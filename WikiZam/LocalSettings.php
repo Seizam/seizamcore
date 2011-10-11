@@ -161,3 +161,5 @@ $wgLanguageSelectorDetectLanguage=LANGUAGE_SELECTOR_PREFER_CLIENT_LANG; #from cl
 # Position of additional manual selector
 $wgLanguageSelectorLocation = LANGUAGE_SELECTOR_IN_TOOLBOX;
 # End Language Selector
+
+# Is Git working from NetBeans?
