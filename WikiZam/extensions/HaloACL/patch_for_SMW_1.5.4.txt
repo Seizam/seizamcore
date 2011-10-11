@@ -1,0 +1,137 @@
+Index: extensions/SemanticMediaWiki/includes/storage/SMW_QueryResult.php
+===================================================================
+--- extensions/SemanticMediaWiki/includes/storage/SMW_QueryResult.php	(revision 9534)
++++ extensions/SemanticMediaWiki/includes/storage/SMW_QueryResult.php	(working copy)
+@@ -216,6 +216,40 @@
+ 		return $result;
+ 	}
+ 
++	/*op-patch|TS|2009-06-19|HaloACL|Semantic protection|start*/
++
++	/**
++	 * Creates a new query result based on $this query result. Everything
++	 * but the content of $this query result is copied into the new one.
++	 * This is useful for query result filters which copy the content only partly.
++	 *
++	 * @param SMWQueryResult $this
++	 * 		The following parts of this query result are copied into the new q.r.:
++	 * 		- print requests
++	 * 		- query, querystring
++	 * 	 	- furtherres
++	 * 	 	- extra printouts
++	 * @param array
++	 * 		An array of results e.g. the set of filtered results of the original query.
++	 * 		If the new q.r. should have no results then pass an empty array.
++	 *
++	 * @return SMWQueryResult
++	 * 		A partly copied $queryResult
++	 */
++	public function newFromQueryResult($results) {
++		$classname = get_class($this);
++		
++		$qr = new $classname($this->mPrintRequests,
++							 $this->mQuery,
++							 $results,
++							 $this->mStore,
++							 $this->mFurtherResults);
++
++		return $qr;
++	}
++	/*op-patch|TS|2009-06-19|end*/
++
++	
+ }
+ 
+ /**
+@@ -258,7 +292,10 @@
+ 	public function __construct( SMWWikiPageValue $resultPage, SMWPrintRequest $printRequest, SMWStore $store ) {
+ 		$this->mResult = $resultPage;
+ 		$this->mPrintRequest = $printRequest;
+-		$this->mStore = $store;
++/*op-patch|TS|2010-07-09|HaloACL|Semantic protection|start*/
++//		$this->mStore = $store;
++		$this->mStore = smwfGetStore();
++/*op-patch|TS|2010-07-09|end*/
+ 		$this->mContent = false;
+ 	}
+ 
+Index: extensions/SemanticMediaWiki/includes/storage/SMW_SQLStore2_Queries.php
+===================================================================
+--- extensions/SemanticMediaWiki/includes/storage/SMW_SQLStore2_Queries.php	(revision 9534)
++++ extensions/SemanticMediaWiki/includes/storage/SMW_SQLStore2_Queries.php	(working copy)
+@@ -545,7 +545,27 @@
+ 
+ 						//No defaultnamespaces here; If any, these are already in the concept.
+ 						$desc = $qp->getQueryDescription( $row->concept_txt );
+-						$qid = $this->compileQueries( $desc );
++/*op-patch|TS|2010-07-14|HaloACL|Semantic protection|start*/
++						global $haclgProtectProperties;
++						if (isset($haclgProtectProperties) && $haclgProtectProperties) {
++							$query = new SMWQuery($desc);
++							wfRunHooks('RewriteQuery', array(&$query, &$queryEmpty) );
++							$errors = $query->getErrors();
++							if (!empty($errors)) {
++								$this->m_errors += $errors;
++							}
++							if ($queryEmpty) {
++								$qid = -1;
++							} else {
++								$desc = $query->getDescription();
++								$qid = $this->compileQueries( $desc );
++							}
++						} else {
++							$qid = $this->compileQueries( $desc );
++						}
++/*op-patch|TS|2010-07-14|end*/
++						
++						
+ 						if ($qid != -1) {
+ 							$query = $this->m_queries[$qid];
+ 						} else { // somehow the concept query is no longer valid; maybe some syntax changed (upgrade) or global settings were modified since storing it
+Index: extensions/SemanticMediaWiki/includes/SMW_DataValue.php
+===================================================================
+--- extensions/SemanticMediaWiki/includes/SMW_DataValue.php	(revision 9534)
++++ extensions/SemanticMediaWiki/includes/SMW_DataValue.php	(working copy)
+@@ -242,6 +242,12 @@
+ 	public function setProperty( SMWPropertyValue $property ) {
+ 		$this->m_property = $property;
+ 	}
++	
++/*op-patch|TS|2010-07-13|HaloACL|Semantic protection|start*/
++	public function getProperty() {
++		return $this->m_property;
++	}
++/*op-patch|TS|2010-07-13|end*/
+ 
+ 	/**
+ 	 * Change the caption (the text used for displaying this datavalue). The given
+Index: extensions/SemanticMediaWiki/includes/SMW_ParserExtensions.php
+===================================================================
+--- extensions/SemanticMediaWiki/includes/SMW_ParserExtensions.php	(revision 9534)
++++ extensions/SemanticMediaWiki/includes/SMW_ParserExtensions.php	(working copy)
+@@ -166,7 +166,11 @@
+ 		}
+ 
+ 		$result = $dv->getShortWikitext( true );
+-
++		
++/*op-patch|TS|2010-07-13|HaloACL|Semantic protection|start*/
++		wfRunHooks('PropertyBeforeOutput', array(&$dv, &$result));
++/*op-patch|TS|2010-07-13|end*/
++				
+ 		if ( ( $smwgInlineErrors && $smwgStoreAnnotations && SMWParserExtensions::$mTempStoreAnnotations ) && ( !$dv->isValid() ) ) {
+ 			$result .= $dv->getErrorText();
+ 		}
+Index: extensions/SemanticMediaWiki/SMW_Settings.php
+===================================================================
+--- extensions/SemanticMediaWiki/SMW_Settings.php	(revision 9534)
++++ extensions/SemanticMediaWiki/SMW_Settings.php	(working copy)
+@@ -66,7 +66,7 @@
+ // $smwgShowFactbox = SMW_FACTBOX_NONEMPTY; # show only those factboxes that have some content
+ // $smwgShowFactbox = SMW_FACTBOX_SPECIAL # show only if special properties were set
+ $smwgShowFactbox = SMW_FACTBOX_HIDDEN; # hide always
+-// $smwgShowFactbox = SMW_FACTBOX_SHOWN;  # show always, buggy and not recommended
++//$smwgShowFactbox = SMW_FACTBOX_SHOWN;  # show always, buggy and not recommended
+ ##
+ 
+ ###

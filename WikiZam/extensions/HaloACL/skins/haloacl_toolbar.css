@@ -1,0 +1,81 @@
+/**
+ * @file
+ * @ingroup HaloACL_CSS
+ */
+
+
+/*  Copyright 2009, ontoprise GmbH
+*  This file is part of the HaloACL-Extension.
+*
+*   The HaloACL-Extension is free software; you can redistribute it and/or modify
+*   it under the terms of the GNU General Public License as published by
+*   the Free Software Foundation; either version 3 of the License, or
+*   (at your option) any later version.
+*
+*   The HaloACL-Extension is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details.
+*
+*   You should have received a copy of the GNU General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * This file contains styles used in toolbar
+ *
+ * @author B2browse/Patrick Hilsbos, Steffen Schachtler
+ * Date: 07.10.2009
+ *
+ */
+#hacl_toolbarcontainer{
+    min-width:750px;
+    height:20px;
+    border:1px #ccc solid;
+    overflow:visible;
+    margin:5px 0 5px 0;
+    padding:2px 0;
+}
+
+#hacl_toolbarcontainer_section1{
+    float:left;
+    height:20px;
+    border:1px #ccc solid;
+    border-style: none solid none none;
+    overflow:visible;
+    padding:0 5px;
+}
+
+#hacl_toolbarcontainer_section3{
+    float:right;
+    height:20px;
+    padding:3px 5px 0px 5px;
+}
+
+.haloacl_infobutton {
+    width:20px;
+    height:20px;
+    background:url(images/info.png) no-repeat;
+    float:left;
+}
+#haloacl_toolbar_popuplink{
+    padding: 2px 0 0 10px;
+    display:inline;
+    float:right;
+}
+
+.hacl_toolbar_invalidAcl {
+	background-color:#ff4444;
+}
+
+.hacl_toolbar_validAcl {
+	background-color:#eee;
+}
+
+.hacl_toolbar_invalidAclText {
+	color:#ffffff;
+}
+
+.hacl_toolbar_validAclText {
+	color:#000000;
+}

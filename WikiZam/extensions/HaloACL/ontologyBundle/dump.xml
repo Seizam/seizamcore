@@ -1,0 +1,286 @@
+<mediawiki xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ontoprise.de/halowikiexport-1.0.xsd" version="1.0" xml:lang="en">
+  <siteinfo>
+    <sitename>Halo3wiki</sitename>
+    <base>http://localhost/develwiki/index.php/Main_Page</base>
+    <generator>MediaWiki 1.15.1</generator>
+    <case>first-letter</case>
+    <namespaces>
+      <namespace key="-2">Media</namespace>
+      <namespace key="-1">Special</namespace>
+      <namespace key="0" />
+      <namespace key="1">Talk</namespace>
+      <namespace key="2">User</namespace>
+      <namespace key="3">User talk</namespace>
+      <namespace key="4">Halo3wiki</namespace>
+      <namespace key="5">Halo3wiki talk</namespace>
+      <namespace key="6">File</namespace>
+      <namespace key="7">File talk</namespace>
+      <namespace key="8">MediaWiki</namespace>
+      <namespace key="9">MediaWiki talk</namespace>
+      <namespace key="10">Template</namespace>
+      <namespace key="11">Template talk</namespace>
+      <namespace key="12">Help</namespace>
+      <namespace key="13">Help talk</namespace>
+      <namespace key="14">Category</namespace>
+      <namespace key="15">Category talk</namespace>
+      <namespace key="102">Property</namespace>
+      <namespace key="103">Property talk</namespace>
+      <namespace key="104">Type</namespace>
+      <namespace key="105">Type talk</namespace>
+      <namespace key="106">Form</namespace>
+      <namespace key="107">Form talk</namespace>
+      <namespace key="108">Concept</namespace>
+      <namespace key="109">Concept talk</namespace>
+      <namespace key="200">WebService</namespace>
+      <namespace key="201">WebService talk</namespace>
+      <namespace key="202">TermImport</namespace>
+      <namespace key="203">TermImport talk</namespace>
+      <namespace key="220">E-mail</namespace>
+      <namespace key="221">E-mail talk</namespace>
+      <namespace key="300">ACL</namespace>
+      <namespace key="301">ACL talk</namespace>
+      <namespace key="400">IAI</namespace>
+      <namespace key="401">IAI talk</namespace>
+    </namespaces>
+  </siteinfo>
+  <page>
+    <title>ACL:Template/NewUserTemplate</title>
+    <id>1995</id>
+    <revision>
+      <id>2205</id>
+      <timestamp>2009-12-15T12:43:10Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{#access: assigned to={{{user}}}
+|actions=read,edit,formedit,wysiwyg,create,move,delete,annotate 
+|description=Full access for {{{user}}}
+|name=Private for {{{user}}}
+}} 
+
+{{#manage rights:assigned to={{{user}}}}} 
+
+[[Category:ACL/Right]]
+
+[[Part of bundle::haloaclontologybundle]]</text>
+    <hash>612f2b93822edc918d5bdb40a8088ab4</hash>
+    </revision>
+  </page>
+  <page>
+    <title>ACL:Template/QARMT/Private use</title>
+    <id>1996</id>
+    <revision>
+      <id>2206</id>
+      <timestamp>2009-12-15T12:44:05Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{#access: assigned to={{{user}}}
+|actions=read,edit,formedit,wysiwyg,create,move,delete,annotate 
+|description=Full access for {{{user}}}
+|name=Private for {{{user}}}
+}} 
+
+{{#manage rights:assigned to={{{user}}}}} 
+
+[[Category:ACL/Right]]
+
+[[Part of bundle::haloaclontologybundle]]</text>
+    <hash>612f2b93822edc918d5bdb40a8088ab4</hash>
+    </revision>
+  </page>
+  <page>
+    <title>ACL:Template/QARMT/Public read</title>
+    <id>1997</id>
+    <revision>
+      <id>2210</id>
+      <timestamp>2009-12-15T13:06:07Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{#access: assigned to={{{user}}}
+|actions=read,edit,formedit,wysiwyg,create,move,delete,annotate 
+|description=Full access for {{{user}}}
+|name=Private for {{{user}}}
+}} 
+
+{{#access: assigned to=*,#
+|actions=read
+|name=Read for others
+}} 
+
+{{#manage rights:assigned to={{{user}}}}} 
+
+[[Category:ACL/Right]]
+[[Part of bundle::haloaclontologybundle]]</text>
+    <hash>e755058bbee7bae2a73f220a853a652b</hash>
+    </revision>
+  </page>
+  <page>
+    <title>ACL:Template/QARMT/Public form edit</title>
+    <id>1998</id>
+    <revision>
+      <id>2208</id>
+      <timestamp>2009-12-15T12:50:28Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{#access: assigned to={{{user}}}
+|actions=read,edit,formedit,wysiwyg,create,move,delete,annotate 
+|description=Full access for {{{user}}}
+|name=Private for {{{user}}}
+}} 
+
+{{#access: assigned to=*,#
+|actions=formedit
+|description=Edit with form for all other users
+|name=Formedit for others
+}} 
+
+{{#manage rights:assigned to={{{user}}}}} 
+
+[[Category:ACL/Right]]
+
+[[Part of bundle::haloaclontologybundle]]</text>
+    <hash>99a397edba465a9ff34dad331bf5fdfe</hash>
+    </revision>
+  </page>
+  <page>
+    <title>ACL:Template/QARMT/Public edit</title>
+    <id>1999</id>
+    <revision>
+      <id>2207</id>
+      <timestamp>2009-12-15T12:48:32Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{#access: assigned to={{{user}}}
+|actions=read,edit,formedit,wysiwyg,create,move,delete,annotate 
+|description=Full access for {{{user}}}
+|name=Private for {{{user}}}
+}} 
+
+{{#access: assigned to=*,#
+|actions=edit
+|description=Edit for all other users
+|name=Edit for others
+}} 
+
+{{#manage rights:assigned to={{{user}}}}} 
+
+[[Category:ACL/Right]]
+
+[[Part of bundle::haloaclontologybundle]]</text>
+    <hash>29c9546039f9078c38b85383a941b48f</hash>
+    </revision>
+  </page>
+  <page>
+    <title>ACL:Template/QARMT/Public full access</title>
+    <id>2000</id>
+    <revision>
+      <id>2209</id>
+      <timestamp>2009-12-15T12:58:05Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{#access: assigned to=*,#
+|actions=*
+|description=Full access for all users
+|name=Full access for all users
+}} 
+
+{{#manage rights:assigned to={{{user}}}}} 
+
+[[Category:ACL/Right]]
+
+[[Part of bundle::haloaclontologybundle]]</text>
+    <hash>ff27960e6227b19dac79baf711c9359f</hash>
+    </revision>
+  </page>
+  <page>
+    <title>ACL:Group/Knowledge architect</title>
+    <id>12</id>
+    <revision>
+      <id>13</id>
+      <timestamp>2010-12-08T10:34:00Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">
+{{#member:members=User:WikiSysop}}
+{{#manage group:assigned to=User:WikiSysop}}
+[[Category:ACL/Group]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>ACL:Group/Knowledge consumer</title>
+    <id>10</id>
+    <revision>
+      <id>11</id>
+      <timestamp>2010-12-08T10:32:45Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">
+{{#member:members=User:WikiSysop}}
+{{#manage group:assigned to=User:WikiSysop}}
+[[Category:ACL/Group]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>ACL:Group/Knowledge provider</title>
+    <id>11</id>
+    <revision>
+      <id>12</id>
+      <timestamp>2010-12-08T10:33:19Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">
+{{#member:members=User:WikiSysop}}
+{{#manage group:assigned to=User:WikiSysop}}
+[[Category:ACL/Group]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>ACL:Group/bureaucrat</title>
+    <id>9</id>
+    <revision>
+      <id>10</id>
+      <timestamp>2010-12-08T10:29:59Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">
+{{#member:members=User:WikiSysop}}
+{{#manage group:assigned to=User:WikiSysop}}
+[[Category:ACL/Group]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>ACL:Group/sysop</title>
+    <id>8</id>
+    <revision>
+      <id>14</id>
+      <timestamp>2010-12-08T10:40:25Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">
+{{#member:members=User:WikiSysop}}
+{{#manage group:assigned to=User:WikiSysop}}
+[[Category:ACL/Group]]</text>
+    </revision>
+  </page>
+</mediawiki>

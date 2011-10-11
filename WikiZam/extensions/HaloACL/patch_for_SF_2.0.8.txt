@@ -1,0 +1,22 @@
+Index: extensions/SemanticForms/includes/SF_FormPrinter.php
+===================================================================
+--- extensions/SemanticForms/includes/SF_FormPrinter.php	(revision 10240)
++++ extensions/SemanticForms/includes/SF_FormPrinter.php	(working copy)
+@@ -224,7 +224,16 @@
+     //$userCanEditPage = ( $wgUser->isAllowed( 'edit' ) && $this->mPageTitle->userCan( 'edit' ) );
+     $permissionErrors = $this->mPageTitle->getUserPermissionsErrors( 'edit', $wgUser );
+     $userCanEditPage = count( $permissionErrors ) == 0;
+-    wfRunHooks( 'sfUserCanEditPage', array( &$userCanEditPage ) );
++/*op-patch|TS|2011-03-31|HaloACL|Protect properties in Semantic Forms|start|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Protect_properties_in_Semantic_Forms*/
++	if (defined('HACL_HALOACL_VERSION')) {
++		// The title with possible protection has to be passed
++		wfRunHooks( 'sfUserCanEditPage', array($this->mPageTitle, &$userCanEditPage ) );
++	} else {
++		// Original code
++	    wfRunHooks( 'sfUserCanEditPage', array(&$userCanEditPage ) );
++	}
++/*op-patch|TS|2011-03-31|end*/
++    
+     $form_text = "";
+     if ( $userCanEditPage || $is_query ) {
+       $form_is_disabled = false;

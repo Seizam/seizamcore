@@ -1,0 +1,47 @@
+Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
+===================================================================
+--- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 6753)
++++ extensions/SemanticForms/includes/SF_FormPrinter.inc	(working copy)
+@@ -178,7 +178,12 @@
+     // show previous set of deletions for this page, if it's been deleted before
+     if (! $form_submitted && ! $this->mPageTitle->exists())
+       $this->showDeletionLog($wgOut);
+-    if (($wgUser->isAllowed('edit') && $this->mPageTitle->userCan('edit')) || $is_query) {
++	/*op-patch|TS|2009-09-11|HaloACL|Protect properties in Semantic Forms|start*/
++	if (($wgUser->isAllowed('edit') &&
++		($this->mPageTitle->userCan('formedit') ||
++		 $this->mPageTitle->userCan('edit') )) ||
++		$is_query) {
++	/*op-patch|TS|2009-09-11|HaloACL|Protect properties in Semantic Forms|end*/
+       $form_is_disabled = false;
+       $form_text = "";
+       // show "Your IP address will be recorded" warning if user is
+Index: extensions/SemanticForms/specials/SF_FormEdit.php
+===================================================================
+--- extensions/SemanticForms/specials/SF_FormEdit.php	(revision 6753)
++++ extensions/SemanticForms/specials/SF_FormEdit.php	(working copy)
+@@ -29,6 +29,10 @@
+ 			$queryparts = explode('/', $query, 2);
+ 			$form_name = isset($queryparts[0]) ? $queryparts[0] : '';
+ 			$target_name = isset($queryparts[1]) ? $queryparts[1] : '';
++/*op-patch|TS|2009-09-29|HaloACL|Store the name of the new page in a javascript variable|start*/
++			// inform other extensions that new data is added
++			wfRunHooks('sfSetTargetName', array(&$target_name));
++/*op-patch|TS|2009-09-29|end*/
+ 		}
+ 
+ 		$alt_forms = $wgRequest->getArray('alt_form');
+@@ -229,7 +233,12 @@
+ 				<form name="createbox" onsubmit="return validate_all()" action="" method="post" class="createbox">
+ 
+ END;
+-			$text .= $form_text;
++			/*op-patch|TS|2009-09-18|HaloACL|Semantic protection|start*/
++			//Original code: $text .= $form_text;
++			$html = '';
++			wfRunHooks('sfHTMLBeforeForm', array(&$target_name, &$html));
++			$text .= $html.$form_text;
++			/*op-patch|TS|2009-09-18|HaloACL|Semantic protection|end*/
+ 		}
+ 	}
+ 	SFUtils::addJavascriptAndCSS();

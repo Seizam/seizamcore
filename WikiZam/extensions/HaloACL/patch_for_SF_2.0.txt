@@ -1,0 +1,16 @@
+Index: extensions/SemanticForms/includes/SF_FormPrinter.php
+===================================================================
+--- extensions/SemanticForms/includes/SF_FormPrinter.php	2010-06-09 05:36:14.000000000 +0200
++++ extensions/SemanticForms/includes/SF_FormPrinter.php	2010-07-09 14:01:49.000000000 +0200
+@@ -179,7 +179,10 @@
+     if ( ! $form_submitted && ! $this->mPageTitle->exists() ) {
+       $this->showDeletionLog( $wgOut );
+     }
+-    $user_can_edit_page = ( $wgUser->isAllowed( 'edit' ) && $this->mPageTitle->userCan( 'edit' ) );
++    /*op-patch|TS|2009-09-11|HaloACL|Protect properties in Semantic Forms|start|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Check_if_a_page_can_be_edited_with_SF*/
++    $user_can_edit_page = ( $wgUser->isAllowed( 'edit' ) &&
++      ( $this->mPageTitle->userCan( 'edit' ) || $this->mPageTitle->userCan( 'formedit' ) ) );
++    /*op-patch|TS|2009-09-11|HaloACL|Protect properties in Semantic Forms|end*/
+     wfRunHooks( 'sfUserCanEditPage', array( &$user_can_edit_page ) );
+     if ( $user_can_edit_page || $is_query ) {
+       $form_is_disabled = false;

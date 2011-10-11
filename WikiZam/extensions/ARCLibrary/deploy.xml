@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+	<global>
+		<version>156</version>
+		<id>arclibrary</id>
+		<vendor>ontoprise GmbH</vendor>
+		<maintainer>ontoprise GmbH</maintainer>
+		<instdir>extensions/ARCLibrary</instdir>
+		<description>
+			Provides the ARC library to other MW extensions.
+		</description>
+		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:ARCLibrary_extension</helpurl>
+		<dependencies>
+			<dependency from="1160" to="1169">mw</dependency>
+		</dependencies>
+		<patchlevel>0</patchlevel>
+		<license>GPL v2</license>
+	</global>
+	<codefiles>
+
+		<file loc="deploy.xml" />
+		<!-- TODO: add all others -->
+	</codefiles>
+	<wikidumps>
+		<!-- empty -->
+	</wikidumps>
+	<resources>
+		<!-- empty -->
+	</resources>
+
+	<configs>
+        <successor ext="smw"/>
+		<new>
+			<require name="arclib_init"
+				file="extensions/ARCLibrary/ARCLibrary.php" />
+			<function name="enableARCLibrary">
+			</function>
+		</new>
+		<uninstall>
+
+		</uninstall>
+	</configs>
+</deploydescriptor>
+

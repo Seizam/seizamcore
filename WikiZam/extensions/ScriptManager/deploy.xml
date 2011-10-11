@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+    <global>
+        <version>156</version>
+        <patchlevel>0</patchlevel>
+        <id>scriptmanager</id>
+        <vendor>ontoprise GmbH</vendor>
+        <maintainer>ontoprise GmbH</maintainer>
+        <instdir>extensions/ScriptManager</instdir>
+        <description>
+           Javascript managing component. Basis for all Halo plugins.
+        </description>
+		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Script_Manager_Extension</helpurl>
+        <dependencies>
+            <dependency from="1120" to="1169">mw</dependency>
+        </dependencies>
+        <license>GPL-v2</license>
+    </global>
+    <codefiles>
+    
+    </codefiles>
+    <wikidumps>
+        <!-- empty -->
+    </wikidumps>
+    <resources>
+        <!-- empty -->
+    </resources>
+    <configs>
+        <successor ext="smw"/>
+        <new>
+        
+            <require name="scriptmanager"
+                file="extensions/ScriptManager/SM_Initialize.php" />
+          
+        </new>
+      
+    </configs>
+</deploydescriptor>

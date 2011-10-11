@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+	<global>
+		<version>150</version>
+		<id>haloacl</id>
+		<vendor>ontoprise GmbH</vendor>
+		<maintainer>ontoprise GmbH</maintainer>
+		<license>GPL-v2</license>
+		<instdir>extensions/HaloACL</instdir>
+		<description>
+			Protects pages, categories, namespaces and semantic properties.
+		</description>
+		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Access_Control_List_extension</helpurl>
+		<dependencies>
+			<dependency from="1132" to="1164">mw</dependency>
+			<dependency from="101">scriptmanager</dependency>
+            <dependency from="100" to="200">arclibrary</dependency>
+			<dependency from="150" optional="true">smwhalo</dependency>
+		</dependencies>
+		<patchlevel>3</patchlevel>
+		<notice>
+		"Your Wiki contains now new pages. Since existing pages can make
+		use of newly imported pages (e.g. templates), it is necessary to
+		REFRESH all pages in this Wiki now.
+		
+		How to refresh all pages in this Wiki?
+		* open in this cmd-line the following directory: "[path to SMW]/maintenance"
+		example:
+		cd
+		C:\Programme\Ontoprise\SMWplus\htdocs\mediawiki\extensions\SemanticMediaWiki\maintenance
+		* call the script "SMW_refreshData.php -v"
+		example:
+		php SMW_refreshData.php -v
+		
+		NOTE: in some cases it is required to call this script aborts with an 
+		error. In
+		such cases you have to run the script multiple times. Please read more about
+		repairing data here:
+		http://smwforum.ontoprise.com/smwforum/index.php/Help:Repairing_data"
+		</notice>		
+	</global>
+	<codefiles>
+		<file loc="deploy.xml" />
+
+		<!-- TODO: add others -->
+	</codefiles>
+	<wikidumps>
+		<file loc="ontologyBundle/dump.xml"/>
+	</wikidumps>
+	<resources>
+		<!-- empty -->
+	</resources>
+	<configs>
+		<precedes ext="smw" />
+
+		<new>
+			<patch file="patch_for_MW_1.13.2.txt" ext="mw" from="1130" to="1139"/>
+			<patch file="patch_for_MW_1.15.1.txt" ext="mw" from="1150" to="1152"/>
+			<patch file="patch_for_MW_1.15.3.txt" ext="mw" from="1153" to="1159"/>
+            <patch file="patch_for_MW_1.16.0.txt" ext="mw" from="1160" to="1161"/>
+            <patch file="patch_for_MW_1.16.4.txt" ext="mw" from="1164" to="1164"/>
+			<patch file="patch_for_SMW_1.4.2.txt" ext="smw" from="142" to="142" />
+			<patch file="patch_for_SMW_1.4.3.txt" ext="smw" from="143" to="143" />
+			<patch file="patch_for_SMW_1.5.0.txt" ext="smw" from="150" to="150" />
+			<patch file="patch_for_SMW_1.5.1.txt" ext="smw" from="151" to="151" />
+            <patch file="patch_for_SMW_1.5.2.txt" ext="smw" from="152" to="152" />
+            <patch file="patch_for_SMW_1.5.4.txt" ext="smw" from="154" to="154" />
+            <patch file="patch_for_SMW_1.5.5.txt" ext="smw" from="155" to="155" />
+            <patch file="patch_for_SMW_1.5.6.txt" ext="smw" from="156" to="156" />
+			<patch file="patch_for_SF_1.9.txt" ext="semanticforms" from="190" to="190" />
+			<patch file="patch_for_SF_1.9.1.txt" ext="semanticforms" from="191" to="191" />
+            <patch file="patch_for_SF_2.0.txt" ext="semanticforms" from="200" to="200" />
+            <patch file="patch_for_SF_2.0.8.txt" ext="semanticforms" from="208" to="208" />
+            <patch file="patch_for_SF_2.1.2.txt" ext="semanticforms" from="212" to="212" />
+			<require name="smwhalo"
+				file="extensions/HaloACL/includes/HACL_Initialize.php" />
+			<php name="MasterTemplate">
+			// Remove the comments from the following line to enable the ACL master template
+			// for private user spaces. Every new article of a user will only be accessible
+			// by himself until the access rights are changed.
+			//$haclgNewUserTemplate = "ACL:Template/NewUserTemplate";
+			</php>				
+			<function name="enableHaloACL">
+			</function>
+			<script file="maintenance/HACL_Setup.php" />
+			<script file="maintenance/HACL_Setup.php"
+				params="--initDefaults" />
+		</new>
+		<update from="120">
+            <patch file="patch_for_MW_1.16.0.txt" />
+            <patch file="patch_for_SMW_1.5.2.txt" />
+            <patch file="patch_for_SF_2.0.txt" />
+		</update>
+		<uninstall>
+			<patch file="patch_for_MW_1.13.2.txt" ext="mw" from="1130" to="1139"/>
+			<patch file="patch_for_MW_1.15.1.txt" ext="mw" from="1150" to="1152"/>
+			<patch file="patch_for_MW_1.15.3.txt" ext="mw" from="1153" to="1159"/>
+            <patch file="patch_for_MW_1.16.0.txt" ext="mw" from="1160" to="1161"/>
+            <patch file="patch_for_MW_1.16.4.txt" ext="mw" from="1164" to="1164"/>
+            <patch file="patch_for_SMW_1.4.2.txt" ext="smw" from="142" to="142" />
+			<patch file="patch_for_SMW_1.4.3.txt" ext="smw" from="143" to="143" />
+			<patch file="patch_for_SMW_1.5.0.txt" ext="smw" from="150" to="150" />
+			<patch file="patch_for_SMW_1.5.1.txt" ext="smw" from="151" to="151" />
+            <patch file="patch_for_SMW_1.5.2.txt" ext="smw" from="152" to="152" />
+            <patch file="patch_for_SMW_1.5.4.txt" ext="smw" from="154" to="154" />
+            <patch file="patch_for_SMW_1.5.5.txt" ext="smw" from="155" to="155" />
+            <patch file="patch_for_SMW_1.5.6.txt" ext="smw" from="156" to="156" />
+			<patch file="patch_for_SF_1.9.txt" ext="semanticforms" from="190" to="190" />
+   			<patch file="patch_for_SF_1.9.1.txt" ext="semanticforms" from="191" to="191" />
+            <patch file="patch_for_SF_2.0.txt" ext="semanticforms" from="200" to="200" />
+            <patch file="patch_for_SF_2.0.8.txt" ext="semanticforms" from="208" to="208" />
+            <patch file="patch_for_SF_2.1.2.txt" ext="semanticforms" from="212" to="212" />
+			<script file="maintenance/HACL_Setup.php"
+				params="--delete" />
+		</uninstall>
+	</configs>
+</deploydescriptor>

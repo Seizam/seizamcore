@@ -1,0 +1,114 @@
+/**
+ * @file
+ * @ingroup HaloACL_CSS
+ */
+/*  Copyright 2010, ontoprise GmbH
+ *  This file is part of the HaloACL-Extension.
+ *
+ *   The HaloACL-Extension is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The HaloACL-Extension is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/**
+ * This file contains styles used on the special page for group permissions
+ *
+ * @author Thomas Schweitzer
+ * Date: 16.11.2010
+ *
+ */
+.haclGroupPermission {
+    border: thin solid grey;
+    margin: 10px;
+}
+
+.haclGPGeneralDiv {
+    border-bottom: thin solid grey;
+	margin:			10px;
+	padding-bottom:	10px;
+}
+
+#haclGPPermissions {
+	overflow: hidden;
+}
+
+#haclGPPermissionsSelectorDiv {
+	width: 25%;	
+}
+
+#haclGPPermissionsTitle {
+    font-weight: bold;
+}
+
+#haclGPPermissions select {
+	width: 100%;
+}
+
+#haclGPPermissions>div {
+	float: left;
+}
+
+#haclGEPermissionExplanation {
+	width:	70%;
+	color:	grey;
+	margin-left: 10px;
+}
+
+#haclGESelectedPermission {
+	font-weight: bold
+}
+
+#haclgGPCheckmarkHint div {
+	color: grey;
+}
+
+.haclGroupEditorDiv {
+    border: thin solid grey;
+	margin:	10px;
+	display: none;	
+}
+
+.haclGroupEditorTitle {
+    font-weight: bold;
+    height: 1.5em;
+    position: relative;
+}
+
+#haclGETGroup {
+    left: 0px;
+    position: absolute;
+}
+
+#haclGETInfo {
+    left: 375px;
+    position: absolute;
+}
+
+#haclGETPermission {
+    left: 413px;
+    position: absolute;
+}
+
+.haclGroupEditorTree {
+    height: 300px;
+    padding: 10px;
+}
+
+.haclGPButtons {
+	display:table;
+	margin-left:auto;
+	margin-right:auto;
+	margin-bottom: 10px;
+}
+
+#haclGPDiscard {
+	color: red;
+}
