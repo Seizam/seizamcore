@@ -37,8 +37,7 @@ $messages = array(
 'tog-editsection'             => 'Enable section editin via [edit] airtins',
 'tog-editsectiononrightclick' => 'Enable section editin bi richt-dabbin on section teitles (JavaScript)',
 'tog-showtoc'                 => 'Shaw table o contents (for pages wi mair nor 3 heidins)',
-'tog-rememberpassword'        => 'Mynd password ower sessions',
-'tog-editwidth'               => 'Edit box haes fou weenth',
+'tog-rememberpassword'        => 'Mynd password ower sessions (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'tog-watchcreations'          => 'Add pages ye mak tar yer watchleet',
 'tog-watchdefault'            => 'Add pages ye edit tae yer watchleet',
 'tog-watchmoves'              => 'Eik pages A move tae ma watchleet',
@@ -176,21 +175,15 @@ $messages = array(
 'faqpage'        => 'Project:ASQ',
 
 # Vector skin
-'vector-action-delete'       => 'Delete',
-'vector-action-move'         => 'Flit',
-'vector-action-protect'      => 'Fend',
-'vector-namespace-category'  => 'Category',
-'vector-namespace-image'     => 'File',
-'vector-namespace-main'      => 'Page',
-'vector-namespace-mediawiki' => 'Message',
-'vector-namespace-template'  => 'Template',
-'vector-namespace-user'      => 'Uiser page',
-'vector-view-create'         => 'Mak',
-'vector-view-edit'           => 'Edit',
-'vector-view-history'        => 'See history',
-'vector-view-viewsource'     => 'View soorce',
-'actions'                    => 'Actions',
-'namespaces'                 => 'Namespaces',
+'vector-action-delete'   => 'Delete',
+'vector-action-move'     => 'Flit',
+'vector-action-protect'  => 'Fend',
+'vector-view-create'     => 'Mak',
+'vector-view-edit'       => 'Edit',
+'vector-view-history'    => 'See history',
+'vector-view-viewsource' => 'View soorce',
+'actions'                => 'Actions',
+'namespaces'             => 'Namespaces',
 
 'errorpagetitle'    => 'Error',
 'returnto'          => 'Return tae $1.',
@@ -393,7 +386,7 @@ Mynd an chynge yer [[Special:Preferences|{{SITENAME}} preferences]].',
 'yourname'                   => 'Yer uiser name',
 'yourpassword'               => 'Passwaird:',
 'yourpasswordagain'          => 'Retype passwaird:',
-'remembermypassword'         => 'Mynd ma password across sessions.',
+'remembermypassword'         => 'Mynd ma password across sessions (for a maximum of $1 {{PLURAL:$1|day|days}})',
 'yourdomainname'             => 'Yer domain:',
 'externaldberror'            => "Aither the wis an external authenteication database mishanter, or ye'r no alloued tae update yer external accoont.",
 'login'                      => 'Log in',
@@ -565,7 +558,7 @@ Yer block ID is $5. Please include this ID in ony argies ye mak.',
 'userjsyoucanpreview'              => "'''Tip:''' Uise the 'Show preview' button tae proof yer new JS afore savin.",
 'usercsspreview'                   => "'''Mynd that ye'r juist previewin yer uiser CSS, it haesna yet been hained!'''",
 'userjspreview'                    => "'''Mynd that ye're juist testin/previewing yer uiser JavaScript; it haesna been hained yet!'''",
-'userinvalidcssjstitle'            => "'''Warnin:''' There isnae a skin \"\$1\". Mynd that yer ain .css an .js pages uise a lowercase teetle, e.g. {{ns:user}}:Foo/monobook.css instead o {{ns:user}}:Foo/Monobook.css.",
+'userinvalidcssjstitle'            => "'''Warnin:''' There isnae a skin \"\$1\". Mynd that yer ain .css an .js pages uise a lowercase teetle, e.g. {{ns:user}}:Foo/vector.css instead o {{ns:user}}:Foo/Vector.css.",
 'updated'                          => '(Updatit)',
 'note'                             => "'''Mynd:'''",
 'previewnote'                      => "'''Mynd that this is juist a scance-ower, an haesna been hained yet!'''",
@@ -600,7 +593,6 @@ Gin ye dinna want yer writin tae be editit athoot mercy and redistribute at will
 YYe'r promisin us forbye that ye wrat this yersel, or copied it frae a
 public domain or siclike free resoorce (see $1 for details).
 '''DINNA SUBMIT COPYRICHTIT WARK ATHOOT PERMEISSION!'''",
-'longpagewarning'                  => "WARNIN: This page is $1 kilobytes lang; some brousers micht hae trouble editin pages approachin or langer nor 32 kb. Please conseider brakkin the page intae smaa'er sections.",
 'longpageerror'                    => "'''ERROR: The text ye hae submitted is $1 kilobytes
 lang, an that's langer than the maximum of $2 kilobytes. It canna be hained.'''",
 'readonlywarning'                  => "WARNIN: The database haes been lockit for maintenance, sae ye'll no can hain yer edits richt nou. Ye micht wish tae cut-n-paste the text intil a text file an hain it for later.",
@@ -751,6 +743,7 @@ there micht be parteeculars in the [{{fullurl:{{#Special:Log}}/suppress|page={{F
 'resultsperpage'            => 'Hits tae shaw per page',
 'contextlines'              => 'Lines tae shaw per hit',
 'contextchars'              => 'Characters o context per line',
+'stub-threshold-disabled'   => 'Tuckie',
 'recentchangescount'        => 'Nummer o teitles in recent chynges',
 'savedprefs'                => 'Yer preferences haes been hained.',
 'timezoneoffset'            => 'Affset',
@@ -800,6 +793,9 @@ there micht be parteeculars in the [{{fullurl:{{#Special:Log}}/suppress|page={{F
 'rightslog'     => 'Uiser richts log',
 'rightslogtext' => 'This is a log o chynges tae uiser richts.',
 
+# Associated actions - in the sentence "You do not have permission to X"
+'action-edit' => 'edit this page',
+
 # Recent changes
 'nchanges'                          => '$1 {{PLURAL:$1|chynge|chynges}}',
 'recentchanges'                     => 'Recent chynges',
@@ -808,6 +804,9 @@ there micht be parteeculars in the [{{fullurl:{{#Special:Log}}/suppress|page={{F
 'rcnotefrom'                        => 'Ablo is the chynges syne <b>$2</b> (up tae <b>$1</b> shawn).',
 'rclistfrom'                        => 'Shaw new chynges stertin frae $1',
 'rcshowhidebots'                    => '$1 bots',
+'rcshowhideliu'                     => '$1 logged-in uisers',
+'rcshowhideanons'                   => '$1 anonymous uisers',
+'rcshowhidemine'                    => '$1 ma edits',
 'rclinks'                           => 'Shaw last $1 chynges in last $2 days<br />$3',
 'diff'                              => 'diff',
 'hist'                              => 'hist',
@@ -1007,6 +1006,7 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'listusers-blocked' => '(blockit)',
 
 # Special:Log/newusers
+'newuserlogpage'          => 'Uiser creation log',
 'newuserlog-create-entry' => 'New uiser accoont',
 
 # Special:ListGroupRights
@@ -1015,6 +1015,7 @@ Also see [[Special:WantedCategories|wanted categories]].',
 # E-mail user
 'mailnologin'     => 'Nae send address',
 'mailnologintext' => 'Ye maun be [[Special:UserLogin|loggit in]] an hae a valid e-mail address in yer [[Special:Preferences|preferences]] tae send e-mail til ither uisers.',
+'emailuser'       => 'E-mail this uiser',
 'noemailtitle'    => 'Nae e-mail address',
 'noemailtext'     => "This uiser haesna specifee'd a valid e-mail address, or haes chuisen no tae receive e-mail frae ither uisers.",
 'emailmessage'    => 'Message:',
@@ -1030,6 +1031,7 @@ Also see [[Special:WantedCategories|wanted categories]].',
 'removedwatch'      => 'Remuved frae watchleet',
 'removedwatchtext'  => 'The page "[[:$1]]" haes been remuved frae yer watchleet.',
 'watch'             => 'Watch',
+'watchthispage'     => 'Leuk ower this page',
 'unwatch'           => 'Unwatch',
 'notanarticle'      => 'No a content page',
 'watchnochange'     => 'Nane o yer watched items were edited in the time period displayed.',
@@ -1082,17 +1084,20 @@ an that ye'r daein this in accord wi [[{{MediaWiki:Policy-url}}]].",
 'revertpage'     => 'Revertit edit o [[Special:Contributions/$2|$2]] ([[User talk:$2|Talk]]), chynged back tae last version bi [[User:$1|$1]]',
 
 # Protect
-'protectlogtext'         => 'Ablo is a leet o page locks/unlocks. See the [[Special:ProtectedPages|protected pages list]] for the list of currently operational page protections.',
-'protectedarticle'       => 'protectit "[[$1]]"',
-'unprotectedarticle'     => 'unprotectit "[[$1]]"',
-'protect-title'          => 'Protectin "$1"',
-'prot_1movedto2'         => '[[$1]] flittit til [[$2]]',
-'protectcomment'         => 'Raeson:',
-'protect-text'           => "Ye can see an chynge the protection level here for the page '''<nowiki>$1</nowiki>'''.",
-'protect-level-sysop'    => 'Juist administrators',
-'protect-othertime'      => 'Ither time:',
-'protect-othertime-op'   => 'ither time',
-'protect-expiry-options' => '2 oor:2 hours,1 day:1 day,3 days:3 days,1 week:1 week,2 weeks:2 weeks,1 month:1 month,3 months:3 months,6 months:6 months,1 year:1 year,infinite:infinite',
+'protectlogtext'              => 'Ablo is a leet o page locks/unlocks. See the [[Special:ProtectedPages|protected pages list]] for the list of currently operational page protections.',
+'protectedarticle'            => 'protectit "[[$1]]"',
+'unprotectedarticle'          => 'unprotectit "[[$1]]"',
+'protect-title'               => 'Protectin "$1"',
+'prot_1movedto2'              => '[[$1]] flittit til [[$2]]',
+'protectcomment'              => 'Raeson:',
+'protectexpiry'               => 'Expires:',
+'protect-text'                => "Ye can see an chynge the protection level here for the page '''<nowiki>$1</nowiki>'''.",
+'protect-default'             => 'Allow aw uisers',
+'protect-level-autoconfirmed' => 'Baur new and unregistered uisers',
+'protect-level-sysop'         => 'Juist administrators',
+'protect-othertime'           => 'Ither time:',
+'protect-othertime-op'        => 'ither time',
+'protect-expiry-options'      => '2 oor:2 hours,1 day:1 day,3 days:3 days,1 week:1 week,2 weeks:2 weeks,1 month:1 month,3 months:3 months,6 months:6 months,1 year:1 year,infinite:infinite',
 
 # Restrictions (nouns)
 'restriction-edit'   => 'Edit',
@@ -1112,6 +1117,7 @@ reveisions will appear in the aulder history, an the current reveision o the liv
 'undeletehistorynoadmin' => 'This airticle haes been delete. The raeson for deletion is
 shawn in the summary ablo, alang wi parteeculars o the uisers that haed editit this page
 afore it wis delete. The actual text o thir deletit reveisions is available tae admeenistrators juist.',
+'undeletelink'           => 'view/restore',
 'undeletedrevisions'     => '{{PLURAL:$1|1 reveision|$1 reveisions}} restored',
 'cannotundelete'         => 'Undelete didna wirk; some ither bodie micht hae aareadies undeletit the page.',
 
@@ -1132,6 +1138,7 @@ afore it wis delete. The actual text o thir deletit reveisions is available tae 
 'sp-contributions-blocklog' => 'block log',
 'sp-contributions-logs'     => 'logs',
 'sp-contributions-talk'     => 'collogue',
+'sp-contributions-username' => 'IP address or uisername:',
 'sp-contributions-submit'   => 'Rake',
 
 # What links here
@@ -1139,9 +1146,11 @@ afore it wis delete. The actual text o thir deletit reveisions is available tae 
 'linkshere'               => "The follaein pages airts tae '''[[:$1]]''':",
 'nolinkshere'             => "Nae pages airt tae '''[[:$1]]'''.",
 'isredirect'              => 'reguidal page',
+'istemplate'              => 'transclusion',
 'isimage'                 => 'eimage link',
 'whatlinkshere-links'     => '← links',
 'whatlinkshere-hidelinks' => '$1 links',
+'whatlinkshere-filters'   => 'Filters',
 
 # Block/unblock
 'blockip'                     => 'Block uiser',
@@ -1272,6 +1281,7 @@ In the saicont case ye can uise an airtin forbye, for exemplar [[{{#Special:Expo
 'tooltip-n-mainpage'              => 'Gang tae the Main Page',
 'tooltip-n-recentchanges'         => 'The leet o recent chynges in the wiki',
 'tooltip-t-contributions'         => "View this uiser's contreibutions",
+'tooltip-t-emailuser'             => 'Send an e-mail to this uiser',
 'tooltip-t-upload'                => 'Uplaid files',
 'tooltip-t-specialpages'          => 'Leet o byordinar pages',
 'tooltip-ca-nstab-user'           => 'View the uiser page',
@@ -1330,7 +1340,7 @@ In the saicont case ye can uise an airtin forbye, for exemplar [[{{#Special:Expo
 # Media information
 'mediawarning'   => "'''Warnin''': This file micht haud mislushious code; bi executin it yer seestem micht be compromised.",
 'imagemaxsize'   => 'Limit eimages on eimage description pages tae:',
-'file-info-size' => '($1 × $2 pixels, file size: $3, MIME type: $4)',
+'file-info-size' => '$1 × $2 pixels, file size: $3, MIME type: $4',
 
 # Special:NewFiles
 'newimages'     => 'Gallery o new files',
