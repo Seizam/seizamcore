@@ -61,7 +61,7 @@ $wgEmailAuthentication = true;
 #$wgDBpassword       = "root";
 
 # MySQL specific settings
-$wgDBprefix         = "";
+#$wgDBprefix         = "";
 
 # MySQL table options to use during installation or update
 $wgDBTableOptions   = "ENGINE=InnoDB, DEFAULT CHARSET=binary";
@@ -105,11 +105,13 @@ $wgUseTeX           = false;
 # Site language code, should be one of ./languages/Language(.*).php
 $wgLanguageCode = "en";
 
-$wgSecretKey = "a99b97286c3e606e27464d7df07c64faabffa80f3f0d73a71e5470b29be82e2c";
+## Moved to ServerSettings.php
+#$wgSecretKey = "a99b97286c3e606e27464d7df07c64faabffa80f3f0d73a71e5470b29be82e2c";
 
-# Site upgrade key. Must be set to a string (default provided) to turn on the
-# web installer while LocalSettings.php is in place
-$wgUpgradeKey = "1abd89e1c9307b07";
+## Site upgrade key. Must be set to a string (default provided) to turn on the
+## web installer while LocalSettings.php is in place
+## Moved to ServerSettings.php
+# $wgUpgradeKey = "1abd89e1c9307b07";
 
 ## Default skin: you can change the default skin. Use the internal symbolic
 ## names, ie 'standard', 'nostalgia', 'cologneblue', 'monobook', 'vector':
@@ -137,7 +139,7 @@ $wgGroupPermissions['*']['edit'] = false;
 # your web server has a query string length limit (then set it to that limit),
 # or if you have suhosin.get.max_value_length set in php.ini (then set it to
 # that value)
-$wgResourceLoaderMaxQueryLength = -1;
+$wgResourceLoaderMaxQueryLength = 1024;
 
 
 # End of automatically generated settings.

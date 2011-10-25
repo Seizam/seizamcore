@@ -32,5 +32,12 @@ $wgDBname           = "wikizam";
 $wgDBuser           = "root";
 $wgDBpassword       = "root";
 
+# MySQL specific settings
+$wgDBprefix         = "";
+
+$wgSecretKey = "a99b97286c3e606e27464d7df07c64faabffa80f3f0d73a71e5470b29be82e2c";
+
+$wgUpgradeKey = "1abd89e1c9307b07";
+
 
 ?>
