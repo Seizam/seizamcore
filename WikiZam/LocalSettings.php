@@ -15,6 +15,9 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	exit;
 }
 
+# Include of ServerSetting.php where Server Side settings are stored
+require_once("$IP/ServerSettings.php");
+
 ## Uncomment this to disable output compression
 # $wgDisableOutputCompression = true;
 
@@ -25,8 +28,9 @@ $wgMetaNamespace = "Project";
 ## defaults for all runtime URL paths are based off of this.
 ## For more information on customizing the URLs please see:
 ## http://www.mediawiki.org/wiki/Manual:Short_URL
-$wgScriptPath       = "/WikiZam";
-$wgScriptExtension  = ".php";
+## Moved to ServerSettings.php
+#$wgScriptPath       = "/WikiZam";
+#$wgScriptExtension  = ".php";
 
 ## The relative URL path to the skins directory
 $wgStylePath        = "$wgScriptPath/skins";
@@ -40,19 +44,21 @@ $wgLogo             = "$wgStylePath/common/images/wiki.png";
 $wgEnableEmail      = true;
 $wgEnableUserEmail  = true; # UPO
 
-$wgEmergencyContact = "apache@localhost";
-$wgPasswordSender   = "apache@localhost";
+## Moved to ServerSettings.php
+#$wgEmergencyContact = "apache@localhost";
+#$wgPasswordSender   = "apache@localhost";
 
 $wgEnotifUserTalk      = true; # UPO
 $wgEnotifWatchlist     = true; # UPO
 $wgEmailAuthentication = true;
 
 ## Database settings
-$wgDBtype           = "mysql";
-$wgDBserver         = "localhost";
-$wgDBname           = "wikizam";
-$wgDBuser           = "root";
-$wgDBpassword       = "root";
+## Moved to ServerSettings.php
+#$wgDBtype           = "mysql";
+#$wgDBserver         = "localhost";
+#$wgDBname           = "wikizam";
+#$wgDBuser           = "root";
+#$wgDBpassword       = "root";
 
 # MySQL specific settings
 $wgDBprefix         = "";
