@@ -424,15 +424,19 @@ class SeizamTemplate extends QuickTemplate {
         // Output HTML Page
         $this->html('headelement');
         ?>
-        <a id="top"></a>
         <div id="mw-js-message" style="display:none;"<?php $this->html('userlangattributes') ?>></div>
         <?php if ($this->data['sitenotice']): ?>
             <!-- sitenotice -->
-            <div id="siteNotice"><?php $this->html('sitenotice') ?></div>
+            <div class="block_flat block_full">
+                <div class="inside">
+                    <div id="siteNotice"><?php $this->html('sitenotice') ?></div>
+                </div>
+            </div>
             <!-- /sitenotice -->
         <?php endif; ?>
         <!-- content -->
         <div id="content">
+            <a id="top"></a>
             <!-- header -->
             <header id="mw-head" class="block_full">
                 <!-- firstHeading -->
@@ -509,7 +513,7 @@ class SeizamTemplate extends QuickTemplate {
                 <!-- /block_full -->
                 <!-- /bodyContent -->
                 <!-- contentFooter -->
-                <div id="self_general" class="block_flat block_full"<?php $this->html('userlangattributes') ?>> <!--<div id="self_general" class="block_flat block_full">-->
+                <div class="block_flat block_full"<?php $this->html('userlangattributes') ?>> <!--<div id="self_general" class="block_flat block_full">-->
                     <div class="inside">
                         <?php foreach ($validFooterLinks as $category => $links): ?>
                             <?php if (count($links) > 0): ?>
@@ -543,57 +547,49 @@ class SeizamTemplate extends QuickTemplate {
             <footer>
                 <div class="inside">
                     <div class="content">
+                        <!-- logo -->
+                        <a id="logo_mini" style="background-image: url(<?php $this->text('logopath') ?>);" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>" <?php echo $this->skin->tooltipAndAccesskey('p-logo') ?>></a>
+                        <!-- /logo -->
+                        <!-- search -->
+                        <?php $this->renderNavigation(array('SEARCH')); ?>
+                        <!-- /search -->
+                        <!-- quicklinks -->
                         <ul>
-                            <li><a href="#">Parcourir</a></li>
-                            <li><a href="#">Mon Seizam</a></li>
+                            <li>
+                                <a href="#">Parcourir</a>
+                            </li>
+                            <li>
+                                <a href="#">Mon Seizam</a>
+                            </li>
                             <li class="more">
                                 <a href="#">
                                     <span class="show_more">Plus d'informations</span>
-                                    <span aria-hidden="true" class="show_less">Moins d'informations</span>
+                                    <span class="show_less" aria-hidden="true">Moins d'informations</span>
                                 </a>
                             </li>
                         </ul>
-                        <?php /*
-                          <!-- logo -->
-                          <a style="background-image: url(<?php $this->text('logopath') ?>);" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>" <?php echo $this->skin->tooltipAndAccesskey('p-logo') ?>></a>
-                          <!-- /logo -->
-                          <!-- search -->
-                          <?php $this->renderNavigation(array('SEARCH')); ?>
-                          <!-- /search -->
-                          <!-- quicklinks -->
-                          <ul>
-                          <li>
-                          <a href="#">Parcourir</a>
-                          </li>
-                          <li>
-                          <a href="#">Mon Seizam</a>
-                          </li>
-                          <li class="more">
-                          <a href="#">
-                          <span class="show_more">Plus d'informations</span>
-                          <span class="show_less" aria-hidden="true">Moins d'informations</span>
-                          </a>
-                          </li>
-                          </ul>
-                          <!-- /quicklinks -->
-                          <!-- moreInfo -->
-                          <aside class="more_infos" <!--style="display: none;"-->>
-                          <?php $this->renderNavigation('PERSONAL'); ?>
-
-                          <?php $this->renderPortals($this->data['sidebar']); ?>
+                        <!-- /quicklinks -->
+                        <!-- moreInfo -->
+                          <aside class="more_infos" style="display: none;">
+                          <?php $this->renderNavigation('PERSONAL');?>
+                          <?php $this->renderPortals($this->data['sidebar']);?>
                           </aside>
                           <!-- /moreInfo -->
-                         */ ?>
                     </div>
                 </div>
             </footer>
             <!-- /footer -->
         </div>
         <!-- /container -->
+        <!-- bottomScripts -->
         <?php $this->html('bottomscripts'); /* JS call to runBodyOnloadHook */ ?>
+        <!-- /bottomScripts -->
         <!-- fixalpha -->
         <script type="<?php $this->text('jsmimetype') ?>"> if ( window.isMSIE55 ) fixalpha(); </script>
         <!-- /fixalpha -->
+        <!-- AlsaCreationScript -->
+        <script src="http://localhost/WikiZam/skins/Seizam/scripts/global.js"></script>
+        <!-- /AlsaCreationScript -->
         <?php $this->html('reporttime') ?>
         <?php if ($this->data['debug']): ?>
             <!-- Debug output: <?php $this->text('debug'); ?> -->
@@ -763,21 +759,10 @@ class SeizamTemplate extends QuickTemplate {
                         <h5<?php $this->html('userlangattributes') ?>><label for="searchInput"><?php $this->msg('search') ?></label></h5>
                         <form action="<?php $this->text('wgScript') ?>" id="searchform">
                             <input type='hidden' name="title" value="<?php $this->text('searchtitle') ?>"/>
-                            <?php if ($wgVectorUseSimpleSearch && $wgUser->getOption('vector-simplesearch')): ?>
-                                <div id="simpleSearch">
-                                    <?php if ($this->data['rtl']): ?>
-                                        <button id="searchButton" type='submit' name='button' <?php echo $this->skin->tooltipAndAccesskey('search-fulltext'); ?>><img src="<?php echo $this->skin->getSkinStylePath('images/search-rtl.png'); ?>" alt="<?php $this->msg('searchbutton') ?>" /></button>
-                                    <?php endif; ?>
-                                    <input id="searchInput" name="search" type="text" <?php echo $this->skin->tooltipAndAccesskey('search'); ?> <?php if (isset($this->data['search'])): ?> value="<?php $this->text('search') ?>"<?php endif; ?> />
-                                    <?php if (!$this->data['rtl']): ?>
-                                        <button id="searchButton" type='submit' name='button' <?php echo $this->skin->tooltipAndAccesskey('search-fulltext'); ?>><img src="<?php echo $this->skin->getSkinStylePath('images/search-ltr.png'); ?>" alt="<?php $this->msg('searchbutton') ?>" /></button>
-                                    <?php endif; ?>
-                                </div>
-                            <?php else: ?>
+                            <div id="simpleSearch">
                                 <input id="searchInput" name="search" type="text" <?php echo $this->skin->tooltipAndAccesskey('search'); ?> <?php if (isset($this->data['search'])): ?> value="<?php $this->text('search') ?>"<?php endif; ?> />
-                                <input type='submit' name="go" class="searchButton" id="searchGoButton"	value="<?php $this->msg('searcharticle') ?>"<?php echo $this->skin->tooltipAndAccesskey('search-go'); ?> />
-                                <input type="submit" name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg('searchbutton') ?>"<?php echo $this->skin->tooltipAndAccesskey('search-fulltext'); ?> />
-                            <?php endif; ?>
+                                <button id="searchButton" type='submit' name='button' <?php echo $this->skin->tooltipAndAccesskey('search-fulltext'); ?>><img src="<?php echo $this->skin->getSkinStylePath('images/search-ltr.png'); ?>" alt="<?php $this->msg('searchbutton') ?>" /></button>
+                            </div>
                         </form>
                     </div>
                     <?php

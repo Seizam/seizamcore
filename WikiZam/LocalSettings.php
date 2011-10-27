@@ -37,7 +37,7 @@ $wgStylePath        = "$wgScriptPath/skins";
 
 ## The relative URL path to the logo.  Make sure you change this from the default,
 ## or else you'll overwrite your logo when you upgrade!
-$wgLogo             = "$wgStylePath/common/images/wiki.png";
+$wgLogo             = "$wgStylePath/seizam/images/logo_mini.png";
 
 ## UPO means: this is also a user preference option
 
@@ -115,7 +115,10 @@ $wgLanguageCode = "en";
 
 ## Default skin: you can change the default skin. Use the internal symbolic
 ## names, ie 'standard', 'nostalgia', 'cologneblue', 'monobook', 'vector':
-$wgDefaultSkin = "vector";
+$wgDefaultSkin = "seizam";
+$wgVectorUseSimpleSearch = "true";
+# To remove various skins from the User Preferences choices
+$wgSkipSkins = array("chick", "cologneblue", "nostalgia", "simple", "standard", "monobook","myskin","modern");
 
 ## For attaching licensing metadata to pages, and displaying an
 ## appropriate copyright notice / icon. GNU Free Documentation
@@ -155,6 +158,8 @@ $wgShowExceptionDetails = true;
 $wgShowSQLErrors = true;
 $wgDebugDumpSql  = true;
 # For Production, remember to log into file instead
+# ResourceLoader Debug mode
+$wgResourceLoaderDebug = true;
 # End Developement Settings
 
 
