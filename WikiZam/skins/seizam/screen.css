@@ -465,8 +465,8 @@ header nav li a:focus {
     padding: 4px 0 4px 8px;
     border-bottom:1px solid #333;
 }
-#mw-head #nav_plus ul li:first-child a {
-    border-top:1px solid #333;
+#mw-head #nav_plus ul li:last-child a {
+    border-bottom:none;
 }
 
 #mw-head nav > ul > li {

@@ -593,9 +593,6 @@ class SeizamTemplate extends QuickTemplate {
         <!-- fixalpha -->
         <script type="<?php $this->text('jsmimetype') ?>"> if ( window.isMSIE55 ) fixalpha(); </script>
         <!-- /fixalpha -->
-        <!-- AlsaCreationScript -->
-        <script src="http://localhost/WikiZam/skins/Seizam/scripts/global.js"></script>
-        <!-- /AlsaCreationScript -->
         <?php $this->html('reporttime') ?>
         <?php if ($this->data['debug']): ?>
             <!-- Debug output: <?php $this->text('debug'); ?> -->
