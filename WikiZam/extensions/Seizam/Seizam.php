@@ -34,7 +34,10 @@ $wgExtensionCredits['other'][] = array(
 	'url' => 'http://www.seizam.com/',
 	'descriptionmsg' => 'sz-seizam-desc',
 );
+
+$wgAutoloadClasses['SeizamHooks'] = dirname( __FILE__ ) . '/Seizam.hooks.php';
 $wgExtensionMessagesFiles['Seizam'] = dirname( __FILE__ ) . '/Seizam.i18n.php';
+$wgHooks['BeforePageDisplay'][] = 'SeizamHooks::beforePageDisplay';
 
 $seizamResourceTemplate = array(
 	'localBasePath' => dirname( __FILE__ ) . '/modules',
@@ -42,7 +45,7 @@ $seizamResourceTemplate = array(
 	'group' => 'ext.seizam',
 );
 $wgResourceModules += array(
-	'ext.vector.global' => $vectorResourceTemplate + array(
+	'ext.seizam.global' => $seizamResourceTemplate + array(
 		'scripts' => 'ext.seizam.global.js')
 );
 
