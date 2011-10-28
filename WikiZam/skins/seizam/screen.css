@@ -26,7 +26,7 @@ audio[controls], canvas, video { display: inline-block; }
 
 html { 
     font-size: 100%;
-    background: #e5e5e5 url(images/bg.jpg) no-repeat center top;
+    background: transparent url(images/background.jpg) fixed right top no-repeat;
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
     -webkit-tap-highlight-color: rgba(0,0,0,0);
@@ -364,8 +364,40 @@ header.block {
 /* ----------------------------------------
    ==  NAVIGATION
    ---------------------------------------- */
+/* Personal */
+#nav_personal {
+    position: absolute;
+    top: 0;
+    right: 0.75em;
+}
+#nav_personal {
+    list-style: none;
+    margin: 0;
+    padding-left: 10em; /* Keep from overlapping logo */
+}
+/* @noflip */
+#nav_personal li {
+    line-height: 1.125em;
+    float: left;
+}
+/* This one flips! */
+#nav_personal li {
+    margin-left: 0.75em;
+    margin-top: 0.5em;
+    font-size: 0.75em;
+    white-space: nowrap;
+}
+#nav_personal a {
+    color:white;
+}
+
+#nav_personal a:focus,
+#nav_personal a:hover {
+    color: #E22C2E;
+}
+
 header nav {
-    text-align:center;
+    text-align:right;
     margin-bottom:8px;
     font-family: Arial, Helvetica, Verdana, sans-serif;
 }
@@ -431,10 +463,10 @@ header nav li a:focus {
 #mw-head #nav_plus ul li a {
     display:block;
     padding: 4px 0 4px 8px;
-    border-top:1px solid #333;
+    border-bottom:1px solid #333;
 }
 #mw-head #nav_plus ul li:first-child a {
-    border-top:0;
+    border-top:1px solid #333;
 }
 
 #mw-head nav > ul > li {
@@ -461,6 +493,10 @@ header nav li a:focus {
 
 #mw-head #nav_plus a {
     color: white;
+}
+
+#mw-head #nav_plus .selected a {
+    display: none;
 }
 
 #mw-head #nav_artist a:focus,
@@ -873,9 +909,7 @@ footer .content #logo_mini {
     display: block;
     width: 107px;
     height: 35px;
-    background-repeat: no-repeat;
-    background-position: center center;
-    text-decoration: none;
+    background: transparent url(images/seizam_mini.png) center center no-repeat;
 }
 footer .content ul {
     padding: 7px 0 0 75px;
@@ -1013,7 +1047,8 @@ footer .more_infos li a {
     background:none;
 }
 
-footer .more_infos form {
+footer .more_infos span.selectLang {
+    display: block;
     padding: 15px 0 25px 0;
     float: none;
 }
@@ -1294,17 +1329,26 @@ textarea + .help {
     display: none;
 }
 
+
+div#content .printfooter {
+    display: none;
+}
+
+div#content .editsection{
+    display: none;
+}
+
 /* Search form */
 #p-search h5 {
     display: none;
 }
-        
+
 #p-search {
     float: left;
 }
 #p-search {
-	padding: 0 0 0 75px;
-	margin:0;
+    padding: 0 0 0 75px;
+    margin:0;
 }
 #p-search form,
 #p-search input {

@@ -37,7 +37,7 @@ $wgStylePath        = "$wgScriptPath/skins";
 
 ## The relative URL path to the logo.  Make sure you change this from the default,
 ## or else you'll overwrite your logo when you upgrade!
-$wgLogo             = "$wgStylePath/seizam/images/logo_mini.png";
+$wgLogo             = "$wgStylePath/common/images/seizam.png";
 
 ## UPO means: this is also a user preference option
 
@@ -116,9 +116,22 @@ $wgLanguageCode = "en";
 ## Default skin: you can change the default skin. Use the internal symbolic
 ## names, ie 'standard', 'nostalgia', 'cologneblue', 'monobook', 'vector':
 $wgDefaultSkin = "seizam";
-$wgVectorUseSimpleSearch = "true";
 # To remove various skins from the User Preferences choices
 $wgSkipSkins = array("chick", "cologneblue", "nostalgia", "simple", "standard", "monobook","myskin","modern");
+## Usability extension for Vector (base of Seizam)
+require_once( "$IP/extensions/Vector/Vector.php" );
+$wgVectorUseSimpleSearch = true;
+$wgDefaultUserOptions['useeditwarning'] = 1;
+$wgVectorFeatures['collapsibletabs']['global'] = false;
+$wgVectorFeatures['collapsiblenav']['global'] = false;
+$wgVectorFeatures['footercleanup']['global'] = false;
+
+## Other UI options
+# Remove section edit link
+#$wgDefaultUserOptions ['editsection'] = false;
+
+## UI Elements extension for Seizam's skin
+require_once( "$IP/extensions/Seizam/Seizam.php" );
 
 ## For attaching licensing metadata to pages, and displaying an
 ## appropriate copyright notice / icon. GNU Free Documentation
@@ -161,5 +174,20 @@ $wgDebugDumpSql  = true;
 # ResourceLoader Debug mode
 $wgResourceLoaderDebug = true;
 # End Developement Settings
+
+
+# Language Selector (auto select user language and drop down menu)
+require_once( "$IP/extensions/LanguageSelector/LanguageSelector.php" );
+# Supported languages
+$wgLanguageSelectorLanguages = array('en','fr');
+# Method of language selection
+$wgLanguageSelectorDetectLanguage = LANGUAGE_SELECTOR_PREFER_CLIENT_LANG; #Automatic selection regarding browser
+# Where to put the language selection dropdown menu
+$wgLanguageSelectorLocation = LANGUAGE_SELECTOR_IN_TOOLBOX;#In toolbow for Vector Skin, hard integrated for Seizam Skin
+
+# Polyglot (auto select page version regarding user language)
+require_once( "$IP/extensions/Polyglot/Polyglot.php" );
+# Enable redirect on target page (eg. MainPage -> MainPage/fr -> Accueil)
+$wfPolyglotFollowRedirects = true;
 
 

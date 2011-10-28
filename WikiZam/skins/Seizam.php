@@ -1,11 +1,15 @@
 <?php
 /**
- * Vector - Branch of MonoBook which has many usability improvements and
- * somewhat cleaner code.
+ * Seizam - Seizam skin based on the Vector Skin.
  *
  * @todo document
  * @file
  * @ingroup Skins
+ * 
+ * @author Clément Dietschy <clement@seizam.com>
+ * 
+ * Based on the original work from: The Vector/MediaWiki team.
+ * 
  */
 if (!defined('MEDIAWIKI')) {
     die(-1);
@@ -434,6 +438,11 @@ class SeizamTemplate extends QuickTemplate {
             </div>
             <!-- /sitenotice -->
         <?php endif; ?>
+            <!-- personalMenu -->
+            <ul id="nav_personal"
+            <?php $this->renderNavigation(array('PERSONAL')); ?>
+            </ul>
+            <!-- /personalMenu -->
         <!-- content -->
         <div id="content">
             <a id="top"></a>
@@ -448,14 +457,12 @@ class SeizamTemplate extends QuickTemplate {
                 <!-- /firstHeading -->
                 <nav>
                     <ul id="nav_artist">
-                        <li><a href="#">Accueil</a></li>
-                        <li><a href="#">Ipsum</a></li>
-                        <li><a href="#">Dolor</a></li>
-                        <li><a href="#">Consectetu</a></li>
+                        <li><a href="#"><?php echo $this->msg('sz-7freedoms') ?></a></li>
+                        <li><a href="#"><?php echo $this->msg('sz-joinseizam') ?></a></li>
                     </ul>
                     <ul id="nav_plus">
                         <li>
-                            <a href="#"><?php echo $this->msg('moredotdotdot') ?></a>
+                            <a href="#"><?php echo $this->msg('actions') ?></a>
                             <ul>
                                 <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
                             </ul>
@@ -548,7 +555,7 @@ class SeizamTemplate extends QuickTemplate {
                 <div class="inside">
                     <div class="content">
                         <!-- logo -->
-                        <a id="logo_mini" style="background-image: url(<?php $this->text('logopath') ?>);" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>" <?php echo $this->skin->tooltipAndAccesskey('p-logo') ?>></a>
+                        <a id="logo_mini" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>" <?php echo $this->skin->tooltipAndAccesskey('p-logo') ?>></a>
                         <!-- /logo -->
                         <!-- search -->
                         <?php $this->renderNavigation(array('SEARCH')); ?>
@@ -556,25 +563,24 @@ class SeizamTemplate extends QuickTemplate {
                         <!-- quicklinks -->
                         <ul>
                             <li>
-                                <a href="#">Parcourir</a>
+                                <a href="#"><?php echo $this->msg('sz-browse') ?></a>
                             </li>
                             <li>
-                                <a href="#">Mon Seizam</a>
+                                <a href="#"><?php echo $this->msg('sz-myseizam') ?></a>
                             </li>
                             <li class="more">
                                 <a href="#">
-                                    <span class="show_more">Plus d'informations</span>
-                                    <span class="show_less" aria-hidden="true">Moins d'informations</span>
+                                    <span class="show_more"><?php echo $this->msg('moredotdotdot') ?></span>
+                                    <span class="show_less" aria-hidden="true"><?php echo $this->msg('lessdotdotdot') ?></span>
                                 </a>
                             </li>
                         </ul>
                         <!-- /quicklinks -->
                         <!-- moreInfo -->
-                          <aside class="more_infos" style="display: none;">
-                          <?php $this->renderNavigation('PERSONAL');?>
-                          <?php $this->renderPortals($this->data['sidebar']);?>
-                          </aside>
-                          <!-- /moreInfo -->
+                        <aside class="more_infos" style="display: none;">
+                            <?php $this->renderMore(); ?>
+                        </aside>
+                        <!-- /moreInfo -->
                     </div>
                 </div>
             </footer>
@@ -597,108 +603,6 @@ class SeizamTemplate extends QuickTemplate {
         </body>
         </html>
         <?php
-    }
-
-    /**
-     * Render a series of portals
-     */
-    private function renderPortals($portals) {
-        // Force the rendering of the following portals
-        if (!isset($portals['SEARCH']))
-            $portals['SEARCH'] = true;
-        if (!isset($portals['TOOLBOX']))
-            $portals['TOOLBOX'] = true;
-        if (!isset($portals['LANGUAGES']))
-            $portals['LANGUAGES'] = true;
-        // Render portals
-        foreach ($portals as $name => $content) {
-            echo "\n<!-- {$name} -->\n";
-            switch ($name) {
-                case 'SEARCH':
-                    break;
-                case 'TOOLBOX':
-                    ?>
-                    <div class="portal" id="p-tb">
-                        <h5<?php $this->html('userlangattributes') ?>><?php $this->msg('toolbox') ?></h5>
-                        <div class="body">
-                            <ul>
-                                <?php if ($this->data['notspecialpage']): ?>
-                                    <li id="t-whatlinkshere"><a href="<?php echo htmlspecialchars($this->data['nav_urls']['whatlinkshere']['href']) ?>"<?php echo $this->skin->tooltipAndAccesskey('t-whatlinkshere') ?>><?php $this->msg('whatlinkshere') ?></a></li>
-                                    <?php if ($this->data['nav_urls']['recentchangeslinked']): ?>
-                                        <li id="t-recentchangeslinked"><a href="<?php echo htmlspecialchars($this->data['nav_urls']['recentchangeslinked']['href']) ?>"<?php echo $this->skin->tooltipAndAccesskey('t-recentchangeslinked') ?>><?php $this->msg('recentchangeslinked-toolbox') ?></a></li>
-                                    <?php endif; ?>
-                                <?php endif; ?>
-                                <?php if (isset($this->data['nav_urls']['trackbacklink'])): ?>
-                                    <li id="t-trackbacklink"><a href="<?php echo htmlspecialchars($this->data['nav_urls']['trackbacklink']['href']) ?>"<?php echo $this->skin->tooltipAndAccesskey('t-trackbacklink') ?>><?php $this->msg('trackbacklink') ?></a></li>
-                                <?php endif; ?>
-                                <?php if ($this->data['feeds']): ?>
-                                    <li id="feedlinks">
-                                        <?php foreach ($this->data['feeds'] as $key => $feed): ?>
-                                            <a id="<?php echo Sanitizer::escapeId("feed-$key") ?>" href="<?php echo htmlspecialchars($feed['href']) ?>" rel="alternate" type="application/<?php echo $key ?>+xml" class="feedlink"<?php echo $this->skin->tooltipAndAccesskey('feed-' . $key) ?>><?php echo htmlspecialchars($feed['text']) ?></a>
-                                        <?php endforeach; ?>
-                                    </li>
-                                <?php endif; ?>
-                                <?php foreach (array('contributions', 'log', 'blockip', 'emailuser', 'upload', 'specialpages') as $special): ?>
-                                    <?php if ($this->data['nav_urls'][$special]): ?>
-                                        <li id="t-<?php echo $special ?>"><a href="<?php echo htmlspecialchars($this->data['nav_urls'][$special]['href']) ?>"<?php echo $this->skin->tooltipAndAccesskey('t-' . $special) ?>><?php $this->msg($special) ?></a></li>
-                                    <?php endif; ?>
-                                <?php endforeach; ?>
-                                <?php if (!empty($this->data['nav_urls']['print']['href'])): ?>
-                                    <li id="t-print"><a href="<?php echo htmlspecialchars($this->data['nav_urls']['print']['href']) ?>" rel="alternate"<?php echo $this->skin->tooltipAndAccesskey('t-print') ?>><?php $this->msg('printableversion') ?></a></li>
-                                <?php endif; ?>
-                                <?php if (!empty($this->data['nav_urls']['permalink']['href'])): ?>
-                                    <li id="t-permalink"><a href="<?php echo htmlspecialchars($this->data['nav_urls']['permalink']['href']) ?>"<?php echo $this->skin->tooltipAndAccesskey('t-permalink') ?>><?php $this->msg('permalink') ?></a></li>
-                                <?php elseif ($this->data['nav_urls']['permalink']['href'] === ''): ?>
-                                    <li id="t-ispermalink"<?php echo $this->skin->tooltip('t-ispermalink') ?>><?php $this->msg('permalink') ?></li>
-                                <?php endif; ?>
-                                <?php wfRunHooks('SkinTemplateToolboxEnd', array(&$this)); ?>
-                            </ul>
-                        </div>
-                    </div>
-                    <?php
-                    break;
-                case 'LANGUAGES':
-                    if ($this->data['language_urls']) {
-                        ?>
-                        <div class="portal" id="p-lang">
-                            <h5<?php $this->html('userlangattributes') ?>><?php $this->msg('otherlanguages') ?></h5>
-                            <div class="body">
-                                <ul>
-                                    <?php foreach ($this->data['language_urls'] as $langlink): ?>
-                                        <li class="<?php echo htmlspecialchars($langlink['class']) ?>"><a href="<?php echo htmlspecialchars($langlink['href']) ?>" title="<?php echo htmlspecialchars($langlink['title']) ?>"><?php echo $langlink['text'] ?></a></li>
-                                    <?php endforeach; ?>
-                                </ul>
-                            </div>
-                        </div>
-                        <?php
-                    }
-                    break;
-                default:
-                    ?>
-                    <div class="portal" id='<?php echo Sanitizer::escapeId("p-$name") ?>'<?php echo $this->skin->tooltip('p-' . $name) ?>>
-                        <h5<?php $this->html('userlangattributes') ?>><?php
-                    $out = wfMsg($name);
-                    if (wfEmptyMsg($name, $out))
-                        echo htmlspecialchars($name); else
-                        echo htmlspecialchars($out);
-                    ?></h5>
-                        <div class="body">
-                            <?php if (is_array($content)): ?>
-                                <ul>
-                                    <?php foreach ($content as $val): ?>
-                                        <li id="<?php echo Sanitizer::escapeId($val['id']) ?>"<?php if ($val['active']): ?> class="active" <?php endif; ?>><a href="<?php echo htmlspecialchars($val['href']) ?>"<?php echo $this->skin->tooltipAndAccesskey($val['id']) ?>><?php echo htmlspecialchars($val['text']) ?></a></li>
-                                    <?php endforeach; ?>
-                                </ul>
-                            <?php else: ?>
-                                <?php echo $content; /* Allow raw HTML block to be defined by extensions */ ?>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                    <?php
-                    break;
-            }
-            echo "\n<!-- /{$name} -->\n";
-        }
     }
 
     /**
@@ -741,17 +645,11 @@ class SeizamTemplate extends QuickTemplate {
                     endforeach;
                     break;
                 case 'PERSONAL':
-                    ?>
-                    <div id="p-personal" class="<?php if (count($this->data['personal_urls']) == 0)
-                        echo ' emptyPortlet'; ?>">
-                        <h5><?php $this->msg('personaltools') ?></h5>
-                        <ul<?php $this->html('userlangattributes') ?>>
-                            <?php foreach ($this->data['personal_urls'] as $item): ?>
-                                <li <?php echo $item['attributes'] ?>><a href="<?php echo htmlspecialchars($item['href']) ?>"<?php echo $item['key'] ?><?php if (!empty($item['class'])): ?> class="<?php echo htmlspecialchars($item['class']) ?>"<?php endif; ?>><?php echo htmlspecialchars($item['text']) ?></a></li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </div>
-                    <?php
+                    foreach ($this->data['personal_urls'] as $item):
+                        ?>
+                        <li <?php echo $item['attributes'] ?>><a href="<?php echo htmlspecialchars($item['href']) ?>"<?php echo $item['key'] ?><?php if (!empty($item['class'])): ?> class="<?php echo htmlspecialchars($item['class']) ?>"<?php endif; ?>><?php echo htmlspecialchars($item['text']) ?></a></li>
+                        <?php
+                    endforeach;
                     break;
                 case 'SEARCH':
                     ?>
@@ -759,10 +657,21 @@ class SeizamTemplate extends QuickTemplate {
                         <h5<?php $this->html('userlangattributes') ?>><label for="searchInput"><?php $this->msg('search') ?></label></h5>
                         <form action="<?php $this->text('wgScript') ?>" id="searchform">
                             <input type='hidden' name="title" value="<?php $this->text('searchtitle') ?>"/>
-                            <div id="simpleSearch">
+                                <?php if ($wgVectorUseSimpleSearch && $wgUser->getOption('vector-simplesearch')): ?>
+                                <div id="simpleSearch">
+                                    <?php if ($this->data['rtl']): ?>
+                                        <button id="searchButton" type='submit' name='button' <?php echo $this->skin->tooltipAndAccesskey('search-fulltext'); ?>><img src="<?php echo $this->skin->getSkinStylePath('images/search-rtl.png'); ?>" alt="<?php $this->msg('searchbutton') ?>" /></button>
+                                    <?php endif; ?>
+                                    <input id="searchInput" name="search" type="text" <?php echo $this->skin->tooltipAndAccesskey('search'); ?> <?php if (isset($this->data['search'])): ?> value="<?php $this->text('search') ?>"<?php endif; ?> />
+                                    <?php if (!$this->data['rtl']): ?>
+                                        <button id="searchButton" type='submit' name='button' <?php echo $this->skin->tooltipAndAccesskey('search-fulltext'); ?>><img src="<?php echo $this->skin->getSkinStylePath('images/search-ltr.png'); ?>" alt="<?php $this->msg('searchbutton') ?>" /></button>
+                                <?php endif; ?>
+                                </div>
+                    <?php else: ?>
                                 <input id="searchInput" name="search" type="text" <?php echo $this->skin->tooltipAndAccesskey('search'); ?> <?php if (isset($this->data['search'])): ?> value="<?php $this->text('search') ?>"<?php endif; ?> />
-                                <button id="searchButton" type='submit' name='button' <?php echo $this->skin->tooltipAndAccesskey('search-fulltext'); ?>><img src="<?php echo $this->skin->getSkinStylePath('images/search-ltr.png'); ?>" alt="<?php $this->msg('searchbutton') ?>" /></button>
-                            </div>
+                                <input type='submit' name="go" class="searchButton" id="searchGoButton"	value="<?php $this->msg('searcharticle') ?>"<?php echo $this->skin->tooltipAndAccesskey('search-go'); ?> />
+                                <input type="submit" name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg('searchbutton') ?>"<?php echo $this->skin->tooltipAndAccesskey('search-fulltext'); ?> />
+                    <?php endif; ?>
                         </form>
                     </div>
                     <?php
@@ -770,6 +679,55 @@ class SeizamTemplate extends QuickTemplate {
             }
             echo "\n<!-- /{$name} -->\n";
         }
+    }
+
+    /**
+     * Render the "more..." footer panel content
+     */
+    private function renderMore() {
+        ?>
+        <section>
+            <p><?php echo $this->msg('sz-legalcontent') ?></p>
+            <ul>
+                <li><a href="#"><?php echo $this->msg('sz-gtcu') ?></a></li>
+                <li><a href="#"><?php echo $this->msg('sz-astcu') ?></a></li>
+                <li><a href="#"><?php echo $this->msg('sz-legalinfo') ?></a></li>
+                <li><a href="#"><?php echo $this->msg('sz-privacypolicy') ?></a></li>
+            </ul>
+        </section>
+
+        <section>
+            <p><?php echo $this->msg('sz-generalinfo') ?></p>
+            <ul>
+                <li><a href="#"><?php echo $this->msg('sz-discoverseizam') ?></a></li>
+                <li><a href="#"><?php echo $this->msg('sz-joinseizam') ?></a></li>
+                <li><a href="#"><?php echo $this->msg('sz-help') ?></a></li>
+                <li><a href="#"><?php echo $this->msg('sz-faq') ?></a></li>
+            </ul>
+        </section>
+
+        <section>
+            <p><?php echo $this->msg('sz-communicate') ?></p>
+            <ul>
+                <li><a href="#"><?php echo $this->msg('sz-reportabuse') ?></a></li>
+                <li><a href="#"><?php echo $this->msg('sz-reportbug') ?></a></li>
+                <li><a href="#"><?php echo $this->msg('sz-technicalsupport') ?></a></li>
+                <li><a href="#"><?php echo $this->msg('sz-contactus') ?></a></li>
+            </ul>
+        </section>
+
+        <section>
+            <p class="sread"><?php echo $this->msg('sz-selectlang') ?></p>
+        <?php echo wfLanguageSelectorHTML(null, 'selectLang', null, null, null); ?>
+            <p class="sread"><?php echo $this->msg('sz-seizamonsocialnetworks') ?></p>
+            <ul class="socials">
+                <li class="twitter"><a href="#">Twitter</a></li>
+                <li class="linkedin"><a href="#">LinkedIn</a></li>
+                <li class="tumblr"><a href="#">Tumblr</a></li>
+                <li class="fcbk"><a href="#">Facebook</a></li>
+            </ul>
+        </section>
+        <?php
     }
 
 }

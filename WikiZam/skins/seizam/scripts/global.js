@@ -229,111 +229,6 @@
 		return false;
 	});
 	
-	$('footer').mouseleave(function(){
-		
-		if( $('.more_infos:visible').length == 1 && clicked == false) {
-			$('footer .more a').trigger('click');
-		}
-	});
-	
-	
-	// footer auto-suggest
-	if($('#search').length) {
-	
-		var ac_opened = false;
-		
-		function clear_as() {
-			$('#auto_suggest').fadeOut(500, function(){
-				$('#auto_suggest').remove();
-			});
-			ac_opened = false;
-		}
-		$('#search').keyup(function(e){
-			if($("#search").val().length > 2) {
-				
-				if($('#auto_suggest').length == 0) {
-					$('footer .content').prepend('<div id="auto_suggest"><a href="#search" class="ac_close" title="Fermer les suggestions">x</a><h4>Suggestions</h4><p>Aucune suggestion</p></div>');
-					$('#auto_suggest').fadeIn(400);
-					ac_opened = true;
-				}
-				
-				$.get('js/ajax/auto_suggest_.html', function(data) {
-					if(data) {
-						$('#auto_suggest p').replaceWith('<ul>' + data + '</ul>');
-					}
-					
-				}, 'html');
-			}
-			else {
-				clear_as();
-			}
-		});
-		
-		$("#auto_suggest li a").live('click', function(){
-			$('#search').val($(this).text());
-			clear_as();
-		});
-		$('#auto_suggest a').live('click', function(e){ 
-			clear_as();
-		});
-		
-		
-		// navigation clavier dans l'auto_suggest
-		$('html').keydown(function(e){
-			if(ac_opened) {
-				if(e.keyCode == 40) {
-					var afind = $('#auto_suggest li:first a');
-					var afocus = $('#auto_suggest li a.focused');
-					
-					if (afocus.length == 1) {
-						afocus.removeClass("focused");
-						anext = afocus.closest('li').next('li');
-						
-						if(anext.length == 1 ) {
-							anext.find('a').addClass("focused").focus();
-						}
-						else
-							// afind.addClass("focused").focus();
-							$("#search").focus();
-					}
-					else
-						afind.addClass("focused").focus();
-					
-					return false;
-				}
-				if(e.keyCode == 38) {
-					var afind = $('#auto_suggest li:last a');
-					var afocus = $('#auto_suggest li a.focused');
-					
-					if (afocus.length == 1) {
-						afocus.removeClass("focused");
-						aprev = afocus.closest('li').prev('li');
-						
-						if(aprev.length == 1 ) {
-							aprev.find('a').addClass("focused").focus();
-						}
-						else 
-							// afind.addClass("focused").focus();
-							$("#search").focus();
-					}
-					else
-						afind.addClass("focused").focus();
-					
-					return false;
-				}
-				else if(e.keyCode == 9) {
-					var alast = $('#auto_suggest li:last a:focus');
-					if(alast.length == 1) {
-						$("#search").focus();
-						$('#auto_suggest li a').removeClass('focused');
-						return false;
-					}
-					$('#auto_suggest li a').removeClass('focused');
-				}
-			}
-		});
-
-	}
 	
 	// avatar
 
@@ -397,3 +292,28 @@
 	}
 	
 })(jQuery)
+
+addOnloadHook(function() { 
+	var i = 1;
+	while ( true ) {
+		var btn = document.getElementById("languageselector-commit-"+i);
+		var sel = document.getElementById("languageselector-select-"+i);
+		var idx = i;
+
+		if (!btn) break;
+
+		btn.style.display = "none";
+		sel.onchange = function() {
+			node = this.parentNode;
+			while( true ) {
+				if( node.tagName.toLowerCase() == "form" ) {
+					node.submit();
+					break;
+				}
+				node = node.parentNode;
+			}
+		};
+
+		i++;
+	}
+});

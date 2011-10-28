@@ -58,6 +58,7 @@ return array(
                 'styles' => array( 'seizam/screen.css' => array( 'media' => 'screen' ) ),
                 'remoteBasePath' => $GLOBALS['wgStylePath'],
                 'localBasePath' => $GLOBALS['wgStyleDirectory'],
+                'dependancies' => 'seizam.global'
         ),
 
 	/* jQuery */
@@ -589,4 +590,9 @@ return array(
 		'remoteBasePath' => $GLOBALS['wgStylePath'],
 		'localBasePath' => $GLOBALS['wgStyleDirectory'],
 	),
+    
+        /* Seizam */
+        'seizam.global' => array(
+            'scripts' => 'skins/seizam/scripts/global.js'
+        )
 );
