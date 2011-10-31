@@ -573,12 +573,13 @@ class SeizamTemplate extends QuickTemplate {
         <!-- bottomScripts -->
         <?php $this->html('bottomscripts'); /* JS call to runBodyOnloadHook */ ?>
         <!-- /bottomScripts -->
+        <!--[if lte IE 8]><script src="js/libs/html5-shiv.js"></script><![endif]-->
         <!-- fixalpha -->
         <script type="<?php $this->text('jsmimetype') ?>"> if ( window.isMSIE55 ) fixalpha(); </script>
         <!-- /fixalpha -->
         <?php $this->html('reporttime') ?>
         <?php if ($this->data['debug']): ?>
-            <!-- Debug output: <?php $this->text('debug'); ?> -->
+        <!-- Debug output: <?php $this->text('debug'); ?> -->
         <?php endif; ?>
         </body>
         </html>
