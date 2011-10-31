@@ -5,7 +5,9 @@
  * @file
  * @ingroup Extensions
  */
-
+if (!defined('MEDIAWIKI')) {
+    die(-1);
+}
 class VectorHooks {
 	
 	/* Protected Static Members */

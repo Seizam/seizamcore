@@ -17,7 +17,9 @@
  * @license GPL v2 or later
  * @version 0.3.0
  */
-
+if (!defined('MEDIAWIKI')) {
+    die(-1);
+}
 /* Configuration */
 
 // Each module may be configured individually to be globally on/off or user preference based

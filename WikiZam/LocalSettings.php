@@ -121,14 +121,11 @@ $wgSkipSkins = array("chick", "cologneblue", "nostalgia", "simple", "standard", 
 ## Usability extension for Vector (base of Seizam)
 require_once( "$IP/extensions/Vector/Vector.php" );
 $wgVectorUseSimpleSearch = true;
+# Vector extension (improve Vector skin) options
 $wgDefaultUserOptions['useeditwarning'] = 1;
 $wgVectorFeatures['collapsibletabs']['global'] = false;
 $wgVectorFeatures['collapsiblenav']['global'] = false;
 $wgVectorFeatures['footercleanup']['global'] = false;
-
-## Other UI options
-# Remove section edit link
-#$wgDefaultUserOptions ['editsection'] = false;
 
 ## UI Elements extension for Seizam's skin
 require_once( "$IP/extensions/Seizam/Seizam.php" );
@@ -172,7 +169,7 @@ $wgShowSQLErrors = true;
 $wgDebugDumpSql  = true;
 # For Production, remember to log into file instead
 # ResourceLoader Debug mode
-$wgResourceLoaderDebug = true;
+$wgResourceLoaderDebug = false;
 # End Developement Settings
 
 
