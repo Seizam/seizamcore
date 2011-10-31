@@ -34,7 +34,9 @@ $messages['en'] = array(
 	'sz-contactus' => 'Contact us',
 	'sz-seizamonsocialnetworks' => 'Seizam on Social Networks',
         'sz-selectlang' => 'Select your Language',
-        'sz-7freedoms' => 'The 7 Freedoms'
+        'sz-7freedoms' => 'The 7 Freedoms',
+        'sz-sitemap' => 'SiteMap',
+        'sz-moreaboutlicensing' => 'Learn more about <a href="#">Licensing</a>'
 );
 
 /** Message documentation (Message documentation)
@@ -72,4 +74,6 @@ $messages['fr'] = array(
 	'sz-seizamonsocialnetworks' => 'Seizam sur les réseaux sociaux',
         'sz-selectlang' => 'Selectionner votre language',
         'sz-7freedoms' => 'Les 7 Libertés',
+        'sz-sitemap' => 'Plan du site',
+        'sz-moreaboutlicensing' => 'En savoir plus sur les <a href="#">Licences</a>'
 );

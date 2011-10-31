@@ -1338,6 +1338,10 @@ div#content .editsection{
     display: none;
 }
 
+#contentSub{
+    display: none;
+}
+
 /* Search form */
 #p-search h5 {
     display: none;

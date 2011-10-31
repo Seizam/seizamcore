@@ -439,7 +439,7 @@ class SeizamTemplate extends QuickTemplate {
             <!-- /sitenotice -->
         <?php endif; ?>
             <!-- personalMenu -->
-            <ul id="nav_personal"
+            <ul id="nav_personal">
             <?php $this->renderNavigation(array('PERSONAL')); ?>
             </ul>
             <!-- /personalMenu -->
@@ -520,33 +520,16 @@ class SeizamTemplate extends QuickTemplate {
                 <!-- /block_full -->
                 <!-- /bodyContent -->
                 <!-- contentFooter -->
-                <div class="block_flat block_full"<?php $this->html('userlangattributes') ?>> <!--<div id="self_general" class="block_flat block_full">-->
-                    <div class="inside">
-                        <?php foreach ($validFooterLinks as $category => $links): ?>
-                            <?php if (count($links) > 0): ?>
-                                <ul id="footer-<?php echo $category ?>">
-                                    <?php foreach ($links as $link): ?>
-                                        <?php if (isset($this->data[$link]) && $this->data[$link]): ?>
-                                            <li id="footer-<?php echo $category ?>-<?php echo $link ?>"><?php $this->html($link) ?></li>
-                                        <?php endif; ?>
-                                    <?php endforeach; ?>
-                                </ul>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
-                        <?php if (count($footericons) > 0): ?>
-                            <ul id="footer-icons" class="noprint">
-                                <?php foreach ($footericons as $blockName => $footerIcons): ?>
-                                    <li id="footer-<?php echo htmlspecialchars($blockName); ?>ico">
-                                        <?php foreach ($footerIcons as $icon): ?>
-                                            <?php echo $this->skin->makeFooterIcon($icon); ?>
-
-                                        <?php endforeach; ?>
-                                    </li>
-                                <?php endforeach; ?>
-                            </ul>
-                        <?php endif; ?>
-                    </div>
-                </div>
+                <div id="self_general" class="block_flat block_full">
+					<div class="inside">
+						<ul id="self_general_links">
+							<li><a href="#"><?php echo $this->msg('sz-discoverseizam') ?></a></li>
+							<li><a href="#"><?php echo $this->msg('sz-sitemap') ?></a></li>
+							<li><a href="#"><?php echo $this->msg('sz-contactus') ?></a></li>
+						</ul>
+						<p><?php echo $this->msgHtml('sz-moreaboutlicensing') ?></a></p>
+					</div>
+				</div>
                 <!-- /contentFooter -->
             </div>
             <!-- /content -->
