@@ -573,7 +573,7 @@ class SeizamTemplate extends QuickTemplate {
         <!-- bottomScripts -->
         <?php $this->html('bottomscripts'); /* JS call to runBodyOnloadHook */ ?>
         <!-- /bottomScripts -->
-        <!--[if lte IE 8]><script src="js/libs/html5-shiv.js"></script><![endif]-->
+        <!--[if lte IE 8]><script src="skins/seizam/scritps/html5-shiv.js"></script><![endif]-->
         <!-- fixalpha -->
         <script type="<?php $this->text('jsmimetype') ?>"> if ( window.isMSIE55 ) fixalpha(); </script>
         <!-- /fixalpha -->
