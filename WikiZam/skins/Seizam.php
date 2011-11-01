@@ -561,9 +561,9 @@ class SeizamTemplate extends QuickTemplate {
                         </ul>
                         <!-- /quicklinks -->
                         <!-- moreInfo -->
-                        <aside class="more_infos" style="display: none;">
+                        <div class="more_infos" style="display: none;">
                             <?php $this->renderMore(); ?>
-                        </aside>
+                        </div>
                         <!-- /moreInfo -->
                     </div>
                 </div>
