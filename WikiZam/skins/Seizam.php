@@ -667,7 +667,7 @@ class SeizamTemplate extends QuickTemplate {
      */
     private function renderMore() {
         ?>
-        <section>
+        <div class="section">
             <p><?php echo $this->msg('sz-legalcontent') ?></p>
             <ul>
                 <li><a href="#"><?php echo $this->msg('sz-gtcu') ?></a></li>
@@ -675,9 +675,9 @@ class SeizamTemplate extends QuickTemplate {
                 <li><a href="#"><?php echo $this->msg('sz-legalinfo') ?></a></li>
                 <li><a href="#"><?php echo $this->msg('sz-privacypolicy') ?></a></li>
             </ul>
-        </section>
+        </div>
 
-        <section>
+        <div class="section">
             <p><?php echo $this->msg('sz-generalinfo') ?></p>
             <ul>
                 <li><a href="#"><?php echo $this->msg('sz-discoverseizam') ?></a></li>
@@ -685,9 +685,9 @@ class SeizamTemplate extends QuickTemplate {
                 <li><a href="#"><?php echo $this->msg('sz-help') ?></a></li>
                 <li><a href="#"><?php echo $this->msg('sz-faq') ?></a></li>
             </ul>
-        </section>
+        </div>
 
-        <section>
+        <div class="section">
             <p><?php echo $this->msg('sz-communicate') ?></p>
             <ul>
                 <li><a href="#"><?php echo $this->msg('sz-reportabuse') ?></a></li>
@@ -695,9 +695,9 @@ class SeizamTemplate extends QuickTemplate {
                 <li><a href="#"><?php echo $this->msg('sz-technicalsupport') ?></a></li>
                 <li><a href="#"><?php echo $this->msg('sz-contactus') ?></a></li>
             </ul>
-        </section>
+        </div>
 
-        <section>
+        <div class="section">
             <p class="sread"><?php echo $this->msg('sz-selectlang') ?></p>
         <?php echo wfLanguageSelectorHTML(null, 'selectLang', null, null, null); ?>
             <p class="sread"><?php echo $this->msg('sz-seizamonsocialnetworks') ?></p>
@@ -707,7 +707,7 @@ class SeizamTemplate extends QuickTemplate {
                 <li class="tumblr"><a href="#">Tumblr</a></li>
                 <li class="fcbk"><a href="#">Facebook</a></li>
             </ul>
-        </section>
+        </div>
         <?php
     }
 
