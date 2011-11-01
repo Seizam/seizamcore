@@ -428,6 +428,7 @@ class SeizamTemplate extends QuickTemplate {
         // Output HTML Page
         $this->html('headelement');
         ?>
+
         <div id="mw-js-message" style="display:none;"<?php $this->html('userlangattributes') ?>></div>
         <?php if ($this->data['sitenotice']): ?>
             <!-- sitenotice -->
@@ -447,7 +448,7 @@ class SeizamTemplate extends QuickTemplate {
         <div id="content">
             <a id="top"></a>
             <!-- header -->
-            <header id="mw-head" class="block_full">
+            <div id="header" class="block_full">
                 <!-- firstHeading -->
                 <div class="block_flat block_half">
                     <div class="inside">
@@ -455,7 +456,7 @@ class SeizamTemplate extends QuickTemplate {
                     </div>
                 </div>
                 <!-- /firstHeading -->
-                <nav>
+                <div id="nav">
                     <ul id="nav_artist">
                         <li><a href="#"><?php echo $this->msg('sz-7freedoms') ?></a></li>
                         <li><a href="#"><?php echo $this->msg('sz-joinseizam') ?></a></li>
@@ -468,8 +469,8 @@ class SeizamTemplate extends QuickTemplate {
                             </ul>
                         </li>
                     </ul>
-                </nav>
-            </header>
+                </div>
+            </div>
             <!-- /header -->
             <!-- bodyCcontent -->
             <div id="bodyContent" role="main"<?php $this->html('specialpageattributes') ?>> <!--<div id="main" role="main">-->
@@ -573,7 +574,6 @@ class SeizamTemplate extends QuickTemplate {
         <!-- bottomScripts -->
         <?php $this->html('bottomscripts'); /* JS call to runBodyOnloadHook */ ?>
         <!-- /bottomScripts -->
-        <!--[if lte IE 8]><script src="skins/seizam/scritps/html5-shiv.js"></script><![endif]-->
         <!-- fixalpha -->
         <script type="<?php $this->text('jsmimetype') ?>"> if ( window.isMSIE55 ) fixalpha(); </script>
         <!-- /fixalpha -->

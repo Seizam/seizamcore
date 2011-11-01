@@ -95,7 +95,7 @@ sub { bottom: -0.25em; }
 
 ul, ol { margin: 1em 0; padding: 0 0 0 40px; }
 dd { margin: 0 0 0 40px; }
-nav ul, nav ol { list-style: none; margin: 0; padding: 0; }
+#nav ul, #nav ol { list-style: none; margin: 0; padding: 0; }
 
 
 /* -----------------------------------------------------------------------------
@@ -153,15 +153,15 @@ button, input[type="button"], input[type="reset"], input[type="submit"] {
     -webkit-appearance: button;
 }
 
-input[type="submit"] {
+input[type="submit"].stylised {
     background: #f0373a;
     border: 1px solid #393535;
     color: #FFFFFF;
     padding: 8px 34px;
     width: auto;
 }
-input[type="submit"]:hover,
-input[type="submit"]:focus {
+input[type="submit"].stylised:hover,
+input[type="submit"].stylised:focus {
     background: #7C2122;
 
 }
@@ -290,7 +290,7 @@ a {
     background:#fcfcfc url(images/sh_block_full_in.png) center bottom no-repeat;
     overflow:hidden;
 }
-header.block {
+#header.block {
     background: transparent url(images/sh_block_header.png) center bottom no-repeat;
 }
 
@@ -370,6 +370,7 @@ header.block {
     top: 0;
     right: 0.75em;
 }
+
 #nav_personal {
     list-style: none;
     margin: 0;
@@ -396,15 +397,15 @@ header.block {
     color: #E22C2E;
 }
 
-header nav {
+#header #nav {
     text-align:right;
     margin-bottom:8px;
     font-family: Arial, Helvetica, Verdana, sans-serif;
 }
-header nav li {
+#header #nav li {
     display: inline;
 }
-header nav li a {
+#header #nav li a {
     display:inline-block;
     margin: 0;
     text-decoration:none;
@@ -413,20 +414,20 @@ header nav li a {
     font-weight: bold;
     color: #232020;
 }
-header nav li a:visited {
+#header #nav li a:visited {
     color: #232020;
 }
-header nav li a:hover,
-header nav li a:focus {
+#header #nav li a:hover,
+#header #nav li a:focus {
     color: #da1b1e;
 }
 
-.profil header nav li a {
+.profil #header #nav li a {
     margin: 0 10px;
 }
 
 /* Navigation on content page */
-#mw-head nav {
+#header #nav {
     float: right;
     margin-bottom: 0;
     font-weight: bold;
@@ -434,25 +435,26 @@ header nav li a:focus {
     width:415px;
 }
 
-#mw-head #nav_artist {
+#header #nav #nav_artist {
     display: inline-block;
     margin: 0 2px 0 0;
     border: 1px solid #D8D7D7;
     background: white;
 }
 
-#mw-head #nav_plus {
+#header #nav #nav_plus {
     display: inline-block;
     margin-left: 12px;
     padding: 0 9px 0 7px;
     border: 1px solid #D8D7D7;
     background: black;
 }
-.ie7 #mw-head #nav_plus {
+
+.ie7 #header #nav #nav_plus {
     position:relative;
     top: -33px;
 }
-#mw-head #nav_plus ul {
+#header #nav #nav_plus ul {
     position:absolute;
     padding:8px;
     right:-9px; top: 22px;
@@ -460,26 +462,26 @@ header nav li a:focus {
     background:black;
     text-align:left;
 }
-#mw-head #nav_plus ul li a {
+#header #nav #nav_plus ul li a {
     display:block;
     padding: 4px 0 4px 8px;
     border-bottom:1px solid #333;
 }
-#mw-head #nav_plus ul li:last-child a {
+#header #nav #nav_plus ul li:last-child a {
     border-bottom:none;
 }
 
-#mw-head nav > ul > li {
+#header #nav > ul > li {
     position:relative;
     display:inline-block;
     padding:4px 10px;
 }
 
-#mw-head #nav_artist a {
+#header #nav #nav_artist a {
     color: black;
 }
 
-#mw-head #nav_artist {
+#header #nav #nav_artist {
     margin-bottom: 33px;	/* total 57px with 24px of next blocks */
     padding-right: 9px;
     text-transform: uppercase;
@@ -487,22 +489,22 @@ header nav li a:focus {
     background: white;
 }
 
-#mw-head #nav_plus ul {
+#header #nav #nav_plus ul {
     display: none;
 }
 
-#mw-head #nav_plus a {
-    color: white;
+#header #nav #nav_plus a {
+    color: #FFFFFF;
 }
 
-#mw-head #nav_plus .selected a {
-    display: none;
+#header #nav #nav_plus .selected a {
+    color: grey;
 }
 
-#mw-head #nav_artist a:focus,
-#mw-head #nav_artist a:hover,
-#mw-head #nav_plus a:focus,
-#mw-head #nav_plus a:hover {
+#header #nav #nav_artist a:focus,
+#header #nav #nav_artist a:hover,
+#header #nav #nav_plus a:focus,
+#header #nav #nav_plus a:hover {
     color: #E22C2E;
 }
 
@@ -520,7 +522,7 @@ header nav li a:focus {
     padding: 18px 20px;
 }
 
-header.block_full .inside {
+#header.block_full .inside {
     padding: 16px 20px 12px;
 }
 .block_medium {
@@ -744,7 +746,7 @@ header.block_full .inside {
     margin: 0.2em 0;
 }
 
-.homepage header hgroup {
+.homepage #header hgroup {
     position:relative;
 }
 .homepage h1, .homepage h2 {
@@ -1082,10 +1084,10 @@ footer .more_infos .socials li a:focus {
 /* -----------------------------------------------------------------------------
    ==  edit profile
    -------------------------------------------------------------------------- */
-.edit_profil header {
+.edit_profil #header {
     text-align:center;
 }
-.edit_profil header .inside {
+.edit_profil #header .inside {
     padding-top: 6px;
 }
 .edit_col_1 {
@@ -1294,12 +1296,12 @@ textarea + .help {
 /*
         IE fixes
 */
-.ie6 #mw-head #nav_artist,
-.ie7 #mw-head #nav_artist,
-.ie6 #mw-head #nav_plus,
-.ie7 #mw-head #nav_plus,
-.ie6 #mw-head nav > ul > li,
-.ie7 #mw-head nav > ul > li {
+.ie6 #header #nav_artist,
+.ie7 #header #nav_artist,
+.ie6 #header #nav_plus,
+.ie7 #header #nav_plus,
+.ie6 #header #nav > ul > li,
+.ie7 #header #nav > ul > li {
     display:inline;
     zoom: 1;
 }
@@ -1440,6 +1442,118 @@ div#simpleSearch button#searchButton img {
 /* IGNORED BY IE6 */
 div#simpleSearch button#searchButton > img {
     margin: 0;
+}
+
+/* Preferences */
+#preftoc {
+	/* Tabs */
+	width: 100%;
+	float: left;
+	clear: both;
+	margin: 0 !important;
+	padding: 0 !important;
+	/* @embed */
+	background-image: url(images/preferences-break.png);
+	background-position: bottom left;
+	background-repeat: no-repeat;
+}
+	#preftoc li {
+		/* Tab */
+		float: left;
+		margin: 0;
+		padding: 0;
+		padding-right: 1px;
+		height: 2.25em;
+		white-space: nowrap;
+		list-style-type: none;
+		list-style-image: none;
+		/* @embed */
+		background-image: url(images/preferences-break.png);
+		background-position: bottom right;
+		background-repeat: no-repeat;
+	}
+	/* Sadly, IE6 won't understand this */
+	#preftoc li:first-child {
+		margin-left: 1px;
+	}
+	#preftoc a,
+	#preftoc a:active {
+		display: inline-block;
+		position: relative;
+		color: #0645ad;
+		padding: 0.5em;
+		text-decoration: none;
+		background-image: none;
+		font-size: 0.9em;
+	}
+	#preftoc a:hover,
+	#preftoc a:focus {
+		text-decoration: underline;
+	}
+	#preftoc li.selected a {
+		/* @embed */
+		background-image: url(images/preferences-fade.png);
+		background-position: bottom;
+		background-repeat: repeat-x;
+		color: #333333;
+		text-decoration: none;
+	}
+#preferences {
+	float: left;
+	width: 100%;
+	margin: 0;
+	margin-top: -2px;
+	clear: both;
+	border: solid 1px #cccccc;
+	background-color: #f9f9f9;
+	/* @embed */
+	background-image: url(images/preferences-base.png);
+}
+#preferences fieldset.prefsection {
+	border: none;
+	padding: 0;
+	margin: 1em;
+}
+#preferences fieldset.prefsection fieldset {
+	border: none;
+	border-top: solid 1px #cccccc;
+}
+#preferences legend {
+	color: #666666;
+}
+#preferences fieldset.prefsection legend.mainLegend {
+	display: none;
+}
+#preferences td {
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+}
+#preferences td.htmlform-tip {
+	font-size: x-small;
+	padding: .2em 2em;
+	color: #666666;
+}
+#preferences div.mw-prefs-buttons {
+	padding: 1em;
+}
+#preferences div.mw-prefs-buttons input {
+	margin-right: 0.25em;
+}
+
+/* 
+ * Styles for the user login and create account forms
+ */
+#userlogin, #userloginForm {
+	border: solid 1px #cccccc;
+	padding: 1.2em;
+	margin: .5em;
+	float: left;
+}
+
+#userlogin {
+	min-width: 20em;
+	max-width: 90%;
+	width: 40em;
 }
 
 
