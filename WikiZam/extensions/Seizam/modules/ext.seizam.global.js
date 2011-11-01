@@ -12,7 +12,7 @@
 	var clicked = false;
 	
 	$('.more_infos').hide();
-	$('footer li.more:not(".current") a').live("click", function() {
+	$('#footer li.more:not(".current") a').live("click", function() {
 		$('.more_infos').stop(true,true).slideDown(400);
 		$(this).closest('li').addClass('current');
 		$(this).find('.show_more').hide();
@@ -20,7 +20,7 @@
 		clicked = false;
 		return false;
 	});
-	$('footer li.more.current a').live("click", function() {
+	$('#footer li.more.current a').live("click", function() {
 		$('.more_infos').stop(true,true).slideUp(400);
 		$(this).closest('li').removeClass('current');
 		$(this).find('.show_more').show();

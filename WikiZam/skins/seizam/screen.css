@@ -1016,15 +1016,15 @@ a {
     overflow: hidden;
 }
 
-.more_infos section {
+#footer .more_infos section {
     float:left;
     width: 200px;
 }
 
-.more_infos section + section {
+#footer .more_infos section + section {
     margin-left: 25px;
 }
-.more_infos section p {
+#footer .more_infos section p {
     font-style: italic;
     font-size: 1.2em;
 }
