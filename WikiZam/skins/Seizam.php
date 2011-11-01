@@ -428,7 +428,7 @@ class SeizamTemplate extends QuickTemplate {
         // Output HTML Page
         $this->html('headelement');
         ?>
-
+        <script src="/WikiZam/skins/seizam/scripts/respond.min.js"></script>
         <div id="mw-js-message" style="display:none;"<?php $this->html('userlangattributes') ?>></div>
         <?php if ($this->data['sitenotice']): ?>
             <!-- sitenotice -->
@@ -535,7 +535,7 @@ class SeizamTemplate extends QuickTemplate {
             </div>
             <!-- /content -->
             <!-- footer -->
-            <footer>
+            <div id="footer">
                 <div class="inside">
                     <div class="content">
                         <!-- logo -->
@@ -567,7 +567,7 @@ class SeizamTemplate extends QuickTemplate {
                         <!-- /moreInfo -->
                     </div>
                 </div>
-            </footer>
+            </div>
             <!-- /footer -->
         </div>
         <!-- /container -->

@@ -247,7 +247,7 @@ input[type="submit"],
     transition: background 0.75s;
 }
 
-footer .more_infos .socials li a {
+#footer .more_infos .socials li a {
     -webkit-transition: all 0.50s;
     -moz-transition: all 0.50s;
     -ms-transition: all 0.50s;
@@ -877,7 +877,7 @@ a {
 }
 
 
-footer {
+#footer {
     position:fixed;
     bottom: 0;
     left: 50%;
@@ -888,23 +888,23 @@ footer {
     background: transparent url(images/sh_block_footer.png) center top no-repeat;
     z-index:500;
 }
-footer .content li a:hover,
-footer .content li a:focus {
+#footer .content li a:hover,
+#footer .content li a:focus {
     color: #F0373A;
 }
-footer .inside {
+#footer .inside {
     border: 1px solid #d6d4d4;
     background: #fff url(images/bg_footer.png) 0 0 repeat-x;
 }
-footer .content {
+#footer .content {
     padding: 9px 20px;
     overflow: hidden;
 }
-footer .content #logo_mini,
-footer .content ul {
+#footer .content #logo_mini,
+#footer .content ul {
     float: left;
 }
-footer .content #logo_mini {
+#footer .content #logo_mini {
     position:relative;
     top:3px;
     left:10px;
@@ -913,21 +913,21 @@ footer .content #logo_mini {
     height: 35px;
     background: transparent url(images/seizam_mini.png) center center no-repeat;
 }
-footer .content ul {
+#footer .content ul {
     padding: 7px 0 0 75px;
     margin:0;
 }
-footer .content ul {
+#footer .content ul {
     padding-top: 10px;
 }
-footer .content li {
+#footer .content li {
     float: left;
     list-style: none;
 }
-footer .content li + li {
+#footer .content li + li {
     margin-left: 50px
 }
-footer .content li a {
+#footer .content li a {
     display:inline-block;
     text-decoration:none;
     color:#505358;
@@ -936,17 +936,17 @@ footer .content li a {
     background: url(images/dot_square.png) no-repeat left center transparent;
 }
 
-footer .content li span.show_less {
+#footer .content li span.show_less {
     display:none;
 }
-footer .content li.more a {
+#footer .content li.more a {
     background-image: url(images/dot_arrow.png);
 }
-footer .content li.current a {
+#footer .content li.current a {
     background-image: url(images/dot_arrow_up.png);
 }
 
-footer .content #search {
+#footer .content #search {
     width: 172px;
     padding: 6px 15px 6px 35px;
     border: 1px solid #e2e1e1;
@@ -954,7 +954,7 @@ footer .content #search {
     background: #fff;
     -webkit-appearance:  textfield;
 }
-footer .content .valid_search {
+#footer .content .valid_search {
     position:absolute;
     top: 6px;
     left: 6px;
@@ -1009,7 +1009,7 @@ footer .content .valid_search {
 
 /* footer more info */
 
-footer .more_infos {
+#footer .more_infos {
     clear:both;
     float:none;
     padding:20px 10px;
@@ -1028,56 +1028,56 @@ footer .more_infos {
     font-style: italic;
     font-size: 1.2em;
 }
-footer .more_infos ul {
+#footer .more_infos ul {
     float: none;
     padding-top: 5px;
     padding-left: 0;
 }
-footer .more_infos li {
+#footer .more_infos li {
     float: none;
     list-style:none;
     font-size: 0.75em;
     font-family: Arial, Helvetica, Verdana, sans-serif;
 }
-footer .more_infos li + li {
+#footer .more_infos li + li {
     margin: 7px 0 0 0;
 }
-footer .more_infos li a {
+#footer .more_infos li a {
     font-style: normal;
     font-weight:bold;
     padding-left:0;
     background:none;
 }
 
-footer .more_infos span.selectLang {
+#footer .more_infos span.selectLang {
     display: block;
     padding: 15px 0 25px 0;
     float: none;
 }
-footer .more_infos form select {
+#footer .more_infos form select {
     width: 192px;
     padding: 4px 2px 4px 8px
 }
-footer .more_infos .socials li,
-footer .more_infos .socials li a {
+#footer .more_infos .socials li,
+#footer .more_infos .socials li a {
     float: left;
     position: relative;
     bottom: 0;
     width:34px;
     height:34px;
 }
-footer .more_infos .socials li a {
+#footer .more_infos .socials li a {
     background: transparent url(images/icon_social.png) 0 0 no-repeat;
     text-indent: -9999px;
 }
-footer .more_infos .socials .linkedin a { background-position: -34px 0; }
-footer .more_infos .socials .tumblr a { background-position: -68px 0; }
-footer .more_infos .socials .fcbk a { background-position: -102px 0; }
+#footer .more_infos .socials .linkedin a { background-position: -34px 0; }
+#footer .more_infos .socials .tumblr a { background-position: -68px 0; }
+#footer .more_infos .socials .fcbk a { background-position: -102px 0; }
 
-footer .more_infos .socials li + li { margin: 0 0 0 18px; }
+#footer .more_infos .socials li + li { margin: 0 0 0 18px; }
 
-footer .more_infos .socials li a:hover,
-footer .more_infos .socials li a:focus {
+#footer .more_infos .socials li a:hover,
+#footer .more_infos .socials li a:focus {
     bottom: 5px;
 }
 
