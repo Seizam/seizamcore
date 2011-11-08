@@ -198,5 +198,5 @@ $wfPolyglotFollowRedirects = true;
 # require_once( "$IP/extensions/SeizamACL/SeizamACL.php" );
 
 # AuthorProtect (dev)
-#require_once( "$IP/extensions/AuthorProtect/AuthorProtect.php" );
+require_once( "$IP/extensions/AuthorProtect/AuthorProtect.php" );
 
