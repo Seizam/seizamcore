@@ -1,6 +1,6 @@
 <?php
 /**
- * Hooks for Seizam extension
+ * Hooks for SeizamACL extension
  * 
  * @file
  * @ingroup Extensions
@@ -8,31 +8,21 @@
 if (!defined('MEDIAWIKI')) {
     die(-1);
 }
-class SeizamHooks {
-	
-	/* Protected Static Members */
-	
-	protected static $features = array(
-		'global' => array(
-			'modules' => array( 'ext.seizam.global' ),
-		)
-	);
-	
-	/* Static Methods */
+class SeizamACLHooks {
+    
+        /* Static Methods */
 	
 	/**
-	 * BeforePageDisplay hook
+	 * LoadExtensionSchemaUpdates hook
 	 * 
-	 * Adds the modules to the page
+	 * Adds the necessary tables to the DB
 	 * 
-	 * @param $out OutputPage output page
-	 * @param $skin Skin current skin
 	 */
-	public static function beforePageDisplay( $out, $skin ) {
-		if ($skin instanceof SkinSeizam) {
-			$out->addModules( 'ext.seizam.global' );
-		}
-		return true;
-	}
+	
+	public static function loadExtensionSchemaUpdates( $updater ) {
+        $updater->addExtensionUpdate( array( 'addTable', 'szacl_owner',
+                dirname( __FILE__ ) . '/schema/mysql/szacl_owner.sql', true ) );
+        return true;
+}
 	
 }

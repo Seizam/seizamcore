@@ -1,53 +1,37 @@
 <?php
 /**
- * Seizam extension
+ * SeizamACL extension
  * 
  * @file
  * @ingroup Extensions
  * 
  * @author Clément Dietschy <clement@seizam.com>
  * 
- * Based on the original work from:
- * 
- * @author Trevor Parscal <trevor@wikimedia.org>
- * @author Roan Kattouw <roan.kattouw@gmail.com>
- * @author Nimish Gautam <nimish@wikimedia.org>
- * @author Adam Miller <amiller@wikimedia.org>
+ * Based on the original HaloACL extension from: Ontoprise Gmbh.
  * 
  * @license GPL v2 or later
- * @version 0.3.0
+ * @version 0.1.0
  */
 if (!defined('MEDIAWIKI')) {
     die(-1);
 }
-/* Configuration */
-
-// Each module may be configured individually to be globally on/off or user preference based
-$wgSeizamFeatures = array(
-);
 
 /* Setup */
 
 $wgExtensionCredits['other'][] = array(
 	'path' => __FILE__,
-	'name' => 'Seizam',
+	'name' => 'SeizamACL',
 	'author' => array( 'Clément Dietschy', 'Seizam Sàrl.'),
 	'version' => '0.1.0',
 	'url' => 'http://www.seizam.com/',
-	'descriptionmsg' => 'sz-seizam-desc',
+	'descriptionmsg' => 'szacl-seizamacl-desc',
 );
 
-$wgAutoloadClasses['SeizamHooks'] = dirname( __FILE__ ) . '/Seizam.hooks.php';
-$wgExtensionMessagesFiles['Seizam'] = dirname( __FILE__ ) . '/Seizam.i18n.php';
-$wgHooks['BeforePageDisplay'][] = 'SeizamHooks::beforePageDisplay';
+$wgAutoloadClasses['SeizamACLHooks'] = dirname( __FILE__ ) . '/SeizamACL.hooks.php';
+$wgExtensionMessagesFiles['SeizamACL'] = dirname( __FILE__ ) . '/SeizamACL.i18n.php';
 
-$seizamResourceTemplate = array(
-	'localBasePath' => dirname( __FILE__ ) . '/modules',
-	'remoteExtPath' => 'Seizam/modules',
-	'group' => 'ext.seizam',
-);
-$wgResourceModules += array(
-	'ext.seizam.global' => $seizamResourceTemplate + array(
-		'scripts' => 'ext.seizam.global.js')
-);
+// Adds the necessary tables to the DB
+$wgHooks['LoadExtensionSchemaUpdates'][] = 'SeizamACLHooks::loadExtensionSchemaUpdates';
+
+
 

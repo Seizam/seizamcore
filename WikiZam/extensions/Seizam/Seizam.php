@@ -15,7 +15,7 @@
  * @author Adam Miller <amiller@wikimedia.org>
  * 
  * @license GPL v2 or later
- * @version 0.3.0
+ * @version 0.1.0
  */
 if (!defined('MEDIAWIKI')) {
     die(-1);

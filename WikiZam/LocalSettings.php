@@ -144,8 +144,14 @@ $wgRightsIcon = "";
 $wgDiff3 = "/usr/bin/diff3";
 
 # The following permissions were set based on your choice in the installer
-$wgGroupPermissions['*']['createaccount'] = false;
-$wgGroupPermissions['*']['edit'] = false;
+
+// Implicit group for all visitors
+$wgGroupPermissions['*']['createaccount']    = false;
+$wgGroupPermissions['*']['edit']             = false;
+
+
+# Read WhiteList
+$wgWhitelistRead = array("Main Page", "Special:UserLogin", "Special:UserLogout");
 
 
 # Query string length limit for ResourceLoader. You should only set this if
@@ -187,4 +193,9 @@ require_once( "$IP/extensions/Polyglot/Polyglot.php" );
 # Enable redirect on target page (eg. MainPage -> MainPage/fr -> Accueil)
 $wfPolyglotFollowRedirects = true;
 
+# SeizamACL (Access Control Lists Extension for Seizam)
+# require_once( "$IP/extensions/SeizamACL/SeizamACL.php" );
+
+# AuthorProtect (dev)
+#require_once( "$IP/extensions/AuthorProtect/AuthorProtect.php" );
 
