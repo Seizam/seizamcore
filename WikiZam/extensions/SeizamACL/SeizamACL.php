@@ -5,9 +5,9 @@
  * @file
  * @ingroup Extensions
  * 
- * @author Clément Dietschy <clement@seizam.com>
+ * @author Yann Missler
  * 
- * Based on the original HaloACL extension from: Ontoprise Gmbh.
+ * Based on the original KeepYourHandsToYourself extension from Jim R. Wilson
  * 
  * @license GPL v2 or later
  * @version 0.1.0
@@ -21,17 +21,20 @@ if (!defined('MEDIAWIKI')) {
 $wgExtensionCredits['other'][] = array(
 	'path' => __FILE__,
 	'name' => 'SeizamACL',
-	'author' => array( 'Clément Dietschy', 'Seizam Sàrl.'),
+	'author' => array( 'Clément Dietschy', 'Yann Missler', 'Seizam Sàrl.', 'Jim R. Wilson'),
 	'version' => '0.1.0',
 	'url' => 'http://www.seizam.com/',
-	'descriptionmsg' => 'szacl-seizamacl-desc',
+	'descriptionmsg' => 'seizamacl-desc',
 );
 
 $wgAutoloadClasses['SeizamACLHooks'] = dirname( __FILE__ ) . '/SeizamACL.hooks.php';
 $wgExtensionMessagesFiles['SeizamACL'] = dirname( __FILE__ ) . '/SeizamACL.i18n.php';
 
-// Adds the necessary tables to the DB
-$wgHooks['LoadExtensionSchemaUpdates'][] = 'SeizamACLHooks::loadExtensionSchemaUpdates';
+# Attach Hooks
+$wgHooks['userCan'][] = 'SeizamACLHooks::CanEditImage';
+$wgHooks['AbortNewAccount'][] = 'SeizamACLHooks::RejectUsernamesWithDot';
+$wgHooks['UploadForm:BeforeProcessing'][] = 'SeizamACLHooks::PrependUsernameToFilename';
 
-
+// Adds the necessary tables to the DB  --> NOT CURRENTLY USED
+// $wgHooks['LoadExtensionSchemaUpdates'][] = 'SeizamACLHooks::loadExtensionSchemaUpdates';
 

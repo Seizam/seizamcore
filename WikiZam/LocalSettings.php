@@ -195,7 +195,7 @@ require_once( "$IP/extensions/Polyglot/Polyglot.php" );
 $wfPolyglotFollowRedirects = true;
 
 # SeizamACL (Access Control Lists Extension for Seizam)
-# require_once( "$IP/extensions/SeizamACL/SeizamACL.php" );
+require_once( "$IP/extensions/SeizamACL/SeizamACL.php" );
 
 # AuthorProtect (dev)
 require_once( "$IP/extensions/AuthorProtect/AuthorProtect.php" );
