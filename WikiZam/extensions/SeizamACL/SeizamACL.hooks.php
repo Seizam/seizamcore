@@ -23,8 +23,7 @@ class SeizamACLHooks {
 	 * @return true Always true so other extensions have a chance to process 'userCan'
 	 */
 	public static function CanEditImage($title, $user, $action, $result) {
-echo 'CanEditImage title=['.$title->getText().'] action=['.$action.']<br/>
-';
+
 		# Check for Namespace, edit action, and sysopship
 		# we only continue if  ns_image AND edit AND !sysop
 		$ns = $title->getNamespace();
@@ -33,12 +32,13 @@ echo 'CanEditImage title=['.$title->getText().'] action=['.$action.']<br/>
 			$action!='edit' ||
 			in_array('sysop', $user->getGroups())
 		) return true;
-
+    
 		# Check that the image contains at least 2 points:
-		#   one after the username,
-		#   one after the filename just before extension
-		# If not, we are uploading a first revission and the username will be added later in
-		# UploadForm:BeforeProcessing => PrependUsernameToFilename
+		#   * one after the username,
+		#   * one after the filename just before extension
+		# if yes, we continue, to test if the current user own the file
+		# If not, we are uploading a first revission and the username will be added later
+		#  by SeizamACLUploadResourceFromFile
 		$text = $title->getText();
 		$needed = $user->getName().'.';
 		if (
@@ -48,7 +48,7 @@ echo 'CanEditImage title=['.$title->getText().'] action=['.$action.']<br/>
 
 
 		# Check if the image name starts with the username and appropriate separator (.)
-		if ( substr( $title->getText(), 0, strlen($needed) ) == $needed ) 
+		if ( substr( $text, 0, strlen($needed) ) == $needed ) 
 			return true;
 
 		# If we got this far, then it's a user trying to edit another user's page or image
@@ -68,7 +68,7 @@ echo 'CanEditImage title=['.$title->getText().'] action=['.$action.']<br/>
 	* @param Mixed $result The result of processing. (passed by reference)
 	* @return Boolean false if username was rejected, true otherwise
 	*/
-	public static function RejectUsernamesWithDot($user, &$abortError) {
+	public static function RejectUsernamesTooExotics($user, &$abortError) {
 
 		if (strstr($user->getName(),'.')!==false) {
 			$abortError = wfMsgForContent('seizamacl-nodots');
@@ -79,31 +79,16 @@ echo 'CanEditImage title=['.$title->getText().'] action=['.$action.']<br/>
 
 
 
-	/**
-	 * Under certain cercumstances, prepend the user's name to the uploaded file.
-	 * Usage: $$wgHooks['UploadForm:BeforeProcessing'][] = 'PrependUsernameToFilename';
-	 * @param Object $uploadForm Special Page derivitive executing the upload operation.
-	 * @return Boolean Always true to allow continued processing
-	 */
-	public static function PrependUsernameToFilename( $uploadForm ) {
-echo 'PrependUsernameToFilename<br/>
-'; 
 
-		# Skip any further checking if the user is not logged in
-		global $wgUser;
-		if ( !$wgUser->isLoggedIn() ) return true;
+	public static function GetUploadRequestHandler( $type, $className ) {
 
-		# First things first, deduce the desired destination filename
-		$dn = $uploadForm->mDesiredDestName;
-		$filtered = wfBaseName( $dn ? $dn : $uploadForm->mSrcName );
-
-		# If the file name has already the username, return
-		# else, append the username + .
-		$append = $wgUser->getName().'.';
-		if ( substr( $filtered, 0, strlen($append) ) == $append ) {
-			return true;
-		} else {
-			$uploadForm->mDesiredDestName = $append . $filtered;
+		switch ( $type ) {
+			case "File":
+				$className = 'SeizamACLUploadResourceFromFile';
+				break;
+			default:
+				print( "GetUploadRequestHandler( type=[$type] , * ) : Unknown type error<br />" );
+				die( -1 );
 		}
 		return true;
 	}
