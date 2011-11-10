@@ -86,6 +86,9 @@ class SeizamACLHooks {
 			case "File":
 				$className = 'SeizamACLUploadResourceFromFile';
 				break;
+			case "Stash":
+				$className = 'UploadFromStash';
+				break;
 			default:
 				print( "GetUploadRequestHandler( type=[$type] , * ) : Unknown type error<br />" );
 				die( -1 );
