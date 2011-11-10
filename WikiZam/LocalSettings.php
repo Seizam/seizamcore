@@ -199,6 +199,3 @@ require_once( "$IP/extensions/SeizamACL/SeizamACL.php" );
 
 # AuthorProtect (dev)
 require_once( "$IP/extensions/AuthorProtect/AuthorProtect.php" );
-
-# Dismissable Site Notice
-require_once( "$IP/extensions/DismissableSiteNotice/DismissableSiteNotice.php" );

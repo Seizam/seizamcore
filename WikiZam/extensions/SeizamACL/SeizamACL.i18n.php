@@ -23,7 +23,7 @@ $messages['en'] = array(
  *
  */
 $messages['qqq'] = array(
-	
+
 );
 
 /** French */
