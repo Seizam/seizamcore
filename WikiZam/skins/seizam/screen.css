@@ -398,14 +398,6 @@ a {
 }
 
 /* Navigation on content page */
-.ns-0 #header #nav {
-    width:72%;
-    margin-left: 28%;
-    margin-bottom: 0;
-    font-weight: bold;
-    text-transform: uppercase;
-    text-align: right;
-}
 
 #nav #nav_artist {
     display: inline-block;
@@ -520,7 +512,7 @@ a {
     width: 239px;
     background: none;
 }
-.block h3 {
+.block h3.title {
     width: 255px;
     text-align: center;
     margin: 0;

@@ -537,7 +537,7 @@ class SeizamTemplate extends QuickTemplate {
         <div id="bodyContent" role="main"<?php $this->html('specialpageattributes') ?>> <!--<div id="main" role="main">-->
             <!-- block_full -->
             <div class="block block_full">
-                <h3><?php $this->html('title') ?></h3>
+                <h3 class="title"><?php $this->html('title') ?></h3>
                 <!-- inside -->
                 <div class="inside">
                     <?php $this->renderNav(); ?>
@@ -586,7 +586,6 @@ class SeizamTemplate extends QuickTemplate {
                 <div id="nav">
                     <ul>
                         <?php $this->renderNavigation(array('PERSONAL')); ?>
-                        <li><a href="/Special:Upload">Upload</a></li>
                     </ul>
                 </div>
             </div>
@@ -596,7 +595,7 @@ class SeizamTemplate extends QuickTemplate {
         <div id="bodyContent" role="main"<?php $this->html('specialpageattributes') ?>> <!--<div id="main" role="main">-->
             <!-- block_full -->
             <div class="block block_full">
-                <h3><?php $this->html('title') ?></h3>
+                <h3 class="title"><?php $this->html('title') ?></h3>
                 <!-- inside -->
                 <div class="inside">
                     <?php $this->renderInsideContent(); ?>

@@ -52,6 +52,12 @@ $wgEnotifUserTalk      = true; # UPO
 $wgEnotifWatchlist     = true; # UPO
 $wgEmailAuthentication = true;
 
+/**
+ * Password reminder name
+ */
+$wgPasswordSenderName = 'Seizam Mail';
+
+
 ## Database settings
 ## Moved to ServerSettings.php
 #$wgDBtype           = "mysql";
@@ -131,6 +137,12 @@ $wgVectorFeatures['footercleanup']['global'] = false;
 ## UI Elements extension for Seizam's skin
 require_once( "$IP/extensions/Seizam/Seizam.php" );
 
+$wgHiddenPrefs = array('userid','underline','stubthreshold','showtoc','showjumplinks','editsection','externaldiff','externaleditor','diffonly','norollbackdiff');
+
+$wgDefaultUserOptions = array(
+	'showtoc'                 => 0,
+	'showjumplinks'           => 0,
+	'editsection'             => 0,);
 ## For attaching licensing metadata to pages, and displaying an
 ## appropriate copyright notice / icon. GNU Free Documentation
 ## License and Creative Commons licenses are supported so far.
