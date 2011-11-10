@@ -208,3 +208,7 @@ require_once( "$IP/extensions/SeizamACL/SeizamACL.php" );
 
 # AuthorProtect (dev)
 require_once( "$IP/extensions/AuthorProtect/AuthorProtect.php" );
+
+# Google Analytics
+require_once( "$IP/extensions/googleAnalytics/googleAnalytics.php" );
+$wgGoogleAnalyticsAccount = "UA-25393782-2";

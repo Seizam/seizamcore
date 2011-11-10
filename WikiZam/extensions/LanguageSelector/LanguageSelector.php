@@ -198,8 +198,8 @@ function wfLanguageSelectorBeforePageDisplay( &$out ) {
 	if ( $wgLanguageSelectorFormUsed ||
 		$wgLanguageSelectorLocation != LANGUAGE_SELECTOR_MANUAL )
 	{
-		$out->addScriptFile( $wgExtensionAssetsPath .
-			'/LanguageSelector/LanguageSelector.js' );
+		/*$out->addScriptFile( $wgExtensionAssetsPath .
+			'/LanguageSelector/LanguageSelector.js' ); Moved into skin*/
 	}
 
 	return true;

@@ -475,6 +475,31 @@ class SeizamTemplate extends QuickTemplate {
         <!-- /container -->
         <!-- bottomScripts -->
         <?php $this->html('bottomscripts'); /* JS call to runBodyOnloadHook */ ?>
+        <script type="text/javascript">
+            addOnloadHook(function() { 
+                var i = 1;
+                while ( true ) {
+                    var btn = document.getElementById("languageselector-commit-"+i);
+                    var sel = document.getElementById("languageselector-select-"+i);
+                    var idx = i;
+
+                    if (!btn) break;
+
+                    btn.style.display = "none";
+                    sel.onchange = function() {
+                        node = this.parentNode;
+                        while( true ) {
+                            if( node.tagName.toLowerCase() == "form" ) {
+                                node.submit();
+                                break;
+                            }
+                            node = node.parentNode;
+                        }
+                    };
+
+                    i++;
+                }
+            });</script>
         <!-- /bottomScripts -->
         <?php $this->html('reporttime') ?>
         <?php if ($this->data['debug']): ?>
@@ -574,7 +599,7 @@ class SeizamTemplate extends QuickTemplate {
                 </div>
             </div>
             <!-- /sitenotice -->
-        <?php
+            <?php
         endif;
     }
 
@@ -591,7 +616,7 @@ class SeizamTemplate extends QuickTemplate {
 
                 <div id="nav">
                     <ul>
-        <?php $this->renderNavigation(array('PERSONAL')); ?>
+                        <?php $this->renderNavigation(array('PERSONAL')); ?>
                     </ul>
                 </div>
             </div>
@@ -604,7 +629,7 @@ class SeizamTemplate extends QuickTemplate {
                 <h3 class="title"><?php $this->html('title') ?></h3>
                 <!-- inside -->
                 <div class="inside">
-        <?php $this->renderInsideContent(); ?>
+                    <?php $this->renderInsideContent(); ?>
                 </div>
                 <!-- /inside -->
             </div>
@@ -627,7 +652,7 @@ class SeizamTemplate extends QuickTemplate {
                     <a id="logo_mini" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>" <?php echo $this->skin->tooltipAndAccesskey('p-logo') ?>></a>
                     <!-- /logo -->
                     <!-- search -->
-        <?php $this->renderNavigation(array('SEARCH')); ?>
+                    <?php $this->renderNavigation(array('SEARCH')); ?>
                     <!-- /search -->
                     <!-- quicklinks -->
                     <ul>
@@ -647,7 +672,7 @@ class SeizamTemplate extends QuickTemplate {
                     <!-- /quicklinks -->
                     <!-- moreInfo -->
                     <div class="more_infos" style="display: none;">
-        <?php $this->renderMore(); ?>
+                        <?php $this->renderMore(); ?>
                     </div>
                     <!-- /moreInfo -->
                 </div>
@@ -694,7 +719,7 @@ class SeizamTemplate extends QuickTemplate {
 
         <div class="section">
             <p class="sread"><?php echo $this->msg('sz-selectlang') ?></p>
-        <?php echo wfLanguageSelectorHTML(null, 'selectLang', null, null, null); ?>
+            <?php echo wfLanguageSelectorHTML(null, 'selectLang', null, null, null); ?>
             <p class="sread"><?php echo $this->msg('sz-seizamonsocialnetworks') ?></p>
             <ul class="socials">
                 <li class="tumblr"><a href="http://www.davidcanwin.com">Tumblr</a></li>
@@ -830,9 +855,9 @@ class SeizamTemplate extends QuickTemplate {
                         <h5<?php $this->html('userlangattributes') ?>><label for="searchInput"><?php $this->msg('search') ?></label></h5>
                         <form action="<?php $this->text('wgScript') ?>" id="searchform">
                             <input type='hidden' name="title" value="<?php $this->text('searchtitle') ?>"/>
-                    <?php if ($wgVectorUseSimpleSearch && $wgUser->getOption('vector-simplesearch')): ?>
+                            <?php if ($wgVectorUseSimpleSearch && $wgUser->getOption('vector-simplesearch')): ?>
                                 <div id="simpleSearch">
-                                <?php if ($this->data['rtl']): ?>
+                                    <?php if ($this->data['rtl']): ?>
                                         <button id="searchButton" type='submit' name='button' <?php echo $this->skin->tooltipAndAccesskey('search-fulltext'); ?>><img src="<?php echo $this->skin->getSkinStylePath('images/search-rtl.png'); ?>" alt="<?php $this->msg('searchbutton') ?>" /></button>
                                     <?php endif; ?>
                                     <input id="searchInput" name="search" type="text" <?php echo $this->skin->tooltipAndAccesskey('search'); ?> <?php if (isset($this->data['search'])): ?> value="<?php $this->text('search') ?>"<?php endif; ?> />
@@ -840,11 +865,11 @@ class SeizamTemplate extends QuickTemplate {
                                         <button id="searchButton" type='submit' name='button' <?php echo $this->skin->tooltipAndAccesskey('search-fulltext'); ?>><img src="<?php echo $this->skin->getSkinStylePath('images/search-ltr.png'); ?>" alt="<?php $this->msg('searchbutton') ?>" /></button>
                                     <?php endif; ?>
                                 </div>
-                                <?php else: ?>
+                            <?php else: ?>
                                 <input id="searchInput" name="search" type="text" <?php echo $this->skin->tooltipAndAccesskey('search'); ?> <?php if (isset($this->data['search'])): ?> value="<?php $this->text('search') ?>"<?php endif; ?> />
                                 <input type='submit' name="go" class="searchButton" id="searchGoButton"	value="<?php $this->msg('searcharticle') ?>"<?php echo $this->skin->tooltipAndAccesskey('search-go'); ?> />
                                 <input type="submit" name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg('searchbutton') ?>"<?php echo $this->skin->tooltipAndAccesskey('search-fulltext'); ?> />
-                    <?php endif; ?>
+                            <?php endif; ?>
                         </form>
                     </div>
                     <?php
