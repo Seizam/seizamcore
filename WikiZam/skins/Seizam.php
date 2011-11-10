@@ -437,6 +437,36 @@ class SeizamTemplate extends QuickTemplate {
         <div id="content">
             <a id="top"></a>
             <?php $this->renderContent() ?>
+            <!-- contentFooter -->
+            <div id="self_general" class="block_flat block_full">
+                <div class="inside">
+                    <?php foreach ($validFooterLinks as $category => $links): ?>
+                        <?php if (count($links) > 0): ?>
+                            <ul id="footer-<?php echo $category ?>">
+                                <?php foreach ($links as $link): ?>
+                                    <?php if (isset($this->data[$link]) && $this->data[$link]): ?>
+                                        <li id="footer-<?php echo $category ?>-<?php echo $link ?>"><?php $this->html($link) ?></li>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                    <?php if (count($footericons) > 0): ?>
+                        <ul id="footer-icons" class="noprint">
+                            <?php foreach ($footericons as $blockName => $footerIcons): ?>
+                                <li id="footer-<?php echo htmlspecialchars($blockName); ?>ico">
+                                    <?php foreach ($footerIcons as $icon): ?>
+                                        <?php echo $this->skin->makeFooterIcon($icon); ?>
+
+                                    <?php endforeach; ?>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+                    <div style="clear:both"></div>
+                </div>
+            </div>
+            <!-- /contentFooter -->
         </div>
         <!-- /content -->
 
@@ -503,18 +533,6 @@ class SeizamTemplate extends QuickTemplate {
             <!-- /block_full -->
         </div>
         <!-- /bodyContent -->
-        <!-- contentFooter -->
-        <div id="self_general" class="block_flat block_full">
-            <div class="inside">
-                <ul id="self_general_links">
-                    <li><?php echo $this->msgHtml('sz-discoverseizam') ?></li>
-                    <li><a href="/Special:AllPages"><?php echo $this->msg('sz-sitemap') ?></a></li>
-                    <li><?php echo $this->msgHtml('sz-contactus') ?></li>
-                </ul>
-                <p><?php echo $this->msgHtml('sz-moreaboutlicensing') ?></a></p>
-            </div>
-        </div>
-        <!-- /contentFooter -->
         <?php
     }
 
@@ -528,7 +546,7 @@ class SeizamTemplate extends QuickTemplate {
 
             <div class="hgroup inside">
                 <h1><a id="logo_project" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"></a></h1>
-<h2><?php $this->msg('sz-tagline') ?></h2>
+                <h2><?php $this->msg('sz-tagline') ?></h2>
 
             </div>
         </div>
@@ -556,20 +574,8 @@ class SeizamTemplate extends QuickTemplate {
                 </div>
             </div>
             <!-- /sitenotice -->
-        <?php endif; ?>
-        <!-- contentFooter -->
-        <div id="self_general" class="block_flat block_full">
-            <div class="inside">
-                <ul id="self_general_links">
-                    <li><?php echo $this->msgHtml('sz-discoverseizam') ?></li>
-                    <li><a href="/Special:AllPages"><?php echo $this->msg('sz-sitemap') ?></a></li>
-                    <li><?php echo $this->msgHtml('sz-contactus') ?></li>
-                </ul>
-                <p><?php echo $this->msgHtml('sz-moreaboutlicensing') ?></a></p>
-            </div>
-        </div>
-        <!-- /contentFooter -->
         <?php
+        endif;
     }
 
     /**
@@ -585,7 +591,7 @@ class SeizamTemplate extends QuickTemplate {
 
                 <div id="nav">
                     <ul>
-                        <?php $this->renderNavigation(array('PERSONAL')); ?>
+        <?php $this->renderNavigation(array('PERSONAL')); ?>
                     </ul>
                 </div>
             </div>
@@ -598,25 +604,13 @@ class SeizamTemplate extends QuickTemplate {
                 <h3 class="title"><?php $this->html('title') ?></h3>
                 <!-- inside -->
                 <div class="inside">
-                    <?php $this->renderInsideContent(); ?>
+        <?php $this->renderInsideContent(); ?>
                 </div>
                 <!-- /inside -->
             </div>
             <!-- /block_full -->
         </div>
         <!-- /bodyContent -->
-        <!-- contentFooter -->
-        <div id="self_general" class="block block_full">
-            <div class="inside">
-                <ul id="self_general_links">
-                    <li><?php echo $this->msgHtml('sz-discoverseizam') ?></li>
-                    <li><a href="/Special:AllPages"><?php echo $this->msg('sz-sitemap') ?></a></li>
-                    <li><?php echo $this->msgHtml('sz-contactus') ?></li>
-                </ul>
-                <p><?php echo $this->msgHtml('sz-moreaboutlicensing') ?></p>
-            </div>
-        </div>
-        <!-- /contentFooter -->
         <?php
     }
 
@@ -633,7 +627,7 @@ class SeizamTemplate extends QuickTemplate {
                     <a id="logo_mini" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>" <?php echo $this->skin->tooltipAndAccesskey('p-logo') ?>></a>
                     <!-- /logo -->
                     <!-- search -->
-                    <?php $this->renderNavigation(array('SEARCH')); ?>
+        <?php $this->renderNavigation(array('SEARCH')); ?>
                     <!-- /search -->
                     <!-- quicklinks -->
                     <ul>
@@ -653,7 +647,7 @@ class SeizamTemplate extends QuickTemplate {
                     <!-- /quicklinks -->
                     <!-- moreInfo -->
                     <div class="more_infos" style="display: none;">
-                        <?php $this->renderMore(); ?>
+        <?php $this->renderMore(); ?>
                     </div>
                     <!-- /moreInfo -->
                 </div>
@@ -700,7 +694,7 @@ class SeizamTemplate extends QuickTemplate {
 
         <div class="section">
             <p class="sread"><?php echo $this->msg('sz-selectlang') ?></p>
-            <?php echo wfLanguageSelectorHTML(null, 'selectLang', null, null, null); ?>
+        <?php echo wfLanguageSelectorHTML(null, 'selectLang', null, null, null); ?>
             <p class="sread"><?php echo $this->msg('sz-seizamonsocialnetworks') ?></p>
             <ul class="socials">
                 <li class="tumblr"><a href="http://www.davidcanwin.com">Tumblr</a></li>
@@ -712,7 +706,6 @@ class SeizamTemplate extends QuickTemplate {
         <?php
     }
 
-    
     /**
      * Render #nav (#nav_artist + #nav_plus)
      */
@@ -785,8 +778,6 @@ class SeizamTemplate extends QuickTemplate {
         <?php
     }
 
-    
-    
     /**
      * Render one or more navigations elements by name, automatically reveresed
      * when UI is in RTL mode
@@ -839,9 +830,9 @@ class SeizamTemplate extends QuickTemplate {
                         <h5<?php $this->html('userlangattributes') ?>><label for="searchInput"><?php $this->msg('search') ?></label></h5>
                         <form action="<?php $this->text('wgScript') ?>" id="searchform">
                             <input type='hidden' name="title" value="<?php $this->text('searchtitle') ?>"/>
-                            <?php if ($wgVectorUseSimpleSearch && $wgUser->getOption('vector-simplesearch')): ?>
+                    <?php if ($wgVectorUseSimpleSearch && $wgUser->getOption('vector-simplesearch')): ?>
                                 <div id="simpleSearch">
-                                    <?php if ($this->data['rtl']): ?>
+                                <?php if ($this->data['rtl']): ?>
                                         <button id="searchButton" type='submit' name='button' <?php echo $this->skin->tooltipAndAccesskey('search-fulltext'); ?>><img src="<?php echo $this->skin->getSkinStylePath('images/search-rtl.png'); ?>" alt="<?php $this->msg('searchbutton') ?>" /></button>
                                     <?php endif; ?>
                                     <input id="searchInput" name="search" type="text" <?php echo $this->skin->tooltipAndAccesskey('search'); ?> <?php if (isset($this->data['search'])): ?> value="<?php $this->text('search') ?>"<?php endif; ?> />
@@ -849,11 +840,11 @@ class SeizamTemplate extends QuickTemplate {
                                         <button id="searchButton" type='submit' name='button' <?php echo $this->skin->tooltipAndAccesskey('search-fulltext'); ?>><img src="<?php echo $this->skin->getSkinStylePath('images/search-ltr.png'); ?>" alt="<?php $this->msg('searchbutton') ?>" /></button>
                                     <?php endif; ?>
                                 </div>
-                            <?php else: ?>
+                                <?php else: ?>
                                 <input id="searchInput" name="search" type="text" <?php echo $this->skin->tooltipAndAccesskey('search'); ?> <?php if (isset($this->data['search'])): ?> value="<?php $this->text('search') ?>"<?php endif; ?> />
                                 <input type='submit' name="go" class="searchButton" id="searchGoButton"	value="<?php $this->msg('searcharticle') ?>"<?php echo $this->skin->tooltipAndAccesskey('search-go'); ?> />
                                 <input type="submit" name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg('searchbutton') ?>"<?php echo $this->skin->tooltipAndAccesskey('search-fulltext'); ?> />
-                            <?php endif; ?>
+                    <?php endif; ?>
                         </form>
                     </div>
                     <?php

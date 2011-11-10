@@ -355,7 +355,7 @@ a {
     color: #E22C2E;
 }
 
-#nav {
+#nav, #footer-places {
     float:right;
     text-align:center;
     margin-bottom:8px;
@@ -365,7 +365,7 @@ a {
 #nav li {
     display: inline;
 }
-#nav li a {
+#nav li a, #footer-places a {
     display:inline-block;
     margin: 0;
     text-decoration:none;
@@ -374,11 +374,11 @@ a {
     font-weight: bold;
     color: #232020;
 }
-#nav li a:visited {
+#nav li a:visited,  #footer-places a {
     color: #232020;
 }
 #nav li a:hover,
-#nav li a:focus {
+#nav li a:focus,  #footer-places a:hover,  #footer-places a:focus   {
     color: #da1b1e;
 }
 
@@ -1292,6 +1292,47 @@ select {
 #toc .toctoggle,
 .toc .toctoggle {
 	font-size: 94%;
+}
+
+
+/* footer */
+div#self_general ul {
+	list-style: none;
+	list-style-image: none;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+div#self_general ul li {
+	margin: 0;
+	padding: 0;
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
+	color: #333333;
+	font-size: 0.7em;
+}
+div#self_general #footer-icons {
+	float: right;
+}
+/* @noflip */
+body.ltr div#self_general #footer-places {
+	float: left;
+}
+div#self_general #footer-info li {
+        display: inline-block;
+        margin: 0 0 0 10px;
+	line-height: 1.4em;
+}
+div#self_general #footer-icons li {
+	float: left;
+	margin-left: 0.5em;
+	line-height: 2em;
+}
+div#self_general #footer-places li {
+	float: left;
+        margin: 0 10px 0 10px;
+	margin-right: 1em;
+	line-height: 2em;
 }
 
 

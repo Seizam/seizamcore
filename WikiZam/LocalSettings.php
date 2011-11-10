@@ -139,18 +139,15 @@ require_once( "$IP/extensions/Seizam/Seizam.php" );
 
 $wgHiddenPrefs = array('userid','underline','stubthreshold','showtoc','showjumplinks','editsection','externaldiff','externaleditor','diffonly','norollbackdiff');
 
-$wgDefaultUserOptions = array(
-	'showtoc'                 => 0,
-	'showjumplinks'           => 0,
-	'editsection'             => 0,);
+
 ## For attaching licensing metadata to pages, and displaying an
 ## appropriate copyright notice / icon. GNU Free Documentation
 ## License and Creative Commons licenses are supported so far.
-#$wgEnableCreativeCommonsRdf = true;
+$wgEnableCreativeCommonsRdf = true;
 $wgRightsPage = ""; # Set to the title of a wiki page that describes your license/copyright
-$wgRightsUrl  = "";
-$wgRightsText = "";
-$wgRightsIcon = "";
+$wgRightsUrl  = "http://creativecommons.org/licenses/by-nc-sa/3.0/";
+$wgRightsText = "Creative Commons Attribution Non-Commercial Share Alike";
+$wgRightsIcon = "{$wgStylePath}/common/images/cc-by-nc-sa.png";
 # $wgRightsCode = ""; # Not yet used
 
 # Path to the GNU diff3 utility. Used for conflict resolution.
