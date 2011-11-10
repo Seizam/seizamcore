@@ -153,12 +153,6 @@ $wgRightsIcon = "{$wgStylePath}/common/images/cc-by-nc-sa.png";
 # Path to the GNU diff3 utility. Used for conflict resolution.
 $wgDiff3 = "/usr/bin/diff3";
 
-# The following permissions were set based on your choice in the installer
-
-// Implicit group for all visitors
-$wgGroupPermissions['*']['createaccount']    = true;
-$wgGroupPermissions['*']['edit']             = false;
-
 
 # Read WhiteList
 $wgWhitelistRead = array("Main Page", "Special:UserLogin", "Special:UserLogout");
@@ -212,3 +206,21 @@ require_once( "$IP/extensions/AuthorProtect/AuthorProtect.php" );
 # Google Analytics
 require_once( "$IP/extensions/googleAnalytics/googleAnalytics.php" );
 $wgGoogleAnalyticsAccount = "UA-25393782-2";
+
+# Account confirmation necessity for Beta version
+require_once("$IP/extensions/ConfirmAccount/ConfirmAccount.php");
+# Set the person's bio as their userpage?
+$wgMakeUserPageFromBio = false;
+# Make the username of the real name?
+$wgUseRealNamesOnly = false;
+# How many requests can an IP make at once?
+$wgAccountRequestThrottle = 3;
+# Minimum biography specs
+$wgAccountRequestMinWords = 0;
+# Show confirmation info fields
+$wgAccountRequestExtraInfo = false;
+
+# Contact Page
+require_once( "$IP/extensions/ContactPage/ContactPage.php" );
+$wgContactUser='WikiSysop';
+$wgContactRequireAll=true;
