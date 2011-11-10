@@ -480,6 +480,7 @@ class SeizamTemplate extends QuickTemplate {
         ?>
         <!-- header -->
         <div id="header" class="block_full">
+            <?php $this->renderNav(); ?>
             <!-- firstHeading -->
             <div class="block_flat block_half">
                 <div class="inside">
@@ -487,7 +488,6 @@ class SeizamTemplate extends QuickTemplate {
                 </div>
             </div>
             <!-- /firstHeading -->
-            <?php $this->renderNav(); ?>
         </div>
         <!-- /header -->
         <!-- bodyCcontent -->
@@ -507,9 +507,9 @@ class SeizamTemplate extends QuickTemplate {
         <div id="self_general" class="block_flat block_full">
             <div class="inside">
                 <ul id="self_general_links">
-                    <li><a href="#"><?php echo $this->msg('sz-discoverseizam') ?></a></li>
-                    <li><a href="#"><?php echo $this->msg('sz-sitemap') ?></a></li>
-                    <li><a href="#"><?php echo $this->msg('sz-contactus') ?></a></li>
+                    <li><?php echo $this->msgHtml('sz-discoverseizam') ?></li>
+                    <li><a href="/Special:AllPages"><?php echo $this->msg('sz-sitemap') ?></a></li>
+                    <li><?php echo $this->msgHtml('sz-contactus') ?></li>
                 </ul>
                 <p><?php echo $this->msgHtml('sz-moreaboutlicensing') ?></a></p>
             </div>
@@ -561,9 +561,9 @@ class SeizamTemplate extends QuickTemplate {
         <div id="self_general" class="block_flat block_full">
             <div class="inside">
                 <ul id="self_general_links">
-                    <li><a href="#"><?php echo $this->msg('sz-discoverseizam') ?></a></li>
-                    <li><a href="#"><?php echo $this->msg('sz-sitemap') ?></a></li>
-                    <li><a href="#"><?php echo $this->msg('sz-contactus') ?></a></li>
+                    <li><?php echo $this->msgHtml('sz-discoverseizam') ?></li>
+                    <li><a href="/Special:AllPages"><?php echo $this->msg('sz-sitemap') ?></a></li>
+                    <li><?php echo $this->msgHtml('sz-contactus') ?></li>
                 </ul>
                 <p><?php echo $this->msgHtml('sz-moreaboutlicensing') ?></a></p>
             </div>
@@ -610,11 +610,11 @@ class SeizamTemplate extends QuickTemplate {
         <div id="self_general" class="block block_full">
             <div class="inside">
                 <ul id="self_general_links">
-                    <li><a href="#"><?php echo $this->msg('sz-discoverseizam') ?></a></li>
-                    <li><a href="#"><?php echo $this->msg('sz-sitemap') ?></a></li>
-                    <li><a href="#"><?php echo $this->msg('sz-contactus') ?></a></li>
+                    <li><?php echo $this->msgHtml('sz-discoverseizam') ?></li>
+                    <li><a href="/Special:AllPages"><?php echo $this->msg('sz-sitemap') ?></a></li>
+                    <li><?php echo $this->msgHtml('sz-contactus') ?></li>
                 </ul>
-                <p><?php echo $this->msgHtml('sz-moreaboutlicensing') ?></a></p>
+                <p><?php echo $this->msgHtml('sz-moreaboutlicensing') ?></p>
             </div>
         </div>
         <!-- /contentFooter -->
@@ -642,7 +642,7 @@ class SeizamTemplate extends QuickTemplate {
                             <a href="/Special:AllPages"><?php echo $this->msg('sz-browse') ?></a>
                         </li>
                         <li>
-                            <a href="/WikiZam/index.php/Special:Preferences"><?php echo $this->msg('sz-myseizam') ?></a>
+                            <a href="/Special:Preferences"><?php echo $this->msg('sz-myseizam') ?></a>
                         </li>
                         <li class="more">
                             <a href="#">

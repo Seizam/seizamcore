@@ -30,5 +30,5 @@ $messages['qqq'] = array(
 $messages['fr'] = array(
         'seizamacl' => 'Listes de Contrôle d\'accès pour Seizam',
 	'seizamacl-desc' => 'Contient fonctions de contrôle d\'accès pour Seizam',
-	'seizamacl-nodots'=>'Les noms d\utilisateur ne peuvent pas contenir de point'
+	'seizamacl-nodots'=>'Les noms d\'utilisateur ne peuvent pas contenir de point'
 );
