@@ -34,5 +34,11 @@ class SeizamHooks {
 		}
 		return true;
 	}
+        
+         
+public static function parserClearState($parser) {
+    $parser->mShowToc = false;
+    return true;
+}
 	
 }

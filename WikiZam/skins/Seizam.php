@@ -319,6 +319,10 @@ class SkinSeizam extends SkinTemplate {
         return $links;
     }
 
+    function getNamespace() {
+        return $this->mTitle->getNamespace();
+    }
+
 }
 
 /**
@@ -427,9 +431,123 @@ class SeizamTemplate extends QuickTemplate {
         }
         // Output HTML Page
         $this->html('headelement');
+        $this->renderTop();
         ?>
-        <script src="/WikiZam/skins/seizam/scripts/respond.min.js"></script>
-        <div id="mw-js-message" style="display:none;"<?php $this->html('userlangattributes') ?>></div>
+        <!-- content -->
+        <div id="content">
+            <a id="top"></a>
+            <?php $this->renderContent() ?>
+        </div>
+        <!-- /content -->
+
+        <?php $this->renderFooter(); ?>
+        </div>
+        <!-- /container -->
+        <!-- bottomScripts -->
+        <?php $this->html('bottomscripts'); /* JS call to runBodyOnloadHook */ ?>
+        <!-- /bottomScripts -->
+        <?php $this->html('reporttime') ?>
+        <?php if ($this->data['debug']): ?>
+            <!-- Debug output: <?php $this->text('debug'); ?> -->
+        <?php endif; ?>
+        </body>
+        </html>
+        <?php
+    }
+
+    /**
+     * Render the #content content
+     */
+    private function renderContent() {
+        switch ($this->skin->getNamespace()) {
+            case NS_PROJECT_TALK :
+            case NS_PROJECT :
+                $this->renderContentNS4();
+                break;
+            case -1 ://NS_SPECIAL
+                $this->renderContentNSSpecial();
+                break;
+            default :
+                $this->renderContentDefault();
+                break;
+        }
+    }
+
+    /**
+     * Render the Default #content content (ex: Main_Namespace)
+     */
+    private function renderContentDefault() {
+        ?>
+        <!-- header -->
+        <div id="header" class="block_full">
+            <!-- firstHeading -->
+            <div class="block_flat block_half">
+                <div class="inside">
+                    <h1 id="firstHeading" class="firstHeading"><?php $this->html('title') ?></h1>
+                </div>
+            </div>
+            <!-- /firstHeading -->
+            <?php $this->renderNav(); ?>
+        </div>
+        <!-- /header -->
+        <!-- bodyCcontent -->
+        <div id="bodyContent" role="main"<?php $this->html('specialpageattributes') ?>> <!--<div id="main" role="main">-->
+            <!-- block_full -->
+            <div class="block_flat block_full">
+                <!-- inside -->
+                <div class="inside">
+                    <?php $this->renderInsideContent(); ?>
+                </div>
+                <!-- /inside -->
+            </div>
+            <!-- /block_full -->
+        </div>
+        <!-- /bodyContent -->
+        <!-- contentFooter -->
+        <div id="self_general" class="block_flat block_full">
+            <div class="inside">
+                <ul id="self_general_links">
+                    <li><a href="#"><?php echo $this->msg('sz-discoverseizam') ?></a></li>
+                    <li><a href="#"><?php echo $this->msg('sz-sitemap') ?></a></li>
+                    <li><a href="#"><?php echo $this->msg('sz-contactus') ?></a></li>
+                </ul>
+                <p><?php echo $this->msgHtml('sz-moreaboutlicensing') ?></a></p>
+            </div>
+        </div>
+        <!-- /contentFooter -->
+        <?php
+    }
+
+    /**
+     * Render the NS-4 (Project:) #content content
+     */
+    private function renderContentNS4() {
+        ?>
+        <!-- header -->
+        <div id="header" class="block block_full homepage">
+
+            <div class="hgroup inside">
+                <h1><a id="logo_project" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"></a></h1>
+<h2><?php $this->msg('sz-tagline') ?></h2>
+
+            </div>
+        </div>
+        <!-- /header -->
+        <!-- bodyCcontent -->
+        <div id="bodyContent" role="main"<?php $this->html('specialpageattributes') ?>> <!--<div id="main" role="main">-->
+            <!-- block_full -->
+            <div class="block block_full">
+                <h3><?php $this->html('title') ?></h3>
+                <!-- inside -->
+                <div class="inside">
+                    <?php $this->renderNav(); ?>
+                    <?php $this->renderInsideContent(); ?>
+                </div>
+                <!-- /inside -->
+            </div>
+            <!-- /block_full -->
+        </div>
+        <!-- /bodyContent -->
         <?php if ($this->data['sitenotice']): ?>
             <!-- sitenotice -->
             <div class="block_flat block_full">
@@ -439,153 +557,237 @@ class SeizamTemplate extends QuickTemplate {
             </div>
             <!-- /sitenotice -->
         <?php endif; ?>
-            <!-- personalMenu -->
-            <ul id="nav_personal">
-            <?php $this->renderNavigation(array('PERSONAL')); ?>
-            </ul>
-            <!-- /personalMenu -->
-        <!-- content -->
-        <div id="content">
-            <a id="top"></a>
-            <!-- header -->
-            <div id="header" class="block_full">
-                <!-- firstHeading -->
-                <div class="block_flat block_half">
-                    <div class="inside">
-                        <h1 id="firstHeading" class="firstHeading"><?php $this->html('title') ?></h1>
-                    </div>
-                </div>
-                <!-- /firstHeading -->
-                <div id="nav">
-                    <ul id="nav_artist">
-                        <li><a href="#"><?php echo $this->msg('sz-7freedoms') ?></a></li>
-                        <li><a href="#"><?php echo $this->msg('sz-joinseizam') ?></a></li>
-                    </ul>
-                    <ul id="nav_plus">
-                        <li>
-                            <a href="#"><?php echo $this->msg('actions') ?></a>
-                            <ul>
-                                <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
+        <!-- contentFooter -->
+        <div id="self_general" class="block_flat block_full">
+            <div class="inside">
+                <ul id="self_general_links">
+                    <li><a href="#"><?php echo $this->msg('sz-discoverseizam') ?></a></li>
+                    <li><a href="#"><?php echo $this->msg('sz-sitemap') ?></a></li>
+                    <li><a href="#"><?php echo $this->msg('sz-contactus') ?></a></li>
+                </ul>
+                <p><?php echo $this->msgHtml('sz-moreaboutlicensing') ?></a></p>
             </div>
-            <!-- /header -->
-            <!-- bodyCcontent -->
-            <div id="bodyContent" role="main"<?php $this->html('specialpageattributes') ?>> <!--<div id="main" role="main">-->
-                <!-- block_full -->
-                <div class="block_flat block_full">
-                    <!-- inside -->
-                    <div class="inside">
-                        <!-- tagline (invisible)-->
-                        <div id="siteSub"><?php $this->msg('tagline') ?></div>
-                        <!-- /tagline -->
-                        <!-- subtitle -->
-                        <div id="contentSub"<?php $this->html('userlangattributes') ?>><?php $this->html('subtitle') ?></div>
-                        <!-- /subtitle -->
-                        <?php if ($this->data['undelete']): ?>
-                            <!-- undelete -->
-                            <div id="contentSub2"><?php $this->html('undelete') ?></div>
-                            <!-- /undelete -->
-                        <?php endif; ?>
-                        <?php if ($this->data['newtalk']): ?>
-                            <!-- newtalk -->
-                            <div class="usermessage"><?php $this->html('newtalk') ?></div>
-                            <!-- /newtalk -->
-                        <?php endif; ?>
-                        <?php if ($this->data['showjumplinks']): ?>
-                            <!-- jumpto (invisible)-->
-                            <div id="jump-to-nav">
-                                <?php $this->msg('jumpto') ?> <a href="#mw-head"><?php $this->msg('jumptonavigation') ?></a>,
-                                <a href="#p-search"><?php $this->msg('jumptosearch') ?></a>
-                            </div>
-                            <!-- /jumpto -->
-                        <?php endif; ?>
-                        <!-- bodytext -->
-                        <?php $this->html('bodytext') ?>
-                        <!-- /bodytext -->
-                        <?php if ($this->data['catlinks']): ?>
-                            <!-- catlinks -->
-                            <?php $this->html('catlinks'); ?>
-                            <!-- /catlinks -->
-                        <?php endif; ?>
-                        <?php if ($this->data['dataAfterContent']): ?>
-                            <!-- dataAfterContent -->
-                            <?php $this->html('dataAfterContent'); ?>
-                            <!-- /dataAfterContent -->
-                        <?php endif; ?>
-                    </div>
-                    <!-- /inside -->
-                </div>
-                <!-- /block_full -->
-                <!-- /bodyContent -->
-                <!-- contentFooter -->
-                <div id="self_general" class="block_flat block_full">
-					<div class="inside">
-						<ul id="self_general_links">
-							<li><a href="#"><?php echo $this->msg('sz-discoverseizam') ?></a></li>
-							<li><a href="#"><?php echo $this->msg('sz-sitemap') ?></a></li>
-							<li><a href="#"><?php echo $this->msg('sz-contactus') ?></a></li>
-						</ul>
-						<p><?php echo $this->msgHtml('sz-moreaboutlicensing') ?></a></p>
-					</div>
-				</div>
-                <!-- /contentFooter -->
-            </div>
-            <!-- /content -->
-            <!-- footer -->
-            <div id="footer">
-                <div class="inside">
-                    <div class="content">
-                        <!-- logo -->
-                        <a id="logo_mini" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>" <?php echo $this->skin->tooltipAndAccesskey('p-logo') ?>></a>
-                        <!-- /logo -->
-                        <!-- search -->
-                        <?php $this->renderNavigation(array('SEARCH')); ?>
-                        <!-- /search -->
-                        <!-- quicklinks -->
-                        <ul>
-                            <li>
-                                <a href="#"><?php echo $this->msg('sz-browse') ?></a>
-                            </li>
-                            <li>
-                                <a href="#"><?php echo $this->msg('sz-myseizam') ?></a>
-                            </li>
-                            <li class="more">
-                                <a href="#">
-                                    <span class="show_more"><?php echo $this->msg('moredotdotdot') ?></span>
-                                    <span class="show_less" aria-hidden="true"><?php echo $this->msg('lessdotdotdot') ?></span>
-                                </a>
-                            </li>
-                        </ul>
-                        <!-- /quicklinks -->
-                        <!-- moreInfo -->
-                        <div class="more_infos" style="display: none;">
-                            <?php $this->renderMore(); ?>
-                        </div>
-                        <!-- /moreInfo -->
-                    </div>
-                </div>
-            </div>
-            <!-- /footer -->
         </div>
-        <!-- /container -->
-        <!-- bottomScripts -->
-        <?php $this->html('bottomscripts'); /* JS call to runBodyOnloadHook */ ?>
-        <!-- /bottomScripts -->
-        <!-- fixalpha -->
-        <script type="<?php $this->text('jsmimetype') ?>"> if ( window.isMSIE55 ) fixalpha(); </script>
-        <!-- /fixalpha -->
-        <?php $this->html('reporttime') ?>
-        <?php if ($this->data['debug']): ?>
-        <!-- Debug output: <?php $this->text('debug'); ?> -->
-        <?php endif; ?>
-        </body>
-        </html>
+        <!-- /contentFooter -->
         <?php
     }
 
+    /**
+     * Render the NS--1 (Special:) #content content
+     */
+    private function renderContentNSSpecial() {
+        ?>
+        <!-- header -->
+
+        <div id="header" class="block block_full profil">
+            <div class="inside">
+                <h1><a id="logo_special" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"></a></h1>
+
+                <div id="nav">
+                    <ul>
+                        <?php $this->renderNavigation(array('PERSONAL')); ?>
+                        <li><a href="/Special:Upload">Upload</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- /header -->
+        <!-- bodyCcontent -->
+        <div id="bodyContent" role="main"<?php $this->html('specialpageattributes') ?>> <!--<div id="main" role="main">-->
+            <!-- block_full -->
+            <div class="block block_full">
+                <h3><?php $this->html('title') ?></h3>
+                <!-- inside -->
+                <div class="inside">
+                    <?php $this->renderInsideContent(); ?>
+                </div>
+                <!-- /inside -->
+            </div>
+            <!-- /block_full -->
+        </div>
+        <!-- /bodyContent -->
+        <!-- contentFooter -->
+        <div id="self_general" class="block block_full">
+            <div class="inside">
+                <ul id="self_general_links">
+                    <li><a href="#"><?php echo $this->msg('sz-discoverseizam') ?></a></li>
+                    <li><a href="#"><?php echo $this->msg('sz-sitemap') ?></a></li>
+                    <li><a href="#"><?php echo $this->msg('sz-contactus') ?></a></li>
+                </ul>
+                <p><?php echo $this->msgHtml('sz-moreaboutlicensing') ?></a></p>
+            </div>
+        </div>
+        <!-- /contentFooter -->
+        <?php
+    }
+
+    /**
+     * Render the footer (main menu)
+     */
+    private function renderFooter() {
+        ?>
+        <!-- footer -->
+        <div id="footer">
+            <div class="inside">
+                <div class="content">
+                    <!-- logo -->
+                    <a id="logo_mini" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>" <?php echo $this->skin->tooltipAndAccesskey('p-logo') ?>></a>
+                    <!-- /logo -->
+                    <!-- search -->
+                    <?php $this->renderNavigation(array('SEARCH')); ?>
+                    <!-- /search -->
+                    <!-- quicklinks -->
+                    <ul>
+                        <li>
+                            <a href="/Special:AllPages"><?php echo $this->msg('sz-browse') ?></a>
+                        </li>
+                        <li>
+                            <a href="/WikiZam/index.php/Special:Preferences"><?php echo $this->msg('sz-myseizam') ?></a>
+                        </li>
+                        <li class="more">
+                            <a href="#">
+                                <span class="show_more"><?php echo $this->msg('moredotdotdot') ?></span>
+                                <span class="show_less" aria-hidden="true"><?php echo $this->msg('lessdotdotdot') ?></span>
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- /quicklinks -->
+                    <!-- moreInfo -->
+                    <div class="more_infos" style="display: none;">
+                        <?php $this->renderMore(); ?>
+                    </div>
+                    <!-- /moreInfo -->
+                </div>
+            </div>
+        </div>
+        <!-- /footer -->
+        <?php
+    }
+
+    /**
+     * Render the "more..." footer panel content
+     */
+    private function renderMore() {
+        ?>
+        <div class="section">
+            <p><?php echo $this->msg('sz-legalcontent') ?></p>
+            <ul>
+                <li><?php echo $this->msgHtml('sz-gtcu') ?></li>
+                <li><?php echo $this->msgHtml('sz-astcu') ?></li>
+                <li><?php echo $this->msgHtml('sz-legalinfo') ?></li>
+                <li><?php echo $this->msgHtml('sz-privacypolicy') ?></li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <p><?php echo $this->msg('sz-generalinfo') ?></p>
+            <ul>
+                <li><?php echo $this->msgHtml('sz-discoverseizam') ?></li>
+                <li><?php echo $this->msgHtml('sz-joinseizam') ?></li>
+                <li><?php echo $this->msgHtml('sz-help') ?></li>
+                <li><?php echo $this->msgHtml('sz-faq') ?></li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <p><?php echo $this->msg('sz-communicate') ?></p>
+            <ul>
+                <li><?php echo $this->msgHtml('sz-reportabuse') ?></li>
+                <li><?php echo $this->msgHtml('sz-reportbug') ?></li>
+                <li><?php echo $this->msgHtml('sz-technicalsupport') ?></li>
+                <li><?php echo $this->msgHtml('sz-contactus') ?></li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <p class="sread"><?php echo $this->msg('sz-selectlang') ?></p>
+            <?php echo wfLanguageSelectorHTML(null, 'selectLang', null, null, null); ?>
+            <p class="sread"><?php echo $this->msg('sz-seizamonsocialnetworks') ?></p>
+            <ul class="socials">
+                <li class="tumblr"><a href="http://www.davidcanwin.com">Tumblr</a></li>
+                <li class="twitter"><a href="http://twitter.com/davidcanwin">Twitter</a></li>
+                <li class="fcbk"><a href="http://www.facebook.com/davidcanwin">Facebook</a></li>
+                <li class="linkedin"><a href="http://www.linkedin.com/company/seizam">LinkedIn</a></li>
+            </ul>
+        </div>
+        <?php
+    }
+
+    
+    /**
+     * Render #nav (#nav_artist + #nav_plus)
+     */
+    private function renderNav() {
+        ?>
+        <div id="nav">
+            <ul id="nav_plus">
+                <li>
+                    <a href="#"><?php echo $this->msg('actions') ?></a>
+                    <ul>
+                        <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <?php
+    }
+
+    /**
+     * Render the real content of a page
+     */
+    private function renderInsideContent() {
+        ?>
+        <!-- tagline (invisible)-->
+        <div id="siteSub"><?php $this->msg('tagline') ?></div>
+        <!-- /tagline -->
+        <!-- subtitle -->
+        <div id="contentSub"<?php $this->html('userlangattributes') ?>><?php $this->html('subtitle') ?></div>
+        <!-- /subtitle -->
+        <?php if ($this->data['undelete']): ?>
+            <!-- undelete -->
+            <div id="contentSub2"><?php $this->html('undelete') ?></div>
+            <!-- /undelete -->
+        <?php endif; ?>
+        <?php if ($this->data['newtalk']): ?>
+            <!-- newtalk -->
+            <div class="usermessage"><?php $this->html('newtalk') ?></div>
+            <!-- /newtalk -->
+        <?php endif; ?>
+        <?php if ($this->data['showjumplinks']): ?>
+            <!-- jumpto (invisible)-->
+            <div id="jump-to-nav">
+                <?php $this->msg('jumpto') ?> <a href="#mw-head"><?php $this->msg('jumptonavigation') ?></a>,
+                <a href="#p-search"><?php $this->msg('jumptosearch') ?></a>
+            </div>
+            <!-- /jumpto -->
+        <?php endif; ?>
+        <!-- bodytext -->
+        <?php $this->html('bodytext') ?>
+        <!-- /bodytext -->
+        <?php if ($this->data['catlinks']): ?>
+            <!-- catlinks -->
+            <?php $this->html('catlinks'); ?>
+            <!-- /catlinks -->
+        <?php endif; ?>
+        <?php if ($this->data['dataAfterContent']): ?>
+            <!-- dataAfterContent -->
+            <?php $this->html('dataAfterContent'); ?>
+            <!-- /dataAfterContent -->
+            <?php
+        endif;
+    }
+
+    /**
+     * Render top of the page (between </head> and <div id="content">
+     */
+    private function renderTop() {
+        ?>
+        <div id="mw-js-message" style="display:none;"<?php $this->html('userlangattributes') ?>></div>
+        <?php
+    }
+
+    
+    
     /**
      * Render one or more navigations elements by name, automatically reveresed
      * when UI is in RTL mode
@@ -638,7 +840,7 @@ class SeizamTemplate extends QuickTemplate {
                         <h5<?php $this->html('userlangattributes') ?>><label for="searchInput"><?php $this->msg('search') ?></label></h5>
                         <form action="<?php $this->text('wgScript') ?>" id="searchform">
                             <input type='hidden' name="title" value="<?php $this->text('searchtitle') ?>"/>
-                                <?php if ($wgVectorUseSimpleSearch && $wgUser->getOption('vector-simplesearch')): ?>
+                            <?php if ($wgVectorUseSimpleSearch && $wgUser->getOption('vector-simplesearch')): ?>
                                 <div id="simpleSearch">
                                     <?php if ($this->data['rtl']): ?>
                                         <button id="searchButton" type='submit' name='button' <?php echo $this->skin->tooltipAndAccesskey('search-fulltext'); ?>><img src="<?php echo $this->skin->getSkinStylePath('images/search-rtl.png'); ?>" alt="<?php $this->msg('searchbutton') ?>" /></button>
@@ -646,13 +848,13 @@ class SeizamTemplate extends QuickTemplate {
                                     <input id="searchInput" name="search" type="text" <?php echo $this->skin->tooltipAndAccesskey('search'); ?> <?php if (isset($this->data['search'])): ?> value="<?php $this->text('search') ?>"<?php endif; ?> />
                                     <?php if (!$this->data['rtl']): ?>
                                         <button id="searchButton" type='submit' name='button' <?php echo $this->skin->tooltipAndAccesskey('search-fulltext'); ?>><img src="<?php echo $this->skin->getSkinStylePath('images/search-ltr.png'); ?>" alt="<?php $this->msg('searchbutton') ?>" /></button>
-                                <?php endif; ?>
+                                    <?php endif; ?>
                                 </div>
-                    <?php else: ?>
+                            <?php else: ?>
                                 <input id="searchInput" name="search" type="text" <?php echo $this->skin->tooltipAndAccesskey('search'); ?> <?php if (isset($this->data['search'])): ?> value="<?php $this->text('search') ?>"<?php endif; ?> />
                                 <input type='submit' name="go" class="searchButton" id="searchGoButton"	value="<?php $this->msg('searcharticle') ?>"<?php echo $this->skin->tooltipAndAccesskey('search-go'); ?> />
                                 <input type="submit" name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg('searchbutton') ?>"<?php echo $this->skin->tooltipAndAccesskey('search-fulltext'); ?> />
-                    <?php endif; ?>
+                            <?php endif; ?>
                         </form>
                     </div>
                     <?php
@@ -662,53 +864,5 @@ class SeizamTemplate extends QuickTemplate {
         }
     }
 
-    /**
-     * Render the "more..." footer panel content
-     */
-    private function renderMore() {
-        ?>
-        <div class="section">
-            <p><?php echo $this->msg('sz-legalcontent') ?></p>
-            <ul>
-                <li><a href="#"><?php echo $this->msg('sz-gtcu') ?></a></li>
-                <li><a href="#"><?php echo $this->msg('sz-astcu') ?></a></li>
-                <li><a href="#"><?php echo $this->msg('sz-legalinfo') ?></a></li>
-                <li><a href="#"><?php echo $this->msg('sz-privacypolicy') ?></a></li>
-            </ul>
-        </div>
-
-        <div class="section">
-            <p><?php echo $this->msg('sz-generalinfo') ?></p>
-            <ul>
-                <li><a href="#"><?php echo $this->msg('sz-discoverseizam') ?></a></li>
-                <li><a href="#"><?php echo $this->msg('sz-joinseizam') ?></a></li>
-                <li><a href="#"><?php echo $this->msg('sz-help') ?></a></li>
-                <li><a href="#"><?php echo $this->msg('sz-faq') ?></a></li>
-            </ul>
-        </div>
-
-        <div class="section">
-            <p><?php echo $this->msg('sz-communicate') ?></p>
-            <ul>
-                <li><a href="#"><?php echo $this->msg('sz-reportabuse') ?></a></li>
-                <li><a href="#"><?php echo $this->msg('sz-reportbug') ?></a></li>
-                <li><a href="#"><?php echo $this->msg('sz-technicalsupport') ?></a></li>
-                <li><a href="#"><?php echo $this->msg('sz-contactus') ?></a></li>
-            </ul>
-        </div>
-
-        <div class="section">
-            <p class="sread"><?php echo $this->msg('sz-selectlang') ?></p>
-        <?php echo wfLanguageSelectorHTML(null, 'selectLang', null, null, null); ?>
-            <p class="sread"><?php echo $this->msg('sz-seizamonsocialnetworks') ?></p>
-            <ul class="socials">
-                <li class="twitter"><a href="#">Twitter</a></li>
-                <li class="linkedin"><a href="#">LinkedIn</a></li>
-                <li class="tumblr"><a href="#">Tumblr</a></li>
-                <li class="fcbk"><a href="#">Facebook</a></li>
-            </ul>
-        </div>
-        <?php
-    }
-
 }
+

@@ -21,7 +21,7 @@
 		return false;
 	});
 	$('#footer li.more.current a').live("click", function() {
-		$('.more_infos').stop(true,true).slideUp(400);
+		$('.more_infos').stop(true,true).slideUp(250);
 		$(this).closest('li').removeClass('current');
 		$(this).find('.show_more').show();
 		$(this).find('.show_less').hide();
@@ -36,9 +36,9 @@
 		var $dd = $('#nav_plus');
 		
 		$dd.hover(function(){
-			$("ul", $dd).slideDown(400);
+			$("ul", $dd).stop(false, true).slideDown(400);
 		}, function(){
-			$("ul", $dd).slideUp(400);
+			$("ul", $dd).stop(false, true).slideUp(250);
 		});
 		
 		$('a', $dd).focus(function(){

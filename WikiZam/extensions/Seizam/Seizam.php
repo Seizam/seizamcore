@@ -39,8 +39,14 @@ $wgExtensionCredits['other'][] = array(
 
 $wgAutoloadClasses['SeizamHooks'] = dirname( __FILE__ ) . '/Seizam.hooks.php';
 $wgExtensionMessagesFiles['Seizam'] = dirname( __FILE__ ) . '/Seizam.i18n.php';
-$wgHooks['BeforePageDisplay'][] = 'SeizamHooks::beforePageDisplay';
 
+// Load JS Resources
+$wgHooks['BeforePageDisplay'][] = 'SeizamHooks::beforePageDisplay';
+// Remove TOC
+$wgHooks['ParserClearState'][] = 'SeizamHooks::parserClearState';
+
+
+// JS Resources Declaration
 $seizamResourceTemplate = array(
 	'localBasePath' => dirname( __FILE__ ) . '/modules',
 	'remoteExtPath' => 'Seizam/modules',
@@ -50,4 +56,5 @@ $wgResourceModules += array(
 	'ext.seizam.global' => $seizamResourceTemplate + array(
 		'scripts' => 'ext.seizam.global.js')
 );
+
 

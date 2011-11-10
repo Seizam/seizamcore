@@ -147,7 +147,7 @@ $wgDiff3 = "/usr/bin/diff3";
 # The following permissions were set based on your choice in the installer
 
 // Implicit group for all visitors
-$wgGroupPermissions['*']['createaccount']    = false;
+$wgGroupPermissions['*']['createaccount']    = true;
 $wgGroupPermissions['*']['edit']             = false;
 
 
@@ -200,3 +200,5 @@ $wfPolyglotFollowRedirects = true;
 # AuthorProtect (dev)
 require_once( "$IP/extensions/AuthorProtect/AuthorProtect.php" );
 
+# Dismissable Site Notice
+require_once( "$IP/extensions/DismissableSiteNotice/DismissableSiteNotice.php" );
