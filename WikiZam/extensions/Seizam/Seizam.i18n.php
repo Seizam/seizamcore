@@ -19,7 +19,7 @@ $messages['en'] = array(
         'lessdotdotdot' => 'Less...',
 	'sz-legalcontent' => 'Legal Content',
 	'sz-gtcu' => '<a href="/Project:GTCU">General Terms and Conditions of Use</a>',
-	'sz-astcu' => '<a href="/Project:ASTCU">Artist Specific Terms and Conditions of Use</a>',
+	'sz-astcu' => '<a href="/Project:STCUA">Artist Specific Terms and Conditions of Use</a>',
 	'sz-legalinfo' => '<a href="/Project:Legal_info">Legal Information</a>',
 	'sz-privacypolicy' => '<a href="/Project:Privacy_policy">Privacy Policy</a>',
 	'sz-generalinfo' => 'General Information',
