@@ -223,4 +223,9 @@ $wgAccountRequestExtraInfo = false;
 # Contact Page
 require_once( "$IP/extensions/ContactPage/ContactPage.php" );
 $wgContactUser='WikiSysop';
+$wgUserEmailUseReplyTo=true;
 $wgContactRequireAll=true;
+
+$wgGroupPermissions['*']['edit'] = false;
+$wgGroupPermissions['sysop']['editprotectedns'] = true;
+$wgNamespaceProtection[NS_PROJECT] = array('editprotectedns');

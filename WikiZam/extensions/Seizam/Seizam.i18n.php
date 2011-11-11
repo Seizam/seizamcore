@@ -26,7 +26,7 @@ $messages['en'] = array(
 	'sz-discoverseizam' => '<a href="/Project:Welcome">Discover Seizam</a>',
 	'sz-joinseizam' => '<a href="/Special:UserLogin">Join Seizam</a>',
 	'sz-help' => '<a href="/Help:Contents">Help</a>',
-	'sz-faq' => '<a href="/Project:FAQ">Frequently Asked Questions</a>',
+	'sz-faq' => '<a href="/Help:FAQ">Frequently Asked Questions</a>',
 	'sz-communicate' => 'Communicate with us',
 	'sz-reportabuse' => '<a href="/Project:Contact">Report Abuse</a>',
 	'sz-reportbug' => '<a href="/Project:Contact">Report Bug</a>',
@@ -37,7 +37,7 @@ $messages['en'] = array(
         'sz-7freedoms' => 'The 7 Freedoms',
         'sz-sitemap' => 'SiteMap',
         'sz-moreaboutlicensing' => 'Learn more about <a href="#">Licensing</a>',
-        'sz-tagline' => 'Building together the community that liberates the artistic world.'
+        'sz-tagline' => 'Community of free artists to build by yourself.'
 );
 
 /** Message documentation (Message documentation)
@@ -68,14 +68,14 @@ $messages['fr'] = array(
 	'sz-help' => '<a href="/Help:Contents">Aide</a>',
 	'sz-faq' => '<a href="/Help:FAQ">Questions fréquentes</a>',
 	'sz-communicate' => 'Communiquer avec nous',
-	'sz-reportabuse' => '<a href="/Project:Contact">Signaler un abus</a>',
-	'sz-reportbug' => '<a href="/Project:Contact">Signaler un bogue</a>',
-	'sz-technicalsupport' => '<a href="/Project:Contact">Support technique</a>',
-	'sz-contactus' => '<a href="/Project:Contact">Nous contacter</a>',
+	'sz-reportabuse' => '<a href="/Project:Contact/fr">Signaler un abus</a>',
+	'sz-reportbug' => '<a href="/Project:Contact/fr">Signaler un bogue</a>',
+	'sz-technicalsupport' => '<a href="/Project:Contact/fr">Support technique</a>',
+	'sz-contactus' => '<a href="/Project:Contact/fr">Nous contacter</a>',
 	'sz-seizamonsocialnetworks' => 'Seizam sur les réseaux sociaux',
         'sz-selectlang' => 'Selectionner votre language',
         'sz-7freedoms' => 'Les 7 Libertés',
         'sz-sitemap' => 'Plan du site',
         'sz-moreaboutlicensing' => 'En savoir plus sur les <a href="#">Licences</a>',
-        'sz-tagline' => 'Construire ensemble la communauté qui libère le monde artistique.'
+        'sz-tagline' => 'Communauté d\'artistes libres à constuire soi-même.'
 );
