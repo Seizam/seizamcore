@@ -37,7 +37,7 @@ $messages['en'] = array(
         'sz-7freedoms' => 'The 7 Freedoms',
         'sz-sitemap' => 'SiteMap',
         'sz-moreaboutlicensing' => 'Learn more about <a href="#">Licensing</a>',
-        'sz-tagline' => 'Community of free artists to build by yourself.'
+        'sz-tagline' => 'Community of free artists to build by yourself, but not alone...'
 );
 
 /** Message documentation (Message documentation)
@@ -77,5 +77,5 @@ $messages['fr'] = array(
         'sz-7freedoms' => 'Les 7 Libertés',
         'sz-sitemap' => 'Plan du site',
         'sz-moreaboutlicensing' => 'En savoir plus sur les <a href="#">Licences</a>',
-        'sz-tagline' => 'Communauté d\'artistes libres à constuire soi-même.'
+        'sz-tagline' => 'Communauté d\'artistes libres à constuire soi-même, mais pas tout seul...'
 );
