@@ -13,14 +13,31 @@
  * @since 1.17
  */
 class OracleUpdater extends DatabaseUpdater {
+
+	/**
+	 * Handle to the database subclass
+	 *
+	 * @var DatabaseOracle
+	 */
+	protected $db;
+
 	protected function getCoreUpdateList() {
 		return array(
-			// 1.16
+			// 1.17
 			array( 'doNamespaceDefaults' ),
 			array( 'doFKRenameDeferr' ),
 			array( 'doFunctions17' ),
 			array( 'doSchemaUpgrade17' ),
 			array( 'doInsertPage0' ),
+			array( 'doRemoveNotNullEmptyDefaults' ),
+			array( 'addTable', 'user_former_groups', 'patch-user_former_groups.sql' ),
+			
+			//1.18
+			array( 'addIndex',	'user',          'i02',       'patch-user_email_index.sql' ),
+			array( 'modifyField', 'user_properties', 'up_property', 'patch-up_property.sql' ),
+			array( 'addTable', 'uploadstash', 'patch-uploadstash.sql' ),
+			array( 'doRebuildDuplicateFunction' ),
+			
 		);
 	}
 
@@ -73,7 +90,7 @@ class OracleUpdater extends DatabaseUpdater {
 	protected function doSchemaUpgrade17() {
 		$this->output( "Updating schema to 17 ... " );
 		// check if iwlinks table exists which was added in 1.17
-		if ( $this->db->tableExists( $this->db->tableName( 'iwlinks' ) ) ) {
+		if ( $this->db->tableExists( 'iwlinks' ) ) {
 			$this->output( "schema seem to be up to date.\n" );
 			return;
 		}
@@ -89,7 +106,7 @@ class OracleUpdater extends DatabaseUpdater {
 		$row = array(
 			'page_id' => 0,
 			'page_namespace' => 0,
-  			'page_title' => ' ',
+			'page_title' => ' ',
 			'page_counter' => 0,
 			'page_is_redirect' => 0,
 			'page_is_new' => 0,
@@ -103,9 +120,35 @@ class OracleUpdater extends DatabaseUpdater {
 	}
 
 	/**
-	 * Overload: after this action field info table has to be rebuilt
+	 * Remove DEFAULT '' NOT NULL constraints from fields as '' is internally
+	 * converted to NULL in Oracle
 	 */
-	public function doUpdates( $what = array( 'core', 'extensions', 'purge' ) ) {
+	protected function doRemoveNotNullEmptyDefaults() {
+		$this->output( "Removing not null empty constraints ... " );
+		$meta = $this->db->fieldInfo( 'categorylinks' , 'cl_sortkey_prefix' );
+		if ( $meta->isNullable() ) {
+			$this->output( "constraints seem to be removed\n" );
+			return;
+		}
+		$this->applyPatch( 'patch_remove_not_null_empty_defs.sql', false );
+		$this->output( "ok\n" );
+	}
+
+	/**
+	 * rebuilding of the function that duplicates tables for tests
+	 */
+	protected function doRebuildDuplicateFunction() {
+		$this->output( "Rebuilding duplicate function ... " );
+		$this->applyPatch( 'patch_rebuild_dupfunc.sql', false );
+		$this->output( "ok\n" );
+	}
+
+	/**
+	 * Overload: after this action field info table has to be rebuilt
+	 *
+	 * @param $what array
+	 */
+	public function doUpdates( $what = array( 'core', 'extensions', 'purge', 'stats' ) ) {
 		parent::doUpdates( $what );
 
 		$this->db->query( 'BEGIN fill_wiki_info; END;' );

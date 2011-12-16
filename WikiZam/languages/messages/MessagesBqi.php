@@ -9,6 +9,7 @@
  *
  * @author Behdarvandyani
  * @author GerardM
+ * @author Huji
  * @author Meno25
  */
 
@@ -273,7 +274,7 @@ $1',
 'loginsuccess'            => "''' ایسا اویدن به داخل سایت {{SITENAME}} بعنوان \"\$1\".'''",
 'nosuchuser'              => 'کاربری به ای نام وجود نداره "$1".
 حروف نام را چک کنین, یا [[Special:UserLogin/signup|درست کنین یه حساب کاربری تازه]].',
-'nosuchusershort'         => 'کاربری به ای نام وجود نداره"<nowiki>$1</nowiki>".
+'nosuchusershort'         => 'کاربری به ای نام وجود نداره"$1".
 حروف نام راچک کنین.',
 'nouserspecified'         => 'ایسا دارین یه نام کاربر ذکر اکنین.',
 'wrongpassword'           => 'رمز وارد وابیده درست نه.
@@ -294,7 +295,7 @@ $1',
 لطفا بعد از دریافت آن داخل سیستم بوین.',
 'eauthentsent'            => 'یه نامه الکترونیکی سی تایید نشانی پست الکترونیکی به نشانی مورنظر ارسال وابید. قبل زه یو که نامه دیگری قابل ارسال به این نشانی بوه، وا دستورهایی که در آن نامه اویده را جهت تأیید ای مساله که ای نشانی مال ایسانه اجرا کنین.',
 
-# Password reset dialog
+# Change password dialog
 'retypenew' => 'تایپ دوباره رمز:',
 
 # Edit page toolbar
@@ -309,8 +310,6 @@ $1',
 لینک خارجی',
 'headline_sample' => 'سرخط متن',
 'headline_tip'    => '2سرخط یکسان',
-'math_sample'     => 'فرمول نهادن ایچو',
-'math_tip'        => 'فرمول ریاضی (LaTeX)',
 'nowiki_sample'   => 'متن شکل نداده یافرمت نوابیده را ایچو بنین',
 'nowiki_tip'      => 'زه فرمت کردن یا شکل دادن ویکی چشم پوشی کن',
 'image_tip'       => 'فایل محاط وابید',
@@ -556,13 +555,11 @@ $2',
 # Watchlist
 'watchlist'         => 'لیست پیگیریهای مو',
 'mywatchlist'       => 'لیست پیگیریهای مو',
-'addedwatch'        => 'اضاف وابید به لیست پیگیری',
 'addedwatchtext'    => "صفحه «<nowiki>$1</nowiki>» به [[Special:Watchlist|لیست پی‌گیری‌های ]] ایسا
 اضاف وابید.
 تغییرات این صفحه و صفحه صحبت مر بوطه اش در آینده ایچو لیست ابوه. به‌علاوه، ای صفحه، سی واضح‌تر دیده وابیدن در [[Special:RecentChanges|فهرست تغییرات اخیر]] به شکل <b>سیاه</b> ایا.
 
 ایر بعدا خواستین ای  صفحه زه لیست پی‌گیریهاتو ورداشته بوه، رو «'''عدم پی‌گیری'''» در بالای صفحه کلیک کنین.",
-'removedwatch'      => 'زه لیست پیگیری حذف وابید',
 'removedwatchtext'  => 'آن صفحه"[[:$1]]" جابجا وابیده زه[[Special:لیست پیگیری|لیست پیگیری ایسا]].',
 'watch'             => 'پی‌گیری',
 'watchthispage'     => 'پیگیری ای صفحه',
@@ -580,7 +577,7 @@ $2',
 'confirmdeletetext'     => 'ایسا اخوین یه صفحه بلند با همه گزارش تاریخی هونه حذف کنین.
 لطفا کانفیرم یا تائید کنین که تمایل وقصد ای کار را دارین, وایسا دوین یا می دانید نتایج وآثار ای کار را, و ایسا انجام ادین ای کار را مطابق با [[{{MediaWiki:Policy-url}}|سیاست‌ها]].',
 'actioncomplete'        => 'عمل  مربوطه راکامل کن',
-'deletedtext'           => '"<nowiki>$1</nowiki>" حذف وابیده.
+'deletedtext'           => '"$1" حذف وابیده.
 بوین $2 سی ثبت حذف آخر.',
 'deletedarticle'        => 'حذف وابید "[[$1]]"',
 'dellogpage'            => 'نمایه _ حذف',
@@ -598,7 +595,7 @@ $2',
 'protectexpiry'               => 'سپری وابیده ها:',
 'protect_expiry_invalid'      => 'با سپری وابیدن وقت غیر معتبره.',
 'protect_expiry_old'          => 'سپری وابیدن وقت مربوط به گذشته.',
-'protect-text'                => "ایسا ممکنه بوینین وتغییر بدین سطح حمایت زه ای صفحه'''<nowiki>$1</nowiki>'''.",
+'protect-text'                => "ایسا ممکنه بوینین وتغییر بدین سطح حمایت زه ای صفحه'''$1'''.",
 'protect-locked-access'       => "حساب کاربری ایسا اجازه تغییر سطح حمایت ای صفحه را نداره.
 ای چونه تنظیمات جاری سی آن صفحه '''$1''':",
 'protect-cascadeon'           => 'ای صفحه  در حال حاضر حفاظت وحمایت وابیده چون که در {{PLURAL:$1|صفحه|صفحات}}
@@ -613,7 +610,7 @@ $2',
 'protect-expiring'            => 'سپری وابیده $1 (UTC)',
 'protect-cascade'             => 'حمایت صفحات دربرگیرنده در ای صفحه (cascading protection)',
 'protect-cantedit'            => 'ایسا نترین تغییر بدین سطوح حمایتی ای صفحه را, زیرا ایسا اجازه اصلاح آن را ندارین.',
-'protect-expiry-options'      => '۲ ساعت:2 hours,۱ روز:1 day,۳ روز:3 days,۱ هفته:1 week,۲ هفته:2 weeks,۱ ماه:1 month,۳ ماه:3 months,۶ ماه:6 months,۱ سال:1 year,بی‌پایان:infinite',
+'protect-expiry-options'      => '۱ ساعت:1 hour,۱ روز:1 day,۱ هفته:1 week,۲ هفته:2 weeks,۱ ماه:1 month,۳ ماه:3 months,۶ ماه:6 months,۱ سال:1 year,بی‌نهایت:infinite',
 'restriction-type'            => 'اجازه:',
 'restriction-level'           => 'سطح محدودیت:',
 
@@ -650,7 +647,7 @@ $2',
 
 # Block/unblock
 'blockip'       => 'بستن کاربر',
-'ipboptions'    => '۲ ساعت:2 hours,۱ روز:1 day,۳ روز:3 days,۱ هفته:1 week,۲ هفته:2 weeks,۱ ماه:1 month,۳ ماه:3 months,۶ ماه:6 months,۱ سال:1 year,بی‌پایان:infinite',
+'ipboptions'    => '۲ ساعت:2 hours,۱ روز:1 day,۳ روز:3 days,۱ هفته:1 week,۲ هفته:2 weeks,۱ ماه:1 month,۳ ماه:3 months,۶ ماه:6 months,۱ سال:1 year,بی‌نهایت:infinite',
 'ipblocklist'   => 'آدرسهای  آی پی وکاربران بسته وابیدند',
 'blocklink'     => 'بسته بوه !',
 'unblocklink'   => 'باز بوه',
@@ -771,11 +768,10 @@ $2',
 'nextdiff'     => 'تفاوت بعدی→',
 
 # Media information
-'file-info-size'       => '$1 × $2 پیکسل, اندازه فایل: $3, MIME نوع: $4',
-'file-nohires'         => '<small>قابلیت تفکیک بالاتری در دسترس نه.</small>',
-'svg-long-desc'        => 'SVG فایل, تقریبا$1 × $2 پیکسل, اندازه فایل: $3',
-'show-big-image'       => 'تصویر با قابلیت تفکیک کامل',
-'show-big-image-thumb' => '<کوچیک>اندازه پیش نمایش: $1 × $2 پیکسلها</کوچیک>',
+'file-info-size' => '$1 × $2 پیکسل, اندازه فایل: $3, MIME نوع: $4',
+'file-nohires'   => '<small>قابلیت تفکیک بالاتری در دسترس نه.</small>',
+'svg-long-desc'  => 'SVG فایل, تقریبا$1 × $2 پیکسل, اندازه فایل: $3',
+'show-big-image' => 'تصویر با قابلیت تفکیک کامل',
 
 # Special:NewFiles
 'newimages' => 'گالری فایلهای تازه',
@@ -799,11 +795,17 @@ $2',
 * exposuretime
 * fnumber
 * isospeedratings
-* focallength',
+* focallength
+* artist
+* copyright
+* imagedescription
+* gpslatitude
+* gpslongitude
+* gpsaltitude',
 
 # External editor support
 'edit-externally'      => 'اصلاح ای صفحه با استفاده زه یه ویرایشگر خارجی',
-'edit-externally-help' => ' سی اطلاعات بیشتر [http://www.mediawiki.org/wiki/Manual:External_editors راهنمایی‌های تنظیمات] اصلاح کننده خارجی را بوینین.',
+'edit-externally-help' => ' سی اطلاعات بیشتر [//www.mediawiki.org/wiki/Manual:External_editors راهنمایی‌های تنظیمات] اصلاح کننده خارجی را بوینین.',
 
 # 'all' in various places, this might be different for inflected languages
 'watchlistall2' => 'همه',

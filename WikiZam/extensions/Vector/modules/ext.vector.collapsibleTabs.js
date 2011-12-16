@@ -1,7 +1,7 @@
 /*
  * Collapsible tabs for Vector
  */
-$(document).ready( function() {	
+jQuery(function( $ ) {	
 	var rtl = $( 'body' ).is( '.rtl' );
 	
 	// Overloading the moveToCollapsed function to animate the transition 
@@ -86,15 +86,20 @@ $(document).ready( function() {
 	
 	// Bind callback functions to animate our drop down menu in and out
 	// and then call the collapsibleTabs function on the menu 
-	$( '#p-views ul' ).bind( "beforeTabCollapse", function() {
-		if( $( '#p-cactions' ).css( 'display' ) == 'none' )
-		$( "#p-cactions" ).addClass( "filledPortlet" ).removeClass( "emptyPortlet" )
-			.find( 'h5' ).css( 'width','1px' ).animate( { 'width':'26px' }, 390 );
-	} ).bind( "beforeTabExpand", function() {
-		if( $( '#p-cactions li' ).length == 1 )
-		$( "#p-cactions h5" ).animate( { 'width':'1px' }, 370, function() {
-			$( this ).attr( 'style', '' ).parent().addClass( "emptyPortlet" ).removeClass( "filledPortlet" );
-		});
+	$( '#p-views ul' ).bind( 'beforeTabCollapse', function() {
+		if ( $( '#p-cactions' ).css( 'display' ) == 'none' ) {
+			$( '#p-cactions' )
+				.addClass( 'filledPortlet' ).removeClass( 'emptyPortlet' )
+				.find( 'h5' )
+					.css( 'width','1px' ).animate( { 'width':'26px' }, 390 );
+		}
+	} ).bind( 'beforeTabExpand', function() {
+		if ( $( '#p-cactions li' ).length == 1 ) {
+			$( '#p-cactions h5' ).animate( { 'width':'1px' }, 370, function() {
+				$( this ).attr( 'style', '' )	
+					.parent().addClass( 'emptyPortlet' ).removeClass( 'filledPortlet' );
+			});
+		}
 	} ).collapsibleTabs( {
 		expandCondition: function( eleWidth ) {
 			if( rtl ){

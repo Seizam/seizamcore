@@ -12,9 +12,7 @@
  * @license GPL v2 or later
  * @version 0.3.0
  */
-if (!defined('MEDIAWIKI')) {
-    die(-1);
-}
+
 /* Configuration */
 
 // Each module may be configured individually to be globally on/off or user preference based
@@ -22,9 +20,11 @@ $wgVectorFeatures = array(
 	'collapsiblenav' => array( 'global' => true, 'user' => true ),
 	'collapsibletabs' => array( 'global' => true, 'user' => false ),
 	'editwarning' => array( 'global' => false, 'user' => true ),
+	'simplesearch' => array( 'global' => false, 'user' => true ),
+	// The follwing are experimental and likely unstable - use at your own risk
 	'expandablesearch' => array( 'global' => false, 'user' => false ),
 	'footercleanup' => array( 'global' => false, 'user' => false ),
-	'simplesearch' => array( 'global' => false, 'user' => true ),
+	'sectioneditlinks' => array( 'global' => false, 'user' => false ),
 );
 
 // The Vector skin has a basic version of simple search, which is a prerequisite for the enhanced one
@@ -34,6 +34,16 @@ $wgDefaultUserOptions['vector-simplesearch'] = 1;
 $wgCollapsibleNavBucketTest = false;
 // Force the new version
 $wgCollapsibleNavForceNewVersion = false;
+
+// Enable bucket testing for new version of section edit links
+$wgVectorSectionEditLinksBucketTest = false;
+// Percentage of users who's use of section edit links will be tracked - half of which will see the
+// new section edit links - default 5%
+$wgVectorSectionEditLinksLotteryOdds = 5;
+// Version number of the current experiment - Buckets from previous experiments will be overwritten
+// with new values when this is incremented, so as to allow accurate re-distribution. When changing
+// the lottery odds, this needs to change too, or you will have inaccurate data.
+$wgVectorSectionEditLinksExperiment = 0;
 
 /* Setup */
 
@@ -49,7 +59,7 @@ $wgAutoloadClasses['VectorHooks'] = dirname( __FILE__ ) . '/Vector.hooks.php';
 $wgExtensionMessagesFiles['Vector'] = dirname( __FILE__ ) . '/Vector.i18n.php';
 $wgHooks['BeforePageDisplay'][] = 'VectorHooks::beforePageDisplay';
 $wgHooks['GetPreferences'][] = 'VectorHooks::getPreferences';
-$wgHooks['MakeGlobalVariablesScript'][] = 'VectorHooks::makeGlobalVariablesScript';
+$wgHooks['ResourceLoaderGetConfigVars'][] = 'VectorHooks::resourceLoaderGetConfigVars';
 $wgHooks['MakeGlobalVariablesScript'][] = 'VectorHooks::makeGlobalVariablesScript';
 
 $vectorResourceTemplate = array(
@@ -95,6 +105,14 @@ $wgResourceModules += array(
 	'ext.vector.footerCleanup' => $vectorResourceTemplate + array(
 		'scripts' => 'ext.vector.footerCleanup.js',
 		'styles' => 'ext.vector.footerCleanup.css',
+	),
+	'ext.vector.sectionEditLinks' => $vectorResourceTemplate + array(
+		'scripts' => 'ext.vector.sectionEditLinks.js',
+		'styles' => 'ext.vector.sectionEditLinks.css',
+		'dependencies' => array(
+			'jquery.cookie',
+			'jquery.clickTracking',
+		),
 	),
 	'ext.vector.simpleSearch' => $vectorResourceTemplate + array(
 		'scripts' => 'ext.vector.simpleSearch.js',

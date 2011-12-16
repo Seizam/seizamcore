@@ -85,19 +85,19 @@ class SkinSeizam extends SkinTemplate {
         $action = $wgRequest->getVal('action', 'view');
         $section = $wgRequest->getVal('section');
 
-        $userCanRead = $this->mTitle->userCanRead();
+        $userCanRead = $this->getTitle()->userCanRead();
 
         // Checks if page is some kind of content
         if ($this->iscontent) {
             // Gets page objects for the related namespaces
-            $subjectPage = $this->mTitle->getSubjectPage();
-            $talkPage = $this->mTitle->getTalkPage();
+            $subjectPage = $this->getTitle()->getSubjectPage();
+            $talkPage = $this->getTitle()->getTalkPage();
 
             // Determines if this is a talk page
-            $isTalk = $this->mTitle->isTalkPage();
+            $isTalk = $this->getTitle()->isTalkPage();
 
             // Generates XML IDs from namespace names
-            $subjectId = $this->mTitle->getNamespaceKey('');
+            $subjectId = $this->getTitle()->getNamespaceKey('');
 
             if ($subjectId == 'main') {
                 $talkId = 'talk';
@@ -116,7 +116,7 @@ class SkinSeizam extends SkinTemplate {
             $links['namespaces'][$talkId]['context'] = 'talk';
 
             // Adds view view link
-            if ($this->mTitle->exists() && $userCanRead) {
+            if ($this->getTitle()->exists() && $userCanRead) {
                 $links['views']['view'] = $this->tabAction(
                         $isTalk ? $talkPage : $subjectPage, 'vector-view-view', ( $action == 'view' || $action == 'purge'), '', true
                 );
@@ -127,12 +127,12 @@ class SkinSeizam extends SkinTemplate {
             // Checks if user can...
             if (
             // read and edit the current page
-                    $userCanRead && $this->mTitle->quickUserCan('edit') &&
+                    $userCanRead && $this->getTitle()->quickUserCan('edit') &&
                     (
                     // if it exists
-                    $this->mTitle->exists() ||
+                    $this->getTitle()->exists() ||
                     // or they can create one here
-                    $this->mTitle->quickUserCan('create')
+                    $this->getTitle()->quickUserCan('create')
                     )
             ) {
                 // Builds CSS class for talk page links
@@ -145,9 +145,9 @@ class SkinSeizam extends SkinTemplate {
                         );
                 $links['views']['edit'] = array(
                     'class' => ( $selected ? 'selected' : '' ) . $isTalkClass,
-                    'text' => $this->mTitle->exists() ? wfMsg('vector-view-edit') : wfMsg('vector-view-create'),
+                    'text' => $this->getTitle()->exists() ? wfMsg('vector-view-edit') : wfMsg('vector-view-create'),
                     'href' =>
-                    $this->mTitle->getLocalURL($this->editUrlOptions())
+                    $this->getTitle()->getLocalURL($this->editUrlOptions())
                 );
                 // Checks if this is a current rev of talk page and we should show a new
                 // section link
@@ -159,20 +159,20 @@ class SkinSeizam extends SkinTemplate {
                         $links['views']['addsection'] = array(
                             'class' => 'collapsible ' . ( $section == 'new' ? 'selected' : false ),
                             'text' => wfMsg('vector-action-addsection'),
-                            'href' => $this->mTitle->getLocalURL(
+                            'href' => $this->getTitle()->getLocalURL(
                                     'action=edit&section=new'
                             )
                         );
                     }
                 }
                 // Checks if the page has some kind of viewable content
-            } elseif ($this->mTitle->hasSourceText() && $userCanRead) {
+            } elseif ($this->getTitle()->hasSourceText() && $userCanRead) {
                 // Adds view source view link
                 $links['views']['viewsource'] = array(
                     'class' => ( $action == 'edit' ) ? 'selected' : false,
                     'text' => wfMsg('vector-view-viewsource'),
                     'href' =>
-                    $this->mTitle->getLocalURL($this->editUrlOptions())
+                    $this->getTitle()->getLocalURL($this->editUrlOptions())
                 );
             }
             wfProfileOut(__METHOD__ . '-edit');
@@ -180,12 +180,12 @@ class SkinSeizam extends SkinTemplate {
             wfProfileIn(__METHOD__ . '-live');
 
             // Checks if the page exists
-            if ($this->mTitle->exists() && $userCanRead) {
+            if ($this->getTitle()->exists() && $userCanRead) {
                 // Adds history view link
                 $links['views']['history'] = array(
                     'class' => 'collapsible ' . ( ( $action == 'history' ) ? 'selected' : false ),
                     'text' => wfMsg('vector-view-history'),
-                    'href' => $this->mTitle->getLocalURL('action=history'),
+                    'href' => $this->getTitle()->getLocalURL('action=history'),
                     'rel' => 'archives',
                 );
 
@@ -193,15 +193,15 @@ class SkinSeizam extends SkinTemplate {
                     $links['actions']['delete'] = array(
                         'class' => ( $action == 'delete' ) ? 'selected' : false,
                         'text' => wfMsg('vector-action-delete'),
-                        'href' => $this->mTitle->getLocalURL('action=delete')
+                        'href' => $this->getTitle()->getLocalURL('action=delete')
                     );
                 }
-                if ($this->mTitle->quickUserCan('move')) {
+                if ($this->getTitle()->quickUserCan('move')) {
                     $moveTitle = SpecialPage::getTitleFor(
                                     'Movepage', $this->thispage
                     );
                     $links['actions']['move'] = array(
-                        'class' => $this->mTitle->isSpecial('Movepage') ?
+                        'class' => $this->getTitle()->isSpecial('Movepage') ?
                                 'selected' : false,
                         'text' => wfMsg('vector-action-move'),
                         'href' => $moveTitle->getLocalURL()
@@ -209,16 +209,16 @@ class SkinSeizam extends SkinTemplate {
                 }
 
                 if (
-                        $this->mTitle->getNamespace() !== NS_MEDIAWIKI &&
+                        $this->getTitle()->getNamespace() !== NS_MEDIAWIKI &&
                         $wgUser->isAllowed('protect')
                 ) {
-                    if (!$this->mTitle->isProtected()) {
+                    if (!$this->getTitle()->isProtected()) {
                         $links['actions']['protect'] = array(
                             'class' => ( $action == 'protect' ) ?
                                     'selected' : false,
                             'text' => wfMsg('vector-action-protect'),
                             'href' =>
-                            $this->mTitle->getLocalURL('action=protect')
+                            $this->getTitle()->getLocalURL('action=protect')
                         );
                     } else {
                         $links['actions']['unprotect'] = array(
@@ -226,7 +226,7 @@ class SkinSeizam extends SkinTemplate {
                                     'selected' : false,
                             'text' => wfMsg('vector-action-unprotect'),
                             'href' =>
-                            $this->mTitle->getLocalURL('action=unprotect')
+                            $this->getTitle()->getLocalURL('action=unprotect')
                         );
                     }
                 }
@@ -236,7 +236,7 @@ class SkinSeizam extends SkinTemplate {
                         $wgUser->isAllowed('deletedhistory') &&
                         $wgUser->isAllowed('undelete')
                 ) {
-                    $n = $this->mTitle->isDeleted();
+                    $n = $this->getTitle()->isDeleted();
                     if ($n) {
                         $undelTitle = SpecialPage::getTitleFor('Undelete');
                         $links['actions']['undelete'] = array(
@@ -252,16 +252,16 @@ class SkinSeizam extends SkinTemplate {
                 }
 
                 if (
-                        $this->mTitle->getNamespace() !== NS_MEDIAWIKI &&
+                        $this->getTitle()->getNamespace() !== NS_MEDIAWIKI &&
                         $wgUser->isAllowed('protect')
                 ) {
-                    if (!$this->mTitle->getRestrictions('create')) {
+                    if (!$this->getTitle()->getRestrictions('create')) {
                         $links['actions']['protect'] = array(
                             'class' => ( $action == 'protect' ) ?
                                     'selected' : false,
                             'text' => wfMsg('vector-action-protect'),
                             'href' =>
-                            $this->mTitle->getLocalURL('action=protect')
+                            $this->getTitle()->getLocalURL('action=protect')
                         );
                     } else {
                         $links['actions']['unprotect'] = array(
@@ -269,7 +269,7 @@ class SkinSeizam extends SkinTemplate {
                                     'selected' : false,
                             'text' => wfMsg('vector-action-unprotect'),
                             'href' =>
-                            $this->mTitle->getLocalURL('action=unprotect')
+                            $this->getTitle()->getLocalURL('action=unprotect')
                         );
                     }
                 }
@@ -288,11 +288,11 @@ class SkinSeizam extends SkinTemplate {
             if ($this->loggedin) {
                 $class = '';
                 $place = 'actions';
-                $mode = $this->mTitle->userIsWatching() ? 'unwatch' : 'watch';
+                $mode = $this->getTitle()->userIsWatching() ? 'unwatch' : 'watch';
                 $links[$place][$mode] = array(
                     'class' => $class . ( ( $action == 'watch' || $action == 'unwatch' ) ? ' selected' : false ),
                     'text' => wfMsg($mode), // uses 'watch' or 'unwatch' message
-                    'href' => $this->mTitle->getLocalURL('action=' . $mode)
+                    'href' => $this->getTitle()->getLocalURL('action=' . $mode)
                 );
             }
             // This is instead of SkinTemplateTabs - which uses a flat array
@@ -320,7 +320,7 @@ class SkinSeizam extends SkinTemplate {
     }
 
     function getNamespace() {
-        return $this->mTitle->getNamespace();
+        return $this->getTitle()->getNamespace();
     }
 
 }
@@ -380,7 +380,7 @@ class SeizamTemplate extends QuickTemplate {
                             $this->skin->tooltip($xmlID);
                 } else {
                     $nav[$section][$key]['key'] =
-                            $this->skin->tooltipAndAccesskey($xmlID);
+                            $this->skin->tooltipAndAccesskeyAttribs($xmlID);
                 }
             }
         }
@@ -396,7 +396,7 @@ class SeizamTemplate extends QuickTemplate {
                         ' class="active"';
             }
             $this->data['personal_urls'][$key]['key'] =
-                    $this->skin->tooltipAndAccesskey('pt-' . $key);
+                    $this->skin->tooltipAndAccesskeyAttribs('pt-' . $key);
         }
 
         // Generate additional footer links
@@ -649,7 +649,7 @@ class SeizamTemplate extends QuickTemplate {
             <div class="inside">
                 <div class="content">
                     <!-- logo -->
-                    <a id="logo_mini" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>" <?php echo $this->skin->tooltipAndAccesskey('p-logo') ?>></a>
+                    <a id="logo_mini" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>" <?php echo $this->skin->tooltipAndAccesskeyAttribs('p-logo') ?>></a>
                     <!-- /logo -->
                     <!-- search -->
                     <?php $this->renderNavigation(array('SEARCH')); ?>
@@ -858,17 +858,17 @@ class SeizamTemplate extends QuickTemplate {
                             <?php if ($wgVectorUseSimpleSearch && $wgUser->getOption('vector-simplesearch')): ?>
                                 <div id="simpleSearch">
                                     <?php if ($this->data['rtl']): ?>
-                                        <button id="searchButton" type='submit' name='button' <?php echo $this->skin->tooltipAndAccesskey('search-fulltext'); ?>><img src="<?php echo $this->skin->getSkinStylePath('images/search-rtl.png'); ?>" alt="<?php $this->msg('searchbutton') ?>" /></button>
+                                        <button id="searchButton" type='submit' name='button' <?php echo $this->skin->tooltipAndAccesskeyAttribs('search-fulltext'); ?>><img src="<?php echo $this->skin->getSkinStylePath('images/search-rtl.png'); ?>" alt="<?php $this->msg('searchbutton') ?>" /></button>
                                     <?php endif; ?>
-                                    <input id="searchInput" name="search" type="text" <?php echo $this->skin->tooltipAndAccesskey('search'); ?> <?php if (isset($this->data['search'])): ?> value="<?php $this->text('search') ?>"<?php endif; ?> />
+                                    <input id="searchInput" name="search" type="text" <?php echo $this->skin->tooltipAndAccesskeyAttribs('search'); ?> <?php if (isset($this->data['search'])): ?> value="<?php $this->text('search') ?>"<?php endif; ?> />
                                     <?php if (!$this->data['rtl']): ?>
-                                        <button id="searchButton" type='submit' name='button' <?php echo $this->skin->tooltipAndAccesskey('search-fulltext'); ?>><img src="<?php echo $this->skin->getSkinStylePath('images/search-ltr.png'); ?>" alt="<?php $this->msg('searchbutton') ?>" /></button>
+                                        <button id="searchButton" type='submit' name='button' <?php echo $this->skin->tooltipAndAccesskeyAttribs('search-fulltext'); ?>><img src="<?php echo $this->skin->getSkinStylePath('images/search-ltr.png'); ?>" alt="<?php $this->msg('searchbutton') ?>" /></button>
                                     <?php endif; ?>
                                 </div>
                             <?php else: ?>
-                                <input id="searchInput" name="search" type="text" <?php echo $this->skin->tooltipAndAccesskey('search'); ?> <?php if (isset($this->data['search'])): ?> value="<?php $this->text('search') ?>"<?php endif; ?> />
-                                <input type='submit' name="go" class="searchButton" id="searchGoButton"	value="<?php $this->msg('searcharticle') ?>"<?php echo $this->skin->tooltipAndAccesskey('search-go'); ?> />
-                                <input type="submit" name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg('searchbutton') ?>"<?php echo $this->skin->tooltipAndAccesskey('search-fulltext'); ?> />
+                                <input id="searchInput" name="search" type="text" <?php echo $this->skin->tooltipAndAccesskeyAttribs('search'); ?> <?php if (isset($this->data['search'])): ?> value="<?php $this->text('search') ?>"<?php endif; ?> />
+                                <input type='submit' name="go" class="searchButton" id="searchGoButton"	value="<?php $this->msg('searcharticle') ?>"<?php echo $this->skin->tooltipAndAccesskeyAttribs('search-go'); ?> />
+                                <input type="submit" name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg('searchbutton') ?>"<?php echo $this->skin->tooltipAndAccesskeyAttribs('search-fulltext'); ?> />
                             <?php endif; ?>
                         </form>
                     </div>

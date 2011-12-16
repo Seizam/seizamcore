@@ -1,7 +1,7 @@
 /* JavaScript for SimpleSearch extension */
 
-$( document ).ready( function() {
-	
+jQuery( document ).ready( function( $ ) {
+
 	// Compatibility map
 	var map = {
 		'browsers': {
@@ -27,44 +27,46 @@ $( document ).ready( function() {
 	if ( !$.client.test( map ) ) {
 		return true;
 	}
-	
+
 	// Disable MWSuggest if loaded
 	if ( window.os_MWSuggestDisable ) {
 		window.os_MWSuggestDisable();
 	}
-	
+
 	// Placeholder text for SimpleSearch box
-	$( 'div#simpleSearch > input#searchInput' )
-		.attr( 'placeholder', mediaWiki.msg( 'vector-simplesearch-search' ) )
+	$( '#simpleSearch > input#searchInput' )
+		.attr( 'placeholder', mw.msg( 'vector-simplesearch-search' ) )
 		.placeholder();
-	
+
 	// General suggestions functionality for all search boxes
 	$( '#searchInput, #searchInput2, #powerSearchText, #searchText' )
 		.suggestions( {
 			fetch: function( query ) {
 				var $this = $(this);
-				var request = $.ajax( {
-					url: wgScriptPath + '/api.php',
-					data: {
-						'action': 'opensearch',
-						'search': query,
-						'namespace': 0,
-						'suggest': ''
-					},
-					dataType: 'json',
-					success: function( data ) {
-						if ( data && 1 in data ) {
-							$this.suggestions( 'suggestions', data[1] );
+				if ( query.length !== 0 ) {
+					var request = $.ajax( {
+						url: mw.util.wikiScript( 'api' ),
+						data: {
+							action: 'opensearch',
+							search: query,
+							namespace: 0,
+							suggest: ''
+						},
+						dataType: 'json',
+						success: function( data ) {
+							if ( $.isArray( data ) && 1 in data ) {
+								$this.suggestions( 'suggestions', data[1] );
+							}
 						}
-					}
-				});
-				$(this).data( 'request', request );
+					});
+					$this.data( 'request', request );
+				}
 			},
-			cancel: function () {
+			cancel: function() {
 				var request = $(this).data( 'request' );
 				// If the delay setting has caused the fetch to have not even happend yet, the request object will
 				// have never been set
-				if ( request && typeof request.abort == 'function' ) {
+				if ( request && $.isFunction( request.abort ) ) {
 					request.abort();
 					$(this).removeData( 'request' );
 				}
@@ -75,7 +77,7 @@ $( document ).ready( function() {
 				}
 			},
 			delay: 120,
-			positionFromLeft: $( 'body' ).is( '.rtl' ),
+			positionFromLeft: $( 'body' ).hasClass( 'rtl' ),
 			highlightInput: true
 		} )
 		.bind( 'paste cut drop', function( e ) {
@@ -92,15 +94,17 @@ $( document ).ready( function() {
 		},
 		special: {
 			render: function( query ) {
-				if ( $(this).children().size() == 0  ) {
+				if ( $(this).children().length === 0 ) {
 					$(this).show();
-					$label = $( '<div />' )
-						.addClass( 'special-label' )
-						.text( mediaWiki.msg( 'vector-simplesearch-containing' ) )
+					var $label = $( '<div></div>', {
+							'class': 'special-label',
+							text: mw.msg( 'vector-simplesearch-containing' )
+						})
 						.appendTo( $(this) );
-					$query = $( '<div />' )
-						.addClass( 'special-query' )
-						.text( query )
+					var $query = $( '<div></div>', {
+							'class': 'special-query',
+							text: query
+						})
 						.appendTo( $(this) );
 					$query.autoEllipsis();
 				} else {
@@ -112,7 +116,11 @@ $( document ).ready( function() {
 			},
 			select: function( $input ) {
 				$input.closest( 'form' ).append(
-					$( '<input />' ).attr( { 'type': 'hidden', 'name': 'fulltext', 'value': 1 } )
+					$( '<input>', {
+						type: 'hidden',
+						name: 'fulltext',
+						val: '1'
+					})
 				);
 				$input.closest( 'form' ).submit();
 			}

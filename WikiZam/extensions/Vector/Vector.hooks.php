@@ -5,9 +5,7 @@
  * @file
  * @ingroup Extensions
  */
-if (!defined('MEDIAWIKI')) {
-    die(-1);
-}
+
 class VectorHooks {
 	
 	/* Protected Static Members */
@@ -54,9 +52,29 @@ class VectorHooks {
 		'footercleanup' => array(
 			'modules' => array( 'ext.vector.footerCleanup' ),
 		),
+		'sectioneditlinks' => array(
+			'modules' => array( 'ext.vector.sectionEditLinks' ),
+			'configurations' => array(
+				'wgVectorSectionEditLinksBucketTest',
+				'wgVectorSectionEditLinksLotteryOdds',
+				'wgVectorSectionEditLinksExperiment',
+			),
+			'requirements' => array(
+				'vector-noexperiments' => false,
+			),
+		),
 		'simplesearch' => array(
 			'requirements' => array( 'vector-simplesearch' => true, 'disablesuggest' => false ),
 			'modules' => array( 'ext.vector.simpleSearch' ),
+		),
+		'experiments' => array(
+			'preferences' => array(
+				'vector-noexperiments' => array(
+					'type' => 'toggle',
+					'label-message' => 'vector-noexperiments-preference',
+					'section' => 'rendering/advancedrendering',
+				),
+			),
 		),
 	);
 	
@@ -96,7 +114,7 @@ class VectorHooks {
 	 * @param $skin Skin current skin
 	 */
 	public static function beforePageDisplay( $out, $skin ) {
-		if ( $skin instanceof SkinVector  /*|| $skin instanceof SkinSeizam*/) {
+		if ( $skin instanceof SkinVector ) {
 			// Add modules for enabled features
 			foreach ( self::$features as $name => $feature ) {
 				if ( isset( $feature['modules'] ) && self::isEnabled( $name ) ) {
@@ -112,8 +130,8 @@ class VectorHooks {
 	 * 
 	 * Adds Vector-releated items to the preferences
 	 * 
-	 * @param $out User current user
-	 * @param $skin array list of default user preference controls
+	 * @param $user User current user
+	 * @param $defaultPreferences array list of default user preference controls
 	 */
 	public static function getPreferences( $user, &$defaultPreferences ) {
 		global $wgVectorFeatures;
@@ -156,10 +174,12 @@ class VectorHooks {
 		}
 		return true;
 	}
-	
+
+	/**
+	 * @param $vars array
+	 * @return bool
+	 */
 	public static function makeGlobalVariablesScript( &$vars ) {
-		global $wgVectorFeatures;
-		
 		// Build and export old-style wgVectorEnabledModules object for back compat
 		$enabledModules = array();
 		foreach ( self::$features as $name => $feature ) {

@@ -7,6 +7,7 @@
  * @ingroup Language
  * @file
  *
+ * @author Alhen
  * @author Diego Grez
  * @author Erebedhel
  * @author Kanon6917
@@ -139,7 +140,6 @@ $messages = array(
 'searcharticle'     => 'Saraña',
 'history'           => 'Nayra qillqata',
 'history_short'     => 'Nayra qillqata',
-'info_short'        => "Uñt'ayawi",
 'edit'              => 'Turkaña',
 'create'            => 'Uñstayaña',
 'editthispage'      => 'Aka uñstawi turkaña',
@@ -173,6 +173,7 @@ $messages = array(
 'editsection'    => 'turkaña',
 'editold'        => 'turkaña',
 'editlink'       => 'trukaña',
+'toc'            => 'Utjirinaka',
 'showtoc'        => 'uñachayaña',
 'site-rss-feed'  => '$1 RSS jalsuri',
 'site-atom-feed' => '$1 Atom jalsuri',

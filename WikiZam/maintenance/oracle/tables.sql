@@ -23,10 +23,11 @@ CREATE TABLE &mw_prefix.mwuser ( -- replace reserved word 'user'
 ALTER TABLE &mw_prefix.mwuser ADD CONSTRAINT &mw_prefix.mwuser_pk PRIMARY KEY (user_id);
 CREATE UNIQUE INDEX &mw_prefix.mwuser_u01 ON &mw_prefix.mwuser (user_name);
 CREATE INDEX &mw_prefix.mwuser_i01 ON &mw_prefix.mwuser (user_email_token);
+CREATE INDEX &mw_prefix.mwuser_i02 ON &mw_prefix.mwuser (user_email, user_name);
 
 -- Create a dummy user to satisfy fk contraints especially with revisions
 INSERT INTO &mw_prefix.mwuser
-  VALUES (user_user_id_seq.nextval,'Anonymous','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL, '', current_timestamp, current_timestamp, 0);
+  VALUES (user_user_id_seq.nextval,'Anonymous',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL, '', current_timestamp, current_timestamp, 0);
 
 CREATE TABLE &mw_prefix.user_groups (
   ug_user   NUMBER      DEFAULT 0 NOT NULL,
@@ -47,7 +48,7 @@ CREATE INDEX &mw_prefix.user_newtalk_i02 ON &mw_prefix.user_newtalk (user_ip);
 
 CREATE TABLE &mw_prefix.user_properties (
   up_user NUMBER NOT NULL,
-  up_property VARCHAR2(32) NOT NULL,
+  up_property VARCHAR2(255) NOT NULL,
   up_value CLOB
 );
 CREATE UNIQUE INDEX &mw_prefix.user_properties_u01 on &mw_prefix.user_properties (up_user,up_property);
@@ -168,9 +169,9 @@ CREATE TABLE &mw_prefix.categorylinks (
   cl_from       NUMBER      NOT NULL,
   cl_to         VARCHAR2(255)         NOT NULL,
   cl_sortkey    VARCHAR2(230),
-  cl_sortkey_prefix VARCHAR2(255) DEFAULT '' NOT NULL,
+  cl_sortkey_prefix VARCHAR2(255),
   cl_timestamp  TIMESTAMP(6) WITH TIME ZONE  NOT NULL,
-  cl_collation	VARCHAR2(32) DEFAULT '' NOT NULL,
+  cl_collation	VARCHAR2(32),
   cl_type 		VARCHAR2(6) DEFAULT 'page' NOT NULL
 );
 ALTER TABLE &mw_prefix.categorylinks ADD CONSTRAINT &mw_prefix.categorylinks_fk1 FOREIGN KEY (cl_from) REFERENCES &mw_prefix.page(page_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
@@ -220,8 +221,8 @@ CREATE INDEX &mw_prefix.langlinks_i01 ON &mw_prefix.langlinks (ll_lang, ll_title
 
 CREATE TABLE &mw_prefix.iwlinks (
   iwl_from NUMBER DEFAULT 0 NOT NULL,
-  iwl_prefix VARCHAR2(20) DEFAULT '' NOT NULL,
-  iwl_title VARCHAR2(255) DEFAULT '' NOT NULL
+  iwl_prefix VARCHAR2(20),
+  iwl_title VARCHAR2(255)
 );
 CREATE UNIQUE INDEX &mw_prefix.iwlinks_ui01 ON &mw_prefix.iwlinks (iwl_from, iwl_prefix, iwl_title);
 CREATE UNIQUE INDEX &mw_prefix.iwlinks_ui02 ON &mw_prefix.iwlinks (iwl_prefix, iwl_title, iwl_from);
@@ -405,18 +406,9 @@ CREATE UNIQUE INDEX &mw_prefix.watchlist_u01 ON &mw_prefix.watchlist (wl_user, w
 CREATE INDEX &mw_prefix.watchlist_i01 ON &mw_prefix.watchlist (wl_namespace, wl_title);
 
 
-CREATE TABLE &mw_prefix.math (
-  math_inputhash              VARCHAR2(32)      NOT NULL,
-  math_outputhash             VARCHAR2(32)      NOT NULL,
-  math_html_conservativeness  NUMBER  NOT NULL,
-  math_html                   CLOB,
-  math_mathml                 CLOB
-);
-CREATE UNIQUE INDEX &mw_prefix.math_u01 ON &mw_prefix.math (math_inputhash);
-
 CREATE TABLE &mw_prefix.searchindex (
   si_page	NUMBER NOT NULL,
-  si_title	VARCHAR2(255) DEFAULT '' NOT NULL,
+  si_title	VARCHAR2(255),
   si_text	CLOB NOT NULL
 );
 CREATE UNIQUE INDEX &mw_prefix.searchindex_u01 ON &mw_prefix.searchindex (si_page);
@@ -528,9 +520,9 @@ CREATE TABLE &mw_prefix.querycachetwo (
   qcc_type          VARCHAR2(32)     NOT NULL,
   qcc_value         NUMBER  DEFAULT 0 NOT NULL,
   qcc_namespace     NUMBER  DEFAULT 0 NOT NULL,
-  qcc_title         VARCHAR2(255)     DEFAULT '' NOT NULL,
+  qcc_title         VARCHAR2(255),
   qcc_namespacetwo  NUMBER  DEFAULT 0 NOT NULL,
-  qcc_titletwo      VARCHAR2(255)     DEFAULT '' NOT NULL
+  qcc_titletwo      VARCHAR2(255)
 );
 CREATE INDEX &mw_prefix.querycachetwo_i01 ON &mw_prefix.querycachetwo (qcc_type,qcc_value);
 CREATE INDEX &mw_prefix.querycachetwo_i02 ON &mw_prefix.querycachetwo (qcc_type,qcc_namespace,qcc_title);
@@ -645,6 +637,14 @@ CREATE TABLE &mw_prefix.module_deps (
 );
 CREATE UNIQUE INDEX &mw_prefix.module_deps_u01 ON &mw_prefix.module_deps (md_module, md_skin);
 
+CREATE TABLE &mw_prefix.config (
+  cf_name VARCHAR2(255) NOT NULL,
+  cf_value blob NOT NULL
+);
+ALTER TABLE &mw_prefix.config ADD CONSTRAINT &mw_prefix.config_pk PRIMARY KEY (cf_name);
+-- leaving index out for now ... 
+
+
 -- do not prefix this table as it breaks parserTests
 CREATE TABLE wiki_field_info_full (
 table_name VARCHAR2(35) NOT NULL,
@@ -718,6 +718,7 @@ CREATE OR REPLACE PROCEDURE duplicate_table(p_tabname   IN VARCHAR2,
   e_table_not_exist EXCEPTION;
   PRAGMA EXCEPTION_INIT(e_table_not_exist, -00942);
   l_temp_ei_sql VARCHAR2(2000);
+  l_temporary   BOOLEAN := p_temporary;
 BEGIN
   BEGIN
     EXECUTE IMMEDIATE 'DROP TABLE ' || p_newprefix || p_tabname ||
@@ -726,7 +727,10 @@ BEGIN
     WHEN e_table_not_exist THEN
       NULL;
   END;
-  IF (p_temporary) THEN
+  IF (p_tabname = 'SEARCHINDEX') THEN
+    l_temporary := FALSE;
+  END IF;
+  IF (l_temporary) THEN
     EXECUTE IMMEDIATE 'CREATE GLOBAL TEMPORARY TABLE ' || p_newprefix ||
                       p_tabname || ' AS SELECT * FROM ' || p_oldprefix ||
                       p_tabname || ' WHERE ROWNUM = 0';
@@ -756,22 +760,30 @@ BEGIN
               WHERE table_name = p_oldprefix || p_tabname
                 AND constraint_type = 'P') LOOP
     l_temp_ei_sql := SUBSTR(rc.ddlvc2, 1, INSTR(rc.ddlvc2, 'PCTFREE') - 1);
-    l_temp_ei_sql := SUBSTR(l_temp_ei_sql, 1, INSTR(l_temp_ei_sql, ')', INSTR(l_temp_ei_sql, 'PRIMARY KEY')+1)+1);
-    EXECUTE IMMEDIATE l_temp_ei_sql;
+    l_temp_ei_sql := SUBSTR(l_temp_ei_sql,
+                            1,
+                            INSTR(l_temp_ei_sql,
+                                  ')',
+                                  INSTR(l_temp_ei_sql, 'PRIMARY KEY') + 1) + 1);
+    IF nvl(length(l_temp_ei_sql), 0) > 0 THEN
+      EXECUTE IMMEDIATE l_temp_ei_sql;
+    END IF;
   END LOOP;
-  IF (NOT p_temporary) THEN
-  FOR rc IN (SELECT REPLACE(DBMS_LOB.SUBSTR(DBMS_METADATA.get_ddl('REF_CONSTRAINT',
-                                                                  constraint_name),
-                                            32767,
-                                            1),
-                            USER || '"."' || p_oldprefix,
-                            USER || '"."' || p_newprefix) DDLVC2,
-                    constraint_name
-               FROM user_constraints uc
-              WHERE table_name = p_oldprefix || p_tabname
-                AND constraint_type = 'R') LOOP
-    EXECUTE IMMEDIATE rc.ddlvc2;
-  END LOOP;
+  IF (NOT l_temporary) THEN
+    FOR rc IN (SELECT REPLACE(DBMS_LOB.SUBSTR(DBMS_METADATA.get_ddl('REF_CONSTRAINT',
+                                                                    constraint_name),
+                                              32767,
+                                              1),
+                              USER || '"."' || p_oldprefix,
+                              USER || '"."' || p_newprefix) DDLVC2,
+                      constraint_name
+                 FROM user_constraints uc
+                WHERE table_name = p_oldprefix || p_tabname
+                  AND constraint_type = 'R') LOOP
+      IF nvl(length(l_temp_ei_sql), 0) > 0 THEN
+        EXECUTE IMMEDIATE l_temp_ei_sql;
+      END IF;
+    END LOOP;
   END IF;
   FOR rc IN (SELECT REPLACE(REPLACE(DBMS_LOB.SUBSTR(DBMS_METADATA.get_ddl('INDEX',
                                                                           index_name),
@@ -792,8 +804,38 @@ BEGIN
                       WHERE table_name = ui.table_name
                         AND constraint_name = ui.index_name)) LOOP
     l_temp_ei_sql := SUBSTR(rc.ddlvc2, 1, INSTR(rc.ddlvc2, 'PCTFREE') - 1);
-    l_temp_ei_sql := SUBSTR(l_temp_ei_sql, 1, INSTR(l_temp_ei_sql, ')', INSTR(l_temp_ei_sql, '"' || USER || '"."' || p_newprefix || '"')+1)+1);
-    EXECUTE IMMEDIATE l_temp_ei_sql;
+    l_temp_ei_sql := SUBSTR(l_temp_ei_sql,
+                            1,
+                            INSTR(l_temp_ei_sql,
+                                  ')',
+                                  INSTR(l_temp_ei_sql,
+                                        '"' || USER || '"."' || p_newprefix || '"') + 1) + 1);
+    IF nvl(length(l_temp_ei_sql), 0) > 0 THEN
+      EXECUTE IMMEDIATE l_temp_ei_sql;
+    END IF;
+  END LOOP;
+  FOR rc IN (SELECT REPLACE(REPLACE(DBMS_LOB.SUBSTR(DBMS_METADATA.get_ddl('INDEX',
+                                                                          index_name),
+                                                    32767,
+                                                    1),
+                                    USER || '"."' || p_oldprefix,
+                                    USER || '"."' || p_newprefix),
+                            '"' || index_name || '"',
+                            '"' || p_newprefix || index_name || '"') DDLVC2,
+                    index_name,
+                    index_type
+               FROM user_indexes ui
+              WHERE table_name = p_oldprefix || p_tabname
+                AND index_type = 'DOMAIN'
+                AND NOT EXISTS
+              (SELECT NULL
+                       FROM user_constraints
+                      WHERE table_name = ui.table_name
+                        AND constraint_name = ui.index_name)) LOOP
+    l_temp_ei_sql := rc.ddlvc2;
+    IF nvl(length(l_temp_ei_sql), 0) > 0 THEN
+      EXECUTE IMMEDIATE l_temp_ei_sql;
+    END IF;
   END LOOP;
   FOR rc IN (SELECT REPLACE(REPLACE(UPPER(DBMS_LOB.SUBSTR(DBMS_METADATA.get_ddl('TRIGGER',
                                                                                 trigger_name),
@@ -807,9 +849,12 @@ BEGIN
                FROM user_triggers
               WHERE table_name = p_oldprefix || p_tabname) LOOP
     l_temp_ei_sql := SUBSTR(rc.ddlvc2, 1, INSTR(rc.ddlvc2, 'ALTER ') - 1);
-    EXECUTE IMMEDIATE l_temp_ei_sql;
+    IF nvl(length(l_temp_ei_sql), 0) > 0 THEN
+      EXECUTE IMMEDIATE l_temp_ei_sql;
+    END IF;
   END LOOP;
 END;
+
 /*$mw$*/
 
 /*$mw$*/

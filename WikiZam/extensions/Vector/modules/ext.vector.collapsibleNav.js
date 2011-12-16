@@ -218,9 +218,11 @@
 				toggle( $(this) );
 			}
 		} )
-		.delegate( 'div.portal:not(.persistent) > h5', 'mousedown', function() {
-			toggle( $(this) );
-			$(this).blur();
+		.delegate( 'div.portal:not(.persistent) > h5', 'mousedown', function( event ) {
+			if ( event.which != 3 ) { // Right mouse click
+				toggle( $(this) );
+				$(this).blur();
+			}
 			return false;
 		} );
 } )( jQuery );
