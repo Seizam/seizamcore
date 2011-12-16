@@ -229,3 +229,5 @@ $wgContactRequireAll=true;
 $wgGroupPermissions['*']['edit'] = false;
 $wgGroupPermissions['sysop']['editprotectedns'] = true;
 $wgNamespaceProtection[NS_PROJECT] = array('editprotectedns');
+
+$wgFavicon = "/favicon.ico";
