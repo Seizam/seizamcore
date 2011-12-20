@@ -27,7 +27,7 @@ audio[controls], canvas, video { display: inline-block; }
 html { 
     font-size: 100%;
     /* @embed */
-    background-image: url(images/background.jpg);
+    background-image: url(images/bg.jpg);
     background-color: #e5e5e5;
     background-repeat: no-repeat;
     background-position: center top;
