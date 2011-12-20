@@ -30,7 +30,7 @@ $wgDBtype           = "mysql";
 $wgDBserver         = "localhost";
 $wgDBname           = "wikidb";
 $wgDBuser           = "seizam";
-$wgDBpassword       = "seizam";
+$wgDBpassword       = "password";
 
 # MySQL specific settings
 $wgDBprefix         = "";
@@ -41,10 +41,10 @@ $wgUpgradeKey = "1abd89e1c9307b07";
 
 $wgSMTP = array(
         'host' => 'ssl://smtp.gmail.com',
-        'IDHost' => 'mydomain.com',
+        'IDHost' => 'seizam.com',
         'port' => 465,
         'username' => 'serveur@seizam.com', ## or info@mydomain.com, or whatever email account you've set up for your Mediawiki installation
-        'password' => 'mv74KLp1',
+        'password' => 'password',
         'auth' => true
      );
 
