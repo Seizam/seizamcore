@@ -335,8 +335,6 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 * @see ResourceLoaderModule::getFileDependencies
 	 */
 	public function getModifiedTime( ResourceLoaderContext $context ) {
-            echo "coucou";
-            debug_print_backtrace();
 		if ( isset( $this->modifiedTime[$context->getHash()] ) ) {
 			return $this->modifiedTime[$context->getHash()];
 		}
