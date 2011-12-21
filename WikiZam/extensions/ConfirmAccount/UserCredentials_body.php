@@ -25,12 +25,13 @@ class UserCredentialsPage extends SpecialPage
 
 		if ( $this->file ) {
 			$this->showFile( $this->file );
-		} else if ( $this->target ) {
+		} elseif ( $this->target ) {
 			$this->showForm();
 			$this->showCredentials();
 		} else {
 			$this->showForm();
 		}
+		$wgOut->addModules( 'ext.confirmAccount' ); // CSS
 	}
 
 	function showForm() {
@@ -40,7 +41,7 @@ class UserCredentialsPage extends SpecialPage
 		$form = Xml::openElement( 'form', array( 'name' => 'stablization', 'action' => $wgScript, 'method' => 'get' ) );
 		$form .= "<fieldset><legend>" . wfMsg( 'usercredentials-leg' ) . "</legend>";
 		$form .= "<table><tr>";
-		$form .= "<td>" . Xml::hidden( 'title', $this->getTitle()->getPrefixedText() ) . "</td>";
+		$form .= "<td>" . Html::Hidden( 'title', $this->getTitle()->getPrefixedText() ) . "</td>";
 		$form .= "<td>" . wfMsgHtml( "usercredentials-user" ) . "</td>";
 		$form .= "<td>" . Xml::input( 'target', 35, $username, array( 'id' => 'wpUsername' ) ) . "</td>";
 		$form .= "<td>" . Xml::submitButton( wfMsg( 'go' ) ) . "</td>";
@@ -78,7 +79,7 @@ class UserCredentialsPage extends SpecialPage
 		$form .= '<legend>' . wfMsgHtml( 'usercredentials-leg-user' ) . '</legend>';
 		$form .= '<table cellpadding=\'4\'>';
 		$form .= "<tr><td>" . wfMsgHtml( 'username' ) . "</td>";
-		$form .= "<td>" . $this->skin->makeLinkObj( $user->getUserPage(), $user->getUserPage()->getText() ) . "</td></tr>\n";
+		$form .= "<td>" . $this->skin->makeLinkObj( $user->getUserPage(), htmlspecialchars( $user->getUserPage()->getText() ) ) . "</td></tr>\n";
 
 		$econf = $row->acd_email_authenticated ? ' <strong>' . wfMsgHtml( 'confirmaccount-econf' ) . '</strong>' : '';
 		$form .= "<tr><td>" . wfMsgHtml( 'usercredentials-email' ) . "</td>";
@@ -110,7 +111,7 @@ class UserCredentialsPage extends SpecialPage
 					}
 					$formName = "wpArea-" . htmlspecialchars( str_replace( ' ', '_', $set[0] ) );
 					if ( isset( $set[1] ) ) {
-						$pg = $this->skin->makeKnownLink( $set[1], wfMsgHtml( 'requestaccount-info' ) );
+						$pg = Linker::link( Title::newFromText( $set[1] ), wfMsgHtml( 'requestaccount-info' ), array(), array(), "known" );
 					} else {
 						$pg = '';
 					}

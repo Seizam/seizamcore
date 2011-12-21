@@ -27,25 +27,24 @@ Once the account is approved, you will be e-mailed a notification message and th
 	'requestaccount-acc-text'   => 'Your e-mail address will be sent a confirmation message once this request is submitted.
 Please respond by clicking on the confirmation link provided by the e-mail.
 Also, your password will be e-mailed to you when your account is created.',
-	'requestaccount-areas' => '', # Do not translate this message to other languages
+	'requestaccount-areas' 		=> '', # Do not translate this message to other languages
 	'requestaccount-areas-text' => 'Select the topic areas below in which you have formal expertise or would like to do the most work in.',
 	'requestaccount-ext-text'   => 'The following information is kept private and will only be used for this request.
 You may want to list contacts such a phone number to aid in identify confirmation.',
-	'requestaccount-bio-text'   => "Your biography will be set as the default content for your userpage.
-Try to include any credentials.
-Make sure you are comfortable publishing such information.
-Your name can be changed via [[Special:Preferences|your preferences]].",
+	'requestaccount-bio-text'   => "Try to include any relevant credentials in your biography below.",
+	'requestaccount-bio-text-i' => "'''Your biography will be set as the initial content for your userpage.'''
+Make sure you are comfortable publishing such information.",
 	'requestaccount-real'       => 'Real name:',
-	'requestaccount-same'       => '(same as real name)',
+	'requestaccount-same'       => '(same as real name below)',
 	'requestaccount-email'      => 'E-mail address:',
 	'requestaccount-reqtype'    => 'Position:',
 	'requestaccount-level-0'    => 'author',
 	'requestaccount-level-1'    => 'editor',
 	'requestaccount-info'       => '(?)',
-	'requestaccount-bio'        => 'Personal biography:',
+	'requestaccount-bio'        => 'Personal biography (plain text only):',
 	'requestaccount-attach'     => 'Resume or CV (optional):',
 	'requestaccount-notes'      => 'Additional notes:',
-	'requestaccount-urls'       => 'List of websites, if any (separate with newlines):',
+	'requestaccount-urls'       => 'List of websites, if any (each on a separate line):',
 	'requestaccount-agree'      => 'You must certify that your real name is correct and that you agree to our Terms of Service.',
 	'requestaccount-inuse'      => 'Username is already in use in a pending account request.',
 	'requestaccount-tooshort'   => 'Your biography must be at least $1 {{PLURAL:$1|word|words}} long.',
@@ -358,77 +357,6 @@ $messages['niu'] = array(
 	'confirmaccount-email' => 'Meli hila:',
 	'usercredentials-user' => 'Matahigoa he tagata:',
 	'usercredentials-email' => 'Meli hila:',
-);
-
-/** Jamaican Creole English (Jamaican Creole English)
- * @author Yocahuna
- */
-$messages['jam'] = array(
-	'requestaccount' => 'Rikwes akount',
-	'requestaccount-text' => "'''Kompliit ahn sobmit di falarin faam fi rikwes a yuuza akount'''.
-
-Mek shuor se yu riid fos di [[{{MediaWiki:Requestaccount-page}}|Toerm a Saabis]] bifuo yu rikwes akount.
-
-Wans di akount apruuv, yu wi get e-miel nuotifikieshan mechiz ahn yu kiahn yuuz di akount a [[Special:UserLogin|lagiin]].",
-	'requestaccount-page' => '{{ns:project}}:Toerm a Saabis',
-	'requestaccount-dup' => "'''Nuot: Yu aredi lag iin wid a rejista akount.'''",
-	'requestaccount-leg-user' => 'Yuuza akount',
-	'requestaccount-leg-areas' => 'Mien ieriadem a inchres',
-	'requestaccount-leg-person' => 'Persnal infamieshan',
-	'requestaccount-leg-other' => 'Ada infamieshan',
-	'requestaccount-leg-tos' => 'Toerm a Saabis',
-	'requestaccount-acc-text' => 'Yu e-miel ajres wi get a kanfoermieshan mechiz wans yu sobmit dis rikwes.
-Begyu rispan bai klik pahn di kanfoermieshan lingk provaid ina di e-miel.
-Alzwel yu paaswod wi e-miel tu yu wen yu akount kriet.',
-	'requestaccount-areas-text' => 'Silek di tapik ieriadem biluo fi we yu gat faamal expoertiis ar wuda laik fi du di muos wok.',
-	'requestaccount-ext-text' => 'Di falarin infamieshan kip praivit ahn wi onggl yuuz fi dis rikwes.
-Yu maita waahn fi lis kantak laka fuon nomba fi ied ina aidentifai kanfoermieshan.',
-	'requestaccount-bio-text' => 'Yu bayagrafi wi set az difaalt kantent fi yu yuuzapiej.
-Chrai fi inkluud eni kridenshal.
-Mek shuor se yu komfotebl fi poblish soertn infamieshan.
-Yu niem kiahn chienj vaya [[Special:Preferences|yu prefransdem]].',
-	'requestaccount-real' => 'Riil niem:',
-	'requestaccount-same' => '(siem az riil niem)',
-	'requestaccount-email' => 'E-miel ajres:',
-	'requestaccount-reqtype' => 'Pozishan:',
-	'requestaccount-level-0' => 'aata',
-	'requestaccount-level-1' => 'edita',
-	'requestaccount-bio' => 'Persnal bayagrafi:',
-	'requestaccount-attach' => 'Rizume ar CV (apshanal):',
-	'requestaccount-notes' => 'Adishanal nuot:',
-	'requestaccount-urls' => 'Lis a websait, ef eni (separiet wid nyuu lain):',
-	'requestaccount-agree' => 'Yu fi soertifai se yu riil niem karek ahn se yu agrii tu wi Toerm a Saabis.',
-	'requestaccount-inuse' => 'Yuuzaniem aredi ina yuus ina pendin akount rikwes.',
-	'requestaccount-tooshort' => 'Yu bayagrafi fi bi akliis $1 {{PLURAL:$1|wod|wod}} lang.',
-	'requestaccount-emaildup' => 'Aneda pendin akount rikwes yuuz di siem e-miel ajres.',
-	'requestaccount-exts' => 'Atachment fail taip no lou.',
-	'requestaccount-resub' => 'Yu CV/rizume fail afi rii-silek fi sikioriti riizn.
-Lef di fiil blangk ef yu no waahn fi inkluud wan agen.',
-	'requestaccount-tos' => 'Mi riid ahn grii fi abaid bai di [[{{MediaWiki:Requestaccount-page}}|Toerm a Saabis]] a {{SITENAME}}.
-Di niem mi spesifai anda "Riil niem" a mi riil niem fi chuu.',
-	'requestaccount-submit' => 'Rikwes akount',
-	'requestaccount-sent' => 'Yu akount rikwes sen soksesfuli ahn nou pendin rivyuu.
-A kanfamieshan rivyuu sen tu yu e-miel ajres.',
-	'request-account-econf' => 'Yu e-miel ajres kanfoerm ahn wi lis az soch ina yu akount rejista.',
-	'requestaccount-email-subj' => '{{SITENAME}} e-miel ajres kanfamieshan',
-	'requestaccount-email-body' => 'Smadi, prabli yu frahn IP ajres $1, rikwes a akount "$2" wid dis e-miel ajres pahn {{SITENAME}}.
-
-Fi kanfoerm se dis akount riili bilangx tu yu pahn {{SITENAME}}, opn dis lingk ina yu brouza:
-
-$3
-
-Ef di akount kriet, onngl yu wi get e-miel wid di paaswod.
-Ef dis a *no* yu, no fala di lingk.
-Dis kanfamieshan kuod wi expaya a $4.',
-	'requestaccount-email-subj-admin' => '{{SITENAME}} akount rikwes',
-	'requestaccount-email-body-admin' => '"$1" rikwes a akount ahn a wiet fi kanfamieshan.
-Di e-miel ajres kanfoerm. Yu kiahn kanfoerm di rikwes yaso "$2".',
-	'acct_request_throttle_hit' => 'Sari yu aredi rikwes {{PLURAL:$1|1 akount|$1 akount}}.
-Yu kyaahn mek no muo rikwes.',
-	'requestaccount-loginnotice' => "Fi abtien a yuuza akount, yu fi '''[[Special:RequestAccount|rikwes wan]]'''.",
-	'confirmaccount-newrequests' => "'''$1''' opn e-miel-kanfoerm [[Special:ConfirmAccounts|akount {{PLURAL:$1|rikwes|rikwes}}]] pendin",
-	'confirmaccounts' => 'Kanfoerm akount rikwes',
-	'confirmedit-desc' => 'Gi biurokratdem di abiliti fi kanfoerm akount rikwes',
 );
 
 /** Afrikaans (Afrikaans)
@@ -995,6 +923,34 @@ $2
 تأكد من أن الاسم مكتوب بطريقة صحيحة.',
 );
 
+/** Azerbaijani (Azərbaycanca)
+ * @author Cekli829
+ */
+$messages['az'] = array(
+	'requestaccount-real' => 'Həqiqi adınız:',
+	'requestaccount-email' => 'E-poçt ünvanı',
+	'requestaccount-reqtype' => 'Mövqe:',
+	'requestaccount-level-0' => 'müəllif',
+	'requestaccount-level-1' => 'redaktor',
+	'confirmaccount-real-q' => 'Ad',
+	'confirmaccount-email-q' => 'E-poçt',
+	'confirmaccount-bio-q' => 'Bioqrafiya',
+	'confirmaccount-name' => 'İstifadəçi adı',
+	'confirmaccount-real' => 'Ad:',
+	'confirmaccount-email' => 'E-poçt:',
+	'confirmaccount-reqtype' => 'mövqe:',
+	'confirmaccount-pos-0' => 'müəllif',
+	'confirmaccount-pos-1' => 'redaktor',
+	'confirmaccount-bio' => 'Bioqrafiya:',
+	'confirmaccount-noreason' => '(heç biri)',
+	'confirmaccount-ip' => 'IP ünvanı:',
+	'confirmaccount-submit' => 'Təsdiq et',
+	'usercredentials-user' => 'İstifadəçi adı:',
+	'usercredentials-email' => 'E-poçt:',
+	'usercredentials-real' => 'Həqiqi adınız:',
+	'usercredentials-bio' => 'Bioqrafiya:',
+);
+
 /** Bikol Central (Bikol Central)
  * @author Filipinayzd
  */
@@ -1015,9 +971,10 @@ $messages['be'] = array(
 	'confirmaccount-submit' => 'Пацвердзіць',
 );
 
-/** Belarusian (Taraškievica orthography) (Беларуская (тарашкевіца))
+/** Belarusian (Taraškievica orthography) (‪Беларуская (тарашкевіца)‬)
  * @author EugeneZelenko
  * @author Jim-by
+ * @author Zedlik
  */
 $messages['be-tarask'] = array(
 	'requestaccount' => 'Запыт на стварэньне рахунку',
@@ -1039,17 +996,16 @@ $messages['be-tarask'] = array(
 	'requestaccount-areas-text' => 'Выберыце вобласьці інтарэсаў, у якіх Вы кампэтэнтны альбо на якімі Вы зьбіраецеся працаваць у найбольшай ступені.',
 	'requestaccount-ext-text' => 'Наступная інфармацыя будзе прыватнай і будзе выкарыстана толькі для апрацоўкі гэтага запыту.
 Вы можаце падаць спосабы кантактаў, напрыклад, нумар тэлефона, каб пацьвердзіць ідэнтычнасьць.',
-	'requestaccount-bio-text' => 'Вашая біяграфія будзе па змоўчваньні разьмешчаная на Вашай старонцы ўдзельніка.
-Паспрабуйце уключыць якую-небудзь інфармацыю аб вашай адукацыі.
-Упэўніцеся, што Вы ня супраць апублікаваньня падобнай інфармацыі.
-Вашае імя можа быць зьменена праз [[Special:Preferences|Вашыя ўстаноўкі]].',
+	'requestaccount-bio-text' => 'Паспрабуйце уключыць любыя адпаведныя ступені ў Вашай біяграфіі ніжэй.',
+	'requestaccount-bio-text-i' => "'''Вашая біяграфія будзе разьмешчаная на Вашай старонцы ўдзельніка.'''
+Упэўніцеся, што Вы ня супраць апублікаваньня падобнай інфармацыі.",
 	'requestaccount-real' => 'Сапраўднае імя:',
 	'requestaccount-same' => '(такое ж як і сапраўднае імя)',
 	'requestaccount-email' => 'Адрас электроннай пошты:',
 	'requestaccount-reqtype' => 'Пасада:',
 	'requestaccount-level-0' => 'аўтар',
 	'requestaccount-level-1' => 'рэдактар',
-	'requestaccount-bio' => 'Асабістая біяграфія:',
+	'requestaccount-bio' => 'Асабістая біяграфія (толькі звычайны тэкст):',
 	'requestaccount-attach' => 'Рэзюмэ (неабавязковае):',
 	'requestaccount-notes' => 'Дадатковая інфармацыя:',
 	'requestaccount-urls' => 'Сьпіс сайтаў, калі ёсьць (кожны ў асобным радку):',
@@ -1147,7 +1103,7 @@ $3
 	'confirmaccount-notes' => 'Дадатковая інфармацыя:',
 	'confirmaccount-urls' => 'Сьпіс сайтаў:',
 	'confirmaccount-none-p' => '(не пададзена)',
-	'confirmaccount-confirm' => 'Выкарыстоўвайце ўстаноўкі ніжэй для зацьверджаньня, адхіленьня ці адкладаньня запыту:',
+	'confirmaccount-confirm' => 'Выкарыстоўвайце налады ніжэй для зацьверджаньня, адхіленьня ці адкладаньня запыту:',
 	'confirmaccount-econf' => '(пацьверджаны)',
 	'confirmaccount-reject' => '(адхілены [[User:$1|$1]] $2)',
 	'confirmaccount-rational' => 'Абгрунтаваньне пададзенае падаўшаму запыт:',
@@ -1337,7 +1293,7 @@ $3
 	'confirmaccount-notes' => 'Допълнителни бележки:',
 	'confirmaccount-urls' => 'Списък с уебсайтове:',
 	'confirmaccount-confirm' => 'Изберете да одобрите, отхвърлите или задържите тази заявка:',
-	'confirmaccount-reject' => '(отказана от [[Потребител:$1|$1]] на $2)',
+	'confirmaccount-reject' => '(отказана от [[User:$1|$1]] на $2)',
 	'confirmaccount-rational' => 'Обосновка към кандидата:',
 	'confirmaccount-noreason' => '(няма)',
 	'confirmaccount-autorej' => '(тази заявка автоматично беше отхвърлена заради неактивност)',
@@ -1411,6 +1367,8 @@ $2
 
 /** Bengali (বাংলা)
  * @author Bellayet
+ * @author Ehsanulhb
+ * @author Wikitanvir
  * @author Zaheen
  */
 $messages['bn'] = array(
@@ -1437,13 +1395,26 @@ $messages['bn'] = array(
 	'requestaccount-submit' => 'অ্যাকাউন্ট অনুরোধ করুন',
 	'requestaccount-email-subj-admin' => '{{SITENAME}}-এ অ্যাকাউন্ট অনুরোধ',
 	'confirmaccounts' => 'অ্যাকাউন্ট অনুরোধ নিশ্চিত',
+	'confirmaccount-none-o' => 'তালিকায় বর্তমানে কোনো খোলা অমীমাংসিত অ্যাকাউন্ট অনুরোধ নেই।',
 	'confirmaccount-real-q' => 'নাম',
 	'confirmaccount-email-q' => 'ইমেইল',
 	'confirmaccount-bio-q' => 'জীবনী',
 	'confirmaccount-showopen' => 'অনুরোধ খোলা',
 	'confirmaccount-showrej' => 'অনুরোধ পরিত্যক্ত হয়েছে',
+	'confirmaccount-showheld' => 'অপেক্ষমাণ অনুরোধসমূহ',
 	'confirmaccount-showexp' => 'অনুরোধ মেয়াদোত্তীর্ণ হয়ে গেছে',
+	'confirmaccount-review' => 'পর্যবেক্ষণ',
+	'confirmaccount-types' => 'নিচ থেকে একটি অ্যাকাউন্ট নিশ্চিতকরণ লাইন নির্বাচন করুন:',
 	'confirmaccount-all' => '(সারিতে সব দেখাও)',
+	'confirmaccount-type' => 'লাইন:',
+	'confirmaccount-q-open' => 'খোলা অনুরোধসমূহ',
+	'confirmaccount-q-held' => 'গ্রহণকৃত অনুরোধসমূহ',
+	'confirmaccount-q-rej' => 'সাম্প্রতিককালে বাতিলকৃত অনুরোধসমূহ',
+	'confirmaccount-q-stale' => 'মেয়াদউত্তীর্ণ অনুরোধসমূহ',
+	'confirmaccount-leg-user' => 'ব্যবহারকারী অ্যাকাউন্ট',
+	'confirmaccount-leg-areas' => 'আগ্রহের মূল ক্ষেত্র',
+	'confirmaccount-leg-person' => 'ব্যক্তিগত তথ্য',
+	'confirmaccount-leg-other' => 'অন্যান্য তথ্য',
 	'confirmaccount-name' => 'ব্যবহারকারী নাম',
 	'confirmaccount-real' => 'নাম:',
 	'confirmaccount-email' => 'ইমেইল:',
@@ -1455,6 +1426,37 @@ $messages['bn'] = array(
 	'confirmaccount-notes' => 'অতিরিক্ত মন্তব্য:',
 	'confirmaccount-urls' => 'ওয়েবসাইটের তালিকা:',
 	'confirmaccount-none-p' => '(দেয়া হয়নি)',
+	'confirmaccount-confirm' => 'গ্রহণ, বর্জন, বা অপেক্ষা করতে নিচের অপশনগুলো ব্যবহার করুন:',
+	'confirmaccount-econf' => '(নিশ্চিতকৃত)',
+	'confirmaccount-reject' => '([[User:$1|$1]] দ্বারা বাতিলকৃত হয়েছে $2টার সময়)',
+	'confirmaccount-noreason' => '(নেই)',
+	'confirmaccount-autorej' => 'এই অনুরোধটি নিষ্ক্রিয়তার কারণে স্বয়ংক্রিয়ভাবে বাতিল হয়ে গেছে',
+	'confirmaccount-create' => 'গৃহীত (অ্যাকাউন্ট তৈরি)',
+	'confirmaccount-deny' => 'বাতিল (তালিকা থেকে বাতিল)',
+	'confirmaccount-hold' => 'অপেক্ষমান',
+	'confirmaccount-spam' => 'স্প্যাম (ই-মেইল পাঠাবেন না)',
+	'confirmaccount-reason' => 'মন্তব্য (ই-মেইলে যোগ করা হবে)',
+	'confirmaccount-ip' => 'আইপি ঠিকানা:',
+	'confirmaccount-legend' => 'এই অ্যাকাউন্টটি নিশ্চিত/বাতিল করুন',
+	'confirmaccount-submit' => 'নিশ্চিত করুন',
+	'confirmaccount-needreason' => 'আপনাকে নিচের মন্তব্য বাক্সে অবশ্যই একটি কারণ দিতে হবে।',
+	'confirmaccount-canthold' => 'এই অনুরোধটি ইতিমধ্যেই হয় অপেক্ষমান বা অপসারিত।',
+	'confirmaccount-rej' => 'অ্যাকাউন্ট অনুরোধ সফলভাবে বাতিল করা হয়েছে।',
+	'confirmaccount-viewing' => '(বর্তমানে [[User:$1|$1]]-এর দ্বারা পরিদর্শিত হয়েছে)',
+	'confirmaccount-summary' => 'নতুন ব্যবহারকারীর জীবনীসহ পাতা তৈরি',
+	'usercredentials-user' => 'ব্যবহারকারী নাম:',
+	'usercredentials-leg-user' => 'ব্যবহারকারী অ্যাকাউন্ট',
+	'usercredentials-leg-areas' => 'আগ্রহের মূল ক্ষেত্র',
+	'usercredentials-leg-person' => 'ব্যক্তিগত তথ্য',
+	'usercredentials-leg-other' => 'অন্যান্য তথ্য',
+	'usercredentials-email' => 'ই-মেইল:',
+	'usercredentials-real' => 'প্রকৃত নাম:',
+	'usercredentials-bio' => 'জীবনী:',
+	'usercredentials-attach' => 'রেজুমে/সিভি:',
+	'usercredentials-notes' => 'অতিরিক্ত মন্তব্য:',
+	'usercredentials-urls' => 'ওয়েবসাইটের তালিকা:',
+	'usercredentials-ip' => 'মূল আইপি ঠিকানা:',
+	'usercredentials-member' => 'অধিকারসমূহ:',
 );
 
 /** Breton (Brezhoneg)
@@ -1482,14 +1484,16 @@ Kaset e vo deoc'h ho ker-tremen dre bostel ivez pa vo bet krouet ho kont ganeoc'
 	'requestaccount-areas-text' => "Dibabit an tachennoù ma'z oc'h barrek da vat, pe ar re ma'z oc'h tuet da gemer perzh ar muiañ.",
 	'requestaccount-ext-text' => "Prevez e chomo an titour da-heul ha n'hallo bezañ implijet nemet evit ar reked-mañ.
 Gallout a rit rollañ darempredoù evel an niverennoù pellgomz evit kaout un tamm skoazell da gadarnaat piv oc'h.",
-	'requestaccount-bio-text' => "Dre zoiuer e vo lakaet ho tamm buhez war ho pajenn implijer. Klaskit skrivañ warni traoù a ro kred ennoc'h. Gwiriit mat ez eo mat deoc'h skignañ seurt titouroù. Cheñch hoc'h anv a c'hallit en ur ober gant [[Special:Preferences|Penndibaboù]].",
+	'requestaccount-bio-text' => 'Klaskit merkañ tammoù testenioù talvoudus diwar-benn ho puhezskrid amañ dindan.',
+	'requestaccount-bio-text-i' => "'''Lakaet e vo ho tamm buhezskrid da vezañ an danvez pennañ evit ho pajenn implijer.'''
+Bezit sur eo mat deoc'h embann seurt titouroù.",
 	'requestaccount-real' => 'Anv gwir :',
 	'requestaccount-same' => '(heñvel ou zh ar gwir anv)',
 	'requestaccount-email' => "Chomlec'h postel :",
 	'requestaccount-reqtype' => "Lec'hiadur :",
 	'requestaccount-level-0' => 'aozer',
 	'requestaccount-level-1' => 'skridaozer',
-	'requestaccount-bio' => 'Buhezskrid personel :',
+	'requestaccount-bio' => 'Buhezskrid personel (skrid plaen nemetken) :',
 	'requestaccount-attach' => 'CV (diret) :',
 	'requestaccount-notes' => 'Notennoù ouzhpenn :',
 	'requestaccount-urls' => "Roll lec'hiennoù web, dispartiet gant lammoù-linenn :",
@@ -1505,7 +1509,7 @@ Da vat eo ma anv gwir an hini am eus merket dindan "Anv gwir".',
 	'requestaccount-sent' => "Kaset eo bet ervat ho koulenn krouién ur gont implijer; lakaet eo bet e roll gortoz ar goulennoù da vezañ aprouet.
 Ur postel kadarnaat zo bet kaset d'ho chomlec'h postel.",
 	'request-account-econf' => "Kadarnaet eo bet ho chomlec'h postel ha meneget e vo evel m'emañ en ho koulenn kont.",
-	'requestaccount-email-subj' => "Gwiriañ ar chomlec'h postel evit {{SITENAME}}",
+	'requestaccount-email-subj' => "Kadarnadenn chomlec'h postel evit {{SITENAME}}",
 	'requestaccount-email-body' => "Unan bennak, c'hwi moarvat, gant ar chomlec'h IP \$1, en deus goulennet sevel ur gont \"\$2\" gant ar chomlec'h postel-mañ war {{SITENAME}}.
 
 Evit kadarnaat eo deoc'h ar gont-se war {{SITENAME}} e gwirionez, digorit al liamm-mañ en ho merdeer :
@@ -1679,13 +1683,14 @@ $messages['bs'] = array(
 	'requestaccount-leg-person' => 'Lične informacije',
 	'requestaccount-leg-other' => 'Ostale informacije',
 	'requestaccount-leg-tos' => 'Uslovi usluge',
+	'requestaccount-areas-text' => 'Odaberite tematske oblasti ispod u kojima imate formalno iskustva ili u kojima bi željeli najviše raditi.',
 	'requestaccount-real' => 'Pravo ime:',
 	'requestaccount-same' => '(isto kao i pravo ime)',
 	'requestaccount-email' => 'E-mail adresa:',
 	'requestaccount-reqtype' => 'Pozicija:',
 	'requestaccount-level-0' => 'autor',
 	'requestaccount-level-1' => 'uređivač',
-	'requestaccount-bio' => 'Lična biografija:',
+	'requestaccount-bio' => 'Lična biografija (samo obični tekst):',
 	'requestaccount-attach' => 'Biografija (opcionalno):',
 	'requestaccount-notes' => 'Dodatne napomene:',
 	'requestaccount-urls' => 'Spisak web stranica, ako ih ima (odvojiti sa novim redovima):',
@@ -1708,6 +1713,7 @@ Ne možete podnositi više zahtjeva.',
 	'confirmaccount-list' => 'Ispod je spisak zahtjeva za računima koji čekaju na odobravanje.
 Jednom podnesen zahtjev koji se odobri ili odbije će se ukloniti sa ovog spiska.',
 	'confirmaccount-none-o' => 'Trenutno nema otvorenih zahtjeva na račun na čekanju na ovom spisku.',
+	'confirmaccount-none-h' => 'Trenutno nema zadržanih zahtjeva na račun na čekanju na ovom spisku.',
 	'confirmaccount-real-q' => 'Ime',
 	'confirmaccount-email-q' => 'E-mail',
 	'confirmaccount-bio-q' => 'Biografija',
@@ -1761,6 +1767,9 @@ Da bi ste se prijaviti, molimo idite na {{fullurl:Special:UserLogin}}.',
 	'usercredentials-real' => 'Pravo ime:',
 	'usercredentials-bio' => 'Biografija:',
 	'usercredentials-attach' => 'Biografija:',
+	'usercredentials-notes' => 'Dodatne napomene:',
+	'usercredentials-urls' => 'Spisak web sajtova:',
+	'usercredentials-ip' => 'Izvorna IP adresa:',
 	'usercredentials-member' => 'Prava:',
 );
 
@@ -1832,6 +1841,7 @@ $messages['cs'] = array(
 	'requestaccount-leg-areas' => 'Hlavní oblasti zájmu',
 	'requestaccount-leg-person' => 'Osobní informace',
 	'requestaccount-leg-other' => 'Další informace',
+	'requestaccount-leg-tos' => 'Podmínky služby',
 	'requestaccount-acc-text' => 'Na Vaši e-mailovou adresu bude po odeslání žádosti zaslána potvrzující zpráva. Prosím, reagujte na ni kliknutím na odkaz v ní. Poté Vám bude zasláno Vaše heslo.',
 	'requestaccount-areas-text' => 'Níže zvolte tématické oblasti, ve kterých jste formálně expertem nebo by jste v nich rádi vykonávali vaši práci.',
 	'requestaccount-bio-text' => 'Vaše bibliografie bude prvotním obsahem vaši uživatelské stránky. Pokuste se uvést všechny reference. Zvažte, zda jste ochotni zveřejnit tyto informace. Jméno si můžete změnit ve [[Special:Preferences|svém nastavení]].',
@@ -1863,6 +1873,12 @@ Pro potvrzení, že tento účet skutečně patří Vám a pro aktivování e-ma
 $3
 
 Pokud jste to *nebyli* Vy, neklikejte na odkaz. Tento potvrzovací kód vyprší $4.',
+	'requestaccount-email-subj-admin' => 'Žádost o účet na {{SITENAME}}',
+	'requestaccount-email-body-admin' => '"$1" požádal o účet a čeká na vaše schválení.
+E-mail byla ověřena. Žádost můžete schválit zde "$2".',
+	'acct_request_throttle_hit' => 'Promiňte, ale už jste {{gender:|požádal|požádala|požádali}} o vytvoření {{PLURAL:$1|1 účtu|$1 účtů}}.
+Další žádost již není možná.',
+	'requestaccount-loginnotice' => "Chcete-li získat uživatelský účet, je třeba o něj '''[[Special:RequestAccount|požádat]]'''.",
 	'confirmaccounts' => 'Potvrdit žádosti o účet',
 	'confirmedit-desc' => 'Dává byrokratům možnost potvrzovat žádosti o účet',
 	'confirmaccount-none-o' => 'V tomto seznamu nejsou žádné požadavky na schválení vytvořeného účtu.',
@@ -1970,6 +1986,7 @@ $messages['da'] = array(
 
 /** German (Deutsch)
  * @author Als-Holder
+ * @author Kghbln
  * @author Leithian
  * @author MF-Warburg
  * @author Pill
@@ -2000,16 +2017,16 @@ Sobald dein Konto angelegt wurde, wird dir dein Passwort per E-Mail zugeschickt.
 	'requestaccount-areas-text' => 'Wähle die Themengebiete aus, in denen du das meiste Fachwissen hast oder wo du am meisten involviert sein wirst.',
 	'requestaccount-ext-text' => 'Die folgenden Informationen werden vertraulich behandelt und ausschließlich für diesen Antrag verwendet.
 Du kannst Kontakt-Angaben wie eine Telefonnummer machen, um die Bearbeitung deines Antrags zu vereinfachen.',
-	'requestaccount-bio-text' => 'Deine Biographie wird als initialer Inhalt deiner Benutzerseite gespeichert.
-Versuche alle nötigen Empfehlungen zu erwähnen, aber stelle sicher, dass du die Informationen auch wirklich veröffentlichen möchtest.
-Du kannst deinen Namen in [[Special:Preferences|deinen Einstellungen]] ändern.',
+	'requestaccount-bio-text' => 'Versuche alle relevanten Informationen in deine untenstehende Biografie aufzunehmen.',
+	'requestaccount-bio-text-i' => "'''Deine Biografie wird als die erste Version deiner Benutzerseite veröffentlicht.'''
+Du musst daher auch tatsächlich mit der Veröffentlichung dieser Daten einverstanden sein.",
 	'requestaccount-real' => 'Bürgerlicher Name:',
 	'requestaccount-same' => '(wie mein bürgerlicher Name)',
 	'requestaccount-email' => 'E-Mail-Adresse:',
 	'requestaccount-reqtype' => 'Position:',
 	'requestaccount-level-0' => 'Autor',
 	'requestaccount-level-1' => 'Bearbeiter',
-	'requestaccount-bio' => 'Persönliche Biographie:',
+	'requestaccount-bio' => 'Persönliche Biografie (nur Text):',
 	'requestaccount-attach' => 'Lebenslauf (optional):',
 	'requestaccount-notes' => 'Zusätzliche Angaben:',
 	'requestaccount-urls' => 'Liste von Webseiten (durch Zeilenumbrüche getrennt):',
@@ -2188,7 +2205,7 @@ Möglicherweise gibt es auf der Seite Kontaktadressen, an die du dich wenden kan
 	'right-lookupcredentials' => '[[Special:UserCredentials|Benutzerempfehlungsschreiben]] sehen',
 );
 
-/** German (formal address) (Deutsch (Sie-Form))
+/** German (formal address) (‪Deutsch (Sie-Form)‬)
  * @author Imre
  * @author The Evil IP address
  * @author Umherirrender
@@ -2767,17 +2784,14 @@ Tu contraseña será enviada cuando tu cuenta sea creada.',
 	'requestaccount-areas-text' => 'Seleccione las áreas en las que tiene experiencia formal o que le interesa colaborar.',
 	'requestaccount-ext-text' => 'La siguiente información se mantiene privada y sólo será usada para esta solicitud.
 Usted puede desear enlistar contactos como un número telefónico para ayudar en la confirmación de la identidad.',
-	'requestaccount-bio-text' => 'Tu biografía será configurado como el contenido por defecto de tu página de usuario.
-Trate de incluir alguna credencial.
-Asegúrese de estar conforme con la publicación de tal información.
-Tu nombre puede ser cambiado a través de [[Special:Preferences|Tus preferencias]].',
+	'requestaccount-bio-text' => 'Trata de incluir alguna credencial relevante en tu biografía abajo.',
 	'requestaccount-real' => 'Nombre real:',
 	'requestaccount-same' => '[Tu nombre real]',
 	'requestaccount-email' => 'Dirección de correo electrónico:',
 	'requestaccount-reqtype' => 'Posición:',
 	'requestaccount-level-0' => 'autor',
 	'requestaccount-level-1' => 'editor',
-	'requestaccount-bio' => 'Biografía personal:',
+	'requestaccount-bio' => 'Biografía personal (sólo texto simple):',
 	'requestaccount-attach' => 'Campo (Opcional):',
 	'requestaccount-notes' => 'Notas adicionales:',
 	'requestaccount-urls' => 'Lista de sitios web [sepáralos por renglones]',
@@ -2957,6 +2971,7 @@ Verifique que el nombre se ha escrito correctamente.',
 
 /** Estonian (Eesti)
  * @author Avjoska
+ * @author Pikne
  */
 $messages['et'] = array(
 	'requestaccount-leg-user' => 'Kasutajakonto',
@@ -2970,7 +2985,7 @@ $messages['et'] = array(
 	'requestaccount-level-0' => 'autor',
 	'requestaccount-level-1' => 'toimetaja',
 	'requestaccount-info' => '(?)',
-	'requestaccount-bio' => 'Personaalne biograafia:',
+	'requestaccount-bio' => 'Isiku biograafia (vaid lihttekst):',
 	'requestaccount-attach' => 'Resümee või CV (valikuline):',
 	'requestaccount-notes' => 'Lisainfo:',
 	'confirmaccount-real-q' => 'Nimi',
@@ -3014,7 +3029,7 @@ $messages['eu'] = array(
 	'requestaccount-leg-person' => 'Norberaren informazioa',
 	'requestaccount-leg-other' => 'Bestelako informazioa',
 	'requestaccount-real' => 'Benetako izena:',
-	'requestaccount-email' => 'Email helbidea:',
+	'requestaccount-email' => 'E-posta helbidea:',
 	'requestaccount-level-0' => 'egilea',
 	'requestaccount-bio' => 'Norberaren biografia:',
 	'requestaccount-attach' => 'Curriculuma (hautazkoa):',
@@ -3317,14 +3332,16 @@ Une fois que le compte est accepté, vous recevrez un courriel de notification e
 	'requestaccount-areas-text' => 'Choisissez les domaines dans lesquels vous avez une expertise démontrée, ou dans lesquels vous êtes enclin à contribuer le plus.',
 	'requestaccount-ext-text' => 'L’information suivante reste privée et ne pourra être utilisée que pour cette requête. 
 	Vous avez la possibilité de lister des contacts tels qu’un numéro de téléphone pour obtenir une assistance pour confirmer votre identité.',
-	'requestaccount-bio-text' => 'Votre biographie sera mise par défaut sur votre page utilisateur. Essayez d’y mettre vos recommandations. Assurez-vous que vous pouvez diffuser sans crainte les informations. Votre nom peut être changé en utilisant [[Special:Preferences]].',
+	'requestaccount-bio-text' => "Essayez d'inclure toute références pertinentes à votre biographie ci-dessous.",
+	'requestaccount-bio-text-i' => "'''Votre biographie servira comme contenu initial de votre page utilisateur.'''
+Assurez-vous d'être à l'aise de publier de telles informations.",
 	'requestaccount-real' => 'Nom réel :',
 	'requestaccount-same' => '(nom figurant dans votre état civil)',
 	'requestaccount-email' => 'Adresse électronique :',
 	'requestaccount-reqtype' => 'Situation :',
 	'requestaccount-level-0' => 'auteur',
 	'requestaccount-level-1' => 'contributeur',
-	'requestaccount-bio' => 'Biographie personnelle :',
+	'requestaccount-bio' => 'Biographie personnelle (texte brut seulement)  :',
 	'requestaccount-attach' => 'CV (facultatif) :',
 	'requestaccount-notes' => 'Notes supplémentaires :',
 	'requestaccount-urls' => "Liste des sites Web. S'il y en a plusieurs, séparez-les par un saut de ligne :",
@@ -3513,17 +3530,14 @@ Et pués, un mot de pâssa serat mandâ per mèssageria èlèctronica quand vout
 	'requestaccount-areas-text' => 'Chouèsésséd los domênos que vos avéd una èxpèrtisa dèmontrâ, ou ben que vos éte encllin a contribuar lo ples.',
 	'requestaccount-ext-text' => 'Ceta enformacion réste privâ et porrat étre utilisâ ren que por ceta demanda.
 Vos avéd la possibilitât de listar des contactes coment un numerô de tèlèfono por avêr una assistance por confirmar voutra identitât.',
-	'requestaccount-bio-text' => 'Voutra biografia serat betâ per dèfôt sur voutra pâge utilisator.
-Tâchiéd d’y betar voutres recomandacions.
-Assurâd-vos que vos pouede difusar sen crenta les enformacions.
-Voutron nom pôt étre changiê en utilisent voutres [[Special:Preferences|prèferences]].',
+	'requestaccount-bio-text' => 'Tâchiéd d’encllure totes les recomandacions que vont avouéc dens voutra biografia ce-desot.',
 	'requestaccount-real' => 'Veré nom :',
 	'requestaccount-same' => '(nom que figure dens voutron ètat civilo)',
 	'requestaccount-email' => 'Adrèce èlèctronica :',
 	'requestaccount-reqtype' => 'Situacion :',
 	'requestaccount-level-0' => 'ôtor',
 	'requestaccount-level-1' => 'contributor',
-	'requestaccount-bio' => 'Biografia a sè :',
+	'requestaccount-bio' => 'Biografia a sè (ren que lo tèxto bruto) :',
 	'requestaccount-attach' => 'CV (u chouèx) :',
 	'requestaccount-notes' => 'Notes de ples :',
 	'requestaccount-urls' => 'Lista des setos vouèbe. S’y en at un mouél, sèparâd-los per un sôt de legne :',
@@ -3550,7 +3564,7 @@ $3
 Voutron mot de pâssa vos serat mandâ ren que se voutron compto utilisator est fêt.
 S’o ére *pas* lo câs, utilisâd pas cél lim.
 Ceti code de confirmacion èxpirerat lo $4.',
-	'requestaccount-email-subj-admin' => 'Demanda de compto utilisator dessus {{SITENAME}}',
+	'requestaccount-email-subj-admin' => 'Demanda de compto dessus {{SITENAME}}',
 	'requestaccount-email-body-admin' => '« $1 » at demandâ un compto utilisator et sè trove en atenta de confirmacion.
 L’adrèce èlèctronica at étâ confirmâ. Vos pouede aprovar la demanda ique « $2 ».',
 	'acct_request_throttle_hit' => 'Dèsolâ, vos éd ja demandâ $1 compto{{PLURAL:$1||s}} utilisator.
@@ -3568,20 +3582,63 @@ Los comptos accèptâs seront fêts et pués enlevâs de ceta lista. Los comptos
 	'confirmaccount-real-q' => 'Nom',
 	'confirmaccount-email-q' => 'Adrèce èlèctronica',
 	'confirmaccount-bio-q' => 'Biografia',
-	'confirmaccount-showopen' => 'Demandes uvèrtes',
+	'confirmaccount-showopen' => 'demandes uvèrtes',
 	'confirmaccount-showrej' => 'Demandes refusâs',
-	'confirmaccount-showheld' => 'Demandes resèrvâs',
-	'confirmaccount-showexp' => 'Demandes èxpirâs',
+	'confirmaccount-showheld' => 'demandes resèrvâs',
+	'confirmaccount-showexp' => 'demandes èxpirâs',
 	'confirmaccount-review' => 'Revêre',
+	'confirmaccount-all' => '(fâre vêre totes les feles)',
+	'confirmaccount-type' => 'Fela :',
+	'confirmaccount-type-0' => 'ôtors possiblos',
+	'confirmaccount-type-1' => 'contributors possiblos',
+	'confirmaccount-q-open' => 'demandes uvèrtes',
+	'confirmaccount-q-held' => 'demandes resèrvâs',
+	'confirmaccount-q-rej' => 'demandes refusâs dèrriérement',
+	'confirmaccount-q-stale' => 'demandes èxpirâs',
+	'confirmaccount-leg-user' => 'Compto utilisator',
+	'confirmaccount-leg-areas' => 'Centros d’entèrèts principâls',
+	'confirmaccount-leg-person' => 'Enformacions a sè',
+	'confirmaccount-leg-other' => 'Ôtres enformacions',
 	'confirmaccount-name' => 'Nom d’utilisator',
 	'confirmaccount-real' => 'Nom :',
 	'confirmaccount-email' => 'Mèl. :',
+	'confirmaccount-reqtype' => 'Situacion :',
+	'confirmaccount-pos-0' => 'ôtor',
+	'confirmaccount-pos-1' => 'contributor',
 	'confirmaccount-bio' => 'Biografia :',
-	'confirmaccount-attach' => 'CV/Rèsumâ :',
-	'confirmaccount-notes' => 'Notes suplèmentères :',
+	'confirmaccount-attach' => 'CV :',
+	'confirmaccount-notes' => 'Notes de ples :',
 	'confirmaccount-urls' => 'Lista des setos vouèbe :',
 	'confirmaccount-none-p' => '(pas montâ)',
 	'confirmaccount-econf' => '(confirmâ)',
+	'confirmaccount-reject' => '(refusâ per [[User:$1|$1]] lo $2)',
+	'confirmaccount-rational' => 'Rêson balyê u candidat :',
+	'confirmaccount-noreason' => '(niona)',
+	'confirmaccount-create' => 'Aprobacion (fât lo compto)',
+	'confirmaccount-deny' => 'Refus (suprime lo compto)',
+	'confirmaccount-hold' => 'Resèrvâ',
+	'confirmaccount-spam' => 'Spame (mandâd gins de mèssâjo)',
+	'confirmaccount-reason' => 'Comentèro (figurerat dens lo mèssâjo) :',
+	'confirmaccount-ip' => 'Adrèce IP :',
+	'confirmaccount-legend' => 'Confirmar / refusar ceti compto',
+	'confirmaccount-submit' => 'Confirmar',
+	'confirmaccount-viewing' => '(orendrêt aprés étre vu per [[User:$1|$1]])',
+	'confirmaccount-wsum' => 'Benvegnua !',
+	'confirmaccount-email-subj' => 'Demanda de compto dessus {{SITENAME}}',
+	'usercredentials' => 'Refèrences a l’utilisator',
+	'usercredentials-user' => 'Nom d’utilisator :',
+	'usercredentials-leg-user' => 'Compto utilisator',
+	'usercredentials-leg-areas' => 'Centros d’entèrèts principâls',
+	'usercredentials-leg-person' => 'Enformacions a sè',
+	'usercredentials-leg-other' => 'Ôtres enformacions',
+	'usercredentials-email' => 'Adrèce èlèctronica :',
+	'usercredentials-real' => 'Veré nom :',
+	'usercredentials-bio' => 'Biografia :',
+	'usercredentials-attach' => 'CV :',
+	'usercredentials-notes' => 'Notes de ples :',
+	'usercredentials-urls' => 'Lista des setos vouèbe :',
+	'usercredentials-ip' => 'Adrèce IP originâla :',
+	'usercredentials-member' => 'Drêts :',
 );
 
 /** Western Frisian (Frysk)
@@ -3608,6 +3665,7 @@ $messages['ga'] = array(
 
 /** Galician (Galego)
  * @author Alma
+ * @author Elisardojm
  * @author Toliño
  * @author Xosé
  */
@@ -3630,17 +3688,16 @@ Unha vez que se aprobe a conta, recibirá unha mensaxe de notificación por corr
 	'requestaccount-areas-text' => 'Seleccione embaixo as áreas dos temas dos que é máis experto ou nos que lle gustaría traballar máis.',
 	'requestaccount-ext-text' => 'A información seguinte mantense como reservada e só se usará para esta solicitude.
 	Pode querer listar contactos, como un número de teléfono, para axudar a identificar a confirmación.',
-	'requestaccount-bio-text' => 'A súa biografía aparecerá como contido predefinido da súa páxina de usuario.
-Tente incluír credenciais.
-Asegúrese de non ter problema coa publicación desa información.
-O seu nome pódese cambiar [[Special:Preferences|nas súas preferencias]].',
+	'requestaccount-bio-text' => 'Tente incluír algunhas credenciais relevantes na súa biografía.',
+	'requestaccount-bio-text-i' => "'''A súa biografía será definida como o contido inicial da súa páxina de usuario.'''
+Asegúrese de que se sinte cómodo publicando esa información.",
 	'requestaccount-real' => 'Nome real:',
 	'requestaccount-same' => '(o mesmo que o nome real)',
 	'requestaccount-email' => 'Enderezo de correo electrónico:',
 	'requestaccount-reqtype' => 'Posición:',
 	'requestaccount-level-0' => 'autor',
 	'requestaccount-level-1' => 'editor',
-	'requestaccount-bio' => 'Biografía persoal:',
+	'requestaccount-bio' => 'Biografía persoal (só texto):',
 	'requestaccount-attach' => 'Curriculum Vitae (opcional):',
 	'requestaccount-notes' => 'Notas adicionais:',
 	'requestaccount-urls' => 'Lista de sitios web, de habelos, (separados cun parágrafo novo):',
@@ -4143,6 +4200,7 @@ $messages['haw'] = array(
 );
 
 /** Hebrew (עברית)
+ * @author Amire80
  * @author Rotemliss
  * @author StuB
  * @author YaronSh
@@ -4164,29 +4222,81 @@ $messages['he'] = array(
 	'requestaccount-acc-text' => 'לכתובת הדוא"ל שלכם תישלח הודעת אישור לאחר שהבקשה תתקבל.
 אנא הגיבו על ידי לחיצה על הקישור לאישור המסופק בהודעת הדוא"ל.
 כמו כן, הסיסמה שלכם תישלח אליכם בעת יצירת חשבונכם.',
+	'requestaccount-areas-text' => 'בחרו את הנושאים שבהם יש לכם מומחיות פורמלית או שבהם אתם עושים את רוב העבודה.',
 	'requestaccount-ext-text' => 'המידע הבא נשמר בפרטיות וישמש עבור בקשה זו בלבד.
 יתכן שתרצו לציין פרטי קשר כגון מספר טלפון כדי לסייע באימות זהותכם.',
+	'requestaccount-bio-text' => 'נסו לכלול הסמכות רלוונטיות בביוגרפיה להלן.',
+	'requestaccount-bio-text-i' => "'''הביוגרפיה שלכם תוגדר בתור התוכן ההתחלתי לדף המשתמש שלכם.'''
+נא לוודא שאתם מסכימים לפרסם מידע כזה.",
 	'requestaccount-real' => 'שם אמיתי:',
 	'requestaccount-same' => '(כמו השם האמיתי)',
 	'requestaccount-email' => 'כתובת הדוא"ל:',
 	'requestaccount-reqtype' => 'משרה:',
 	'requestaccount-level-0' => 'מחבר',
 	'requestaccount-level-1' => 'עורך',
-	'requestaccount-bio' => 'ביוגרפיה אישית:',
+	'requestaccount-bio' => 'ביוגרפיה אישית (רק טקסט פשוט):',
 	'requestaccount-attach' => 'קורות חיים (אופציונאלי):',
 	'requestaccount-notes' => 'הערות נוספות:',
 	'requestaccount-urls' => 'רשימה של אתרים, אם יש כאלה (הפרידו באמצעות שורות חדשות):',
 	'requestaccount-agree' => 'עליכם לאמת כי השם שציינתם הוא שמכם האמיתי ושהוא נכון ושאתם מסכימים לתנאי השימוש שלנו.',
 	'requestaccount-inuse' => 'שם המשתמש כבר נמצא בשימוש בבקשת חשבון ממתינה.',
 	'requestaccount-tooshort' => 'על הביוגרפיה שלכם להכיל לפחות {{PLURAL:$1|מילה אחת|$1 מילים}}.',
+	'requestaccount-emaildup' => 'בקשת חשבון ממתינה אחרת משתמשת באותה כתובת דוא"ל.',
 	'requestaccount-exts' => 'סוג הקובץ המצורף אינו מורשה.',
+	'requestaccount-resub' => 'מסיבות של אבטחת מידע יש לבחור מחדש את קובץ קורות החיים שלכם.
+השאירו את השדה הזה ריק אם אינכם רוצים לכלול כאן קובץ כזה.',
+	'requestaccount-tos' => 'קראתי והסכמתי ל[[{{MediaWiki:Requestaccount-page}}|תנאי השימוש]] של {{SITENAME}}.
+השם שציינתי תחת "השם האמתי" הוא באמת שמי האמתי.',
+	'requestaccount-submit' => 'בקשת חשבון',
+	'requestaccount-sent' => 'בקשת החשבון שלכם נשלחה בהצלחה וממתינה לסקירה.
+מכתב וידוא נשתח לכתובת הדואר האלקטרוני שלכם.',
+	'request-account-econf' => 'המערכת וידאה את נכונות כתובת הדואר האלקטרוני שלכם והיא תירשם בבקשת החשבון שלכם.',
 	'requestaccount-email-subj' => 'אימות כתובת דוא"ל עבור {{SITENAME}}',
+	'requestaccount-email-body' => 'מישהו, כנראה אתם מכתובת ה־IP‏ $1 ביקש ליצור חשבון בשם "$2" המזוהה עם כתובת הדואר האלקטרוני הזאת באתר {{SITENAME}}.
+
+כדי לאשר שהחשבון הזה אכן שייך לכם באתר {{SITENAME}}, פתחו את הקישור הבא בדפדפן שלכם:
+
+$3
+
+אם החשבון נוצר, הססמה תישלח רק אליכם.
+אם לא ביקשתם את זה, אין ללחוץ על הקישור.
+קוד האישור הזה יפוג ב־$4.',
 	'requestaccount-email-subj-admin' => 'בקשת חשבון באתר {{SITENAME}}',
+	'requestaccount-email-body-admin' => '"$1" ביקש חשבון וממתין לאישור.
+בוצע וידוא כתובת דואר אלקטרוני. אפשר לאשר את הבקשה כאן "$2".',
+	'acct_request_throttle_hit' => 'סליחה, אתם כבר ביקשתם {{PLURAL:$1|חשבון|$1 חשבונות}}.
+אי־אפשר לבקש עוד.',
 	'requestaccount-loginnotice' => "כדי לקבל חשבון משתמש, עליכם '''[[Special:RequestAccount|לבקש אחד כזה]]'''.",
+	'confirmaccount-newrequests' => "יש {{PLURAL:$1|[[Special:ConfirmAccounts|בקשה פתוחה ממתינה '''אחת''' לפתוח חשבון]], עם כתובת דואר אלקטרוני מאושרת שממתינה|'''$1''' [[Special:ConfirmAccounts|בקשות פתוחות לפתוח חשבונות]], עם כתובות דואר אלקטרוני מאושרות שממתינות}} לאישור",
 	'confirmaccounts' => 'אישור בקשות חשבון',
 	'confirmedit-desc' => 'הענקת היכולת לביורוקרטים לאשר בקשות לחשבונות',
+	'confirmaccount-maintext' => "'''הדף הזה משמש לאישור בקשות ממתינות לפתוח חשבון באתר {{SITENAME}}'''.
+
+כל בקשה לפתוח חשבון מכילה שלושה תורי־משנה.
+אחד לבקשה הפתוחה, אחד לאלה שהטיפול בהם הושהה על־ידי מפעילים אחרים בשל המתנה למידע נוסף, ועוד אחד לבקשות שנדחו לאחרונה.
+
+בזמן מענה לבקשה, יש לסקור אותה בתשומת לב ואם יש בכך צורך לוודא שהמידע בבקשה נכון.
+הפעולות שתעשו תירשמנה ביומן פרטי.
+כמו־כן, מצופה שתוכלו לסקור גם פעילות של מפעילים אחרים באישור חשבונות.",
 	'confirmaccount-list' => 'להלן מופיעה רשימת חשבונות הממתינים לאישור.
 לאחר דחייה או אישור של אחת הבקשות היא תוסר מרשימה זו.',
+	'confirmaccount-list2' => 'להלן רשימה של בקשות חשבון שנדחו לאחרונה ויימחקו אוטומטית לאחר מספר ימים.
+עדיין אפשר לאשר את החשבונות האלה, אבל כדאי לבדוק לפני־כן מדוע המפעיל דחה את הבקשה.',
+	'confirmaccount-list3' => 'להלן רשימה של בקשות חשבון שנדחו לאחרונה ויימחקו אוטומטית לאחר מספר ימים.
+עדיין אפשר לאשר את החשבונות האלה.',
+	'confirmaccount-text' => "יש בקשה ממתינה לחשבון באתר '''{{SITENAME}}'''.
+
+נא לסקור את המידע להלן בעיון.
+אם אתם מאשרים את הבקשה, השתמשו בתפריט הנפתח כדי לקבוע את מצב החשבון של המשתמש.
+עריכות בקורות החיים בבקשה לא תשפענה על האחסון הקבוע של פרטי הזיהוי.
+שימו לב שאפשר ליצור חשבון בשם אחר.
+השתמשו בזה רק כדי להימנע מהתנגשויות עם שמות אחרים.
+
+אם אתם פשוט תעזבו את הדף הזה בלי לאשר או לדחות את הבקשה הזאת, הבקשה תישאר בהמתנה.",
+	'confirmaccount-none-o' => 'אין כעת בקשות ממתינות לפתוח חשבון ברשימה הזאת.',
+	'confirmaccount-none-h' => 'אין כעת בקשות ממתינות מוחזקות לפתוח חשבון ברשימה הזאת.',
+	'confirmaccount-none-r' => 'אין כעת בקשות לפתוח חשבון שנדחו לאחרוה ברשימה הזאת.',
+	'confirmaccount-none-e' => 'אין כעת בקשות לפתוח חשבון שפג תוקפן ברשימה הזאת.',
 	'confirmaccount-real-q' => 'שם',
 	'confirmaccount-email-q' => 'דוא"ל',
 	'confirmaccount-bio-q' => 'ביוגרפיה',
@@ -4195,8 +4305,11 @@ $messages['he'] = array(
 	'confirmaccount-showheld' => 'בקשות שעוכבו',
 	'confirmaccount-showexp' => 'בקשות שפג תוקפן',
 	'confirmaccount-review' => 'סקירה',
+	'confirmaccount-types' => 'בחירת תור אישור חשבונות מתוך הרשימה להלן:',
 	'confirmaccount-all' => '(הצגת כל התורים)',
 	'confirmaccount-type' => 'תור:',
+	'confirmaccount-type-0' => 'כותבים עתידיים',
+	'confirmaccount-type-1' => 'עורכים עתידיים',
 	'confirmaccount-q-open' => 'בקשות פתוחות',
 	'confirmaccount-q-held' => 'בקשות שעוכבו',
 	'confirmaccount-q-rej' => 'בקשות שנדחו לאחרונה',
@@ -4221,14 +4334,17 @@ $messages['he'] = array(
 	'confirmaccount-confirm' => 'השתמשו באפשרויות שלהלן כדי לקבל, לדחות או לעכב בקשה זו:',
 	'confirmaccount-econf' => '(מאושרת)',
 	'confirmaccount-reject' => '(נדחתה על ידי [[User:$1|$1]] ב־$2)',
+	'confirmaccount-rational' => 'ההסבר שניתן לפונה:',
 	'confirmaccount-noreason' => '(ללא)',
-	'confirmaccount-held' => '(סומנה להמתנה על ידי [User:$1|$1]] ב־$2)',
+	'confirmaccount-autorej' => '(הבקשה הזאת נמחקה לאור חוסר פעילות)',
+	'confirmaccount-held' => '(סומנה להמתנה על ידי [[User:$1|$1]] ב־$2)',
 	'confirmaccount-create' => 'אישור (יצירת חשבון)',
 	'confirmaccount-deny' => 'דחייה (מחיקת הבקשה)',
 	'confirmaccount-hold' => 'עיכוב',
 	'confirmaccount-spam' => 'זבל (ללא שליחת הודעה בדוא"ל)',
 	'confirmaccount-reason' => 'הערה (תיכלל בהודעת הדוא"ל):',
 	'confirmaccount-ip' => 'כתובת IP:',
+	'confirmaccount-legend' => 'לאשר / לדחות את זה בחשבון',
 	'confirmaccount-submit' => 'אישור',
 	'confirmaccount-needreason' => 'יש לספק סיבה בתיבת התגובה למטה.',
 	'confirmaccount-canthold' => 'בקשה זו כבר נמצאת בהמתנה או מחוקה.',
@@ -4236,6 +4352,10 @@ $messages['he'] = array(
 	'confirmaccount-rej' => 'בקשת החשבון נדחתה בהצלחה.',
 	'confirmaccount-viewing' => '(הבקשה נצפית כרגע בידי [[User:$1|$1]])',
 	'confirmaccount-summary' => 'יצירת דף משתמש עם ביוגרפיה של משתמש חדש',
+	'confirmaccount-welc' => "'''ברוכים הבאים לאתר ''{{SITENAME}}''!'''
+אנו מקווים שתרומותיכם יהיו רבות וטובות.
+כנראה כדאי שתקראו עכשיו את [[{{MediaWiki:Helppage}}|דפי העזרה]].
+ושוב, ברוכים הבאים, תיהנו!",
 	'confirmaccount-wsum' => 'ברוכים הבאים!',
 	'confirmaccount-email-subj' => 'בקשת חשבון באתר {{SITENAME}}',
 	'confirmaccount-email-body' => 'בקשתך לקבלת חשבון אושרה באתר {{SITENAME}}.
@@ -4256,6 +4376,21 @@ $3
 
 מטעמי אבטחה תזדקקו לשנות את סיסמתכם עם הכניסה הראשונה.
 כדי להתחבר אנא גשו לכתובת {{fullurl:Special:UserLogin}}.',
+	'confirmaccount-email-body3' => 'סליחה, הבקשה ליצור את החשבון "$1" נדחתה באתר {{SITENAME}}.
+
+יש מספר סיבות אפשריות לכך.
+ייתכן שלא מילאתם את הטופס נכון, לא נתתם תשובות באורך הדרוש, או לא עמדתם בתנאי כלשהו שמוגדר במדיניות.
+ייתכן שבאתר יש רשימת קשר שאפשר להשתמש בה כדי לברר מידע נוסף על המדיניות הזאת.',
+	'confirmaccount-email-body4' => 'סליחה, הבקשה ליצור את החשבון "$1" נדחתה באתר {{SITENAME}}.
+
+$2
+
+ייתכן שבאתר יש רשימת קשר שאפשר להשתמש בה כדי לברר מידע נוסף על המדיניות הזאת.',
+	'confirmaccount-email-body5' => 'לפני שהבקשה לחשבון "$1" יכולה לקבל אישור באתר {{SITENAME}}, יש לספק מידע אישי נוסף.
+
+$2
+
+ייתכן שבאתר יש רשימת קשר שאפשר להשתמש בה כדי לברר מידע נוסף על המדיניות הזאת.',
 	'usercredentials' => 'פרטי זיהוי המשתמש',
 	'usercredentials-leg' => 'פרטי זיהוי המשתמש שאושרו בתהליך האיתור',
 	'usercredentials-user' => 'שם המשתמש:',
@@ -4275,6 +4410,7 @@ $3
 	'usercredentials-badid' => 'לא נמצאו פרטי זיהוי עבור משתמש זה.
 אנא ודאו שהשם מאוית כראוי.',
 	'right-confirmaccount' => 'צפייה ב[[Special:ConfirmAccounts|תור עם החשבונות הדרושים]]',
+	'right-requestips' => 'לצפות בכתובות IP של המבקשים בזמן עיבוד בקשות לפתוח חשבון',
 	'right-lookupcredentials' => 'צפייה ב[[Special:UserCredentials|הרשאות המשתמש]]',
 );
 
@@ -4966,17 +5102,16 @@ Tu recipera etiam tu contrasigno in e-mail al creation de tu conto.',
 	'requestaccount-areas-text' => 'Selige in basso le areas thematic in le quales tu ha expertise formal o al quales tu volerea laborar le plus.',
 	'requestaccount-ext-text' => 'Le sequente information resta private e essera usate solmente pro iste requesta.
 Tu ha le possibilitate de listar contactos como un numero de telephono pro adjutar in le confirmation de tu identitate.',
-	'requestaccount-bio-text' => 'Tu biographia essera le contento predefinite pro tu pagina de usator.
-Essaya includer omne litteras de credentia.
-Assecura te que tu sia confortabile con le publication de tal informationes.
-Tu nomine pote esser cambiate in [[Special:Preferences|tu preferentias]].',
+	'requestaccount-bio-text' => 'Essaya includer omne qualificationes relevante in tu biographia hic infra.',
+	'requestaccount-bio-text-i' => "'''Le biographia essera inserite como le contento initial de tu pagina de usator.'''
+Assecura te que tu sia confortabile con le publication de tal informationes.",
 	'requestaccount-real' => 'Nomine real:',
 	'requestaccount-same' => '(equal al nomine real)',
 	'requestaccount-email' => 'Adresse de e-mail:',
 	'requestaccount-reqtype' => 'Position:',
 	'requestaccount-level-0' => 'autor',
 	'requestaccount-level-1' => 'contributor',
-	'requestaccount-bio' => 'Biographia personal:',
+	'requestaccount-bio' => 'Biographia personal (texto simple solmente):',
 	'requestaccount-attach' => 'Résumé o CV (optional):',
 	'requestaccount-notes' => 'Notas additional:',
 	'requestaccount-urls' => 'Lista de sitos web, si alcun (un per linea):',
@@ -4993,7 +5128,7 @@ Le nomine que io ha specificate sub "Nomine real" es de facto mi proprie nomine 
 	'requestaccount-sent' => 'Tu requesta de conto ha essite inviate con successo e nunc attende revision.
 Un message de confirmation ha essite inviate a tu adresse de e-mail.',
 	'request-account-econf' => 'Tu adresse de e-mail ha essite confirmate e essera listate como tal in tu requesta de conto.',
-	'requestaccount-email-subj' => 'Confirmation de adresse e-mail pro {{SITENAME}}',
+	'requestaccount-email-subj' => 'Confirmation del adresse de e-mail pro {{SITENAME}}',
 	'requestaccount-email-body' => 'Un persona, probabilemente tu, desde le adresse IP $1, ha requestate un conto "$2" con iste adresse de e-mail in {{SITENAME}}.
 
 Pro confirmar que iste conto realmente pertine a te in {{SITENAME}}, visita iste ligamine in tu navigator del web:
@@ -5183,17 +5318,16 @@ Kata sandi Anda juga akan dikirimkan melalui surel setelah akun Anda disetujui d
 	'requestaccount-areas-text' => 'Pilih topik-topik yang merupakan keahlian formal Anda atau merupakan area yang akan paling banyak Anda sentuh.',
 	'requestaccount-ext-text' => 'Informasi berikut ini akan diperlakukan secara rahasia dan hanya akan digunakan sehubungan dengan permintaan ini.
 Anda dapat menuliskan daftar kontak seperti nomor telepon Anda untuk mempermudah dalam mengkonfirmasikan identitas Anda.',
-	'requestaccount-bio-text' => 'Biografi Anda akan ditampilkan sebagai konten default untuk halaman pengguna Anda.
-Anda dapat memasukkan beberapa hal pribadi.
-Pastikan Anda merasa nyaman untuk mempublikasikan informasi-informasi tersebut.
-Nama Anda dapat diubah melalui [[Special:Preferences|preferensi Anda]].',
+	'requestaccount-bio-text' => 'Usakan untuk memasukkan kredensial yang relevan ke dalam biografi Anda di bawah ini.',
+	'requestaccount-bio-text-i' => "'''Biografi Anda akan ditetapkan sebagai konten awal halaman pengguna Anda.'''
+Pastikan Anda merasa nyaman untuk menerbitkan informasi semacam itu.",
 	'requestaccount-real' => 'Nama asli:',
 	'requestaccount-same' => '(sama dengan nama asli)',
 	'requestaccount-email' => 'Alamat surel:',
 	'requestaccount-reqtype' => 'Posisi:',
 	'requestaccount-level-0' => 'penulis',
 	'requestaccount-level-1' => 'penyunting',
-	'requestaccount-bio' => 'Biografi pribadi:',
+	'requestaccount-bio' => 'Biografi pribadi (hanya teks sederhana):',
 	'requestaccount-attach' => 'Resume atau CV (opsional):',
 	'requestaccount-notes' => 'Catatan tambahan:',
 	'requestaccount-urls' => 'Daftar situs web, jika ada (pisahkan dengan baris baru):',
@@ -5499,17 +5633,16 @@ Inoltre la tua password sarà inviata via e-mail quando il tuo account sarà sta
 	'requestaccount-areas-text' => 'Selezionare le aree di seguito in cui si hanno competenze formali o in cui si vorrebbe fare la maggior parte del lavoro.',
 	'requestaccount-ext-text' => "Le seguenti informazioni saranno tenute private e saranno usate solo per questa richiesta.
 Potresti voler inserire dei contatti come un numero di telefono per aiutare l'identificazione.",
-	'requestaccount-bio-text' => 'La tua biografia sarà impostata come contenuto predefinito per la tua pagina utente.
-Cerca di inserire tutte le credenziali.
-Assicurati di voler pubblicare tali informazioni.
-Il tuo nome può essere modificato tramite le [[Special:Preferences|tue preferenze]].',
+	'requestaccount-bio-text' => 'Cerca di inserire tutte le credenziali e le informazioni rilevanti nella tua biografia.',
+	'requestaccount-bio-text-i' => "'''La tua biografia sarà impostata come contenuto predefinito per la tua pagina utente.'''
+Assicurati di voler pubblicare tali informazioni.",
 	'requestaccount-real' => 'Vero nome:',
 	'requestaccount-same' => '(uguale al vero nome)',
 	'requestaccount-email' => 'Indirizzo e-mail:',
 	'requestaccount-reqtype' => 'Posizione:',
 	'requestaccount-level-0' => 'autore',
 	'requestaccount-level-1' => 'editore',
-	'requestaccount-bio' => 'Biografia personale:',
+	'requestaccount-bio' => 'Biografia personale (solo testo):',
 	'requestaccount-attach' => 'Curriculum (opzionale):',
 	'requestaccount-notes' => 'Ulteriori note:',
 	'requestaccount-urls' => 'Elenco dei siti web, se ce ne sono (uno per riga):',
@@ -5891,6 +6024,77 @@ $2
 	'right-lookupcredentials' => '[[Special:UserCredentials|利用者信頼情報]]を見る',
 );
 
+/** Jamaican Creole English (Patios)
+ * @author Yocahuna
+ */
+$messages['jam'] = array(
+	'requestaccount' => 'Rikwes akount',
+	'requestaccount-text' => "'''Kompliit ahn sobmit di falarin faam fi rikwes a yuuza akount'''.
+
+Mek shuor se yu riid fos di [[{{MediaWiki:Requestaccount-page}}|Toerm a Saabis]] bifuo yu rikwes akount.
+
+Wans di akount apruuv, yu wi get e-miel nuotifikieshan mechiz ahn yu kiahn yuuz di akount a [[Special:UserLogin|lagiin]].",
+	'requestaccount-page' => '{{ns:project}}:Toerm a Saabis',
+	'requestaccount-dup' => "'''Nuot: Yu aredi lag iin wid a rejista akount.'''",
+	'requestaccount-leg-user' => 'Yuuza akount',
+	'requestaccount-leg-areas' => 'Mien ieriadem a inchres',
+	'requestaccount-leg-person' => 'Persnal infamieshan',
+	'requestaccount-leg-other' => 'Ada infamieshan',
+	'requestaccount-leg-tos' => 'Toerm a Saabis',
+	'requestaccount-acc-text' => 'Yu e-miel ajres wi get a kanfoermieshan mechiz wans yu sobmit dis rikwes.
+Begyu rispan bai klik pahn di kanfoermieshan lingk provaid ina di e-miel.
+Alzwel yu paaswod wi e-miel tu yu wen yu akount kriet.',
+	'requestaccount-areas-text' => 'Silek di tapik ieriadem biluo fi we yu gat faamal expoertiis ar wuda laik fi du di muos wok.',
+	'requestaccount-ext-text' => 'Di falarin infamieshan kip praivit ahn wi onggl yuuz fi dis rikwes.
+Yu maita waahn fi lis kantak laka fuon nomba fi ied ina aidentifai kanfoermieshan.',
+	'requestaccount-bio-text' => 'Yu bayagrafi wi set az difaalt kantent fi yu yuuzapiej.
+Chrai fi inkluud eni kridenshal.
+Mek shuor se yu komfotebl fi poblish soertn infamieshan.
+Yu niem kiahn chienj vaya [[Special:Preferences|yu prefransdem]].',
+	'requestaccount-real' => 'Riil niem:',
+	'requestaccount-same' => '(siem az riil niem)',
+	'requestaccount-email' => 'E-miel ajres:',
+	'requestaccount-reqtype' => 'Pozishan:',
+	'requestaccount-level-0' => 'aata',
+	'requestaccount-level-1' => 'edita',
+	'requestaccount-bio' => 'Persnal bayagrafi:',
+	'requestaccount-attach' => 'Rizume ar CV (apshanal):',
+	'requestaccount-notes' => 'Adishanal nuot:',
+	'requestaccount-urls' => 'Lis a websait, ef eni (separiet wid nyuu lain):',
+	'requestaccount-agree' => 'Yu fi soertifai se yu riil niem karek ahn se yu agrii tu wi Toerm a Saabis.',
+	'requestaccount-inuse' => 'Yuuzaniem aredi ina yuus ina pendin akount rikwes.',
+	'requestaccount-tooshort' => 'Yu bayagrafi fi bi akliis $1 {{PLURAL:$1|wod|wod}} lang.',
+	'requestaccount-emaildup' => 'Aneda pendin akount rikwes yuuz di siem e-miel ajres.',
+	'requestaccount-exts' => 'Atachment fail taip no lou.',
+	'requestaccount-resub' => 'Yu CV/rizume fail afi rii-silek fi sikioriti riizn.
+Lef di fiil blangk ef yu no waahn fi inkluud wan agen.',
+	'requestaccount-tos' => 'Mi riid ahn grii fi abaid bai di [[{{MediaWiki:Requestaccount-page}}|Toerm a Saabis]] a {{SITENAME}}.
+Di niem mi spesifai anda "Riil niem" a mi riil niem fi chuu.',
+	'requestaccount-submit' => 'Rikwes akount',
+	'requestaccount-sent' => 'Yu akount rikwes sen soksesfuli ahn nou pendin rivyuu.
+A kanfamieshan rivyuu sen tu yu e-miel ajres.',
+	'request-account-econf' => 'Yu e-miel ajres kanfoerm ahn wi lis az soch ina yu akount rejista.',
+	'requestaccount-email-subj' => '{{SITENAME}} e-miel ajres kanfamieshan',
+	'requestaccount-email-body' => 'Smadi, prabli yu frahn IP ajres $1, rikwes a akount "$2" wid dis e-miel ajres pahn {{SITENAME}}.
+
+Fi kanfoerm se dis akount riili bilangx tu yu pahn {{SITENAME}}, opn dis lingk ina yu brouza:
+
+$3
+
+Ef di akount kriet, onngl yu wi get e-miel wid di paaswod.
+Ef dis a *no* yu, no fala di lingk.
+Dis kanfamieshan kuod wi expaya a $4.',
+	'requestaccount-email-subj-admin' => '{{SITENAME}} akount rikwes',
+	'requestaccount-email-body-admin' => '"$1" rikwes a akount ahn a wiet fi kanfamieshan.
+Di e-miel ajres kanfoerm. Yu kiahn kanfoerm di rikwes yaso "$2".',
+	'acct_request_throttle_hit' => 'Sari yu aredi rikwes {{PLURAL:$1|1 akount|$1 akount}}.
+Yu kyaahn mek no muo rikwes.',
+	'requestaccount-loginnotice' => "Fi abtien a yuuza akount, yu fi '''[[Special:RequestAccount|rikwes wan]]'''.",
+	'confirmaccount-newrequests' => "'''$1''' opn e-miel-kanfoerm [[Special:ConfirmAccounts|akount {{PLURAL:$1|rikwes|rikwes}}]] pendin",
+	'confirmaccounts' => 'Kanfoerm akount rikwes',
+	'confirmedit-desc' => 'Gi biurokratdem di abiliti fi kanfoerm akount rikwes',
+);
+
 /** Javanese (Basa Jawa)
  * @author Meursault2004
  * @author Pras
@@ -6009,8 +6213,11 @@ $messages['km'] = array(
 	'requestaccount-bio' => 'ជីវប្រវត្តិផ្ទាល់ខ្លួន៖',
 	'requestaccount-attach' => 'ប្រវត្តិរូប (ស្រេចចិត្ត)​៖',
 	'requestaccount-notes' => 'សម្គាល់បន្ថែម៖',
-	'requestaccount-agree' => 'អ្នកត្រូវតែ បញ្ជាក់ថា ឈ្មោះពិត របស់អ្នក ត្រឹមត្រូវ និងថា អ្នកព្រមព្រៀង ចំពោះ លក្ខណ្ឌ ប្រើប្រាស់សេវា ។',
-	'requestaccount-tooshort' => 'ជីវប្រវត្តិរបស់អ្នកត្រូវតែមានយ៉ាងតិច $1 {{PLURAL:$1|ពាក្យ|ពាក្យ}} ។',
+	'requestaccount-urls' => 'បញ្ជីវិបសាយ បើមាន (ចែកគ្នាដោយការចុះបន្ទាត់)៖',
+	'requestaccount-agree' => 'អ្នកត្រូវតែបញ្ជាក់ថា ឈ្មោះពិតរបស់អ្នកត្រឹមត្រូវ និងថាអ្នកព្រមព្រៀងជាមួយ «លក្ខខណ្ឌប្រើប្រាស់សេវាកម្ម» នេះ ។',
+	'requestaccount-tooshort' => 'ជីវប្រវត្តិរបស់អ្នកត្រូវតែមានយ៉ាងតិច $1 ពាក្យ។',
+	'requestaccount-tos' => 'ខ្ញុំបានអាននិងយល់ព្រមជាមួយ[[{{MediaWiki:Requestaccount-page}}|លក្ខខណ្ឌប្រើប្រាស់សេវាកម្ម]] របស់ {{SITENAME}}។
+ឈ្មោះដែលខ្ញុំបានផ្ដល់អោយនៅក្រោម «ឈ្មោះពិត» គឺពិតជាឈ្មោះពិតរបស់ខ្ញុំផ្ទាល់មែន។',
 	'requestaccount-submit' => 'សំណើសុំគណនី',
 	'requestaccount-email-subj' => 'ការបញ្ជាក់ទទួលស្គាល់ អាសយដ្ឋានអ៊ីមែល {{SITENAME}}',
 	'requestaccount-email-subj-admin' => 'សំណើសុំគណនីរបស់{{SITENAME}}',
@@ -6023,18 +6230,22 @@ $messages['km'] = array(
 	'confirmaccount-real-q' => 'ឈ្មោះ',
 	'confirmaccount-email-q' => 'អ៊ីមែល',
 	'confirmaccount-bio-q' => 'ជីវប្រវត្តិ',
+	'confirmaccount-showopen' => 'ការស្នើសុំចំហ',
 	'confirmaccount-showrej' => 'ការស្នើសុំត្រូវបានបដិសេធ',
+	'confirmaccount-showheld' => 'ការស្នើសុំធ្វើរួចហើយ',
 	'confirmaccount-showexp' => 'ការស្នើសុំផុតកំណត់ហើយ',
 	'confirmaccount-review' => 'មើលឡើងវិញ',
 	'confirmaccount-all' => '(បង្ហាញ គ្រប់ ជួររង់ចាំ)',
 	'confirmaccount-type' => 'ជួររង់ចាំ ត្រូវបានជ្រើសយក ៖',
 	'confirmaccount-q-open' => 'បើក​សំណើ',
-	'confirmaccount-q-stale' => 'សំណើ​ដែល​ផុត​កំណត់',
+	'confirmaccount-q-held' => 'ការស្នើសុំធ្វើរួចហើយ',
+	'confirmaccount-q-rej' => 'ការស្នើសុំដែលត្រូវបានបដិសេដថ្មីៗ',
+	'confirmaccount-q-stale' => 'ការស្នើសុំ​ដែល​ផុត​កំណត់',
 	'confirmaccount-leg-user' => 'គណនីអ្នកប្រើប្រាស់',
 	'confirmaccount-leg-areas' => 'ចំណង់ចំណូលចិត្ត',
 	'confirmaccount-leg-person' => 'ព័ត៌មានផ្ទាល់ខ្លួន',
 	'confirmaccount-leg-other' => 'ព័ត៌មាន​ដទៃ',
-	'confirmaccount-name' => 'ឈ្មោះអ្នកប្រើប្រាស់',
+	'confirmaccount-name' => 'អត្តនាម',
 	'confirmaccount-real' => 'ឈ្មោះ​៖',
 	'confirmaccount-email' => 'អ៊ីមែល​៖',
 	'confirmaccount-reqtype' => 'មុខងារ:',
@@ -6045,19 +6256,31 @@ $messages['km'] = array(
 	'confirmaccount-notes' => 'កំណត់សម្គាល់បន្ថែម៖',
 	'confirmaccount-urls' => 'បញ្ជីគេហទំព័រ៖',
 	'confirmaccount-none-p' => '(មិនត្រូវបាន​ផ្តល់)',
+	'confirmaccount-confirm' => 'ប្រើប្រាស់ជំរើសខាងក្រោមដើម្បី យល់ស្រប បដិសេដ ឬ ទុកសំនើសុំនេះមួយអន្លើសិន៖',
 	'confirmaccount-econf' => '(បានបញ្ជាក់ទទួលស្គាល់)',
+	'confirmaccount-reject' => '(ត្រូវបានបដិសេដដោយ [[User:$1|$1]] នៅ $2)',
 	'confirmaccount-noreason' => '(ទទេ)',
-	'confirmaccount-create' => 'ព្រមទទួល (បង្កើត​គណនី)',
+	'confirmaccount-held' => '(ត្រូវបានសំគាល់ជា "ទុកមួយអន្លើ" ដោយ [[User:$1|$1]] នៅ $2)',
+	'confirmaccount-create' => 'យល់ស្រប (បង្កើត​គណនី)',
+	'confirmaccount-deny' => 'បដិសេដ (ដកចេញពីបញ្ជី)',
+	'confirmaccount-hold' => 'ទុកមួយអន្លើសិន',
+	'confirmaccount-spam' => 'ស្ប៉ាម (កុំផ្ញើអ៊ីមែល)',
 	'confirmaccount-reason' => 'យោបល់(នឹងត្រូវបានបញ្ចូលទៅក្នុងអ៊ីមែល)៖',
 	'confirmaccount-ip' => 'អាសយដ្ឋាន IP៖',
-	'confirmaccount-legend' => 'បញ្ជាក់ទទួលស្គាល់ឬច្រានចោលគណនីនេះ',
+	'confirmaccount-legend' => 'បញ្ជាក់ទទួលស្គាល់ឬបដិសេដគណនីនេះ',
 	'confirmaccount-submit' => 'បញ្ជាក់ទទួលស្គាល់',
 	'confirmaccount-needreason' => 'អ្នក​ត្រូវ​ផ្តល់​ហេតុផល ក្នុង​ប្រអប់វិចារ​ខាងក្រោម​​។',
-	'confirmaccount-acc' => 'សំណើគណនី​ត្រូវ​បាន​អះអាង​ដោយជោគជ័យ,
+	'confirmaccount-canthold' => 'សំនើសុំនេះត្រូវបានទុកមួយអន្លើឬលុបចោល។',
+	'confirmaccount-acc' => 'សំណើគណនី​ត្រូវ​បាន​បញ្ជាក់ទទួលស្គាល់​ដោយជោគជ័យ,
 
 បាន​បង្កើត​គណនី​អ្នកប្រើប្រាស់​ថ្មី​ហើយ [[User:$1|$1]]​។',
 	'confirmaccount-rej' => 'សំណើសុំគណនីបានបដិសេធរួចជាស្រេចហើយ។',
+	'confirmaccount-viewing' => '(ពេលនេះ កំពុងមើលដោយ [[User:$1|$1]])',
 	'confirmaccount-summary' => 'បង្កើត​ទំព័រ​អ្នកប្រើប្រាស់​ជាមួយ​ប្រវត្តិរូប​នៃ​អ្នកប្រើប្រាស់​ថ្មី​។',
+	'confirmaccount-welc' => "'''''{{SITENAME}}'' សូមស្វាគមន៍!'''
+យើងខ្ញុំសង្ឃឹមថាអ្នកនឹងជួយរួមចំណែកបានច្រើនជាមួយយើងខ្ញុំ។
+ជាដំបូង សូមអ្នកអាន[[{{MediaWiki:Helppage}}|ទំព័រជំនួយជាមុនសិន]]។
+សូមចូលរួមដោយរីករាយ។ សូមអរគុណ។",
 	'confirmaccount-wsum' => 'សូមស្វាគមន៍!',
 	'confirmaccount-email-subj' => 'សំណើសុំគណនី {{SITENAME}}',
 	'confirmaccount-email-body' => 'សំណើសុំគណនីរបស់អ្នកនៅលើ{{SITENAME}}ត្រូវបានអនុម័តរួចហើយ។
@@ -6086,7 +6309,7 @@ $3
 ដើម្បីសុវត្ថិភាព អ្នកនឹងត្រូវតែប្តូរពាក្យសំងាត់របស់អ្នកនៅពេលកត់ឈ្មោះចូលលើកដំបូង។
 
 ដើម្បីកត់ឈ្មោះចូល សូមចូលទៅកាន់ {{fullurl:Special:UserLogin}} ។',
-	'usercredentials-user' => 'ឈ្មោះអ្នកប្រើប្រាស់៖',
+	'usercredentials-user' => 'អត្តនាម៖',
 	'usercredentials-leg-user' => 'គណនីអ្នកប្រើប្រាស់',
 	'usercredentials-leg-areas' => 'ចំណង់ចំណូលចិត្ត',
 	'usercredentials-leg-person' => 'ព័ត៌មាន​ផ្ទាល់ខ្លួន',
@@ -6237,16 +6460,16 @@ Sobald De ene Zohjang kräje häß, kriß De en <i lang=\"en\">e-mail</i> jesche
 	'requestaccount-emaildup' => 'En ander Aanfrooch noh enem Zohjang als Metmaacher hät de sellve <i lang="en">e-mail</i>-Addräß.',
 	'requestaccount-exts' => 'Di Zoot Datei-Aanhang es nit zohjelohße.',
 	'requestaccount-resub' => 'Dinge Levvensverlouf moß norr_ens neu ußjewählt wäde, zor Sescherheit. Lohß dat Feld leddisch, wann De_n_nit mieh wigger dobei han wells.',
-	'requestaccount-tos' => 'Esch han jelesse, wat op dä Sigg „[[{{MediaWiki:Requestaccount-page}}|{{int:requestaccount-leg-tos}}]]“ övver de {{SITENAME}} shteiht, Un esch versescheren, dat wad esch unger „reschtijje Name“ aanjejovve hann, wörklesch minge reschtijje Name es.',
+	'requestaccount-tos' => 'Esch han jelesse, wat op dä Sigg „[[{{MediaWiki:Requestaccount-page}}|{{int:requestaccount-leg-tos}}]]“ övver {{GRAMMAR:Akkusativ|{{SITENAME}}}} shteiht, Un esch versescheren, dat wad esch unger „reschtijje Name“ aanjejovve hann, wörklesch minge reschtijje Name es.',
 	'requestaccount-submit' => 'Noh enem Zojang als ene Metmaacher frore',
 	'requestaccount-sent' => 'Ding Aanfrooch es jäz op der Wääsch jebraat, un waadt drop, dat sesch Eine dröm kömmert.
 För se ze beschtäätejje, es en <i lang="en">e-mail</i> aan Ding aanjejovve Adräß ongerwähß.',
 	'request-account-econf' => 'Ding <i lang="en">e-mail</i>-Addräß es beschtätesch un dat shteiht jetß och esu en Dinge Aanfrooch noh enem Zohjang als Metmaacher dren.',
-	'requestaccount-email-subj' => 'De {{SITENAME}} ier <i lang="en">e-mail</i>-Addräß Beschtätejung',
+	'requestaccount-email-subj' => '{{ucfirst:{{GRAMMAR:Genitiv ier feminine|{{SITENAME}}}}}} <i lang="en">e-mail</i>-Addräß Beschtätejung',
 	'requestaccount-email-body' => 'Daach,
 
 künnt sin, Do woohß et sellver, jedenfalls hät eine vun dä IP-Address
-$1 en Aanfrooch noh enem Zohjang op de {{SITENAME}}
+$1 en Aanfrooch noh enem Zohjang op {{GRAMMAR:Akkusativ|{{SITENAME}}}}
 als Metmaacher met däm Name „$2“ jeschtallt.
 
 Jetz wulle mer vun Dier en Beschtäätejung, dat dat all ääsch es,
@@ -6258,19 +6481,19 @@ $3
 Wann Dinge Zohjang dann ennjerescht wood, kriß Do allein dat
 Passwoot doför zohjescheck.
 
-Wann dat alles Kappes es, un De wells jaa nit op de {{SITENAME}}
+Wann dat alles Kappes es, un De wells jaa nit {{GRAMMAR:em|{{SITENAME}}}}
 metmaache, dann donn jaa nix. Aam $5 öm $6 Uhr verfällt dä Lengk
 bovve automattesch un vun janz allein.
 
-Ene schööne Jrooß vun de {{SITENAME}}',
-	'requestaccount-email-subj-admin' => 'Aanfrooch för Metmaacher op dä {{SITENAME}} ze wääde.',
+Ene schööne Jrooß {{GRAMMAR:Genitiv vun|{{SITENAME}}}}',
+	'requestaccount-email-subj-admin' => 'Aanfrooch för Metmaacher {{GRAMMAR:von|{{SITENAME}}}} ze wääde.',
 	'requestaccount-email-body-admin' => '{{GENDER:$1|Dä|Dat|Dä Metmaacher|Dat|De}} „$1“ well ene Zohjang han un es am waade, dä ze krijje. De aanjejovve <i lang="en">e-mail</i>-Addräß es beschtätesch. Do kanns dämm dä Zohjang jevve op dä Sigg: $2',
 	'acct_request_throttle_hit' => 'Deihd uns leid, Do häs {{PLURAL:$1|ald|ald $1 Mohl|jaanit}} noh enem Zohjang jefrooch. Do kanns nit noch mieh Aanfroore enreische.',
 	'requestaccount-loginnotice' => "Öm ene Zohjang ze krijje, donn '''[[Special:RequestAccount|noh einem froore]]'''.",
 	'confirmaccount-newrequests' => "'''\$1''' unjedonn [[Special:ConfirmAccounts|{{PLURAL:\$1|Aanfrooch|Aanfroore|Aanfroore}}]] met beschtääteschte <i lang=\"en\">e-mail</i>-Addräß {{PLURAL:\$1|es|sin|sin}} am waade.",
 	'confirmaccounts' => 'Aanfroore noh Metmaacher beschtähtejje',
 	'confirmedit-desc' => 'Määt et müjjelesch, dat {{int:group-bureaucrat}} de neu Aanmeldunge beshtätejje.',
-	'confirmaccount-maintext' => "'''Die Sigg hee es för unjedonn Aanfroore noh Zohjäng als Metmaacher vun de {{SITENAME}} ze beärbeide.'''
+	'confirmaccount-maintext' => "'''Die Sigg hee es för unjedonn Aanfroore noh Zohjäng als Metmaacher {{GRAMMAR:Genitiv vun|{{SITENAME}}}} ze beärbeide.'''
 
 Jede Schlang met Aanfroore es ongerdeijlt en drei eije Schlange met dä Zoote: Unjedonn — Zeröckjeschtallt weil mer noch op Antwoote am waade sin — un köözlesch eets afjelehnt.
 
@@ -6281,7 +6504,7 @@ Wann ene Aanfrooch aanjenumme udder affjelehnt es, kütt se eruß uß dä Leß.'
 Se künne emmer noch aanjenumme wähde, ävver et es wall en joode Idee, eets ens met däm Wiki-Köbes ze kalle, dä se afjelehnt hät.',
 	'confirmaccount-list3' => 'Hee dronger es en Leß met ußjeloufe Aanfroore, di automattesch uß dä Leß eruß kumme, wann se en paa Dääsch alt sin.
 Se künne ävver emmer noch aanjenumme wähde.',
-	'confirmaccount-text' => "Dat es en Aanfrooch noh enem Zohjang als Metmaacher op de '''{{SITENAME}}'''.
+	'confirmaccount-text' => "Dat es en Aanfrooch noh enem Zohjang als Metmaacher '''op {{GRAMMAR:Akkusativ|{{SITENAME}}}}'''.
 
 Donn Der de Enfommazjuhne onge jenou dorschlesse.
 Wann De dä Metmaacher aannemmps, nemm de Enstellung „Posizjuhn“ öm däm Metmaacher singe Shtattus enzeshtelle. Änderunge aan dä Date övver et Levve en dä Aanfrooch donn nit beeinfluße, wat op Duur övver dä Metmaacher faßjehallde weed. Do kanns dä Metmaacher unger enem andere Name aanlääje lohße. Domet kanns De dubbelte Name verhendere.
@@ -6345,13 +6568,13 @@ Wann de Vun dä Sigg hee fott jeihß, oohne se afzelehne udder beshtähtejje, bl
 	'confirmaccount-rej' => 'Di Aanfrooch noh enem Zojang wood afjelehnt.',
 	'confirmaccount-viewing' => '(Weet em Momang {{GENDER:$1|vum|vum|vum Metmaacher|vum|vun dä}} [[User:$1|$1]] aanjeloert)',
 	'confirmaccount-summary' => 'Ben en Metmaachersigg met dä Levvensdaate vun dämneue Metmaacher am aanlääje.',
-	'confirmaccount-welc' => "'''Wellkumme op de ''{{SITENAME}}''!'''
+	'confirmaccount-welc' => "'''Wellkumme {{GRAMMAR:em|{{SITENAME}}}}!'''
 Mer hoffe, Do deihs joot un vill beidraare.
 Künnt sin, Do wells de [[{{MediaWiki:Helppage}}|Sigge met Hülp]] lesse.
 Norr_ens, wellkumme, un vill Shpaß hee!",
 	'confirmaccount-wsum' => 'Wellkumme!',
-	'confirmaccount-email-subj' => 'Ding Aanfrooch noh enem Zohjang op de {{SITENAME}}',
-	'confirmaccount-email-body' => 'Op Ding Aanfrooch noh enem Zohjang op de {{SITENAME}} es de Antwoot:
+	'confirmaccount-email-subj' => 'Ding Aanfrooch noh enem Zohjang op {{GRAMMAR:Akkusativ|{{SITENAME}}}}',
+	'confirmaccount-email-body' => 'Op Ding Aanfrooch noh enem Zohjang op {{GRAMMAR:Akkusativ|{{SITENAME}}}} es de Antwoot:
 Hurra, jetz kanns de erin.
 
 Dinge Name als Metmaacher es „$1“
@@ -6360,7 +6583,7 @@ Ding Passwoot es „$2“
 
 Zor Sescherheit moß De Ding Passwoot ändere, wann De et eehzte Mohl enloggs.
 Zom Enlogge, jangk noh {{fullurl:Special:UserLogin}}',
-	'confirmaccount-email-body2' => 'Op Ding Aanfrooch häß De enen Zohjang op de {{SITENAME}} krääje.
+	'confirmaccount-email-body2' => 'Op Ding Aanfrooch häß De enen Zohjang op {{GRAMMAR:Akkusativ|{{SITENAME}}}} krääje.
 
 Dinge Name als Metmaacher es „$1“
 
@@ -6370,14 +6593,14 @@ $3
 
 Zor Sescherheit moß De Ding Passwoot ändere, wann De et eehzte Mohl enloggs.
 Zom Enlogge, jangk noh {{fullurl:Special:UserLogin}}',
-	'confirmaccount-email-body3' => 'Ding Aanfrooch noh enem Zohjang op de {{SITENAME}}
+	'confirmaccount-email-body3' => 'Ding Aanfrooch noh enem Zohjang op {{GRAMMAR:Akkusativ|{{SITENAME}}}}
 als Metmaacher met däm Name „$1“ es afjelehnt.
 
 Doh kann et etlijje Jrönd för jevve. De künnts dat Fommulaa verkeht ußjeföllt han,
 Ding Antwoote wohre nit jenooch, udder De häs jet jemaat, wat för dat Wikki nit paß.
 Wann en Leß met Kuntakte em Wikki es, kanns De doh drövver versöhke, wigger ze kumme,
 wann De doch noch erin wells, udder jet ze saare udder ze froore häs.',
-	'confirmaccount-email-body4' => 'Ding Aanfrooch noh enem Zohjang als Metmaacher op de {{SITENAME}}
+	'confirmaccount-email-body4' => 'Ding Aanfrooch noh enem Zohjang als Metmaacher op {{GRAMMAR:Akkusativ|{{SITENAME}}}}
 met däm Name „$1“ es afjelehnt woode.
 
 $2
@@ -6387,7 +6610,7 @@ wigger ze kumme, wannv De doch noch erin wells, udder jet ze saare
 udder ze froore häs.',
 	'confirmaccount-email-body5' => 'Iih dat Ding Aanfrooch noh enem Zohjang als Metmaacher
 met däm Name „$1“
-op de {{SITENAME}}
+op {{GRAMMAR:Akkusativ|{{SITENAME}}}}
 aanjenumme wääde kann, do moß De noch jet nohlääje.
 
 $2
@@ -6417,7 +6640,18 @@ Loor ens, ov dä Name reschtesch jetipp es.',
 	'right-lookupcredentials' => 'De [[Special:UserCredentials|Nohwiise]] för Metmaacher aanloore',
 );
 
-/** Cornish (Kernewek)
+/** Kurdish (Latin) (Kurdî (Latin))
+ * @author George Animal
+ */
+$messages['ku-latn'] = array(
+	'requestaccount-leg-user' => 'Hesabê bikarhêner',
+	'confirmaccount-real-q' => 'Nav',
+	'confirmaccount-name' => 'Navê bikarhêner',
+	'usercredentials-user' => 'Navê bikarhêner:',
+	'usercredentials-member' => 'Mafan',
+);
+
+/** Cornish (Kernowek)
  * @author Kw-Moon
  */
 $messages['kw'] = array(
@@ -6495,17 +6729,14 @@ Och Äert Passwuert gëtt Iech gemailt esoubal wéi Äre Benotzerkonnt ugeluecht
 	'requestaccount-areas-text' => 'Wielt déi Sujeten aus an denen Dir formaalt Fachwëssen huet oder an deem Dir am léifste schaffe wëllt.',
 	'requestaccount-ext-text' => "Dës Informatioune gi vertraulech behandelt a gi just fir dës Ufro benotzt.
 Dir kënnt Kontaktinformatiounen wéi eng Telefonsnummer uginn fir d'Identitéitskonfirmatioun ze vereinfachen.",
-	'requestaccount-bio-text' => 'Är Biographie gëtt als initiale Contenu vun denger Benotzersäit gespäichert.
-Versicht all néideg Recommandatiounnen unzeginn.
-Vergewëssert iech, ob Dir déi Informatiounen och wierklech verëffentleche wëllt.
-Ären Numm kann op [[Special:Preferences|meng Astellunge]] geännert ginn.',
+	'requestaccount-bio-text' => 'Versicht all néideg Informatiounen an Ärer Biographie hei drënner unzeginn.',
 	'requestaccount-real' => 'Richtegen Numm:',
 	'requestaccount-same' => "(d'selwecht wéi de richtegen Numm)",
 	'requestaccount-email' => 'E-mail-Adress:',
 	'requestaccount-reqtype' => 'Positioun:',
 	'requestaccount-level-0' => 'Auteur',
 	'requestaccount-level-1' => 'Editeur',
-	'requestaccount-bio' => 'Peréinlech Biographie:',
+	'requestaccount-bio' => 'Perséinlech Biographie (nëmmen Text):',
 	'requestaccount-attach' => 'Liewenslaf oder CV (optional):',
 	'requestaccount-notes' => 'Zousätzlech Bemierkungen:',
 	'requestaccount-urls' => 'Lëscht vu Websäiten (all Säit an enger neier Zeil)',
@@ -6648,7 +6879,7 @@ Méiglecherweis gëtt et Kontaktlëschten op dem Site déi Dir benotze kënnt wa
 	'usercredentials' => 'Referenzen déi de Benotzer uginn huet:',
 	'usercredentials-leg' => 'Confirméiert Referenze vun engem Benotzer nokucken',
 	'usercredentials-user' => 'Benotzernumm:',
-	'usercredentials-text' => 'Hei ënnedrënner stinn déi confirméiert Benotzer-Berechtigungsnoweiser fir de gewielte Benotzerkont.',
+	'usercredentials-text' => 'Hei ënnendrënner stinn déi confirméiert Benotzer-Berechtigungsnoweiser fir de gewielte Benotzerkont.',
 	'usercredentials-leg-user' => 'Benotzerkont',
 	'usercredentials-leg-areas' => 'Haaptinteressen',
 	'usercredentials-leg-person' => 'Perséinlech Informatiounen',
@@ -6772,6 +7003,7 @@ Doe kans diene naam aanpasse via dien [[Special:Preferences|veurkaöre]].",
 );
 
 /** Lithuanian (Lietuvių)
+ * @author Eitvys200
  * @author Homo
  * @author Tomasdd
  */
@@ -6782,6 +7014,15 @@ $messages['lt'] = array(
 	'confirmaccount-real-q' => 'Vardas',
 	'confirmaccount-real' => 'Vardas:',
 	'confirmaccount-ip' => 'IP adresas:',
+	'usercredentials-leg-user' => 'Vartotojo paskyra',
+	'usercredentials-leg-person' => 'Asmeninė informacija',
+	'usercredentials-leg-other' => 'Kita informacija',
+	'usercredentials-email' => 'El. paštas:',
+	'usercredentials-real' => 'Tikras vardas:',
+	'usercredentials-bio' => 'Biografija:',
+	'usercredentials-urls' => 'Tinklapių sąrašas:',
+	'usercredentials-ip' => 'Originalus IP adresas:',
+	'usercredentials-member' => 'Teisės:',
 );
 
 /** Eastern Mari (Олык Марий)
@@ -6819,17 +7060,16 @@ $messages['mk'] = array(
 	'requestaccount-areas-text' => 'Подолу изберете ги тематските области во кои сте стручни, или на кои би сакале највеќе да работите.',
 	'requestaccount-ext-text' => 'Следните информации се држат во приватност и ќе се користат само на ваше барање.
 Препорачуваме да наведете контакти како телефонски број за полесно потврдување на идентитетот.',
-	'requestaccount-bio-text' => 'Вашата биографија по основно ќе биде поставена како содржина на вашата корисничка страница.
-По можност вклучете и препораки.
-Уверете се дека немате против објавување на вакви информации.
-Името можете да си го промените преку [[Special:Preferences|вашите нагодувања]].',
+	'requestaccount-bio-text' => 'По можност во биографијата подолу вклучете и препораки или уверенија.',
+	'requestaccount-bio-text-i' => "'''Вашата биографија ќе стои како првична содржина на корисничката страница.'''
+Размислете дали сакате да се објавуваат вакви информации за вас.",
 	'requestaccount-real' => 'Вистинско име:',
 	'requestaccount-same' => '(исто како вистинско име)',
 	'requestaccount-email' => 'Е-поштенска адреса:',
 	'requestaccount-reqtype' => 'Позиција:',
 	'requestaccount-level-0' => 'автор',
 	'requestaccount-level-1' => 'уредувач',
-	'requestaccount-bio' => 'Лична биографија:',
+	'requestaccount-bio' => 'Лична биографија (само прост текст):',
 	'requestaccount-attach' => 'Резиме или CV (не е задолжително):',
 	'requestaccount-notes' => 'Други забелешки:',
 	'requestaccount-urls' => 'Список на мрежни места, ако ги има (се пишуваат во посебен ред):',
@@ -6847,14 +7087,14 @@ $messages['mk'] = array(
 Ви испративме потврдна порака по е-пошта.',
 	'request-account-econf' => 'Вашата е-поштенска адреса е потврдена и ќе биде наведена како таква во вашето барање за сметка.',
 	'requestaccount-email-subj' => '{{SITENAME}}: потврдување на е-пошта',
-	'requestaccount-email-body' => 'Некој, веројатно вие од IP-адресата $1, побарал сметка „$2“ со оваа е-поштенска адреса на {{SITENAME}}.
+	'requestaccount-email-body' => 'Некој, веројатно Вие од IP-адресата $1, на {{SITENAME}} побарал сметка „$2“ со оваа е-поштенска адреса.
 
-За да потврдите дека оваа сметка навистина ви припаѓа вам на {{SITENAME}}, отворете ја врскава во прелистувачот:
+За да потврдите дека оваа сметка на {{SITENAME}} навистина ви припаѓа Вам, отворете ја врскава во прелистувачот:
 
 $3
 
-Ако сметката е создадена, само вие ќе ја добиете лозинката по е-пошта.
-Доколку ова *не* сте вие, не одете на врската.
+Ако сметката е создадена, само Вие ќе ја добиете лозинката по е-пошта.
+Доколку тоа *не* сте Вие, не отворајте ја врската.
 Овој потврден код истекува во $4.',
 	'requestaccount-email-subj-admin' => 'Барање за сметка на {{SITENAME}}',
 	'requestaccount-email-body-admin' => '„$1“ побара сметка и чека потврда.
@@ -6913,7 +7153,7 @@ $3
 Можно е барањето веќе да е обработено.',
 	'confirmaccount-leg-user' => 'Корисничка сметка',
 	'confirmaccount-leg-areas' => 'Главни полиња на интерес',
-	'confirmaccount-leg-person' => 'Персонални информации',
+	'confirmaccount-leg-person' => 'Лични податоци',
 	'confirmaccount-leg-other' => 'Други информации',
 	'confirmaccount-name' => 'Корисничко име',
 	'confirmaccount-real' => 'Име:',
@@ -7012,6 +7252,7 @@ $2
 
 /** Malayalam (മലയാളം)
  * @author Jacob.jose
+ * @author Junaidpv
  * @author Praveenp
  * @author Shijualex
  */
@@ -7023,6 +7264,7 @@ $messages['ml'] = array(
 	'requestaccount-leg-areas' => 'താല്പര്യമുള്ള പ്രധാന മേഖലകൾ',
 	'requestaccount-leg-person' => 'വ്യക്തിഗത വിവരങ്ങൾ',
 	'requestaccount-leg-other' => 'മറ്റ് വിവരങ്ങൾ',
+	'requestaccount-leg-tos' => 'സേവനവ്യവസ്ഥകൾ',
 	'requestaccount-acc-text' => 'ഈ അഭ്യർത്ഥന സമർപ്പിക്കപ്പെട്ടതിനു ശേഷം താങ്കളുടെ ഇമെയിൽ വിലാസത്തിലേക്ക് ഒരു സ്ഥിരീകരണമെയിൽ അയക്കുന്നതായിരിക്കും. പ്രസ്തുത ഇമെയിലിലുള്ള സ്ഥിരീകരണലിങ്കിൽ ഞെക്കി പ്രതികരിക്കുക. അംഗത്വം സൃഷ്ടിക്കപ്പെട്ടതിനു ശേഷം താങ്കളുടെ രഹസ്യവാക്കും ഇമെയിലിൽ അയക്കുന്നതായിരിക്കും.',
 	'requestaccount-real' => 'യഥാർത്ഥ പേര്:',
 	'requestaccount-same' => '(യഥാർത്ഥ പേരുതന്നെ)',
@@ -7132,6 +7374,7 @@ $messages['mn'] = array(
 );
 
 /** Marathi (मराठी)
+ * @author Htt
  * @author Kaustubh
  * @author Mahitgar
  */
@@ -7141,24 +7384,24 @@ $messages['mr'] = array(
 
 अर्ज पाठविण्यापूर्वी तुम्ही [[{{MediaWiki:Requestaccount-page}}|अटी व नियम]] वाचलेले असल्याची खात्री करा.
 
-एकदा का खाते तयार झाले की तुम्हाला तसा इमेल संदेश येईल व तुम्ही [[Special:UserLogin]] मध्ये प्रवेश करू शकाल.",
+एकदा का खाते तयार झाले की तुम्हाला तसा विपत्र संदेश येईल व तुम्ही [[Special:UserLogin]] मध्ये प्रवेश करू शकाल.",
 	'requestaccount-page' => '{{ns:project}}:अटी व नियम',
 	'requestaccount-dup' => "'''सूचना: तुम्ही अगोदरच नोंदीकृत खात्यामधून प्रवेश केलेला आहे.'''",
 	'requestaccount-leg-user' => 'सदस्य खाते',
 	'requestaccount-leg-areas' => 'मुख्य पसंती',
 	'requestaccount-leg-person' => 'वैयक्तिक माहिती',
 	'requestaccount-leg-other' => 'इतर माहिती',
+	'requestaccount-leg-tos' => 'सेवेच्या अटी',
 	'requestaccount-acc-text' => 'ही मागणी पूर्ण झाल्यावर तुमच्या इमेल पत्त्यावर एक संदेश येईल. कृपया त्या संदेशात दिलेल्या दुव्यावर टिचकी मारुन सदस्य खात्याची खात्री करा. खाते तयार झाल्यावर परवलीचा शब्द तुमच्या इमेल वर पाठविला जाईल.',
 	'requestaccount-areas-text' => 'खालील क्षेत्रांपैकी तुमच्या पसंतीचे तसेच तुम्ही जाणकार असलेले विषय निवडा.',
 	'requestaccount-ext-text' => 'खालील माहिती ही गोपनीय असेल व फक्त या मागणी करताच वापरली जाईल.
 तुम्ही ओळख पटविण्यासाठी एखादा संपर्क क्रमांक देऊ शकता.',
 	'requestaccount-bio-text' => 'तुमची वैयक्तिक माहिती तुमच्या सदस्य पानावर दिसेल.
 काही विशेष उल्लेखनीय कामगिरी असल्यास ती वाढविण्याचा प्रयत्न करा.
-तसेच ही माहिती प्रकाशित करण्यास तुमची हरकत नाही हे तपासून पहा.
-तुमचे नाव तुम्ही [[Special:Preferences]] मध्ये बदलू शकता.',
+तसेच ही माहिती प्रकाशित करण्यास तुमची हरकत नाही हे तपासून पहा.',
 	'requestaccount-real' => 'खरे नाव:',
 	'requestaccount-same' => '(खर्‍या नावा प्रमाणेच)',
-	'requestaccount-email' => 'इमेल पत्ता:',
+	'requestaccount-email' => 'विपत्र पत्ता:',
 	'requestaccount-reqtype' => 'हुद्दा:',
 	'requestaccount-level-0' => 'लेखक',
 	'requestaccount-level-1' => 'संपादक',
@@ -7240,7 +7483,7 @@ $3
 	'confirmaccount-leg-other' => 'इतर माहिती',
 	'confirmaccount-name' => 'सदस्यनाव',
 	'confirmaccount-real' => 'नाव:',
-	'confirmaccount-email' => 'इमेल:',
+	'confirmaccount-email' => 'विपत्र:',
 	'confirmaccount-reqtype' => 'स्थिती:',
 	'confirmaccount-pos-0' => 'लेखक',
 	'confirmaccount-pos-1' => 'संपादक',
@@ -7323,6 +7566,219 @@ $2
 	'usercredentials-badid' => 'या सदस्याची शिफारसपत्रे सापडली नाहीत. सदस्य नाव बरोबर असल्याची खात्री करा.',
 );
 
+/** Malay (Bahasa Melayu)
+ * @author Anakmalaysia
+ */
+$messages['ms'] = array(
+	'requestaccount' => 'Mohon akaun',
+	'requestaccount-text' => "'''Lengkapkan dan serahkan borang yang berikut untuk memohon akaun pengguna'''.
+
+Pastikan anda sudah membaca [[{{MediaWiki:Requestaccount-page}}|Syarat-Syarat Perkhidmatan]] terlebih dahulu sebelum memohon akaun.
+
+Sebaik sahaja akaun anda diluluskan, anda akan diberi e-mel makluman dan akaun itu akan boleh digunakan selepas anda [[Special:UserLogin|log masuk]].",
+	'requestaccount-page' => '{{ns:project}}:Syarat-Syarat Perkhidmatan',
+	'requestaccount-dup' => "'''Perhatian: Anda sudah log masuk dengan akaun berdaftar.'''",
+	'requestaccount-leg-user' => 'Akaun pengguna',
+	'requestaccount-leg-areas' => 'Bidang-bidang yang paling diminati',
+	'requestaccount-leg-person' => 'Maklumat peribadi',
+	'requestaccount-leg-other' => 'Maklumat lain',
+	'requestaccount-leg-tos' => 'Syarat-Syarat Perkhidmatan',
+	'requestaccount-acc-text' => 'Satu pesanan pengesahan akan dihantar ke alamat e-mel anda sebaik sahaja permohonan ini diserahkan.
+Sila balas dengan mengklik pautan pengesahan yang diberikan dalam e-mel.
+Selain itu, kata laluan anda akan die-melkan kepada anda apabila akuan anda dibuka.',
+	'requestaccount-areas-text' => 'Pilih bidang-bidang topik yang anda mempunyai kepakaran formal atau ingin paling banyak usahakan di bawah.',
+	'requestaccount-ext-text' => 'Maklumat berikut dirahsiakan dan digunakan untuk permohonan ini sahaja.
+Mungkin anda ingin menyenaraikan maklumat hubungan seperti nombor telefon untuk memudahkan proses pengesahan identiti.',
+	'requestaccount-bio-text' => 'Cuba sertakan sebarang bukti kelayakan yang berkaitan dalam biografi anda di bawah.',
+	'requestaccount-bio-text-i' => "'''Biografi anda akan ditetapkan sebagai kandungan permulaan laman pengguna anda.'''
+Pastikan anda berasa selesa untuk menerbitkan maklumat sedemikian.",
+	'requestaccount-real' => 'Nama sebenar:',
+	'requestaccount-same' => '(sama dengan nama sebenar di bawah)',
+	'requestaccount-email' => 'Alamat e-mel:',
+	'requestaccount-reqtype' => 'Kedudukan:',
+	'requestaccount-level-0' => 'pengarang',
+	'requestaccount-level-1' => 'penyunting',
+	'requestaccount-bio' => 'Biografi peribadi (teks biasa sahaja):',
+	'requestaccount-attach' => 'Resume atau CV (pilihan):',
+	'requestaccount-notes' => 'Catatan tambahan:',
+	'requestaccount-urls' => 'Senarai tapak web, jika ada (setiap satu dalam baris berasingan):',
+	'requestaccount-agree' => 'Anda mesti memperakui bahawa nama sebenar anda adalah tepat dan anda bersetuju dengan Syarat-Syarat Perkhidmatan kami.',
+	'requestaccount-inuse' => 'Nama pengguna sudah dipakai dalam satu permohonan akaun yang menunggu.',
+	'requestaccount-tooshort' => 'Biografi anda mestilah sekurang-kurangnya mengandungi $1 patah perkataan.',
+	'requestaccount-emaildup' => 'E-mel yang diberikan sudah dipakai dalam satu permohonan akaun yang menunggu.',
+	'requestaccount-exts' => 'Jenis fail lampiran tidak dibenarkan.',
+	'requestaccount-resub' => 'Fail CV/resume anda mesti dipilih semula atas sebab-sebab keselamatan.
+Biarkan ruangan ini kosong jika anda tidak ingin melampirkan apa-apa.',
+	'requestaccount-tos' => 'Saya telah membaca dan bersetuju untuk mematuhi [[{{MediaWiki:Requestaccount-page}}|Syarat-Syarat Perkhidmatan]] {{SITENAME}}.
+Nama yang saya nyatakan dalam ruangan "Nama sebenar" sememangnya nama sebenar saya sendiri.',
+	'requestaccount-submit' => 'Mohon akaun',
+	'requestaccount-sent' => 'Permohonan akaun anda berjaya dihantar dan sedang menunggu untuk dikaji.
+	Satu pesanan e-mel pengesahan telah dihantar ke alamat e-mel anda.',
+	'request-account-econf' => 'Alamat e-mel anda telah disahkan dan akan disenaraikan dalam permohonan akaun anda.',
+	'requestaccount-email-subj' => 'Pengesahan alamat e-mel {{SITENAME}}',
+	'requestaccount-email-body' => 'Seseorang, mungkin anda dari alamat IP $1, telah memohon akaun "$2" dengan alamat e-mel ini di {{SITENAME}}.
+
+Untuk mengesahkan bahawa akaun ini benar-benar milik anda di {{SITENAME}}, buka pautan berikut dalam pelayar anda:
+
+$3
+
+Jika akaun ini dibuka, hanya anda yang akan diberi kata laluan melalui e-mel.
+Jika ini *bukan* anda, jangan ikut pautan ini.
+Kod pengesahan ini akan luput pada $4.',
+	'requestaccount-email-subj-admin' => 'Permohonan akaun {{SITENAME}}',
+	'requestaccount-email-body-admin' => '"$1" telah memohon akaun dan sedang menunggu pengesahan.
+Alamat e-mel ini telah disahkan. Anda boleh mengesahan permohonan di sini "$2".',
+	'acct_request_throttle_hit' => 'Maaf, anda sudah memohon {{PLURAL:$1|1 akaun|$1 akaun}}.
+Anda tidak boleh membuat permohonan lagi.',
+	'requestaccount-loginnotice' => "Untuk memperoleh akaun pengguna, anda mesti '''[[Special:RequestAccount|membuat permohonan]]'''.",
+	'confirmaccount-newrequests' => "'''$1''' [[Special:ConfirmAccounts|permohonan akaun]] terbuka yang disahkan oleh e-mel dan menunggu",
+	'confirmaccounts' => 'Sahkan permohonan akaun',
+	'confirmedit-desc' => 'Memberi birokrat kebolehan untuk mengesahkan permohonan akaun',
+	'confirmaccount-maintext' => "'''Laman ini digunakan untuk mengesahkan permohonan akaun yang menunggu di ''{{SITENAME}}'''''.
+
+Setiap baris gilir permohonan akaun terdiri daripada tiga baris gilir kecil.
+Satu untuk permohonan terbuka, satu untuk permohonan yang digantung oleh pentadbir lain kerana menunggu maklumat lanjut, dan satu lagi untuk permohonan yang ditolak baru-baru ini.
+
+Apabila membalas permohonan, sila kajinya dengan teliti, dan jika perlu, sahkan maklumat yang terkandung dalamnya.
+Tindakan anda akan dilogkan secara rahsia.
+Anda juga dijangka mengkaji sebarang aktiviti yang berlaku di sini selain yang anda lakukan.",
+	'confirmaccount-list' => 'Berikut ialah senarai permohonan akaun yang menunggu kelulusan.
+Sebaik sahaja permohonan diterima atau ditolak, ia akan dipadamkan dari senarai ini.',
+	'confirmaccount-list2' => 'Berikut ialah senarai permohonan akaun yang ditolak baru-baru ini dan mungkin akan dihapuskan secara automatik selepas beberapa hari.
+Ia masih boleh diluluskan menjadi akaun, tetapi anda harus berunding dengan pentadbir yang membuat penolakan terlebih dahulu sebelum berbuat demikian.',
+	'confirmaccount-list3' => 'Berikut ialah senarai permohonan akaun luput yang mungkin akan dihapuskan secara automatik selepas beberapa hari.
+Ia masih boleh diluluskan menjadi akaun.',
+	'confirmaccount-text' => "Ini ialah permohonan akaun pengguna yang menunggu di '''{{SITENAME}}'''.
+
+Sila kaji maklumat berikut secara teliti.
+Jika anda ingin meluluskan permohoan ini, gunakan juntai bawah posisi untuk menetapkan status akaun pengguna.
+Suntingan yang dilakukan pada biografi aplikasi tidak akan mempengaruhi sebarang storan kelayakan yang kekal.
+Ingat, anda boleh memilih untuk membuka akaun itu dengan nama pengguna yang lain.
+Gunakan ini untuk mengelakkan percanggahan dengan nama lain sahaja.
+
+Jika anda membiarkan laman ini begitu sahaja tanpa mengesahkan atau menolak permohonan ini, ia akan kekal menunggu.",
+	'confirmaccount-none-o' => 'Buat masa ini, tiada permohonan akaun menunggu yang terbuka dalam senarai ini.',
+	'confirmaccount-none-h' => 'Buat masa ini, tiada permohonan akaun menunggu yang tergantung dalam senarai ini.',
+	'confirmaccount-none-r' => 'Buat masa ini, tiada permohonan akaun yang ditolak baru-baru ini dalam senarai ini.',
+	'confirmaccount-none-e' => 'Buat masa ini, tiada permohonan akaun yang luput dalam senarai ini.',
+	'confirmaccount-real-q' => 'Nama',
+	'confirmaccount-email-q' => 'E-mel',
+	'confirmaccount-bio-q' => 'Biografi',
+	'confirmaccount-showopen' => 'permohonan terbuka',
+	'confirmaccount-showrej' => 'permohonan ditolak',
+	'confirmaccount-showheld' => 'permohonan tergantung',
+	'confirmaccount-showexp' => 'permohonan luput',
+	'confirmaccount-review' => 'Kaji semula',
+	'confirmaccount-types' => 'Pilih baris gilir pengesahan akaun dari bawah:',
+	'confirmaccount-all' => '(tunjukkan semua baris gilir)',
+	'confirmaccount-type' => 'Baris gilir:',
+	'confirmaccount-type-0' => 'bakal pengarang',
+	'confirmaccount-type-1' => 'bakal penyunting',
+	'confirmaccount-q-open' => 'permohonan terbuka',
+	'confirmaccount-q-held' => 'permohonan tergantung',
+	'confirmaccount-q-rej' => 'permohonan ditolak yang terbaru',
+	'confirmaccount-q-stale' => 'permohonan luput',
+	'confirmaccount-badid' => 'Tiada permohonan menunggu yang sepadan dengan ID yang diberikan.
+Mungkin ia sudah diuruskan.',
+	'confirmaccount-leg-user' => 'Akaun pengguna',
+	'confirmaccount-leg-areas' => 'Bidang-bidang yang paling diminati',
+	'confirmaccount-leg-person' => 'Maklumat peribadi',
+	'confirmaccount-leg-other' => 'Maklumat lain',
+	'confirmaccount-name' => 'Nama pengguna',
+	'confirmaccount-real' => 'Nama:',
+	'confirmaccount-email' => 'E-mel:',
+	'confirmaccount-reqtype' => 'Kedudukan:',
+	'confirmaccount-pos-0' => 'pengarang',
+	'confirmaccount-pos-1' => 'penyunting',
+	'confirmaccount-bio' => 'Biografi:',
+	'confirmaccount-attach' => 'Resume/CV:',
+	'confirmaccount-notes' => 'Catatan tambahan:',
+	'confirmaccount-urls' => 'Senarai tapak web:',
+	'confirmaccount-none-p' => '(tidak disediakan)',
+	'confirmaccount-confirm' => 'Gunakan pilihan di bawah untuk menerima, menolak atau menggantung permohonan ini:',
+	'confirmaccount-econf' => '(disahkan)',
+	'confirmaccount-reject' => '(ditolak oleh [[User:$1|$1]] pada $2)',
+	'confirmaccount-rational' => 'Rasional yang diberikan kepada pemohon:',
+	'confirmaccount-noreason' => '(tiada)',
+	'confirmaccount-autorej' => '(permohonan ini telah dibuang secara automatik disebabkan ketidakaktifan)',
+	'confirmaccount-held' => '(ditandai sebagai "tergantung" oleh [[User:$1|$1]] pada $2)',
+	'confirmaccount-create' => 'Terima (buka akaun)',
+	'confirmaccount-deny' => 'Tolak (buang dari senarai)',
+	'confirmaccount-hold' => 'Gantung',
+	'confirmaccount-spam' => 'Spam (jangan hantar e-mel)',
+	'confirmaccount-reason' => 'Komen (akan disertakan dalam e-mel):',
+	'confirmaccount-ip' => 'Alamat IP:',
+	'confirmaccount-legend' => 'Sahkan/tolak akaun ini',
+	'confirmaccount-submit' => 'Sahkan',
+	'confirmaccount-needreason' => 'Anda mesti menyatakan sebab dalam ruangan komen di bawah.',
+	'confirmaccount-canthold' => 'Permohonan ini digantung atau dihapuskan.',
+	'confirmaccount-acc' => 'Permohonan akaun berjaya disahkan;
+	akaun pengguna baru [[User:$1|$1]] dicipta.',
+	'confirmaccount-rej' => 'Permohonan akaun berjaya ditolak.',
+	'confirmaccount-viewing' => '(sedang diliha oleh [[User:$1|$1]])',
+	'confirmaccount-summary' => 'Laman pengguna diwujudkan dengan biografi pengguna baru.',
+	'confirmaccount-welc' => "'''Selamat datang ''{{SITENAME}}''!'''
+Kami berharap agar anda memberikan sumbangan yang banyak dan bermanfaat di sini.
+Apa kata anda membaca [[{{MediaWiki:Helppage}}|laman-laman bantuan]] terlebih dahulu.
+Apapun, selamat datang dan salam ceria!",
+	'confirmaccount-wsum' => 'Selamat datang!',
+	'confirmaccount-email-subj' => 'Permohonan akaun {{SITENAME}}',
+	'confirmaccount-email-body' => 'Permohonan akaun anda telah diluluskan di {{SITENAME}}.
+
+Nama akaun: $1
+
+Kata laluan: $2
+
+Atas sebab keselamatan, anda perlu menukar kata laluan pada log masuk pertama.
+Untuk log masuk, sila ke {{fullurl:Special:UserLogin}}.',
+	'confirmaccount-email-body2' => 'Permohonan akaun anda telah diluluskan di {{SITENAME}}.
+
+Nama akaun: $1
+
+Kata laluan: $2
+
+$3
+
+Atas sebab keselamatan, anda perlu menukar kata laluan pada log masuk pertama.
+Untuk log masuk, sila ke {{fullurl:Special:UserLogin}}.',
+	'confirmaccount-email-body3' => 'Maaf, permohonan akaun anda "$1" telah ditolak di {{SITENAME}}.
+
+Ini mungkin timbul atas beberapa sebab.
+Mungkin anda tidak mengisi borang dengan betul, tidak menulis jawapan anda secukupnya, ataupun tidak memenuhi kriteria dasar tertentu.
+Terdapat senarai hubungan dalam tapak yang boleh anda gunakan jika anda ingin mengetahui lebih banyak mengenai dasar akaun pengguna.',
+	'confirmaccount-email-body4' => 'Maaf, permohonan akaun anda "$1" telah ditolak di {{SITENAME}}.
+
+$2
+
+Terdapat senarai hubungan dalam tapak yang boleh anda gunakan jika anda ingin mengetahui lebih banyak mengenai dasar akaun pengguna.',
+	'confirmaccount-email-body5' => 'Sebelum permohonan akaun anda "$1" boleh diterima di {{SITENAME}}, anda mesti memberikan maklumat tambahan terlebih dahulu.
+
+$2
+
+Terdapat senarai hubungan dalam tapak yang boleh anda gunakan jika anda ingin mengetahui lebih banyak mengenai dasar akaun pengguna.',
+	'usercredentials' => 'Bukti kelayakan pengguna',
+	'usercredentials-leg' => 'Cari bukti kelayakan yang disahkan untuk pengguna',
+	'usercredentials-user' => 'Nama pengguna:',
+	'usercredentials-text' => 'Berikut ialah bukti-bukti kelayakan yang disahkan bagi akaun pengguna yang terpilih.',
+	'usercredentials-leg-user' => 'Akaun pengguna',
+	'usercredentials-leg-areas' => 'Bidang-bidang yang paling diminati',
+	'usercredentials-leg-person' => 'Maklumat peribadi',
+	'usercredentials-leg-other' => 'Maklumat lain',
+	'usercredentials-email' => 'E-mel:',
+	'usercredentials-real' => 'Nama sebenar:',
+	'usercredentials-bio' => 'Biografi:',
+	'usercredentials-attach' => 'Resume/CV:',
+	'usercredentials-notes' => 'Catatan tambahan:',
+	'usercredentials-urls' => 'Senarai tapak web:',
+	'usercredentials-ip' => 'Alamat IP asal:',
+	'usercredentials-member' => 'Hak:',
+	'usercredentials-badid' => 'Tiada bukti kelayakan untuk pengguna ini.
+Pastikan namanya dieja dengan betul.',
+	'right-confirmaccount' => 'Melihat [[Special:ConfirmAccounts|baris gilir dengan akaun-akaun yang dimohon]]',
+	'right-requestips' => 'Melihat alamat-alamat IP pemohon ketika memproseskan akaun-akaun yang dimohon',
+	'right-lookupcredentials' => 'Melihat [[Special:UserCredentials|kelayakan pengguna]]',
+);
+
 /** Maltese (Malti)
  * @author Chrisportelli
  * @author Roderick Mallia
@@ -7339,6 +7795,8 @@ $messages['mt'] = array(
  * @author Botuzhaleny-sodamo
  */
 $messages['myv'] = array(
+	'requestaccount-real' => 'Алкуксонь леметь:',
+	'requestaccount-same' => '(истямо кода алкуксонь лемесь)',
 	'requestaccount-level-0' => 'теицязо',
 	'requestaccount-level-1' => 'витницязо-петницязо',
 	'confirmaccount-real-q' => 'Лемезэ:',
@@ -7346,6 +7804,7 @@ $messages['myv'] = array(
 	'confirmaccount-type' => 'Чиполань пулось:',
 	'confirmaccount-name' => 'Теицянь лем',
 	'confirmaccount-real' => 'Лемезэ:',
+	'confirmaccount-email' => 'Е-сёрма:',
 	'confirmaccount-pos-0' => 'теиця',
 	'confirmaccount-pos-1' => 'витницязо-петницязо',
 	'confirmaccount-none-p' => '(апак максо)',
@@ -7433,17 +7892,16 @@ U krijgt een wachtwoord als uw gebruiker is aangemaakt.',
 	'requestaccount-areas-text' => 'Selecteer hieronder de onderwerpen waarmee u ervaring hebt of waarvan u het meeste werk wil verrichten.',
 	'requestaccount-ext-text' => 'De volgende informatie wordt vertrouwelijk behandeld en wordt alleen gebruikt voor deze aanvraag.
 U kunt contactgegevens zoals een telefoonummer opgeven om te helpen bij het vaststellen van uw identiteit.',
-	'requestaccount-bio-text' => 'Uw biografie wordt opgenomen in uw gebruikerspagina.
-Probeer uw belangrijkste gegevens op te nemen.
-Zorg ervoor dat u achter het publiceren van dergelijke informatie staat.
-U kunt uw naam wijzigen via uw [[Special:Preferences|voorkeuren]].',
+	'requestaccount-bio-text' => 'Probeer uw belangrijkste gegevens op te nemen.',
+	'requestaccount-bio-text-i' => "'''Deze tekst wordt gebruikt voor uw gebruikerspagina.'''
+Zorg ervoor dat u hier gegevens noteert die gepubliceerd mogen worden.",
 	'requestaccount-real' => 'Uw naam:',
 	'requestaccount-same' => '(gelijk aan uw naam)',
 	'requestaccount-email' => 'E-mailadres:',
 	'requestaccount-reqtype' => 'Positie:',
 	'requestaccount-level-0' => 'auteur',
 	'requestaccount-level-1' => 'redacteur',
-	'requestaccount-bio' => 'Persoonlijke biografie:',
+	'requestaccount-bio' => 'Persoonlijke biografie (alleen platte tekst):',
 	'requestaccount-attach' => 'CV (optioneel):',
 	'requestaccount-notes' => 'Opmerkingen:',
 	'requestaccount-urls' => 'Lijst van websites, als van toepassing (iedere site op een aparte regel):',
@@ -7530,7 +7988,7 @@ Wellicht is de aanvraag al afgehandeld.',
 	'confirmaccount-name' => 'Gebruikersnaam',
 	'confirmaccount-real' => 'Naam:',
 	'confirmaccount-email' => 'E-mail:',
-	'confirmaccount-reqtype' => 'Functie:',
+	'confirmaccount-reqtype' => 'Positie:',
 	'confirmaccount-pos-0' => 'auteur',
 	'confirmaccount-pos-1' => 'redacteur',
 	'confirmaccount-bio' => 'Biografie:',
@@ -7842,7 +8300,7 @@ Når kontoen godkjennes vil du få beskjed på e-post, og du vil kunne [[Special
 	'requestaccount-reqtype' => 'Stilling:',
 	'requestaccount-level-0' => 'forfatter',
 	'requestaccount-level-1' => 'redaktør',
-	'requestaccount-bio' => 'Personlig biografi:',
+	'requestaccount-bio' => 'Personlig biografi (kun ren tekst):',
 	'requestaccount-attach' => 'Resyme eller CV (valgfri):',
 	'requestaccount-notes' => 'Andre merknader:',
 	'requestaccount-urls' => 'Liste over nettsider, om det er noen (skill dem fra hverandre med linjeskift):',
@@ -8184,6 +8642,17 @@ Aquò permet d’èsser sus la tièra dels contactes del site, se ne desiratz sa
 	'right-lookupcredentials' => 'Vejatz las [[Special:UserCredentials|referéncias dels utilizaires]]',
 );
 
+/** Oriya (ଓଡ଼ିଆ)
+ * @author Odisha1
+ */
+$messages['or'] = array(
+	'confirmaccount-real-q' => 'ନାମ',
+	'confirmaccount-real' => 'ନାମ',
+	'confirmaccount-email' => 'ଇ-ମେଲ',
+	'confirmaccount-wsum' => 'ସ୍ଵାଗତ!',
+	'usercredentials-email' => 'E-mail:',
+);
+
 /** Ossetic (Иронау)
  * @author Amikeco
  */
@@ -8283,16 +8752,16 @@ Hasło do konta zostanie przesłane poprzez e‐mail, gdy konto zostanie już ut
 	'requestaccount-areas-text' => 'Określ tematy i obszary dla których posiadasz formalne przygotowanie lub takie nad którymi planujesz najwięcej pracować.',
 	'requestaccount-ext-text' => 'Następujące informacje nie będą udostępniane. Zostaną użyte tylko na potrzeby tego wniosku o założenie konta użytkownika.
 Możesz wyświetlić kontakty np. numer telefonu, by łatwiej zdecydować o zatwierdzeniu lub odrzuceniu wniosku.',
-	'requestaccount-bio-text' => 'Biografia zostanie wstawiona jako domyślna zawartość Twojej strony użytkownika.
-Załącz informacje o kwalifikacjach i referencje, oczywiście pod warunkiem, że opublikowanie tych informacji nie stanowi dla Ciebie problemu.
-Imię i nazwisko będziesz mógł poprawić w [[Special:Preferences|preferencjach]].',
+	'requestaccount-bio-text' => 'Spróbuj zawrzeć w swojej poniższej biografii wszelkie istotne informacje.',
+	'requestaccount-bio-text-i' => "'''Twoja biografia zostanie zamieszczona jako początkowa zawartość Twojej strony użytkownika.'''
+Upewnij się, czy na pewno chcesz opublikować te informacje.",
 	'requestaccount-real' => 'Imię i nazwisko:',
 	'requestaccount-same' => '(prawdziwe imię i nazwisko)',
 	'requestaccount-email' => 'Adres e‐mail:',
 	'requestaccount-reqtype' => 'Stanowisko:',
 	'requestaccount-level-0' => 'autor',
 	'requestaccount-level-1' => 'redaktor',
-	'requestaccount-bio' => 'Osobista biografia:',
+	'requestaccount-bio' => 'Autobiografia (wyłącznie czysty tekst):',
 	'requestaccount-attach' => 'Życiorys (opcjonalne):',
 	'requestaccount-notes' => 'Dodatkowe informacje:',
 	'requestaccount-urls' => 'Lista adresów stron internetowych, jeśli posiadasz (każdy w osobnym wierszu):',
@@ -8488,17 +8957,16 @@ Na vira che 'l cont a sia aprovà, a l'arseivrà na notìfica për pòsta eletr�
 	'requestaccount-acc-text' => "A soa adrëssa ëd pòsta eletrònica a-i rivërà un messagi, na vira che sta domanda a la sia mandà. Per piasì, ch'a n'arsponda ën dand-ie un colp col rat ansima a l'aniura ch'a treuva ant ël messagi. Ëdcò soa ciav a sarà recapità për pòsta eletrònica, na vira che sò cont a sia creà.",
 	'requestaccount-areas-text' => "Selession-a j'argoment sota dont it l'has esperiensa formal o at piasrìa travajeje ansima.",
 	'requestaccount-ext-text' => "St'anformassion-sì as ten privà e as dòvra mach për sta question-sì. S'a veul a peul buté dij contat coma un nùmer ëd telèfono për giuté a identifichesse sensa dubi.",
-	'requestaccount-bio-text' => "Soa biografìa a sarà buta coma contnù base për soa pàgina utent. 
-S'a peul, ch'a buta soe credensiaj, cole ch'a sio. 
-Ch'a varda mach però dë buté dj'anformassion ch'a-j da gnun fastudi publiché. 
-An tute le manere, a peul sempe cambiesse 'd nòm ën dovrand l'adrëssa [[Special:Preferences|Ij mè gust]].",
+	'requestaccount-bio-text' => 'Preuva a anserì quaich credensiaj relenante ant toa biografìa sì sota.',
+	'requestaccount-bio-text-i' => "'''Toa biografìa a sarà ampostà com ël contnù inissial për toa pagina utent.'''
+Sigurte d'esse content ëd publiché cole anformassion.",
 	'requestaccount-real' => 'Nòm vèir:',
 	'requestaccount-same' => '(istess che sò nòm vèir)',
 	'requestaccount-email' => 'Adrëssa ëd pòsta eletrònica:',
 	'requestaccount-reqtype' => 'Posission:',
 	'requestaccount-level-0' => 'autor',
 	'requestaccount-level-1' => 'editor',
-	'requestaccount-bio' => 'Biografìa personal:',
+	'requestaccount-bio' => 'Biografìa personal (mach sempi test):',
 	'requestaccount-attach' => 'Curriculum vitae (opsional):',
 	'requestaccount-notes' => 'Nòte adissionaj:',
 	'requestaccount-urls' => "Lista ëd sit ant sla Ragnà, s'a-i n'a-i é (buté un për riga):",
@@ -8644,7 +9112,7 @@ Ch'a contròla che ël nòm a sia scrivù da bin.",
  * @author Ahmed-Najib-Biabani-Ibrahimkhel
  */
 $messages['ps'] = array(
-	'requestaccount-leg-user' => 'کارن-حساب',
+	'requestaccount-leg-user' => 'ګڼون',
 	'requestaccount-leg-person' => 'ځاني مالومات',
 	'requestaccount-leg-other' => 'نور مالومات',
 	'requestaccount-real' => 'اصلي نوم:',
@@ -8653,32 +9121,34 @@ $messages['ps'] = array(
 	'requestaccount-bio' => 'شخصي ژوندليک:',
 	'requestaccount-tooshort' => 'ستاسې ژوندليک بايد لږ تر لږه $1 {{PLURAL:$1|ويی|وييونه}} اوږد وي.',
 	'confirmaccount-real-q' => 'نوم',
-	'confirmaccount-email-q' => 'برېښلیک',
+	'confirmaccount-email-q' => 'برېښليک',
 	'confirmaccount-bio-q' => 'ژوندليک',
 	'confirmaccount-showrej' => 'رټل شوې غوښتنې',
 	'confirmaccount-review' => 'مخکتنه',
-	'confirmaccount-leg-user' => 'کارن-حساب',
+	'confirmaccount-q-open' => 'پرانيستې غوښتنې',
+	'confirmaccount-leg-user' => 'ګڼون',
 	'confirmaccount-leg-person' => 'ځاني مالومات',
 	'confirmaccount-leg-other' => 'نور مالومات',
 	'confirmaccount-name' => 'کارن-نوم',
 	'confirmaccount-real' => 'نوم:',
 	'confirmaccount-email' => 'برېښليک:',
 	'confirmaccount-pos-0' => 'ليکوال',
+	'confirmaccount-pos-1' => 'سمونګر',
 	'confirmaccount-bio' => 'ژوندليک:',
 	'confirmaccount-urls' => 'د وېبځايونو لړليک:',
 	'confirmaccount-noreason' => '(هېڅ)',
 	'confirmaccount-ip' => 'IP پته:',
 	'confirmaccount-wsum' => 'ښه راغلاست!',
-	'confirmaccount-email-body' => 'په {{SITENAME}} باندې د يوه کارن-حساب لپاره غوښتنه مو ومنل شوه .
+	'confirmaccount-email-body' => 'په {{SITENAME}} باندې د يوه ګڼون لپاره غوښتنه مو ومنل شوه .
 
-د کارن-حساب نوم: $1
+د ګڼون نوم: $1
 
 پټنوم: $2
 
 د تحفظ د سببونو لپاره تاسو ته پکار ده چې د وروسته له دې چې د لومړي ځل لپاره غونډال ته ننوتلی نو مهرباني وکړی خپل پټنوم بدل کړی. د دې لپاره چې غونډال ته ننوځی، مهرباني وکړی {{fullurl:Special:UserLogin}} ولاړ شی.',
-	'confirmaccount-email-body2' => 'په {{SITENAME}} باندې د يوه کارن-حساب لپاره غوښتنه مو ومنل شوه .
+	'confirmaccount-email-body2' => 'په {{SITENAME}} باندې د يوه ګڼون لپاره غوښتنه مو ومنل شوه .
 
-د کارن-حساب نوم: $1
+د ګڼون نوم: $1
 
 پټنوم: $2
 
@@ -8686,13 +9156,14 @@ $3
 
 د تحفظ د سببونو لپاره تاسو ته پکار ده چې د وروسته له دې چې د لومړي ځل لپاره غونډال ته ننوتلی نو مهرباني وکړی خپل پټنوم بدل کړی. د دې لپاره چې غونډال ته ننوځی، مهرباني وکړی {{fullurl:Special:UserLogin}} ولاړ شی.',
 	'usercredentials-user' => 'کارن-نوم:',
-	'usercredentials-leg-user' => 'کارن-حساب',
+	'usercredentials-leg-user' => 'ګڼون',
 	'usercredentials-leg-person' => 'ځاني مالومات',
 	'usercredentials-leg-other' => 'نور مالومات',
 	'usercredentials-email' => 'برېښليک:',
 	'usercredentials-real' => 'اصلي نوم:',
 	'usercredentials-bio' => 'ژوندليک:',
 	'usercredentials-urls' => 'د وېبځايونو لړليک:',
+	'usercredentials-ip' => 'آرنۍ آی پي پته:',
 	'usercredentials-member' => 'رښتې:',
 );
 
@@ -8721,17 +9192,16 @@ Assim que a conta for aprovada, ser-lhe-á enviada uma mensagem de notificação
 	'requestaccount-areas-text' => 'Seleccione abaixo as áreas em que possui experiência formal ou em que mais gostaria de trabalhar.',
 	'requestaccount-ext-text' => 'A seguinte informação será mantida privada e só será usada para este pedido.
 Talvez possa listar contactos, tais como o número de telefone, para ajudar na confirmação da identificação.',
-	'requestaccount-bio-text' => 'Por omissão, a sua biografia será usada como conteúdo da sua página de utilizador.
-Tente incluir algumas credenciais.
-Assegure-se de que concorda com a publicação desta informação.
-O seu nome pode ser alterado nas [[Special:Preferences|suas preferências]].',
+	'requestaccount-bio-text' => 'Tente incluir todas as credenciais relevantes na sua biografia abaixo.',
+	'requestaccount-bio-text-i' => "'''A sua biografia será definida como o conteúdo inicial da sua página de utilizador.'''
+Certifique-se de que pretende publicar esta informação.",
 	'requestaccount-real' => 'Nome real:',
 	'requestaccount-same' => '(igual ao nome real)',
 	'requestaccount-email' => 'Endereço de correio electrónico:',
 	'requestaccount-reqtype' => 'Posição:',
 	'requestaccount-level-0' => 'autor',
 	'requestaccount-level-1' => 'editor',
-	'requestaccount-bio' => 'Biografia pessoal:',
+	'requestaccount-bio' => 'Biografia pessoal (só texto):',
 	'requestaccount-attach' => 'Currículo (opcional):',
 	'requestaccount-notes' => 'Notas adicionais:',
 	'requestaccount-urls' => 'Lista de sites na internet, se algum (um por linha):',
@@ -8748,14 +9218,14 @@ O nome que introduzi em "Nome real" é de facto o meu nome real.',
 Uma mensagem de confirmação foi enviada para o seu correio electrónico.',
 	'request-account-econf' => 'O seu correio electrónico foi confirmado e será listado como tal no seu pedido de conta.',
 	'requestaccount-email-subj' => 'Confirmação de endereço electrónico para a {{SITENAME}}',
-	'requestaccount-email-body' => 'Alguém, provavelmente você a partir do endereço IP $1, pediu uma conta "$2" com este endereço de correio electrónico na {{SITENAME}}.
+	'requestaccount-email-body' => 'Alguém, provavelmente você a partir do endereço IP $1, solicitou uma conta "$2" com este endereço de correio electrónico na {{SITENAME}}.
 
 Para confirmar que esta conta realmente lhe pertence na {{SITENAME}}, siga este link no seu browser:
 
 $3
 
-Se a conta for criada, a palavra-chave só lhe será enviada a si. Se este pedido *não* foi feito por si, não siga o link.
-Este código de confirmação expirará a $4.',
+Se a conta for criada, a palavra-chave só será enviada a si. Se este pedido *não* foi feito por si, não siga o link.
+Este código de confirmação irá expirar às $6 de $5.',
 	'requestaccount-email-subj-admin' => 'Pedido de conta na {{SITENAME}}',
 	'requestaccount-email-body-admin' => '"$1" pediu uma conta e aguarda confirmação.
 O endereço electrónico foi confirmado. Pode confirmar o pedido aqui "$2".',
@@ -8900,6 +9370,7 @@ Podem haver listas de contactos no site que poderá usar se deseja saber mais so
 /** Brazilian Portuguese (Português do Brasil)
  * @author Eduardo.mps
  * @author Giro720
+ * @author Helder.wiki
  * @author Heldergeovane
  * @author Luckas Blade
  */
@@ -9076,7 +9547,7 @@ $2
 Podem haver listas de contatos no sítio que poderá usar se desejar saber mais sobre a política de contas de utilizador.',
 	'usercredentials' => 'Credenciais do utilizador',
 	'usercredentials-leg' => 'Procurar credenciais confirmadas para um utilizador',
-	'usercredentials-user' => 'Nome de utilizador:',
+	'usercredentials-user' => 'Nome de usuário:',
 	'usercredentials-text' => 'Abaixo estão as credenciais validadas da conta de utilizador selecionada.',
 	'usercredentials-leg-user' => 'Conta de utilizador',
 	'usercredentials-leg-areas' => 'Principais áreas de interesse',
@@ -9131,17 +9602,14 @@ După ce contul va fi aprobat, vei fi anunțat printr-un mesaj trimis prin e-mai
 	'requestaccount-leg-person' => 'Informații personale',
 	'requestaccount-leg-other' => 'Alte informații',
 	'requestaccount-leg-tos' => 'Termenii serviciului',
-	'requestaccount-bio-text' => 'Biografia ta va fi introdusă automat în pagina ta de utilizator.
-Încearcă să incluzi referiri la diplome care să ateste cunoștințele tale.
-Asigură-te că publicarea acestora nu-ți aduce prejudicii.
-Numele tău poate fi schimbat din [[Special:Preferences|preferințele tale]].',
+	'requestaccount-bio-text' => 'Încercați să includeți orice acreditări relevante în biografia dumneavoastră, mai jos.',
 	'requestaccount-real' => 'Nume real:',
 	'requestaccount-same' => '(același cu numele real)',
 	'requestaccount-email' => 'Adresă e-mail:',
 	'requestaccount-reqtype' => 'Poziție:',
 	'requestaccount-level-0' => 'autor',
 	'requestaccount-level-1' => 'editor',
-	'requestaccount-bio' => 'Biografie personală:',
+	'requestaccount-bio' => 'Biografie personală (numai text simplu):',
 	'requestaccount-attach' => 'CV (opțional):',
 	'requestaccount-notes' => 'Note adiționale:',
 	'requestaccount-agree' => 'Trebuie să certifici că numele tău real este corect introdus și că accepți Termenii Serviciului.',
@@ -9260,6 +9728,7 @@ $messages['roa-tara'] = array(
  * @author Lockal
  * @author MaxSem
  * @author Rubin
+ * @author Sasha Blashenkov
  * @author Александр Сигачёв
  */
 $messages['ru'] = array(
@@ -9281,17 +9750,16 @@ $messages['ru'] = array(
 	'requestaccount-areas-text' => 'Выберите области, в которых вы компетентны или в которых собираетесь работать в наибольшей степени.',
 	'requestaccount-ext-text' => 'Следующая информация будет сохранена в секрете и будет использована только для обработки данного запроса.
 	Вы можете перечислить способы связи, например, номер телефона, чтобы помочь в подтверждении идентичности.',
-	'requestaccount-bio-text' => 'Ваша биография будет по умолчанию помещена на вашу личную страницу.
-Попробуйте включить какие-либо удостоверения личности.
-Убедитесь, что вы не против публикации этой информации.
-Ваше имя может быть изменено с помощью [[Special:Preferences|ваших персональных настроек]].',
+	'requestaccount-bio-text' => 'Попробуйте включить любые соответствующие полномочия в вашей биографии ниже.',
+	'requestaccount-bio-text-i' => "'''Ваша биография будет размещена на вашей личной странице.'''
+Убедитесь, что вы не возражаете против публикации этих сведений.",
 	'requestaccount-real' => 'Настоящее имя:',
 	'requestaccount-same' => '(такая же как и настоящее имя)',
 	'requestaccount-email' => 'Электронная почта:',
 	'requestaccount-reqtype' => 'Должность:',
 	'requestaccount-level-0' => 'автор',
 	'requestaccount-level-1' => 'редактор',
-	'requestaccount-bio' => 'Личная биография:',
+	'requestaccount-bio' => 'Личная биография (только обычный текст):',
 	'requestaccount-attach' => 'Резюме (необязательно):',
 	'requestaccount-notes' => 'Дополнительные замечания:',
 	'requestaccount-urls' => 'Список веб-сайтов, если есть (по одному на каждой строчке):',
@@ -9481,6 +9949,42 @@ $messages['rue'] = array(
 	'confirmaccount-pos-0' => 'автор',
 	'confirmaccount-pos-1' => 'едітор',
 	'confirmaccount-bio' => 'Біоґрафія:',
+);
+
+/** Yakut (Саха тыла)
+ * @author HalanTul
+ */
+$messages['sah'] = array(
+	'requestaccount' => 'Бэлиэтэниллибит аат',
+	'requestaccount-text' => "'''Ааты бэлиэтииргэ манна баар форманы толор уонна ыыт.'''
+
+Ыытыаҥ иннинэ бука диэн [[{{MediaWiki:Requestaccount-page}}|Өҥө оҥоруу усулуобуйатын]] аах.
+
+Талбыт аатыҥ бигэргэтилиннэҕинэ электроннай почтаҕар биллэрии кэлиэҕэ, оччоҕо ол аатынан [[Special:UserLogin|киирэр]] кыахтаныаҥ.",
+	'requestaccount-page' => '{{ns:project}}:Өҥө оҥоруутун усулуобуйата',
+	'requestaccount-dup' => "'''Биллэрии: Эн бэлиэтэммит аатынан хайыы үйэ киирбит эбиккин.'''",
+	'requestaccount-leg-user' => 'Бэлиэ аат',
+	'requestaccount-leg-areas' => 'Кэрэхсиир хайысхаларыҥ',
+	'requestaccount-leg-person' => 'Тус бэйэҥ туһунан',
+	'requestaccount-leg-other' => 'Атын сибидиэнньэлэр',
+	'requestaccount-leg-tos' => 'Туһаныы сиэрэ',
+	'requestaccount-acc-text' => 'Сайаапка ыыппытыҥ кэннэ эн аадырыскар бигэргэтэр ыйытыктаах сурук кэлиэ. 
+Онно баар сигэн баттаатаххына сайаапкаҥ бигэргэниэ. 
+Ол кэнниттэн киирии тылыҥ эмиэ электроннай почтанан кэлиэ.',
+	'requestaccount-areas-text' => 'Үчүгэйдик билэр, үлэлиэххин баҕарар хайысхаларгын (эйгэлэргин) тал.',
+	'requestaccount-ext-text' => 'Манна ыйбыт сибидиэнньэлэриҥ туора дьоҥҥо көстүөхтэрэ суоҕа уонна бу сайаапканы көрөргө эрэ туһаныллыахтара.
+Эн буоларгын бигэргэтэр ситим көрүҥнэрин, холобур төлөппүөнүҥ нүөмэрин, этиэххин сөп.',
+	'requestaccount-real' => 'Дьиҥнээх аатыҥ:',
+	'requestaccount-same' => '(дьиҥнээх аатыҥ курдук)',
+	'requestaccount-email' => 'Электроннай почтаҥ:',
+	'requestaccount-reqtype' => 'Дуоһунаһыҥ:',
+	'requestaccount-level-0' => 'ааптар',
+	'requestaccount-level-1' => 'эрэдээктэр',
+	'requestaccount-bio' => 'Олоҕуҥ олуктара (көннөрү тиэксинэн):',
+	'requestaccount-attach' => 'Резюме (булгуччута суох):',
+	'requestaccount-notes' => 'Эбии этиилэр:',
+	'requestaccount-urls' => 'Ситим-сирдэр тиһиктэрэ, баар буоллаҕына (устуруока аайы биирдии):',
+	'requestaccount-agree' => 'Аатыҥ сөпкө суруллубутун бигэргэт уонна Өҥө оҥоруу усулуобуйатын кытта сөбүлэһэргин биллэр.',
 );
 
 /** Sicilian (Sicilianu)
@@ -9674,22 +10178,23 @@ Na stránke môže byť uvedený zoznam kontaktov, ktorý môžete použiť ak s
 	'right-lookupcredentials' => 'Zobraziť [[Special:UserCredentials|údaje používateľa]]',
 );
 
-/** Serbian Cyrillic ekavian (Српски (ћирилица))
+/** Serbian Cyrillic ekavian (‪Српски (ћирилица)‬)
+ * @author Rancher
  * @author Sasa Stefanovic
  * @author Михајло Анђелковић
  */
 $messages['sr-ec'] = array(
 	'requestaccount-leg-user' => 'Кориснички налог',
 	'requestaccount-leg-areas' => 'Главне сфере интересовања',
-	'requestaccount-leg-person' => 'Личне информације',
-	'requestaccount-leg-other' => 'Друге информације',
+	'requestaccount-leg-person' => 'Лични подаци',
+	'requestaccount-leg-other' => 'Други подаци',
 	'requestaccount-leg-tos' => 'Услови коришћења',
 	'requestaccount-real' => 'Право име:',
 	'requestaccount-same' => '(истоветно правом имену)',
 	'requestaccount-email' => 'Е-пошта:',
-	'requestaccount-reqtype' => 'Позиција:',
+	'requestaccount-reqtype' => 'Положај:',
 	'requestaccount-level-0' => 'аутор',
-	'requestaccount-level-1' => 'едитор',
+	'requestaccount-level-1' => 'уређивач',
 	'requestaccount-bio' => 'Лична биографија:',
 	'requestaccount-attach' => 'Резиме или CV (необавезно):',
 	'requestaccount-notes' => 'Додатне напомене:',
@@ -9706,8 +10211,8 @@ $messages['sr-ec'] = array(
 	'confirmaccount-none-r' => 'Тренутно нема скоро одбачених захтева у овом списку.',
 	'confirmaccount-none-e' => 'Тренутно нема застарелих захтева у овом списку.',
 	'confirmaccount-real-q' => 'Име',
-	'confirmaccount-email-q' => 'Мејл',
-	'confirmaccount-bio-q' => 'Биографија',
+	'confirmaccount-email-q' => 'Е-пошта',
+	'confirmaccount-bio-q' => 'Животопис',
 	'confirmaccount-showopen' => 'нерешени захтеви',
 	'confirmaccount-showrej' => 'одбачени захтеви',
 	'confirmaccount-showheld' => 'стопирани захтеви',
@@ -9724,15 +10229,15 @@ $messages['sr-ec'] = array(
 Можда је већ био решен.',
 	'confirmaccount-leg-user' => 'Кориснички налог',
 	'confirmaccount-leg-areas' => 'Главне интересне сфере',
-	'confirmaccount-leg-person' => 'Личне информације',
-	'confirmaccount-leg-other' => 'Друге информације',
+	'confirmaccount-leg-person' => 'Лични подаци',
+	'confirmaccount-leg-other' => 'Други подаци',
 	'confirmaccount-name' => 'Корисничко име',
 	'confirmaccount-real' => 'Име:',
-	'confirmaccount-email' => 'Мејл:',
-	'confirmaccount-reqtype' => 'Позиција:',
+	'confirmaccount-email' => 'Е-пошта:',
+	'confirmaccount-reqtype' => 'Положај:',
 	'confirmaccount-pos-0' => 'аутор',
-	'confirmaccount-pos-1' => 'едитор',
-	'confirmaccount-bio' => 'Биографија:',
+	'confirmaccount-pos-1' => 'уређивач',
+	'confirmaccount-bio' => 'Животопис:',
 	'confirmaccount-attach' => 'Резиме/CV:',
 	'confirmaccount-notes' => 'Додатне напомене:',
 	'confirmaccount-urls' => 'Списак вебсајтова:',
@@ -9746,7 +10251,7 @@ $messages['sr-ec'] = array(
 	'confirmaccount-held' => '(означено као "стопирано" од [[User:$1|$1]] на $2)',
 	'confirmaccount-create' => 'Прихвати (направи налог)',
 	'confirmaccount-deny' => 'Одбаци (скини са списка)',
-	'confirmaccount-hold' => 'Стопирај',
+	'confirmaccount-hold' => 'Заустави',
 	'confirmaccount-reason' => 'Коментар (биће укључен у имејл):',
 	'confirmaccount-ip' => 'IP адреса:',
 	'confirmaccount-submit' => 'Потврди',
@@ -9761,11 +10266,11 @@ $messages['sr-ec'] = array(
 	'usercredentials-user' => 'Корисничко име:',
 	'usercredentials-leg-user' => 'Кориснички налог',
 	'usercredentials-leg-areas' => 'Главне сфере интересовања',
-	'usercredentials-leg-person' => 'Личне информације',
-	'usercredentials-leg-other' => 'Друге информације',
-	'usercredentials-email' => 'Мејл:',
+	'usercredentials-leg-person' => 'Лични подаци',
+	'usercredentials-leg-other' => 'Други подаци',
+	'usercredentials-email' => 'Е-пошта:',
 	'usercredentials-real' => 'Право име:',
-	'usercredentials-bio' => 'Биографија:',
+	'usercredentials-bio' => 'Животопис:',
 	'usercredentials-attach' => 'Резиме/CV:',
 	'usercredentials-notes' => 'Додатне напомене:',
 	'usercredentials-urls' => 'Списак вебсајтова:',
@@ -9773,14 +10278,15 @@ $messages['sr-ec'] = array(
 	'usercredentials-member' => 'Права:',
 );
 
-/** Serbian Latin ekavian (Srpski (latinica))
+/** Serbian Latin ekavian (‪Srpski (latinica)‬)
  * @author Michaello
+ * @author Rancher
  * @author Михајло Анђелковић
  */
 $messages['sr-el'] = array(
 	'requestaccount-leg-user' => 'Korisnički nalog',
 	'requestaccount-leg-areas' => 'Glavne sfere interesovanja',
-	'requestaccount-leg-person' => 'Lične informacije',
+	'requestaccount-leg-person' => 'Lični podaci',
 	'requestaccount-leg-other' => 'Druge informacije',
 	'requestaccount-leg-tos' => 'Uslovi korišćenja',
 	'requestaccount-real' => 'Pravo ime:',
@@ -9805,8 +10311,8 @@ Elektronska poruka za potvrdu je poslata na Vašu adresu Vaše elektronske pošt
 	'confirmaccount-none-r' => 'Trenutno nema skoro odbačenih zahteva u ovom spisku.',
 	'confirmaccount-none-e' => 'Trenutno nema zastarelih zahteva u ovom spisku.',
 	'confirmaccount-real-q' => 'Ime',
-	'confirmaccount-email-q' => 'Mejl',
-	'confirmaccount-bio-q' => 'Biografija',
+	'confirmaccount-email-q' => 'E-pošta',
+	'confirmaccount-bio-q' => 'Životopis',
 	'confirmaccount-showopen' => 'nerešeni zahtevi',
 	'confirmaccount-showrej' => 'odbačeni zahtevi',
 	'confirmaccount-showheld' => 'stopirani zahtevi',
@@ -9823,15 +10329,15 @@ Elektronska poruka za potvrdu je poslata na Vašu adresu Vaše elektronske pošt
 Možda je već bio rešen.',
 	'confirmaccount-leg-user' => 'Korisnički nalog',
 	'confirmaccount-leg-areas' => 'Glavne interesne sfere',
-	'confirmaccount-leg-person' => 'Lične informacije',
+	'confirmaccount-leg-person' => 'Lični podaci',
 	'confirmaccount-leg-other' => 'Druge informacije',
 	'confirmaccount-name' => 'Korisničko ime',
 	'confirmaccount-real' => 'Ime:',
-	'confirmaccount-email' => 'Mejl:',
+	'confirmaccount-email' => 'E-pošta:',
 	'confirmaccount-reqtype' => 'Pozicija:',
 	'confirmaccount-pos-0' => 'autor',
 	'confirmaccount-pos-1' => 'editor',
-	'confirmaccount-bio' => 'Biografija:',
+	'confirmaccount-bio' => 'Životopis:',
 	'confirmaccount-attach' => 'Rezime/CV:',
 	'confirmaccount-notes' => 'Dodatne napomene:',
 	'confirmaccount-urls' => 'Spisak vebsajtova:',
@@ -9860,11 +10366,11 @@ napravljen je novi korisnički nalog [[User:$1|$1]].',
 	'usercredentials-user' => 'Korisničko ime:',
 	'usercredentials-leg-user' => 'Korisnički nalog',
 	'usercredentials-leg-areas' => 'Glavne sfere interesovanja',
-	'usercredentials-leg-person' => 'Lične informacije',
+	'usercredentials-leg-person' => 'Lični podaci',
 	'usercredentials-leg-other' => 'Druge informacije',
-	'usercredentials-email' => 'Mejl:',
+	'usercredentials-email' => 'E-pošta:',
 	'usercredentials-real' => 'Pravo ime:',
-	'usercredentials-bio' => 'Biografija:',
+	'usercredentials-bio' => 'Životopis:',
 	'usercredentials-attach' => 'Rezime/CV:',
 	'usercredentials-notes' => 'Dodatne napomene:',
 	'usercredentials-urls' => 'Spisak vebsajtova:',
@@ -10161,6 +10667,7 @@ $messages['su'] = array(
  * @author M.M.S.
  * @author Najami
  * @author Per
+ * @author WikiPhoenix
  */
 $messages['sv'] = array(
 	'requestaccount' => 'Ansök om konto',
@@ -10190,7 +10697,7 @@ Ditt namn kan du ändra i [[Special:Preferences|dina inställningar]].',
 	'requestaccount-reqtype' => 'Ställning:',
 	'requestaccount-level-0' => 'författare',
 	'requestaccount-level-1' => 'redaktör',
-	'requestaccount-bio' => 'Personlig biografi:',
+	'requestaccount-bio' => 'Personlig biografi (oformaterad text):',
 	'requestaccount-attach' => 'Meritförteckning/CV (frivilligt):',
 	'requestaccount-notes' => 'Andra anmärkningar',
 	'requestaccount-urls' => 'Lista över webbplatser (skriv en per rad om det är flera):',
@@ -10425,17 +10932,16 @@ $messages['te'] = array(
 	'requestaccount-areas-text' => 'కింది విషయాల లోంచి మీకు ప్రవేశం ఉన్న వాటిని లేదా మీరు పనిచేయదలచిన వాటిని ఎంచుకోండి.',
 	'requestaccount-ext-text' => 'కింది సమాచారాన్ని గోప్యంగా ఉంచుతాం, ఈ అభ్యర్ధన కోసం మాత్రమే వాడుతాం.
 మిమ్మల్ని గుర్తించటంలో సాయపడే ఫోను నంబరు వంటి పరిచయ వివరాలను ఇవ్వవచ్చు.',
-	'requestaccount-bio-text' => 'మీ వ్యక్తిగత వివరాలే మీ వాడుకరిపేజీకి డిఫాల్టు కంటెంటుగా ఉంటుంది.
-ఇంకా ఏమైనా చేర్చాలంటే చేర్చండి.
-మీకు ఇబ్బంది లేని సమాచారాన్ని మాత్రమే ప్రచురించండి.
-[[Special:Preferences|మీ అభిరుచులు]] కు వెళ్ళి మీ పేరును మార్చుకోవచ్చు.',
+	'requestaccount-bio-text' => 'కింది మీ జీవిత విశేషాల్లో సంబంధిత క్రెడేన్షియళ్ళను చేర్చండి.',
+	'requestaccount-bio-text-i' => "'''మీ జీవిత విశేషాలే మీ వాడుకరిపేజీకి తొలి పలుకులుగా సెట్ చేస్తాం.'''
+అలాంటి సమాచారాన్ని ప్రచురించడంలో మొహమాట పడకండి.",
 	'requestaccount-real' => 'అసలు పేరు:',
 	'requestaccount-same' => '(వాస్తవిక పేరు ఏదో అదే)',
 	'requestaccount-email' => 'ఈమెయిలు చిరునామా:',
 	'requestaccount-reqtype' => 'స్థానము:',
 	'requestaccount-level-0' => 'రచయిత',
 	'requestaccount-level-1' => 'సంపాదకులు',
-	'requestaccount-bio' => 'వ్యక్తిగత జీవితచరిత్ర:',
+	'requestaccount-bio' => 'వ్యక్తిగత జీవిత విశేషాలు (మామూలు టెక్స్టు మాత్రమే) :',
 	'requestaccount-attach' => 'రెజ్యూమె లేదా CV (మీ ఇష్టం):',
 	'requestaccount-notes' => 'అదనపు గమనికలు:',
 	'requestaccount-urls' => 'వెబ్&zwnj;సైట్ల జాబితా, ఉంటే గనక (లైనుకి ఒకటి చొప్పున):',
@@ -10470,6 +10976,20 @@ $3
 	'confirmaccount-newrequests' => "ప్రస్తుతం '''$1''' {{PLURAL:$1|[[Special:ConfirmAccounts|ఖాతా అభ్యర్థన]]|[[Special:ConfirmAccounts|ఖాతా అభ్యర్థనలు]]}} వేచి{{PLURAL:$1|వుంది|వున్నాయి}}.",
 	'confirmaccounts' => 'ఖాతా అభ్యర్థనలను నిర్ధారించండి',
 	'confirmedit-desc' => 'అధికారులకు ఖాతా అభ్యర్థనలను నిర్ధారించే వీలుకల్పిస్తుంది',
+	'confirmaccount-maintext' => "'''ఈ పేజీని ''{{SITENAME}}'' లో పెండింగులో ఉన్న ఖాతా అభ్యర్ధనలను ధృవీకరించేందుకు వాడతాము'''.
+
+ప్రతీ ఖాతా అభ్యర్ధన క్యూలోను మూడు ఉప క్యూలుంటాయి.
+కొత్త అభ్యర్ధనలు ఒకదానిలో,అదనపు సమాచారం కోసం ఇతర నిర్వాహకులు పెండింగులో పెట్టిన అభ్యర్ధనలు రెండో దానిలోను, ఇటీవల తిరస్కరించిన అభ్యర్ధనలు మూడోదానిలోనూ ఉంటాయి..
+
+అభ్యర్ధనకు స్పందించేటపుడు,దాన్ని జాగ్రత్తగా పరిశీలించండి. అవసరమైతే, దానిలో ఇచ్చిన సమాచారాన్ని నిర్ధారించుకోండి.
+మీ చర్యలు గోప్యంగా లాగ్ చెయ్యబడతాయి.
+మీరు చేసే పనితో పాటు, ఇక్కడ జరిగే అన్ని చర్యలనూ మీరు సమీక్షించాల్సి ఉంది.",
+	'confirmaccount-list' => 'ఆమోదం కోసం వేచి ఉన్న ఖాతా అభ్యర్ధనల జాబితా కింద ఇచ్చాం.
+ఈ అభ్యర్ధనలు ఆమోదం పొందినా, లేక తిరస్కరించబడినా వెంటనే అవి ఈ జాబితాలోంచి తొలగించబడతాయి.',
+	'confirmaccount-list2' => 'ఇటీవల తిరస్కరించబడిన ఖాతా అభ్యర్ధన లివి. కొన్నాళ్ళకు ఇవి ఆటోమాటిగ్గా తొలగించబడతాయి.
+మీరు వీటిని ఆమోదించవచ్చు, కానీ దానికంటే ముందు తిరస్కరించిన నిర్వాహకుని సంప్రదిస్తే మంచిది.',
+	'confirmaccount-list3' => 'కాలం చెల్లిన ఖాతా అభ్యర్ధనల జాబితా ఇది. కొన్నాళ్ళకు ఇవి ఆటోమాటిగ్గా తొలగించబడతాయి.
+వీటిని మీరు ఆమోదించవచ్చు.',
 	'confirmaccount-none-o' => 'ప్రస్తుతం ఈ జాబితాలో పెండింగులో ఉన్న తెరచి ఉన్న అభ్యర్ధనలేమీ లేవు.',
 	'confirmaccount-none-h' => 'ప్రస్తుతం ఈ జాబితాలో అట్టేపెట్టిన పెండింగు అభ్యర్ధనలేమీ లేవు.',
 	'confirmaccount-none-r' => 'ప్రస్తుతం ఈ జాబితాలో ఇటీవల తిరస్కరించిన ఖాతా అభ్యర్థనలు ఏమీలేవు.',
@@ -10578,10 +11098,12 @@ $messages['tet'] = array(
 	'requestaccount-level-0' => 'autór',
 	'confirmaccount-real-q' => 'Naran',
 	'confirmaccount-email-q' => 'Korreiu eletróniku',
+	'confirmaccount-name' => "Naran uza-na'in",
 	'confirmaccount-real' => 'Naran:',
 	'confirmaccount-email' => 'Korreiu eletróniku:',
 	'confirmaccount-pos-0' => 'autór',
 	'confirmaccount-ip' => 'Diresaun IP:',
+	'usercredentials-user' => "Naran uza-na'in:",
 	'usercredentials-email' => 'Korreiu eletróniku:',
 );
 
@@ -11082,17 +11604,16 @@ Kapag napahintulutan na ang akawnt, padadalhan ka ng isang mensahe ng pagbibigay
 	'requestaccount-areas-text' => 'Piliin ang mga pook ng paksang nasa ibaba kung saan mayroon kang pormal na kadalubhasaan o nais na pag-ukulan ng karamihan sa mga gawain mo.',
 	'requestaccount-ext-text' => 'Pinananatiling pansarili ang sumusunod na kabatiran at gagamitin lamang para sa kahilingang ito.
 Maaaring naisin mong magtala ng mga kabatirang pangpakikipag-ugnayang katulad ng bilang ng telepono upang makatulong sa pagtitiyak ng pagkakakilanlan.',
-	'requestaccount-bio-text' => 'Itatalaga ang talambuhay mo bilang likas na nakatakdang nilalaman para sa iyong pahina ng tagagamit.
-Subuking isama ang anumang mga katibayan ng katangian.
-Tiyaking maginhawa para sa iyo at hindi ka nagaalinglangang ilathala ng ganyang kabatiran.
-Maaari mong baguhin ang pangalan mo sa pamamagitan ng [[Special:Preferences|iyong mga kagustuhan]].',
+	'requestaccount-bio-text' => 'Subukang isama ang anumang kaugnay na mga kredensyal sa loob ng iyong talambuhay sa ibaba.',
+	'requestaccount-bio-text-i' => "'''Ang talambuhay mo ay itatakda bilang pansimulang nilalaman para sa pahina mo ng tagagamit.'''
+Tiyaking maginhawa ang pakiramdam mo sa paglalathala ng ganyang kabatiran.",
 	'requestaccount-real' => 'Totoong pangalan:',
 	'requestaccount-same' => '(katulad ng totoong pangalan)',
 	'requestaccount-email' => 'Adres ng e-liham:',
 	'requestaccount-reqtype' => 'Katungkulan:',
 	'requestaccount-level-0' => 'may-akda',
 	'requestaccount-level-1' => 'patnugot',
-	'requestaccount-bio' => 'Pansariling talambuhay:',
+	'requestaccount-bio' => 'Pansariling talambuhay (payak na teksto lamang):',
 	'requestaccount-attach' => 'Buod ng mga karanasan sa hanapbuhay (maaaring wala nito):',
 	'requestaccount-notes' => 'Karagdagang mga tala:',
 	'requestaccount-urls' => 'Talaan ng mga websayt, kung mayroon (ihiwalay na may bagong mga guhit):',
@@ -11545,7 +12066,7 @@ $messages['uk'] = array(
 	'requestaccount-reqtype' => 'Посада:',
 	'requestaccount-level-0' => 'автор',
 	'requestaccount-level-1' => 'редактор',
-	'requestaccount-bio' => 'Особиста біографія:',
+	'requestaccount-bio' => 'Особиста біографія (тільки звичайний текст):',
 	'requestaccount-notes' => 'Додаткова інформація:',
 	'requestaccount-tooshort' => 'Ваша біографія повинна містити не менше $1 {{PLURAL:$1|слова|слів}}.',
 	'requestaccount-exts' => 'Недозволений тип прикріпленого файлу.',
@@ -11697,10 +12218,17 @@ $messages['vo'] = array(
  * @author פוילישער
  */
 $messages['yi'] = array(
+	'requestaccount-level-0' => 'מחבר',
 	'confirmaccount-real-q' => 'נאמען',
 	'confirmaccount-leg-user' => 'באַניצער קאנטע',
 	'confirmaccount-name' => 'באַניצער נאָמען',
 	'confirmaccount-real' => 'נאָמען:',
+	'confirmaccount-pos-1' => 'רעדאַקטאָר',
+	'confirmaccount-bio' => 'ביאגראַפֿיע',
+	'confirmaccount-econf' => '(באשטעטיקט)',
+	'confirmaccount-hold' => 'האַלטן',
+	'confirmaccount-submit' => 'באַשטעטיקן',
+	'confirmaccount-wsum' => 'ברוך הבא!',
 	'confirmaccount-email-body' => 'אײַער בקשה פֿאַר אַ קאנטע אויף {{SITENAME}} איז געווארן באַשטעטיקט. 
 
  באַניצער־נאָמען: $1 
@@ -11710,6 +12238,8 @@ $messages['yi'] = array(
  צוליב זיכערהייַט סיבות וועט איר דאַרפֿן טוישן אייער פאַסוואָרט בײַם ערשטן ארײַנלאָגירן. 
  כדי ארײַנלאָגירן, ביטע גייט צו {{fullurl:Special:UserLogin}}.',
 	'usercredentials-user' => 'באַניצער נאָמען:',
+	'usercredentials-leg-user' => 'באַניצער קאנטע',
+	'usercredentials-member' => 'רעכטן',
 );
 
 /** Cantonese (粵語) */
@@ -11811,7 +12341,9 @@ $2
 
 /** Simplified Chinese (‪中文(简体)‬)
  * @author Chenxiaoqino
+ * @author Hydra
  * @author Kuailong
+ * @author Mark85296341
  * @author Wilsonmess
  */
 $messages['zh-hans'] = array(
@@ -11932,6 +12464,7 @@ $3
 	'confirmaccount-confirm' => '用以下的按钮去批准或拒绝这个请求。',
 	'confirmaccount-econf' => '（已批准）',
 	'confirmaccount-reject' => '（于$2被[[User:$1|$1]]拒绝）',
+	'confirmaccount-rational' => '给申请人的理由：',
 	'confirmaccount-noreason' => '（无）',
 	'confirmaccount-autorej' => '（此请求已因为无活动而自动被回绝）',
 	'confirmaccount-held' => '(在$2 被[[User:$1|$1]]标记为"挂起")',
@@ -11940,7 +12473,7 @@ $3
 	'confirmaccount-hold' => '挂起',
 	'confirmaccount-spam' => '垃圾（请不要发送电子邮件）',
 	'confirmaccount-reason' => '注解 （在电邮中使用）:',
-	'confirmaccount-ip' => ' IP地址：',
+	'confirmaccount-ip' => 'IP地址：',
 	'confirmaccount-legend' => '批准/拒绝这个帐号',
 	'confirmaccount-submit' => '确认',
 	'confirmaccount-needreason' => '您必须在下方的评论栏阐述您的理由。',
@@ -11992,7 +12525,7 @@ $2
 	'usercredentials-leg-areas' => '主要的兴趣范围',
 	'usercredentials-leg-person' => '个人信息',
 	'usercredentials-leg-other' => '其他信息',
-	'usercredentials-email' => ' 电子邮件：',
+	'usercredentials-email' => '电子邮件：',
 	'usercredentials-real' => '真实姓名：',
 	'usercredentials-bio' => '个人简介：',
 	'usercredentials-attach' => '简历或履历：',
@@ -12000,49 +12533,60 @@ $2
 	'usercredentials-urls' => '网站列表:',
 	'usercredentials-ip' => '原始IP地址：',
 	'usercredentials-member' => '权限：',
+	'right-confirmaccount' => '查看 [[Special:ConfirmAccounts|请求帐户的队列]]',
+	'right-requestips' => '在处理请求的帐户查看请求者的 IP 地址',
+	'right-lookupcredentials' => '查看 [[Special:UserCredentials|用户凭据]]',
 );
 
-/** Traditional Chinese (‪中文(繁體)‬) */
+/** Traditional Chinese (‪中文(繁體)‬)
+ * @author Mark85296341
+ * @author Waihorace
+ */
 $messages['zh-hant'] = array(
 	'requestaccount' => '請求帳戶',
 	'requestaccount-text' => "'''完成並遞交以下的表格去請求一個用戶帳戶'''。
 
-	請確認您在請求一個帳戶之前，先讀過[[{{MediaWiki:Requestaccount-page}}|服務細則]]。
+請確認您在請求一個帳戶之前，先讀過[[{{MediaWiki:Requestaccount-page}}|服務細則]]。
 
-	一旦該帳戶獲得批准，您將會收到一個電郵通知訊息，該帳戶就可以在[[Special:Userlogin]]中使用。",
+一旦該帳戶獲得批准，您將會收到一個電郵通知訊息，該帳戶就可以在[[Special:UserLogin|登入頁面]]中使用。",
 	'requestaccount-page' => '{{ns:project}}:服務條款',
-	'requestaccount-dup' => "'''注意: 您已經登入成一個已註冊的帳戶。'''",
-	'requestaccount-leg-user' => '用戶賬戶',
-	'requestaccount-leg-person' => '個人信息',
-	'requestaccount-leg-other' => '其他信息',
+	'requestaccount-dup' => "'''注意：您已經登入成一個已註冊的帳戶。'''",
+	'requestaccount-leg-user' => '使用者帳號',
+	'requestaccount-leg-areas' => '感興趣的主要領域',
+	'requestaccount-leg-person' => '個人資訊',
+	'requestaccount-leg-other' => '其他資訊',
 	'requestaccount-leg-tos' => '服務條款',
-	'requestaccount-acc-text' => '當完成請求時，一封確認訊息會發到您的電郵地址。
+	'requestaccount-acc-text' => '當完成請求時，一封確認訊息會發到您的電郵位址。
 	請在該封電郵中點擊確認連結去回應它。同時，當您的帳戶被創建後，您帳戶的個密碼將會電郵給您。',
 	'requestaccount-areas-text' => '在下面選擇你最專業的或者最感興趣的話題。',
 	'requestaccount-ext-text' => '以下的資料將會保密，而且只是會用在這次請求中。
 	您可能需要列示聯絡資料，像電話號碼等去幫助證明您的確認。',
 	'requestaccount-bio-text' => '您傳記將會設定成在您用戶頁中的預設內容。嘗試包含任何的憑據。
 	而且你是肯定您是可以發佈這些資料。您的名字可以透過[[Special:Preferences]]更改。',
-	'requestaccount-real' => '真實名字:',
+	'requestaccount-real' => '真實名字：',
 	'requestaccount-same' => '（同真實名字）',
-	'requestaccount-email' => '電郵地址:',
+	'requestaccount-email' => '電郵地址：',
 	'requestaccount-reqtype' => '位置',
 	'requestaccount-level-0' => '作者',
 	'requestaccount-level-1' => '編輯',
 	'requestaccount-bio' => '個人傳記:',
+	'requestaccount-attach' => '簡歷或履歷（可選）：',
 	'requestaccount-notes' => '附加註解:',
 	'requestaccount-urls' => '網站列表，如有者 （以新行分開）:',
 	'requestaccount-agree' => '您一定要證明到您的真實名字是正確的，而且您同意我們的服務細則。',
 	'requestaccount-inuse' => '該用戶名已經用來請求帳戶。',
-	'requestaccount-tooshort' => '您的傳記必須最少有$1個字的長度。',
-	'requestaccount-emaildup' => '另一個尚未確認的賬戶已經使用了此電子郵件地址。',
+	'requestaccount-tooshort' => '您的傳記必須最少有$1{{PLURAL:$1|字|個字}}的長度。',
+	'requestaccount-emaildup' => '另一個尚未確認的帳戶已經使用了此電子郵件位址。',
 	'requestaccount-exts' => '此類型的文件不允許上傳',
+	'requestaccount-resub' => '出於安全原因，您的簡歷或履歷必須被重新選擇。
+若您不想再加入一個，請將此欄留空。',
 	'requestaccount-tos' => '我已經閱讀以及同意持續遵守{{SITENAME}}的服務細則。',
 	'requestaccount-submit' => '請求帳戶',
-	'requestaccount-sent' => '您的帳戶請求已經成功發出，現正等候複審。',
-	'request-account-econf' => '您的電郵地址已經確認，將會在您的帳戶口請求中列示。',
-	'requestaccount-email-subj' => '{{SITENAME}}電郵地址確認',
-	'requestaccount-email-body' => '有人，可能是您，由IP地址$1，在{{SITENAME}}中用這個電郵地址請求一個名叫"$2"的帳戶。
+	'requestaccount-sent' => '您的帳戶請求已經成功發出，現正等候複審。
+一個確認電郵已發送至您的電郵。',
+	'request-account-econf' => '您的電郵位址已經確認，將會在您的帳戶口請求中列示。',
+	'requestaccount-email-subj' => '{{SITENAME}}電郵位址確認',
+	'requestaccount-email-body' => '有人，可能是您，由IP位址$1，在{{SITENAME}}中用這個電郵位址請求一個名叫"$2"的帳戶。
 
 要確認這個戶口真的屬於在{{SITENAME}}上面嘅您，就在您的瀏覽器中度開啟這個連結:
 
@@ -12050,25 +12594,27 @@ $3
 
 如果該帳戶已經創建，只有您才會收到該電郵密碼。如果這個帳戶*不是*屬於您的話，不要點擊這個連結。
 呢個確認碼將會響$4過期。',
-	'requestaccount-email-subj-admin' => '{{SITENAME}}賬戶請求',
-	'requestaccount-email-body-admin' => ' "$1" 請求了一個賬戶並正在等待批准.
-電子郵件地址已確認. 要批准賬戶，請點擊 "$2".',
-	'acct_request_throttle_hit' => '抱歉，您已經請求了$1個戶口。您不可以請求更多個帳戶。',
-	'requestaccount-loginnotice' => "要取得個用戶帳戶，您一定要'''[[Special:RequestAccount|請求一個]]'''。",
-	'confirmaccounts' => '確認戶口請求',
-	'confirmedit-desc' => '允許下屬機構確認賬戶請求',
-	'confirmaccount-maintext' => "'''本頁面用於確認 ''{{SITENAME}}''的賬戶請求'''.
+	'requestaccount-email-subj-admin' => '{{SITENAME}}帳號請求',
+	'requestaccount-email-body-admin' => ' "$1" 請求了一個帳號並正在等待批准.
+電子郵件位址已確認. 要批准帳號，請點擊 "$2".',
+	'acct_request_throttle_hit' => '抱歉，您已經請求了{{PLURAL:$1|1個|$1個}}帳號。
+您不可以請求更多帳號。',
+	'requestaccount-loginnotice' => "要取得個使用者帳號，您一定要'''[[Special:RequestAccount|請求一個]]'''。",
+	'confirmaccount-newrequests' => "'''$1'''開啟電郵確認[[Special:ConfirmAccounts|{{PLURAL:$1|帳戶請求|多個帳戶請求}}]]待審中",
+	'confirmaccounts' => '確認帳號請求',
+	'confirmedit-desc' => '允許下屬機構確認帳號請求',
+	'confirmaccount-maintext' => "'''本頁面用於確認 ''{{SITENAME}}''的帳戶請求'''.
 
 每個帳戶請求隊列包括三個子隊列。
 一個是開放的請求，一個是被其他管理員擱置的請求，一個是最近被拒絕的請求。
 
-當回復請求時，請仔細閱讀。如有需要，確認其中包含的信息。
+當回復請求時，請仔細閱讀。如有需要，確認其中包含的資訊。
 你的行為將被私下記錄。
 也希望你能審查任何在這發生的不是你本人的操作。",
 	'confirmaccount-list' => '以下是正在等候批准的用戶請求列表。
-	已經批准的帳戶將會創建以及在這個列表中移除。已拒絕的用戶將只會在這個表中移除。',
+	已經批准的帳戶將會建立以及在這個列表中移除。已拒絕的用戶將只會在這個表中移除。',
 	'confirmaccount-list2' => '以下是一個先前拒絕過的帳口請求，可能會在數日後刪除。
-	它們仍舊可以批准創建一個帳戶，但是在您作之前請先問拒絕該帳戶的管理員。',
+	它們仍舊可以批准建立一個帳戶，但是在您作之前請先問拒絕該帳戶的管理員。',
 	'confirmaccount-list3' => '下面是可能於幾天後被自動刪除的過期帳號請求。他們依然可以被批准。',
 	'confirmaccount-text' => "這個是在'''{{SITENAME}}'''中等候請求帳戶的頁面。
 	請小心閱讀，有需要的話，就要同時確認它下面的全部資料。
@@ -12097,38 +12643,46 @@ $3
 	'confirmaccount-q-rej' => '最近拒絕的請求',
 	'confirmaccount-q-stale' => '過期的請求',
 	'confirmaccount-badid' => '提供的ID是沒有未決定的請求。它可能已經被處理。',
-	'confirmaccount-leg-user' => '用戶賬戶',
-	'confirmaccount-leg-person' => '個人信息',
-	'confirmaccount-leg-other' => '其他信息',
-	'confirmaccount-name' => '用戶名字',
-	'confirmaccount-real' => '名字',
+	'confirmaccount-leg-user' => '使用者帳號',
+	'confirmaccount-leg-areas' => '感興趣的主要領域',
+	'confirmaccount-leg-person' => '個人資訊',
+	'confirmaccount-leg-other' => '其他資訊',
+	'confirmaccount-name' => '使用者名稱',
+	'confirmaccount-real' => '名稱：',
 	'confirmaccount-email' => '電郵',
 	'confirmaccount-reqtype' => '位置',
 	'confirmaccount-pos-0' => '作者',
 	'confirmaccount-pos-1' => '編輯',
 	'confirmaccount-bio' => '傳記',
+	'confirmaccount-attach' => '簡歷或履歷：',
 	'confirmaccount-notes' => '注釋：',
-	'confirmaccount-urls' => '網站列表:',
-	'confirmaccount-none-p' => '(沒有提供)',
+	'confirmaccount-urls' => '網站列表：',
+	'confirmaccount-none-p' => '（未提供）',
 	'confirmaccount-confirm' => '用以下的按鈕去批准或拒絕這個請求。',
 	'confirmaccount-econf' => '（已批准）',
 	'confirmaccount-reject' => '（於$2被[[User:$1|$1]]拒絕）',
+	'confirmaccount-rational' => '理由給予申請人：',
 	'confirmaccount-noreason' => '（無）',
 	'confirmaccount-autorej' => '（此請求已因為無活動而自動被回絕）',
 	'confirmaccount-held' => '(在$2 被[[User:$1|$1]]標記為"掛起")',
-	'confirmaccount-create' => '接受 （創建帳戶）',
+	'confirmaccount-create' => '接受 （建立帳號）',
 	'confirmaccount-deny' => '拒絕 （反列示）',
 	'confirmaccount-hold' => '掛起',
 	'confirmaccount-spam' => '垃圾（請不要發送電子郵件）',
 	'confirmaccount-reason' => '註解 （在電郵中使用）:',
-	'confirmaccount-ip' => ' IP地址：',
+	'confirmaccount-ip' => 'IP 位址：',
+	'confirmaccount-legend' => '批准/拒絕這個帳號',
 	'confirmaccount-submit' => '確認',
-	'confirmaccount-acc' => '帳戶請求已經成功確認；已經創建一個新的用戶帳號[[User:$1]]。',
+	'confirmaccount-needreason' => '您必須在下方的評論欄闡述您的理由。',
+	'confirmaccount-canthold' => '該請求已被掛起，或已被刪除。',
+	'confirmaccount-acc' => '帳戶請求已經成功確認；已經建立一個新的使用者帳號[[User:$1]]。',
 	'confirmaccount-rej' => '帳戶請求已經成功拒絕。',
-	'confirmaccount-summary' => '正在創建一個新用戶擁有傳記的用戶頁面。',
-	'confirmaccount-welc' => "'''歡迎來到''{{SITENAME}}''！'''我們希望您會作出更多更好嘅貢獻。
-	您可能會去參看[[{{MediaWiki:Helppage}}|開始]]。再一次歡迎你！
-	[[User:FuzzyBot|FuzzyBot]] 11:50, 3 September 2008 （UTC）",
+	'confirmaccount-viewing' => '（目前正由[[User:$1|$1]]瀏覽）',
+	'confirmaccount-summary' => '正在建立一個新用戶擁有傳記的使用者頁面。',
+	'confirmaccount-welc' => "'''歡迎來到''{{SITENAME}}''！'''
+我們希望您會作出更多更好的貢獻。
+您可能想先閱讀一下[[{{MediaWiki:Helppage}}|說明頁面]]。
+再次歡迎您，祝您愉快！",
 	'confirmaccount-wsum' => '歡迎！',
 	'confirmaccount-email-subj' => '{{SITENAME}}帳戶請求',
 	'confirmaccount-email-body' => '您請求的帳戶已經在{{SITENAME}}中批准。
@@ -12154,21 +12708,32 @@ $3
 
 $2
 
-在這個網站中度提供了聯絡人列表，您可以用去知道更多用戶帳戶方針的資料。',
-	'confirmaccount-email-body5' => '在你請求賬戶 "$1" 能在 {{SITENAME}} 被批准之前，你必須先提供一些附加信息。
+在這個網站中度提供了聯絡人列表，您可以用去知道更多使用者帳號方針的資料。',
+	'confirmaccount-email-body5' => '在你請求帳戶 "$1" 能在 {{SITENAME}} 被批准之前，你必須先提供一些附加資訊。
 
 $2
 
-如果你想知道更多有關賬戶政策的信息，你可以使用網站中的聯繫列表。',
+如果你想知道更多有關帳戶政策的資訊，你可以使用網站中的聯繫列表。',
 	'usercredentials' => '用戶資格',
 	'usercredentials-leg' => '查找已驗證的用戶資格',
-	'usercredentials-user' => '用戶名：',
+	'usercredentials-user' => '使用者名稱：',
 	'usercredentials-text' => '下面是已選中用戶的有效資格。',
-	'usercredentials-leg-user' => '用戶賬戶',
-	'usercredentials-leg-person' => '個人信息',
-	'usercredentials-leg-other' => '其他信息',
-	'usercredentials-email' => ' 電子郵件：',
+	'usercredentials-leg-user' => '使用者帳號',
+	'usercredentials-leg-areas' => '感興趣的主要領域',
+	'usercredentials-leg-person' => '個人資訊',
+	'usercredentials-leg-other' => '其他資訊',
+	'usercredentials-email' => '電子郵件：',
 	'usercredentials-real' => '真實姓名：',
 	'usercredentials-bio' => '個人簡介：',
+	'usercredentials-attach' => '簡歷或履歷：',
+	'usercredentials-notes' => '附加註解：',
+	'usercredentials-urls' => '網站列表：',
+	'usercredentials-ip' => '原始IP位址：',
+	'usercredentials-member' => '權限：',
+	'usercredentials-badid' => '沒有憑據找到該用戶。 
+檢查名稱拼寫是否正確。',
+	'right-confirmaccount' => '查看[[Special:ConfirmAccounts|待審帳戶隊列]]',
+	'right-requestips' => '在處理帳戶請求時查看請求者的IP地址',
+	'right-lookupcredentials' => '查看[[Special:UserCredentials|用戶憑據]]',
 );
 

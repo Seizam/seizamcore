@@ -1,7 +1,7 @@
 <?php
 /*
  (c) Aaron Schulz 2007, GPL
- 
+
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 2 of the License, or
@@ -143,19 +143,20 @@ $dir = dirname( __FILE__ ) . '/';
 $wgExtensionMessagesFiles['ConfirmAccount'] = $dir . 'ConfirmAccount.i18n.php';
 $wgExtensionAliasesFiles['ConfirmAccount'] = $dir . 'ConfirmAccount.alias.php';
 
-function efLoadConfirmAccount() {
-	global $wgUser;
-	# Don't load unless needed
-	if ( $wgUser->getId() && $wgUser->isAllowed( 'confirmaccount' ) ) {
-		efConfirmAccountInjectStyle();
-	}
-}
+$wgResourceModules['ext.confirmAccount'] = array(
+	'styles' 		=> 'confirmaccount.css',
+	'localBasePath' => dirname( __FILE__ ),
+	'remoteExtPath' => 'ConfirmAccount',
+);
+
+// @todo FIXME: Move hook functions to a class.
 
 function efAddRequestLoginText( &$template ) {
-	global $wgUser;
+	global $wgUser, $wgOut;
 	# Add a link to RequestAccount from UserLogin
 	if ( !$wgUser->isAllowed( 'createaccount' ) ) {
-		$template->set( 'header', wfMsgExt( 'requestaccount-loginnotice', array( 'parse' ) ) );
+		$template->set( 'header', wfMsgExt( 'requestaccount-loginnotice', 'parse' ) );
+		$wgOut->addModules( 'ext.confirmAccount' ); // CSS
 	}
 	return true;
 }
@@ -164,7 +165,7 @@ function efSetRequestLoginLinks( &$personal_urls, &$title ) {
 	if ( isset( $personal_urls['anonlogin'] ) ) {
 		$personal_urls['anonlogin']['text'] = wfMsg('nav-login-createaccount');
 	} elseif ( isset($personal_urls['login'] ) ) {
-		$personal_urls['login']['text'] = wfMsg('nav-login-createaccount');	
+		$personal_urls['login']['text'] = wfMsg('nav-login-createaccount');
 	}
 	return true;
 }
@@ -183,19 +184,7 @@ function efCheckIfAccountNameIsPending( $user, &$abortError ) {
 	return true;
 }
 
-function efConfirmAccountInjectStyle() {
-	global $wgOut, $wgUser, $wgScriptPath;
-	# FIXME: find better load place
-	# UI CSS
-	$wgOut->addLink( array(
-		'rel'	=> 'stylesheet',
-		'type'	=> 'text/css',
-		'media'	=> 'screen',
-		'href'	=> $wgScriptPath . '/extensions/ConfirmAccount/confirmaccount.css',
-	) );
-	return true;
-}
-
+// FIXME: don't just take on to general site notice
 function efConfirmAccountsNotice( $notice ) {
 	global $wgConfirmAccountNotice, $wgUser;
 	if ( !$wgConfirmAccountNotice || !$wgUser->isAllowed( 'confirmaccount' ) ) {
@@ -209,7 +198,9 @@ function efConfirmAccountsNotice( $notice ) {
 	if ( !$count )  {
 		$dbw = wfGetDB( DB_MASTER );
 		$count = $dbw->selectField( 'account_requests', 'COUNT(*)',
-			array( 'acr_deleted' => 0, 'acr_held IS NULL', 'acr_email_authenticated IS NOT NULL' ),
+			array( 'acr_deleted' => 0,
+				'acr_held IS NULL',
+				'acr_email_authenticated IS NOT NULL' ),
 			__METHOD__ );
 		# Use '-' for zero, to avoid any confusion over key existence
 		if ( !$count ) {
@@ -220,8 +211,9 @@ function efConfirmAccountsNotice( $notice ) {
 	}
 	if ( $count !== '-' ) {
 		$message = wfMsgExt( 'confirmaccount-newrequests', array( 'parsemag' ), $count );
-
-		$notice .= '<div id="mw-confirmaccount-msg" class="mw-confirmaccount-bar">' . $wgOut->parse( $message ) . '</div>';
+		$notice .= '<div id="mw-confirmaccount-msg" class="mw-confirmaccount-bar">' .
+			$wgOut->parse( $message ) . '</div>';
+		$wgOut->addModules( 'ext.confirmAccount' ); // CSS
 	}
 	return true;
 }
@@ -240,7 +232,6 @@ $wgSpecialPages['UserCredentials'] = 'UserCredentialsPage';
 $wgAutoloadClasses['UserCredentialsPage'] = $dir . 'UserCredentials_body.php';
 $wgSpecialPageGroups['UserCredentials'] = 'users';
 
-$wgExtensionFunctions[] = 'efLoadConfirmAccount';
 # Make sure "login / create account" notice still as "create account"
 $wgHooks['PersonalUrls'][] = 'efSetRequestLoginLinks';
 # Add notice of where to request an account at UserLogin
@@ -251,6 +242,8 @@ $wgHooks['AbortNewAccount'][] = 'efCheckIfAccountNameIsPending';
 $wgHooks['LoadExtensionSchemaUpdates'][] = 'efConfirmAccountSchemaUpdates';
 # Status header like "new messages" bar
 $wgHooks['SiteNoticeAfter'][] = 'efConfirmAccountsNotice';
+# Register admin pages for AdminLinks extension.
+$wgHooks['AdminLinks'][] = 'efConfirmAccountAdminLinks';
 
 function efConfirmAccountSchemaUpdates( $updater = null ) {
 	$base = dirname( __FILE__ );
@@ -268,7 +261,7 @@ function efConfirmAccountSchemaUpdates( $updater = null ) {
 			$wgExtNewFields[] = array( 'account_requests', 'acr_areas', "$base/archives/patch-acr_areas.sql" );
 
 			$wgExtNewIndexes[] = array( 'account_requests', 'acr_email', "$base/archives/patch-email-index.sql" );
-		} else if ( $wgDBtype == 'postgres' ) {
+		} elseif ( $wgDBtype == 'postgres' ) {
 			$wgExtNewTables[] = array( 'account_requests', "$base/ConfirmAccount.pg.sql" );
 
 			$wgExtPGNewFields[] = array( 'account_requests', 'acr_held', "TIMESTAMPTZ" );
@@ -295,7 +288,7 @@ function efConfirmAccountSchemaUpdates( $updater = null ) {
 			$updater->addExtensionUpdate( array( 'addField', 'account_requests', 'acr_areas', "$base/archives/patch-acr_areas.sql", true ) );
 
 			$updater->addExtensionUpdate( array( 'addIndex', 'account_requests', 'acr_email', "$base/archives/patch-email-index.sql", true ) );
-		} else if ( $updater->getDB()->getType() == 'postgres' ) {
+		} elseif ( $updater->getDB()->getType() == 'postgres' ) {
 			$updater->addExtensionUpdate( array( 'addTable', 'account_requests', "$base/ConfirmAccount.pg.sql", true ) );
 
 			$updater->addExtensionUpdate( array( 'addPgField', 'account_requests', 'acr_held', "TIMESTAMPTZ" ) );
@@ -311,5 +304,20 @@ function efConfirmAccountSchemaUpdates( $updater = null ) {
 			$updater->addExtensionUpdate( array( 'addIndex', 'account_requests', 'acr_email', "$base/postgres/patch-email-index.sql", true ) );
 		}
 	}
+	return true;
+}
+
+function efConfirmAccountAdminLinks( &$admin_links_tree ) {
+	$users_section = $admin_links_tree->getSection( wfMsg( 'adminlinks_users' ) );
+	$extensions_row = $users_section->getRow( 'extensions' );
+
+	if ( is_null( $extensions_row ) ) {
+		$extensions_row = new ALRow( 'extensions' );
+		$users_section->addRow( $extensions_row );
+	}
+
+	$extensions_row->addItem( ALItem::newFromSpecialPage( 'ConfirmAccounts' ) );
+	$extensions_row->addItem( ALItem::newFromSpecialPage( 'UserCredentials' ) );
+
 	return true;
 }

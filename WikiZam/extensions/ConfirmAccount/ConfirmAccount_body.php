@@ -12,6 +12,7 @@ class ConfirmAccountsPage extends SpecialPage
 		parent::__construct('ConfirmAccounts','confirmaccount');
 	}
 
+	// @TODO: split out listlink mess
 	function execute( $par ) {
 		global $wgRequest, $wgOut, $wgUser, $wgAccountRequestTypes, $wgLang;
 
@@ -83,7 +84,7 @@ class ConfirmAccountsPage extends SpecialPage
 		# Show other sub-queue links. Grey out the current one.
 		# When viewing a request, show them all.
 		if( $this->acrID || $this->showStale || $this->showRejects || $this->showHeld ) {
-			$listLink = $this->skin->makeKnownLinkObj( $titleObj, wfMsgHtml( 'confirmaccount-showopen' ) );
+			$listLink = Linker::link( $titleObj, wfMsgHtml( 'confirmaccount-showopen' ), array(), array(), "known" );
 		} else {
 			$listLink = wfMsgHtml( 'confirmaccount-showopen' );
 		}
@@ -136,20 +137,21 @@ class ConfirmAccountsPage extends SpecialPage
 
 		if( $wgRequest->wasPosted() && $wgUser->matchEditToken( $wgRequest->getVal( 'wpEditToken' ) ) ) {
 			$this->doSubmit();
-		} else if( $this->file ) {
+		} elseif( $this->file ) {
 			$this->showFile( $this->file );
-		} else if( $this->acrID ) {
+		} elseif( $this->acrID ) {
 			$this->showForm();
-		} else if( $this->queueType != -1 ) {
+		} elseif( $this->queueType != -1 ) {
 			$this->showList();
 		} else {
 			$this->showQueues();
 		}
+		$wgOut->addModules( 'ext.confirmAccount' ); // CSS
 	}
 
 	protected function showQueues() {
 		global $wgOut, $wgAccountRequestTypes, $wgLang;
-		$wgOut->addWikiText( wfMsg('confirmaccount-maintext') );
+		$wgOut->addWikiMsg( 'confirmaccount-maintext' );
 
 		$wgOut->addHTML( '<p><strong>' . wfMsgHtml('confirmaccount-types') . '</strong></p>' );
 		$wgOut->addHTML( '<ul>' );
@@ -205,7 +207,7 @@ class ConfirmAccountsPage extends SpecialPage
 			$wgOut->addHTML( '<div class="errorbox">' . $msg . '</div><div class="visualClear"></div>' );
 		}
 
-		$wgOut->addWikiText( wfMsg( "confirmaccount-text" ) );
+		$wgOut->addWikiMsg( 'confirmaccount-text' );
 
 		if( $row->acr_rejected ) {
 			$datim = $wgLang->timeanddate( wfTimestamp(TS_MW, $row->acr_rejected), true );
@@ -222,7 +224,7 @@ class ConfirmAccountsPage extends SpecialPage
 			} else {
 				$wgOut->addHTML( "<p><i> $reason </i></p>" );
 			}
-		} else if( $row->acr_held ) {
+		} elseif( $row->acr_held ) {
 			$datim = $wgLang->timeanddate( wfTimestamp(TS_MW, $row->acr_held), true );
 			$date = $wgLang->date( wfTimestamp(TS_MW, $row->acr_held), true );
 			$time = $wgLang->time( wfTimestamp(TS_MW, $row->acr_held), true );
@@ -277,7 +279,7 @@ class ConfirmAccountsPage extends SpecialPage
 					}
 					$formName = "wpArea-" . htmlspecialchars(str_replace(' ','_',$set[0]));
 					if( isset($set[1]) ) {
-						$pg = $this->skin->makeKnownLink( $set[1], wfMsgHtml('requestaccount-info') );
+						$pg = Linker::link( Title::newFromText( $set[1] ), wfMsgHtml('requestaccount-info'), array(), array(), "known" );
 					} else {
 						$pg = '';
 					}
@@ -323,7 +325,7 @@ class ConfirmAccountsPage extends SpecialPage
 				$form .= self::parseLinks($row->acr_urls);
 			}
 			if( $wgUser->isAllowed( 'requestips' ) ) {
-				$blokip = SpecialPage::getTitleFor( 'blockip' );
+				$blokip = SpecialPage::getTitleFor( 'Block' );
 				$form .= "<p>".wfMsgHtml('confirmaccount-ip')." ".htmlspecialchars($row->acr_ip).
 				" (" . $this->skin->makeKnownLinkObj( $blokip, wfMsgHtml('blockip'),
 					'ip=' . $row->acr_ip . '&wpCreateAccount=1' ).")</p>\n";
@@ -356,11 +358,11 @@ class ConfirmAccountsPage extends SpecialPage
 		$form .= "<p>".Xml::submitButton( wfMsgHtml( 'confirmaccount-submit') )."</p>\n";
 		$form .= '</fieldset>';
 
-		$form .= Xml::hidden( 'title', $titleObj->getPrefixedDBKey() )."\n";
-		$form .= Xml::hidden( 'action', 'reject' );
-		$form .= Xml::hidden( 'acrid', $row->acr_id );
-		$form .= Xml::hidden( 'wpShowRejects', $this->showRejects );
-		$form .= Xml::hidden( 'wpEditToken', $wgUser->editToken() )."\n";
+		$form .= Html::Hidden( 'title', $titleObj->getPrefixedDBKey() )."\n";
+		$form .= Html::Hidden( 'action', 'reject' );
+		$form .= Html::Hidden( 'acrid', $row->acr_id );
+		$form .= Html::Hidden( 'wpShowRejects', $this->showRejects );
+		$form .= Html::Hidden( 'wpEditToken', $wgUser->editToken() )."\n";
 		$form .= Xml::closeElement( 'form' );
 
 		$wgOut->addHTML( $form );
@@ -453,7 +455,7 @@ class ConfirmAccountsPage extends SpecialPage
 			$wgMemc->delete( $key );
 
 			$this->showSuccess( $this->submitType );
-		} else if( $this->submitType === 'accept' ) {
+		} elseif( $this->submitType === 'accept' ) {
 			global $wgAuth, $wgConfirmAccountSaveInfo, $wgAllowAccountRequestFiles;
 
 			# Now create user and check if the name is valid
@@ -680,7 +682,7 @@ class ConfirmAccountsPage extends SpecialPage
 			}
 			# Finally, done!!!
 			$this->showSuccess( $this->submitType, $user->getName(), array( $error ) );
-		} else if( $this->submitType === 'hold' ) {
+		} elseif( $this->submitType === 'hold' ) {
 			global $wgUser;
 
 			# Make proxy user to email a message
@@ -692,7 +694,7 @@ class ConfirmAccountsPage extends SpecialPage
 				$error = wfMsg( 'confirmaccount-canthold' );
 				$this->showForm( $error );
 				return false;
-			} else if( !$this->reason ) {
+			} elseif( !$this->reason ) {
 				$error = wfMsg( 'confirmaccount-needreason' );
 				$this->showForm( $error );
 				return false;
@@ -770,7 +772,6 @@ class ConfirmAccountsPage extends SpecialPage
 	 * @return string $linkList, list of clickable links
 	 */
 	public static function parseLinks( $text ) {
-		global $wgParser, $wgUser;
 		# Don't let this get flooded
 		$max = 10;
 		$count = 0;
@@ -807,9 +808,9 @@ class ConfirmAccountsPage extends SpecialPage
 		$titleObj = SpecialPage::getTitleFor( 'ConfirmAccounts', $this->specialPageParameter );
 		$wgOut->setPagetitle( wfMsgHtml('actioncomplete') );
 		if( $this->submitType == 'accept' ) {
-			$wgOut->addWikiText( wfMsg( "confirmaccount-acc", $name ) );
-		} else if( $this->submitType == 'reject' || $this->submitType == 'spam' ) {
-			$wgOut->addWikiText( wfMsg( "confirmaccount-rej" ) );
+			$wgOut->addWikiMsg( 'confirmaccount-acc', $name );
+		} elseif( $this->submitType == 'reject' || $this->submitType == 'spam' ) {
+			$wgOut->addWikiMsg( 'confirmaccount-rej' );
 		} else {
 			$wgOut->redirect( $titleObj->getFullUrl() );
 			return;
@@ -834,7 +835,7 @@ class ConfirmAccountsPage extends SpecialPage
 		if( $pager->getNumRows() ) {
 			if( $this->showStale ) {
 				$wgOut->addHTML( wfMsgExt('confirmaccount-list3', array('parse') ) );
-			} else if( $this->showRejects ) {
+			} elseif( $this->showRejects ) {
 				$wgOut->addHTML( wfMsgExt('confirmaccount-list2', array('parse') ) );
 			} else {
 				$wgOut->addHTML( wfMsgExt('confirmaccount-list', array('parse') ) );
@@ -845,9 +846,9 @@ class ConfirmAccountsPage extends SpecialPage
 		} else {
 			if( $this->showRejects ) {
 				$wgOut->addHTML( wfMsgExt('confirmaccount-none-r', array('parse')) );
-			} else if( $this->showStale ) {
+			} elseif( $this->showStale ) {
 				$wgOut->addHTML( wfMsgExt('confirmaccount-none-e', array('parse')) );
-			} else if( $this->showHeld ) {
+			} elseif( $this->showHeld ) {
 				$wgOut->addHTML( wfMsgExt('confirmaccount-none-h', array('parse')) );
 			} else {
 				$wgOut->addHTML( wfMsgExt('confirmaccount-none-o', array('parse')) );
@@ -927,7 +928,7 @@ class ConfirmAccountsPage extends SpecialPage
 			$date = $wgLang->date( wfTimestamp(TS_MW, $row->acr_rejected), true );
 			$time = $wgLang->time( wfTimestamp(TS_MW, $row->acr_rejected), true );
 			$r .= ' <b>'.wfMsgExt( 'confirmaccount-reject', array('parseinline'), $row->user_name, $datim, $date, $time ).'</b>';
-		} else if( $row->acr_held && !$row->acr_rejected ) {
+		} elseif( $row->acr_held && !$row->acr_rejected ) {
 			$datim = $wgLang->timeanddate( wfTimestamp(TS_MW, $row->acr_held), true );
 			$date = $wgLang->date( wfTimestamp(TS_MW, $row->acr_held), true );
 			$time = $wgLang->time( wfTimestamp(TS_MW, $row->acr_held), true );
@@ -1033,7 +1034,7 @@ class ConfirmAccountsPager extends ReverseChronologicalPager {
 		# Stale requests have a user ID of zero
 		if( $this->stale ) {
 			$conds[] = 'acr_user = 0';
-		} else if( $this->rejects ) {
+		} elseif( $this->rejects ) {
 			$conds[] = 'acr_user != 0';
 			$tables[] = 'user';
 			$conds[] = 'acr_user = user_id';

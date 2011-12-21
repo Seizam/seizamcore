@@ -12,7 +12,7 @@ class RequestAccountPage extends SpecialPage {
 	}
 
 	function execute( $par ) {
-		global $wgUser, $wgOut, $wgRequest, $action, $wgUseRealNamesOnly,
+		global $wgUser, $wgOut, $wgRequest, $wgUseRealNamesOnly,
 			$wgAccountRequestToS, $wgAccountRequestExtraInfo, $wgAccountRequestTypes;
 		# If a user cannot make accounts, don't let them request them either
 		global $wgAccountRequestWhileBlocked;
@@ -24,7 +24,7 @@ class RequestAccountPage extends SpecialPage {
 			$wgOut->readOnlyPage();
 			return;
 		}
-		
+
 		$this->setHeaders();
 
 		$this->mRealName = trim( $wgRequest->getText( 'wpRealName' ) );
@@ -66,19 +66,22 @@ class RequestAccountPage extends SpecialPage {
 
 		$this->skin = $wgUser->getSkin();
 
+		$action = $wgRequest->getVal( 'action' );
 		if ( $wgRequest->wasPosted() && $wgUser->matchEditToken( $wgRequest->getVal( 'wpEditToken' ) ) ) {
 			$this->mPrevAttachment = $this->mPrevAttachment ? $this->mPrevAttachment : $this->mSrcName;
 			$this->doSubmit();
-		} else if ( $action == 'confirmemail' ) {
+		} elseif ( $action == 'confirmemail' ) {
 			$this->confirmEmailToken( $emailCode );
 		} else {
 			$this->showForm();
 		}
+		$wgOut->addModules( 'ext.confirmAccount' ); // CSS
 	}
 
 	protected function showForm( $msg = '', $forgotFile = 0 ) {
-		global $wgOut, $wgUser, $wgUseRealNamesOnly, $wgAllowRealName, $wgAccountRequestToS,
-			$wgAccountRequestTypes, $wgAccountRequestExtraInfo, $wgAllowAccountRequestFiles;
+		global $wgOut, $wgUser, $wgUseRealNamesOnly, $wgAllowRealName;
+		global $wgAccountRequestToS, $wgAccountRequestTypes, $wgAccountRequestExtraInfo,
+			$wgAllowAccountRequestFiles, $wgMakeUserPageFromBio;
 
 		$this->mForgotAttachment = $forgotFile;
 
@@ -89,10 +92,10 @@ class RequestAccountPage extends SpecialPage {
 		}
 		# Give notice to users that are logged in
 		if ( $wgUser->getID() ) {
-			$wgOut->addWikiText( wfMsg( "requestaccount-dup" ) );
+			$wgOut->addWikiMsg( 'requestaccount-dup' );
 		}
 
-		$wgOut->addWikiText( wfMsg( "requestaccount-text" ) );
+		$wgOut->addWikiMsg( 'requestaccount-text' );
 
 		$form  = Xml::openElement( 'form', array( 'method' => 'post', 'name' => 'accountrequest',
 			'action' => $this->getTitle()->getLocalUrl(), 'enctype' => 'multipart/form-data' ) );
@@ -139,7 +142,7 @@ class RequestAccountPage extends SpecialPage {
 					}
 					$formName = "wpArea-" . htmlspecialchars( str_replace( ' ', '_', $set[0] ) );
 					if ( isset( $set[1] ) ) {
-						$pg = $this->skin->makeKnownLink( $set[1], wfMsgHtml( 'requestaccount-info' ) );
+						$pg = Linker::link( Title::newFromText( $set[1] ), wfMsgHtml( 'requestaccount-info' ), array(), array(), "known" );
 					} else {
 						$pg = '';
 					}
@@ -152,7 +155,11 @@ class RequestAccountPage extends SpecialPage {
 
 		$form .= '<fieldset>';
 		$form .= '<legend>' . wfMsgHtml( 'requestaccount-leg-person' ) . '</legend>';
-		$form .= wfMsgExt( 'requestaccount-bio-text', array( 'parse' ) ) . "\n";
+		if ( $wgMakeUserPageFromBio ) {
+			$form .= wfMsgExt( 'requestaccount-bio-text-i', 'parse' ) . "\n";
+		}
+		$form .= wfMsgExt( 'requestaccount-bio-text', 'parse' ) . "\n";
+
 		if ( $wgUseRealNamesOnly  || $wgAllowRealName ) {
 			$form .= '<table cellpadding=\'4\'>';
 			$form .= "<tr><td>" . Xml::label( wfMsgHtml( 'requestaccount-real' ), 'wpRealName' ) . "</td>";
@@ -201,16 +208,16 @@ class RequestAccountPage extends SpecialPage {
 			$form .= $captcha->getForm();
 			$form .= '</fieldset>';
 		}
-		$form .= Xml::hidden( 'title', $this->getTitle()->getPrefixedDBKey() ) . "\n";
-		$form .= Xml::hidden( 'wpEditToken', $wgUser->editToken() ) . "\n";
-		$form .= Xml::hidden( 'attachment', $this->mPrevAttachment ) . "\n";
-		$form .= Xml::hidden( 'forgotAttachment', $this->mForgotAttachment ) . "\n";
+		$form .= Html::Hidden( 'title', $this->getTitle()->getPrefixedDBKey() ) . "\n";
+		$form .= Html::Hidden( 'wpEditToken', $wgUser->editToken() ) . "\n";
+		$form .= Html::Hidden( 'attachment', $this->mPrevAttachment ) . "\n";
+		$form .= Html::Hidden( 'forgotAttachment', $this->mForgotAttachment ) . "\n";
 		$form .= "<p>" . Xml::submitButton( wfMsgHtml( 'requestaccount-submit' ) ) . "</p>";
 		$form .= Xml::closeElement( 'form' );
 
 		$wgOut->addHTML( $form );
 
-		$wgOut->addWikiText( wfMsg( "requestaccount-footer" ) );
+		$wgOut->addWikiMsg( 'requestaccount-footer' );
 	}
 
 	protected function doSubmit() {
@@ -364,7 +371,8 @@ class RequestAccountPage extends SpecialPage {
 				'acr_comment' => '',
 				'acr_email_token' => md5( $token ),
 			    'acr_email_token_expires' => $dbw->timestamp( $expires ),
-				'acr_ip' => wfGetIP() // Possible use for spam blocking
+				'acr_ip' => wfGetIP(), // Possible use for spam blocking
+				'acr_deleted' => 0,
 			),
 			__METHOD__
 		);
@@ -397,7 +405,7 @@ class RequestAccountPage extends SpecialPage {
 	protected function showSuccess() {
 		global $wgOut;
 		$wgOut->setPagetitle( wfMsg( "requestaccount" ) );
-		$wgOut->addWikiText( wfMsg( "requestaccount-sent" ) );
+		$wgOut->addWikiMsg( 'requestaccount-sent' );
 		$wgOut->returnToMain();
 	}
 
@@ -487,28 +495,33 @@ class RequestAccountPage extends SpecialPage {
 		$wgOut->addHTML( wfMsgExt( 'acct_request_throttle_hit', 'parsemag', $limit ) );
 	}
 
+	/**
+	 * (a) Try to confirm an email address via a token
+	 * (b) Notify $wgConfirmAccountContact on success
+	 * @param int $limit number of accounts allowed to be requested from the same IP
+	 */
 	protected function confirmEmailToken( $code ) {
-		global $wgUser, $wgOut, $wgConfirmAccountContact;
+		global $wgUser, $wgOut, $wgConfirmAccountContact, $wgPasswordSender;
 		# Confirm if this token is in the pending requests
 		$name = $this->requestFromEmailToken( $code );
 		if ( $name !== false ) {
 			# Send confirmation email to prospective user
 			$this->confirmEmail( $name );
 			# Send mail to admin after e-mail has been confirmed
-			global $wgConfirmAccountContact, $wgPasswordSender;
 			if ( $wgConfirmAccountContact != '' ) {
 				$target = new MailAddress( $wgConfirmAccountContact );
 				$source = new MailAddress( $wgPasswordSender );
 				$title = SpecialPage::getTitleFor( 'ConfirmAccounts' );
-				$subject = wfMsg( 'requestaccount-email-subj-admin' );
-				$body = wfMsg( 'requestaccount-email-body-admin', $name, $title->getFullUrl() );
+				$subject = wfMsgForContent( 'requestaccount-email-subj-admin' );
+				$body = wfMsgForContent(
+					'requestaccount-email-body-admin', $name, $title->getFullUrl() );
 				# Actually send the email...
 				$result = UserMailer::send( $target, $source, $subject, $body );
 				if ( WikiError::isError( $result ) ) {
 					wfDebug( "Could not sent email to admin at $target\n" );
 				}
 			}
-			$wgOut->addWikiText( wfMsgHtml( 'request-account-econf' ) );
+			$wgOut->addWikiMsg( 'request-account-econf' );
 			$wgOut->returnToMain();
 			return;
 		}
@@ -517,16 +530,16 @@ class RequestAccountPage extends SpecialPage {
 		if ( is_object( $user ) ) {
 			if ( $user->confirmEmail() ) {
 				$message = $wgUser->isLoggedIn() ? 'confirmemail_loggedin' : 'confirmemail_success';
-				$wgOut->addWikiText( wfMsg( $message ) );
+				$wgOut->addWikiMsg( $message );
 				if ( !$wgUser->isLoggedIn() ) {
 					$title = SpecialPage::getTitleFor( 'Userlogin' );
 					$wgOut->returnToMain( true, $title->getPrefixedUrl() );
 				}
 			} else {
-				$wgOut->addWikiText( wfMsg( 'confirmemail_error' ) );
+				$wgOut->addWikiMsg( 'confirmemail_error' );
 			}
 		} else {
-			$wgOut->addWikiText( wfMsg( 'confirmemail_invalid' ) );
+			$wgOut->addWikiMsg( 'confirmemail_invalid' );
 		}
 	}
 
