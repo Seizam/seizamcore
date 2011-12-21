@@ -44,6 +44,13 @@ if ( $wgImgAuthPublicTest
 
 $matches = WebRequest::getPathInfo();
 $path = $matches['title'];
+if ($path && $path[0] !== '/') {
+    // Make sure $path has a leading /
+    $path = "/" . $path;
+}
+// remove the img_auth.php from the leading
+if (substr($path, 0, 14) === '/img_auth.php/')
+        $path = substr ($path, 13);
 
 // Check for bug 28235: QUERY_STRING overriding the correct extension
 $dotPos = strrpos( $path, '.' );
