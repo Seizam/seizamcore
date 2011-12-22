@@ -226,6 +226,11 @@ $wgUserEmailUseReplyTo=true;
 $wgContactRequireAll=true;
 
 
+# UploadWizard
+require_once( "$IP/extensions/UploadWizard/UploadWizard.php" );
+
+
+
 # Rights
 $wgGroupPermissions['*']['edit'] = false;
 $wgGroupPermissions['sysop']['editprotectedns'] = true;

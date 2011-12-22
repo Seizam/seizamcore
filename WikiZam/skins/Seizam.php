@@ -719,7 +719,7 @@ class SeizamTemplate extends QuickTemplate {
 
         <div class="section">
             <p class="sread"><?php echo $this->msg('sz-selectlang') ?></p>
-            <?php echo wfLanguageSelectorHTML(null, 'selectLang', null, null, null); ?>
+            <?php echo wfLanguageSelectorHTML($this->skin->getTitle(), null, 'selectLang'); ?>
             <p class="sread"><?php echo $this->msg('sz-seizamonsocialnetworks') ?></p>
             <ul class="socials">
                 <li class="tumblr"><a href="http://www.davidcanwin.com">Tumblr</a></li>

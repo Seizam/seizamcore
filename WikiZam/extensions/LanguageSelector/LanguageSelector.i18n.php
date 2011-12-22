@@ -106,7 +106,15 @@ $messages['ast'] = array(
 	'languageselector-setlang' => 'establecer',
 );
 
-/** Bashkir (Башҡорт)
+/** Azerbaijani (Azərbaycanca)
+ * @author Proger
+ */
+$messages['az'] = array(
+	'languageselector' => 'Dil',
+	'languageselector-setlang' => 'Seç',
+);
+
+/** Bashkir (Башҡортса)
  * @author Assele
  * @author Рустам Нурыев
  */
@@ -118,14 +126,15 @@ $messages['ba'] = array(
 
 /** Bavarian (Boarisch)
  * @author Man77
+ * @author Mucalexx
  */
 $messages['bar'] = array(
-	'languageselector' => 'Språch',
-	'languageselector-desc' => 'Språchnauswåih auf jeda Seitn, aa fia Bsuacha',
-	'languageselector-setlang' => 'setzn',
+	'languageselector' => 'Sprooch',
+	'languageselector-desc' => 'Sproochnauswoi auf jeeder Seiten, aa fyr Bsuacher',
+	'languageselector-setlang' => 'sétzen',
 );
 
-/** Belarusian (Taraškievica orthography) (Беларуская (тарашкевіца))
+/** Belarusian (Taraškievica orthography) (‪Беларуская (тарашкевіца)‬)
  * @author Jim-by
  * @author Red Winged Duck
  */
@@ -151,6 +160,14 @@ $messages['bn'] = array(
 	'languageselector-setlang' => 'স্থাপন',
 );
 
+/** Tibetan (བོད་ཡིག)
+ * @author Freeyak
+ */
+$messages['bo'] = array(
+	'languageselector' => 'སྐད་རིགས།',
+	'languageselector-desc' => 'ཤོག་ངོས་སོ་སོའི་སྐད་རིགས་འདེམས་ཚན་དང་། གཞན་ལྟ་ཀློག་བྱེད་མཁན་གྱི་ཆེད་དུའང་ཡིན།',
+);
+
 /** Breton (Brezhoneg)
  * @author Fulup
  */
@@ -167,6 +184,13 @@ $messages['bs'] = array(
 	'languageselector' => 'Jezik',
 	'languageselector-desc' => 'Odabir jezika na svakoj stranici, također i za posjetioce',
 	'languageselector-setlang' => 'postavi',
+);
+
+/** Буряад (Буряад)
+ * @author ОйЛ
+ */
+$messages['bxr'] = array(
+	'languageselector' => 'Хэлэн',
 );
 
 /** Catalan (Català)
@@ -225,9 +249,12 @@ $messages['cy'] = array(
 
 /** Danish (Dansk)
  * @author Jon Harald Søby
+ * @author Peter Alberti
  */
 $messages['da'] = array(
 	'languageselector' => 'Sprog',
+	'languageselector-desc' => 'Sprogvælger på alle sider, også for gæster',
+	'languageselector-setlang' => 'vælg',
 );
 
 /** German (Deutsch)
@@ -583,7 +610,14 @@ $messages['ksh'] = array(
 	'languageselector-setlang' => 'Setze',
 );
 
-/** Cornish (Kernewek)
+/** Kurdish (Latin) (Kurdî (Latin))
+ * @author George Animal
+ */
+$messages['ku-latn'] = array(
+	'languageselector' => 'Ziman',
+);
+
+/** Cornish (Kernowek)
  * @author Kw-Moon
  */
 $messages['kw'] = array(
@@ -638,6 +672,7 @@ $messages['lt'] = array(
  */
 $messages['ltg'] = array(
 	'languageselector' => 'Volūda',
+	'languageselector-setlang' => 'nūstateit',
 );
 
 /** Macedonian (Македонски)
@@ -698,9 +733,10 @@ $messages['myv'] = array(
 
 /** Nahuatl (Nāhuatl)
  * @author Fluence
+ * @author Teòtlalili
  */
 $messages['nah'] = array(
-	'languageselector' => 'Tlahtōlli',
+	'languageselector' => 'Tlâtòlli',
 );
 
 /** Low German (Plattdüütsch)
@@ -862,6 +898,15 @@ $messages['ru'] = array(
 	'languageselector-setlang' => 'установить',
 );
 
+/** Rusyn (Русиньскый)
+ * @author Gazeb
+ */
+$messages['rue'] = array(
+	'languageselector' => 'Язык',
+	'languageselector-desc' => 'Выбер языка на каждій сторінцї і тыж про навщівників',
+	'languageselector-setlang' => 'становити',
+);
+
 /** Yakut (Саха тыла)
  * @author HalanTul
  */
@@ -916,7 +961,7 @@ $messages['sli'] = array(
 	'languageselector-setlang' => 'setza',
 );
 
-/** Serbian Cyrillic ekavian (Српски (ћирилица))
+/** Serbian Cyrillic ekavian (‪Српски (ћирилица)‬)
  * @author Sasa Stefanovic
  * @author Михајло Анђелковић
  */
@@ -926,7 +971,7 @@ $messages['sr-ec'] = array(
 	'languageselector-setlang' => 'постави',
 );
 
-/** Serbian Latin ekavian (Srpski (latinica))
+/** Serbian Latin ekavian (‪Srpski (latinica)‬)
  * @author Michaello
  */
 $messages['sr-el'] = array(
@@ -961,6 +1006,13 @@ $messages['sv'] = array(
 	'languageselector' => 'Språk',
 	'languageselector-desc' => 'Språkväljare på varje sida, också för besökare',
 	'languageselector-setlang' => 'välj',
+);
+
+/** Tamil (தமிழ்)
+ * @author Mahir78
+ */
+$messages['ta'] = array(
+	'languageselector' => 'மொழி',
 );
 
 /** Telugu (తెలుగు)
@@ -1117,11 +1169,12 @@ $messages['zh-hans'] = array(
 
 /** Traditional Chinese (‪中文(繁體)‬)
  * @author Liangent
+ * @author Mark85296341
  * @author Shinjiman
  */
 $messages['zh-hant'] = array(
 	'languageselector' => '語言',
-	'languageselector-desc' => '在每一頁面上添加語言選擇項，對匿名訪問者亦有效',
+	'languageselector-desc' => '在每一頁面上加入語言選擇項，對匿名訪問者亦有效',
 	'languageselector-setlang' => '設定',
 );
 
