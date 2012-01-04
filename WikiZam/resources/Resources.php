@@ -21,7 +21,7 @@ return array(
 		'remoteBasePath' => $GLOBALS['wgStylePath'],
 		'localBasePath' => $GLOBALS['wgStyleDirectory'],
 	),
-	'skins.monobook' => array(
+/*	'skins.monobook' => array(
 		'styles' => array(
 			'monobook/main.css' => array( 'media' => 'screen' ),
 		),
@@ -56,7 +56,7 @@ return array(
 		'remoteBasePath' => $GLOBALS['wgStylePath'],
 		'localBasePath' => $GLOBALS['wgStyleDirectory'],
 	),
-	'skins.standard' => array(
+*/	'skins.standard' => array(
 		'styles' => array( 'common/wikistandard.css' => array( 'media' => 'screen' ) ),
 		'remoteBasePath' => $GLOBALS['wgStylePath'],
 		'localBasePath' => $GLOBALS['wgStyleDirectory'],
@@ -711,10 +711,5 @@ return array(
 		'remoteBasePath' => $GLOBALS['wgStylePath'],
 		'localBasePath' => $GLOBALS['wgStyleDirectory'],
 	),
-
-	/* Seizam */
-	'seizam.global' => array(
-		'scripts' => 'skins/seizam/scripts/global.js'
-	)
 
 );

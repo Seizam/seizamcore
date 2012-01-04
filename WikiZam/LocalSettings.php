@@ -35,7 +35,8 @@ $wgStylePath        = "$wgScriptPath/skins";
 
 ## The relative URL path to the logo.  Make sure you change this from the default,
 ## or else you'll overwrite your logo when you upgrade!
-$wgLogo             = "$wgStylePath/common/images/seizam.png";
+# $wgLogo             = "$wgStylePath/common/images/seizam.png";
+$wgLogo             = "$wgStylePath/seizam/images/logo_mini_h.png";
 
 ## UPO means: this is also a user preference option
 
@@ -188,8 +189,8 @@ $wgLanguageSelectorLanguages = array('en','fr');
 # Method of language selection
 $wgLanguageSelectorDetectLanguage = LANGUAGE_SELECTOR_PREFER_CLIENT_LANG; #Automatic selection regarding browser
 # Where to put the language selection dropdown menu
-$wgLanguageSelectorLocation = LANGUAGE_SELECTOR_IN_TOOLBOX;#In toolbow for Vector Skin, hard integrated for Seizam Skin
-
+// $wgLanguageSelectorLocation = LANGUAGE_SELECTOR_IN_TOOLBOX;#In toolbow for Vector Skin, hard integrated for Seizam Skin
+$wgLanguageSelectorLocation = LANGUAGE_SELECTOR_MANUAL; #buggy in toolbox with Vector(yes, very strange), so only manual placing
 
 # Polyglot (auto select page version regarding user language)
 require_once( "$IP/extensions/Polyglot/Polyglot.php" );
@@ -228,6 +229,19 @@ $wgContactRequireAll=true;
 
 # UploadWizard
 require_once( "$IP/extensions/UploadWizard/UploadWizard.php" );
+# default upload url will point to uploadwizard
+$wgUploadNavigationUrl = '/Special:UploadWizard';
+$wgUploadWizardConfig = array(
+    'skipTutorial' => false,
+    'altUploadForm' => 'Special:Upload',
+    'tutorialTemplate' => 'uploadwizard_tutorial_$1.svg', //width=720
+    'tutorialHelpdeskCoords' => false,
+    'skipTutorial' => true,
+#        'autoCategory' => 'Uploaded with UploadWizard',
+#        'feedbackPage' => 'FeedbackTest2',
+#        'enableFormData' => false,  # Should FileAPI uploads be used on supported browsers?
+#        'enableMultiFileSelect' => false
+);
 
 
 
@@ -240,3 +254,5 @@ $wgNamespaceProtection[NS_PROJECT] = array('editprotectedns');
 # Where is the favicon ?
 $wgFavicon = "/favicon.ico";
 
+# ensure to clear cache when modifications occur on this file
+$wgInvalidateCacheOnLocalSettingsChange = true;
