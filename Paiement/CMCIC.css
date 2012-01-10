@@ -1,0 +1,120 @@
+/*****************************************************************************
+ *
+ * "open source" kit for CMCIC-P@iement(TM) 
+ *
+ * File "CMCIC.css":
+ *
+ * Author   : Euro-Information/e-Commerce (contact: centrecom@e-i.com)
+ * Version  : 1.04
+ * Date     : 01/01/2009
+ *
+ * Copyright: (c) 2009 Euro-Information. All rights reserved.
+ * License  : see attached document "License.txt".
+ *
+ *****************************************************************************/
+
+a:link, a:visited, a:active {
+        color: #FFF;
+}
+
+.anglais {
+        font-style: italic;
+}
+
+body {
+	margin-top: 0;
+	padding-top: 0;
+        font-size: 12px;
+        font-family: Arial, Helvetica, sans-serif;
+        background-color: #d9d9d9;
+	background-image: url(fond.gif);
+	background-repeat: repeat-x;
+}
+
+.champs {
+        font-size: 12px;
+        border: 1px solid #E75A2A;
+        width: 150px;
+}
+
+.clear_both {
+        clear: both;
+}
+
+.droite {
+        float: right;
+}
+
+div {
+        width: 780px;
+        padding: 5px;
+}
+
+#footer {
+        font-size: 10px;
+}
+
+#frm {
+        background-color: #008A9A;
+        padding: 5px;
+        border: 1px solid #E75A2A;
+        width: 500px;
+}
+
+        #frm p {
+                font-weight: bold;
+        }
+
+.gauche {
+        float: left;
+}
+
+h1 {
+        font-size: 22px;
+        color: #0570AD;
+}
+
+h2 {
+	font-size: 20px;
+	color: #0570AD;
+}
+
+#header {
+	padding: 0;
+	margin: 0;
+        width: 500px;
+}
+
+.infos {
+        display: none;
+        padding: 2px;
+        width: 460px;
+        background-color: #FFF;
+	border: 1px dotted #F00;
+}
+
+label {
+        display: block;
+        float: left;
+        width: 170px;
+        font-weight: bold;
+        color: #fff;
+}
+
+pre {
+	padding: 2px;
+	background-color: #FFF;
+	border: 1px dotted #F00;
+}
+
+img {
+	border: 0px solid #FFF;
+}
+
+.value {
+	color: #339966;
+}
+
+.name {
+	color: #FF6600;
+}
