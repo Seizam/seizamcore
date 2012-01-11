@@ -13,7 +13,8 @@ $messages = array();
  */
 $messages['en'] = array(
 	'electronicpayment'=>'Electronic Payment',
-	'electronicpayment-desc'=>'Virtual Electronic Payment Terminal for Seizam'
+	'electronicpayment-desc'=>'Virtual Electronic Payment Terminal for Seizam',
+        'eptback' => 'EPTBack'
 );
 
 /** Message documentation (Message documentation)

@@ -38,6 +38,11 @@ $wgSpecialPages['ElectronicPayment'] = 'SpecialElectronicPayment';
 
 $wgSpecialPageGroups['ElectronicPayment'] = 'other';
 
+$wgAutoloadClasses['SpecialEPTBack'] = $dir . 'EPTBack_body.php';
+$wgSpecialPages['EPTBack'] = 'SpecialEPTBack';
+
+$wgSpecialPageGroups['EPTBack'] = 'other';
+
 #Settings
 // TPE Settings
 // Warning !! CMCIC_Config contains the key, you have to protect this file with all the mechanism available in your development environment.
