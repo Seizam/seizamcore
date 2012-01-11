@@ -75,7 +75,7 @@ $wgDBTableOptions   = "ENGINE=InnoDB, DEFAULT CHARSET=binary";
 $wgDBmysql5 = false;
 
 ## Shared memory settings
-$wgMainCacheType    = CACHE_ACCEL;
+$wgMainCacheType    = CACHE_NONE;
 $wgMemCachedServers = array();
 
 ## To enable image uploads, make sure the 'images' directory
@@ -242,6 +242,9 @@ $wgUploadWizardConfig = array(
 #        'enableFormData' => false,  # Should FileAPI uploads be used on supported browsers?
 #        'enableMultiFileSelect' => false
 );
+
+# Seizam's Virtual Electronic Payment Terminal
+require_once( "$IP/extensions/ElectronicPayment/ElectronicPayment.php" );
 
 
 

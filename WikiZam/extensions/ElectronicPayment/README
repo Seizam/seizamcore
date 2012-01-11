@@ -1,0 +1,7 @@
+# ElectronicPayment provides CIC Bank's Virtual Electronic Payment Terminal to MediaWiki. Be careful about other required Seizam Stack extensions.
+
+# This extension requires MediaWiki 1.18+.
+
+# Example LocalSettings.php additions
+
+require_once( "$IP/extensions/SeizamVEPT/SeizamVEPT.php" );
