@@ -87,6 +87,8 @@ mw.UploadWizard.prototype = {
 		// remove first spinner
 		$j( '#mwe-first-spinner' ).remove();
 		
+                /*  WE DO NOT NEED THESE ELEMENTS FOR SEIZAM -> 36 LINES
+                 *  
 		// construct the message for the subheader
 		$j( '#contentSub' ).append( $j( '<span style="margin-right: 0.5em;"></span>' ).msg( 'mwe-upwiz-subhead-message' ) );
 		// feedback request
@@ -122,6 +124,8 @@ mw.UploadWizard.prototype = {
 			}
 		}
 		$j( '#contentSub .contentSubLink:not(:last)' ).after( '&nbsp;&middot;&nbsp;' );
+                END OF REMOVED ELEMENTS <- 36 LINES
+                */
 
 		// construct the arrow steps from the UL in the HTML
 		$j( '#mwe-upwiz-steps' )
