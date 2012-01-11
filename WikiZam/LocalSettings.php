@@ -232,11 +232,14 @@ require_once( "$IP/extensions/UploadWizard/UploadWizard.php" );
 # default upload url will point to uploadwizard
 $wgUploadNavigationUrl = '/Special:UploadWizard';
 $wgUploadWizardConfig = array(
-    'skipTutorial' => false,
-    'altUploadForm' => 'Special:Upload',
-    'tutorialTemplate' => 'uploadwizard_tutorial_$1.svg', //width=720
+#    'debug' => true,
+#    'altUploadForm' => 'Special:Upload',
+#    'tutorialTemplate' => 'uploadwizard_tutorial_$1.svg', //width=720
     'tutorialHelpdeskCoords' => false,
     'skipTutorial' => true,
+    'bugList' => '', // no link to bug list
+    'translateHelp' => '', // no link to translate
+    'altUploadForm' => '', // no alternate form (should be special:upload when possible)
 #        'autoCategory' => 'Uploaded with UploadWizard',
 #        'feedbackPage' => 'FeedbackTest2',
 #        'enableFormData' => false,  # Should FileAPI uploads be used on supported browsers?
