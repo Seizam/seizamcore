@@ -42,10 +42,10 @@ $wgSpecialPageGroups['ElectronicPayment'] = 'other';
 // TPE Settings
 // Warning !! CMCIC_Config contains the key, you have to protect this file with all the mechanism available in your development environment.
 // You may for instance put this file in another directory and/or change its name.
-require_once("ElectronicPayment.config.php");
+require_once($dir.'ElectronicPayment.config.php');
 
 #TPE kit
-require_once("CMCIC_Tpe.inc.php");
+require_once($dir.'CMCIC_Tpe.inc.php');
 
 
 # Attach Hooks
