@@ -35,7 +35,7 @@ $wgExtensionCredits['other'][] = array(
 * and to lookups for loclaized pages.
 * Set this to a small set of languages that are likely to be used on your site to
 * improve performance. Leave NULL to allow all languages known to MediaWiki via
-* $wgLanguageNames.
+* languages/Names.php.
 * If the LanguageSelector extension is installed, $wgLanguageSelectorLanguages is used
 * as a fallback.
 */
@@ -77,7 +77,7 @@ function wfPolyglotExtension() {
 	}
 	
 	if ( $wgPolyglotLanguages === null ) {
-		$wgPolyglotLanguages = array_keys( $GLOBALS['wgLanguageNames'] );
+		$wgPolyglotLanguages = array_keys( Language::getLanguageNames() );
 	}
 }
 
@@ -212,11 +212,23 @@ function wfPolyglotGetLanguages( $title ) {
 	$n = $title->getDBkey();
 	$ns = $title->getNamespace();
 
+	$titles = array();
+	$batch = new LinkBatch();
+
+	foreach ( $wgPolyglotLanguages as $lang ) {
+		$obj = Title::makeTitle( $ns, $n . '/' . $lang );
+		$batch->addObj( $obj );
+		$titles[] = array( $obj, $lang );
+	}
+
+	$batch->execute();
 	$links = array();
 
-	foreach ($wgPolyglotLanguages as $lang) {
-		$t = Title::makeTitle($ns, $n . '/' . $lang);
-		if ($t->exists()) $links[$lang] = $t->getFullText();
+	foreach( $titles as $parts ) {
+		list( $t, $lang ) = $parts;
+		if ( $t->exists() ) {
+			$links[$lang] = $t->getFullText();
+		}
 	}
 
 	return $links;

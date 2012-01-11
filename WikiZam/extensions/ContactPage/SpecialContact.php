@@ -108,8 +108,9 @@ class EmailContactForm {
 	function __construct( $target, $par ) {
 		global $wgRequest, $wgUser;
 
+		$this->wasPosted = $wgRequest->wasPosted();
 		$this->formType = $wgRequest->getText( 'formtype', $par );
-		
+
 		# Check for type in [[Special:Contact/type]]: change pagetext and prefill form fields
 		if ( $this->formType != '' ) {
 			$message = 'contactpage-pagetext-' . $this->formType;
@@ -135,7 +136,7 @@ class EmailContactForm {
 			} else {
 				$this->text = $wgRequest->getText( 'wpText' );
 			}
-		} else {		
+		} else {
 			$this->formularText = wfMsgExt( 'contactpage-pagetext', 'parse' );
 			$this->text = $wgRequest->getText( 'wpText' );
 			$this->subject = $wgRequest->getText( 'wpSubject' );
@@ -201,7 +202,7 @@ class EmailContactForm {
 	}
 
 	function showForm() {
-		global $wgOut, $wgUser, $wgContactRequireAll, $wgContactIncludeIP;
+		global $wgOut, $wgUser, $wgContactRequireAll, $wgContactIncludeIP, $wgRequest;
 
 		#TODO: show captcha
 
@@ -273,11 +274,12 @@ class EmailContactForm {
 					'</td>
 				</tr>';
 			}
-			
+
+			$ccme = $this->wasPosted ? $this->cc_me : $wgUser->getBoolOption( 'ccmeonemails' );
 			$form .= '<tr>
 				<td></td>
 				<td class="mw-input">' .
-					Xml::checkLabel( wfMsg( 'emailccme' ), 'wpCCMe', 'wpCCMe', $this->cc_me ) .
+					Xml::checkLabel( wfMsg( 'emailccme' ), 'wpCCMe', 'wpCCMe', $ccme ) .
 					'<br />' . $this->getCaptcha() .
 				'</td>
 			</tr>
@@ -378,7 +380,7 @@ class EmailContactForm {
 			} else {
 				$subject = wfMsgForContent( 'contactpage-subject-and-sender', $subject, $this->fromaddress );
 			}
-		} else if ( $includeIP ) {
+		} elseif ( $includeIP ) {
 			$subject = wfMsgForContent( 'contactpage-subject-and-sender', $subject, $senderIP );
 		}
 

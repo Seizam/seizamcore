@@ -173,7 +173,21 @@ $messages['arz'] = array(
 	'contactpage-captcha-failed' => 'اختبار الكابتشا فشل! ([[Special:Captcha/help|معلومات إضافية]])',
 );
 
-/** Bashkir (Башҡорт)
+/** Azerbaijani (Azərbaycanca)
+ * @author Cekli829
+ */
+$messages['az'] = array(
+	'contact' => 'Əlaqə səhifəsi',
+	'contactpage' => 'Əlaqə səhifəsi',
+	'contactpage-title' => 'Əlaqə',
+	'contactpage-legend' => 'E-məktub göndər',
+	'contactpage-fromname' => 'Sizin adınız: *',
+	'contactpage-fromaddress' => 'Sizin e-poçtunuz: **',
+	'contactpage-fromname-required' => 'Sizin adınız:',
+	'contactpage-fromaddress-required' => 'Sizin e-poçtunuz:',
+);
+
+/** Bashkir (Башҡортса)
  * @author Assele
  * @author Haqmar
  */
@@ -208,7 +222,7 @@ $messages['bcl'] = array(
 	'contactpage-fromaddress' => "''e''-surat mo **",
 );
 
-/** Belarusian (Taraškievica orthography) (Беларуская (тарашкевіца))
+/** Belarusian (Taraškievica orthography) (‪Беларуская (тарашкевіца)‬)
  * @author EugeneZelenko
  * @author Jim-by
  * @author Red Winged Duck
@@ -262,17 +276,26 @@ $messages['bg'] = array(
 
 /** Bengali (বাংলা)
  * @author Bellayet
+ * @author Usarker
+ * @author Wikitanvir
  */
 $messages['bn'] = array(
 	'contact' => 'যোগাযোগের পাতা',
 	'contactpage' => 'যোগাযোগের পাতা',
 	'contactpage-title' => 'যোগাযোগ',
+	'contactpage-pagetext' => 'অনুগ্রহ করে নিচের ফর্মটি ব্যবহার করুন আমাদের সাথে যোগাযোগ করতে।',
 	'contactpage-legend' => 'ই-মেইল পাঠাও',
 	'contactpage-defsubject' => 'যোগাযোগ বার্তা',
+	'contactpage-subject-and-sender' => '$1 ($2 থেকে)',
+	'contactpage-subject-and-sender-withip' => '$1 ($2 থেকে $3-এ)',
 	'contactpage-fromname' => 'আপনার নাম: *',
 	'contactpage-fromaddress' => 'আপনার ই-মেইল: **',
 	'contactpage-fromname-required' => 'আপনার নাম:',
 	'contactpage-fromaddress-required' => 'আপনার ই-মেইল:',
+	'contactpage-formfootnotes-required' => 'সকল অংশ পূরণ করতে হবে।',
+	'contactpage-captcha' => 'বার্তা পাঠাতে, অনুগ্রহ করো ক্যাপচাটি সমাধান করুন ([[Special:Captcha/help|বিস্তারিত]])',
+	'contactpage-captcha-failed' => 'ক্যাপচা পরীক্ষা ব্যর্থ! ([[Special:Captcha/help|বিস্তারিত]])',
+	'contactpage-includeip' => 'এই বার্তায় আমার আইপি ঠিকানা যোগ করো।',
 );
 
 /** Breton (Brezhoneg)
@@ -457,7 +480,8 @@ $messages['de'] = array(
 	'contactpage-includeip' => 'Meine IP-Adresse in diese Nachricht einfügen.',
 );
 
-/** German (formal address) (Deutsch (Sie-Form))
+/** German (formal address) (‪Deutsch (Sie-Form)‬)
+ * @author Kghbln
  * @author Raimond Spekking
  */
 $messages['de-formal'] = array(
@@ -468,7 +492,7 @@ $messages['de-formal'] = array(
 ** optional, wird aber benötigt, um Ihnen antworten zu können',
 	'contactpage-fromname-required' => 'Ihr Name:',
 	'contactpage-fromaddress-required' => 'Ihre E-Mail-Adresse:',
-	'contactpage-captcha' => 'Um die Nachricht senden zu können, lösen Sie bitte das Captcha ([[Special:Captcha/help|weitere Informationen]])',
+	'contactpage-captcha' => 'Um die Nachricht senden zu können, lösen Sie bitte das CAPTCHA ([[Special:Captcha/help|weitere Informationen]])',
 );
 
 /** Zazaki (Zazaki)
@@ -577,6 +601,7 @@ $messages['eo'] = array(
 
 /** Spanish (Español)
  * @author Crazymadlover
+ * @author Fitoschido
  * @author Imre
  * @author Locos epraix
  * @author Peter17
@@ -584,25 +609,25 @@ $messages['eo'] = array(
  * @author לערי ריינהארט
  */
 $messages['es'] = array(
-	'contact' => 'Para contactar',
+	'contact' => 'Página de contacto',
 	'contactpage' => 'Página de contacto',
 	'contactpage-desc' => '[[Special:Contact|Formulario de contacto para visitantes]]',
-	'contactpage-title' => 'Contactar',
-	'contactpage-pagetext' => 'Por favor use el formulario de abajo para contactarnos.',
+	'contactpage-title' => 'Contacto',
+	'contactpage-pagetext' => 'Utiliza el siguiente formulario para ponerte en contacto con nosotros.',
 	'contactpage-legend' => 'Enviar correo electrónico',
 	'contactpage-defsubject' => 'Mensaje de contacto',
 	'contactpage-subject-and-sender' => '$1 (de $2)',
 	'contactpage-subject-and-sender-withip' => '$1 (de $2 en $3)',
-	'contactpage-fromname' => 'Su nombre: *',
-	'contactpage-fromaddress' => 'Su correo electrónico: **',
+	'contactpage-fromname' => 'Tu nombre: *',
+	'contactpage-fromaddress' => 'Tu correo electrónico: **',
 	'contactpage-formfootnotes' => '* opcional<br />
 ** opcional pero necesario si deseas una respuesta',
-	'contactpage-fromname-required' => 'Su nombre:',
-	'contactpage-fromaddress-required' => 'Su correo electrónico:',
-	'contactpage-formfootnotes-required' => 'Todos los campos son requeridos.',
-	'contactpage-captcha' => 'Para enviar el mensaje, por favor resuelve el captcha ([[Special:Captcha/help|más información]])',
-	'contactpage-captcha-failed' => '¡Prueba de captcha fallida! ([[Special:Captcha/help|más información]])',
-	'contactpage-includeip' => 'Incluir mi dirección IP en este mensaje',
+	'contactpage-fromname-required' => 'Tu nombre:',
+	'contactpage-fromaddress-required' => 'Tu correo electrónico:',
+	'contactpage-formfootnotes-required' => 'Todos los campos son obligatorios.',
+	'contactpage-captcha' => "Para enviar el mensaje, por favor resuelve el ''captcha'' ([[Special:Captcha/help|más información]])",
+	'contactpage-captcha-failed' => "¡Prueba de ''captcha'' fallida! ([[Special:Captcha/help|más información]])",
+	'contactpage-includeip' => 'Incluir mi dirección IP en este mensaje.',
 );
 
 /** Estonian (Eesti)
@@ -666,6 +691,7 @@ $messages['ext'] = array(
 /** Persian (فارسی)
  * @author Ebraminio
  * @author Ladsgroup
+ * @author Mjbmr
  * @author Wayiran
  */
 $messages['fa'] = array(
@@ -674,16 +700,16 @@ $messages['fa'] = array(
 	'contactpage-desc' => '[[Special:Contact|فرم تماس برای بازدیدکنندگان]]',
 	'contactpage-title' => 'تماس',
 	'contactpage-pagetext' => 'لطفاً از فرم زیر برای تماس با ما استفاده کنید.',
-	'contactpage-legend' => 'فرستادن رایانامه',
+	'contactpage-legend' => 'ارسال پست الکترونیکی',
 	'contactpage-defsubject' => 'پیام تماس',
 	'contactpage-subject-and-sender' => '$1 (از $2)',
 	'contactpage-subject-and-sender-withip' => '$1 (از $2 در $3)',
 	'contactpage-fromname' => 'نام شما: *',
-	'contactpage-fromaddress' => 'رایانامه شما: **',
+	'contactpage-fromaddress' => 'پست الکترونیکی شما: **',
 	'contactpage-formfootnotes' => '* اختیاری <br />
 ** اختیاری است اما اگر پاسخی می‌خواهید مورد نیاز است',
 	'contactpage-fromname-required' => 'نام شما:',
-	'contactpage-fromaddress-required' => 'رایانامه شما:',
+	'contactpage-fromaddress-required' => 'پست الکترونیکی شما:',
 	'contactpage-formfootnotes-required' => 'همهٔ گزینه‌ها الزامی هستند.',
 	'contactpage-captcha' => 'برای فرستادن پیام، لطفاً کپچا را حل کنید ([[Special:Captcha/help|اطلاعات بیش‌تر]])',
 	'contactpage-captcha-failed' => 'آزمون کپچا شکست خورد! ([[Special:Captcha/help|اطلاعات بیش‌تر]])',
@@ -1224,7 +1250,7 @@ $messages['ksh'] = array(
 	'contactpage-title' => 'Kontak',
 	'contactpage-pagetext' => 'Övver di Sigg hee kanns De dä Wiki-Maacher jet schrieve.',
 	'contactpage-legend' => '<i lang="en">e-mail</i> schecke',
-	'contactpage-defsubject' => 'Kontak-Sigg fun de {{SITENAME}}',
+	'contactpage-defsubject' => 'Kontak-Nohreesch',
 	'contactpage-subject-and-sender' => '$1 (fun $2)',
 	'contactpage-subject-and-sender-withip' => '$1 (vum $2 met dä IP-Addräß $3)',
 	'contactpage-fromname' => 'Dinge Name: <sup>*</sup>',
@@ -1235,7 +1261,7 @@ $messages['ksh'] = array(
 	'contactpage-fromname-required' => 'Dinge Name:',
 	'contactpage-fromaddress-required' => 'Ding <i lang="en">e-mail</i> Address:',
 	'contactpage-formfootnotes-required' => 'Dat moß all ußjefollt wäde.',
-	'contactpage-captcha' => 'Öm Ding Nohresch ze schecke, don dat Kaptscha endrare.
+	'contactpage-captcha' => 'Öm Ding Nohreesch ze schecke, don dat Kaptscha endrare.
 ([[Special:Captcha/help|Mieh Enfommazjuhne]])',
 	'contactpage-captcha-failed' => 'De Pröfung fum Kaptscha jingk donevve.
 Eß ävver kei Problem.
@@ -1244,7 +1270,14 @@ Don et einfach norr_ens versöke.
 	'contactpage-includeip' => 'Donn ming <i lang="en">IP</i>-Addräß en heh di Nohreesch erin.',
 );
 
-/** Cornish (Kernewek)
+/** Kurdish (Latin) (Kurdî (Latin))
+ * @author George Animal
+ */
+$messages['ku-latn'] = array(
+	'contactpage-fromname' => 'Navê te: *',
+);
+
+/** Cornish (Kernowek)
  * @author Kernoweger
  * @author Kw-Moon
  */
@@ -1280,7 +1313,7 @@ $messages['lb'] = array(
 	'contactpage-fromname' => 'Ären Numm: *',
 	'contactpage-fromaddress' => 'Är E-mail-Adress: **',
 	'contactpage-formfootnotes' => '* optional<br />
-** optional, gëtt awer gebraucht fir iech äntwerten ze kënnen',
+** optional, gëtt awer gebraucht fir Iech äntwerten ze kënnen',
 	'contactpage-fromname-required' => 'Ären Numm:',
 	'contactpage-fromaddress-required' => 'Är E-Mailadress:',
 	'contactpage-formfootnotes-required' => 'All Felder mussen ausgefëllt ginn.',
@@ -1315,9 +1348,12 @@ $messages['li'] = array(
 );
 
 /** Lithuanian (Lietuvių)
+ * @author Eitvys200
  * @author Matasg
  */
 $messages['lt'] = array(
+	'contactpage-legend' => 'Siųsti elektroninį laišką',
+	'contactpage-subject-and-sender' => '$1 (iš $2 )',
 	'contactpage-fromaddress' => 'Jūsų elektroninis paštas: **',
 	'contactpage-formfootnotes' => '* neprivaloma<br /> 
 ** neprivaloma, tačiau būtina, jei norite atsakyti',
@@ -1326,6 +1362,7 @@ $messages['lt'] = array(
 	'contactpage-formfootnotes-required' => 'Visi laukai yra privalomi.',
 	'contactpage-captcha' => 'Norėdami siųsti pranešimą, prašome išspręsti captcha ([[Special:Captcha/help|daugiau informacijos]])',
 	'contactpage-captcha-failed' => 'Captcha testas nepavyko! ([[Special:Captcha/help|daugiau informacijos]])',
+	'contactpage-includeip' => 'Įtraukti mano IP adresą į šį pranešimą.',
 );
 
 /** Lazuri (Lazuri)
@@ -1497,6 +1534,31 @@ $messages['nds'] = array(
 	'contactpage-captcha-failed' => 'Captcha-Test is scheefgahn! ([[Special:Captcha/help|mehr Infos]])',
 );
 
+/** Nepali (नेपाली)
+ * @author Bhawani Gautam Rhk
+ */
+$messages['ne'] = array(
+	'contact' => 'सम्पर्क पृष्ठ',
+	'contactpage' => 'सम्पर्क पृष्ठ',
+	'contactpage-desc' => '[[Special:Contact|आगन्तुकसितको सम्पर्क]]',
+	'contactpage-title' => 'संपर्क गर्ने',
+	'contactpage-pagetext' => 'हामीसित सम्पर्क साध्न तल दिइएको फ़ारमको प्रयोग गर्नुहोस्।',
+	'contactpage-legend' => 'इमेल पठाउने',
+	'contactpage-defsubject' => 'सम्पर्क सन्देश',
+	'contactpage-subject-and-sender' => '($2बाट) $1',
+	'contactpage-subject-and-sender-withip' => '($2बाट  $3मा) $1',
+	'contactpage-fromname' => 'तपाईंको नाम:  *',
+	'contactpage-fromaddress' => 'तपाईंको इमेल: **',
+	'contactpage-formfootnotes' => '* ऐच्छिक <br />
+** ऐच्छिक तर आवश्यक यदि तपाईं उत्तर चाहनु हुन्छ भनें',
+	'contactpage-fromname-required' => 'तपाईंको नाम:',
+	'contactpage-fromaddress-required' => 'तपाईंको इमेल:',
+	'contactpage-formfootnotes-required' => 'सबै क्षेत्र जरुरी।',
+	'contactpage-captcha' => 'सन्देश पठाउन,  कृपया क्याप्चा सुल्झाउनु होस् ([[Special:Captcha/help|थप जानाकारी]])',
+	'contactpage-captcha-failed' => 'क्याप्चा जाँच विफल!  [[Special:Captcha/help|थप जानकारी]]',
+	'contactpage-includeip' => 'मेरो आई पी ठेगाना यस सन्देशमा संलग्न गर्ने।',
+);
+
 /** Dutch (Nederlands)
  * @author SPQRobin
  * @author Siebrand
@@ -1606,13 +1668,22 @@ $messages['oc'] = array(
 	'contactpage-includeip' => 'Inclure mon adreça IP dins aquel messatge.',
 );
 
+/** Ossetic (Иронау)
+ * @author Amikeco
+ */
+$messages['os'] = array(
+	'contactpage-fromname-required' => 'Дæ ном:',
+);
+
 /** Deitsch (Deitsch)
  * @author Xqt
  */
 $messages['pdc'] = array(
 	'contactpage-subject-and-sender' => '$1 (vun $2)',
 	'contactpage-fromname' => 'Dei Naame: *',
+	'contactpage-fromaddress' => 'Dei E-Poschd: **',
 	'contactpage-fromname-required' => 'Dei Naame:',
+	'contactpage-fromaddress-required' => 'Dei E-Poschd:',
 );
 
 /** Polish (Polski)
@@ -1935,7 +2006,8 @@ $messages['sq'] = array(
 	'contact' => 'Kumtime',
 );
 
-/** Serbian Cyrillic ekavian (Српски (ћирилица))
+/** Serbian Cyrillic ekavian (‪Српски (ћирилица)‬)
+ * @author Rancher
  * @author Михајло Анђелковић
  */
 $messages['sr-ec'] = array(
@@ -1949,14 +2021,15 @@ $messages['sr-ec'] = array(
 	'contactpage-formfootnotes' => '* необавезно<br />
 ** необавезно, али потребно ако желите да добијете одговор',
 	'contactpage-fromname-required' => 'Ваше име:',
-	'contactpage-fromaddress-required' => 'Ваш мејл:',
+	'contactpage-fromaddress-required' => 'Е-пошта:',
 	'contactpage-formfootnotes-required' => 'Сва поља су обавезна.',
 	'contactpage-captcha' => 'Молимо Вас да решите CAPTCHA-у, да бисте послали поруку ([[Special:Captcha/help|више информација]])',
 	'contactpage-captcha-failed' => 'CAPTCHA тест није прошао! ([[Special:Captcha/help|више информација]])',
 );
 
-/** Serbian Latin ekavian (Srpski (latinica))
+/** Serbian Latin ekavian (‪Srpski (latinica)‬)
  * @author Michaello
+ * @author Жељко Тодоровић
  */
 $messages['sr-el'] = array(
 	'contactpage-desc' => '[[Special:Contact|Kontakt-forma za posetioce]]',
@@ -1969,7 +2042,7 @@ $messages['sr-el'] = array(
 	'contactpage-formfootnotes' => '* neobavezno<br />
 ** neobavezno, ali potrebno ako želite da dobijete odgovor',
 	'contactpage-fromname-required' => 'Vaše ime:',
-	'contactpage-fromaddress-required' => 'Vaš mejl:',
+	'contactpage-fromaddress-required' => 'E-pošta:',
 	'contactpage-formfootnotes-required' => 'Sva polja su obavezna.',
 	'contactpage-captcha' => 'Molimo Vas da rešite CAPTCHA-u, da biste poslali poruku ([[Special:Captcha/help|više informacija]])',
 	'contactpage-captcha-failed' => 'CAPTCHA test nije prošao! ([[Special:Captcha/help|više informacija]])',
@@ -2412,15 +2485,16 @@ $messages['za'] = array(
  * @author Liangent
  * @author Shinjiman
  * @author Wmr89502270
+ * @author Xiaomingyan
  */
 $messages['zh-hans'] = array(
-	'contact' => '联络页面',
-	'contactpage' => '联络页面',
+	'contact' => '联系页面',
+	'contactpage' => '联系页面',
 	'contactpage-desc' => '[[Special:Contact|供访问者使用的联系表单]]',
-	'contactpage-title' => '联络',
+	'contactpage-title' => '联系',
 	'contactpage-pagetext' => '请用以下的表格去联络我们。',
 	'contactpage-legend' => '发送电邮',
-	'contactpage-defsubject' => '联络信息',
+	'contactpage-defsubject' => '联系信息',
 	'contactpage-subject-and-sender' => '$1 （自$2）',
 	'contactpage-subject-and-sender-withip' => '$1 (由$2在$3)',
 	'contactpage-fromname' => '您的名字： *',
@@ -2440,6 +2514,7 @@ $messages['zh-hans'] = array(
  * @author Horacewai2
  * @author Liangent
  * @author Shinjiman
+ * @author Waihorace
  * @author Wrightbus
  */
 $messages['zh-hant'] = array(
