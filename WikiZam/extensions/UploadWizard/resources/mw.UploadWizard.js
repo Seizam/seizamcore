@@ -25,7 +25,12 @@ mw.UploadWizard.userAgent = "UploadWizard (alpha)";
 
 
 mw.UploadWizard.prototype = {
-	stepNames: [ 'tutorial', 'file', 'deeds', 'details', 'thanks' ],
+	
+        // SEIZAM MOD: we do not display tutorial
+        //stepNames: [ 'tutorial', 'file', 'deeds', 'details', 'thanks' ],
+        stepNames: [ 'file', 'deeds', 'details', 'thanks' ],
+        // END Of MOD
+        
 	currentStepName: undefined,
 
 	/*
@@ -145,6 +150,8 @@ mw.UploadWizard.prototype = {
 		$j( '.mwe-upwiz-button-home' )
 			.click( function() { window.location.href = mw.config.get('wgArticlePath').replace("$1", ""); } );
 
+                // SEIZAM MOD: we do not display turoial, so the next lines are escaped
+                /*
 		// handler for next button
 		$j( '#mwe-upwiz-stepdiv-tutorial .mwe-upwiz-button-next')
 			.click( function() {
@@ -154,7 +161,9 @@ mw.UploadWizard.prototype = {
 				}
 				_this.moveToStep( 'file' );
 			} );
-
+                */
+                // END OF MOD
+               
 		$j( '#mwe-upwiz-add-file' ).button();
 
 		$j( '#mwe-upwiz-upload-ctrl' )
@@ -256,6 +265,8 @@ mw.UploadWizard.prototype = {
 
 		// WIZARD
 
+                // SEIZAM MOD: we do not display tutorial, so we escape the next lines
+                /*
 		// check to see if the the skip tutorial cookie is set
 		if ( document.cookie.indexOf('skiptutorial=1') != -1 || UploadWizardConfig['skipTutorial'] ) {
 			// "select" the second step - highlight, make it visible, hide all others
@@ -264,6 +275,10 @@ mw.UploadWizard.prototype = {
 			// "select" the first step - highlight, make it visible, hide all others
 			_this.moveToStep( 'tutorial' );
 		}
+                */
+                // SEIZAM MOD: we go directly to the file step
+                _this.moveToStep( 'file' );
+                // END OF MOD
 
 	},
 
@@ -903,15 +918,19 @@ mw.UploadWizard.prototype = {
 			.focus( function() { this.select(); } );
 	},
 
+        // SEIZAM MOD: we never diplay tutorial, so the skipTutorialCookie is no more needed
+        // the function is escaped
 	/**
 	 * Set a cookie which lets the user skip the tutorial step in the future
 	 */
-	setSkipTutorialCookie: function() {
+        /*
+        setSkipTutorialCookie: function() {
 		var e = new Date();
 		e.setTime( e.getTime() + (365*24*60*60*1000) ); // one year
 		var cookieString='skiptutorial=1; expires=' + e.toGMTString() + '; path=/';
 		document.cookie = cookieString;
 	},
+        */
 
 	/**
 	 *

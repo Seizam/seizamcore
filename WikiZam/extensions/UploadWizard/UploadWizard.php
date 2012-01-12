@@ -39,7 +39,8 @@ foreach ( array(
 		'UploadWizardHooks' => $wgUpwizDir,
 		'ApiDeleteUploadCampaign' => $wgUpwizDir . '/api',
 		'UploadWizardConfig' => $wgUpwizDir . '/includes',
-		'UploadWizardTutorial' => $wgUpwizDir . '/includes',
+// SEIZAM MOD: tutorial is not used, so not loaded
+//		'UploadWizardTutorial' => $wgUpwizDir . '/includes',
 		'UploadWizardCampaign' => $wgUpwizDir . '/includes',
 		'SpecialUploadWizard' => $wgUpwizDir . '/includes/specials',
 		'SpecialUploadCampaigns' => $wgUpwizDir . '/includes/specials',

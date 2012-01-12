@@ -29,7 +29,8 @@ form.mwe-upwiz-form {
 	border-bottom: solid 1px #a7d7f9;
 }
 
-#mwe-upwiz-step-tutorial {
+/* SEIZAM MOd: the first step is now file     #mwe-upwiz-step-tutorial { */
+#mwe-upwiz-step-file {
 	border-left: solid 1px #a7d7f9;
 }
 
