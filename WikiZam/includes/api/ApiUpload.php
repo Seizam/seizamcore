@@ -4,7 +4,7 @@
  *
  * Created on Aug 21, 2008
  *
- * Copyright Â© 2008 - 2010 Bryan Tong Minh <Bryan.TongMinh@Gmail.com>
+ * Copyright © 2008 - 2010 Bryan Tong Minh <Bryan.TongMinh@Gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -566,6 +566,6 @@ class ApiUpload extends ApiBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id$';
+		return __CLASS__ . ': $Id: ApiUpload.php 104449 2011-11-28 15:52:04Z reedy $';
 	}
 }
