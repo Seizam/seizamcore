@@ -4,7 +4,7 @@
  *
  * Created on Aug 21, 2008
  *
- * Copyright © 2008 - 2010 Bryan Tong Minh <Bryan.TongMinh@Gmail.com>
+ * Copyright Â© 2008 - 2010 Bryan Tong Minh <Bryan.TongMinh@Gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -147,12 +147,7 @@ class ApiUpload extends ApiBase {
 	 */
 	function performStash() {
 		try {
-			$stashFile = $this->mUpload->stashFile();
-
-			if ( !$stashFile ) {
-				throw new MWException( 'Invalid stashed file' );
-			}
-			$fileKey = $stashFile->getFileKey();
+			$fileKey = $this->mUpload->stashFile()->getFileKey();
 		} catch ( MWException $e ) {
 			$message = 'Stashing temporary file failed: ' . get_class( $e ) . ' ' . $e->getMessage();
 			wfDebug( __METHOD__ . ' ' . $message . "\n");
@@ -571,6 +566,6 @@ class ApiUpload extends ApiBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiUpload.php 104449 2011-11-28 15:52:04Z reedy $';
+		return __CLASS__ . ': $Id$';
 	}
 }
