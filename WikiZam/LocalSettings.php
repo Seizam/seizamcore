@@ -262,3 +262,8 @@ $wgFavicon = "/favicon.ico";
 
 # ensure to clear cache when modifications occur on this file
 $wgInvalidateCacheOnLocalSettingsChange = true;
+
+require_once( "$IP/extensions/WikiEditor/WikiEditor.php" );
+$wgDefaultUserOptions['usebetatoolbar'] = 1;
+$wgDefaultUserOptions['usebetatoolbar-cgd'] = 1;
+$wgDefaultUserOptions['wikieditor-preview'] = 1;
