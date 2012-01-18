@@ -3669,13 +3669,13 @@ function wfUnpack( $format, $data, $length=false ) {
 
 //
 /**
- * SEIZAM special backtrace method
+ * special backtrace method
  * original from http://php.net/manual/en/function.debug-backtrace.php
  * by diz at ysagoon dot com 
  * 
- * @return string A summarized backtrace (filenames, lines, functions names, ...)
+ * @return string A pretty summarized backtrace (filenames, lines, functions names, ...)
  */
-function seizamGetBacktrace()
+function wfGetPrettyBacktrace()
 {
 
     $backtrace = debug_backtrace();

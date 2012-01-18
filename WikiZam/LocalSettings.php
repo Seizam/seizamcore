@@ -78,13 +78,6 @@ $wgDBmysql5 = false;
 $wgMainCacheType    = CACHE_NONE;
 $wgMemCachedServers = array();
 
-## To enable image uploads, make sure the 'images' directory
-## is writable, then set this to true:
-$wgEnableUploads  = true;
-$wgImgAuthPublicTest = false;
-#$wgUseImageMagick = true;
-#$wgImageMagickConvertCommand = "/usr/bin/convert";
-
 # InstantCommons allows wiki to use images from http://commons.wikimedia.org
 $wgUseInstantCommons  = false;
 
@@ -92,12 +85,6 @@ $wgUseInstantCommons  = false;
 ## Linux server, this will need to be set to the name of an
 ## available UTF-8 locale
 $wgShellLocale = "en_US.UTF-8";
-
-## If you want to use image uploads under safe mode,
-## create the directories images/archive, images/thumb and
-## images/temp, and make them all writable. Then uncomment
-## this, if it's not already uncommented:
-#$wgHashedUploadDirectory = false;
 
 ## If you have the appropriate support software installed
 ## you can enable inline LaTeX equations:
@@ -227,24 +214,34 @@ $wgUserEmailUseReplyTo=true;
 $wgContactRequireAll=true;
 
 
-# UploadWizard
+
+# ---------------
+#     UPLOADS
+# ---------------
+//
+## To enable image uploads, make sure the 'images' directory
+## is writable, then set this to true:
+$wgEnableUploads  = true;	//true = upload enabled
+$wgImgAuthPublicTest = false;	//false = bypass full public wiki
+				// ($wgGroupPermissions['*']['read'] = true;)) test
+$wgUseImageMagick = true;	//true = use imagemagick library instead of
+				// internal PHP image conversion system
+$wgImageMagickConvertCommand = "/usr/bin/convert"; 
+
 require_once( "$IP/extensions/UploadWizard/UploadWizard.php" );
-# default upload url will point to uploadwizard
+				// default upload url will point to uploadwizard
 $wgUploadNavigationUrl = '/Special:UploadWizard';
 $wgUploadWizardConfig = array(
-#    'debug' => true,
-#    'altUploadForm' => 'Special:Upload',
-#    'tutorialTemplate' => 'uploadwizard_tutorial_$1.svg', //width=720
-    'tutorialHelpdeskCoords' => false,
-    'skipTutorial' => true,
-    'bugList' => '', // no link to bug list
-    'translateHelp' => '', // no link to translate
-    'altUploadForm' => '', // no alternate form (should be special:upload when possible)
-#        'autoCategory' => 'Uploaded with UploadWizard',
-#        'feedbackPage' => 'FeedbackTest2',
-#        'enableFormData' => false,  # Should FileAPI uploads be used on supported browsers?
-#        'enableMultiFileSelect' => false
+    'tutorialHelpdeskCoords' => false,	//false = no helpdesk button
+    'skipTutorial' => true,		//true = no tutorial
+    'bugList' => '',			//'' = no link to bug list
+    'translateHelp' => '',		//'' = no link to translate
+    'altUploadForm' => '',		//'' = no alternate form 
+					// (should be special:upload when possible)
 );
+
+
+
 
 # Seizam's Virtual Electronic Payment Terminal
 require_once( "$IP/extensions/ElectronicPayment/ElectronicPayment.php" );

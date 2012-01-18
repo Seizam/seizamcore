@@ -142,7 +142,7 @@ abstract class UploadBase {
 	}
 
 	public function __construct() {
-	    wfDebugLog( 'upload', 'UploadBase.php>__construct(): backtrace=\n' .print_r(seizamGetBacktrace(), true));
+	    wfDebugLog( 'upload', "UploadBase.php>__construct(): backtrace=\n" .wfGetPrettyBacktrace());
 	}
 
 	/**
@@ -756,7 +756,7 @@ abstract class UploadBase {
 
 		$file = $stash->stashFile( $this->mTempPath, $this->getSourceType(), $key );
 		$this->mLocalFile = $file;
-		wfDebugLog( 'upload', '-UploadBase.php>stashFile(): return ' .get_class( $file ) );
+		wfDebugLog( 'upload', '-UploadBase.php>stashFile(): return instance of ' .get_class( $file ) );
 		return $file;
 	}
 
