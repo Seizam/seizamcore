@@ -100,10 +100,21 @@ class UploadFromStash extends UploadBase {
 	 * There is no need to stash the image twice
 	 */
 	public function stashFile( $key = null ) {
+	    
+		wfDebugLog( 'upload', '-UploadFromStash.php>stashFile(): enter' );
+	    
+		
 		if ( !empty( $this->mLocalFile ) ) {
+		    
+			wfDebugLog( 'upload', '-UploadFromStash.php>stashFile(): return $this->mLocalFile instance of ' . get_class($this->mLocalFile));
+			
 			return $this->mLocalFile;
 		}
+		
+		wfDebugLog( 'upload', '-UploadFromStash.php>stashFile(): return parent::stashFile($key) instance of ' .	get_class(parent::stashFile( $key )));
+		
 		return parent::stashFile( $key );
+		
 	}
 
 	/**

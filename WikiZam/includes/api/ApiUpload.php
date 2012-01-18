@@ -146,13 +146,26 @@ class ApiUpload extends ApiBase {
 	 * @return String file key
 	 */
 	function performStash() {
+	    
+		wfDebugLog( 'upload', 'ApiUpload.php>performStash(): enter ($this->mUpload='.get_class($this->mUpload).')');
+		
 		try {
-			$fileKey = $this->mUpload->stashFile()->getFileKey();
+			$stashFile = $this->mUpload->stashFile();
+
+			if ( !$stashFile ) {
+				throw new MWException( 'Invalid stashed file' );
+			}
+			
+			$fileKey = $stashFile->getFileKey();
+			
 		} catch ( MWException $e ) {
 			$message = 'Stashing temporary file failed: ' . get_class( $e ) . ' ' . $e->getMessage();
 			wfDebug( __METHOD__ . ' ' . $message . "\n");
 			throw new MWException( $message );
 		}
+		
+		wfDebugLog( 'upload', 'ApiUpload.php>performStash(): return $fileKey=' . print_r( $fileKey, true ));
+		
 		return $fileKey;
 	}
 

@@ -179,6 +179,9 @@ class UploadStash {
 	 * @return UploadStashFile: file, or null on failure
 	 */
 	public function stashFile( $path, $sourceType = null, $key = null ) {
+	    
+		wfDebugLog( 'upload', '--UploadStash.php>stashFile(): enter' );
+	    
 		if ( ! file_exists( $path ) ) {
 			wfDebug( __METHOD__ . " tried to stash file at '$path', but it doesn't exist\n" );
 			throw new UploadStashBadPathException( "path doesn't exist" );
@@ -304,6 +307,8 @@ class UploadStash {
 
 		# create the UploadStashFile object for this file.
 		$this->initFile( $key );
+
+		wfDebugLog( 'upload', '--UploadStash.php>stashFile(): return $this->getFile($key) instance of ' . get_class($this->getFile( $key ) ) );
 
 		return $this->getFile( $key );
 	}
