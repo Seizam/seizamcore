@@ -55,6 +55,8 @@ class SpecialEPTBack extends SpecialPage {
         // Set the content type.
         header("Pragma: no-cache");
         header("Content-type: text/plain");
+        
+        //echo "This a test interface\n\n";
 
         # Get request data from, e.g.
         $param = $wgRequest->getText('param');
@@ -62,8 +64,8 @@ class SpecialEPTBack extends SpecialPage {
         // Begin Main : Retrieve Variables posted by CMCIC Payment Server 
         $CMCIC_bruteVars = getMethode();
         
-        print_r($CMCIC_bruteVars);
-        print_r($wgRequest);
+        //print_r($CMCIC_bruteVars);
+        //print_r($wgRequest);
 
 // TPE init variables
         $oTpe = new CMCIC_Tpe();
