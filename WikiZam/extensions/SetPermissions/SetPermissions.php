@@ -1,6 +1,9 @@
 <?php
 /**
- * AuthorProtect extension by Ryan Schmidt
+ * SetPermissions extension by Yann Missler
+ * http://www.seizam.com
+ * 
+ * Based on AuthorProtect extension by Ryan Schmidt
  * See http://www.mediawiki.org/wiki/Extension:AuthorProtect for more details
  */
 
@@ -11,39 +14,48 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 
 $wgExtensionCredits['other'][] = array(
 	'path' => __FILE__,
-	'name' => 'Author Protect',
-	'author' => 'Ryan Schmidt',
-	'url' => 'http://www.mediawiki.org/wiki/Extension:AuthorProtect',
-	'version' => '1.2',
-	'descriptionmsg' => 'authorprotect-desc',
+	'name' => 'Set Permissions',
+	'author' => 'Ryan Schmidt, Yann Missler',
+	'url' => 'http://www.seizam.com',
+	'version' => '1.0 alpha',
+	'descriptionmsg' => 'setpermissions-desc',
 );
 
-$wgAvailableRights[] = 'author'; // dynamically assigned to the author of a page, but can be set w/ wgGroupPermissions too
-$wgAvailableRights[] = 'authorprotect'; // users without this right cannot protect pages they author
-$wgExtensionMessagesFiles['AuthorProtect'] = dirname( __FILE__ ) . '/AuthorProtect.i18n.php';
-$wgGroupPermissions['sysop']['author'] = true; // sysops can edit every page despite author protection
-$wgGroupPermissions['user']['authorprotect'] = true; // registered users can protect pages they author
+$wgAvailableRights[] = 'author';
+    // dynamically assigned to the author of a page, but can be set w/ wgGroupPermissions too
+$wgAvailableRights[] = 'setpermissions'; 
+    // users without this right cannot protect pages they author
+$wgExtensionMessagesFiles['SetPermissions'] = dirname( __FILE__ ) . '/SetPermissions.i18n.php';
+
 $wgHooks['SkinTemplateNavigation::Universal'][] = 'efMakeContentAction';
-$wgHooks['UnknownAction'][] = 'efAuthorProtectForm';
-$wgHooks['userCan'][] = 'efAuthorProtectDelay';
+	// add an item to the action menu
+$wgHooks['UnknownAction'][] = 'efSetPermissionsForm';
+	// add a non native action to mediawiki
+$wgHooks['userCan'][] = 'efSetPermissionsDelay';
 $wgHooks['UserGetRights'][] = 'efAssignAuthor';
-$wgRestrictionLevels[] = 'author'; // so sysops, etc. using the normal protection interface can protect and unprotect it at the author level
+
+$wgGroupPermissions['sysop']['author'] = true; 
+    // sysops can edit every page despite author protection
+$wgGroupPermissions['user']['setpermissions'] = true;
+    // registered users can protect pages they author
+$wgRestrictionLevels[] = 'author';
+    // so sysops, etc. using the normal protection interface can protect and unprotect it at the author level
 
 // internal variables, do not modify
-$wgAuthorProtectDoProtect = false;
-$wgAuthorProtectDelayRun = true;
+$wgSetPermissionsDoProtect = false;
+$wgSetPermissionsDelayRun = true;
 
 /**
  * Extensions like ConfirmAccount do some weird stuff to $wgTitle during the UserGetRights hook
  * So this delays the hook's execution to a point where $wgTitle is set
  */
-function efAuthorProtectDelay( $title, &$user, $action, $result ) {
-	global $wgAuthorProtectDelayRun;
-	if ( $wgAuthorProtectDelayRun ) {
+function efSetPermissionsDelay( $title, &$user, $action, $result ) {
+	global $wgSetPermissionsDelayRun;
+	if ( $wgSetPermissionsDelayRun ) {
 		$user->mRights = null;
 		$user->getRights(); // delay hook execution for compatibility w/ ConfirmAccount
 		$act = ( $action == '' || $action == 'view' ) ? 'edit' : $action;
-		$wgAuthorProtectDelayRun = false;
+		$wgSetPermissionsDelayRun = false;
 		if ( userIsAuthor( $title ) && isAuthorProtected( $title, $act ) ) {
 			$result = true;
 			return false;
@@ -63,51 +75,64 @@ function efAssignAuthor( $user, &$aRights ) {
 		$aRights = array_unique( $aRights );
 	}
 	// assign protect too if we need to
-	global $wgAuthorProtectDoProtect;
-	if ( $wgAuthorProtectDoProtect ) {
+	global $wgSetPermissionsDoProtect;
+	if ( $wgSetPermissionsDoProtect ) {
 		$aRights[] = 'protect';
 		$aRights = array_unique( $aRights );
 	}
 	return true;
 }
 
-function efAuthorProtectAssignProtect() {
-	global $wgAuthorProtectDoProtect, $wgUser;
-	$wgAuthorProtectDoProtect = true;
+function efSetPermissionsAssignProtect() {
+	global $wgSetPermissionsDoProtect, $wgUser;
+	$wgSetPermissionsDoProtect = true;
 	$wgUser->mRights = null;
 	$wgUser->getRights(); // re-trigger the above function to assign the protect right
-	$wgAuthorProtectDoProtect = false;
+	$wgSetPermissionsDoProtect = false;
 }
 
-function efAuthorProtectUnassignProtect() {
+function efSetPermissionsUnassignProtect() {
 	global $wgUser;
 	$wgUser->mRights = null;
 	$wgUser->getRights();
 }
 
+/**
+ * Add a custom item to the action list on pages
+ * @global type $wgUser
+ * @global type $wgRequest
+ * @param type $skin
+ * @param type $cactions
+ * @return type 
+ */
 function efMakeContentAction( $skin, &$cactions ) {
 	global $wgUser, $wgRequest;
 
 	$title = $skin->getTitle();
-	if ( userIsAuthor( $title ) && $wgUser->isAllowed( 'authorprotect' ) && !$wgUser->isAllowed( 'protect' ) ) {
+	
+	// if user has 'protect' right, she cannot use 'setpermissions'
+	if ( userIsAuthor( $title ) && $wgUser->isAllowed( 'setpermissions' ) && !$wgUser->isAllowed( 'protect' ) ) {
 		$action = $wgRequest->getText( 'action' );
-		$cactions['actions']['authorprotect'] = array(
-			'class' => $action == 'authorprotect' ? 'selected' : false,
-			'text' => wfMsg( efAuthorProtectMessage( $title ) ),
-			'href' => $title->getLocalUrl( 'action=authorprotect' ),
+		$cactions['actions']['setpermissions'] = array(
+			'class' => $action == 'setpermissions' ? 'selected' : false,
+			'text' => wfMsg( 'setpermissions' ),
+			'href' => $title->getLocalUrl( 'action=setpermissions' ),
 		);
 	}
 	return true;
 }
 
-function efAuthorProtectForm( $action, $article ) {
-	if ( $action == 'authorprotect' ) {
+function efSetPermissionsForm( $action, $article ) {
+
+    wfDebugLog( 'setpermissions', 'SetPermissions.php>efSetPermissionsForm() enter');
+    
+	if ( $action == 'setpermissions' ) {
 		global $wgOut, $wgUser, $wgRequest, $wgRestrictionTypes;
-		if ( $wgUser->isAllowed( 'authorprotect' ) ) {
+		if ( $wgUser->isAllowed( 'setpermissions' ) ) {
 			if ( userIsAuthor( $article->getTitle() ) ) {
-				$wgOut->setPageTitle( wfMsg( 'authorprotect' ) );
+				$wgOut->setPageTitle( wfMsg( 'setpermissions' ) );
 				if ( !$wgRequest->wasPosted() ) {
-					$wgOut->addHTML( efAuthorProtectMakeProtectForm( $article->getTitle() ) );
+					$wgOut->addHTML( efSetPermissionsMakeProtectForm( $article->getTitle() ) );
 				} else {
 					if ( !$wgUser->matchEditToken( $wgRequest->getText( 'wpToken' ) ) ) {
 						$wgOut->setPageTitle( wfMsg( 'errorpagetitle' ) );
@@ -116,7 +141,7 @@ function efAuthorProtectForm( $action, $article ) {
 					}
 					$restrictions = array();
 					$expiration = array();
-					$expiry = efAuthorProtectExpiry( $wgRequest->getText( 'wpExpiryTime' ) );
+					$expiry = efSetPermissionsExpiry( $wgRequest->getText( 'wpExpiryTime' ) );
 					foreach ( $wgRestrictionTypes as $type ) {
 						$rest = $article->getTitle()->getRestrictions( $type );
 						if ( $rest !== array() ) {
@@ -139,61 +164,75 @@ function efAuthorProtectForm( $action, $article ) {
 						}
 					}
 					$cascade = false;
-					efAuthorProtectAssignProtect();
+					efSetPermissionsAssignProtect();
 					$str = var_export( array( 'restrictions' => $restrictions, 'reason' => $wgRequest->getText( 'wpReason' ), 'cascade' => $cascade, 'expiry' => $expiration ), true );
-					wfDebugLog( 'authorprotect', $str );
+					wfDebugLog( 'setpermissions', "SetPermissions.php>efSetPermissionsForm(): asked=\n$str" );
 					$success = $article->updateRestrictions(
 						$restrictions, // array of restrictions
 						$wgRequest->getText( 'wpReason' ), // reason
 						$cascade, // cascading protection disabled, need to pass by reference
 						$expiration // expiration
 					);
-					efAuthorProtectUnassignProtect();
+					efSetPermissionsUnassignProtect();
 					if ( $success ) {
-						$wgOut->addWikiMsg( 'authorprotect-success' );
+						$wgOut->addWikiMsg( 'setpermissions-success' );
 					} else {
-						$wgOut->addWikiMsg( 'authorprotect-failure' );
+						$wgOut->addWikiMsg( 'setpermissions-failure' );
 					}
 				}
 			} else {
 				$wgOut->setPageTitle( wfMsg( 'errorpagetitle' ) );
-				$wgOut->addWikiMsg( 'authorprotect-notauthor' );
+				$wgOut->addWikiMsg( 'setpermissions-notauthor' );
 			}
 		} else {
-			$wgOut->permissionRequired( 'authorprotect' );
+			$wgOut->permissionRequired( 'setpermissions' );
 		}
 		return false; // still continues hook processing, but doesn't throw an error message
 	}
 	return true; // unknown action, so state that the action doesn't exist
 }
 
-function efAuthorProtectMakeProtectForm( $title ) {
+function efSetPermissionsMakeProtectForm( $title ) {
+    
+    wfDebugLog( 'setpermissions', 'SetPermissions.php>efSetPermissionsMakeProtectForm() enter');
+	
 	global $wgRestrictionTypes, $wgUser;
+	    //This array contains the actions that can be restricted, that is, 
+	    //made unavailable to classes of users via protection (using action=protect). 
+	    //By default, it contains the strings edit and move. 
+	    //For this extension, we added "read" string in LocalSettings.php
 	$token = $wgUser->editToken();
 	// FIXME: raw html messages
-	$form = Xml::openElement( 'p' ) . wfMsg( 'authorprotect-intro' ) . Xml::closeElement( 'p' );
-	$form .= Xml::openElement( 'form', array( 'method' => 'post', 'action' => $title->getLocalUrl( 'action=authorprotect' ) ) );
+	$form = Xml::openElement( 'p' ) . wfMsg( 'setpermissions-intro' ) . Xml::closeElement( 'p' );
+	$form .= Xml::openElement( 'form', array( 'method' => 'post', 'action' => $title->getLocalUrl( 'action=setpermissions' ) ) );
 
 	$br = Html::element( 'br' );
 
 	foreach ( $wgRestrictionTypes as $type ) {
 		$rest = $title->getRestrictions( $type );
+		
+		 wfDebugLog( 'setpermissions',
+			 'SetPermissions.php>efSetPermissionsMakeProtectForm() $title->getRestrictions('.
+			 $type . ') = ' . print_r($rest, true) );
+		 
+		    //$type = action that permission needs to be checked for
+		    //$rest = array of Strings of groups allowed to do action to this article
 		if ( $rest !== array() ) {
 			if ( !$wgUser->isAllowed( $rest[0] ) && !in_array( 'author', $rest ) )
 				continue; // it's protected at a level higher than them, so don't let them change it so they can now mess with stuff
 		}
 
 		$checked =  in_array( 'author', $rest );
-		$form .= Xml::checkLabel( wfMsg( "authorprotect-$type" ), "check-$type", "check-$type", $checked ) . $br;
+		$form .= Xml::checkLabel( wfMsg( "setpermissions-$type" ), "check-$type", "check-$type", $checked ) . $br;
 	}
 
 	// FIXME: use Xml::inputLabel
-	$form .= $br . Xml::element( 'label', array( 'for' => 'wpExpiryTime' ), wfMsg( 'authorprotect-expiry' ) ) . ' ';
+	$form .= $br . Xml::element( 'label', array( 'for' => 'wpExpiryTime' ), wfMsg( 'setpermissions-expiry' ) ) . ' ';
 	$form .= Xml::element( 'input', array( 'type' => 'text', 'name' => 'wpExpiryTime' ) ) . $br;
-	$form .= $br . Xml::element( 'label', array( 'for' => 'wpReason' ), wfMsg( 'authorprotect-reason' ) ) . ' ';
+	$form .= $br . Xml::element( 'label', array( 'for' => 'wpReason' ), wfMsg( 'setpermissions-reason' ) ) . ' ';
 	$form .= Xml::element( 'input', array( 'type' => 'text', 'name' => 'wpReason' ) );
 	$form .= $br . Html::hidden( 'wpToken', $token );
-	$form .= $br . Xml::element( 'input', array( 'type' => 'submit', 'name' => 'wpConfirm', 'value' => wfMsg( 'authorprotect-confirm' ) ) );
+	$form .= $br . Xml::element( 'input', array( 'type' => 'submit', 'name' => 'wpConfirm', 'value' => wfMsg( 'setpermissions-confirm' ) ) );
 	$form .= Xml::closeElement( 'form' );
 	return $form;
 }
@@ -212,22 +251,13 @@ function userIsAuthor( $title ) {
 	return $wgUser->getID() == $aid;
 }
 
-function efAuthorProtectMessage( $title ) {
-	global $wgRestrictionTypes;
-	foreach ( $wgRestrictionTypes as $type ) {
-		if ( in_array( 'author', $title->getRestrictions( $type ) ) )
-			return 'unprotect';
-	}
-	return 'protect';
-}
-
 function isAuthorProtected( $title, $action ) {
 	$rest = $title->getRestrictions( $action );
 	return in_array( 'author', $rest );
 }
 
 // forked from ProtectionForm::getExpiry and modified to rewrite '' to infinity
-function efAuthorProtectExpiry( $value ) {
+function efSetPermissionsExpiry( $value ) {
 	if ( $value == 'infinite' || $value == 'indefinite' || $value == 'infinity' || $value == '' ) {
 		$time = Block::infinity();
 	} else {
