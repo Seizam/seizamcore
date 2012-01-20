@@ -124,7 +124,9 @@ Class EPMessage {
   
   // Pick a language for the external payment interface (FR EN DE IT ES NL PT SV availabe) (EN default)
   private function assignEPTLanguage() {
-      return 'EN';
+      global $wgLang;
+      if ($wgLang->getCode()=='fr') return 'FR';
+      else return 'EN';
   }  
   
   //!\\ Careful with collisions (assign when writing, not before);
