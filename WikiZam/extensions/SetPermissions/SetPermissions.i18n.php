@@ -13,7 +13,7 @@ $messages = array();
  */
 $messages['en'] = array(
 	'setpermissions'            => 'Set permissions',
-	'setpermissions-desc'       => 'Based on AuthorProtect 1.2 extension, it allows the author of a page or file to set rights for other users',
+	'setpermissions-desc'       => 'Based on AuthorProtect v1.2 and AuthorRestriction v2.0 extensions, it allows the author of a page or file to set rights for other users',
     	'setpermissions-intro'      => 'Use this form to set this page read/write rights from non-authors',
     
 	'setpermissions-notauthor'  => 'You are not the author of this page',

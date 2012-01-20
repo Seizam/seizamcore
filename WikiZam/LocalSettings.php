@@ -243,9 +243,8 @@ $wgUploadWizardConfig = array(
 require_once( "$IP/extensions/ElectronicPayment/ElectronicPayment.php" );
 
 
-# SetPermissions (dev) based on AuthorProtect
+# SetPermissions
 require_once( "$IP/extensions/SetPermissions/SetPermissions.php" );
-$wgRestrictionTypes[] = "read"; //Add a read right, experimental !
 
 
 # Rights

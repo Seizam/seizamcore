@@ -3721,8 +3721,9 @@ function wfGetPrettyBacktrace()
 	else
 	    $output.="\n" ;
 	
-        $output .= " file: {$bt['file']} line: {$bt['line']} ";
-        $output .= "call: ".( isset($bt['class']) ? $bt['class'] : '' ). 
+        $output .= " file: ".( isset($bt['file']) ? $bt['file'] : '?' ).
+		" line: ".( isset($bt['line']) ? $bt['line'] : '?' ) ;
+        $output .= " call: ".( isset($bt['class']) ? $bt['class'] : '' ). 
 		(isset($bt['type']) ? $bt['type'] : '' ) .
 		(isset($bt['function']) ? $bt['function'] : '') ."($args)";;
     }

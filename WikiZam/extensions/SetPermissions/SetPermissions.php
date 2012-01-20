@@ -15,7 +15,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 $wgExtensionCredits['other'][] = array(
 	'path' => __FILE__,
 	'name' => 'Set Permissions',
-	'author' => 'Ryan Schmidt, Yann Missler',
+	'author' => 'Ryan Schmidt, Jean-Lou Dupont, Yann Missler',
 	'url' => 'http://www.seizam.com',
 	'version' => '1.0 alpha',
 	'descriptionmsg' => 'setpermissions-desc',
@@ -32,16 +32,29 @@ $wgHooks['SkinTemplateNavigation::Universal'][] = 'efMakeContentAction';
 $wgHooks['UnknownAction'][] = 'efSetPermissionsForm';
 	// add a non native action to mediawiki
 $wgHooks['userCan'][] = 'efSetPermissionsDelay';
+	// ??? (inherited from AuthorProtect)
+$wgHooks['userCan'][] = 'efSetPermissionsUserCanRead';
+	// if the current user does not have the read right, she cannot view the article
 $wgHooks['UserGetRights'][] = 'efAssignAuthor';
+	// this hook dynamically give the current user the "author" right if this
+	// function estimate that she is the author
 
-$wgGroupPermissions['sysop']['author'] = true; 
-    // sysops can edit every page despite author protection
-$wgGroupPermissions['user']['setpermissions'] = true;
-    // registered users can protect pages they author
+$wgRestrictionTypes[] = "read";
+    // Configure actions that can be restricted using action=protect, that is, made 
+    // unavailable to classes of users via protection (using action=protect)
+    // We add a read right, this way sysops can change permissions via action=protect
 $wgRestrictionLevels[] = 'author';
-    // so sysops, etc. using the normal protection interface can protect and unprotect it at the author level
+    // this add the special level "author" used by SetPermissions to MediaWiki system, so that 
+    // the normal protection interface can protect and unprotect at the author level exactly
+    // the same way as SetPermissions internally does
+$wgGroupPermissions['sysop']['author'] = true; 
+    // sysops are in author level of every page, that is they can always do what they
+    // wants to every pages (big boss mode)
+$wgGroupPermissions['user']['setpermissions'] = true;
+    // registered users can set permissions to pages they author
 
-// internal variables, do not modify
+
+// internal variables, do not modify (inherited from AuthorProtect)
 $wgSetPermissionsDoProtect = false;
 $wgSetPermissionsDelayRun = true;
 
@@ -50,13 +63,14 @@ $wgSetPermissionsDelayRun = true;
  * So this delays the hook's execution to a point where $wgTitle is set
  */
 function efSetPermissionsDelay( $title, &$user, $action, $result ) {
+    
 	global $wgSetPermissionsDelayRun;
 	if ( $wgSetPermissionsDelayRun ) {
 		$user->mRights = null;
 		$user->getRights(); // delay hook execution for compatibility w/ ConfirmAccount
 		$act = ( $action == '' || $action == 'view' ) ? 'edit' : $action;
 		$wgSetPermissionsDelayRun = false;
-		if ( userIsAuthor( $title ) && isAuthorProtected( $title, $act ) ) {
+		if ( userIsAuthor( $title ) && isActionRestrictedAtAuthorLevel( $title, $act ) ) {
 			$result = true;
 			return false;
 		}
@@ -127,12 +141,16 @@ function efSetPermissionsForm( $action, $article ) {
     wfDebugLog( 'setpermissions', 'SetPermissions.php>efSetPermissionsForm() enter');
     
 	if ( $action == 'setpermissions' ) {
-		global $wgOut, $wgUser, $wgRequest, $wgRestrictionTypes;
+		global $wgOut, $wgUser, $wgRequest;
+				
 		if ( $wgUser->isAllowed( 'setpermissions' ) ) {
 			if ( userIsAuthor( $article->getTitle() ) ) {
+			    
 				$wgOut->setPageTitle( wfMsg( 'setpermissions' ) );
+				
 				if ( !$wgRequest->wasPosted() ) {
 					$wgOut->addHTML( efSetPermissionsMakeProtectForm( $article->getTitle() ) );
+
 				} else {
 					if ( !$wgUser->matchEditToken( $wgRequest->getText( 'wpToken' ) ) ) {
 						$wgOut->setPageTitle( wfMsg( 'errorpagetitle' ) );
@@ -142,10 +160,18 @@ function efSetPermissionsForm( $action, $article ) {
 					$restrictions = array();
 					$expiration = array();
 					$expiry = efSetPermissionsExpiry( $wgRequest->getText( 'wpExpiryTime' ) );
-					foreach ( $wgRestrictionTypes as $type ) {
+					
+					//instead of loading $wgRestricitonTypes, we load the title specific restrictions available
+					$applicableRestrictionTypes  = $article->getTitle()->getRestrictionTypes();
+					wfDebugLog( 'setpermissions', 'SetPermissions.php>efSetPermissionsForm() $applicableRestrictionTypes='.print_r($applicableRestrictionTypes, true));
+		
+					foreach ( $applicableRestrictionTypes as $type ) {
 						$rest = $article->getTitle()->getRestrictions( $type );
 						if ( $rest !== array() ) {
-							if ( !$wgUser->isAllowed( $rest[0] ) && !in_array( 'author', $rest ) ) {
+							if ( !$wgUser->isAllowed( $rest[0] ) &&	    // if user do not has this right
+												    // (inherited from a group)
+								!in_array( 'author', $rest ) )	    // AND not setted at aythor level
+							{
 								$restrictions[$type] = $rest[0]; // don't let them lower the protection level
 								continue;
 							}
@@ -165,8 +191,14 @@ function efSetPermissionsForm( $action, $article ) {
 					}
 					$cascade = false;
 					efSetPermissionsAssignProtect();
-					$str = var_export( array( 'restrictions' => $restrictions, 'reason' => $wgRequest->getText( 'wpReason' ), 'cascade' => $cascade, 'expiry' => $expiration ), true );
+					
+					$str = var_export( array( 
+					    'restrictions' => $restrictions, 
+					    'reason' => $wgRequest->getText( 'wpReason' ), 
+					    'cascade' => $cascade, 
+					    'expiry' => $expiration ), true );
 					wfDebugLog( 'setpermissions', "SetPermissions.php>efSetPermissionsForm(): asked=\n$str" );
+					
 					$success = $article->updateRestrictions(
 						$restrictions, // array of restrictions
 						$wgRequest->getText( 'wpReason' ), // reason
@@ -196,7 +228,7 @@ function efSetPermissionsMakeProtectForm( $title ) {
     
     wfDebugLog( 'setpermissions', 'SetPermissions.php>efSetPermissionsMakeProtectForm() enter');
 	
-	global $wgRestrictionTypes, $wgUser;
+	global $wgUser;
 	    //This array contains the actions that can be restricted, that is, 
 	    //made unavailable to classes of users via protection (using action=protect). 
 	    //By default, it contains the strings edit and move. 
@@ -208,21 +240,28 @@ function efSetPermissionsMakeProtectForm( $title ) {
 
 	$br = Html::element( 'br' );
 
-	foreach ( $wgRestrictionTypes as $type ) {
+	$applicableRestrictionTypes  = $title->getRestrictionTypes(); // this way, do not display create for exsiting page
+		
+	foreach ( $applicableRestrictionTypes as $type ) {
 		$rest = $title->getRestrictions( $type );
+		    //$type = action that permission needs to be checked for
+		    //$rest = array of Strings of groups allowed to do action to this article
 		
 		 wfDebugLog( 'setpermissions',
 			 'SetPermissions.php>efSetPermissionsMakeProtectForm() $title->getRestrictions('.
 			 $type . ') = ' . print_r($rest, true) );
+		
+		//the next lines display checkbox and eventually check them
 		 
-		    //$type = action that permission needs to be checked for
-		    //$rest = array of Strings of groups allowed to do action to this article
-		if ( $rest !== array() ) {
-			if ( !$wgUser->isAllowed( $rest[0] ) && !in_array( 'author', $rest ) )
-				continue; // it's protected at a level higher than them, so don't let them change it so they can now mess with stuff
+		if ( $rest !== array() ) { // if not empty restrictions
+			//TODO: check how this is handled in action protect/unprotect 
+			if ( !$wgUser->isAllowed( $rest[0] ) && // IF  it is '$rest'ricted to a group in which the user is not AND
+				!in_array( 'author', $rest ) ) // not $rest'ricted to author level 
+				continue;   // it's protected at a level higher than them, so don't 
+					    // let them change it so they can now mess with stuff
 		}
 
-		$checked =  in_array( 'author', $rest );
+		$checked =  in_array( 'author', $rest ); // checked if restricted to author level
 		$form .= Xml::checkLabel( wfMsg( "setpermissions-$type" ), "check-$type", "check-$type", $checked ) . $br;
 	}
 
@@ -237,6 +276,13 @@ function efSetPermissionsMakeProtectForm( $title ) {
 	return $form;
 }
 
+/**
+ * The most important code!
+ * This says if the current user is the author of $title.
+ * @global type $wgUser
+ * @param Title $title
+ * @return type 
+ */
 function userIsAuthor( $title ) {
 	global $wgUser;
 
@@ -244,14 +290,22 @@ function userIsAuthor( $title ) {
 		return false; // quick hack to prevent the API from messing up.
 	}
 
+	if ( $wgUser->getID() === 0 ) {
+	    return false; // don't allow anons, they shouldn't even get this far but just in case...
+	}
+	
 	$id = $title->getArticleId();
 	$dbr = wfGetDB( DB_SLAVE ); // grab the slave for reading
-	$aid = $dbr->selectField( 'revision', 'rev_user',  array( 'rev_page' => $id ), __METHOD__ );
-	// FIXME: weak comparison
+	$aid = $dbr->selectField( 'revision', 'rev_user',  array( 'rev_page' => $id ),
+		__METHOD__, array( 'ORDER BY' => 'rev_timestamp ASC'  ) );
+	
+	wfDebugLog( 'setpermissions', 'SetPermissions.php>userIsAuthor(): article_id='.$id
+		.' author_id='.print_r($aid, true) . ' user_id='.$wgUser->getID());
+	
 	return $wgUser->getID() == $aid;
 }
 
-function isAuthorProtected( $title, $action ) {
+function isActionRestrictedAtAuthorLevel( $title, $action ) {
 	$rest = $title->getRestrictions( $action );
 	return in_array( 'author', $rest );
 }
@@ -272,4 +326,37 @@ function efSetPermissionsExpiry( $value ) {
 		$time = wfTimestamp( TS_MW, $unix );
 	}
 	return $time;
+}
+
+
+
+function efSetPermissionsUserCanRead( $title, &$user, $action, $result )
+//function efSetPermissionsUserCanRead( &$article )
+{
+
+        wfDebugLog( 'setpermissions', 'SetPermissions.php>efSetPermissionsUserCanRead($title="'.$title->getLocalURL().
+		'" $action="'.$action.'") enter');
+ 
+  # if the action is not related to a 'view' (i.e. 'read') request, get out.
+  if ($action != 'read')
+   return true;  #don't stop processing the hook chain
+  
+  wfDebugLog( 'setpermissions', 'SetPermissions.php>efSetPermissionsUserCanRead('.$title->getLocalURL().')'
+	  // . " stacktrace=\n ".print_r(wfGetPrettyBacktrace(),true)
+	  . ' usersGroups=' . print_r($user->getGroups(), true)
+	  . ' usersRights=' . print_r($user->getRights(), true)
+	  );
+ 
+  // If 'author' restriction is active, then check for 'author' right
+  if ( isActionRestrictedAtAuthorLevel( $title, 'read') === true ) 
+  {
+    // if the user is not in the author group, and she is not the author of the page => not allowed
+         if ( !in_array('author', $user->getRights()) && !userIsAuthor($title)  )
+        {
+		//stop processing (the viewing is restricted, so nothing else can be done by user!)
+		$result = false;
+		return false;
+        } 
+  }
+  return true; # don't stop processing hook chain.
 }
