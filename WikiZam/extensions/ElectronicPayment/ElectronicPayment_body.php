@@ -63,12 +63,14 @@ class SpecialElectronicPayment extends SpecialPage {
         } else if ($wgRequest->getText('status') == 'attempt') {
 
             $message = new EPMessage($wgRequest->getText('amount'));
+            
+            $this->sayIt($message->epm);
 
             //$wgOut->addWikiText('ref: ' . $message->epm_o_reference);
             //$wgOut->addWikiText('ram: ' . $message->epm_o_raw_amount);
             //$wgOut->addWikiText('cur: ' . $message->epm_o_currency);
 
-            $wgOut->addWikiText(wfMsg('ep-action', $message->epm_o_amount));
+            $wgOut->addWikiText(wfMsg('ep-action', $message->epm['epm_o_amount']));
 
             //$wgOut->addWikiText('tex: ' . $message->epm_o_free_text);
             // transaction date : format d/m/y:h:m:s
@@ -90,17 +92,17 @@ class SpecialElectronicPayment extends SpecialPage {
 <p>
 	<input type="hidden" name="version"             id="version"        value="' . $message->oTpe->sVersion . '" />
 	<input type="hidden" name="TPE"                 id="TPE"            value="' . $message->oTpe->sNumero . '" />
-	<input type="hidden" name="date"                id="date"           value="' . $message->epm_o_date . '" />
-	<input type="hidden" name="montant"             id="montant"        value="' . $message->epm_o_amount . '" />
-	<input type="hidden" name="reference"           id="reference"      value="' . $message->epm_o_reference . '" />
-	<input type="hidden" name="MAC"                 id="MAC"            value="' . $message->epm_o_mac . '" />
+	<input type="hidden" name="date"                id="date"           value="' . $message->epm['epm_o_date'] . '" />
+	<input type="hidden" name="montant"             id="montant"        value="' . $message->epm['epm_o_amount'] . '" />
+	<input type="hidden" name="reference"           id="reference"      value="' . $message->epm['epm_o_reference'] . '" />
+	<input type="hidden" name="MAC"                 id="MAC"            value="' . $message->epm['epm_o_mac'] . '" />
 	<input type="hidden" name="url_retour"          id="url_retour"     value="' . $message->oTpe->sUrlKO . '" />
 	<input type="hidden" name="url_retour_ok"       id="url_retour_ok"  value="' . $message->oTpe->sUrlOK . '" />
 	<input type="hidden" name="url_retour_err"      id="url_retour_err" value="' . $message->oTpe->sUrlKO . '" />
 	<input type="hidden" name="lgue"                id="lgue"           value="' . $message->oTpe->sLangue . '" />
 	<input type="hidden" name="societe"             id="societe"        value="' . $message->oTpe->sCodeSociete . '" />
-	<input type="hidden" name="texte-libre"         id="texte-libre"    value="' . HtmlEncode($message->epm_o_free_text) . '" />
-	<input type="hidden" name="mail"                id="mail"           value="' . $message->epm_o_mail . '" />
+	<input type="hidden" name="texte-libre"         id="texte-libre"    value="' . HtmlEncode($message->epm['epm_o_free_text']) . '" />
+	<input type="hidden" name="mail"                id="mail"           value="' . $message->epm['epm_o_mail'] . '" />
 	<!-- Uniquement pour le Paiement fractionné -->
 	<input type="hidden" name="nbrech"              id="nbrech"         value="" />
 	<input type="hidden" name="dateech1"            id="dateech1"       value="" />
