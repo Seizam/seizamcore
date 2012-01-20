@@ -20,12 +20,10 @@ class ElectronicPaymentHooks {
 	 * Adds the necessary tables to the DB
 	 * 
 	 */
-	
-	/* CURRENTLY NOT USED
 
 	public static function loadExtensionSchemaUpdates( $updater ) {
-        $updater->addExtensionUpdate( array( 'addTable', 'szacl_owner',
-                dirname( __FILE__ ) . '/schema/mysql/szacl_owner.sql', true ) );
+        $updater->addExtensionUpdate( array( 'addTable', 'ep_message',
+                dirname( __FILE__ ) . '/schema/mysql/ep_message.sql', true ) );
         return true;
-	*/
+        }
 }
