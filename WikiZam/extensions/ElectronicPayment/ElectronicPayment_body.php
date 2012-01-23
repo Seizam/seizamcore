@@ -47,7 +47,7 @@ class SpecialElectronicPayment extends SpecialPage {
      * Special page entry point
      */
     public function execute($par) {
-        global $wgRequest, $wgOut, $wgUser, $wgLang;
+        global $wgRequest, $wgOut;
 
         $this->setHeaders();
 
@@ -61,8 +61,8 @@ class SpecialElectronicPayment extends SpecialPage {
         } else if ($wgRequest->getText('status') == 'success') {
             $wgOut->addWikiText(wfMsg('ep-success'));
         } else if ($wgRequest->getText('status') == 'attempt') {
-
-            $message = new EPMessage($wgRequest->getText('amount'));
+            
+            $message = new EPMessage('out');
             
             $this->sayIt($message->epm);
 
@@ -79,10 +79,10 @@ class SpecialElectronicPayment extends SpecialPage {
             //$wgOut->addWikiText('lan: ' . $message->epm_o_language);
             //$wgOut->addWikiText('mai: ' . $message->epm_o_mail);
             // Control String for support
-            //$wgOut->addWikiText('ctl: ' . $message->CtlHmac);
+            $wgOut->addWikiText('ctl: ' . $message->CtlHmac);
             // Data to certify
-            //$wgOut->addWikiText('dat: ' . $message->PHP1_FIELDS);
-            //$wgOut->addWikiText('sMAC: ' . $message->epm_o_mac);
+            $wgOut->addWikiText('dat: ' . $message->PHP1_FIELDS);
+            $wgOut->addWikiText('sMAC: ' . $message->epm['epm_o_mac']);
 
             $output = '
 
@@ -92,7 +92,7 @@ class SpecialElectronicPayment extends SpecialPage {
 <p>
 	<input type="hidden" name="version"             id="version"        value="' . $message->oTpe->sVersion . '" />
 	<input type="hidden" name="TPE"                 id="TPE"            value="' . $message->oTpe->sNumero . '" />
-	<input type="hidden" name="date"                id="date"           value="' . $message->epm['epm_o_date'] . '" />
+	<input type="hidden" name="date"                id="date"           value="' . $message->mySqlStringToBankTime($message->epm['epm_o_date']) . '" />
 	<input type="hidden" name="montant"             id="montant"        value="' . $message->epm['epm_o_amount'] . '" />
 	<input type="hidden" name="reference"           id="reference"      value="' . $message->epm['epm_o_reference'] . '" />
 	<input type="hidden" name="MAC"                 id="MAC"            value="' . $message->epm['epm_o_mac'] . '" />
@@ -131,9 +131,9 @@ class SpecialElectronicPayment extends SpecialPage {
 
     function sayIt($in) {
         global $wgOut;
-        $wgOut->addHTML('<pre>');
-        $wgOut->addHTML(print_r($in, true));
-        $wgOut->addHTML('</pre>');
+        printf('<pre>');
+        printf(print_r($in, true));
+        printf('</pre>');
     }
 
 }

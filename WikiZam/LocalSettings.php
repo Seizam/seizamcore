@@ -249,7 +249,9 @@ require_once( "$IP/extensions/SetPermissions/SetPermissions.php" );
 
 # Rights
 $wgGroupPermissions['*']['edit'] = false;
+
 $wgGroupPermissions['sysop']['editprotectedns'] = true;
+
 $wgNamespaceProtection[NS_PROJECT] = array('editprotectedns');
 
 

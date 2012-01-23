@@ -37,5 +37,6 @@ $messages['fr'] = array(
 	'electronicpayment-desc' => 'Terminal de Paiement Électronique Virtuel pour Seizam',
         'ep-action' => 'Cliquez sur le bouton ci-dessous pour atteindre l\'interface de paiement sécurisée de notre banque (CIC). Montant de la transaction : \'\'\'$1\'\'\'',
         'ep-fail' => 'La transaction est ratée. Essayez encore.',
+        'ep-success' => 'La transaction est réussie. \o/',
         'ep-connect' => 'Connection'
 );
