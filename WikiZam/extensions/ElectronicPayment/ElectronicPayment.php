@@ -52,6 +52,10 @@ $wgSpecialPages['EPTBack'] = 'SpecialEPTBack';
 
 $wgSpecialPageGroups['EPTBack'] = 'other';
 
+# Right for Payment administration
+$wgAvailableRights[] = 'epadmin';
+$wgGroupPermissions['sysop']['epadmin'] = true;
+
 #Settings
 // TPE Settings
 // Warning !! CMCIC_Config contains the key, you have to protect this file with all the mechanism available in your development environment.
@@ -116,6 +120,8 @@ Class EPMessage {
             case 'in' :
                 $this->__constructIncoming();
                 break;
+            case 'read' :
+                $this->__constructFromDB();
         }
     }
 
@@ -135,7 +141,7 @@ Class EPMessage {
         $this->epm['epm_o_reference'] = $wgRequest->getText('reference');
         $this->epm['epm_o_mail'] = $this->valueFromFreeText('mail');
         $this->epm['epm_o_language'] = $this->valueFromFreeText('lang');
-        $this->epm['epm_o_mac'] = $wgRequest->getText('MAC');
+        $this->epm['epm_o_mac'] = strtolower($wgRequest->getText('MAC'));
         $this->epm['epm_o_ip'] = $wgRequest->getText('ipclient');
         $this->epm['epm_o_return_code'] = $wgRequest->getText('code-retour');
         $this->epm['epm_o_cvx'] = $wgRequest->getText('cvx');
@@ -160,7 +166,7 @@ Class EPMessage {
         $this->CtlHmac = sprintf(CMCIC_CTLHMAC, $this->oTpe->sVersion, $this->oTpe->sNumero, $this->oHmac->computeHmac(sprintf(CMCIC_CTLHMACSTR, $this->oTpe->sVersion, $this->oTpe->sNumero)));
 
         //Now that we know everything, we can calculate the control sum for order validation
-        if (strtolower($this->epm['epm_o_mac']) == $this->calculateMAC()) {
+        if ($this->epm['epm_o_mac'] == $this->calculateMAC()) {
             $this->tmp_o_receipt = CMCIC_CGI2_MACOK;
         } else {
             $this->tmp_o_receipt = CMCIC_CGI2_MACNOTOK . $this->epm_o_validating_fields;
@@ -209,7 +215,18 @@ Class EPMessage {
         $this->writeDB();
     }
 
-// Pick a language for the external payment interface (FR EN DE IT ES NL PT SV availabe) (EN default)
+    private function __constructFromDB() {
+        global $wgRequest, $wgUser, $wgOut;
+        if ($wgUser->isAllowed('epadmin')) {
+            $this->epm['epm_id'] = $wgRequest->getText('id');
+            $this->readDB();
+        } else {
+            $wgOut->disable();
+            echo "Electronic Payment Terminal ERROR : You do not have the right to do this action.";
+        }
+    }
+
+    // Pick a language for the external payment interface (FR EN DE IT ES NL PT SV availabe) (EN default)
     private function assignEPTLanguage() {
         global $wgLang;
         if ($wgLang->getCode() == 'fr')
@@ -239,6 +256,11 @@ Class EPMessage {
     private function writeDB() {
         $dbw = wfGetDB(DB_MASTER);
         return $dbw->insert('ep_message', $this->epm);
+    }
+
+    private function readDB() {
+        $dbr = wfGetDB(DB_SLAVE);
+        $this->epm = $dbr->selectRow('ep_message', '*', 'epm_id = ' . $this->epm['epm_id']);
     }
 
     private function bankStringToMySqlTime($time) {

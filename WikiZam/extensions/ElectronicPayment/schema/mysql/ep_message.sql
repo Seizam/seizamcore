@@ -4,7 +4,6 @@
 -- Table structure for table `ep_message`
 --
 
-DROP TABLE IF EXISTS `ep_message`;
 CREATE TABLE IF NOT EXISTS `ep_message` (
   `epm_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Primary key',
   `epm_type` varchar(4) NOT NULL COMMENT 'Type of message (INcoming, OUTcoming)',

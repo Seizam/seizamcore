@@ -61,17 +61,16 @@ class SpecialElectronicPayment extends SpecialPage {
         } else if ($wgRequest->getText('status') == 'success') {
             $wgOut->addWikiText(wfMsg('ep-success'));
         } else if ($wgRequest->getText('status') == 'attempt') {
-            
-            $message = new EPMessage('out');
-            
-            
-            //$this->sayIt($message->epm);
 
+            $message = new EPMessage('out');
+
+
+            //$this->sayIt($message->epm);
             //$wgOut->addWikiText('ref: ' . $message->epm_o_reference);
             //$wgOut->addWikiText('ram: ' . $message->epm_o_raw_amount);
             //$wgOut->addWikiText('cur: ' . $message->epm_o_currency);
 
-            $wgOut->addWikiText(wfMsg('ep-action', $message->epm['epm_o_amount']).$message->epm['epm_o_currency']);
+            $wgOut->addWikiText(wfMsg('ep-action', $message->epm['epm_o_amount']) . $message->epm['epm_o_currency']);
 
             //$wgOut->addWikiText('tex: ' . $message->epm_o_free_text);
             // transaction date : format d/m/y:h:m:s
@@ -115,7 +114,7 @@ class SpecialElectronicPayment extends SpecialPage {
 	<input type="hidden" name="dateech4"            id="dateech4"       value="" />
 	<input type="hidden" name="montantech4"         id="montantech4"    value="" />
 	<!-- -->
-	<input type="submit" name="bouton"              id="bouton"         value="'.wfMsg('ep-connect').'" />
+	<input type="submit" name="bouton"              id="bouton"         value="' . wfMsg('ep-connect') . '" />
 </p>
 </form>
 <!-- FIN FORMULAIRE TYPE DE PAIEMENT / END PAYMENT FORM TEMPLATE -->
@@ -125,6 +124,10 @@ class SpecialElectronicPayment extends SpecialPage {
 
 
             $wgOut->addHTML($output);
+        } else if ($wgRequest->getText('status') == 'read') {
+
+            $message = new EPMessage('read');
+            $wgOut->addHTML('<pre>' . print_r($message->epm, true) . '</pre>');
         } else {
             $wgOut->addWikiText('[http://localhost/WikiZam/index.php?title=Special:ElectronicPayment&status=attempt&amount=46 Click Here]');
         }
