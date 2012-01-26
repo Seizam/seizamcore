@@ -248,9 +248,10 @@ require_once( "$IP/extensions/SetPermissions/SetPermissions.php" );
 
 
 # Rights
-$wgGroupPermissions['*']['edit'] = false;
+$wgGroupPermissions['*']['edit'] = true;
 $wgGroupPermissions['sysop']['editprotectedns'] = true;
 $wgNamespaceProtection[NS_PROJECT] = array('editprotectedns');
+
 
 
 # Where is the favicon ?
@@ -263,3 +264,7 @@ require_once( "$IP/extensions/WikiEditor/WikiEditor.php" );
 $wgDefaultUserOptions['usebetatoolbar'] = 1;
 $wgDefaultUserOptions['usebetatoolbar-cgd'] = 1;
 $wgDefaultUserOptions['wikieditor-preview'] = 1;
+
+# Enable subpages in the main namespace
+$wgNamespacesWithSubpages[NS_MAIN] = true;
+

@@ -21,94 +21,93 @@ $wgExtensionCredits['other'][] = array(
 	'descriptionmsg' => 'setpermissions-desc',
 );
 
-$wgAvailableRights[] = 'author';
-    // dynamically assigned to the author of a page, but can be set w/ wgGroupPermissions too
+$wgAvailableRights[] = 'owner';
+    // dynamically assigned to the owner of a page, but can be set w/ wgGroupPermissions too
 $wgAvailableRights[] = 'setpermissions'; 
-    // users without this right cannot protect pages they author
+    // users without this right cannot access setpermissions page, even if they own the page
 $wgExtensionMessagesFiles['SetPermissions'] = dirname( __FILE__ ) . '/SetPermissions.i18n.php';
 
-$wgHooks['SkinTemplateNavigation::Universal'][] = 'efMakeContentAction';
+$wgHooks['SkinTemplateNavigation::Universal'][] = 'spSetPermissionsMakeContentAction';
 	// add an item to the action menu
-$wgHooks['UnknownAction'][] = 'efSetPermissionsForm';
+$wgHooks['UnknownAction'][] = 'spSetPermissionsForm';
 	// add a non native action to mediawiki
-$wgHooks['userCan'][] = 'efSetPermissionsDelay';
-	// ??? (inherited from AuthorProtect)
-$wgHooks['userCan'][] = 'efSetPermissionsUserCanRead';
-	// if the current user does not have the read right, she cannot view the article
-$wgHooks['UserGetRights'][] = 'efAssignAuthor';
-	// this hook dynamically give the current user the "author" right if this
-	// function estimate that she is the author
+$wgHooks['userCan'][] = 'spSetPermissionsUserCanIfAtOwnerLevel';
+	// if action is restricted at owner level, check  that the user is the owner
+$wgHooks['UserGetRights'][] = 'spSetPermissionsAssignDynamicRights';
+	// this hook is call when mediawiki request the rights of a user, it can give more 
+	// rights than mediawiki does, in our case, it depends if the user is the owner
+	// >> this hook dynamically give the current user the "owner" right if this
+	//    function estimate that she is the owner
+
+
+// This hook can be reused in another extension, wich can say if someone is owner or not
+/*
+$wgHooks['IsOwner'][] = 'kikoo';
+function kikoo( $title, $user, &$result) {
+    $result = false;	//false=not owner , true=owner
+    return false;	//false=stop proccessing , true=continue 
+			//(call other IsOwner declared functions, then the basic spSetPermissionsIsOwner)
+}
+*/
 
 $wgRestrictionTypes[] = "read";
     // Configure actions that can be restricted using action=protect, that is, made 
     // unavailable to classes of users via protection (using action=protect)
-    // We add a read right, this way sysops can change permissions via action=protect
-$wgRestrictionLevels[] = 'author';
-    // this add the special level "author" used by SetPermissions to MediaWiki system, so that 
-    // the normal protection interface can protect and unprotect at the author level exactly
-    // the same way as SetPermissions internally does
-$wgGroupPermissions['sysop']['author'] = true; 
-    // sysops are in author level of every page, that is they can always do what they
-    // wants to every pages (big boss mode)
-$wgGroupPermissions['user']['setpermissions'] = true;
-    // registered users can set permissions to pages they author
+    // We add a read right, this way sysops can also change read permissions via action=protect
 
+
+$wgGroupPermissions['user']['setpermissions'] = true;
+    // registered users can set permissions to pages they own
+
+//TO BE MOVED IN  LOCALSETTINGS.PHP
+$wgGroupPermissions['artist'] = array();			// create artists user group   
+$wgSetPermissionsRestrictions = array(
+	'user',
+	'artist',
+	'owner'
+);
+//END TO BE MOVED
+
+   
 
 // internal variables, do not modify (inherited from AuthorProtect)
 $wgSetPermissionsDoProtect = false;
-$wgSetPermissionsDelayRun = true;
+    // tells to the UserGetRight own hook implementation if we need to grant protect right
+    // (required when updating article restriction when validating SetPermissions form
 
-/**
- * Extensions like ConfirmAccount do some weird stuff to $wgTitle during the UserGetRights hook
- * So this delays the hook's execution to a point where $wgTitle is set
- */
-function efSetPermissionsDelay( $title, &$user, $action, $result ) {
-    
-	global $wgSetPermissionsDelayRun;
-	if ( $wgSetPermissionsDelayRun ) {
-		$user->mRights = null;
-		$user->getRights(); // delay hook execution for compatibility w/ ConfirmAccount
-		$act = ( $action == '' || $action == 'view' ) ? 'edit' : $action;
-		$wgSetPermissionsDelayRun = false;
-		if ( userIsAuthor( $title ) && isActionRestrictedAtAuthorLevel( $title, $act ) ) {
-			$result = true;
-			return false;
-		}
+spSetPermissionsSetup();
+
+
+function spSetPermissionsSetup() {
+	global $wgRestrictionLevels, $wgGroupPermissions, $wgSetPermissionsRestrictions;
+	var_dump($wgSetPermissionsRestrictions);
+	foreach ($wgSetPermissionsRestrictions as $rest) {
+		$wgRestrictionLevels[] = $rest.'-perm';
+			// this add the levels used by SetPermissions to MediaWiki system, so that 
+			// the normal protection interface can protect and unprotect at every levels exactly
+			// the same way as SetPermissions internally does
+		if ($rest!='owner') //because owner-perm is dynamically assign depending of the title
+			$wgGroupPermissions[$rest][$rest.'-perm'] = true;
+		$wgGroupPermissions['sysop'][$rest.'-perm'] = true;
+			// with this, for permissions checks, sysops are virtually owner of everything
+			// sysops are in owner level of every page, that is they can always do what they
+			// wants to every pages (big boss mode)
 	}
-	$result = null;
-	return true;
 }
+ 
 
-function efAssignAuthor( $user, &$aRights ) {
-	global $wgTitle;
-
-	// don't assign author to anons... messes up logging stuff.
-	// plus it's all user_id based so it is impossible to differentiate one anon from another
-	if ( userIsAuthor( $wgTitle ) && $user->isLoggedIn() ) {
-		$aRights[] = 'author';
-		$aRights = array_unique( $aRights );
-	}
-	// assign protect too if we need to
-	global $wgSetPermissionsDoProtect;
-	if ( $wgSetPermissionsDoProtect ) {
-		$aRights[] = 'protect';
-		$aRights = array_unique( $aRights );
-	}
-	return true;
-}
-
-function efSetPermissionsAssignProtect() {
+function spSetPermissionsAssignProtect() {
 	global $wgSetPermissionsDoProtect, $wgUser;
-	$wgSetPermissionsDoProtect = true;
-	$wgUser->mRights = null;
-	$wgUser->getRights(); // re-trigger the above function to assign the protect right
+	$wgSetPermissionsDoProtect = true;  //tells spSetPermissionsAssignDynamicRights to add the "protect" right
+	$wgUser->mRights = null;	    // clear current user rights
+	$wgUser->getRights();		    // force rights reloading
 	$wgSetPermissionsDoProtect = false;
 }
 
-function efSetPermissionsUnassignProtect() {
+function spSetPermissionsUnassignProtect() {
 	global $wgUser;
-	$wgUser->mRights = null;
-	$wgUser->getRights();
+	$wgUser->mRights = null;    // clear current user rights (and clear the "protect" right
+	$wgUser->getRights();	    // force rights reloading
 }
 
 /**
@@ -119,13 +118,13 @@ function efSetPermissionsUnassignProtect() {
  * @param type $cactions
  * @return type 
  */
-function efMakeContentAction( $skin, &$cactions ) {
+function spSetPermissionsMakeContentAction( $skin, &$cactions ) {
 	global $wgUser, $wgRequest;
 
 	$title = $skin->getTitle();
 	
 	// if user has 'protect' right, she cannot use 'setpermissions'
-	if ( userIsAuthor( $title ) && $wgUser->isAllowed( 'setpermissions' ) && !$wgUser->isAllowed( 'protect' ) ) {
+	if ( spSetPermissionsIsOwner( $title , $wgUser ) && $wgUser->isAllowed( 'setpermissions' ) && !$wgUser->isAllowed( 'protect' ) ) {
 		$action = $wgRequest->getText( 'action' );
 		$cactions['actions']['setpermissions'] = array(
 			'class' => $action == 'setpermissions' ? 'selected' : false,
@@ -136,227 +135,349 @@ function efMakeContentAction( $skin, &$cactions ) {
 	return true;
 }
 
-function efSetPermissionsForm( $action, $article ) {
+function spSetPermissionsForm( $action, $article ) {
 
-    wfDebugLog( 'setpermissions', 'SetPermissions.php>efSetPermissionsForm() enter');
+    wfDebugLog( 'setpermissions', 'Form() enter');
     
-	if ( $action == 'setpermissions' ) {
-		global $wgOut, $wgUser, $wgRequest;
-				
-		if ( $wgUser->isAllowed( 'setpermissions' ) ) {
-			if ( userIsAuthor( $article->getTitle() ) ) {
-			    
-				$wgOut->setPageTitle( wfMsg( 'setpermissions' ) );
-				
-				if ( !$wgRequest->wasPosted() ) {
-					$wgOut->addHTML( efSetPermissionsMakeProtectForm( $article->getTitle() ) );
-
-				} else {
-					if ( !$wgUser->matchEditToken( $wgRequest->getText( 'wpToken' ) ) ) {
-						$wgOut->setPageTitle( wfMsg( 'errorpagetitle' ) );
-						$wgOut->addWikiMsg( 'sessionfailure' );
-						return false;
-					}
-					$restrictions = array();
-					$expiration = array();
-					$expiry = efSetPermissionsExpiry( $wgRequest->getText( 'wpExpiryTime' ) );
-					
-					//instead of loading $wgRestricitonTypes, we load the title specific restrictions available
-					$applicableRestrictionTypes  = $article->getTitle()->getRestrictionTypes();
-					wfDebugLog( 'setpermissions', 'SetPermissions.php>efSetPermissionsForm() $applicableRestrictionTypes='.print_r($applicableRestrictionTypes, true));
-		
-					foreach ( $applicableRestrictionTypes as $type ) {
-						$rest = $article->getTitle()->getRestrictions( $type );
-						if ( $rest !== array() ) {
-							if ( !$wgUser->isAllowed( $rest[0] ) &&	    // if user do not has this right
-												    // (inherited from a group)
-								!in_array( 'author', $rest ) )	    // AND not setted at aythor level
-							{
-								$restrictions[$type] = $rest[0]; // don't let them lower the protection level
-								continue;
-							}
-						}
-						if ( $wgRequest->getCheck( "check-{$type}" ) ) {
-							$restrictions[$type] = 'author';
-							$expiration[$type] = $expiry;
-						} else {
-							if ( in_array( 'author', $rest ) ) {
-								$restrictions[$type] = '';
-								$expiration[$type] = $expiry;
-							} else {
-								$restrictions[$type] = ( $rest !== array() ) ? $rest[0] : ''; // we're not setting it
-								$expiration[$type] = $expiry;
-							}
-						}
-					}
-					$cascade = false;
-					efSetPermissionsAssignProtect();
-					
-					$str = var_export( array( 
-					    'restrictions' => $restrictions, 
-					    'reason' => $wgRequest->getText( 'wpReason' ), 
-					    'cascade' => $cascade, 
-					    'expiry' => $expiration ), true );
-					wfDebugLog( 'setpermissions', "SetPermissions.php>efSetPermissionsForm(): asked=\n$str" );
-					
-					$success = $article->updateRestrictions(
-						$restrictions, // array of restrictions
-						$wgRequest->getText( 'wpReason' ), // reason
-						$cascade, // cascading protection disabled, need to pass by reference
-						$expiration // expiration
-					);
-					efSetPermissionsUnassignProtect();
-					if ( $success ) {
-						$wgOut->addWikiMsg( 'setpermissions-success' );
-					} else {
-						$wgOut->addWikiMsg( 'setpermissions-failure' );
-					}
-				}
-			} else {
-				$wgOut->setPageTitle( wfMsg( 'errorpagetitle' ) );
-				$wgOut->addWikiMsg( 'setpermissions-notauthor' );
-			}
-		} else {
-			$wgOut->permissionRequired( 'setpermissions' );
-		}
-		return false; // still continues hook processing, but doesn't throw an error message
+	if ( $action != 'setpermissions' ) { // unknown action, so state that the action doesn't exist
+		return true; //stop processing
 	}
-	return true; // unknown action, so state that the action doesn't exist
+	
+	global $wgOut, $wgUser, $wgRequest;
+
+	if ( !$wgUser->isAllowed( 'setpermissions' ) ) {
+		// user is not allowed to use setpermissions
+		$wgOut->permissionRequired( 'setpermissions' );
+		
+	} else {
+		// user is allowed to use setpermissions
+		if ( !spSetPermissionsIsOwner( $article->getTitle() , $wgUser ) ) {
+			// user is not the owner of the page
+			$wgOut->setPageTitle( wfMsg( 'errorpagetitle' ) );
+			$wgOut->addWikiMsg( 'setpermissions-notowner' );
+			
+		} else {
+			// user is the owner of the page, so let's do what we have to
+			$wgOut->setPageTitle( wfMsg( 'setpermissions' ) );
+
+			if ( !$wgRequest->wasPosted() ) {
+				// no data submitted, so construct the form
+				$wgOut->addHTML( spSetPermissionsMakeForm( $article->getTitle() ) );
+
+			} else {
+				// ensure that the form was submitted from the user's own login session
+				if ( !$wgUser->matchEditToken( $wgRequest->getText( 'wpToken' ) ) ) {
+					// hummm.... how did this case happen?
+					$wgOut->setPageTitle( wfMsg( 'errorpagetitle' ) );
+					$wgOut->addWikiMsg( 'sessionfailure' );
+					return false; // stop processing
+				}
+
+				// ok, so let's go!
+				
+				$restrictions = array();
+				$expiration = array();
+				$expiry = Block::infinity(); // the restriction will never expire
+
+				// we load the title specific available restrictions
+				$applicableRestrictionTypes  = $article->getTitle()->getRestrictionTypes();
+				wfDebugLog( 'setpermissions'
+						, 'Form(): applying permissions, available title restrictions = '
+						.implode(',', $applicableRestrictionTypes));
+						
+				// for each of theses available restrictions
+				foreach ( $applicableRestrictionTypes as $type ) {  // $type = 'read' or 'edit' or 'upload' or ....
+
+					$rest = $article->getTitle()->getRestrictions( $type ); 
+						// $rest = 'sysop' or 'autoconfirmed' or 'owner' or ...
+					wfDebugLog( 'setpermissions', 'Form(): current restriction "'
+							.$type.'" value = '.implode(',', $rest));
+
+					if ( $rest !== array() ) { // the title has already a restriction
+						if ( !$wgUser->isAllowed( $rest[0] ) ) {
+							// this check rights inherited from groups and also our
+							// dynamic rights assigned by spSetPermissionsAssignDynamicRights
+							$restrictions[$type] = $rest[0]; // don't let them lower the protection level
+							continue; // exit foreach
+						}
+					}
+					
+					// we arrive here is user can change the permissions
+					// checkboxes'name = check-$type-$rest (ex: check-read-artist)
+					
+					if ( $wgRequest->getCheck( "check-{$type}-everyone" ) ) {
+						$restrictions[$type] = ''; // no restriction
+			
+					} elseif ( $wgRequest->getCheck( "check-{$type}-user" ) ) {
+						$restrictions[$type] = 'user'; // set to owner level
+						
+					} elseif ( $wgRequest->getCheck( "check-{$type}-artist" ) ) {
+						$restrictions[$type] = 'artist'; // set to owner level
+						
+					} else {
+							$restrictions[$type] = 'owner'; // unset ownerlevel
+					}
+					
+					$expiration[$type] = $expiry;
+					
+				}
+				
+				$cascade = false;
+					// don't cascade the owner restriction, because a subpage may not have the same owner
+					// so casacing won't make sens, and can be very problematic
+					// don't change this unless you know serioulsy what you are doing !!!
+
+				spSetPermissionsAssignProtect();
+				//temporary assign protect right, in order to update the restricitons
+
+				$str = var_export( array( 
+					'restrictions' => $restrictions, 
+					'reason' => $wgRequest->getText( 'wpReason' ), 
+					'cascade' => $cascade, 
+					'expiry' => $expiration ), true );
+				wfDebugLog( 'setpermissions', "Form(): updating to\n $str" );
+
+				$success = $article->updateRestrictions(
+					$restrictions, // array of restrictions
+					$wgRequest->getText( 'wpReason' ), // reason
+					$cascade, // cascading protection disabled, need to pass by reference
+					$expiration // expiration
+				);  // this article function check that the user has sufficient rights
+
+				spSetPermissionsUnassignProtect();
+				// remove temporary assigned protect right
+
+				if ( $success ) {
+					$wgOut->addWikiMsg( 'setpermissions-success' );
+				} else {
+					$wgOut->addWikiMsg( 'setpermissions-failure' );
+				}
+			}
+		} 
+	} 
+	
+	return false; // still continues hook processing, and doesn't throw an error message
+
 }
 
-function efSetPermissionsMakeProtectForm( $title ) {
-    
-    wfDebugLog( 'setpermissions', 'SetPermissions.php>efSetPermissionsMakeProtectForm() enter');
+function spSetPermissionsMakeForm( $title ) {
 	
-	global $wgUser;
-	    //This array contains the actions that can be restricted, that is, 
-	    //made unavailable to classes of users via protection (using action=protect). 
-	    //By default, it contains the strings edit and move. 
-	    //For this extension, we added "read" string in LocalSettings.php
+	global $wgUser, $wgRestrictionLevels;
+	$applicableRestrictionTypes  = $title->getRestrictionTypes(); // this way, do not display create for exsiting page
+	
+	wfDebugLog( 'setpermissions', 'MakeForm(): $title->getRestrictionTypes() = '. implode(',',$applicableRestrictionTypes));
+	
 	$token = $wgUser->editToken();
-	// FIXME: raw html messages
-	$form = Xml::openElement( 'p' ) . wfMsg( 'setpermissions-intro' ) . Xml::closeElement( 'p' );
-	$form .= Xml::openElement( 'form', array( 'method' => 'post', 'action' => $title->getLocalUrl( 'action=setpermissions' ) ) );
+	
+	$form  = Html::rawElement( 'p', array(), htmlspecialchars( wfMsg( 'setpermissions-intro' ) ) );
+	$form .= Html::openElement( 'form', array( 'method' => 'post', 'action' => $title->getLocalUrl( 'action=setpermissions' ) ) );
 
 	$br = Html::element( 'br' );
+	
+	$form .=	Xml::openElement( 'table') .
+				Xml::openElement( 'tbody' ) ;
 
-	$applicableRestrictionTypes  = $title->getRestrictionTypes(); // this way, do not display create for exsiting page
+	foreach ( $applicableRestrictionTypes as $type ) {	// read/edit for a page, upload for a file, ....
+		$rest = $title->getRestrictions( $type ); // = who is allowed to do $type on $title
+		wfDebugLog( 'setpermissions',
+			 'MakeForm(): $title->getRestrictions('.
+			 $type . ') = ' . implode(',',$rest) );
 		
-	foreach ( $applicableRestrictionTypes as $type ) {
-		$rest = $title->getRestrictions( $type );
-		    //$type = action that permission needs to be checked for
-		    //$rest = array of Strings of groups allowed to do action to this article
+		$form .= '<tr><td>'.Xml::openElement( 'fieldset' ) . Xml::element( 'legend', null, wfMsg( "setpermissions-whocan-$type") ) ;
+		//the next lines display checkboxes and eventually check them
 		
-		 wfDebugLog( 'setpermissions',
-			 'SetPermissions.php>efSetPermissionsMakeProtectForm() $title->getRestrictions('.
-			 $type . ') = ' . print_r($rest, true) );
-		
-		//the next lines display checkbox and eventually check them
-		 
-		if ( $rest !== array() ) { // if not empty restrictions
-			//TODO: check how this is handled in action protect/unprotect 
-			if ( !$wgUser->isAllowed( $rest[0] ) && // IF  it is '$rest'ricted to a group in which the user is not AND
-				!in_array( 'author', $rest ) ) // not $rest'ricted to author level 
-				continue;   // it's protected at a level higher than them, so don't 
-					    // let them change it so they can now mess with stuff
+		if (  $rest !== array() && !$wgUser->isAllowed($rest[0]) ) {		
+			// IF  it is '$rest'ricted to a group in which the user is not 
+			// it's protected at a level higher than them, so don't 
+			// let them change it so they can now mess with stuff
+			$form .=  wfMsg( "restriction-level-$rest[0]" ).' ('.$rest[0].')';
+			continue;
 		}
+						
+		$checked =  $rest === array();		// empty = no restriction = everyone can do
+		$form .= Xml::checkLabel( wfMsg( "setpermissions-everyone" ), "check-$type-everyone", "check-$type-everyone", $checked ) . $br;
+			
+		$checked =  $checked || in_array( 'user', $rest ) ; 
+		$form .= Xml::checkLabel( wfMsg( "setpermissions-user" ), "check-$type-user", "check-$type-user", $checked ) . $br;
+		
+		$checked =  $checked || in_array( 'artist', $rest ) ; 
+		$form .= Xml::checkLabel( wfMsg( "setpermissions-artist" ), "check-$type-artist", "check-$type-artist", $checked ) . $br;
+		
+		$checked =  $checked || in_array( 'owner', $rest ) ; // checked if restricted to owner level
+		$form .= Xml::checkLabel( wfMsg( "setpermissions-owner-me" ), "check-$type-owner", "check-$type-owner", true, array( 'disabled' => 'disabled' ) ) ;
+		
+		$form .= Xml::closeElement( 'fieldset' ) .'</td></tr>';
 
-		$checked =  in_array( 'author', $rest ); // checked if restricted to author level
-		$form .= Xml::checkLabel( wfMsg( "setpermissions-$type" ), "check-$type", "check-$type", $checked ) . $br;
 	}
 
-	// FIXME: use Xml::inputLabel
-	$form .= $br . Xml::element( 'label', array( 'for' => 'wpExpiryTime' ), wfMsg( 'setpermissions-expiry' ) ) . ' ';
-	$form .= Xml::element( 'input', array( 'type' => 'text', 'name' => 'wpExpiryTime' ) ) . $br;
-	$form .= $br . Xml::element( 'label', array( 'for' => 'wpReason' ), wfMsg( 'setpermissions-reason' ) ) . ' ';
-	$form .= Xml::element( 'input', array( 'type' => 'text', 'name' => 'wpReason' ) );
 	$form .= $br . Html::hidden( 'wpToken', $token );
-	$form .= $br . Xml::element( 'input', array( 'type' => 'submit', 'name' => 'wpConfirm', 'value' => wfMsg( 'setpermissions-confirm' ) ) );
+	
+	
+	// Dev In Progress
+	
+	$form .= Xml::closeElement( 'tbody' ) . Xml::closeElement( 'table' );
+	// end DIP section
+	
+	$form .= $br . Xml::submitButton( wfMessage( 'setpermissions-confirm' ) );
 	$form .= Xml::closeElement( 'form' );
 	return $form;
 }
 
 /**
  * The most important code!
- * This says if the current user is the author of $title.
- * @global type $wgUser
+ * This says if the current user is the owner of $title.
+ * @global User $user
  * @param Title $title
- * @return type 
+ * @return boolean 
  */
-function userIsAuthor( $title ) {
-	global $wgUser;
-
+function spSetPermissionsIsOwner( $title, $user ) {
+    
 	if ( !$title instanceOf Title ) {
-		return false; // quick hack to prevent the API from messing up.
+	    wfDebugLog( 'setpermissions', 'IsOwner() = NO (not a valid insance of title)');
+	    return false; // quick hack to prevent the API from messing up.
 	}
-
-	if ( $wgUser->getID() === 0 ) {
+	
+	if ( $user->getID() === 0 ) { // if anonymous
+	    wfDebugLog( 'setpermissions', 'IsOwner() = NO (anonymous user)');
 	    return false; // don't allow anons, they shouldn't even get this far but just in case...
 	}
 	
-	$id = $title->getArticleId();
-	$dbr = wfGetDB( DB_SLAVE ); // grab the slave for reading
-	$aid = $dbr->selectField( 'revision', 'rev_user',  array( 'rev_page' => $id ),
-		__METHOD__, array( 'ORDER BY' => 'rev_timestamp ASC'  ) );
-	
-	wfDebugLog( 'setpermissions', 'SetPermissions.php>userIsAuthor(): article_id='.$id
-		.' author_id='.print_r($aid, true) . ' user_id='.$wgUser->getID());
-	
-	return $wgUser->getID() == $aid;
-}
-
-function isActionRestrictedAtAuthorLevel( $title, $action ) {
-	$rest = $title->getRestrictions( $action );
-	return in_array( 'author', $rest );
-}
-
-// forked from ProtectionForm::getExpiry and modified to rewrite '' to infinity
-function efSetPermissionsExpiry( $value ) {
-	if ( $value == 'infinite' || $value == 'indefinite' || $value == 'infinity' || $value == '' ) {
-		$time = Block::infinity();
-	} else {
-		$unix = strtotime( $value );
-
-		if ( !$unix || $unix === -1 ) {
-			return false;
-		}
-
-		// Fixme: non-qualified absolute times are not in users specified timezone
-		// and there isn't notice about it in the ui
-		$time = wfTimestamp( TS_MW, $unix );
+	// process custom hook IsOwner, in order for other extensions to fetch 
+	// ownership using a different way 
+	$result = false;
+	if ( wfRunHooks( 'IsOwner', array( $title, $user, &$result ) ) ) {
+	    // no hook functions stopped processing, so we have use the default method
+	    wfDebugLog( 'setpermissions', 'IsOwner(): hook IsOwner did not answer, so evaluating first revisionner'); 
+	    $result = spSetPermissionsIsFirstRevisonner( $title, $user );
 	}
-	return $time;
+	
+	wfDebugLog( 'setpermissions', 'IsOwner() = '.( $result ? 'YES' : 'NO'));
+	return $result ;
 }
 
 
+function spSetPermissionsIsFirstRevisonner( $title, $user ) {
+    
+    // looking for the first revisonner
+    $id = $title->getArticleId();
+    $dbr = wfGetDB( DB_SLAVE ); // grab the slave for reading
+    $firstrevionnerid = $dbr->selectField( 'revision', 'rev_user',  array( 'rev_page' => $id ),
+	    __METHOD__, array( 'ORDER BY' => 'rev_timestamp ASC'  ) );
 
-function efSetPermissionsUserCanRead( $title, &$user, $action, $result )
-//function efSetPermissionsUserCanRead( &$article )
+    $userid = $user->getID();
+    $result = ( $userid == $firstrevionnerid );
+    
+    wfDebugLog( 'setpermissions', 'IsFirstRevisonner() = '
+	    .( $result ? 'YES' : 'NO')
+	    ." (page_id=$id first_revisionner_id=$firstrevionnerid current_user_id=$userid)");
+    
+    return $result;
+}
+
+
+function spSetPermissionsIsRestrictedAtOwnerLevel( $title, $action ) {
+	$rest = $title->getRestrictions( $action );
+	$back = in_array( 'owner', $rest );
+	wfDebugLog( 'setpermissions', 'IsRestrictedAtOwnerLevel() = '
+		.( $back ? 'YES' : 'NO'). ' (title: "'.$title->getLocalURL().'" , action: '.$action.')');
+	return $back;
+}
+
+
+/**
+ * registered as hook UserGetRights (executed everytime MediaWiki request the available permissions
+ * of a user)
+ * >> we give the user the special "owner" right if we estimate she is the owner of the ressource
+ * @global type $wgTitle
+ * @global boolean $wgSetPermissionsDoProtect
+ * @param type $user
+ * @param type $aRights
+ * @return type 
+ */
+function spSetPermissionsAssignDynamicRights( $user, &$aRights ) {
+	global $wgTitle;
+    
+/*	wfDebugLog( 'setpermissions', 'SetPermissions.php>spSetPermissionsAssignDynamicRights( title='
+		. ( $wgTitle instanceOf Title ? 
+		    '"'.$wgTitle->getLocalURL().'"('.$wgTitle->getArticleId().')'
+		    : '???' )
+		.' user="'.$user->getName().'"('.$user->getID().') ): enter');
+*/	
+	// don't assign "owner" to anons... messes up logging stuff.
+	// plus it's all user_id based so it is impossible to differentiate one anon from another
+	if ( $user->isLoggedIn() && spSetPermissionsIsOwner( $wgTitle , $user ) ) {
+		wfDebugLog( 'setpermissions', 'AssignDynamicRights(): '
+			.'assigning current user "'.$user->getName().'"('.$user->getID()
+			.') the "owner" right');
+		$aRights[] = 'owner';
+		$aRights = array_unique( $aRights );
+	}
+	// assign protect too if we need to (required when the user submit a permission change)
+	global $wgSetPermissionsDoProtect;
+	if ( $wgSetPermissionsDoProtect ) {
+		wfDebugLog( 'setpermissions', 'AssignDynamicRights(): '
+			.'assigning current user "'.$user->getName().'"('.$user->getID()
+			.') the "protect" right');
+		$aRights[] = 'protect';
+		$aRights = array_unique( $aRights );
+	}
+	
+	return true;
+}
+
+/**
+ * Stop the proccessing and answer NO only if:
+ * * the action is restricted at "owner" level
+ * * the user is not the owner OR member of special "owner" group
+ * @param type $title
+ * @param type $user
+ * @param type $action
+ * @param boolean $result
+ * @return type 
+ */
+function spSetPermissionsUserCanIfAtOwnerLevel( $title, &$user, $action, $result )
+//function spSetPermissionsUserCanRead( &$article )
 {
 
-        wfDebugLog( 'setpermissions', 'SetPermissions.php>efSetPermissionsUserCanRead($title="'.$title->getLocalURL().
-		'" $action="'.$action.'") enter');
- 
+/*        wfDebugLog( 'setpermissions', 'SetPermissions.php>spSetPermissionsUserCanIfAtOwnerLevel("'
+		.$title->getLocalURL().'"('.$title->getArticleId().') current user="'
+		.$user->getName().'"('.$user->getID().') action="'.$action.'") enter');
+*/		    
   # if the action is not related to a 'view' (i.e. 'read') request, get out.
-  if ($action != 'read')
-   return true;  #don't stop processing the hook chain
-  
-  wfDebugLog( 'setpermissions', 'SetPermissions.php>efSetPermissionsUserCanRead('.$title->getLocalURL().')'
+//  if ($action != 'read')
+//   return true;  #don't stop processing the hook chain
+  /*
+  wfDebugLog( 'setpermissions', 'SetPermissions.php>spSetPermissionsUserCanIfAtOwnerLevel('.$title->getLocalURL().')'
 	  // . " stacktrace=\n ".print_r(wfGetPrettyBacktrace(),true)
-	  . ' usersGroups=' . print_r($user->getGroups(), true)
-	  . ' usersRights=' . print_r($user->getRights(), true)
+	  . "\n the curr user is   explicit   member of groups: " . implode(",", $user->getGroups())
+	  . "\n the curr user is   implicit   member of groups: " . implode(",", $user->getAutomaticGroups())
+	  . "\n the curr user has  rights:      " . implode(",", $user->getRights())
+	  . "\n the curr user has  permissions: " . implode(",", $user->getAllRights())		  
+		  
 	  );
- 
-  // If 'author' restriction is active, then check for 'author' right
-  if ( isActionRestrictedAtAuthorLevel( $title, 'read') === true ) 
+  */
+    
+    if ( $action != 'read' && $action != 'edit' )
+	wfDebugLog( 'setpermissions-notice', 'UserCanIfAtOwnerLevel(): '
+		.'( title=['.$title->getLocalURL().'] action=['.$action.']  user=['.$user->getName()
+		.'('.$user->getID().')] )');
+    
+  $act = $action;
+  if ( $action == '' || $action == 'view' ) { //just in case, but shouldn't occur
+      $act = 'read' ; 
+  }
+    
+  // If 'owner' restriction is active, then check for 'owner' dynamic assigned right
+  if ( spSetPermissionsIsRestrictedAtOwnerLevel( $title, $action) === true ) 
   {
-    // if the user is not in the author group, and she is not the author of the page => not allowed
-         if ( !in_array('author', $user->getRights()) && !userIsAuthor($title)  )
-        {
-		//stop processing (the viewing is restricted, so nothing else can be done by user!)
-		$result = false;
-		return false;
-        } 
+    // if the user is not in the owner group (!sysop), and she is not the owner of the page => not allowed
+    if ( !in_array('owner', $user->getRights()) && !spSetPermissionsIsOwner( $title , $user )  )
+    {
+	wfDebugLog( 'setpermissions', 'UserCanIfAtOwnerLevel(): NO '
+	    .'($title="'.$title->getLocalURL().'" $action="'.$action.'" restricted to owner only)');
+	$result = false; //not allowed
+	return false; //stop processing 
+    } 
   }
   return true; # don't stop processing hook chain.
 }
