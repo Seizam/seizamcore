@@ -47,7 +47,7 @@ class SpecialElectronicPayment extends SpecialPage {
      * Special page entry point
      */
     public function execute($par) {
-        global $wgRequest, $wgOut, $wgUser, $wgLang;
+        global $wgRequest, $wgOut;
 
         $this->setHeaders();
 
@@ -62,15 +62,15 @@ class SpecialElectronicPayment extends SpecialPage {
             $wgOut->addWikiText(wfMsg('ep-success'));
         } else if ($wgRequest->getText('status') == 'attempt') {
 
-            $message = new EPMessage($wgRequest->getText('amount'));
-            
-            $this->sayIt($message->epm);
+            $message = new EPMessage('out');
 
+
+            //$this->sayIt($message->epm);
             //$wgOut->addWikiText('ref: ' . $message->epm_o_reference);
             //$wgOut->addWikiText('ram: ' . $message->epm_o_raw_amount);
             //$wgOut->addWikiText('cur: ' . $message->epm_o_currency);
 
-            $wgOut->addWikiText(wfMsg('ep-action', $message->epm['epm_o_amount']));
+            $wgOut->addWikiText(wfMsg('ep-action', $message->epm['epm_o_amount']) . $message->epm['epm_o_currency']);
 
             //$wgOut->addWikiText('tex: ' . $message->epm_o_free_text);
             // transaction date : format d/m/y:h:m:s
@@ -81,8 +81,8 @@ class SpecialElectronicPayment extends SpecialPage {
             // Control String for support
             //$wgOut->addWikiText('ctl: ' . $message->CtlHmac);
             // Data to certify
-            //$wgOut->addWikiText('dat: ' . $message->PHP1_FIELDS);
-            //$wgOut->addWikiText('sMAC: ' . $message->epm_o_mac);
+            //$wgOut->addWikiText('dat: ' . $message->epm_o_validating_fields);
+            //$wgOut->addWikiText('sMAC: ' . $message->epm['epm_o_mac']);
 
             $output = '
 
@@ -92,8 +92,8 @@ class SpecialElectronicPayment extends SpecialPage {
 <p>
 	<input type="hidden" name="version"             id="version"        value="' . $message->oTpe->sVersion . '" />
 	<input type="hidden" name="TPE"                 id="TPE"            value="' . $message->oTpe->sNumero . '" />
-	<input type="hidden" name="date"                id="date"           value="' . $message->epm['epm_o_date'] . '" />
-	<input type="hidden" name="montant"             id="montant"        value="' . $message->epm['epm_o_amount'] . '" />
+	<input type="hidden" name="date"                id="date"           value="' . $message->mySqlStringToBankTime($message->epm['epm_o_date']) . '" />
+	<input type="hidden" name="montant"             id="montant"        value="' . $message->epm['epm_o_amount'] . $message->epm['epm_o_currency'] . '" />
 	<input type="hidden" name="reference"           id="reference"      value="' . $message->epm['epm_o_reference'] . '" />
 	<input type="hidden" name="MAC"                 id="MAC"            value="' . $message->epm['epm_o_mac'] . '" />
 	<input type="hidden" name="url_retour"          id="url_retour"     value="' . $message->oTpe->sUrlKO . '" />
@@ -114,7 +114,7 @@ class SpecialElectronicPayment extends SpecialPage {
 	<input type="hidden" name="dateech4"            id="dateech4"       value="" />
 	<input type="hidden" name="montantech4"         id="montantech4"    value="" />
 	<!-- -->
-	<input type="submit" name="bouton"              id="bouton"         value="'.wfMsg('ep-connect').'" />
+	<input type="submit" name="bouton"              id="bouton"         value="' . wfMsg('ep-connect') . '" />
 </p>
 </form>
 <!-- FIN FORMULAIRE TYPE DE PAIEMENT / END PAYMENT FORM TEMPLATE -->
@@ -124,6 +124,10 @@ class SpecialElectronicPayment extends SpecialPage {
 
 
             $wgOut->addHTML($output);
+        } else if ($wgRequest->getText('status') == 'read') {
+
+            $message = new EPMessage('read');
+            $wgOut->addHTML('<pre>' . print_r($message->epm, true) . '</pre>');
         } else {
             $wgOut->addWikiText('[http://localhost/WikiZam/index.php?title=Special:ElectronicPayment&status=attempt&amount=46 Click Here]');
         }
@@ -131,9 +135,9 @@ class SpecialElectronicPayment extends SpecialPage {
 
     function sayIt($in) {
         global $wgOut;
-        $wgOut->addHTML('<pre>');
-        $wgOut->addHTML(print_r($in, true));
-        $wgOut->addHTML('</pre>');
+        printf('<pre>');
+        printf(print_r($in, true));
+        printf('</pre>');
     }
 
 }

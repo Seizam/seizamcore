@@ -376,7 +376,7 @@ function spSetPermissionsIsFirstRevisonner( $title, $user ) {
 
 
 function spSetPermissionsIsRestrictedAtOwnerLevel( $title, $action ) {
-	$rest = $title->getRestrictions( $action );
+	$rest = $title->getRestrictions( $action ); // array()  or array( 'owner' )
 	$back = in_array( 'owner', $rest );
 	wfDebugLog( 'setpermissions', 'IsRestrictedAtOwnerLevel() = '
 		.( $back ? 'YES' : 'NO'). ' (title: "'.$title->getLocalURL().'" , action: '.$action.')');
@@ -409,7 +409,7 @@ function spSetPermissionsAssignDynamicRights( $user, &$aRights ) {
 		wfDebugLog( 'setpermissions', 'AssignDynamicRights(): '
 			.'assigning current user "'.$user->getName().'"('.$user->getID()
 			.') the "owner" right');
-		$aRights[] = 'owner';
+		$aRights[] = 'ownage';
 		$aRights = array_unique( $aRights );
 	}
 	// assign protect too if we need to (required when the user submit a permission change)

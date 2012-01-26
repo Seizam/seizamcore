@@ -247,9 +247,10 @@ require_once( "$IP/extensions/ElectronicPayment/ElectronicPayment.php" );
 require_once( "$IP/extensions/SetPermissions/SetPermissions.php" );
 
 
-# Rights
-$wgGroupPermissions['*']['edit'] = true;
+
+$wgGroupPermissions['*']['edit'] = false;
 $wgGroupPermissions['sysop']['editprotectedns'] = true;
+
 $wgNamespaceProtection[NS_PROJECT] = array('editprotectedns');
 
 
