@@ -149,7 +149,7 @@ Class EPMessage {
         $this->epm['epm_o_brand'] = $wgRequest->getText('brand');
         $this->epm['epm_o_status3ds'] = $wgRequest->getText('status3ds');
         $this->epm['epm_o_numauto'] = $wgRequest->getText('numauto');
-        $this->epm['epm_o_whyrefused'] = $wgRequest->getText('motirefus');
+        $this->epm['epm_o_whyrefused'] = $wgRequest->getText('motifrefus');
         $this->epm['epm_o_originecb'] = $wgRequest->getText('originecb');
         $this->epm['epm_o_bincb'] = $wgRequest->getText('bincb');
         $this->epm['epm_o_hpancb'] = $wgRequest->getText('hpancb');
