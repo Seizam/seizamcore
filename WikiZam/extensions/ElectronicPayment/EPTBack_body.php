@@ -50,28 +50,17 @@ class SpecialEPTBack extends SpecialPage {
         global $wgRequest, $wgOut;
 
         $message = new EPMessage('in');
-// Disable the regular OutputPage stuff -- we're taking over output!
+        // Disable the regular OutputPage stuff -- we're taking over output!
         $wgOut->disable();
 
         // Set the content type.
         header("Pragma: no-cache");
         header("Content-type: text/plain");
-        
-        //echo "This a test interface\n\n";
-        
-        $this->sayIt($message->epm);
 
-//-----------------------------------------------------------------------------
-// Send receipt to CMCIC server
-//-----------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------
+        // Send receipt to CMCIC server
+        //-----------------------------------------------------------------------------
         printf(CMCIC_CGI2_RECEIPT, $message->tmp_o_receipt);
-
-// Copyright (c) 2009 Euro-Information ( mailto:centrecom@e-i.com )
-// All rights reserved. ---
-    }
-    
-    function sayIt($in) {
-        printf(print_r($in, true));
     }
 
 }

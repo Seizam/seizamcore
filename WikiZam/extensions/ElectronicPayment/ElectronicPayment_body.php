@@ -64,13 +64,14 @@ class SpecialElectronicPayment extends SpecialPage {
             
             $message = new EPMessage('out');
             
-            $this->sayIt($message->epm);
+            
+            //$this->sayIt($message->epm);
 
             //$wgOut->addWikiText('ref: ' . $message->epm_o_reference);
             //$wgOut->addWikiText('ram: ' . $message->epm_o_raw_amount);
             //$wgOut->addWikiText('cur: ' . $message->epm_o_currency);
 
-            $wgOut->addWikiText(wfMsg('ep-action', $message->epm['epm_o_amount']));
+            $wgOut->addWikiText(wfMsg('ep-action', $message->epm['epm_o_amount']).$message->epm['epm_o_currency']);
 
             //$wgOut->addWikiText('tex: ' . $message->epm_o_free_text);
             // transaction date : format d/m/y:h:m:s
@@ -79,10 +80,10 @@ class SpecialElectronicPayment extends SpecialPage {
             //$wgOut->addWikiText('lan: ' . $message->epm_o_language);
             //$wgOut->addWikiText('mai: ' . $message->epm_o_mail);
             // Control String for support
-            $wgOut->addWikiText('ctl: ' . $message->CtlHmac);
+            //$wgOut->addWikiText('ctl: ' . $message->CtlHmac);
             // Data to certify
-            $wgOut->addWikiText('dat: ' . $message->PHP1_FIELDS);
-            $wgOut->addWikiText('sMAC: ' . $message->epm['epm_o_mac']);
+            //$wgOut->addWikiText('dat: ' . $message->epm_o_validating_fields);
+            //$wgOut->addWikiText('sMAC: ' . $message->epm['epm_o_mac']);
 
             $output = '
 
@@ -93,7 +94,7 @@ class SpecialElectronicPayment extends SpecialPage {
 	<input type="hidden" name="version"             id="version"        value="' . $message->oTpe->sVersion . '" />
 	<input type="hidden" name="TPE"                 id="TPE"            value="' . $message->oTpe->sNumero . '" />
 	<input type="hidden" name="date"                id="date"           value="' . $message->mySqlStringToBankTime($message->epm['epm_o_date']) . '" />
-	<input type="hidden" name="montant"             id="montant"        value="' . $message->epm['epm_o_amount'] . '" />
+	<input type="hidden" name="montant"             id="montant"        value="' . $message->epm['epm_o_amount'] . $message->epm['epm_o_currency'] . '" />
 	<input type="hidden" name="reference"           id="reference"      value="' . $message->epm['epm_o_reference'] . '" />
 	<input type="hidden" name="MAC"                 id="MAC"            value="' . $message->epm['epm_o_mac'] . '" />
 	<input type="hidden" name="url_retour"          id="url_retour"     value="' . $message->oTpe->sUrlKO . '" />

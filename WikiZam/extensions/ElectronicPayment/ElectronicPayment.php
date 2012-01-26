@@ -72,7 +72,8 @@ Class EPMessage {
         'epm_user_id' => '', // int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Foreign key to user.user_id',
         'epm_o_ept' => '', // int(8) unsigned NOT NULL DEFAULT '0' COMMENT 'EPT id',
         'epm_o_date' => '', // datetime NOT NULL COMMENT 'Order DateTime',
-        'epm_o_amount' => '', // varchar(12) NOT NULL COMMENT 'Order Amount',
+        'epm_o_amount' => '', // decimal(9,2) NOT NULL COMMENT 'Order Amount',
+        'epm_o_currency' => '', // varchar(3) NOT NULL DEFAULT 'EUR' COMMENT 'Order Amount',
         'epm_o_reference' => '', // int(12) unsigned NOT NULL COMMENT 'Oder Reference',
         'epm_o_mail' => '', // tinyblob NOT NULL COMMENT 'Ordering User''s Mail',
         'epm_o_language' => '', // varchar(2) NOT NULL DEFAULT 'EN' COMMENT 'Order Language',
@@ -97,16 +98,14 @@ Class EPMessage {
         'epm_o_filtercause' => '', // blob DEFAULT NULL COMMENT 'Filter return array'
         'epm_o_filtervalue' => ''); // blob DEFAULT NULL COMMENT 'Filter return array values',
     //
-        //Logical Params
-    public $tmp_o_currency = 'EUR';
-    public $tmp_o_raw_amount;
+
     //Bank object instances
     public $oTpe;
     public $oHmac;
     public $tmp_o_receipt;
     public $tmp_o_date_bank_format;
     //Debug/Dev
-    public $PHP1_FIELDS;
+    public $epm_o_validating_fields;
     public $CtlHmac;
 
     public function __construct($type) {
@@ -123,18 +122,21 @@ Class EPMessage {
     private function __constructIncoming() {
         global $wgUser, $wgRequest;
 
+
+        $this->epm['epm_o_free_text'] = $wgRequest->getText('texte-libre');
+
         $this->epm['epm_type'] = 'in';
         $this->epm['epm_date'] = date("Y-m-d:H:i:s");
-        $this->epm['epm_user_id'] = $wgUser->getId();
+        $this->epm['epm_user_id'] = $this->valueFromFreeText('user');
         $this->epm['epm_o_ept'] = $wgRequest->getText('TPE');
         $this->tmp_o_date_bank_format = $wgRequest->getText('date');
         $this->epm['epm_o_date'] = $this->bankStringToMySqlTime($this->tmp_o_date_bank_format);
-        $this->epm['epm_o_amount'] = $wgRequest->getText('montant');
+        $this->ReadAmountAndCurrencyFromString($wgRequest->getText('montant'));
         $this->epm['epm_o_reference'] = $wgRequest->getText('reference');
+        $this->epm['epm_o_mail'] = $this->valueFromFreeText('mail');
+        $this->epm['epm_o_language'] = $this->valueFromFreeText('lang');
         $this->epm['epm_o_mac'] = $wgRequest->getText('MAC');
         $this->epm['epm_o_ip'] = $wgRequest->getText('ipclient');
-        $this->epm['epm_o_free_text'] = $wgRequest->getText('texte-libre');
-
         $this->epm['epm_o_return_code'] = $wgRequest->getText('code-retour');
         $this->epm['epm_o_cvx'] = $wgRequest->getText('cvx');
         $this->epm['epm_o_vld'] = $wgRequest->getText('vld');
@@ -157,16 +159,12 @@ Class EPMessage {
         // Control String for support
         $this->CtlHmac = sprintf(CMCIC_CTLHMAC, $this->oTpe->sVersion, $this->oTpe->sNumero, $this->oHmac->computeHmac(sprintf(CMCIC_CTLHMACSTR, $this->oTpe->sVersion, $this->oTpe->sNumero)));
 
-        $MAC = $this->calculateMAC();
-        
-        echo "\nMAC=".$MAC."\n";
         //Now that we know everything, we can calculate the control sum for order validation
-        if ($this->epm['epm_o_mac'] == $MAC) {
-            echo "\nMATCH\n";
+        if (strtolower($this->epm['epm_o_mac']) == $this->calculateMAC()) {
             $this->tmp_o_receipt = CMCIC_CGI2_MACOK;
         } else {
-            echo "\nNO MATCH\n";
-            $this->tmp_o_receipt = CMCIC_CGI2_MACNOTOK . $this->PHP1_FIELDS;;
+            $this->tmp_o_receipt = CMCIC_CGI2_MACNOTOK . $this->epm_o_validating_fields;
+            ;
         }
 
         //Do what needs to be done regarding order success status
@@ -184,9 +182,11 @@ Class EPMessage {
         $this->epm['epm_user_id'] = $wgUser->getId();
         $this->epm['epm_o_ept'] = CMCIC_TPE;
         $this->epm['epm_o_date'] = $this->epm['epm_date'];
-        $this->tmp_o_date_bank_format = $this->bankStringToMySqlTime($this->epm['epm_o_date']);
-        $this->tmp_o_raw_amount = $wgRequest->getText('amount');
-        $this->epm['epm_o_amount'] = $this->tmp_o_raw_amount . $this->tmp_o_currency;
+        $this->tmp_o_date_bank_format = $this->mySqlStringToBankTime($this->epm['epm_o_date']);
+        $this->epm['epm_o_amount'] = $wgRequest->getText('amount');
+        $this->epm['epm_o_currency'] = $wgRequest->getText('currency');
+        if ($this->epm['epm_o_currency'] == '')
+            $this->epm['epm_o_currency'] = 'EUR';
         $this->epm['epm_o_mail'] = 'contact@seizam.com'; // $wgUser->getEmail();
         $this->epm['epm_o_language'] = $this->assignEPTLanguage();
         $this->epm['epm_o_ip'] = IP::sanitizeIP(wfGetIP());
@@ -226,10 +226,14 @@ Class EPMessage {
 
 // Calculate the control sum for order validation
     private function calculateMAC() {
-// Data to certify
-        $this->PHP1_FIELDS = sprintf(CMCIC_CGI1_FIELDS, $this->oTpe->sNumero, $this->tmp_o_date_bank_format, $this->tmp_o_raw_amount, $this->tmp_o_currency, $this->epm['epm_o_reference'], $this->epm['epm_o_free_text'], $this->oTpe->sVersion, $this->oTpe->sLangue, $this->oTpe->sCodeSociete, $this->epm['epm_o_mail'], ''/* $sNbrEch */, ''/* $sDateEcheance1 */, ''/* $sMontantEcheance1 */, ''/* $sDateEcheance2 */, ''/* $sMontantEcheance2 */, ''/* $sDateEcheance3 */, ''/* $sMontantEcheance3 */, ''/* $sDateEcheance4 */, ''/* $sMontantEcheance4 */, $this->epm['epm_o_options']);
-
-        return $this->oHmac->computeHmac($this->PHP1_FIELDS);
+        // Data to certify
+        if ($this->epm['epm_type'] == 'out') {
+            $this->epm_o_validating_fields = sprintf(CMCIC_CGI1_FIELDS, $this->oTpe->sNumero, $this->tmp_o_date_bank_format, $this->epm['epm_o_amount'], $this->epm['epm_o_currency'], $this->epm['epm_o_reference'], $this->epm['epm_o_free_text'], $this->oTpe->sVersion, $this->oTpe->sLangue, $this->oTpe->sCodeSociete, $this->epm['epm_o_mail'], ''/* $sNbrEch */, ''
+                    /* $sDateEcheance1 */, ''/* $sMontantEcheance1 */, ''/* $sDateEcheance2 */, ''/* $sMontantEcheance2 */, ''/* $sDateEcheance3 */, ''/* $sMontantEcheance3 */, ''/* $sDateEcheance4 */, ''/* $sMontantEcheance4 */, $this->epm['epm_o_options']);
+        } else if ($this->epm['epm_type'] == 'in') {
+            $this->epm_o_validating_fields = sprintf(CMCIC_CGI2_FIELDS, $this->oTpe->sNumero, $this->tmp_o_date_bank_format, $this->epm['epm_o_amount'] . $this->epm['epm_o_currency'], $this->epm['epm_o_reference'], $this->epm['epm_o_free_text'], $this->oTpe->sVersion, $this->epm['epm_o_return_code'], $this->epm['epm_o_cvx'], $this->epm['epm_o_vld'], $this->epm['epm_o_brand'], $this->epm['epm_o_status3ds'], $this->epm['epm_o_numauto'], $this->epm['epm_o_whyrefused'], $this->epm['epm_o_originecb'], $this->epm['epm_o_bincb'], $this->epm['epm_o_hpancb'], $this->epm['epm_o_ip'], $this->epm['epm_o_originetr'], $this->epm['epm_o_veres'], $this->epm['epm_o_pares']);
+        }
+        return $this->oHmac->computeHmac($this->epm_o_validating_fields);
     }
 
     private function writeDB() {
@@ -243,7 +247,7 @@ Class EPMessage {
         if (preg_match($pattern, $time, $matches) == 1) {
             return $matches['Y'] . '-' . $matches['m'] . '-' . $matches['d'] . ':' . $matches['H'] . ':' . $matches['i'] . ':' . $matches['s'];
         } else
-            return false;
+            return "\nbankStringToMySqlTime Error\n";
     }
 
     public function mySqlStringToBankTime($time) {
@@ -252,31 +256,37 @@ Class EPMessage {
         if (preg_match($pattern, $time, $matches) == 1) {
             return $matches['d'] . '/' . $matches['m'] . '/' . $matches['Y'] . ':' . $matches['H'] . ':' . $matches['i'] . ':' . $matches['s'];
         } else
+            return "\nmySqlStringToBankTime Error\n";
+    }
+
+    private function ReadAmountAndCurrencyFromString($input) {
+        $matches = array();
+        $pattern = "/^(?P<A>[0-9\.]+)(?P<C>[A-Z]{3})$/";
+        if (preg_match($pattern, $input, $matches) == 1) {
+            $this->epm['epm_o_amount'] = $matches['A'];
+            $this->epm['epm_o_currency'] = $matches['C'];
+        } else
             return false;
     }
 
-    private function ValueFromFreeText($freeText, $key) {
+    private function valueFromFreeText($key) {
         $matches = array();
-        $pattern = "/" . $key . " :<(.*)>/";
-        if (preg_match($pattern, $time, $matches) == 1) {
-            print_r($matches);
-            return $matches['Y'] . '-' . $matches['m'] . '-' . $matches['d'] . ':' . $matches['H'] . ':' . $matches['i'] . ':' . $matches['s'];
+        $pattern = "/" . $key . ": <([\d\D]*?)>/";
+        if (preg_match($pattern, $this->epm['epm_o_free_text'], $matches) == 1) {
+            return $matches[1];
         } else
-            return false;
+            return "null";
     }
 
     private function reactToReturnCode() {
         switch ($this->epm['epm_o_return_code']) {
             case "Annulation":
-                echo "\nCancelled\n";
                 break;
 
             case "payetest":
-                echo "\nTest Success\n";
                 break;
 
             case "paiement":
-                echo "\nSuccess\n";
                 break;
         }
     }
