@@ -244,8 +244,10 @@ require_once( "$IP/extensions/ElectronicPayment/ElectronicPayment.php" );
 
 
 # SetPermissions
-require_once( "$IP/extensions/SetPermissions/SetPermissions.php" );
+//require_once( "$IP/extensions/SetPermissions/SetPermissions.php" );
 
+# Restrictions
+require_once( "$IP/extensions/Restrictions/Restrictions.php" );
 
 
 $wgGroupPermissions['*']['edit'] = false;
@@ -268,4 +270,3 @@ $wgDefaultUserOptions['wikieditor-preview'] = 1;
 
 # Enable subpages in the main namespace
 $wgNamespacesWithSubpages[NS_MAIN] = true;
-

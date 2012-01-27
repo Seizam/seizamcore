@@ -79,7 +79,7 @@ spSetPermissionsSetup();
 
 
 function spSetPermissionsSetup() {
-	global $wgRestrictionLevels, $wgGroupPermissions, $wgSetPermissionsRestrictions;
+	global $wgRestrictionLevels, $wgGroupPermissions, $wgSetPermissionsRestrictions, $wgRestrictionTypes;
 	var_dump($wgSetPermissionsRestrictions);
 	foreach ($wgSetPermissionsRestrictions as $rest) {
 		$wgRestrictionLevels[] = $rest.'-perm';
