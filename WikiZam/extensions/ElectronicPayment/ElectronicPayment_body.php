@@ -50,10 +50,13 @@ class SpecialElectronicPayment extends SpecialPage {
         global $wgRequest, $wgOut;
 
         $this->setHeaders();
+        
+        
 
         //echo 'lang: '.$wgLang->getCode();
         //$this->sayIt($wgOut);
         //$this->sayIt($wgRequest);
+        //global $wgUser;
         //$this->sayIt($wgUser);
 
         if ($wgRequest->getText('status') == 'fail') {
@@ -125,11 +128,10 @@ class SpecialElectronicPayment extends SpecialPage {
 
             $wgOut->addHTML($output);
         } else if ($wgRequest->getText('status') == 'read') {
-
             $message = new EPMessage('read');
             $wgOut->addHTML('<pre>' . print_r($message->epm, true) . '</pre>');
         } else {
-            $wgOut->addWikiText('[http://localhost/WikiZam/index.php?title=Special:ElectronicPayment&status=attempt&amount=46 Click Here]');
+            $wgOut->addHTML('<a href="/index.php?title=Special:ElectronicPayment&status=attempt&amount=46">Click Here</a>');
         }
     }
 

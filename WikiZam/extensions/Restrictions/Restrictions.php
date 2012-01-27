@@ -175,7 +175,7 @@ function efRestrictionsUserCan( $title, &$user, $action, &$result ) {
 	}
 	
 	wfDebugLog( 'restrictions', 'UserCan: '.($result?'YES':'NO')
-		. ' ("'.$act.'" restricted to "'.$title_restriction.'")');
+		. ' ("'.$act.'" restricted to "'.implode(',',$title_restrictions).'")');
 	
 	// stop processing
 	return false;
