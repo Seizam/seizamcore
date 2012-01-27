@@ -244,15 +244,16 @@ require_once( "$IP/extensions/ElectronicPayment/ElectronicPayment.php" );
 
 
 # SetPermissions
-require_once( "$IP/extensions/SetPermissions/SetPermissions.php" );
+//require_once( "$IP/extensions/SetPermissions/SetPermissions.php" );
 
+# Restrictions
+require_once( "$IP/extensions/Restrictions/Restrictions.php" );
 
-# Rights
 $wgGroupPermissions['*']['edit'] = false;
-
 $wgGroupPermissions['sysop']['editprotectedns'] = true;
 
 $wgNamespaceProtection[NS_PROJECT] = array('editprotectedns');
+
 
 
 # Where is the favicon ?
@@ -266,3 +267,5 @@ $wgDefaultUserOptions['usebetatoolbar'] = 1;
 $wgDefaultUserOptions['usebetatoolbar-cgd'] = 1;
 $wgDefaultUserOptions['wikieditor-preview'] = 1;
 
+# Enable subpages in the main namespace
+$wgNamespacesWithSubpages[NS_MAIN] = true;
