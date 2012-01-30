@@ -46,12 +46,6 @@ $wgSpecialPages['ElectronicPayment'] = 'SpecialElectronicPayment';
 
 $wgSpecialPageGroups['ElectronicPayment'] = 'other';
 
-# Special EPTBak (INbound)
-$wgAutoloadClasses['SpecialEPTBack'] = $dir . 'EPTBack_body.php';
-$wgSpecialPages['EPTBack'] = 'SpecialEPTBack';
-
-$wgSpecialPageGroups['EPTBack'] = 'other';
-
 # Right for Payment administration
 $wgAvailableRights[] = 'epadmin';
 $wgGroupPermissions['sysop']['epadmin'] = true;
@@ -140,11 +134,11 @@ Class EPMessage {
         }
     }
     
-    # Constructs Incoming EPMessage. ie: The bank is confirming an order to us (Special:EPTBack)
+    # Constructs Incoming EPMessage. ie: The bank is confirming an order to us (Special:ElectronicPayment&action=EPTBack)
     private function __constructIncoming() {
         global $wgUser, $wgRequest;
 
-        # Some params are read from free-text, it has to be set before.
+        # Some params are read from free-text, free-text has to be set first.
         $this->epm['epm_o_free_text'] = $wgRequest->getText('texte-libre');
 
         # Msg related fields
@@ -209,7 +203,7 @@ Class EPMessage {
         $this->writeDB();
     }
 
-    # Constructs OutGoing EPMessage. ie: We are sending user to bank payment interface  (Special:ElectronicPayment)
+    # Constructs OutGoing EPMessage. ie: We are sending user to bank payment interface  (Special:ElectronicPayment&action=attempt)
     private function __constructOutgoing() {
         global $wgUser, $wgRequest;
 

@@ -49,45 +49,62 @@ class SpecialElectronicPayment extends SpecialPage {
     public function execute($par) {
         global $wgRequest, $wgOut;
 
-        $this->setHeaders();
-        
-        
+        switch ($wgRequest->getText('action')) {
+            case 'attempt':
+                $this->setHeaders();
+                $this->constructAttempt();
+                break;
+            case 'read' :
+                $this->setHeaders();
+                $this->constructRead();
+                break;
+            case 'fail' :
+                $this->setHeaders();
+                $wgOut->addWikiText(wfMsg('ep-fail'));
+                break;
+            case 'success' :
+                $this->setHeaders();
+                $wgOut->addWikiText(wfMsg('ep-success'));
+                break;
+            case 'EPTBack' :
+                $message = new EPMessage('in');
+                $wgOut->disable();
+                header("Pragma: no-cache");
+                header("Content-type: text/plain");
+                printf(CMCIC_CGI2_RECEIPT, $message->tmp_o_receipt);
+                break;
+            default :
+                $this->setHeaders();
+                $wgOut->addHTML('<a href="/index.php?title=Special:ElectronicPayment&status=attempt&amount=46">Click Here</a>');
+                break;
+        }
+    }
 
-        //echo 'lang: '.$wgLang->getCode();
-        //$this->sayIt($wgOut);
-        //$this->sayIt($wgRequest);
-        //global $wgUser;
-        //$this->sayIt($wgUser);
-
-        if ($wgRequest->getText('status') == 'fail') {
-            $wgOut->addWikiText(wfMsg('ep-fail'));
-        } else if ($wgRequest->getText('status') == 'success') {
-            $wgOut->addWikiText(wfMsg('ep-success'));
-        } else if ($wgRequest->getText('status') == 'attempt') {
-
-            $message = new EPMessage('out');
+    private function constructAttempt() {
+        global $wgOut;
+        $message = new EPMessage('out');
 
 
-            //$this->sayIt($message->epm);
-            //$wgOut->addWikiText('ref: ' . $message->epm_o_reference);
-            //$wgOut->addWikiText('ram: ' . $message->epm_o_raw_amount);
-            //$wgOut->addWikiText('cur: ' . $message->epm_o_currency);
+        //$this->sayIt($message->epm);
+        //$wgOut->addWikiText('ref: ' . $message->epm_o_reference);
+        //$wgOut->addWikiText('ram: ' . $message->epm_o_raw_amount);
+        //$wgOut->addWikiText('cur: ' . $message->epm_o_currency);
 
-            $wgOut->addWikiText(wfMsg('ep-action', $message->epm['epm_o_amount']) . $message->epm['epm_o_currency']);
+        $wgOut->addWikiText(wfMsg('ep-action', $message->epm['epm_o_amount']) . $message->epm['epm_o_currency']);
 
-            //$wgOut->addWikiText('tex: ' . $message->epm_o_free_text);
-            // transaction date : format d/m/y:h:m:s
-            //$sDate = date("d/m/Y:H:i:s");
-            //$wgOut->addWikiText('dat: ' . $message->epm_o_date);
-            //$wgOut->addWikiText('lan: ' . $message->epm_o_language);
-            //$wgOut->addWikiText('mai: ' . $message->epm_o_mail);
-            // Control String for support
-            //$wgOut->addWikiText('ctl: ' . $message->CtlHmac);
-            // Data to certify
-            //$wgOut->addWikiText('dat: ' . $message->epm_o_validating_fields);
-            //$wgOut->addWikiText('sMAC: ' . $message->epm['epm_o_mac']);
+        //$wgOut->addWikiText('tex: ' . $message->epm_o_free_text);
+        // transaction date : format d/m/y:h:m:s
+        //$sDate = date("d/m/Y:H:i:s");
+        //$wgOut->addWikiText('dat: ' . $message->epm_o_date);
+        //$wgOut->addWikiText('lan: ' . $message->epm_o_language);
+        //$wgOut->addWikiText('mai: ' . $message->epm_o_mail);
+        // Control String for support
+        //$wgOut->addWikiText('ctl: ' . $message->CtlHmac);
+        // Data to certify
+        //$wgOut->addWikiText('dat: ' . $message->epm_o_validating_fields);
+        //$wgOut->addWikiText('sMAC: ' . $message->epm['epm_o_mac']);
 
-            $output = '
+        $output = '
 
 <div id="frm">
 <!-- FORMULAIRE TYPE DE PAIEMENT / PAYMENT FORM TEMPLATE -->
@@ -126,15 +143,15 @@ class SpecialElectronicPayment extends SpecialPage {
 
 
 
-            $wgOut->addHTML($output);
-        } else if ($wgRequest->getText('status') == 'read') {
-            $message = new EPMessage('read');
-            $wgOut->addHTML('<pre>' . print_r($message->epm, true) . '</pre>');
-        } else {
-            $wgOut->addHTML('<a href="/index.php?title=Special:ElectronicPayment&status=attempt&amount=46">Click Here</a>');
-        }
+        $wgOut->addHTML($output);
     }
 
+    private function constructRead() {
+        global $wgOut;
+        $message = new EPMessage('read');
+        $wgOut->addHTML('<pre>' . print_r($message->epm, true) . '</pre>');
+    }
+    
     function sayIt($in) {
         global $wgOut;
         printf('<pre>');

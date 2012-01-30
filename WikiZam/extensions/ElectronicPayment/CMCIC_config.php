@@ -26,8 +26,8 @@ define("CMCIC_TPE", "6527604");
 define("CMCIC_VERSION", "3.0");
 define("CMCIC_SERVEUR", "https://ssl.paiement.cic-banques.fr/test/");
 define("CMCIC_CODESOCIETE", "seizamsarl");
-define("CMCIC_URLOK", "http://papilusion.seizam.com/index.php?title=Special:ElectronicPayment&status=success");
-define("CMCIC_URLKO", "http://papilusion.seizam.com/index.php?title=Special:ElectronicPayment&status=fail");
+define("CMCIC_URLOK", "http://papilusion.seizam.com/index.php?title=Special:ElectronicPayment&action=success");
+define("CMCIC_URLKO", "http://papilusion.seizam.com/index.php?title=Special:ElectronicPayment&action=fail");
 
 $wgCMCIC_config = array('key' => CMCIC_CLE,
  'ept' => CMCIC_TPE,
