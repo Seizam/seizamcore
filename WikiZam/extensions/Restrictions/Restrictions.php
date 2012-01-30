@@ -20,7 +20,7 @@ $wgExtensionMessagesFiles['Restrictions'] = dirname( __FILE__ ) . '/Restrictions
 // add our own userCan hook
 $wgHooks['userCan'][] = 'efRestrictionsUserCan';
 
-// this hook is call when mediawiki request the rights of a user, it can give more 
+// this hook is called when mediawiki request the rights of a user, it can give more 
 // rights than mediawiki does, in our case, it depends if the user is the owner
 // it can also give the protect right while updating restrictons
 $wgHooks['UserGetRights'][] = 'efRestrictionsUserGetRights';
@@ -71,7 +71,7 @@ foreach ($wgRestrictionsLevelsHierarchy as $level) {
 	if ( $level!='owner' && $level!='' ) 	
 		$wgGroupPermissions[$level][$level.'-level'] = true;
 
-	// sysops can always do what do want on every restrictions levels (even owner and everyone)
+	// sysops can always do what they want on every restrictions levels (even owner and everyone)
 	if ( $level!='' ) 
 		$wgGroupPermissions['sysop'][$level.'-level'] = true;
 		
@@ -80,7 +80,8 @@ foreach ($wgRestrictionsLevelsHierarchy as $level) {
 
 
 # ==================================== 
-#   THE CODE
+#           THE CODE
+# ====================================
 
 function efRestrictionsUserCan( $title, &$user, $action, $result ) {
 	
@@ -97,7 +98,7 @@ function efRestrictionsUserCan( $title, &$user, $action, $result ) {
 
 	// fetch restriction from MediaWiki core
 	$title_restrictions = $title->getRestrictions( $action );
-
+        
 	// if no restrictions, return "the $user can do $action on $title"
 	if ( $title_restrictions === array() ) {
 		wfDebugLog( 'restrictions', 'UserCan: action not restricted');

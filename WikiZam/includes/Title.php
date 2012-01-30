@@ -1477,6 +1477,8 @@ class Title {
 			if ( $right == 'sysop' ) {
 				$right = 'protect';
 			}
+                        
+                        // BIG LOGICAL MISTAKE.
 			if ( $right != '' && !$user->isAllowed( $right ) ) {
 				// Users with 'editprotected' permission can edit protected pages
 				if ( $action == 'edit' && $user->isAllowed( 'editprotected' ) ) {
