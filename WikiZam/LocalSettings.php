@@ -249,12 +249,13 @@ require_once( "$IP/extensions/ElectronicPayment/ElectronicPayment.php" );
 # Restrictions
 require_once( "$IP/extensions/Restrictions/Restrictions.php" );
 
-$wgGroupPermissions['*']['edit'] = false;
+// available restriction level/group via SetPermissions form
+// ($wgRestrictionLevels will be updated in order for theses level to be accessed via protect
+$wgRestrictionsGroups = array( '', 'user', 'artist', 'owner' );
+$wgGroupPermissions['*']['edit'] = false; 
 $wgGroupPermissions['sysop']['editprotectedns'] = true;
 
 $wgNamespaceProtection[NS_PROJECT] = array('editprotectedns');
-
-
 
 # Where is the favicon ?
 $wgFavicon = "/favicon.ico";
