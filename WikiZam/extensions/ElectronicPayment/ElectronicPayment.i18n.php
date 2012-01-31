@@ -18,7 +18,12 @@ $messages['en'] = array(
         'ep-action' => 'Please click on the button below to reach our bank (CIC) secure electronic payment interface. Transaction amount: \'\'\'$1\'\'\'',
         'ep-fail' => 'The transaction failed. Try again.',
         'ep-success' => 'The transaction succeeded. \o/',
-        'ep-connect' => 'Connect'
+        'ep-connect' => 'Connect',
+        'ep-fd-ordersection' => 'My Order',
+        'ep-fd-personalsection' => 'My Details',
+        'ep-fd-amountlabel' => 'Amount in Euro (€)',
+        'ep-fd-emaillabel' => 'Email for order confirmation'
+        
     
 );
 

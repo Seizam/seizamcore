@@ -50,13 +50,12 @@ class SpecialElectronicPayment extends SpecialPage {
         global $wgRequest, $wgOut;
 
         switch ($wgRequest->getText('action')) {
-            case 'attempt':
+            /*case 'attempt' :
                 $this->setHeaders();
-                $this->constructAttempt();
-                break;
+                break;*/
             case 'read' :
                 $this->setHeaders();
-                $this->constructRead();
+                self::constructRead();
                 break;
             case 'fail' :
                 $this->setHeaders();
@@ -75,12 +74,12 @@ class SpecialElectronicPayment extends SpecialPage {
                 break;
             default :
                 $this->setHeaders();
-                $wgOut->addHTML('<a href="/index.php?title=Special:ElectronicPayment&status=attempt&amount=46">Click Here</a>');
+                self::constructDefault();
                 break;
         }
     }
 
-    private function constructAttempt() {
+    static function constructAttempt() {
         global $wgOut;
         $message = new EPMessage('out');
 
@@ -146,17 +145,60 @@ class SpecialElectronicPayment extends SpecialPage {
         $wgOut->addHTML($output);
     }
 
-    private function constructRead() {
+    static function constructRead() {
         global $wgOut;
         $message = new EPMessage('read');
         $wgOut->addHTML('<pre>' . print_r($message->epm, true) . '</pre>');
     }
     
-    function sayIt($in) {
+    static function constructDefault() {
+        global $wgRequest, $wgUser;
+        
+            $formDescriptor = array(
+                        'amount' => array(
+                                'label-message' => 'ep-fd-amountlabel',
+                                'type' => 'float',
+                                'required' => 'true'
+                        ),
+                        'mail' => array(
+                                'label-message' => 'youremail',
+                                'type' => 'email',
+                                'required' => 'true',
+				'validation-callback' => array( 'SpecialElectronicPayment', 'validateEmail' )
+                        )
+                );
+            
+            if (!(($mail = $wgUser->getEmail())=='')) {
+                $formDescriptor['mail']['default'] = $wgUser->getEmail();
+                $formDescriptor['mail']['disabled'] = true;
+            }
+ 
+                $htmlForm = new HTMLForm( $formDescriptor, 'ep-fd' );
+                $htmlForm->setSubmitText('Next');
+                $htmlForm->setTitle( SpecialPage::getTitleFor( 'ElectronicPayment' ) );
+                $htmlForm->setSubmitCallback( array( 'SpecialElectronicPayment', 'initOrder' ) );
+ 
+                $htmlForm->show();
+        }
+        
+    static function initOrder() {
+        global $wgRequest;
+        SpecialElectronicPayment::constructAttempt();
+        return true;
+    }
+    
+    static function validateEmail( $email, $alldata ) {
+		if ( $email && !Sanitizer::validateEmail( $email ) ) {
+			return wfMsgExt( 'invalidemailaddress', 'parseinline' );
+		}
+                return true;
+    }
+    
+    static function sayIt($in) {
         global $wgOut;
-        printf('<pre>');
-        printf(print_r($in, true));
-        printf('</pre>');
+        $wgOut->addHTML('<pre>');
+        $wgOut->addHTML(print_r($in, true));
+        $wgOut->addHTML('</pre>');
     }
 
 }
