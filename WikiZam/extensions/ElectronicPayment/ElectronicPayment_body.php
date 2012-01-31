@@ -50,22 +50,22 @@ class SpecialElectronicPayment extends SpecialPage {
         global $wgRequest, $wgOut;
 
         switch ($wgRequest->getText('action')) {
-            case 'attempt':
-                $this->setHeaders();
-                $this->constructAttempt();
-                break;
+            # Sysop can read an order from table (providing id)
             case 'read' :
                 $this->setHeaders();
-                $this->constructRead();
+                self::constructRead();
                 break;
+            # Coming back to Seizam (payment failed/cancelled)
             case 'fail' :
                 $this->setHeaders();
                 $wgOut->addWikiText(wfMsg('ep-fail'));
                 break;
+            # Coming back to Seizam (payment succeeded)
             case 'success' :
                 $this->setHeaders();
                 $wgOut->addWikiText(wfMsg('ep-success'));
                 break;
+            # Validation Interface (not for humans)
             case 'EPTBack' :
                 $message = new EPMessage('in');
                 $wgOut->disable();
@@ -73,37 +73,23 @@ class SpecialElectronicPayment extends SpecialPage {
                 header("Content-type: text/plain");
                 printf(CMCIC_CGI2_RECEIPT, $message->tmp_o_receipt);
                 break;
+            # Welcome & Init Order
             default :
                 $this->setHeaders();
-                $wgOut->addHTML('<a href="/index.php?title=Special:ElectronicPayment&status=attempt&amount=46">Click Here</a>');
+                self::constructDefault();
                 break;
         }
     }
 
-    private function constructAttempt() {
+    # Construct the form to be sent to the bank
+
+    static function constructAttempt() {
         global $wgOut;
         $message = new EPMessage('out');
 
-
-        //$this->sayIt($message->epm);
-        //$wgOut->addWikiText('ref: ' . $message->epm_o_reference);
-        //$wgOut->addWikiText('ram: ' . $message->epm_o_raw_amount);
-        //$wgOut->addWikiText('cur: ' . $message->epm_o_currency);
-
         $wgOut->addWikiText(wfMsg('ep-action', $message->epm['epm_o_amount']) . $message->epm['epm_o_currency']);
 
-        //$wgOut->addWikiText('tex: ' . $message->epm_o_free_text);
-        // transaction date : format d/m/y:h:m:s
-        //$sDate = date("d/m/Y:H:i:s");
-        //$wgOut->addWikiText('dat: ' . $message->epm_o_date);
-        //$wgOut->addWikiText('lan: ' . $message->epm_o_language);
-        //$wgOut->addWikiText('mai: ' . $message->epm_o_mail);
-        // Control String for support
-        //$wgOut->addWikiText('ctl: ' . $message->CtlHmac);
-        // Data to certify
-        //$wgOut->addWikiText('dat: ' . $message->epm_o_validating_fields);
-        //$wgOut->addWikiText('sMAC: ' . $message->epm['epm_o_mac']);
-
+        # The form that is gonna send the user to the bank payment interface
         $output = '
 
 <div id="frm">
@@ -140,23 +126,77 @@ class SpecialElectronicPayment extends SpecialPage {
 <!-- FIN FORMULAIRE TYPE DE PAIEMENT / END PAYMENT FORM TEMPLATE -->
 </div>
 ';
-
-
-
         $wgOut->addHTML($output);
     }
 
-    private function constructRead() {
+    # Instanciate and print Order id=?
+
+    static function constructRead() {
         global $wgOut;
         $message = new EPMessage('read');
         $wgOut->addHTML('<pre>' . print_r($message->epm, true) . '</pre>');
     }
-    
-    function sayIt($in) {
+
+    # Form to input order (amount, email)
+
+    static function constructDefault() {
+        global $wgRequest, $wgUser;
+
+        # We are using the HTMLForm Helper
+        # That's the way to create a form
+        $formDescriptor = array(
+            'amount' => array(
+                'label-message' => 'ep-fd-amountlabel',
+                'type' => 'float',
+                'required' => 'true'
+            ),
+            'mail' => array(
+                'label-message' => 'youremail',
+                'type' => 'email',
+                'required' => 'true',
+                'validation-callback' => array('SpecialElectronicPayment', 'validateEmail')
+            )
+        );
+
+        # If user has an email registered, don't let him change it
+        if (!(($mail = $wgUser->getEmail()) == '')) {
+            $formDescriptor['mail']['default'] = $wgUser->getEmail();
+            $formDescriptor['mail']['disabled'] = true;
+        }
+
+        
+        $htmlForm = new HTMLForm($formDescriptor, 'ep-fd');
+        $htmlForm->setSubmitText(wfMsg('next'));
+        $htmlForm->setTitle(SpecialPage::getTitleFor('ElectronicPayment'));
+        $htmlForm->setSubmitCallback(array('SpecialElectronicPayment', 'initOrder'));
+
+        $htmlForm->show();
+    }
+
+    # Called after constructDefault's form has been validated
+
+    static function initOrder() {
+        global $wgRequest;
+        SpecialElectronicPayment::constructAttempt();
+        return true;
+    }
+
+    # Validate Email String provided in constructDefault
+
+    static function validateEmail($email, $alldata) {
+        if ($email && !Sanitizer::validateEmail($email)) {
+            return wfMsgExt('invalidemailaddress', 'parseinline');
+        }
+        return true;
+    }
+
+    # Just a array print fonction
+
+    static function sayIt($in) {
         global $wgOut;
-        printf('<pre>');
-        printf(print_r($in, true));
-        printf('</pre>');
+        $wgOut->addHTML('<pre>');
+        $wgOut->addHTML(print_r($in, true));
+        $wgOut->addHTML('</pre>');
     }
 
 }

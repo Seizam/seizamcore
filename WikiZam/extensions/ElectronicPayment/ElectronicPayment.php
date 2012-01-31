@@ -220,14 +220,14 @@ Class EPMessage {
         $this->tmp_o_date_bank_format = $this->mySqlStringToBankTime($this->epm['epm_o_date']); # bank wants a special format for date
         
         # Money issues
-        $this->epm['epm_o_amount'] = $wgRequest->getText('amount'); #How much? @TODO: Validate
-        $this->epm['epm_o_currency'] = $wgRequest->getText('currency'); #Of what? @TODO: Validate
+        $this->epm['epm_o_amount'] = $wgRequest->getText('wpamount'); #How much? @TODO: Validate
+        $this->epm['epm_o_currency'] = $wgRequest->getText('wpcurrency'); #Of what? @TODO: Validate
         # Default currency if not submitted.
         if ($this->epm['epm_o_currency'] == '')
             $this->epm['epm_o_currency'] = 'EUR';
         
         # User related data
-        $this->epm['epm_o_mail'] = 'contact@seizam.com'; # $wgUser->getEmail();#@TODO:Fix for anonymous.
+        $this->epm['epm_o_mail'] = $wgRequest->getText('wpmail'); # $wgUser->getEmail();#@TODO:Fix for anonymous.
         $this->epm['epm_o_language'] = $this->assignEPTLanguage(); #Sets the interface language
         $this->epm['epm_o_ip'] = IP::sanitizeIP(wfGetIP()); #Saves user's IP.
 
