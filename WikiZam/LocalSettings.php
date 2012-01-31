@@ -252,8 +252,13 @@ require_once( "$IP/extensions/Restrictions/Restrictions.php" );
 // available restriction level/group via SetPermissions form
 // ($wgRestrictionLevels will be updated in order for theses level to be accessed via protect
 $wgRestrictionsGroups = array( '', 'user', 'artist', 'owner' );
-$wgGroupPermissions['*']['edit'] = false; 
-$wgGroupPermissions['sysop']['editprotectedns'] = true;
+// everyone can edit, even anons, but, there can be per-page restrctions
+// by default 'user' is allowed to edit, even if '*' is not.
+$wgGroupPermissions['*']['edit'] = true; 
+// disable move (but sysop can still move, because sysop group have seperates rights
+$wgGroupPermissions['user']['move']					= false;
+$wgGroupPermissions['user']['move-subpages']		= false;
+$wgGroupPermissions['user']['move-rootuserpages']	= false; // can move root userpages
 
 $wgNamespaceProtection[NS_PROJECT] = array('editprotectedns');
 
