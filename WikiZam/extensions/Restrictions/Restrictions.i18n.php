@@ -13,25 +13,25 @@ $messages = array();
  */
 $messages['en'] = array(
 	
-	'setpermissions'            => 'Set permissions',
+	'setrestrictions'				=> 'Set restrictions',
 	
-	'setpermissions-success'    => 'Protection successful!',
-	'setpermissions-failure'    => 'Protection unsuccessful',
+	'setrestrictions-success'		=> 'Restrictions update successful!',
+	'setrestrictions-failure'		=> 'We were unable to update the restrictions.',
 	
-    'setpermissions-intro'      => 'Use this form to set this pages\'s accessibilty from others',
+    'setrestrictions-intro'			=> 'Use this form to set this pages\'s accessibilty from others',
     
-	'setpermissions-notowner'	=> 'This page does\'nt belong to you.',
-	'setpermissions-confirm'    => 'Update',
+	'setrestrictions-notowner'		=> 'This page does\'nt belong to you.',
+	'setrestrictions-confirm'		=> 'Update',
     
-	'setpermissions-whocan-read'	=> 'Who can read?',
-	'setpermissions-whocan-edit'	=> 'Who can edit?',
-	'setpermissions-whocan-move'	=> 'Who can move? (renaming)',
+	'setrestrictions-whocan-read'	=> 'Who can read?',
+	'setrestrictions-whocan-edit'	=> 'Who can edit?',
+	'setrestrictions-whocan-move'	=> 'Who can move? (renaming)',
 	
-	'setpermissions-whocan-upload'	=> 'Who can upload?',
-	'setpermissions-whocan-create'	=> 'Who can create?',
+	'setrestrictions-whocan-upload'	=> 'Who can upload?',
+	'setrestrictions-whocan-create'	=> 'Who can create?',
 	
-	'setpermissions-everyone'       => 'Everyone',
-	'setpermissions-user'			=> 'Connected users',
-	'setpermissions-owner'			=> 'Me',
+	'setrestrictions-everyone'      => 'Everyone',
+	'setrestrictions-user'			=> 'Users',
+	'setrestrictions-owner'			=> 'Me (owner)',
 		
 );
