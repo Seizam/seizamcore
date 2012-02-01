@@ -5,8 +5,6 @@
 //   user-> check si user appartient groupe
 //   change name to SetPermissions
 
-
-
 # ======================
 #    CONFIGURATION VARS
 
@@ -65,14 +63,24 @@ $wgHooks['SkinTemplateNavigation::Universal'][] = 'efRestrictionsMakeContentActi
 // add a non native action to mediawiki
 $wgHooks['UnknownAction'][] = 'efRestrictionsForm';
 
+// secure from viewing a transclusion if the template forbidden it
+// Available from MW version 1.10.1: "Allows an extension to specify a version of a page to get for inclusion in a template?"
+$wgHooks['BeforeParserFetchTemplateAndtitle'][] = 'efRestrictionsBeforeParserFetchTemplateAndtitle';
+
 // registering our defered setup function
 $wgExtensionFunctions[] = 'efRestrictionsSetup';
 
-// internal variable
+
+# internal variable
+
 // tells to our own UserGetRight hook implementation if we need to grant protect right
 // (required when updating article restriction when validating SetPermissions form)
 $wgSetPermissionsDoProtect = false;
-    
+
+// Used for cache
+// store result to avoid checking restrictions again
+// [user_id][title_id][action] = true(=allowed) / false(=disallowed)
+$wgRestrictionsUserCan = array();
 
 
 # ==================================== 
@@ -93,7 +101,7 @@ $wgRestrictionTypes[] = "read";
 
 function efRestrictionsSetup() {
 
-	global $wgRestrictionsGroups, $wgRestrictionLevels;
+	global $wgRestrictionsGroups, $wgRestrictionLevels,$wgGroupPermissions;
 	//TODO: refactore to use merge
 	foreach ($wgRestrictionsGroups as $group) {
 		// if not virtual, add the group to "protect"'s accessible levels
@@ -102,6 +110,10 @@ function efRestrictionsSetup() {
 		}
 		// TODO
 		// if not in wgGroupPermission > create it
+		if ($group!='' && $group!='owner' && !array_key_exists($group,$wgGroupPermissions)) {
+			wfDebugLog( 'restrictions', 'Setup: /!\ creating user group "'.$group.'"');
+			$wgGroupPermissions[$group] = array();
+		}
 	}
 }
 
@@ -112,15 +124,52 @@ function efRestrictionsSetup() {
 # ====================================
 
 function efRestrictionsIsUserInGroup($user, $group) {
-	$user_groups = $user->getEffectiveGroups();
-	return in_array($group, $user_groups);
+	return in_array($group, $user->getEffectiveGroups());
 }
 
+// when the parser process a page and find a template(=transclusions?), this hook is called
+// so we can skip this transclusion or specifiy another revision of it
+function efRestrictionsBeforeParserFetchTemplateAndtitle( $parser, Title $title, &$skip, &$id ) {
+	
+	if ( !( $parser instanceof Parser ) ) {
+		wfDebugLog( 'restrictions', 'BeforeParserFetchTemplateAndtitle: NOTHING TO DO (no parser given)');
+		return true; // nothing to do
+	}
+	
+	if ( $title->getNamespace() < 0 || $title->getNamespace() == NS_MEDIAWIKI ) {
+		wfDebugLog( 'restrictions', 'BeforeParserFetchTemplateAndtitle: NOTHING TO DO (bug 29579 for NS_MEDIAWIKI)');
+		return true; // nothing to do (bug 29579 for NS_MEDIAWIKI)
+	}
+	
+	// we have to know if the user can read this template
+	$result = true;
+	global $wgUser;
+	wfRunHooks( 'userCan', array( $title, &$wgUser, 'read', &$result ) );
+	$skip = !$result;	// skip  if  she can't
+	
+	wfDebugLog( 'restrictions', 'BeforeParserFetchTemplateAndtitle: '
+			.($skip ? "SKIP (=do not display) THE TEMPLATE" : "CAN FETCH THE TEMPLATE")
+			.' (title="'.$title->getPrefixedDBkey()
+			.'"('.$title->getArticleId().') $skip="'.var_export($skip, true)
+			.'" $id="'.var_export($id, true).'")');
+	
+	// return true (=continue processing) when do not skip the transclusion 
+	// return false  (=stop processing)   when     skip    the transclusion 
+	return !$skip;	
+	
+}
+
+// donner le droit dans le userCan
+// 
+// meme si le pageRestrictions ne restreint pas alors qu'il devrait
+// ,mon code lui sera juste et fera le bon test d'appartenance à un groupe
+// 
+// avant l'exécution (problématique) de title->checkPagesRestriction, 
+// le hook userCan est appelé dans Title->checkPermissionHooks
+// donc quoiqu'il arrive, mon bon usercan aura la main
 function efRestrictionsUserCan( $title, &$user, $action, &$result ) {
 	
-	wfDebugLog( 'restrictions', 'UserCan: title="'
-		.$title->getLocalURL().'"('.$title->getArticleId().') user="'
-		.$user->getName().'"('.$user->getID().') action="'.$action.'"');
+	// userCan is called before title->checkPageRestrictions
 	
 	$act = $action;
 
@@ -128,15 +177,33 @@ function efRestrictionsUserCan( $title, &$user, $action, &$result ) {
 	if ( $action == '' || $action == 'view' ) { 
 		$act = 'read' ; 
 	}
-
+	
 	// fetch restriction and user groups from MediaWiki core
 	$title_restrictions = $title->getRestrictions( $act );
 
 	// if no restrictions, return "the $user can do $action on $title"
 	if ( $title_restrictions === array() ) {
-		wfDebugLog( 'restrictions', 'UserCan: action not restricted');
-		//$result = true;		// allowed
+		wfDebugLog( 'restrictions', 'UserCan: action not restricted, resume other hooks ('
+				.$user->getName().'['.$user->getID().'] '.$action.' "'
+				.$title->getPrefixedDBkey().'"['.$title->getArticleId().']');
 		return true;		// continue userCan hooks processing (another hook can still disallow user)
+	}
+	
+	
+	// update user right about the current title
+	// (not pretty, but needed because this is the way MW core check restrictions...)
+	efRestrictionsGrantRestrictionsRights( $title, $user );
+	
+	//check if cached
+	global $wgRestrictionsUserCan;
+	if (isset($wgRestrictionsUserCan[$user->getID()][$title->getArticleId()][$act])) {
+		$result = $wgRestrictionsUserCan[$user->getID()][$title->getArticleId()][$act];
+		wfDebugLog( 'restrictions', 'UserCan: CACHE HIT "'
+				.($result?'YES':'NO').'" (title="'
+			.$title->getPrefixedDBkey().'"['.$title->getArticleId().'] user="'
+			.$user->getName().'"['.$user->getID().'] action="'.$action.'"]');
+		
+		return false;
 	}
 
 	// there should only be one restriction level per page/action 
@@ -175,9 +242,14 @@ function efRestrictionsUserCan( $title, &$user, $action, &$result ) {
 		$result = true;		// allowed
 	}
 	
-	wfDebugLog( 'restrictions', 'UserCan: '.($result?'YES':'NO')
-		. ' ("'.$act.'" restricted to "'.implode(',',$title_restrictions).'")');
+	// store to cache
+	$wgRestrictionsUserCan[$user->getID()][$title->getArticleId()][$act] = $result;
 	
+	wfDebugLog( 'restrictions', 'UserCan: CACHE MISS "'.($result?'YES':'NO'). '" ("'.$title->getPrefixedDBkey()
+			.'"('.$title->getArticleId().')" '.$act.' restricted to "'.implode(',',$title_restrictions).'") ');
+
+//	wfDebugLog( 'restrictions', wfGetPrettyBacktrace());
+
 	// stop processing
 	return false;
 	
@@ -209,8 +281,8 @@ function efRestrictionsIsOwner( $title, $user ) {
 
 	}
 	
-	wfDebugLog( 'restrictions', 'IsOwner: title="'.$title->getLocalURL()
-			.'" user="'.$user->getName().'") = '.( $result ? 'YES' : 'NO'));
+	wfDebugLog( 'restrictions', 'IsOwner: '.( $result ? 'YES' : 'NO').' (title="'.$title->getPrefixedDBkey()
+			.'" user="'.$user->getName().'")');
 	return $result ;
 }
 
@@ -225,36 +297,82 @@ function efRestrictionsIsOwner( $title, $user ) {
  */
 function efRestrictionsUserGetRights( $user, &$aRights ) {
 	
-	global $wgTitle;
-
 	// When updating title's restriction, "protect" and user's group rights are needed
 	// so when flushing rights (in Form() code), the next lines grant the rights.
 	// Activated by setting $wgSetPermissionsDoProtect to true.
-	global $wgSetPermissionsDoProtect, $wgRestrictionsGroups;
+	global $wgSetPermissionsDoProtect, $wgTitle;
+	
 	if ( $wgSetPermissionsDoProtect ) {
 		
-		wfDebugLog( 'restrictions', 'UserGetRights: granting "protect" right');
+		wfDebugLog( 'restrictions', 'UserGetRights: granting "protect" right to '.$user->getName()
+				.' (title="'.$wgTitle->getPrefixedDBkey().'")');
 		$aRights[] = 'protect';
-		
-		$to_grant = array_intersect($wgRestrictionsGroups, $user->getEffectiveGroups());
-		
-		foreach ($to_grant as $group) {
-			// add the group to user right
-			// (not very clean, but this is how MediaWiki manage restrictions)
-				wfDebugLog( 'restrictions', 'UserGetRights: granting "'.$group.'" right');
-				$aRights[] = $group;
-		}
-		
-		if ($user->isLoggedIn() && efRestrictionsIsOwner( $wgTitle , $user ) ) {
-				wfDebugLog( 'restrictions', 'UserGetRights: granting "owner" right');
-				$aRights[] = 'owner';
-		}
-		
 		$aRights = array_unique( $aRights );
+		
 	}
-
+	
+	efRestrictionsGrantRestrictionsRights( $wgTitle, $user, $aRights );
+	
 	return true;	// don't stop hook processing
 	
+}
+
+function efRestrictionsGrantRestrictionsRights( $title, $user, &$aRights = null ) {
+	
+	if ($aRights==null) {
+		$aRights = &$user->mRights;
+	} 
+	
+	if ($aRights==null) {
+		wfDebugLog( 'restrictions', 'GrantRestrictionsRights: need to fetch rights by calling getRights()');
+		$user->mRights = null;    // clear current user rights (and clear the "protect" right
+		$user->getRights();
+		$aRights = &$user->mRights;
+	}
+	
+	if ($aRights==null) {
+		wfDebugLog( 'restrictions', 'GrantRestrictionsRights: /!\ $aRights is still null, something goes wrong');
+	}
+	
+	# grant group right if the user is in group
+	# this is not pretty, but this is how MediaWiki manage restrictions (see Title.php->checkPageRestrictions)
+
+	global $wgRestrictionsGroups;
+	$to_grant = array_intersect($wgRestrictionsGroups, $user->getEffectiveGroups());
+	foreach ($to_grant as $group) {
+		// add the group to user right
+		// (not very pretty, but this is how MediaWiki manage restrictions)
+		if (!in_array($group, $aRights)) {
+			wfDebugLog( 'restrictions', 'GrantRestrictionsRights: granting "'.$group.'" right to '
+					.$user->getName());
+			$aRights[] = $group;
+		}
+	}
+
+	if ($user->isLoggedIn() && efRestrictionsIsOwner( $title , $user ) ) {
+
+		# user is owner of the current title
+
+		if (!in_array('owner', $aRights)) {
+			wfDebugLog( 'restrictions', 'GrantRestrictionsRights: granting "owner" right to '
+					.$user->getName().' (title="'.$title->getPrefixedDBkey().'")');
+			$aRights[] = 'owner';
+		}
+
+	} else {
+
+		# user is not owner of the current title
+
+		if(in_array('owner', $aRights)) {
+			wfDebugLog( 'restrictions', 'GrantRestrictionsRights: removing "owner" right to '
+					.$user->getName().' (title="'.$title->getPrefixedDBkey().'")');
+			wfDebugLog( 'restrictions', 'GrantRestrictionsRights: ..rights before: '.implode(',',$aRights));
+			unset($aRights[array_search('owner',$aRights)]); // remove owner
+			wfDebugLog( 'restrictions', 'GrantRestrictionsRights: ..rights after: '.implode(',',$aRights));
+		}
+
+	}
+
 }
 
 
@@ -268,7 +386,7 @@ function efRestrictionsMakeContentAction( $skin, &$cactions ) {
 			&& $wgUser->isAllowed( 'setpermissions' )
 			&& !$wgUser->isAllowed( 'protect' ) ) {
 		$action = $wgRequest->getText( 'action' );
-		$cactions['actions']['setpermissions'] = array(
+		$cactions['actions']['setpermissions'] = array(		
 			'class' => $action == 'setpermissions' ? 'selected' : false,
 			'text' => wfMsg( 'setpermissions' ),
 			'href' => $title->getLocalUrl( 'action=setpermissions' ),
@@ -351,22 +469,15 @@ function efRestrictionsForm( $action, $article ) {
 			// satisfy all current restrictions in order to change at least on of them
 			// (maybe, this behviour can be improved)
 			// (the mediawiki check that the user satisfy all to allow an action... that's it)
-			$stop = false;
 			foreach ($current_restrictions as $current_restriction) {
 				
-				// if we found that the user is not in one of the restrictions, no more need to check others
-				if ($stop)
-					continue; //end prematurely this foreach iteration
-				
-				if ( !efRestrictionsIsUserInGroup($wgUser, $current_restriction) &&
-						( $current_restriction!='owner' || !efRestrictionsIsOwner($title, $wgUser)) )  {
-					// if the user is not in one of the restrictions, we keep the previous restrictions
+				if ( !efRestrictionsCanTheUserSetToThisLevel($wgUser, $title, $current_restriction) )  {
+					
+					// if the user cannot set this restriction, we keep the previous restrictions
 					$new_restrictions[$action] = $current_restrictions;
-					// need no more to test other restrictions for this action
-					$stop = true;
-					continue; //end this foreach iteration
+					
+					break; //end foreach 
 				}
-		
 			}
 		}
 
@@ -380,43 +491,54 @@ function efRestrictionsForm( $action, $article ) {
 		
 		// check what's checked, taking account $wgRestrictionsGroups order 
 		global $wgRestrictionsGroups;
-		$stop_foreach = false;
 		foreach( $wgRestrictionsGroups as $current_level) {
 			
-			// end the iteration if requested
-			// TO DO: change this exit to something prettier if possible
-			if ($stop_foreach)
-				continue;
-			
-			// 'everyone' = ''
+			// convert from BACK-END to FRONT-END: 'everyone' = ''
 			$current_level = ($current_level=='' ? 'everyone' : $current_level);
 			
 			wfDebugLog( 'restrictions', 'Form: get check "'."check-$action-$current_level\""
 					.print_r($wgRequest->getCheck( "check-$action-$current_level" ), true) );
 			
+			// is the checkbox $action/$current_level checked ?
 			if ( $wgRequest->getCheck( "check-$action-$current_level" ) ) {
-				$new_restrictions[$action] = 
-					($current_level=='everyone' ? 
-						'' :
-						$current_level); 
-				// we have found the restriction to apply, so exit foreach
-				$stop_foreach = true; 
+				
+				// convert from FRONT-END to BACK-END
+				$current_level = ( $current_level=='everyone' ? '' : $current_level);
+				
+				// can the user set to this level?
+				if (efRestrictionsCanTheUserSetToThisLevel($wgUser, $title, $current_level) )  {
+
+					// so we can set the restriction to it			
+					$new_restrictions[$action] = $current_level;
+					
+					// we have found the restriction to apply, so exit foreach
+					// (we apply only one restriction, but it chould be possible to apply few ones)
+					break;
+					
+				} else {
+					
+					# the user wanted to restrict the action to a level, in which she is not
+					# what to do? diplay an error message? 
+					# if no code in this block, we will resume checkboxes getting values,
+					# and set to restriction level 'owner' if no one else checked
+					
+				}
 			}
 		}
 
-	}
+	} // END foreach $applicableRestrictionTypes
 
 	// don't cascade the owner restriction, because a subpage may not have the same owner
 	// so casacing won't make sens, and can be very problematic
 	// don't change this unless you know serioulsy what you are doing !!!
 	$cascade = false;
 		
-	//temporary assign protect right, in order to update the restricitons
+	# temporary assign protect right, in order to update the restricitons
 
 	global $wgSetPermissionsDoProtect;
-	$wgSetPermissionsDoProtect = true;  //tells spSetPermissionsAssignDynamicRights to add the "protect" right
-	$wgUser->mRights = null;	    // clear current user rights
-	$wgUser->getRights();		    // force rights reloading
+	$wgSetPermissionsDoProtect = true;  // tells spSetPermissionsAssignDynamicRights to add the "protect" right
+	$wgUser->mRights = null;			// clear current user rights
+	$wgUser->getRights();				// force rights reloading
 	$wgSetPermissionsDoProtect = false;
 
 	wfDebugLog( 'restrictions', "Form: updating restrictions to\n "
@@ -425,7 +547,8 @@ function efRestrictionsForm( $action, $article ) {
 				'reason' => 'MediaWiki extension Restrictions', 
 				'cascade' => $cascade, 
 				'expiry' => $expiration ), true ));
-
+	
+	// update restrictions
 	$success = $article->updateRestrictions(
 		$new_restrictions,				// array of restrictions
 		'Restrictions extension',	// reason
@@ -433,24 +556,34 @@ function efRestrictionsForm( $action, $article ) {
 		$expiration					// expiration
 	);  // note that this article function check that the user has sufficient rights
 
-	// remove temporary assigned protect right
-	$wgUser->mRights = null;    // clear current user rights (and clear the "protect" right
-	$wgUser->getRights();	    // force rights reloading
-	
-	// force reloading restrictions
+	# force reloading page's restrictions
+	wfDebugLog( 'restrictions', 'Form: purge title\'s restrictions then force reload ');
 	$article->getTitle()->mRestrictions = array();
 	$article->getTitle()->mRestrictionsLoaded = false;
 	$article->getTitle()->loadRestrictions();
+	
+	# remove temporary assigned protect right
+	wfDebugLog( 'restrictions', 'Form: purge user\'s rights then force reload');
+	$wgUser->mRights = null;    // clear current user rights (and clear the "protect" right
+	$wgUser->getRights();	    // force rights reloading
 
+	# clear userCan cache (needed because of protect right granted few instants)
+	wfDebugLog( 'restrictions', 'Form: purge userCan cached values (will be reloaded when hit miss)');
+	global $wgRestrictionsUserCan;
+	$wgRestrictionsUserCan = array();
+	
+	// display error/succes message
 	if ( $success ) {
 		$wgOut->addWikiMsg( 'setpermissions-success' );
 	} else {
 		$wgOut->addWikiMsg( 'setpermissions-failure' );
 	}
 	
+	// re-display the setpermissions form with the current restrictions (reloaded above)
 	$wgOut->addHTML( efRestrictionsMakeForm( $article->getTitle() ) );
 	
-	return false; // stop hook processing, and doesn't throw an error message
+	// stop hook processing, and doesn't throw an error message
+	return false;
 
 }
 
@@ -459,9 +592,7 @@ function efRestrictionsMakeForm( $title ) {
 	
 	global $wgUser, $wgRestrictionsGroups;
 	$applicableRestrictionTypes  = $title->getRestrictionTypes(); // this way, do not display create for exsiting page
-	
-	wfDebugLog( 'setpermissions', 'MakeForm(): $title->getRestrictionTypes() = '. implode(',',$applicableRestrictionTypes));
-	
+		
 	$token = $wgUser->editToken();
 	$br = Html::element( 'br' );
 	
@@ -477,9 +608,6 @@ function efRestrictionsMakeForm( $title ) {
 
 		$title_action_restrictions = $title->getRestrictions( $action ); //'sysop', 'owner', ...
 
-		wfDebugLog( 'restrictions', 'Form: current title restriction "'
-				.$action.'" restricted to level(s) "'.implode(',', $title_action_restrictions).'"');
-
 		$form .= '<td>'.Xml::openElement( 'fieldset' );
 		$form .= Xml::element( 'legend', null, wfMsg( "setpermissions-whocan-$action") ) ;
 		
@@ -488,18 +616,10 @@ function efRestrictionsMakeForm( $title ) {
 		// for that case
 		// please review this if you have mutliple restrictions per action per page
 		$stop = false;
-		foreach ( $title_action_restrictions as $one_restriction ) {
-			
-			wfDebugLog( 'restrictions', 'Form: handling "'.$one_restriction.'"');
-			
-			if ($stop)
-				continue; // end foreach iteration
-		
-			$result = true;
+		foreach ( $title_action_restrictions as $current_restriction ) {
 			
 			// if restricted to a level that the user can't set, display only a message
-			if (!efRestrictionsIsUserInGroup($wgUser, $one_restriction) &&
-					( $one_restriction!='owner' || !efRestrictionsIsOwner($title, $wgUser))) {
+			if (!efRestrictionsCanTheUserSetToThisLevel($wgUser, $title, $current_restriction)) {
 				
 				$form .=  wfMsg( "restriction-level-$title_action_restrictions[0]" ).' ('.$title_action_restrictions[0].')';
 				$form .= Xml::closeElement( 'fieldset' ) .'</td>';
@@ -507,11 +627,12 @@ function efRestrictionsMakeForm( $title ) {
 				// restrictions are inclusive (see Title.php>checkPageRestrictions()
 				// so no more iteration needed
 				$stop = true; 
+				break;
 			}
 			
 		}
 		
-		// if the user cannot change a restriction, we prematurely this iteration
+		// if the user cannot change a restriction, we prematurely end this iteration
 		// because we cannot add any checkboxe for that action
 		if ($stop)
 			continue; // end foreach iteration
@@ -519,16 +640,27 @@ function efRestrictionsMakeForm( $title ) {
 		# the next lines display checkboxes and eventually check them
 
 		foreach( $wgRestrictionsGroups as $current_level) {
+			
+			// if the level is not selectable, do not display the checkboxe
+			if (!efRestrictionsCanTheUserSetToThisLevel($wgUser, $title, $current_level)) { 
+				continue; // end foreach iteration
+			}
+			
 			$checked = ( ($current_level=='' && $title_action_restrictions===array()) ?
-							true	// everyone is checked by default
-							: in_array( $current_level, $title_action_restrictions ) ); 
-			$current_level = $current_level=='' ? 'everyone' : $current_level;
+					// everyone is checked if there is currently no restrictions
+					true	
+					// else, check if there is a restriction to this level
+					: in_array( $current_level, $title_action_restrictions ) ); 
+			
+			// convert from BACK-END to FRONT-END
+			$current_level = ( $current_level=='' ? 'everyone' : $current_level);
+			
 			$form .= Xml::checkLabel( 
 					wfMsg( "setpermissions-$current_level" ), 
 					"check-$action-$current_level", 
 					"check-$action-$current_level", 
 					$checked ) . $br;
-			$check_next = $checked;
+
 		}
 		
 		// we arrive here if user can change the permissions
@@ -543,4 +675,17 @@ function efRestrictionsMakeForm( $title ) {
 	$form .= $br . Xml::submitButton( wfMessage( 'setpermissions-confirm' ) );
 	$form .= Xml::closeElement( 'form' );
 	return $form;
+}
+
+
+function efRestrictionsCanTheUserSetToThisLevel($user, $title, $level) {
+			
+	return ( 
+			//    user in group
+			efRestrictionsIsUserInGroup($user, $level) 
+			// OR level everyone
+			|| $level == ''	
+			// OR ( level is owner AND user is the owner of the title )
+			|| ( $level=='owner' && efRestrictionsIsOwner($title, $user) ) ) ;
+			
 }
