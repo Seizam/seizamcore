@@ -14,7 +14,6 @@ $messages = array();
 $messages['en'] = array(
 	'electronicpayment'=>'Electronic Payment',
 	'electronicpayment-desc'=>'Virtual Electronic Payment Terminal for Seizam',
-        'eptback' => 'EPTBack',
         'ep-action' => 'Please click on the button below to reach our bank (CIC) secure electronic payment interface. Transaction amount: \'\'\'$1\'\'\'',
         'ep-fail' => 'The transaction failed. Sorry.',
         'ep-success' => 'The transaction succeeded. \o/',

@@ -4,4 +4,4 @@
 
 # Example LocalSettings.php additions
 
-require_once( "$IP/extensions/SeizamVEPT/SeizamVEPT.php" );
+require_once( "$IP/extensions/ElectronicPayment/ElectronicPayment.php" );

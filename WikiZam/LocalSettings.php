@@ -270,3 +270,6 @@ $wgDefaultUserOptions['wikieditor-preview'] = 1;
 
 # Enable subpages in the main namespace
 $wgNamespacesWithSubpages[NS_MAIN] = true;
+
+# Transaction Manager
+require_once( "$IP/extensions/TransactionManager/TransactionManager.php" );

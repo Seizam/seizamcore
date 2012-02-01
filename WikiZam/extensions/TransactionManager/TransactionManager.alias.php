@@ -10,10 +10,10 @@ $specialPageAliases = array();
 
 /** English (English) */
 $specialPageAliases['en'] = array(
-	'ElectronicPayment' => array( 'Electronic Payment' ),
+	'TransactionManager' => array( 'TransactionManager' ),
 );
 
 /** French (Français) */
 $specialPageAliases['fr'] = array(
-	'ElectronicPayment' => array( 'Paiement Électronique' ),
+	'TransactionManager' => array( 'GestionnaireDeTransaction' ),
 );

@@ -11,7 +11,6 @@
  * @license GPL v2 or later
  * @version 0.1.0
  */
-
 if (!defined('MEDIAWIKI')) {
     die(-1);
 }
@@ -19,10 +18,10 @@ if (!defined('MEDIAWIKI')) {
 /* Setup */
 $wgExtensionCredits['specialpage'][] = array(
     'path' => __FILE__,
-    'name' => 'ElectronicPayment',
+    'name' => 'Electronic Payment',
     'author' => array('Clément Dietschy', 'Seizam Sàrl.'),
     'version' => '0.1.0',
-    'url' => 'http:#www.seizam.com/',
+    'url' => 'http://www.seizam.com/',
     'descriptionmsg' => 'electronicpayment-desc',
 );
 
@@ -60,7 +59,6 @@ require_once($dir . 'ElectronicPayment.config.php');
 require_once($dir . 'CMCIC_Tpe.inc.php');
 
 Class EPMessage {
-
 #Required Params
 
     public $epm = array(
@@ -69,7 +67,6 @@ Class EPMessage {
         'epm_type' => '', # varchar(4) NOT NULL COMMENT 'Type of message (INcoming, OUTcoming)',
         'epm_date' => '', # datetime NOT NULL COMMENT 'DateTime',
         'epm_user_id' => '', # int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Foreign key to user.user_id',
-        
         # Params related to Order
         'epm_o_ept' => '', # int(8) unsigned NOT NULL DEFAULT '0' COMMENT 'EPT id',
         'epm_o_date' => '', # datetime NOT NULL COMMENT 'Order DateTime',
@@ -80,11 +77,9 @@ Class EPMessage {
         'epm_o_language' => '', # varchar(2) NOT NULL DEFAULT 'EN' COMMENT 'Order Language',
         'epm_o_mac' => '', # varchar(40) NOT NULL COMMENT 'Order Verification Sum',
         'epm_o_ip' => '', # tinyblob NOT NULL COMMENT 'Ordering user''s IP'
-        
         # Optional Params
         'epm_o_free_text' => '', # mediumblob COMMENT 'Order Free Text',
         'epm_o_options' => '', # mediumblob COMMENT 'Order Options',
-        
         # Inbound Params
         'epm_o_return_code' => '', # varchar(16) DEFAULT NULL COMMENT 'Order Return Code',
         'epm_o_cvx' => '', # varchar(3) DEFAULT NULL COMMENT 'Order CVX',
@@ -100,7 +95,8 @@ Class EPMessage {
         'epm_o_veres' => '', # varchar(1) DEFAULT NULL COMMENT 'State of 3DSecure VERes',
         'epm_o_pares' => '', # varchar(1) DEFAULT NULL COMMENT 'State of 3DSecure PARes',
         'epm_o_filtercause' => '', # blob DEFAULT NULL COMMENT 'Filter return array'
-        'epm_o_filtervalue' => ''); # blob DEFAULT NULL COMMENT 'Filter return array values',
+        'epm_o_filtervalue' => '' # blob DEFAULT NULL COMMENT 'Filter return array values',
+    );
 
 
     # The VEPT
@@ -113,7 +109,7 @@ Class EPMessage {
     public $tmp_o_date_bank_format;
     # String containing all fields hashed for validation
     public $epm_o_validating_fields;
-    
+
     # Debug/Dev
     public $CtlHmac;
 
@@ -133,8 +129,9 @@ Class EPMessage {
                 $this->__constructFromDB();
         }
     }
-    
+
     # Constructs Incoming EPMessage. ie: The bank is confirming an order to us (Special:ElectronicPayment&action=EPTBack)
+
     private function __constructIncoming() {
         global $wgUser, $wgRequest;
 
@@ -145,24 +142,24 @@ Class EPMessage {
         $this->epm['epm_type'] = 'in';
         $this->epm['epm_date'] = date("Y-m-d:H:i:s");
         $this->epm['epm_user_id'] = $this->valueFromFreeText('user');
-        
+
         # Order related fields
         $this->epm['epm_o_ept'] = $wgRequest->getText('TPE');
         $this->tmp_o_date_bank_format = $wgRequest->getText('date');
         $this->epm['epm_o_date'] = $this->bankStringToMySqlTime($this->tmp_o_date_bank_format);
         $this->epm['epm_o_reference'] = $wgRequest->getText('reference');
-        
+
         # Money Issues
         $this->ReadAmountAndCurrencyFromString($wgRequest->getText('montant'));
-        
+
         # User related data
         $this->epm['epm_o_mail'] = $this->valueFromFreeText('mail');
         $this->epm['epm_o_language'] = $this->valueFromFreeText('lang');
         $this->epm['epm_o_ip'] = $wgRequest->getText('ipclient');
-        
+
         # Order Validation
         $this->epm['epm_o_mac'] = strtolower($wgRequest->getText('MAC'));
-        
+
         # Order Confirmation
         $this->epm['epm_o_return_code'] = $wgRequest->getText('code-retour');
         $this->epm['epm_o_cvx'] = $wgRequest->getText('cvx');
@@ -182,7 +179,7 @@ Class EPMessage {
 
         # Instanciate VEPT class (Code provided by bank in CMCIC_Tpe.inc.php)
         $this->oTpe = new CMCIC_Tpe();
-        
+
         # Instanciate HMAC class (Code provided by bank in CMCIC_Tpe.inc.php)
         $this->oHmac = new CMCIC_Hmac($this->oTpe);
 
@@ -204,33 +201,30 @@ Class EPMessage {
     }
 
     # Constructs OutGoing EPMessage. ie: We are sending user to bank payment interface  (Special:ElectronicPayment&action=attempt)
+
     private function __constructOutgoing() {
         global $wgUser, $wgRequest;
 
         # Here we set all the fields we can. Look in variable declaration for fields meaning
-        
         # Msg related fields
         $this->epm['epm_type'] = 'out';
         $this->epm['epm_date'] = date("Y-m-d:H:i:s");
         $this->epm['epm_user_id'] = $wgUser->getId(); # =0 if anonymous
-        
         # Order related fields
         $this->epm['epm_o_ept'] = CMCIC_TPE; # not necessary but who knows how much VEPT could be used.
         $this->epm['epm_o_date'] = $this->epm['epm_date']; # Outgoing order time is creation time.
         $this->tmp_o_date_bank_format = $this->mySqlStringToBankTime($this->epm['epm_o_date']); # bank wants a special format for date
-        
         # Money issues
         $this->epm['epm_o_amount'] = $wgRequest->getText('wpamount'); #How much? @TODO: Validate
         $this->epm['epm_o_currency'] = $wgRequest->getText('wpcurrency'); #Of what? @TODO: Validate
         # Default currency if not submitted.
         if ($this->epm['epm_o_currency'] == '')
             $this->epm['epm_o_currency'] = 'EUR';
-        
+
         # User related data
         $this->epm['epm_o_mail'] = $wgRequest->getText('wpmail'); # $wgUser->getEmail();#@TODO:Fix for anonymous.
         $this->epm['epm_o_language'] = $this->assignEPTLanguage(); #Sets the interface language
         $this->epm['epm_o_ip'] = IP::sanitizeIP(wfGetIP()); #Saves user's IP.
-
         # This free text is coming back (Incoming), we use it to store data we want available at all time & everywhere.
         # Example: Easily retrieve User ID even if msg has been lost somewhere.
         $this->epm['epm_o_free_text'] = '(user: <' . $this->epm['epm_user_id'] . '> ip: <' . $this->epm['epm_o_ip'] . '> mail: <' . $this->epm['epm_o_mail'] . '> lang: <' . $this->epm['epm_o_language'] . '>)';
@@ -240,7 +234,7 @@ Class EPMessage {
 
         # Instanciate VEPT class (Code provided by bank in CMCIC_Tpe.inc.php)
         $this->oTpe = new CMCIC_Tpe($this->epm['epm_o_language']);
-        
+
         # Instanciate HMAC class (Code provided by bank in CMCIC_Tpe.inc.php)
         $this->oHmac = new CMCIC_Hmac($this->oTpe);
 
@@ -255,6 +249,7 @@ Class EPMessage {
     }
 
     # Constructor for reading DB. Sysadmin Only.
+
     private function __constructFromDB() {
         global $wgRequest, $wgUser, $wgOut;
         if ($wgUser->isAllowed('epadmin')) {
@@ -267,6 +262,7 @@ Class EPMessage {
     }
 
     # Pick a language for the external payment interface (FR EN DE IT ES NL PT SV availabe) (EN default)
+
     private function assignEPTLanguage() {
         global $wgLang;
         if ($wgLang->getCode() == 'fr')
@@ -277,11 +273,13 @@ Class EPMessage {
 
     #!\\ Careful with collisions (assign when writing, not before);
     # Reference: unique, alphaNum (A-Z a-z 0-9), 12 characters max
+
     private function assignNewOrderReference() {
         return date("His");
     }
 
     # Calculate the control sum for order validation.
+
     private function calculateMAC() {
         #Structure of String to hash changes between outgoing & incoming
         if ($this->epm['epm_type'] == 'out') {
@@ -297,18 +295,21 @@ Class EPMessage {
     }
 
     # Record current object to DB.
+
     private function writeDB() {
         $dbw = wfGetDB(DB_MASTER);
         return $dbw->insert('ep_message', $this->epm);
     }
 
     # Set current object from DB.
+
     private function readDB() {
         $dbr = wfGetDB(DB_SLAVE);
         $this->epm = $dbr->selectRow('ep_message', '*', 'epm_id = ' . $this->epm['epm_id']);
     }
 
     # Takes $time like 'dd/mm/YYYY_a_HH:ii:ss' and outputs 'YYYY-mm-dd:HH:ii:ss'.
+
     private function bankStringToMySqlTime($time) {
         $matches = array();
         $pattern = "/^(?P<d>[0-9]{2})\/(?P<m>[0-9]{2})\/(?P<Y>[0-9]{4})_a_(?P<H>[0-9]{2}):(?P<i>[0-9]{2}):(?P<s>[0-9]{2})$/";
@@ -319,6 +320,7 @@ Class EPMessage {
     }
 
     # Takes $time like 'YYYY-mm-dd:HH:ii:ss' and outputs 'dd/mm/YYYY:HH:ii:ss'.
+
     public function mySqlStringToBankTime($time) {
         $matches = array();
         $pattern = "/^(?P<Y>[0-9]{4})-(?P<m>[0-9]{2})-(?P<d>[0-9]{2}):(?P<H>[0-9]{2}):(?P<i>[0-9]{2}):(?P<s>[0-9]{2})$/";
@@ -329,6 +331,7 @@ Class EPMessage {
     }
 
     # Reads $input like '1234.5678EUR' and puts 1234.5678 into epm_o_amount and EUR into epm_o_currency.
+
     private function ReadAmountAndCurrencyFromString($input) {
         $matches = array();
         $pattern = "/^(?P<A>[0-9\.]+)(?P<C>[A-Z]{3})$/";
@@ -342,6 +345,7 @@ Class EPMessage {
     # Extract 'value' corresponding to $key in epm_o_free_text.
     # Ex: $this->epm['epm_o_free_text'] = '(user: <1> ip: <127.0.0.1> mail: <contact@seizam.com>  lang: <EU>)'
     # valueFromFreeText('ip') returns 127.0.0.1
+
     private function valueFromFreeText($key) {
         $matches = array();
         $pattern = "/" . $key . ": <([\d\D]*?)>/";
@@ -352,6 +356,7 @@ Class EPMessage {
     }
 
     # That's the place where magic happens.
+
     private function reactToReturnCode() {
         switch ($this->epm['epm_o_return_code']) {
             case "Annulation":
