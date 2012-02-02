@@ -1,7 +1,0 @@
-# SeizamACL provides Access Control Functionalities to MediaWiki. Inspired from HaloACL
-
-# This extension requires MediaWiki 1.17+ because it makes use of ResourceLoader.
-
-# Example LocalSettings.php additions
-
-require_once( "$IP/extensions/SeizamACL/SeizamACL.php" );
