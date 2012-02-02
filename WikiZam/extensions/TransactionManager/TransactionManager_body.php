@@ -75,6 +75,7 @@ class SpecialTransactionManager extends SpecialPage {
     public function getBalanceFromDB() {
         global $wgUser;
         $dbr = wfGetDB(DB_SLAVE);
+        # @TODO: Remove TE(st) from conditions. Otherwise we count virtual money...
         $result = $dbr->select('tm_record', 'SUM(tmr_amount) AS balance', array('tmr_user_id' => $wgUser->getId(), 'tmr_status'=>array('OK','TE')));
         return $result->current()->balance;
     }
