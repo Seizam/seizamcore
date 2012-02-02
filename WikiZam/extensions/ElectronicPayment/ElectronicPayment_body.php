@@ -153,8 +153,8 @@ class SpecialElectronicPayment extends SpecialPage {
             'mail' => array(
                 'label-message' => 'youremail',
                 'type' => 'email',
-                'required' => 'true',
-                'validation-callback' => array('SpecialElectronicPayment', 'validateEmail')
+                'validation-callback' => array('SpecialElectronicPayment', 'validateEmail'),
+                'required' => 'true'
             )
         );
 
@@ -164,7 +164,7 @@ class SpecialElectronicPayment extends SpecialPage {
             $formDescriptor['mail']['disabled'] = true;
         }
 
-        
+
         $htmlForm = new HTMLForm($formDescriptor, 'ep-fd');
         $htmlForm->setSubmitText(wfMsg('next'));
         $htmlForm->setTitle(SpecialPage::getTitleFor('ElectronicPayment'));
@@ -186,11 +186,13 @@ class SpecialElectronicPayment extends SpecialPage {
     static function validateEmail($email, $alldata) {
         if ($email && !Sanitizer::validateEmail($email)) {
             return wfMsgExt('invalidemailaddress', 'parseinline');
+        } else if ($email == '') {
+            return wfMsgExt('htmlform-required', 'parseinline');
         }
         return true;
     }
 
-    # Just a array print fonction
+    # Just an array print fonction
 
     static function sayIt($in) {
         global $wgOut;

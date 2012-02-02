@@ -26,4 +26,11 @@ class TransactionManagerHooks {
                 dirname( __FILE__ ) . '/schema/mysql/tm_record.sql', true ) );
         return true;
         }
+        
+        
+        public static function beforeTransactionSave(&$record){
+            $tmr = new TMRecord($record);
+            $record = $tmr->tmr;
+            return false;
+        }
 }

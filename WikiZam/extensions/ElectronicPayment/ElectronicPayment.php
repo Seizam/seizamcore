@@ -72,7 +72,7 @@ Class EPMessage {
         'epm_o_date' => '', # datetime NOT NULL COMMENT 'Order DateTime',
         'epm_o_amount' => '', # decimal(9,2) NOT NULL COMMENT 'Order Amount',
         'epm_o_currency' => '', # varchar(3) NOT NULL DEFAULT 'EUR' COMMENT 'Order Amount',
-        'epm_o_reference' => '', # int(12) unsigned NOT NULL COMMENT 'Oder Reference',
+        'epm_o_reference' => '', # int(10) unsigned NOT NULL COMMENT 'Oder Reference',
         'epm_o_mail' => '', # tinyblob NOT NULL COMMENT 'Ordering User''s Mail',
         'epm_o_language' => '', # varchar(2) NOT NULL DEFAULT 'EN' COMMENT 'Order Language',
         'epm_o_mac' => '', # varchar(40) NOT NULL COMMENT 'Order Verification Sum',
@@ -188,16 +188,19 @@ Class EPMessage {
 
         # Now that we know everything, we can calculate the control sum for order validation
         if ($this->epm['epm_o_mac'] == $this->calculateMAC()) {
-            $this->tmp_o_receipt = CMCIC_CGI2_MACOK;
-        } else {
-            $this->tmp_o_receipt = CMCIC_CGI2_MACNOTOK . $this->epm_o_validating_fields;
-        }
-
+        $this->tmp_o_receipt = CMCIC_CGI2_MACOK;
         #Do what needs to be done regarding order success status
         $this->reactToReturnCode();
 
         #Finally, save the message
         $this->writeDB();
+
+        return true;
+
+        } else { # That's not a valid request! @TODO: Write in error Log
+        $this->tmp_o_receipt = CMCIC_CGI2_MACNOTOK . $this->epm_o_validating_fields;
+        return false;
+        }
     }
 
     # Constructs OutGoing EPMessage. ie: We are sending user to bank payment interface  (Special:ElectronicPayment&action=attempt)
@@ -230,7 +233,7 @@ Class EPMessage {
         $this->epm['epm_o_free_text'] = '(user: <' . $this->epm['epm_user_id'] . '> ip: <' . $this->epm['epm_o_ip'] . '> mail: <' . $this->epm['epm_o_mail'] . '> lang: <' . $this->epm['epm_o_language'] . '>)';
 
         # Now that the required params are set, the entry can be saved and an Order Reference assigned
-        $this->epm['epm_o_reference'] = $this->assignNewOrderReference();
+        $this->assignNewOrderReference();
 
         # Instanciate VEPT class (Code provided by bank in CMCIC_Tpe.inc.php)
         $this->oTpe = new CMCIC_Tpe($this->epm['epm_o_language']);
@@ -271,11 +274,38 @@ Class EPMessage {
             return 'EN';
     }
 
-    #!\\ Careful with collisions (assign when writing, not before);
-    # Reference: unique, alphaNum (A-Z a-z 0-9), 12 characters max
+    # Assign unique refrence;
+    # Reference: unique, int(12)
 
     private function assignNewOrderReference() {
-        return date("His");
+        # Construct Record For Transaction Manager
+        $record = array(
+            'tmr_type' => 'payment', # varchar(8) NOT NULL COMMENT 'Type of message (Payment, Sale, Plan)',
+            'tmr_date_created' => $this->epm['epm_date'], # datetime NOT NULL COMMENT 'DateTime of creation',
+            # Paramas related to User
+            'tmr_user_id' => $this->epm['epm_user_id'], # int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Foreign key to user.user_id',
+            'tmr_mail' => $this->epm['epm_o_mail'], # tinyblob COMMENT 'User''s Mail',
+            'tmr_ip' => $this->epm['epm_o_ip'], # tinyblob COMMENT 'User''s IP'
+            # Params related to Record
+            'tmr_amount' => $this->epm['epm_o_amount'], # decimal(9,2) NOT NULL COMMENT 'Record Amount',
+            'tmr_currency' => $this->epm['epm_o_currency'], # varchar(3) NOT NULL DEFAULT 'EUR' COMMENT 'Record Currency',
+            'tmr_desc' => 'ep-tm-attempt', # varchar(64) NOT NULL COMMENT 'Record Description',
+            'tmr_status' => 'PE' # varchar(2) NOT NULL COMMENT 'Record status (OK, KO, PEnding)',
+        );
+
+        # Send to Transaction Manager and fetch assigned reference.
+        if (!wfRunHooks('BeforeTransactionSave', array(&$record)) && $record['tmr_id'] != '') {
+            $this->epm['epm_o_reference'] = $record['tmr_id'];
+        } else
+            $this->assignNewOrderReferenceFailSafe();
+    }
+
+    # Assign "unique" reference randomly;
+    # Reference: unique, int(12)
+    # @TODO: Check if reference is free.
+
+    private function assignNewOrderReferenceFailSafe() {
+        $this->epm['epm_o_reference'] = 4000000000 + rand(0, 290000000);
     }
 
     # Calculate the control sum for order validation.
@@ -298,7 +328,10 @@ Class EPMessage {
 
     private function writeDB() {
         $dbw = wfGetDB(DB_MASTER);
-        return $dbw->insert('ep_message', $this->epm);
+        $this->tmr['epm_id'] = $dbw->nextSequenceValue('ep_message_epm_id_seq');
+        $return = $dbw->insert('ep_message', $this->epm);
+        $this->tmr['epm_id'] = $dbw->insertId();
+        return $return;
     }
 
     # Set current object from DB.
@@ -358,16 +391,39 @@ Class EPMessage {
     # That's the place where magic happens.
 
     private function reactToReturnCode() {
+        # Construct Record For Transaction Manager
+        $record = array(
+            # Params related to Record
+            'tmr_id' => $this->epm['epm_o_reference'], #int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Primary key'
+        );
         switch ($this->epm['epm_o_return_code']) {
             case "Annulation":
+                $record['tmr_desc'] = 'ep-tm-fail'; # varchar(64) NOT NULL COMMENT 'Record Description',
+                $record['tmr_status'] = 'KO'; # varchar(2) NOT NULL COMMENT 'Record status (OK, KO, PEnding)',
                 break;
 
             case "payetest":
+                $record['tmr_desc'] = 'ep-tm-test'; # varchar(64) NOT NULL COMMENT 'Record Description',
+                $record['tmr_status'] = 'TE'; # varchar(2) NOT NULL COMMENT 'Record status (OK, KO, PEnding)',
                 break;
 
             case "paiement":
+                $record['tmr_desc'] = 'ep-tm-success'; # varchar(64) NOT NULL COMMENT 'Record Description',
+                $record['tmr_status'] = 'OK'; # varchar(2) NOT NULL COMMENT 'Record status (OK, KO, PEnding)',
                 break;
         }
+        
+        # Send to Transaction Manager for update.
+        return !wfRunHooks('BeforeTransactionSave', array(&$record));
+
+        
+    }
+
+    static function sayIt($in) {
+        global $wgOut;
+        $wgOut->addHTML('<pre>');
+        $wgOut->addHTML(print_r($in, true));
+        $wgOut->addHTML('</pre>');
     }
 
 }

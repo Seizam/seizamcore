@@ -51,24 +51,12 @@ class SpecialTransactionManager extends SpecialPage {
 
         $this->setHeaders();
         $wgOut->addWikiText(wfMsg('tm-desc'));
-        self::sayIt($wgRequest);
+        //self::sayIt($wgRequest);
         
-        $input = array(
-        # Params related to Message
-        'tmr_type' => $wgRequest->getText('type'), # varchar(8) NOT NULL COMMENT 'Type of message (Payment, Sale, Plan)',
-        # Params related to Record
-        'tmr_amount' => $wgRequest->getText('amount'), # decimal(9,2) NOT NULL COMMENT 'Record Amount',
-        'tmr_desc' => 'Test Special:', # varchar(64) COMMENT 'Record Desc',
-        );
+        $wgOut->addWikiText('BALANCE= '.$this->getBalanceFromDB().'€');
         
-        self::sayIt($input);
-        
-        $tmr = new TMRecord($input);
-
-        
-        self::sayIt($tmr);
-        
-        
+        foreach($this->readUserRecordsfromDB() as $record)
+            self::sayIt($record);
     }
     
     static function sayIt($in) {
@@ -76,6 +64,19 @@ class SpecialTransactionManager extends SpecialPage {
         $wgOut->addHTML('<pre>');
         $wgOut->addHTML(print_r($in, true));
         $wgOut->addHTML('</pre>');
+    }
+    
+    public function readUserRecordsfromDB() {
+        global $wgUser;
+        $dbr = wfGetDB(DB_SLAVE);
+        return $dbr->select('tm_record', '*', array('tmr_user_id' => $wgUser->getId()));
+    }
+    
+    public function getBalanceFromDB() {
+        global $wgUser;
+        $dbr = wfGetDB(DB_SLAVE);
+        $result = $dbr->select('tm_record', 'SUM(tmr_amount) AS balance', array('tmr_user_id' => $wgUser->getId(), 'tmr_status'=>'OK'));
+        return $result->current()->balance;
     }
 
 }

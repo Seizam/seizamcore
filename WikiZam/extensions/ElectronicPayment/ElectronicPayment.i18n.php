@@ -18,9 +18,11 @@ $messages['en'] = array(
         'ep-fail' => 'The transaction failed. Sorry.',
         'ep-success' => 'The transaction succeeded. \o/',
         'ep-connect' => 'Connect',
-        'ep-fd-amountlabel' => 'Amount in Euros (€)'
-        
-    
+        'ep-fd-amountlabel' => 'Amount in Euros (€)',
+        'ep-tm-attempt' => 'Bank Card Payment Attempt',
+        'ep-tm-fail' => 'Failed Bank Card Payment',
+        'ep-tm-test' => 'Bank Card Payment Test',
+        'ep-tm-success' => 'Bank Card Payment'
 );
 
 /** Message documentation (Message documentation)
@@ -40,5 +42,9 @@ $messages['fr'] = array(
         'ep-fail' => 'La transaction est ratée. Désolé.',
         'ep-success' => 'La transaction est réussie. \o/',
         'ep-connect' => 'Connexion',
-        'ep-fd-amountlabel' => 'Montant en Euros (€)'
+        'ep-fd-amountlabel' => 'Montant en Euros (€)',
+        'ep-tm-attempt' => 'Tentative de paiement par carte bancaire',
+        'ep-tm-fail' => 'Paiement par carte bancaire échoué',
+        'ep-tm-test' => 'Test de paiement par carte bancaire',
+        'ep-tm-success' => 'Paiement par carte bancaire'
 );

@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS `ep_message` (
   `epm_o_date` datetime NOT NULL COMMENT 'Order DateTime',
   `epm_o_amount` decimal(9,2) unsigned NOT NULL COMMENT 'Order Amount',
   `epm_o_currency` varchar(3) NOT NULL DEFAULT 'EUR',
-  `epm_o_reference` int(12) unsigned NOT NULL COMMENT 'Oder Reference',
+  `epm_o_reference` int(10) unsigned NOT NULL COMMENT 'Oder Reference',
   `epm_o_free_text` mediumblob COMMENT 'Order Free Text',
   `epm_o_mail` tinyblob NOT NULL COMMENT 'Ordering User''s Mail',
   `epm_o_language` varchar(2) NOT NULL DEFAULT 'EN' COMMENT 'Order Language',
