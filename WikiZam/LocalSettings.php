@@ -185,10 +185,6 @@ require_once( "$IP/extensions/Polyglot/Polyglot.php" );
 $wfPolyglotFollowRedirects = true;
 
 
-# SeizamACL (Access Control Lists Extension for Seizam)
-require_once( "$IP/extensions/SeizamACL/SeizamACL.php" );
-
-
 # Google Analytics
 require_once( "$IP/extensions/googleAnalytics/googleAnalytics.php" );
 $wgGoogleAnalyticsAccount = "UA-25393782-2";
@@ -252,6 +248,8 @@ require_once( "$IP/extensions/Restrictions/Restrictions.php" );
 // available restriction level/group via SetPermissions form
 // ($wgRestrictionLevels will be updated in order for theses level to be accessed via protect
 $wgRestrictionsGroups = array( '', 'user', 'artist', 'owner' );
+// remove the 'move' restriction
+unset($wgRestrictionTypes[array_search('move', $wgRestrictionTypes)]);
 // everyone can edit, even anons, but, there can be per-page restrctions
 // by default 'user' is allowed to edit, even if '*' is not.
 $wgGroupPermissions['*']['edit'] = true; 
@@ -278,3 +276,7 @@ $wgNamespacesWithSubpages[NS_MAIN] = true;
 
 # Transaction Manager
 require_once( "$IP/extensions/TransactionManager/TransactionManager.php" );
+
+
+// FEEDS
+$wgAdvertisedFeedTypes = array( 'rss', 'atom' );
