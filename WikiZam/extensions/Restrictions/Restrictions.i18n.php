@@ -18,6 +18,8 @@ $messages['en'] = array(
 	'setrestrictions-success'		=> 'Restrictions update successful!',
 	'setrestrictions-failure'		=> 'We were unable to update the restrictions.',
 	
+	'setrestrictions-locked'		=> 'Restrictions are locked for this page',
+	
     'setrestrictions-intro'			=> 'Use this form to set this pages\'s accessibilty from others',
     
 	'setrestrictions-notowner'		=> 'This page does\'nt belong to you.',
