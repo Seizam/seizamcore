@@ -27,11 +27,11 @@ if (!defined('MEDIAWIKI')) {
  * SkinTemplate class for Vector skin
  * @ingroup Skins
  */
-class SkinSeizam extends SkinTemplate {
+class SkinSkinzam extends SkinTemplate {
     /* Functions */
 
-    var $skinname = 'seizam', $stylename = 'seizam',
-    $template = 'SeizamTemplate', $useHeadElement = true;
+    var $skinname = 'skinzam', $stylename = 'skinzam',
+    $template = 'SkinzamTemplate', $useHeadElement = true;
 
     /**
      * Initializes output page and sets up skin-specific parameters
@@ -61,7 +61,7 @@ class SkinSeizam extends SkinTemplate {
      */
     function setupSkinUserCss(OutputPage $out) {
         parent::setupSkinUserCss($out);
-        $out->addModuleStyles('skins.seizam');
+        $out->addModuleStyles('skins.skinzam');
     }
 
     /**
@@ -329,7 +329,7 @@ class SkinSeizam extends SkinTemplate {
  * QuickTemplate class for Vector skin
  * @ingroup Skins
  */
-class SeizamTemplate extends QuickTemplate {
+class SkinzamTemplate extends QuickTemplate {
     /* Members */
 
     /**
@@ -475,31 +475,6 @@ class SeizamTemplate extends QuickTemplate {
         <!-- /container -->
         <!-- bottomScripts -->
         <?php $this->html('bottomscripts'); /* JS call to runBodyOnloadHook */ ?>
-        <script type="text/javascript">
-            addOnloadHook(function() { 
-                var i = 1;
-                while ( true ) {
-                    var btn = document.getElementById("languageselector-commit-"+i);
-                    var sel = document.getElementById("languageselector-select-"+i);
-                    var idx = i;
-
-                    if (!btn) break;
-
-                    btn.style.display = "none";
-                    sel.onchange = function() {
-                        node = this.parentNode;
-                        while( true ) {
-                            if( node.tagName.toLowerCase() == "form" ) {
-                                node.submit();
-                                break;
-                            }
-                            node = node.parentNode;
-                        }
-                    };
-
-                    i++;
-                }
-            });</script>
         <!-- /bottomScripts -->
         <?php $this->html('reporttime') ?>
         <?php if ($this->data['debug']): ?>

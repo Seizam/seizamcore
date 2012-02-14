@@ -1,7 +1,0 @@
-# Seizam provides elements to the Seizam skin. It is Based on the Vector Extension.
-
-# This extension requires MediaWiki 1.17+ because it makes use of ResourceLoader.
-
-# Example LocalSettings.php additions
-
-require_once( "$IP/extensions/Seizam/Seizam.php" );

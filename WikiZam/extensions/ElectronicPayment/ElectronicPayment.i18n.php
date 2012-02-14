@@ -22,7 +22,9 @@ $messages['en'] = array(
         'ep-tm-attempt' => 'Bank Card Payment Attempt',
         'ep-tm-fail' => 'Failed Bank Card Payment',
         'ep-tm-test' => 'Bank Card Payment Test',
-        'ep-tm-success' => 'Bank Card Payment'
+        'ep-tm-success' => 'Bank Card Payment',
+        'ep-help-amount' => 'Type here the amount of your order. (Format: 12.34)',
+        'ep-help-mail' => 'Type here your email adress where confirmation will be sent'
 );
 
 /** Message documentation (Message documentation)
@@ -46,5 +48,8 @@ $messages['fr'] = array(
         'ep-tm-attempt' => 'Tentative de paiement par carte bancaire',
         'ep-tm-fail' => 'Paiement par carte bancaire échoué',
         'ep-tm-test' => 'Test de paiement par carte bancaire',
-        'ep-tm-success' => 'Paiement par carte bancaire'
+        'ep-tm-success' => 'Paiement par carte bancaire',
+        'ep-help-amount' => 'Tappez ici le montant de votre commande. (Format: 12.34)',
+        'ep-help-mail' => 'Tappez ici votre adresse email où la confirmation sera envoyée'
+    
 );

@@ -238,18 +238,30 @@ a {
 .block {
     margin:24px 0;
     padding-bottom: 6px;
-    background: transparent url(images/sh_block_full.png) center bottom no-repeat;
+    /* @embed */
+    background-image: url(images/sh_block_full.png);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center bottom;
 }
 
 .block .inside {
     clear: left;
     padding: 18px 20px 18px 20px;
     border: 1px solid #d8d7d7;
-    background:#fcfcfc url(images/sh_block_full_in.png) center bottom no-repeat;
+    /* @embed */
+    background-image: url(images/sh_block_full_in.png);
+    background-color: #fcfcfc;
+    background-repeat: no-repeat;
+    background-position: center bottom;
     overflow:hidden;
 }
 #header.block {
-    background: transparent url(images/sh_block_header.png) center bottom no-repeat;
+    /* @embed */
+    background-image: url(images/sh_block_header.png);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center bottom;
 }
 
 /* block with no 3D effect on bottom */
@@ -492,7 +504,11 @@ a {
 .block_medium {
     float: left;
     width: 558px;
-    background: transparent url(images/sh_block_medium.png) center bottom no-repeat;
+    /* @embed */
+    background-image: url(images/sh_block_medium.png);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center bottom;
 }
 
 .block_half {	/* no 3D effect for now, only intended to work with .block_flat */
@@ -520,7 +536,11 @@ a {
     font-size: 18px;
     border: 1px solid #dedddd;
     border-bottom: 0;
-    background: #ececec url(images/bg_title.png) 0 0 repeat-x;
+    /* @embed */
+    background-image: url(images/bg_title.png);
+    background-color: #ececec;
+    background-repeat: repeat-x;
+    background-position: 0 0;
     font-weight: normal;
     font-style: italic;
 }
@@ -661,7 +681,11 @@ a {
     top: 80px;
     width: 40px;
     height: 39px;
-    background: url(images/arrows_slide.png) 0 0 no-repeat;
+    /* @embed */
+    background-image: url(images/arrows_slide.png);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: 0 0;
     text-indent: -9999px;
     z-index:5;
 }
@@ -717,7 +741,11 @@ a {
     position: absolute;
     top:1px; left:1px;
     width: 241px; height: 133px;
-    background: #000 url(images/wm_plus.png) 90% 18% no-repeat;
+    /* @embed */
+    background-image: url(images/wm_plus.png);
+    background-color: #000;
+    background-repeat: no-repeat;
+    background-position: 90% 18%;
 
 }
 .third_parts a {
@@ -740,7 +768,11 @@ a {
     margin: 0;
     margin-left:-470px;
     padding-top: 8px;
-    background: transparent url(images/sh_block_footer.png) center top no-repeat;
+    /* @embed */
+    background-image: url(images/sh_block_footer.png);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center top;
     z-index:500;
 }
 #footer .content li a:hover,
@@ -749,7 +781,11 @@ a {
 }
 #footer .inside {
     border: 1px solid #d6d4d4;
-    background: #fff url(images/bg_footer.png) 0 0 repeat-x;
+    /* @embed */
+    background-image: url(images/bg_footer.png);
+    background-color: #fff;
+    background-repeat: repeat-x;
+    background-position: 0 0;
 }
 #footer .content {
     padding: 9px 20px;
@@ -766,21 +802,33 @@ a {
     display: block;
     width: 107px;
     height: 35px;
-    background: transparent url(images/seizam_mini.png) center center no-repeat;
+    /* @embed */
+    background-image: url(images/seizam_mini.png);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center center;
 }
 
 #logo_project {
     display: inline-block;
     width: 289px;
     height: 97px;
-    background: transparent url(images/logo.png) center center no-repeat;
+    /* @embed */
+    background-image: url(images/logo.png);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center center;
 }
 
 #logo_special {
     display: inline-block;
     width: 140px;
     height: 48px;
-    background: transparent url(images/logo_mini_h.png) center center no-repeat;
+    /* @embed */
+    background-image: url(images/logo_mini_h.png);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center center;
 }
 
 #footer .content ul {
@@ -803,16 +851,22 @@ a {
     color:#505358;
     font-style:italic;
     padding-left: 14px;
-    background: url(images/dot_square.png) no-repeat left center transparent;
+    /* @embed */
+    background-image: url(images/dot_square.png);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: left center;
 }
 
 #footer .content li span.show_less {
     display:none;
 }
 #footer .content li.more a {
+    /* @embed */
     background-image: url(images/dot_arrow.png);
 }
 #footer .content li.current a {
+    /* @embed */
     background-image: url(images/dot_arrow_up.png);
 }
 
@@ -937,7 +991,11 @@ a {
     height:34px;
 }
 #footer .more_infos .socials li a {
-    background: transparent url(images/icon_social.png) 0 0 no-repeat;
+    /* @NOembed That's already pretty well optimized, no need to overload css'*/
+    background-image: url(images/icon_social.png);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: 0 0;
     text-indent: -9999px;
 }
 #footer .more_infos .socials .linkedin a { background-position: -34px 0; }

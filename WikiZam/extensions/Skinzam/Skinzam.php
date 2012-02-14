@@ -1,6 +1,6 @@
 <?php
 /**
- * Seizam extension
+ * Skinzam extension
  * 
  * @file
  * @ingroup Extensions
@@ -23,38 +23,38 @@ if (!defined('MEDIAWIKI')) {
 /* Configuration */
 
 // Each module may be configured individually to be globally on/off or user preference based
-$wgSeizamFeatures = array(
+$wgSkinzamFeatures = array(
 );
 
 /* Setup */
 
 $wgExtensionCredits['other'][] = array(
 	'path' => __FILE__,
-	'name' => 'Seizam',
+	'name' => 'Skinzam',
 	'author' => array( 'Clément Dietschy', 'Seizam Sàrl.'),
 	'version' => '0.1.0',
 	'url' => 'http://www.seizam.com/',
-	'descriptionmsg' => 'sz-seizam-desc',
+	'descriptionmsg' => 'sz-skinzam-desc',
 );
 
-$wgAutoloadClasses['SeizamHooks'] = dirname( __FILE__ ) . '/Seizam.hooks.php';
-$wgExtensionMessagesFiles['Seizam'] = dirname( __FILE__ ) . '/Seizam.i18n.php';
+$wgAutoloadClasses['SkinzamHooks'] = dirname( __FILE__ ) . '/Skinzam.hooks.php';
+$wgExtensionMessagesFiles['Skinzam'] = dirname( __FILE__ ) . '/Skinzam.i18n.php';
 
 // Load JS Resources
-$wgHooks['BeforePageDisplay'][] = 'SeizamHooks::beforePageDisplay';
+$wgHooks['BeforePageDisplay'][] = 'SkinzamHooks::beforePageDisplay';
 // Remove TOC
-$wgHooks['ParserClearState'][] = 'SeizamHooks::parserClearState';
+$wgHooks['ParserClearState'][] = 'SkinzamHooks::parserClearState';
 
 
 // JS Resources Declaration
-$seizamResourceTemplate = array(
+$skinzamResourceTemplate = array(
 	'localBasePath' => dirname( __FILE__ ) . '/modules',
-	'remoteExtPath' => 'Seizam/modules',
-	'group' => 'ext.seizam',
+	'remoteExtPath' => 'Skinzam/modules',
+	'group' => 'ext.skinzam',
 );
 $wgResourceModules += array(
-	'ext.seizam.global' => $seizamResourceTemplate + array(
-		'scripts' => 'ext.seizam.global.js')
+	'ext.skinzam.global' => $skinzamResourceTemplate + array(
+		'scripts' => 'ext.skinzam.global.js')
 );
 
 

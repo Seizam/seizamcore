@@ -1,6 +1,6 @@
 <?php
 /**
- * Hooks for Seizam extension
+ * Hooks for Skinzam extension
  * 
  * @file
  * @ingroup Extensions
@@ -8,7 +8,7 @@
 if (!defined('MEDIAWIKI')) {
     die(-1);
 }
-class SeizamHooks {
+class SkinzamHooks {
 	
 	/* Protected Static Members */
 	
@@ -29,8 +29,8 @@ class SeizamHooks {
 	 * @param $skin Skin current skin
 	 */
 	public static function beforePageDisplay( $out, $skin ) {
-		if ($skin instanceof SkinSeizam) {
-			$out->addModules( 'ext.seizam.global' );
+		if ($skin instanceof SkinSkinzam) {
+			$out->addModules( 'ext.skinzam.global' );
 		}
 		return true;
 	}

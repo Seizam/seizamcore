@@ -62,11 +62,11 @@ return array(
 		'localBasePath' => $GLOBALS['wgStyleDirectory'],
 	),
 
-	'skins.seizam' => array(
-		'styles' => array( 'seizam/screen.css' => array( 'media' => 'screen' ) ),
+	'skins.skinzam' => array(
+		'styles' => array( 'skinzam/screen.css' => array( 'media' => 'screen' ) ),
 		'remoteBasePath' => $GLOBALS['wgStylePath'],
 		'localBasePath' => $GLOBALS['wgStyleDirectory'],
-		'dependancies' => 'seizam.global'
+		'dependancies' => 'skinzam.global'
 	),
 
 	/* jQuery */

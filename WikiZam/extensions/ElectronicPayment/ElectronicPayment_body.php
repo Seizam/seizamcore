@@ -48,7 +48,7 @@ class SpecialElectronicPayment extends SpecialPage {
      */
     public function execute($par) {
         global $wgRequest, $wgOut;
-
+        
         switch ($wgRequest->getText('action')) {
             # Sysop can read an order from table (providing id)
             case 'read' :
@@ -148,19 +148,22 @@ class SpecialElectronicPayment extends SpecialPage {
             'amount' => array(
                 'label-message' => 'ep-fd-amountlabel',
                 'type' => 'float',
-                'required' => 'true'
+                'required' => 'true',
+                'help-message' => 'ep-help-amount'
             ),
             'mail' => array(
                 'label-message' => 'youremail',
                 'type' => 'email',
+                'required' => 'true',
                 'validation-callback' => array('SpecialElectronicPayment', 'validateEmail'),
-                'required' => 'true'
+                'help-message' => 'ep-help-mail'
             )
         );
 
         # If user has an email registered, don't let him change it
         if (!(($mail = $wgUser->getEmail()) == '')) {
             $formDescriptor['mail']['default'] = $wgUser->getEmail();
+            #@FIXME: If form disabled
             $formDescriptor['mail']['disabled'] = true;
         }
 

@@ -188,18 +188,17 @@ Class EPMessage {
 
         # Now that we know everything, we can calculate the control sum for order validation
         if ($this->epm['epm_o_mac'] == $this->calculateMAC()) {
-        $this->tmp_o_receipt = CMCIC_CGI2_MACOK;
-        #Do what needs to be done regarding order success status
-        $this->reactToReturnCode();
+            $this->tmp_o_receipt = CMCIC_CGI2_MACOK;
+            #Do what needs to be done regarding order success status
+            $this->reactToReturnCode();
 
-        #Finally, save the message
-        $this->writeDB();
+            #Finally, save the message
+            $this->writeDB();
 
-        return true;
-
+            return true;
         } else { # That's not a valid request! @TODO: Write in error Log
-        $this->tmp_o_receipt = CMCIC_CGI2_MACNOTOK . $this->epm_o_validating_fields;
-        return false;
+            $this->tmp_o_receipt = CMCIC_CGI2_MACNOTOK . $this->epm_o_validating_fields;
+            return false;
         }
     }
 
@@ -225,7 +224,7 @@ Class EPMessage {
             $this->epm['epm_o_currency'] = 'EUR';
 
         # User related data
-        $this->epm['epm_o_mail'] = $wgRequest->getText('wpmail'); # $wgUser->getEmail();#@TODO:Fix for anonymous.
+        $this->epm['epm_o_mail'] = $wgRequest->getText('wpmail'); # $wgUser->getEmail();
         $this->epm['epm_o_language'] = $this->assignEPTLanguage(); #Sets the interface language
         $this->epm['epm_o_ip'] = IP::sanitizeIP(wfGetIP()); #Saves user's IP.
         # This free text is coming back (Incoming), we use it to store data we want available at all time & everywhere.
@@ -303,6 +302,7 @@ Class EPMessage {
     # Assign "unique" reference randomly;
     # Reference: unique, int(12)
     # @TODO: Check if reference is free.
+    # @TODO: Write debug log
 
     private function assignNewOrderReferenceFailSafe() {
         $this->epm['epm_o_reference'] = 4000000000 + rand(0, 290000000);
@@ -412,11 +412,9 @@ Class EPMessage {
                 $record['tmr_status'] = 'OK'; # varchar(2) NOT NULL COMMENT 'Record status (OK, KO, PEnding)',
                 break;
         }
-        
-        # Send to Transaction Manager for update.
-        return !wfRunHooks('BeforeTransactionSave', array(&$record));
 
-        
+        # Send to Transaction Manager for update.
+        return!wfRunHooks('BeforeTransactionSave', array(&$record));
     }
 
     static function sayIt($in) {

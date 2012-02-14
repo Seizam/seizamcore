@@ -1,6 +1,6 @@
 <?php
 /**
- * Internationalisation for Seizam extension
+ * Internationalisation for Skinzam extension
  * 
  * @file
  * @ingroup Extensions
@@ -12,8 +12,8 @@ $messages = array();
  * @author Trevor Parscal
  */
 $messages['en'] = array(
-	'sz-seizam' => 'UI elements for Seizam',
-	'sz-seizam-desc' => 'Holds UI elements for Seizam\'s skin',
+	'sz-skinzam' => 'UI elements for Seizam',
+	'sz-skinzam-desc' => 'Holds UI elements for Seizam\'s skin',
         'sz-myseizam' => 'My Seizam',
         'sz-browse' => 'Browse Seizam',
         'lessdotdotdot' => 'Less...',

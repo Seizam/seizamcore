@@ -36,7 +36,7 @@ $wgStylePath        = "$wgScriptPath/skins";
 ## The relative URL path to the logo.  Make sure you change this from the default,
 ## or else you'll overwrite your logo when you upgrade!
 # $wgLogo             = "$wgStylePath/common/images/seizam.png";
-$wgLogo             = "$wgStylePath/seizam/images/logo_mini_h.png";
+$wgLogo             = "$wgStylePath/skinzam/images/logo_mini_h.png";
 
 ## UPO means: this is also a user preference option
 
@@ -108,10 +108,10 @@ $wgLanguageCode = "en";
 
 ## Default skin: you can change the default skin. Use the internal symbolic
 ## names, ie 'standard', 'nostalgia', 'cologneblue', 'monobook', 'vector':
-$wgDefaultSkin = "seizam";
+$wgDefaultSkin = "skinzam";
 # To remove various skins from the User Preferences choices
 $wgSkipSkins = array("chick", "cologneblue", "nostalgia", "simple", "standard", "monobook","myskin","modern");
-## Usability extension for Vector (base of Seizam)
+## Usability extension for Vector (base of Skinzam)
 require_once( "$IP/extensions/Vector/Vector.php" );
 $wgVectorUseSimpleSearch = true;
 # Vector extension (improve Vector skin) options
@@ -121,7 +121,7 @@ $wgVectorFeatures['collapsiblenav']['global'] = false;
 $wgVectorFeatures['footercleanup']['global'] = false;
 
 ## UI Elements extension for Seizam's skin
-require_once( "$IP/extensions/Seizam/Seizam.php" );
+require_once( "$IP/extensions/Skinzam/Skinzam.php" );
 
 $wgHiddenPrefs = array('userid','underline','stubthreshold','showtoc','showjumplinks','editsection','externaldiff','externaleditor','diffonly','norollbackdiff');
 
@@ -176,17 +176,13 @@ $wgLanguageSelectorLanguages = array('en','fr');
 # Method of language selection
 $wgLanguageSelectorDetectLanguage = LANGUAGE_SELECTOR_PREFER_CLIENT_LANG; #Automatic selection regarding browser
 # Where to put the language selection dropdown menu
-// $wgLanguageSelectorLocation = LANGUAGE_SELECTOR_IN_TOOLBOX;#In toolbow for Vector Skin, hard integrated for Seizam Skin
+// $wgLanguageSelectorLocation = LANGUAGE_SELECTOR_IN_TOOLBOX;#In toolbow for Vector Skin, hard integrated for Skinzam
 $wgLanguageSelectorLocation = LANGUAGE_SELECTOR_MANUAL; #buggy in toolbox with Vector(yes, very strange), so only manual placing
 
 # Polyglot (auto select page version regarding user language)
 require_once( "$IP/extensions/Polyglot/Polyglot.php" );
 # Enable redirect on target page (eg. MainPage -> MainPage/fr -> Accueil)
 $wfPolyglotFollowRedirects = true;
-
-
-# SeizamACL (Access Control Lists Extension for Seizam)
-require_once( "$IP/extensions/SeizamACL/SeizamACL.php" );
 
 
 # Google Analytics
