@@ -78,6 +78,9 @@ $wgHooks['ArticleProtectComplete'][] = 'efRestrictionsArticleProtectComplete';
 // remove page text if it is read restricted
 $wgHooks['SearchUpdate'][] = 'efRestrictionsSearchUpdate';
 
+// add a usercan control when trying to add a page to a watchlist
+$wgHooks['WatchArticle'][] = 'efRestrictionsWatchArticle';
+
 // registering our defered setup function
 $wgExtensionFunctions[] = 'efRestrictionsSetup';
 
@@ -215,6 +218,9 @@ function efRestrictionsUserCan( $title, &$user, $action, &$result ) {
 			."\n".wfGetPrettyBacktrace()
 			);
 */	
+	
+//	wfDebugLog( 'restrictions', 'UserCan: title is '.get_class($title));
+	
 	$act = $action;
 
 	//just in case, but shouldn't occur
@@ -904,3 +910,49 @@ function efRestrictionsSearchUpdate( $id, $namespace, $title_text, &$text ) {
 	return true;
 }
 	
+// check that the page is not read protected
+// it may be better to check if the "user can read" the page instead... because 
+// maybe she can read even if it read restricted (= read restricted to user)
+function efRestrictionsWatchArticle( &$user, &$article ) {
+	
+	$title = $article->getTitle();
+	
+	if ($title->isProtected('read')) {
+		
+		wfDebugLog( 'restrictions', 'WatchArticle: FORBIDDEN'
+				.' the title "'.$title->getPrefixedDBkey().'"['.$title->getArticleId().']' 
+				.' has a read restriction, so no one can watch it');
+		
+		$wgOut->addWikiText( wfMsg( 'badaccess' ) );
+		return false;
+		
+	}
+	
+	wfDebugLog( 'restrictions', 'WatchArticle: ALLOWED'
+		.' the title "'.$title->getPrefixedDBkey().'"['.$title->getArticleId().']' 
+		.' has no read restriction');
+	
+	return true;
+}
+
+
+/* watchlist content may be changed using hook SpecialWatchlistFilters or SpecialWatchlistQuery, maybe....
+ 
+	public static function modifyNewPagesQuery( $specialPage, $opts, &$conds, &$tables, &$fields, &$join_conds ) {
+		return self::modifyChangesListQuery( $conds, $tables, $join_conds, $fields );
+	}
+
+	public static function modifyChangesListQuery(array &$conds, array &$tables, array &$join_conds, array &$fields) {
+		global $wgRequest;
+		$tables[] = 'flaggedpages';
+		$fields[] = 'fp_stable';
+		$fields[] = 'fp_pending_since';
+		$join_conds['flaggedpages'] = array( 'LEFT JOIN', 'fp_page_id = rc_cur_id' );
+ 
+		if ( $wgRequest->getBool( 'hideReviewed' ) && !FlaggedRevs::useOnlyIfProtected() ) {
+			$conds[] = 'rc_timestamp >= fp_pending_since OR fp_stable IS NULL';
+		}
+ 
+		return true;
+	}
+ */
