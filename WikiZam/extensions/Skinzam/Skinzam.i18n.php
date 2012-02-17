@@ -12,6 +12,7 @@ $messages = array();
  * @author Trevor Parscal
  */
 $messages['en'] = array(
+        'skinzam' => 'SkinZam',
 	'sz-skinzam' => 'UI elements for Seizam',
 	'sz-skinzam-desc' => 'Holds UI elements for Seizam\'s skin',
         'sz-myseizam' => 'My Seizam',
@@ -37,7 +38,25 @@ $messages['en'] = array(
         'sz-7freedoms' => 'The 7 Freedoms',
         'sz-sitemap' => 'SiteMap',
         'sz-moreaboutlicensing' => 'Learn more about <a href="#">Licensing</a>',
-        'sz-tagline' => 'Community of free artists to build by yourself, but not alone...'
+        'sz-tagline' => 'Community of free artists to build by yourself, but not alone...',
+        'sz-profil-save' => 'Save',
+        'sz-profil-you' => 'You',
+        'sz-profil-username-help' => 'Your Username, that is the way you\'re authenticated on Seizam',
+        'sz-profil-realname-help' => 'Your full true legal fullname',
+        'sz-profil-realname' => 'Real Name',
+        'sz-profil-account' => 'Account',
+        'sz-profil-bonus' => 'Bonus',
+        'myform-simpletextfield' => 'International Simple Text Field',
+        'myform-submit' => 'Go! Go! Go!',
+        'myform-section1' => 'The First Section',
+        'myform-section2' => 'Section II',
+        'myform-section3' => 'Third Section',
+        'myform-subsectionA' => 'The First Subsection',
+        'myform-subsectionB' => 'Section II-A',
+        'myform-subsectionC' => 'Section II-B',
+        
+    
+    
 );
 
 /** Message documentation (Message documentation)
