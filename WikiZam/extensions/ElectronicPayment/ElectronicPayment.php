@@ -40,7 +40,7 @@ $wgExtensionMessagesFiles['ElectronicPayment'] = $dir . 'ElectronicPayment.i18n.
 $wgExtensionAliasesFiles['ElectronicPayment'] = $dir . 'ElectronicPayment.alias.php';
 
 # Special Electronic Payment (OUTbound)
-$wgAutoloadClasses['SpecialElectronicPayment'] = $dir . 'ElectronicPayment_body.php';
+$wgAutoloadClasses['SpecialElectronicPayment'] = $dir . 'SpecialElectronicPayment.php';
 $wgSpecialPages['ElectronicPayment'] = 'SpecialElectronicPayment';
 
 $wgSpecialPageGroups['ElectronicPayment'] = 'other';

@@ -426,6 +426,7 @@ a {
     padding: 0 9px 0 7px;
     border: 1px solid #D8D7D7;
     background: black;
+    z-index: 20;
 }
 
 .ie7 #nav #nav_plus {
@@ -439,6 +440,7 @@ a {
     width:100px;
     background:black;
     text-align:left;
+    z-index: 20;
 }
 #nav #nav_plus ul li a {
     display:block;
@@ -762,54 +764,6 @@ a {
 }
 
 
-#footer {
-    position:fixed;
-    bottom: 0;
-    left: 50%;
-    width: 940px;
-    margin: 0;
-    margin-left:-470px;
-    padding-top: 8px;
-    /* @embed */
-    background-image: url(images/sh_block_footer.png);
-    background-color: transparent;
-    background-repeat: no-repeat;
-    background-position: center top;
-    z-index:500;
-}
-#footer .content li a:hover,
-#footer .content li a:focus {
-    color: #F0373A;
-}
-#footer .inside {
-    border: 1px solid #d6d4d4;
-    /* @embed */
-    background-image: url(images/bg_footer.png);
-    background-color: #fff;
-    background-repeat: repeat-x;
-    background-position: 0 0;
-}
-#footer .content {
-    padding: 9px 20px;
-    overflow: hidden;
-}
-#footer .content #logo_mini,
-#footer .content ul {
-    float: left;
-}
-#footer .content #logo_mini {
-    position:relative;
-    top:3px;
-    left:10px;
-    display: block;
-    width: 107px;
-    height: 35px;
-    /* @embed */
-    background-image: url(images/seizam_mini.png);
-    background-color: transparent;
-    background-repeat: no-repeat;
-    background-position: center center;
-}
 
 #logo_project {
     display: inline-block;
@@ -828,6 +782,62 @@ a {
     height: 48px;
     /* @embed */
     background-image: url(images/logo_mini_h.png);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+
+/* -----------------------------------------------------------------------------
+   ==  footer
+   -------------------------------------------------------------------------- */
+
+#footer {
+    position:fixed;
+    bottom: 0;
+    left: 50%;
+    width: 940px;
+    margin: 0;
+    margin-left:-470px;
+    padding-top: 8px;
+    /* @embed */
+    background-image: url(images/sh_block_footer.png);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center top;
+    z-index:10;
+}
+#footer .content li a:hover,
+#footer .content li a:focus {
+    color: #F0373A;
+}
+#footer .inside {
+    border: 1px solid #d6d4d4;
+    /* @embed */
+    background-image: url(images/bg_footer.png);
+    background-color: #fff;
+    background-repeat: repeat-x;
+    background-position: 0 0;
+}
+#footer .content {
+    padding: 9px 20px;
+    position: relative;
+    overflow: hidden;
+    z-index: 15;
+}
+#footer .content #logo_mini,
+#footer .content ul {
+    float: left;
+}
+#footer .content #logo_mini {
+    position:relative;
+    top:3px;
+    left:10px;
+    display: block;
+    width: 107px;
+    height: 35px;
+    /* @embed */
+    background-image: url(images/seizam_mini.png);
     background-color: transparent;
     background-repeat: no-repeat;
     background-position: center center;
@@ -884,6 +894,30 @@ a {
     position:absolute;
     top: 6px;
     left: 6px;
+}
+
+span#prettyUserName {
+    display: block;
+    z-index: -10;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 53px;
+    line-height:45px;
+    max-width: 450px;
+    
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 80px;
+    font-weight: bold;
+    font-style: italic;
+    text-align: left;
+    
+    color: #C6C6C6;
+    opacity: 0.3;
+    
 }
 
 /* footer more info */

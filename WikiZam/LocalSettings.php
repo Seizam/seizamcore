@@ -123,9 +123,6 @@ $wgVectorFeatures['footercleanup']['global'] = false;
 ## UI Elements extension for Seizam's skin
 require_once( "$IP/extensions/Skinzam/Skinzam.php" );
 
-$wgHiddenPrefs = array('userid','underline','stubthreshold','showtoc','showjumplinks','editsection','externaldiff','externaleditor','diffonly','norollbackdiff');
-
-
 ## For attaching licensing metadata to pages, and displaying an
 ## appropriate copyright notice / icon. GNU Free Documentation
 ## License and Creative Commons licenses are supported so far.

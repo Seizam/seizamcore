@@ -42,7 +42,7 @@ $wgExtensionMessagesFiles['TransactionManager'] = $dir . 'TransactionManager.i18
 $wgExtensionAliasesFiles['TransactionManager'] = $dir . 'TransactionManager.alias.php';
 
 # Special Electronic Payment (OUTbound)
-$wgAutoloadClasses['SpecialTransactionManager'] = $dir . 'TransactionManager_body.php';
+$wgAutoloadClasses['SpecialTransactionManager'] = $dir . 'SpecialTransactionManager.php';
 $wgSpecialPages['TransactionManager'] = 'SpecialTransactionManager';
 
 $wgSpecialPageGroups['TransactionManager'] = 'other';
