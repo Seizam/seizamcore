@@ -56,8 +56,7 @@ $wgGroupPermissions['sysop']['epadmin'] = true;
 require_once($dir . 'ElectronicPayment.config.php');
 
 # Debug file (written on unauthentificated inbound message)
-//$wgDebugLogGroups['EPErrors'] = '/var/log/seizam/ep_errors.log'; #@TODO: pretty log management in LocalSettings/ServerSettings
-$wgDebugLogGroups['EPErrors'] = $dir.'logs/ep_errors.log';
+$wgDebugLogGroups['EPErrors'] = '/var/log/seizam/ep_errors.log'; #@TODO: pretty log management in LocalSettings/ServerSettings
 
 #TPE kit
 require_once($dir . 'CMCIC_Tpe.inc.php');
@@ -310,7 +309,14 @@ Class EPOrder {
     
     public function __construct($epm) {
         # First we keep only what we want from $order
+        
+        echo '<pre>contruct$epm';
+        print_r($epm);
+        echo '</pre>';
         $order = array_intersect_key($epm, $this->epo);
+        echo '<pre>contruct$order';
+        print_r($order);
+        echo '</pre>';
         # 2 way of constructing
         if (isset($order['epo_id']) && $order['epo_id'] > 0) {
             $this->__constructFromDB($order);
@@ -319,8 +325,9 @@ Class EPOrder {
     }
     
     private function __constructFromDB($order) {
+        
         # Okay, which order are we talking about?
-        $this->epo['epo_id'] = $order['epo_id'] = $order;
+        $this->epo['epo_id'] = $order['epo_id'];
         
         # Let's fetch the order's data from DB.
         $this->readDB();
@@ -367,7 +374,7 @@ Class EPOrder {
         # We need to write, therefore we need the master
         $dbw = wfGetDB(DB_MASTER);
         # Writing...
-        $return = $dbw->update('ep_order', $this->epo, array('epo_id'=>$this->epo['epo_id']));
+        $return = $dbw->update('ep_order', $this->epo, array('epo_id' => $this->epo['epo_id']));
         
         return $return;
     }
@@ -378,7 +385,7 @@ Class EPOrder {
         # We are reading, but we need the master table anyway
         # (An order can be updated a lot within instants)
         $dbr = wfGetDB(DB_MASTER);
-        $this->epo = (array)$dbr->selectRow('ep_order', '*', 'epo_id = ' . $this->epo['epo_id']);
+        $this->epo = (array)$dbr->selectRow('ep_order', '*', array('epo_id'=>  $this->epo['epo_id']));
     }
     
     # That's the place where magic happens.

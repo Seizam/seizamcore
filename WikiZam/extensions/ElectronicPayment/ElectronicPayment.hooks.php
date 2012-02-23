@@ -24,6 +24,8 @@ class ElectronicPaymentHooks {
 	public static function loadExtensionSchemaUpdates( $updater ) {
         $updater->addExtensionUpdate( array( 'addTable', 'ep_message',
                 dirname( __FILE__ ) . '/schema/mysql/ep_message.sql', true ) );
+        $updater->addExtensionUpdate( array( 'addTable', 'ep_order',
+                dirname( __FILE__ ) . '/schema/mysql/ep_order.sql', true ) );
         return true;
         }
 }
