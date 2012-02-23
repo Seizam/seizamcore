@@ -327,20 +327,14 @@ Class EPOrder {
     private function __constructFromDB() {
         # Let's fetch the order's data from DB.
         $this->readDB();
-        echo 'constructFromDB ';
-        print_r($this->epo);
     }
 
     public function setEPO($epm) {
-        echo 'setEPO ';
-        print_r($epm);
-        print_r($this->epo);
         # First we keep only what we want from $epm
         $epo = array_intersect_key($epm, $this->epo);
 
         # We don't want anything telling us these:
         unset($epo['epo_id']);
-        unset($epo['epo_date_created']);
         unset($epo['epo_tmr_id']);
         if ($epo['epo_user_id'] === $this->epo['epo_user_id'] &&
                 $epo['epo_mail'] === $this->epo['epo_mail'] &&
@@ -385,6 +379,7 @@ Class EPOrder {
 
     public function updateDB() {
         # Setting the date of update
+        unset($this->epo['epo_date_created']);
         $this->epo['epo_date_modified'] = date("Y-m-d:H:i:s");
         # We need to write, therefore we need the master
         $dbw = wfGetDB(DB_MASTER);

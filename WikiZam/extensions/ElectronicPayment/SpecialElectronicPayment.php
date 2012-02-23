@@ -59,7 +59,7 @@ class SpecialElectronicPayment extends SpecialPage {
             # Coming back to Seizam (payment failed/cancelled)
             case 'fail' :
                 $this->setHeaders();
-                $output->addWikiText(wfMesage('ep-fail')->text());
+                $output->addWikiText(wfMessage('ep-fail')->text());
                 break;
             # Coming back to Seizam (payment succeeded)
             case 'success' :
@@ -212,8 +212,10 @@ class SpecialElectronicPayment extends SpecialPage {
 
     private function constructDefault() {
         $user = $this->getUser();
+        
+        # We check if the user has some pending transaction to pay
 
-        # We are using the HTMLForm Helper
+        # We are using the HTMLFormS Helper
         # That's the way to create a form
         $formDescriptor = array(
             'amount' => array(

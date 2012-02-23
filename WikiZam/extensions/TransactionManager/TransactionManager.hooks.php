@@ -28,9 +28,12 @@ class TransactionManagerHooks {
         }
         
         
-        public static function beforeTransactionSave(&$record){
-            $tmr = new TMRecord($record);
-            $record = $tmr->tmr;
+        public static function beforeTransactionSave(&$tmr){
+            $record = TMRecord::create($tmr);
+            if ($record->setTMR($tmr)) {
+                $record->updateDB();
+                $tmr = $record->tmr;
+            }
             return false;
         }
 }
