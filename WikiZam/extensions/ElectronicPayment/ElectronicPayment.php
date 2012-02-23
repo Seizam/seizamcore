@@ -429,7 +429,7 @@ Class EPOrder {
 
     private function saveTransaction($desc, EPMessage $message) {
         # Construct Record For Transaction Manager
-        $record = array(
+        $tmr = array(
             'tmr_type' => 'payment', # varchar(8) NOT NULL COMMENT 'Type of message (Payment, Sale, Plan)',
             # Paramas related to User
             'tmr_user_id' => $this->epo['epo_user_id'], # int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Foreign key to user.user_id',
