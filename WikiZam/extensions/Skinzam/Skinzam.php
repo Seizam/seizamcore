@@ -37,18 +37,26 @@ $wgExtensionCredits['other'][] = array(
 	'descriptionmsg' => 'sz-skinzam-desc',
 );
 
-$wgAutoloadClasses['SkinzamHooks'] = dirname( __FILE__ ) . '/Skinzam.hooks.php';
-$wgExtensionMessagesFiles['Skinzam'] = dirname( __FILE__ ) . '/Skinzam.i18n.php';
+$dir = dirname(__FILE__) . '/';
+
+require_once($dir . 'Skinzam.GlobalFunctions.php');
+
+$wgAutoloadClasses['HTMLFormS'] = $dir . 'HTMLFormS.php';
+$wgAutoloadClasses['SkinzamHooks'] = $dir . 'Skinzam.hooks.php';
+$wgExtensionMessagesFiles['Skinzam'] = $dir . 'Skinzam.i18n.php';
+$wgExtensionAliasesFiles['Skinzam'] = $dir . 'Skinzam.alias.php';
 
 // Load JS Resources
 $wgHooks['BeforePageDisplay'][] = 'SkinzamHooks::beforePageDisplay';
 // Remove TOC
 $wgHooks['ParserClearState'][] = 'SkinzamHooks::parserClearState';
 
+$wgHooks['SkinTemplateOutputPageBeforeExec'][] = 'SkinzamHooks::skinTemplateOutputPageBeforeExec';
+
 
 // JS Resources Declaration
 $skinzamResourceTemplate = array(
-	'localBasePath' => dirname( __FILE__ ) . '/modules',
+	'localBasePath' => $dir . 'modules',
 	'remoteExtPath' => 'Skinzam/modules',
 	'group' => 'ext.skinzam',
 );
@@ -56,5 +64,18 @@ $wgResourceModules += array(
 	'ext.skinzam.global' => $skinzamResourceTemplate + array(
 		'scripts' => 'ext.skinzam.global.js')
 );
+
+# Special Skinzam (UI test class)
+$wgAutoloadClasses['SpecialSkinzam'] = $dir . 'SpecialSkinzam.php';
+
+$wgSpecialPages['Skinzam'] = 'SpecialSkinzam';
+
+$wgSpecialPageGroups['Skinzam'] = 'other';
+
+# Some global settings
+# Tune Special:Preferences
+$wgHiddenPrefs = array('userid','underline','stubthreshold','showtoc','showjumplinks','editsection','externaldiff','externaleditor','diffonly','norollbackdiff');
+# Do not display IP as a username-like. (Careful, breaks SeizamFooter if turned true).
+$wgShowIPinHeader = false;
 
 

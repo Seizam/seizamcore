@@ -24,7 +24,8 @@ $messages['en'] = array(
         'ep-tm-test' => 'Bank Card Payment Test',
         'ep-tm-success' => 'Bank Card Payment',
         'ep-help-amount' => 'Type here the amount of your order. (Format: 12.34)',
-        'ep-help-mail' => 'Type here your email adress where confirmation will be sent'
+        'ep-help-mail' => 'Type here your email adress where confirmation will be sent',
+        'ep-section' => 'Make an electronic payment'
 );
 
 /** Message documentation (Message documentation)
@@ -50,6 +51,7 @@ $messages['fr'] = array(
         'ep-tm-test' => 'Test de paiement par carte bancaire',
         'ep-tm-success' => 'Paiement par carte bancaire',
         'ep-help-amount' => 'Tappez ici le montant de votre commande. (Format: 12.34)',
-        'ep-help-mail' => 'Tappez ici votre adresse email où la confirmation sera envoyée'
+        'ep-help-mail' => 'Tappez ici votre adresse email où la confirmation sera envoyée',
+        'ep-section' => 'Réaliser un paiement électronique'
     
 );

@@ -42,7 +42,7 @@ $wgExtensionMessagesFiles['TransactionManager'] = $dir . 'TransactionManager.i18
 $wgExtensionAliasesFiles['TransactionManager'] = $dir . 'TransactionManager.alias.php';
 
 # Special Electronic Payment (OUTbound)
-$wgAutoloadClasses['SpecialTransactionManager'] = $dir . 'TransactionManager_body.php';
+$wgAutoloadClasses['SpecialTransactionManager'] = $dir . 'SpecialTransactionManager.php';
 $wgSpecialPages['TransactionManager'] = 'SpecialTransactionManager';
 
 $wgSpecialPageGroups['TransactionManager'] = 'other';
@@ -53,6 +53,8 @@ $wgGroupPermissions['sysop']['tmadmin'] = true;
 
 Class TMRecord {
     # DB Entry
+    
+    private $tmr_id;
 
     public $tmr = array(
         # Params related to Message
@@ -71,39 +73,48 @@ Class TMRecord {
         'tmr_desc' => '', # varchar(64) NOT NULL COMMENT 'Record Description',
         'tmr_status' => 'KO' # varchar(2) NOT NULL COMMENT 'Record status (OK, KO, PEnding, TEst)',
     );
+    
+    /**
+     * @return TMRecord
+     */
+    public static function create($tmr) {
+        if (is_int($tmr))
+            $tmr = array('tmr_id' => $tmr);
+        return new TMRecord($tmr);
+    }
 
     # Main constructor, often called by hooked funtion in TransactionManagerHooks.
 
-    public function __construct($record) {
-        global $wgUser;
+    private function __construct($tmr) {
 
         # If there is an id submitted through record, fetch data from db
-        if (isset($record['tmr_id']) && $record['tmr_id'] > 0) {
-            $this->__constructFromDB($record);
+        if (isset($tmr['tmr_id']) && $tmr['tmr_id'] > 0) {
+            $this->tmr_id = $tmr['tmr_id'];
+            $this->__constructFromDB();
         } else # It is a new record
-            $this->__constructFromScratch($record);
+            $this->__constructFromScratch($tmr);
         
     }
     
-    private function __constructFromDB($record) {
-        # Okay, which Record are we talking about?
-        $this->tmr['tmr_id'] = $record['tmr_id'];
-        
-        # Let's fetch the record's data from DB.
+    private function __constructFromDB() {
+        # Let's fetch the order's data from DB.
         $this->readDB();
-        
-        # Now we update the record by merging $tmr with $record...
-        
-        # We don't want anything telling us the record's birthdate!
-        unset($record['tmr_date_created']);
-        
-        # @TODO: Perhaps more fields shouldn't be overwritten (ex: user_id...)?
-        
-        # And now, we merge.
-        $this->tmr = array_merge($this->tmr, $record);
-        
-        # Finally, update DB.
-        $this->updateDB();
+    }
+    
+    public function setTMR($tmr) {
+        # First we keep only what we want from $tmr
+        $tmr = array_intersect_key($tmr, $this->tmr);
+
+        # We don't want anything telling us these:
+        # TODO: Add unique Hash identification?
+        unset($tmr['tmr_id']);
+        if ($tmr['tmr_user_id'] === $this->tmr['tmr_user_id']) {
+            # And now, we merge.
+            $this->tmr = array_merge($this->tmr, $tmr);
+
+            return true;
+        }
+        return false;
     }
     
     private function __constructFromScratch($record) {
@@ -138,12 +149,13 @@ Class TMRecord {
     # Record current object to DB and set tmr_id
 
     private function writeDB() {
+        # Setting the date of update
+        $this->tmr['tmr_date_created'] = date("Y-m-d:H:i:s");
+        $this->tmr['tmr_date_modified'] = $this->tmr['tmr_date_created'];
         # We need to write, therefore we need the master
         $dbw = wfGetDB(DB_MASTER);
         # PostgreSQL, null for MySQL
         $this->tmr['tmr_id'] = $dbw->nextSequenceValue('tm_record_tmr_id_seq');
-        # Setting the date of update
-        $this->tmr['tmr_date_modified'] = date("Y-m-d:H:i:s");
         # Writing...
         $return = $dbw->insert('tm_record', $this->tmr);
         # Setting tmr_id from auto incremented id in DB
@@ -152,11 +164,14 @@ Class TMRecord {
         return $return;
     }
     
+    # Write current object to DB
+    
     private function updateDB() {
+        # Setting the date of update
+        unset($this->tmr['tmr_date_created']);
+        $this->tmr['tmr_date_modified'] = date("Y-m-d:H:i:s");
         # We need to write, therefore we need the master
         $dbw = wfGetDB(DB_MASTER);
-        # Setting the date of update
-        $this->tmr['tmr_date_modified'] = date("Y-m-d:H:i:s");
         # Writing...
         $return = $dbw->update('tm_record', $this->tmr, array('tmr_id'=>$this->tmr['tmr_id']));
         

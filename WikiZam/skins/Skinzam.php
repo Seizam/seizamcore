@@ -42,16 +42,14 @@ class SkinSkinzam extends SkinTemplate {
 
         parent::initPage($out);
 
-        /* Removed until necessary (SeizamDev 24/10/11)
-          // Append CSS which includes IE only behavior fixes for hover support -
-          // this is better than including this in a CSS fille since it doesn't
-          // wait for the CSS file to load before fetching the HTC file.
-          $min = $wgRequest->getFuzzyBool( 'debug' ) ? '' : '.min';
-          $out->addHeadItem( 'csshover',
-          '<!--[if lt IE 7]><style type="text/css">body{behavior:url("' .
-          htmlspecialchars( $wgLocalStylePath ) .
-          "/{$this->stylename}/csshover{$min}.htc\")}</style><![endif]-->"
-          ); */
+        // Append CSS which includes IE only behavior fixes for hover support -
+        // this is better than including this in a CSS fille since it doesn't
+        // wait for the CSS file to load before fetching the HTC file.
+        $min = $wgRequest->getFuzzyBool('debug') ? '' : '.min';
+        $out->addHeadItem('csshover', '<!--[if lt IE 7]><style type="text/css">body{behavior:url("' .
+                htmlspecialchars($wgLocalStylePath) .
+                "/{$this->stylename}/csshover{$min}.htc\")}</style><![endif]-->"
+        );
     }
 
     /**
@@ -64,261 +62,6 @@ class SkinSkinzam extends SkinTemplate {
         $out->addModuleStyles('skins.skinzam');
     }
 
-    /**
-     * Builds a structured array of links used for tabs and menus
-     * @return array
-     * @private
-     */
-    function buildNavigationUrls() {
-        global $wgContLang, $wgLang, $wgOut, $wgUser, $wgRequest, $wgArticle;
-        global $wgDisableLangConversion, $wgVectorUseIconWatch;
-
-        wfProfileIn(__METHOD__);
-
-        $links = array(
-            'namespaces' => array(),
-            'views' => array(),
-            'actions' => array()
-        );
-
-        // Detects parameters
-        $action = $wgRequest->getVal('action', 'view');
-        $section = $wgRequest->getVal('section');
-
-        $userCanRead = $this->getTitle()->userCanRead();
-
-        // Checks if page is some kind of content
-        if ($this->iscontent) {
-            // Gets page objects for the related namespaces
-            $subjectPage = $this->getTitle()->getSubjectPage();
-            $talkPage = $this->getTitle()->getTalkPage();
-
-            // Determines if this is a talk page
-            $isTalk = $this->getTitle()->isTalkPage();
-
-            // Generates XML IDs from namespace names
-            $subjectId = $this->getTitle()->getNamespaceKey('');
-
-            if ($subjectId == 'main') {
-                $talkId = 'talk';
-            } else {
-                $talkId = "{$subjectId}_talk";
-            }
-
-            // Adds namespace links
-            $links['namespaces'][$subjectId] = $this->tabAction(
-                    $subjectPage, 'nstab-' . $subjectId, !$isTalk, '', $userCanRead
-            );
-            $links['namespaces'][$subjectId]['context'] = 'subject';
-            $links['namespaces'][$talkId] = $this->tabAction(
-                    $talkPage, 'talk', $isTalk, '', $userCanRead
-            );
-            $links['namespaces'][$talkId]['context'] = 'talk';
-
-            // Adds view view link
-            if ($this->getTitle()->exists() && $userCanRead) {
-                $links['views']['view'] = $this->tabAction(
-                        $isTalk ? $talkPage : $subjectPage, 'vector-view-view', ( $action == 'view' || $action == 'purge'), '', true
-                );
-            }
-
-            wfProfileIn(__METHOD__ . '-edit');
-
-            // Checks if user can...
-            if (
-            // read and edit the current page
-                    $userCanRead && $this->getTitle()->quickUserCan('edit') &&
-                    (
-                    // if it exists
-                    $this->getTitle()->exists() ||
-                    // or they can create one here
-                    $this->getTitle()->quickUserCan('create')
-                    )
-            ) {
-                // Builds CSS class for talk page links
-                $isTalkClass = $isTalk ? ' istalk' : '';
-
-                // Determines if we're in edit mode
-                $selected = (
-                        ( $action == 'edit' || $action == 'submit' ) &&
-                        ( $section != 'new' )
-                        );
-                $links['views']['edit'] = array(
-                    'class' => ( $selected ? 'selected' : '' ) . $isTalkClass,
-                    'text' => $this->getTitle()->exists() ? wfMsg('vector-view-edit') : wfMsg('vector-view-create'),
-                    'href' =>
-                    $this->getTitle()->getLocalURL($this->editUrlOptions())
-                );
-                // Checks if this is a current rev of talk page and we should show a new
-                // section link
-                if (( $isTalk && $wgArticle && $wgArticle->isCurrent() ) || ( $wgOut->showNewSectionLink() )) {
-                    // Checks if we should ever show a new section link
-                    if (!$wgOut->forceHideNewSectionLink()) {
-                        // Adds new section link
-                        //$links['actions']['addsection']
-                        $links['views']['addsection'] = array(
-                            'class' => 'collapsible ' . ( $section == 'new' ? 'selected' : false ),
-                            'text' => wfMsg('vector-action-addsection'),
-                            'href' => $this->getTitle()->getLocalURL(
-                                    'action=edit&section=new'
-                            )
-                        );
-                    }
-                }
-                // Checks if the page has some kind of viewable content
-            } elseif ($this->getTitle()->hasSourceText() && $userCanRead) {
-                // Adds view source view link
-                $links['views']['viewsource'] = array(
-                    'class' => ( $action == 'edit' ) ? 'selected' : false,
-                    'text' => wfMsg('vector-view-viewsource'),
-                    'href' =>
-                    $this->getTitle()->getLocalURL($this->editUrlOptions())
-                );
-            }
-            wfProfileOut(__METHOD__ . '-edit');
-
-            wfProfileIn(__METHOD__ . '-live');
-
-            // Checks if the page exists
-            if ($this->getTitle()->exists() && $userCanRead) {
-                // Adds history view link
-                $links['views']['history'] = array(
-                    'class' => 'collapsible ' . ( ( $action == 'history' ) ? 'selected' : false ),
-                    'text' => wfMsg('vector-view-history'),
-                    'href' => $this->getTitle()->getLocalURL('action=history'),
-                    'rel' => 'archives',
-                );
-
-                if ($wgUser->isAllowed('delete')) {
-                    $links['actions']['delete'] = array(
-                        'class' => ( $action == 'delete' ) ? 'selected' : false,
-                        'text' => wfMsg('vector-action-delete'),
-                        'href' => $this->getTitle()->getLocalURL('action=delete')
-                    );
-                }
-                if ($this->getTitle()->quickUserCan('move')) {
-                    $moveTitle = SpecialPage::getTitleFor(
-                                    'Movepage', $this->thispage
-                    );
-                    $links['actions']['move'] = array(
-                        'class' => $this->getTitle()->isSpecial('Movepage') ?
-                                'selected' : false,
-                        'text' => wfMsg('vector-action-move'),
-                        'href' => $moveTitle->getLocalURL()
-                    );
-                }
-
-                if (
-                        $this->getTitle()->getNamespace() !== NS_MEDIAWIKI &&
-                        $wgUser->isAllowed('protect')
-                ) {
-                    if (!$this->getTitle()->isProtected()) {
-                        $links['actions']['protect'] = array(
-                            'class' => ( $action == 'protect' ) ?
-                                    'selected' : false,
-                            'text' => wfMsg('vector-action-protect'),
-                            'href' =>
-                            $this->getTitle()->getLocalURL('action=protect')
-                        );
-                    } else {
-                        $links['actions']['unprotect'] = array(
-                            'class' => ( $action == 'unprotect' ) ?
-                                    'selected' : false,
-                            'text' => wfMsg('vector-action-unprotect'),
-                            'href' =>
-                            $this->getTitle()->getLocalURL('action=unprotect')
-                        );
-                    }
-                }
-            } else {
-                // article doesn't exist or is deleted
-                if (
-                        $wgUser->isAllowed('deletedhistory') &&
-                        $wgUser->isAllowed('undelete')
-                ) {
-                    $n = $this->getTitle()->isDeleted();
-                    if ($n) {
-                        $undelTitle = SpecialPage::getTitleFor('Undelete');
-                        $links['actions']['undelete'] = array(
-                            'class' => false,
-                            'text' => wfMsgExt(
-                                    'vector-action-undelete', array('parsemag'), $wgLang->formatNum($n)
-                            ),
-                            'href' => $undelTitle->getLocalURL(
-                                    'target=' . urlencode($this->thispage)
-                            )
-                        );
-                    }
-                }
-
-                if (
-                        $this->getTitle()->getNamespace() !== NS_MEDIAWIKI &&
-                        $wgUser->isAllowed('protect')
-                ) {
-                    if (!$this->getTitle()->getRestrictions('create')) {
-                        $links['actions']['protect'] = array(
-                            'class' => ( $action == 'protect' ) ?
-                                    'selected' : false,
-                            'text' => wfMsg('vector-action-protect'),
-                            'href' =>
-                            $this->getTitle()->getLocalURL('action=protect')
-                        );
-                    } else {
-                        $links['actions']['unprotect'] = array(
-                            'class' => ( $action == 'unprotect' ) ?
-                                    'selected' : false,
-                            'text' => wfMsg('vector-action-unprotect'),
-                            'href' =>
-                            $this->getTitle()->getLocalURL('action=unprotect')
-                        );
-                    }
-                }
-            }
-            wfProfileOut(__METHOD__ . '-live');
-            /**
-             * The following actions use messages which, if made particular to
-             * the Vector skin, would break the Ajax code which makes this
-             * action happen entirely inline. Skin::makeGlobalVariablesScript
-             * defines a set of messages in a javascript object - and these
-             * messages are assumed to be global for all skins. Without making
-             * a change to that procedure these messages will have to remain as
-             * the global versions.
-             */
-            // Checks if the user is logged in
-            if ($this->loggedin) {
-                $class = '';
-                $place = 'actions';
-                $mode = $this->getTitle()->userIsWatching() ? 'unwatch' : 'watch';
-                $links[$place][$mode] = array(
-                    'class' => $class . ( ( $action == 'watch' || $action == 'unwatch' ) ? ' selected' : false ),
-                    'text' => wfMsg($mode), // uses 'watch' or 'unwatch' message
-                    'href' => $this->getTitle()->getLocalURL('action=' . $mode)
-                );
-            }
-            // This is instead of SkinTemplateTabs - which uses a flat array
-            wfRunHooks('SkinTemplateNavigation', array(&$this, &$links));
-
-            // If it's not content, it's got to be a special page
-        } else {
-            $links['namespaces']['special'] = array(
-                'class' => 'selected',
-                'text' => wfMsg('nstab-special'),
-                'href' => $wgRequest->getRequestURL()
-            );
-            // Equiv to SkinTemplateBuildContentActionUrlsAfterSpecialPage
-            wfRunHooks('SkinTemplateNavigation::SpecialPage', array(&$this, &$links));
-        }
-
-
-        // Equiv to SkinTemplateContentActions
-        wfRunHooks('SkinTemplateNavigation::Universal', array(&$this, &$links));
-
-        wfProfileOut(__METHOD__);
-
-
-        return $links;
-    }
-
     function getNamespace() {
         return $this->getTitle()->getNamespace();
     }
@@ -329,7 +72,7 @@ class SkinSkinzam extends SkinTemplate {
  * QuickTemplate class for Vector skin
  * @ingroup Skins
  */
-class SkinzamTemplate extends QuickTemplate {
+class SkinzamTemplate extends BaseTemplate {
     /* Members */
 
     /**
@@ -349,86 +92,35 @@ class SkinzamTemplate extends QuickTemplate {
         $action = $wgRequest->getText('action');
 
         // Build additional attributes for navigation urls
-        $nav = $this->skin->buildNavigationUrls();
+        $nav = $this->data['content_navigation'];
+        $xmlID = '';
         foreach ($nav as $section => $links) {
             foreach ($links as $key => $link) {
-                $xmlID = $key;
-                if (isset($link['context']) && $link['context'] == 'subject') {
-                    $xmlID = 'ca-nstab-' . $xmlID;
-                } else if (isset($link['context']) && $link['context'] == 'talk') {
-                    $xmlID = 'ca-talk';
-                } else {
-                    $xmlID = 'ca-' . $xmlID;
+                if ($section == 'views' && !( isset($link['primary']) && $link['primary'] )) {
+                    $link['class'] = rtrim('collapsible ' . $link['class'], ' ');
                 }
+
+                $xmlID = isset($link['id']) ? $link['id'] : 'ca-' . $xmlID;
                 $nav[$section][$key]['attributes'] =
                         ' id="' . Sanitizer::escapeId($xmlID) . '"';
-                if ($nav[$section][$key]['class']) {
+                if ($link['class']) {
                     $nav[$section][$key]['attributes'] .=
                             ' class="' . htmlspecialchars($link['class']) . '"';
                     unset($nav[$section][$key]['class']);
                 }
-                // We don't want to give the watch tab an accesskey if the page
-                // is being edited, because that conflicts with the accesskey on
-                // the watch checkbox.  We also don't want to give the edit tab
-                // an accesskey, because that's fairly superfluous and conflicts
-                // with an accesskey (Ctrl-E) often used for editing in Safari.
-                if (
-                        in_array($action, array('edit', 'submit')) &&
-                        in_array($key, array('edit', 'watch', 'unwatch'))
-                ) {
+                if (isset($link['tooltiponly']) && $link['tooltiponly']) {
                     $nav[$section][$key]['key'] =
-                            $this->skin->tooltip($xmlID);
+                            Linker::tooltip($xmlID);
                 } else {
                     $nav[$section][$key]['key'] =
-                            $this->skin->tooltipAndAccesskeyAttribs($xmlID);
+                            Xml::expandAttributes(Linker::tooltipAndAccesskeyAttribs($xmlID));
                 }
             }
         }
         $this->data['namespace_urls'] = $nav['namespaces'];
         $this->data['view_urls'] = $nav['views'];
         $this->data['action_urls'] = $nav['actions'];
-        // Build additional attributes for personal_urls
-        foreach ($this->data['personal_urls'] as $key => $item) {
-            $this->data['personal_urls'][$key]['attributes'] =
-                    ' id="' . Sanitizer::escapeId("pt-$key") . '"';
-            if (isset($item['active']) && $item['active']) {
-                $this->data['personal_urls'][$key]['attributes'] .=
-                        ' class="active"';
-            }
-            $this->data['personal_urls'][$key]['key'] =
-                    $this->skin->tooltipAndAccesskeyAttribs('pt-' . $key);
-        }
 
-        // Generate additional footer links
-        $footerlinks = $this->data["footerlinks"];
-
-        // Reduce footer links down to only those which are being used
-        $validFooterLinks = array();
-        foreach ($footerlinks as $category => $links) {
-            $validFooterLinks[$category] = array();
-            foreach ($links as $link) {
-                if (isset($this->data[$link]) && $this->data[$link]) {
-                    $validFooterLinks[$category][] = $link;
-                }
-            }
-        }
-
-        // Generate additional footer icons
-        $footericons = $this->data["footericons"];
-        // Unset any icons which don't have an image
-        foreach ($footericons as $footerIconsKey => &$footerIconsBlock) {
-            foreach ($footerIconsBlock as $footerIconKey => $footerIcon) {
-                if (!is_string($footerIcon) && !isset($footerIcon["src"])) {
-                    unset($footerIconsBlock[$footerIconKey]);
-                }
-            }
-        }
-        // Redo removal of any empty blocks
-        foreach ($footericons as $footerIconsKey => &$footerIconsBlock) {
-            if (count($footerIconsBlock) <= 0) {
-                unset($footericons[$footerIconsKey]);
-            }
-        }
         // Output HTML Page
         $this->html('headelement');
         $this->renderTop();
@@ -438,51 +130,23 @@ class SkinzamTemplate extends QuickTemplate {
             <a id="top"></a>
             <?php $this->renderContent() ?>
             <!-- contentFooter -->
-            <div id="self_general" class="block_flat block_full">
-                <div class="inside">
-                    <?php foreach ($validFooterLinks as $category => $links): ?>
-                        <?php if (count($links) > 0): ?>
-                            <ul id="footer-<?php echo $category ?>">
-                                <?php foreach ($links as $link): ?>
-                                    <?php if (isset($this->data[$link]) && $this->data[$link]): ?>
-                                        <li id="footer-<?php echo $category ?>-<?php echo $link ?>"><?php $this->html($link) ?></li>
-                                    <?php endif; ?>
-                                <?php endforeach; ?>
-                            </ul>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
-                    <?php if (count($footericons) > 0): ?>
-                        <ul id="footer-icons" class="noprint">
-                            <?php foreach ($footericons as $blockName => $footerIcons): ?>
-                                <li id="footer-<?php echo htmlspecialchars($blockName); ?>ico">
-                                    <?php foreach ($footerIcons as $icon): ?>
-                                        <?php echo $this->skin->makeFooterIcon($icon); ?>
-
-                                    <?php endforeach; ?>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
-                    <?php endif; ?>
-                    <div style="clear:both"></div>
-                </div>
-            </div>
+            <?php $this->renderContentFooter() ?>
             <!-- /contentFooter -->
         </div>
         <!-- /content -->
 
+        <!-- footer -->
         <?php $this->renderFooter(); ?>
-        </div>
-        <!-- /container -->
+        <!-- /footer -->
+
+
         <!-- bottomScripts -->
-        <?php $this->html('bottomscripts'); /* JS call to runBodyOnloadHook */ ?>
+        <?php $this->renderBottom() ?>
         <!-- /bottomScripts -->
-        <?php $this->html('reporttime') ?>
-        <?php if ($this->data['debug']): ?>
-            <!-- Debug output: <?php $this->text('debug'); ?> -->
-        <?php endif; ?>
         </body>
         </html>
         <?php
+        // End of Output HTML Page
     }
 
     /**
@@ -546,7 +210,7 @@ class SkinzamTemplate extends QuickTemplate {
 
             <div class="hgroup inside">
                 <h1><a id="logo_project" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"></a></h1>
-                <h2><?php $this->msg('sz-tagline') ?></h2>
+                <h2><?php wfMessage('sz-tagline')->text() ?></h2>
 
             </div>
         </div>
@@ -615,14 +279,52 @@ class SkinzamTemplate extends QuickTemplate {
     }
 
     /**
+     * Render the Contentfooter (content related infos)
+     */
+    private function renderContentFooter() {
+        ?>
+
+        <div id="self_general" class="block block_full">
+            <div class="inside">
+                <?php foreach ($this->getFooterLinks() as $category => $links): ?>
+                    <ul id="footer-<?php echo $category ?>">
+                        <?php foreach ($links as $link): ?>
+                            <li id="footer-<?php echo $category ?>-<?php echo $link ?>"><?php $this->html($link) ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endforeach; ?>
+                <?php $footericons = $this->getFooterIcons("icononly");
+                if (count($footericons) > 0): ?>
+                    <ul id="footer-icons" class="noprint">
+                        <?php foreach ($footericons as $blockName => $footerIcons): ?>
+                            <li id="footer-<?php echo htmlspecialchars($blockName); ?>ico">
+                                <?php foreach ($footerIcons as $icon): ?>
+                                    <?php echo $this->skin->makeFooterIcon($icon); ?>
+
+                                <?php endforeach; ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
+                <div style="clear:both"></div>
+            </div>
+        </div>
+        <?php
+    }
+
+    /**
      * Render the footer (main menu)
      */
     private function renderFooter() {
         ?>
-        <!-- footer -->
         <div id="footer">
             <div class="inside">
                 <div class="content">
+                <?php if (isset($this->data['sz_pretty_username'])): ?>
+                <span id="prettyUserName">
+                    <?php echo $this->data['sz_pretty_username'] ?>
+                </span>
+                <? endif; ?>
                     <!-- logo -->
                     <a id="logo_mini" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>" <?php echo $this->skin->tooltipAndAccesskeyAttribs('p-logo') ?>></a>
                     <!-- /logo -->
@@ -631,16 +333,11 @@ class SkinzamTemplate extends QuickTemplate {
                     <!-- /search -->
                     <!-- quicklinks -->
                     <ul>
-                        <li>
-                            <a href="/Special:AllPages"><?php echo $this->msg('sz-browse') ?></a>
-                        </li>
-                        <li>
-                            <a href="/Special:Preferences"><?php echo $this->msg('sz-myseizam') ?></a>
-                        </li>
+                        <?php $this->renderNavigation(array('SZ-FOOTER')); ?>
                         <li class="more">
                             <a href="#">
-                                <span class="show_more"><?php echo $this->msg('moredotdotdot') ?></span>
-                                <span class="show_less" aria-hidden="true"><?php echo $this->msg('lessdotdotdot') ?></span>
+                                <span class="show_more"><?php echo wfMessage('moredotdotdot')->text() ?></span>
+                                <span class="show_less" aria-hidden="true"><?php echo wfMessage('lessdotdotdot')->text() ?></span>
                             </a>
                         </li>
                     </ul>
@@ -653,7 +350,6 @@ class SkinzamTemplate extends QuickTemplate {
                 </div>
             </div>
         </div>
-        <!-- /footer -->
         <?php
     }
 
@@ -663,39 +359,39 @@ class SkinzamTemplate extends QuickTemplate {
     private function renderMore() {
         ?>
         <div class="section">
-            <p><?php echo $this->msg('sz-legalcontent') ?></p>
+            <p><?php echo wfMessage('sz-legalcontent')->text() ?></p>
             <ul>
-                <li><?php echo $this->msgHtml('sz-gtcu') ?></li>
-                <li><?php echo $this->msgHtml('sz-astcu') ?></li>
-                <li><?php echo $this->msgHtml('sz-legalinfo') ?></li>
-                <li><?php echo $this->msgHtml('sz-privacypolicy') ?></li>
+                <li><?php echo wfMessage('sz-gtcu')->parse() ?></li>
+                <li><?php echo wfMessage('sz-astcu')->parse() ?></li>
+                <li><?php echo wfMessage('sz-legalinfo')->parse() ?></li>
+                <li><?php echo wfMessage('sz-privacypolicy')->parse() ?></li>
             </ul>
         </div>
 
         <div class="section">
-            <p><?php echo $this->msg('sz-generalinfo') ?></p>
+            <p><?php echo wfMessage('sz-generalinfo')->text() ?></p>
             <ul>
-                <li><?php echo $this->msgHtml('sz-discoverseizam') ?></li>
-                <li><?php echo $this->msgHtml('sz-joinseizam') ?></li>
-                <li><?php echo $this->msgHtml('sz-help') ?></li>
-                <li><?php echo $this->msgHtml('sz-faq') ?></li>
+                <li><?php echo wfMessage('sz-discoverseizam')->parse() ?></li>
+                <li><?php echo wfMessage('sz-joinseizam')->parse() ?></li>
+                <li><?php echo wfMessage('sz-help')->parse() ?></li>
+                <li><?php echo wfMessage('sz-faq')->parse() ?></li>
             </ul>
         </div>
 
         <div class="section">
-            <p><?php echo $this->msg('sz-communicate') ?></p>
+            <p><?php echo wfMessage('sz-communicate')->text() ?></p>
             <ul>
-                <li><?php echo $this->msgHtml('sz-reportabuse') ?></li>
-                <li><?php echo $this->msgHtml('sz-reportbug') ?></li>
-                <li><?php echo $this->msgHtml('sz-technicalsupport') ?></li>
-                <li><?php echo $this->msgHtml('sz-contactus') ?></li>
+                <li><?php echo wfMessage('sz-reportabuse')->parse() ?></li>
+                <li><?php echo wfMessage('sz-reportbug')->parse() ?></li>
+                <li><?php echo wfMessage('sz-technicalsupport')->parse() ?></li>
+                <li><?php echo wfMessage('sz-contactus')->parse() ?></li>
             </ul>
         </div>
 
         <div class="section">
-            <p class="sread"><?php echo $this->msg('sz-selectlang') ?></p>
+            <p class="sread"><?php echo wfMessage('sz-selectlang')->text() ?></p>
             <?php echo wfLanguageSelectorHTML($this->skin->getTitle(), null, 'selectLang'); ?>
-            <p class="sread"><?php echo $this->msg('sz-seizamonsocialnetworks') ?></p>
+            <p class="sread"><?php echo wfMessage('sz-seizamonsocialnetworks')->text() ?></p>
             <ul class="socials">
                 <li class="tumblr"><a href="http://www.davidcanwin.com">Tumblr</a></li>
                 <li class="twitter"><a href="http://twitter.com/davidcanwin">Twitter</a></li>
@@ -714,7 +410,7 @@ class SkinzamTemplate extends QuickTemplate {
         <div id="nav">
             <ul id="nav_plus">
                 <li>
-                    <a href="#"><?php echo $this->msg('actions') ?></a>
+                    <a href="#"><?php echo wfMessage('actions')->text() ?></a>
                     <ul>
                         <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
                     </ul>
@@ -730,7 +426,7 @@ class SkinzamTemplate extends QuickTemplate {
     private function renderInsideContent() {
         ?>
         <!-- tagline (invisible)-->
-        <div id="siteSub"><?php $this->msg('tagline') ?></div>
+        <div id="siteSub"><?php wfMessage('tagline')->text() ?></div>
         <!-- /tagline -->
         <!-- subtitle -->
         <div id="contentSub"<?php $this->html('userlangattributes') ?>><?php $this->html('subtitle') ?></div>
@@ -748,8 +444,8 @@ class SkinzamTemplate extends QuickTemplate {
         <?php if ($this->data['showjumplinks']): ?>
             <!-- jumpto (invisible)-->
             <div id="jump-to-nav">
-                <?php $this->msg('jumpto') ?> <a href="#mw-head"><?php $this->msg('jumptonavigation') ?></a>,
-                <a href="#p-search"><?php $this->msg('jumptosearch') ?></a>
+                <?php wfMessage('jumpto')->text() ?> <a href="#mw-head"><?php wfMessage('jumptonavigation')->text() ?></a>,
+                <a href="#p-search"><?php wfMessage('jumptosearch')->text() ?></a>
             </div>
             <!-- /jumpto -->
         <?php endif; ?>
@@ -776,6 +472,18 @@ class SkinzamTemplate extends QuickTemplate {
         ?>
         <div id="mw-js-message" style="display:none;"<?php $this->html('userlangattributes') ?>></div>
         <?php
+    }
+
+    /**
+     * Render bottom of the page (scripts, debug...) (between </div id="content"> and </body>)
+     */
+    private function renderBottom() {
+        ?>
+        <!-- fixalpha -->
+        <script type="<?php $this->text('jsmimetype') ?>"> if ( window.isMSIE55 ) fixalpha(); </script>
+        <!-- /fixalpha -->
+        <?php
+        $this->printTrail();
     }
 
     /**
@@ -818,33 +526,36 @@ class SkinzamTemplate extends QuickTemplate {
                     endforeach;
                     break;
                 case 'PERSONAL':
-                    foreach ($this->data['personal_urls'] as $item):
-                        ?>
-                        <li <?php echo $item['attributes'] ?>><a href="<?php echo htmlspecialchars($item['href']) ?>"<?php echo $item['key'] ?><?php if (!empty($item['class'])): ?> class="<?php echo htmlspecialchars($item['class']) ?>"<?php endif; ?>><?php echo htmlspecialchars($item['text']) ?></a></li>
-                        <?php
+                    foreach ($this->getPersonalTools() as $key => $item):
+                        echo $this->makeListItem($key, $item);
+                    endforeach;
+                    break;
+                case 'SZ-FOOTER' :
+                    foreach ($this->getSzFooterUrls() as $key => $item):
+                        echo $this->makeListItem($key, $item);
                     endforeach;
                     break;
                 case 'SEARCH':
                     ?>
                     <div id="p-search">
-                        <h5<?php $this->html('userlangattributes') ?>><label for="searchInput"><?php $this->msg('search') ?></label></h5>
+                        <h5<?php $this->html('userlangattributes') ?>><label for="searchInput"><?php wfMessage('search') ?></label></h5>
                         <form action="<?php $this->text('wgScript') ?>" id="searchform">
                             <input type='hidden' name="title" value="<?php $this->text('searchtitle') ?>"/>
-                            <?php if ($wgVectorUseSimpleSearch && $wgUser->getOption('vector-simplesearch')): ?>
+                                <?php if ($wgVectorUseSimpleSearch && $wgUser->getOption('vector-simplesearch')): ?>
                                 <div id="simpleSearch">
                                     <?php if ($this->data['rtl']): ?>
-                                        <button id="searchButton" type='submit' name='button' <?php echo $this->skin->tooltipAndAccesskeyAttribs('search-fulltext'); ?>><img src="<?php echo $this->skin->getSkinStylePath('images/search-rtl.png'); ?>" alt="<?php $this->msg('searchbutton') ?>" /></button>
+                                        <?php echo $this->makeSearchButton('image', array('id' => 'searchButton', 'src' => $this->skin->getSkinStylePath('images/search-rtl.png'))); ?>
                                     <?php endif; ?>
-                                    <input id="searchInput" name="search" type="text" <?php echo $this->skin->tooltipAndAccesskeyAttribs('search'); ?> <?php if (isset($this->data['search'])): ?> value="<?php $this->text('search') ?>"<?php endif; ?> />
+                                    <?php echo $this->makeSearchInput(array('id' => 'searchInput', 'type' => 'text')); ?>
                                     <?php if (!$this->data['rtl']): ?>
-                                        <button id="searchButton" type='submit' name='button' <?php echo $this->skin->tooltipAndAccesskeyAttribs('search-fulltext'); ?>><img src="<?php echo $this->skin->getSkinStylePath('images/search-ltr.png'); ?>" alt="<?php $this->msg('searchbutton') ?>" /></button>
-                                    <?php endif; ?>
+                                    <?php echo $this->makeSearchButton('image', array('id' => 'searchButton', 'src' => $this->skin->getSkinStylePath('images/search-ltr.png'))); ?>
+                                <?php endif; ?>
                                 </div>
                             <?php else: ?>
-                                <input id="searchInput" name="search" type="text" <?php echo $this->skin->tooltipAndAccesskeyAttribs('search'); ?> <?php if (isset($this->data['search'])): ?> value="<?php $this->text('search') ?>"<?php endif; ?> />
-                                <input type='submit' name="go" class="searchButton" id="searchGoButton"	value="<?php $this->msg('searcharticle') ?>"<?php echo $this->skin->tooltipAndAccesskeyAttribs('search-go'); ?> />
-                                <input type="submit" name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg('searchbutton') ?>"<?php echo $this->skin->tooltipAndAccesskeyAttribs('search-fulltext'); ?> />
-                            <?php endif; ?>
+                                <?php echo $this->makeSearchInput(array('id' => 'searchInput')); ?>
+                                <?php echo $this->makeSearchButton('go', array('id' => 'searchGoButton', 'class' => 'searchButton')); ?>
+                        <?php echo $this->makeSearchButton('fulltext', array('id' => 'mw-searchButton', 'class' => 'searchButton')); ?>
+                    <?php endif; ?>
                         </form>
                     </div>
                     <?php
@@ -852,6 +563,37 @@ class SkinzamTemplate extends QuickTemplate {
             }
             echo "\n<!-- /{$name} -->\n";
         }
+    }
+
+    /**
+     * Create an array of footer links items from the data in the quicktemplate
+     * stored by the SkinTemplate Hook in extensions/Skinzam/Skinzam.hooks.php.
+     * The resulting array is built acording to a format intended to be passed
+     * through makeListItem to generate the html.
+     * This is in reality the same list as already stored in sz_footer_urls
+     * however it is reformatted so that you can just pass the individual items
+     * to makeListItem instead of hardcoding the element creation boilerplate.
+     */
+    function getSzFooterUrls() {
+        $szFooterUrls = array();
+        foreach ($this->data['sz_footer_urls'] as $key => $szfurl) {
+            # The class on a personal_urls item is meant to go on the <a> instead
+            # of the <li> so we have to use a single item "links" array instead
+            # of using most of the personal_url's keys directly
+            $szFooterUrls[$key] = array();
+            $szFooterUrls[$key]["links"][] = array();
+            $szFooterUrls[$key]["links"][0]["single-id"] = $szFooterUrls[$key]["id"] = "szf-$key";
+
+
+            if (isset($szfurl["active"])) {
+                $szFooterUrls[$key]["active"] = $szfurl["active"];
+            }
+            foreach (array("href", "class", "text") as $k) {
+                if (isset($szfurl[$k]))
+                    $szFooterUrls[$key]["links"][0][$k] = $szfurl[$k];
+            }
+        }
+        return $szFooterUrls;
     }
 
 }
