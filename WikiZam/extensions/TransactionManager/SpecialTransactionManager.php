@@ -50,7 +50,7 @@ class SpecialTransactionManager extends SpecialPage {
         global $wgRequest, $wgOut;
 
         $this->setHeaders();
-        $wgOut->addWikiText(wfMsg('tm-desc'));
+        $wgOut->addWikiText(wfMessage('tm-desc')->text());
         //self::sayIt($wgRequest);
         
         $wgOut->addWikiText('BALANCE= '.$this->getBalanceFromDB().'€');

@@ -152,6 +152,8 @@ Class TMRecord {
         return $return;
     }
     
+    # Write current object to DB
+    
     private function updateDB() {
         # We need to write, therefore we need the master
         $dbw = wfGetDB(DB_MASTER);

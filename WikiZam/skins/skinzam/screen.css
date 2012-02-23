@@ -1713,6 +1713,8 @@ input:invalid, textarea:invalid { background-color: #f0dddd; }
 
 p.mw-htmlform-invalid-input span.error {
     display: block;
+    width: 184px;
+    text-align: justify;
     font-size: 1em;
     margin-left: 192px;
     color: #f0373a;

@@ -49,6 +49,8 @@ class SpecialSkinzam extends SpecialPage {
     public function execute($par) {
         global $wgOut;
         $this->setHeaders();
+        
+        $this->getOutput();
 
         # A formDescriptor Array to tell HTMLForm what to build
         $formDescriptor = array(
@@ -56,15 +58,20 @@ class SpecialSkinzam extends SpecialPage {
                 'type' => 'text',
                 'label' => 'text',
                 'default' => 'Valeur par défaut',
-                'size' => 10,
                 'maxlength'=> 7,
                 'help' => 'This is supposed to help'
+            ),
+            'Lise' => array(
+                'type' => 'text',
+                'label' => 'Message for Lise',
+                'default' => 'What a beautiful girl',
+                'maxlength'=> 16,
+                'help' => 'That is supposed to be romantic'
             ),
             'password' => array(
                 'type' => 'password',
                 'label' => 'password',
                 'default' => '',
-                'size' => 16,
                 'maxlength'=> 16,
                 'help' => 'This is supposed to help'
             ),
@@ -72,7 +79,6 @@ class SpecialSkinzam extends SpecialPage {
                 'type' => 'float',
                 'label' => 'float',
                 'default' => 'plop',
-                'size' => 8,
                 'maxlength'=> 6,
                 'min' => 41,
                 'max' => 43,
@@ -82,7 +88,6 @@ class SpecialSkinzam extends SpecialPage {
                 'type' => 'int',
                 'label' => 'int',
                 'default' => 1789,
-                'size' => 4,
                 'maxlength'=> 4,
                 'min' => 0,
                 'max' => 2011,
@@ -113,7 +118,6 @@ class SpecialSkinzam extends SpecialPage {
                     'Option 1' => 1,
                     'Option 2' => 'option2id'
                 ),
-                'size' => 27,
                 'maxlength'=> 10,
                 'help' => 'This is supposed to help'
             ),
@@ -125,7 +129,6 @@ class SpecialSkinzam extends SpecialPage {
                     'Option 1' => 1,
                     'Option 2' => 'option2id'
                 ),
-                'size' => 27,
                 'maxlength'=> 10,
                 'help' => 'This is supposed to help'
             ),
@@ -157,6 +160,7 @@ class SpecialSkinzam extends SpecialPage {
                 'help' => 'This is supposed to help'
             ),
             'info' => array(
+                'section' => 'section',
                 'type' => 'info',
                 'label' => 'info',
                 'default' => '<a href="http://www.davidcanwin.com">DavidCanWin.com</a> <a href="http://www.davidcanwin.com">DavidCanWin.com</a> <a href="http://www.davidcanwin.com">DavidCanWin.com</a> <a href="http://www.davidcanwin.com">DavidCanWin.com</a> <a href="http://www.davidcanwin.com">DavidCanWin.com</a>',
@@ -180,6 +184,8 @@ class SpecialSkinzam extends SpecialPage {
         $htmlForm->setTitle($this->getTitle()); # You must call setTitle() on an HTMLForm
 
         $htmlForm->setSubmitCallback(array('SpecialSkinzam', 'processInput'));
+        
+        $htmlForm->addHeaderText('ceci est un text de tete','section');
 
         $htmlForm->show(); # Displaying the form
     }

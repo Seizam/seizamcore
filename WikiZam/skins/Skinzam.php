@@ -210,7 +210,7 @@ class SkinzamTemplate extends BaseTemplate {
 
             <div class="hgroup inside">
                 <h1><a id="logo_project" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"></a></h1>
-                <h2><?php wfMessage('sz-tagline') ?></h2>
+                <h2><?php wfMessage('sz-tagline')->text() ?></h2>
 
             </div>
         </div>
@@ -336,8 +336,8 @@ class SkinzamTemplate extends BaseTemplate {
                         <?php $this->renderNavigation(array('SZ-FOOTER')); ?>
                         <li class="more">
                             <a href="#">
-                                <span class="show_more"><?php echo wfMessage('moredotdotdot') ?></span>
-                                <span class="show_less" aria-hidden="true"><?php echo wfMessage('lessdotdotdot') ?></span>
+                                <span class="show_more"><?php echo wfMessage('moredotdotdot')->text() ?></span>
+                                <span class="show_less" aria-hidden="true"><?php echo wfMessage('lessdotdotdot')->text() ?></span>
                             </a>
                         </li>
                     </ul>
@@ -359,7 +359,7 @@ class SkinzamTemplate extends BaseTemplate {
     private function renderMore() {
         ?>
         <div class="section">
-            <p><?php echo wfMessage('sz-legalcontent') ?></p>
+            <p><?php echo wfMessage('sz-legalcontent')->text() ?></p>
             <ul>
                 <li><?php echo wfMessage('sz-gtcu')->parse() ?></li>
                 <li><?php echo wfMessage('sz-astcu')->parse() ?></li>
@@ -369,7 +369,7 @@ class SkinzamTemplate extends BaseTemplate {
         </div>
 
         <div class="section">
-            <p><?php echo wfMessage('sz-generalinfo') ?></p>
+            <p><?php echo wfMessage('sz-generalinfo')->text() ?></p>
             <ul>
                 <li><?php echo wfMessage('sz-discoverseizam')->parse() ?></li>
                 <li><?php echo wfMessage('sz-joinseizam')->parse() ?></li>
@@ -379,7 +379,7 @@ class SkinzamTemplate extends BaseTemplate {
         </div>
 
         <div class="section">
-            <p><?php echo wfMessage('sz-communicate') ?></p>
+            <p><?php echo wfMessage('sz-communicate')->text() ?></p>
             <ul>
                 <li><?php echo wfMessage('sz-reportabuse')->parse() ?></li>
                 <li><?php echo wfMessage('sz-reportbug')->parse() ?></li>
@@ -389,9 +389,9 @@ class SkinzamTemplate extends BaseTemplate {
         </div>
 
         <div class="section">
-            <p class="sread"><?php echo wfMessage('sz-selectlang') ?></p>
+            <p class="sread"><?php echo wfMessage('sz-selectlang')->text() ?></p>
             <?php echo wfLanguageSelectorHTML($this->skin->getTitle(), null, 'selectLang'); ?>
-            <p class="sread"><?php echo wfMessage('sz-seizamonsocialnetworks') ?></p>
+            <p class="sread"><?php echo wfMessage('sz-seizamonsocialnetworks')->text() ?></p>
             <ul class="socials">
                 <li class="tumblr"><a href="http://www.davidcanwin.com">Tumblr</a></li>
                 <li class="twitter"><a href="http://twitter.com/davidcanwin">Twitter</a></li>
@@ -410,7 +410,7 @@ class SkinzamTemplate extends BaseTemplate {
         <div id="nav">
             <ul id="nav_plus">
                 <li>
-                    <a href="#"><?php echo wfMessage('actions') ?></a>
+                    <a href="#"><?php echo wfMessage('actions')->text() ?></a>
                     <ul>
                         <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
                     </ul>
@@ -426,7 +426,7 @@ class SkinzamTemplate extends BaseTemplate {
     private function renderInsideContent() {
         ?>
         <!-- tagline (invisible)-->
-        <div id="siteSub"><?php wfMessage('tagline') ?></div>
+        <div id="siteSub"><?php wfMessage('tagline')->text() ?></div>
         <!-- /tagline -->
         <!-- subtitle -->
         <div id="contentSub"<?php $this->html('userlangattributes') ?>><?php $this->html('subtitle') ?></div>
@@ -444,8 +444,8 @@ class SkinzamTemplate extends BaseTemplate {
         <?php if ($this->data['showjumplinks']): ?>
             <!-- jumpto (invisible)-->
             <div id="jump-to-nav">
-                <?php wfMessage('jumpto') ?> <a href="#mw-head"><?php wfMessage('jumptonavigation') ?></a>,
-                <a href="#p-search"><?php wfMessage('jumptosearch') ?></a>
+                <?php wfMessage('jumpto')->text() ?> <a href="#mw-head"><?php wfMessage('jumptonavigation')->text() ?></a>,
+                <a href="#p-search"><?php wfMessage('jumptosearch')->text() ?></a>
             </div>
             <!-- /jumpto -->
         <?php endif; ?>
