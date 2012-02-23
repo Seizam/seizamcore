@@ -122,7 +122,7 @@ class SpecialElectronicPayment extends SpecialPage {
         $epm['epm_filtercause'] = $request->getText('filtragecause');
         $epm['epm_filtervalue'] = $request->getText('filtragevaleur');
 
-        return new EPMessage('in', $epm);
+        return EPMessage::create('in', $epm);
     }
 
     private function displayEPTBack(EPMessage $epmessage) {
@@ -149,7 +149,7 @@ class SpecialElectronicPayment extends SpecialPage {
         $epm['epo_language'] = $this->assignEPTLanguage();
         $epm['epo_status'] = 'PE';
 
-        return new EPMessage('out', $epm);
+        return EPMessage::create('out', $epm);
     }
 
     # Display the form to be sent to the bank
@@ -204,7 +204,7 @@ class SpecialElectronicPayment extends SpecialPage {
     private function constructAndDisplayRead() {
         global $wgOut;
         $epm['epm_id'] = $wgRequest->getText('id');
-        $message = new EPMessage('read', $epm);
+        $message = EPMessage::create('read', $epm);
         $wgOut->addHTML('<pre>' . print_r($message->epm, true) . '</pre>');
     }
 

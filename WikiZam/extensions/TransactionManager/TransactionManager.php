@@ -138,12 +138,13 @@ Class TMRecord {
     # Record current object to DB and set tmr_id
 
     private function writeDB() {
+        # Setting the date of update
+        $this->tmr['tmr_date_created'] = date("Y-m-d:H:i:s");
+        $this->tmr['tmr_date_modified'] = $this->tmr['tmr_date_created'];
         # We need to write, therefore we need the master
         $dbw = wfGetDB(DB_MASTER);
         # PostgreSQL, null for MySQL
         $this->tmr['tmr_id'] = $dbw->nextSequenceValue('tm_record_tmr_id_seq');
-        # Setting the date of update
-        $this->tmr['tmr_date_modified'] = date("Y-m-d:H:i:s");
         # Writing...
         $return = $dbw->insert('tm_record', $this->tmr);
         # Setting tmr_id from auto incremented id in DB

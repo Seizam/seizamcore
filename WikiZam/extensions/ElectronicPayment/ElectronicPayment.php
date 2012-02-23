@@ -57,7 +57,6 @@ require_once($dir . 'ElectronicPayment.config.php');
 
 # Debug file (written on unauthentificated inbound message)
 $wgDebugLogGroups['EPErrors'] = '/var/log/seizam/ep_errors.log'; #@TODO: pretty log management in LocalSettings/ServerSettings
-
 #TPE kit
 require_once($dir . 'CMCIC_Tpe.inc.php');
 
@@ -93,7 +92,7 @@ Class EPMessage {
 
     # The related Order (EPOrder)
     public $order;
-    
+
     # The VEPT
     public $oTpe;
     # The certification/hash logic
@@ -108,7 +107,15 @@ Class EPMessage {
     # Debug/Dev
     public $CtlHmac;
 
-    public function __construct($type, $epm) {
+    # Returns EPMessage object
+
+    public static function create($type, $epm) {
+        return new EPMessage($type, $epm);
+    }
+
+    # Main constructor
+
+    private function __construct($type, $epm) {
         # 3 way of constructing
         switch ($type) {
             # Constructs OutGoing EPMessage. ie: We are sending user to bank payment interface (Special:ElectronicPayment)
@@ -132,9 +139,16 @@ Class EPMessage {
         # Msg related fields
         $this->epm['epm_type'] = 'in';
         $this->epm_date_message_bank_format = $epm['epm_date_message_bank_format'];
-        
-        # We build the order
-        $this->order = new EPOrder($epm);
+
+        # We build the order from DB
+        $this->order = EPOrder::create($epm);
+
+        # We add the new data to the order
+        if (!$this->order->setEPO($epm)) {
+            $this->epm_receipt = CMCIC_CGI2_MACNOTOK . 'EPOrder Not Valid' . print_r($epm, true);
+            wfDebugLog('EPErrors', $this->epm_receipt);
+            return false;
+        }
 
         # Merge input and msg related fields
         $epm['epm_epo_id'] = $epm['epo_id'];
@@ -151,20 +165,23 @@ Class EPMessage {
         $this->CtlHmac = sprintf(CMCIC_CTLHMAC, $this->oTpe->sVersion, $this->oTpe->sNumero, $this->oHmac->computeHmac(sprintf(CMCIC_CTLHMACSTR, $this->oTpe->sVersion, $this->oTpe->sNumero)));
 
         # Now that we know everything, we can calculate the control sum for order validation
-        if ($this->epm['epm_mac'] == $this->calculateMAC()) {
-            $this->epm_receipt = CMCIC_CGI2_MACOK;
-            #Do what needs to be done regarding order success status
-            $this->order->reactToReturnCode($this);
-
-            #Finally, save the message
-            $this->writeDB();
-
-            return true;
-        } else { # That's not a valid request!
+        if ($this->epm['epm_mac'] != $this->calculateMAC()) {
             $this->epm_receipt = CMCIC_CGI2_MACNOTOK . $this->epm_validating_fields;
             wfDebugLog('EPErrors', $this->epm_receipt);
             return false;
         }
+
+        $this->epm_receipt = CMCIC_CGI2_MACOK;
+        # Save the message
+        $this->writeDB();
+
+        # Finally, do what needs to be done regarding order success status
+        $this->order->reactToReturnCode($this);
+
+        # Save the order
+        $this->order->updateDB();
+
+        return true;
     }
 
     # Constructs OutGoing EPMessage. ie: We are sending user to bank payment interface  (Special:ElectronicPayment&action=attempt)
@@ -173,15 +190,15 @@ Class EPMessage {
         # Here we set all the fields we can. Look in variable declaration for fields meaning
         # Msg related fields
         $this->epm['epm_type'] = 'out';
-        
+
         # We build the order
-        $this->order = new EPOrder($epm);
-        
+        $this->order = EPOrder::create($epm);
+
         # Merge input and msg related fields
         $epm['epm_epo_id'] = $this->order->epo['epo_id'];
         $epm = array_intersect_key($epm, $this->epm);
         $this->epm = array_merge($this->epm, $epm);
-        
+
         # Order related fields
         $this->epm['epm_ept'] = CMCIC_TPE; # not necessary but who knows how much VEPT could be used.
 
@@ -201,7 +218,7 @@ Class EPMessage {
         # Now that we know everything, we can calculate the control sum for order validation
         $this->epm['epm_mac'] = $this->calculateMAC();
 
-        #Finally, save the message
+        # Finally, save the message
         $this->writeDB();
     }
 
@@ -217,18 +234,6 @@ Class EPMessage {
             echo "Electronic Payment Terminal ERROR : You do not have the right to do this action.";
         }
     }
-
-    # Pick a language for the external payment interface (FR EN DE IT ES NL PT SV availabe) (EN default)
-
-    private function assignEPTLanguage() {
-        global $wgLang;
-        if ($wgLang->getCode() == 'fr')
-            return 'FR';
-        else
-            return 'EN';
-    }
-
-    
 
     # Calculate the control sum for order validation.
 
@@ -259,7 +264,7 @@ Class EPMessage {
         $return = $dbw->insert('ep_message', $this->epm);
         # Setting epo_id from auto incremented id in DB
         $this->epm['epm_id'] = $dbw->insertId();
-        
+
         return $return;
     }
 
@@ -281,18 +286,11 @@ Class EPMessage {
             return "\nmySqlStringToBankTime Error\n";
     }
 
-    
-
-    static function sayIt($in) {
-        global $wgOut;
-        $wgOut->addHTML('<pre>');
-        $wgOut->addHTML(print_r($in, true));
-        $wgOut->addHTML('</pre>');
-    }
-
 }
 
 Class EPOrder {
+
+    private $epo_id = '';
     public $epo = array(
         'epo_id' => '', # int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Primary key (the reference)',
         'epo_tmr_id' => '', # int(10) unsigned NULL COMMENT 'Foreign key to tm_record',
@@ -306,51 +304,68 @@ Class EPOrder {
         'epo_language' => 'EN', # varchar(2) NOT NULL DEFAULT 'EN' COMMENT 'Order Language',
         'epo_status' => 'KO' # varchar(2) NOT NULL DEFAULT 'ko' COMMENT 'Record status (OK, KO, PEnding, TEst)',
     );
-    
-    public function __construct($epm) {
-        # First we keep only what we want from $order
-        
-        echo '<pre>contruct$epm';
-        print_r($epm);
-        echo '</pre>';
-        $order = array_intersect_key($epm, $this->epo);
-        echo '<pre>contruct$order';
-        print_r($order);
-        echo '</pre>';
-        # 2 way of constructing
-        if (isset($order['epo_id']) && $order['epo_id'] > 0) {
-            $this->__constructFromDB($order);
-        } else # It is a new order
-            $this->__constructFromScratch($order);
+
+    /**
+     * @return EPOrder
+     */
+    public static function create($epm) {
+        if (is_int($epm))
+            $epm = array('epo_id' => $epm);
+        return new EPOrder($epm);
     }
-    
-    private function __constructFromDB($order) {
-        
-        # Okay, which order are we talking about?
-        $this->epo['epo_id'] = $order['epo_id'];
-        
+
+    private function __construct($epm) {
+        # 2 way of constructing
+        if (isset($epm['epo_id']) && $epm['epo_id'] > 0) {
+            $this->epo_id = $epm['epo_id'];
+            $this->__constructFromDB();
+        } else { # It is a new order
+            $this->__constructFromScratch($epm);
+        }
+    }
+
+    private function __constructFromDB() {
         # Let's fetch the order's data from DB.
         $this->readDB();
-        
-        # @TODO: Perhaps more fields shouldn't be overwritten (ex: user_id...)?
-        # @TODO: Validate (same amount, same currency...)
-        
-        # And now, we merge.
-        $this->epo = array_merge($this->epo, $order);
-        
-        $this->updateDB();
+        echo 'constructFromDB ';
+        print_r($this->epo);
     }
-    
-    private function __constructFromScratch($order) {
+
+    public function setEPO($epm) {
+        echo 'setEPO ';
+        print_r($epm);
+        print_r($this->epo);
+        # First we keep only what we want from $epm
+        $epo = array_intersect_key($epm, $this->epo);
+
+        # We don't want anything telling us these:
+        unset($epo['epo_id']);
+        unset($epo['epo_date_created']);
+        unset($epo['epo_tmr_id']);
+        if ($epo['epo_user_id'] === $this->epo['epo_user_id'] &&
+                $epo['epo_mail'] === $this->epo['epo_mail'] &&
+                $epo['epo_amount'] === $this->epo['epo_amount'] &&
+                $epo['epo_currency'] === $this->epo['epo_currency']) {
+            # And now, we merge.
+            $this->epo = array_merge($this->epo, $epo);
+
+            return true;
+        }
+        return false;
+    }
+
+    private function __constructFromScratch($epm) {
+        # First we keep only what we want from $epm
+        $epo = array_intersect_key($epm, $this->epo);
+
         # Now we write the record by merging $this->epo with $order...
-        
         # And now, we merge.
-        $this->epo = array_merge($this->epo, $order);
-        
+        $this->epo = array_merge($this->epo, $epo);
+
         $this->writeDB();
     }
-    
-     # Record current object to DB and set epo_id
+
+    # Record current object to DB and set epo_id
 
     private function writeDB() {
         # Setting the dates
@@ -359,23 +374,23 @@ Class EPOrder {
         # We need to write, therefore we need the master
         $dbw = wfGetDB(DB_MASTER);
         # PostgreSQL, null for MySQL
-        $this->epo['epo_id'] = $dbw->nextSequenceValue('ep_order_epo_id_seq');
+        $this->epo_id = $dbw->nextSequenceValue('ep_order_epo_id_seq');
         # Writing...
         $return = $dbw->insert('ep_order', $this->epo);
         # Setting epo_id from auto incremented id in DB
-        $this->epo['epo_id'] = $dbw->insertId();
-        
+        $this->epo_id = $this->epo['epo_id'] = $dbw->insertId();
+
         return $return;
     }
-    
-    private function updateDB() {
+
+    public function updateDB() {
         # Setting the date of update
         $this->epo['epo_date_modified'] = date("Y-m-d:H:i:s");
         # We need to write, therefore we need the master
         $dbw = wfGetDB(DB_MASTER);
         # Writing...
-        $return = $dbw->update('ep_order', $this->epo, array('epo_id' => $this->epo['epo_id']));
-        
+        $return = $dbw->update('ep_order', $this->epo, array('epo_id' => $this->epo_id));
+
         return $return;
     }
 
@@ -385,12 +400,12 @@ Class EPOrder {
         # We are reading, but we need the master table anyway
         # (An order can be updated a lot within instants)
         $dbr = wfGetDB(DB_MASTER);
-        $this->epo = (array)$dbr->selectRow('ep_order', '*', array('epo_id'=>  $this->epo['epo_id']));
+        $this->epo = (array) $dbr->selectRow('ep_order', '*', array('epo_id' => $this->epo_id));
     }
-    
+
     # That's the place where magic happens.
 
-    public function reactToReturnCode($message) {
+    public function reactToReturnCode(EPMessage $message) {
         switch ($message->epm['epm_return_code']) {
             case "Annulation":
                 //$record['tmr_desc'] = 'ep-tm-fail'; # varchar(64) NOT NULL COMMENT 'Record Description',
@@ -399,26 +414,24 @@ Class EPOrder {
 
             case "payetest":
                 $this->epo['epo_status'] = 'TE'; # varchar(2) NOT NULL COMMENT 'Record status (OK, KO, PEnding)',
-                $this->saveTransaction('ep-tm-test',$message);
+                $this->epo['epo_date_paid'] = $message->epm['epm_date_message'];
+                $this->saveTransaction('ep-tm-test', $message);
                 break;
 
             case "paiement":
                 $this->epo['epo_status'] = 'OK'; # varchar(2) NOT NULL COMMENT 'Record status (OK, KO, PEnding)',
-                $this->saveTransaction('ep-tm-success',$message);
+                $this->epo['epo_date_paid'] = $message->epm['epm_date_message'];
+                $this->saveTransaction('ep-tm-success', $message);
                 break;
         }
-        
-        # Update DB entry
-        $this->updateDB();
     }
-    
+
     # @TODO: DOCUMENT
 
     private function saveTransaction($desc, EPMessage $message) {
         # Construct Record For Transaction Manager
         $record = array(
             'tmr_type' => 'payment', # varchar(8) NOT NULL COMMENT 'Type of message (Payment, Sale, Plan)',
-            'tmr_date_created' => $message->epm['epm_date_message'], # datetime NOT NULL COMMENT 'DateTime of creation',
             # Paramas related to User
             'tmr_user_id' => $this->epo['epo_user_id'], # int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Foreign key to user.user_id',
             'tmr_mail' => $this->epo['epo_mail'], # tinyblob COMMENT 'User''s Mail',
@@ -435,4 +448,13 @@ Class EPOrder {
             $this->epo['epo_tmr_id'] = $record['tmr_id'];
         }
     }
+
+    public function getId() {
+        return $this->epo_id;
+    }
+
+    private function setId($id) {
+        $this->epo_id = $id;
+    }
+
 }
