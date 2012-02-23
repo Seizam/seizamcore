@@ -145,15 +145,15 @@ Class EPMessage {
 
         # We add the new data to the order
         if (!$this->order->setEPO($epm)) {
-            $this->epm_receipt = CMCIC_CGI2_MACNOTOK . 'EPOrder Not Valid' . print_r($epm, true);
+            $this->epm_receipt = CMCIC_CGI2_MACNOTOK . "EPOrder Not Valid\n" . print_r($epm, true);
             wfDebugLog('EPErrors', $this->epm_receipt);
             return false;
         }
 
         # Merge input and msg related fields
         $epm['epm_epo_id'] = $epm['epo_id'];
-        $epm = array_intersect_key($epm, $this->epm);
-        $this->epm = array_merge($this->epm, $epm);
+        $epm_intersected = array_intersect_key($epm, $this->epm);
+        $this->epm = array_merge($this->epm, $epm_intersected);
 
         # Instanciate VEPT class (Code provided by bank in CMCIC_Tpe.inc.php)
         $this->oTpe = new CMCIC_Tpe();
@@ -166,7 +166,7 @@ Class EPMessage {
 
         # Now that we know everything, we can calculate the control sum for order validation
         if ($this->epm['epm_mac'] != $this->calculateMAC()) {
-            $this->epm_receipt = CMCIC_CGI2_MACNOTOK . $this->epm_validating_fields . print_r($epm, true);
+            $this->epm_receipt = CMCIC_CGI2_MACNOTOK . $this->epm_validating_fields . "\n" . print_r($epm, true);
             wfDebugLog('EPErrors', $this->epm_receipt);
             return false;
         }
@@ -177,7 +177,7 @@ Class EPMessage {
 
         # Finally, do what needs to be done regarding order success status
         if (!$this->order->reactToReturnCode($this)) {
-            $this->epm_receipt = CMCIC_CGI2_MACNOTOK . 'TMRecord not Valid' . print_r($epm, true);
+            $this->epm_receipt = CMCIC_CGI2_MACNOTOK . "TMRecord not Valid\n" . print_r($epm, true);
             wfDebugLog('EPErrors', $this->epm_receipt);
             return false;
         }
@@ -333,6 +333,8 @@ Class EPOrder {
         $this->readDB();
     }
 
+    # set EPMessage from array
+    
     public function setEPO($epm) {
         # First we keep only what we want from $epm
         $epo = array_intersect_key($epm, $this->epo);
@@ -441,7 +443,7 @@ Class EPOrder {
         );
 
         # Send to Transaction Manager and fetch assigned reference.
-        if (!wfRunHooks('BeforeTransactionSave', array(&$tmr)) && isset($tmr['epo_id']) && $tmr['epo_id'] > 0) {
+        if (!wfRunHooks('BeforeTransactionSave', array(&$tmr)) && isset($tmr['tmr_id']) && $tmr['tmr_id'] > 0) {
             $this->epo['epo_tmr_id'] = $tmr['tmr_id'];
             return true;
         }

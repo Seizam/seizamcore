@@ -101,7 +101,23 @@ Class TMRecord {
         $this->readDB();
     }
     
-    public function setTMR($tmr) {
+    # Set TMP and update database from array
+    
+    public function update($tmr) {
+        # Check if we have an existing object entering
+        # if not, that means the object has been created with __constructFromScratch and is already in DB
+        if (isset($tmr['tmr_id']) && $tmr['tmr_id'] > 0) {
+            if ($this->set($tmr)) {
+                return $this->updateDB();
+            }
+        }
+        
+        return false;
+    }
+    
+    # Set TMRecord from array
+    
+    public function set($tmr) {
         # First we keep only what we want from $tmr
         $tmr = array_intersect_key($tmr, $this->tmr);
 
@@ -117,15 +133,16 @@ Class TMRecord {
         return false;
     }
     
-    private function __constructFromScratch($record) {
+    private function __constructFromScratch($tmr) {
         global $wgUser;
-        # set tmr_date_created (we are creating the entry)
-        $this->tmr['tmr_date_created'] = date("Y-m-d:H:i:s");
         
-        # Now we write the record by merging $tmr with $record...
+        # First we keep only what we want from $tmr
+        $tmr = array_intersect_key($tmr, $this->tmr);
+        
+        # Now we write the record by merging $this->tmr with $tmr...
         
         # And now, we merge.
-        $this->tmr = array_merge($this->tmr, $record);
+        $this->tmr = array_merge($this->tmr, $tmr);
         
         # See if we can add some missing data...
         
