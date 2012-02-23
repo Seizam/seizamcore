@@ -80,7 +80,7 @@ Class TMRecord {
     public static function create($tmr) {
         if (is_int($tmr))
             $tmr = array('tmr_id' => $tmr);
-        return new EPOrder($tmr);
+        return new TMRecord($tmr);
     }
 
     # Main constructor, often called by hooked funtion in TransactionManagerHooks.
@@ -102,7 +102,7 @@ Class TMRecord {
     }
     
     public function setTMR($tmr) {
-        # First we keep only what we want from $epm
+        # First we keep only what we want from $tmr
         $tmr = array_intersect_key($tmr, $this->tmr);
 
         # We don't want anything telling us these:

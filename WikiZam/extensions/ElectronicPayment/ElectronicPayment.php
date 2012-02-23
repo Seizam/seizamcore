@@ -166,7 +166,7 @@ Class EPMessage {
 
         # Now that we know everything, we can calculate the control sum for order validation
         if ($this->epm['epm_mac'] != $this->calculateMAC()) {
-            $this->epm_receipt = CMCIC_CGI2_MACNOTOK . $this->epm_validating_fields;
+            $this->epm_receipt = CMCIC_CGI2_MACNOTOK . $this->epm_validating_fields . print_r($epm, true);
             wfDebugLog('EPErrors', $this->epm_receipt);
             return false;
         }
@@ -176,7 +176,11 @@ Class EPMessage {
         $this->writeDB();
 
         # Finally, do what needs to be done regarding order success status
-        $this->order->reactToReturnCode($this);
+        if (!$this->order->reactToReturnCode($this)) {
+            $this->epm_receipt = CMCIC_CGI2_MACNOTOK . 'TMRecord not Valid' . print_r($epm, true);
+            wfDebugLog('EPErrors', $this->epm_receipt);
+            return false;
+        }
 
         # Save the order
         $this->order->updateDB();
@@ -405,19 +409,17 @@ Class EPOrder {
             case "Annulation":
                 //$record['tmr_desc'] = 'ep-tm-fail'; # varchar(64) NOT NULL COMMENT 'Record Description',
                 $this->epo['epo_status'] = 'KO'; # varchar(2) NOT NULL COMMENT 'Record status (OK, KO, PEnding)',
-                break;
+                return true;
 
             case "payetest":
                 $this->epo['epo_status'] = 'TE'; # varchar(2) NOT NULL COMMENT 'Record status (OK, KO, PEnding)',
                 $this->epo['epo_date_paid'] = $message->epm['epm_date_message'];
-                $this->saveTransaction('ep-tm-test', $message);
-                break;
+                return $this->saveTransaction('ep-tm-test', $message);
 
             case "paiement":
                 $this->epo['epo_status'] = 'OK'; # varchar(2) NOT NULL COMMENT 'Record status (OK, KO, PEnding)',
                 $this->epo['epo_date_paid'] = $message->epm['epm_date_message'];
-                $this->saveTransaction('ep-tm-success', $message);
-                break;
+                return $this->saveTransaction('ep-tm-success', $message);
         }
     }
 
@@ -439,9 +441,12 @@ Class EPOrder {
         );
 
         # Send to Transaction Manager and fetch assigned reference.
-        if (!wfRunHooks('BeforeTransactionSave', array(&$record)) && $record['tmr_id'] != '') {
-            $this->epo['epo_tmr_id'] = $record['tmr_id'];
+        if (!wfRunHooks('BeforeTransactionSave', array(&$tmr)) && isset($tmr['epo_id']) && $tmr['epo_id'] > 0) {
+            $this->epo['epo_tmr_id'] = $tmr['tmr_id'];
+            return true;
         }
+        
+        return false;
     }
 
     public function getId() {
