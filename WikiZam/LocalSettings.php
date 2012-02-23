@@ -277,6 +277,9 @@ $wgNamespacesWithSubpages[NS_MAIN] = true;
 # Transaction Manager
 require_once( "$IP/extensions/TransactionManager/TransactionManager.php" );
 
+# WikiPlace
+# still in development, so please, activate it in ServerSetting.php to not have it running on papilusion
+//require_once( "$IP/extensions/WikiPlace/WikiPlace.php" );
 
 // FEEDS
 $wgAdvertisedFeedTypes = array( 'rss', 'atom' );

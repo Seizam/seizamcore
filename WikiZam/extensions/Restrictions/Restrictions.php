@@ -1,8 +1,14 @@
 <?php
-// TODO:
-//   backward compatible,
-//   configuration,
-//   user-> check si user appartient groupe
+
+/*
+ * Restrictions extension, developped by Yann Missler, Seizam SARL
+ * www.seizam.com
+ */
+
+if (!defined('MEDIAWIKI')) {
+	echo "Restrictions extension\n";
+    die(-1);
+}
 
 # ======================
 #    CONFIGURATION VARS
@@ -19,14 +25,6 @@
 // NOTE: $wgRestrictionLevels will be updated in order for theses level to be accessed via protect
 $wgRestrictionsGroups = array( '', 'owner'); 
 
-// set restriction types dependences
-// (already applied in MediaWiki core code, but here it can be changed using only this array)
-$wgRestrictionTypesNeed = array( 
-		'edit' => 'read', // <=> setting edit to a level is only possible if read is set at least to this level
-	);
-
-// disable automatic summary, because api.php can always see them, even if read restricted
-$wgUseAutomaticEditSummaries = false;
 
 # ==================================== 
 #   REGISTERING EXTENSION
@@ -34,12 +32,13 @@ $wgUseAutomaticEditSummaries = false;
 $wgExtensionCredits['validextensionclass'][] = array(
    'path' => __FILE__,
    'name' => 'Restrictions',
-   'author' =>'Yann Missler', 
+   'author' =>'Yann Missler, Seizam SARL', 
    'url' => 'http://www.seizam.com', 
    'description' => 'This extension overrides MediaWiki\'s inital restrictions system.',
    'version'  => 'alpha',
    );
 
+/*
 $wgResourceModules['ext.Restrictions'] = array(
         'scripts' => 'myExtension.js',
         'styles' => 'myExtension.css',
@@ -47,6 +46,7 @@ $wgResourceModules['ext.Restrictions'] = array(
         'localBasePath' => dirname( __FILE__ ),
         'remoteExtPath' => 'MyExtension',
 );
+ */
 
 
 // load messages file
@@ -78,14 +78,14 @@ $wgHooks['ArticleProtectComplete'][] = 'efRestrictionsArticleProtectComplete';
 // remove page text if it is read restricted
 $wgHooks['SearchUpdate'][] = 'efRestrictionsSearchUpdate';
 
-// add a usercan control when trying to add a page to a watchlist
+// add a "read restrictions" check when trying to add a page to a watchlist
 $wgHooks['WatchArticle'][] = 'efRestrictionsWatchArticle';
 
 // registering our defered setup function
 $wgExtensionFunctions[] = 'efRestrictionsSetup';
 
 
-# internal variable
+# internal variables
 
 // tells to our own UserGetRight hook implementation if we need to grant protect right
 // (required when updating article restriction when validating SetRestrictions form)
@@ -118,6 +118,10 @@ $wgGroupPermissions['sysop']['bypassrestrictions'] = true;
 // add the read rights to restricted actions list
 $wgRestrictionTypes[] = "read";
 
+// disable automatic summary, because api.php can always see comments, even if the page is read restricted
+// so, only protection log and user's comment are visible via history
+$wgUseAutomaticEditSummaries = false;
+
 
 # 2) defered setup 
 
@@ -130,7 +134,7 @@ function efRestrictionsSetup() {
 		if (!in_array($group, $wgRestrictionLevels)) {
 			$wgRestrictionLevels[] = $group;
 		}
-		// TODO
+
 		// if not in wgGroupPermission > create it
 		if ($group!='' && $group!='owner' && !array_key_exists($group,$wgGroupPermissions)) {
 			wfDebugLog( 'restrictions', 'Setup: /!\ creating user group "'.$group.'"');
