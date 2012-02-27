@@ -168,6 +168,7 @@ a.important:focus {
     border: 1px solid #ddd;
     background: #f2f2f2;
     color: #666;
+    clear: both;
 }
 div.success {
     border-color: #d0debd;
@@ -1502,19 +1503,6 @@ button, input[type="button"], input[type="reset"], input[type="submit"] {
     -webkit-appearance: button;
 }
 
-input[type="submit"] {
-    background: #f0373a;
-    border: 1px solid #393535;
-    color: #FFFFFF;
-    padding: 8px 34px;
-    width: auto;
-}
-input[type="submit"]:hover,
-input[type="submit"]:focus {
-    background: #7C2122;
-
-}
-
 
 input[type="checkbox"], input[type="radio"] { box-sizing: border-box; }
 input[type="search"] { -moz-box-sizing: content-box; -webkit-box-sizing: content-box; box-sizing: content-box; }
@@ -1555,7 +1543,7 @@ input:invalid, textarea:invalid { background-color: #f0dddd; }
 }
 
 .edit_col_1 .content_block { 
-    margin-bottom: 25px
+    margin-bottom: 18px
 }
 
 .edit_col_1 .content_block legend {	
@@ -1638,11 +1626,17 @@ input:invalid, textarea:invalid { background-color: #f0dddd; }
     margin: 0;
 }
 
+
+
 .edit_col_1 .content_block label,
 .edit_col_1 .content_block .label_like {
     display:inline-block;
-    width: 142px;
-    margin-right: 50px;
+    width: 172px;
+    margin-right: 20px;
+    text-align: right;
+}
+
+.edit_col_1 .content_block .mw-htmlform-field-HTMLTextAreaField label {
     text-align: left;
 }
 
@@ -1675,15 +1669,47 @@ input:invalid, textarea:invalid { background-color: #f0dddd; }
     margin-right:0;
 }
 
-.edit_col_1 .submit {
-    text-align: right;
+.edit_col_1 input[type="submit"] {
+    background: #f0373a;
+    border: 1px solid #393535;
+    color: #FFFFFF;
+    padding: 8px 8px;
+    width: 184px;
+    text-align: center;
+}
+input[type="submit"]:hover,
+input[type="submit"]:focus {
+    background: #7C2122;
+
 }
 
-.edit_col_1 .submit input {
-    border: 1px solid #443f3f;
-    padding: 6px 75px;
-    color: #fff;
-    background-color: #f0373a;
+div.form_header {
+    background-color: transparent;
+    border-top: none;
+}
+
+div.form_footer {
+    background-color: transparent;
+    border-bottom: none;
+}
+
+.edit_col_1 p.submit {
+    text-align: right;
+    margin: 0 0 25px 0;
+}
+
+.edit_col_1 p.section_header {
+    color: #808183;
+    border-bottom: 1px solid #dad9d9;
+    margin-bottom: 18px;
+    padding-bottom: 18px;
+}
+
+.edit_col_1 p.section_footer {
+    color: #808183;
+    border-top: 1px solid #dad9d9;
+    margin-top: 18px;
+    padding-top: 18px;
 }
 
 

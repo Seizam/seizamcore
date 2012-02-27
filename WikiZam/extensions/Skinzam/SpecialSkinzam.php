@@ -47,147 +47,8 @@ class SpecialSkinzam extends SpecialPage {
      * Special page entry point
      */
     public function execute($par) {
-        global $wgOut;
         $this->setHeaders();
-        
-        $this->getOutput();
-
-        # A formDescriptor Array to tell HTMLForm what to build
-        $formDescriptor = array(
-            'text' => array(
-                'type' => 'text',
-                'label' => 'text',
-                'default' => 'Valeur par défaut',
-                'maxlength'=> 7,
-                'help' => 'This is supposed to help'
-            ),
-            'Lise' => array(
-                'type' => 'text',
-                'label' => 'Message for Lise',
-                'default' => 'What a beautiful girl',
-                'maxlength'=> 16,
-                'help' => 'That is supposed to be romantic'
-            ),
-            'password' => array(
-                'type' => 'password',
-                'label' => 'password',
-                'default' => '',
-                'maxlength'=> 16,
-                'help' => 'This is supposed to help'
-            ),
-            'float' => array(
-                'type' => 'float',
-                'label' => 'float',
-                'default' => 'plop',
-                'maxlength'=> 6,
-                'min' => 41,
-                'max' => 43,
-                'help' => 'This is supposed to help'
-            ),
-            'int' => array(
-                'type' => 'int',
-                'label' => 'int',
-                'default' => 1789,
-                'maxlength'=> 4,
-                'min' => 0,
-                'max' => 2011,
-                'help' => 'This is supposed to help'
-            ),
-            'textarea' => array(
-                'type' => 'textarea',
-                'label' => 'textarea',
-                'default' => 'Valeur par défaut',
-                'rows' => 3,
-                'help' => 'This is supposed to help'
-            ),
-            'select' => array(
-                'type' => 'select',
-                'label' => 'select',
-                'options' => array(
-                    'Option 0' => 0,
-                    'Option 1' => 1,
-                    'Option 2' => 'option2id'
-                ),
-                'help' => 'This is supposed to help'
-            ),
-            'selectorother' => array(
-                'type' => 'selectorother',
-                'label' => 'selectorother',
-                'options' => array(
-                    'Option 0' => 0,
-                    'Option 1' => 1,
-                    'Option 2' => 'option2id'
-                ),
-                'maxlength'=> 10,
-                'help' => 'This is supposed to help'
-            ),
-            'selectandother' => array(
-                'type' => 'selectandother',
-                'label' => 'selectandother',
-                'options' => array(
-                    'Option 0' => 0,
-                    'Option 1' => 1,
-                    'Option 2' => 'option2id'
-                ),
-                'maxlength'=> 10,
-                'help' => 'This is supposed to help'
-            ),
-            'multiselect' => array(
-                'type' => 'multiselect',
-                'label' => 'multiselect',
-                'options' => array(
-                    'Option 0' => 0,
-                    'Option 1' => 1,
-                    'Option 2' => 'option2id'
-                ),
-                'default' => array(0, 'option2id'),
-                'help' => 'This is supposed to help'
-            ),
-            'radio' => array(
-                'type' => 'radio',
-                'label' => 'radio',
-                'options' => array(
-                    'Option 0 Option 0 Option 0 Option 0 Option 0 Option 0 Option 0 Option 0 Option 0 Option 0 Option 0 Option 0' => 0,
-                    'Option 1' => 1,
-                    'Option 2' => 'option2id'
-                ),
-                'default' => 1,
-                'help' => 'This is supposed to help'
-            ),
-            'check' => array(
-                'type' => 'check',
-                'label' => 'check check check check check check check check check check check check check check check check check check check check check check check check check check check check check check check',
-                'help' => 'This is supposed to help'
-            ),
-            'info' => array(
-                'section' => 'section',
-                'type' => 'info',
-                'label' => 'info',
-                'default' => '<a href="http://www.davidcanwin.com">DavidCanWin.com</a> <a href="http://www.davidcanwin.com">DavidCanWin.com</a> <a href="http://www.davidcanwin.com">DavidCanWin.com</a> <a href="http://www.davidcanwin.com">DavidCanWin.com</a> <a href="http://www.davidcanwin.com">DavidCanWin.com</a>',
-                'raw' => true,
-                'help' => 'This is supposed to help'
-            ),
-            'submit' => array(
-                'type' => 'submit',
-                'help' => 'This is supposed to help'
-            ),
-            'hidden' => array(
-                'type' => 'hidden',
-                'label' => 'hidden',
-                'default' => 'This Intel Is Hidden',
-                'help' => 'This is supposed to help'
-            )
-);
-        $htmlForm = new HTMLFormS($formDescriptor, 'myform'); # We build the HTMLForm object, calling the form "myform"
-
-        $htmlForm->setSubmitText(wfMessage('myform-submit')); # What text does the submit button display
-        $htmlForm->setTitle($this->getTitle()); # You must call setTitle() on an HTMLForm
-
-        $htmlForm->setSubmitCallback(array('SpecialSkinzam', 'processInput'));
-        
-        $htmlForm->addHeaderText('ceci est un text de tete','section');
-
-        $htmlForm->show(); # Displaying the form
+        self::bigForm($this->getTitle());
     }
 
     static function processInput($formData) {
@@ -309,76 +170,30 @@ class SpecialSkinzam extends SpecialPage {
     static function bigForm($title) {
         global $wgUser;
         $formDescriptor = array(
-            'username' => array(
+            'amount' => array(
                 'section' => 'you',
-                'label-message' => 'username',
-                'type' => 'info',
-                'default' => $wgUser->getName(),
+                'label' => 'montant',
+                'type' => 'float',
+                'default' => 99.99,
                 'disabled' => true,
-                'help-message' => 'prefs-help-realname'
+                'help' => 'montant-help'
             ),
-            'realname' => array(
+            'email' => array(
                 'section' => 'you',
-                'class' => 'HTMLTextField',
-                'default' => $wgUser->getRealName(),
-                'label-message' => 'yourrealname',
-                'help-message' => 'prefs-help-realname',
-                'required' => true,
+                'type' => 'text',
+                'default' => 'bob@plop',
+                'label' => 'email',
+                'help' => 'email-help',
+                'disabled' => true,
             ),
-            'gender' => array(
+            'submit' => array(
                 'section' => 'you',
-                'class' => 'HTMLSelectField',
-                'options' => array(
-                    wfMsg('gender-male') => 'male',
-                    wfMsg('gender-female') => 'female',
-                    wfMsg('gender-unknown') => 'unknown',
-                ),
-                'label-message' => 'yourgender',
-                'help-message' => 'prefs-help-gender',
+                'type' => 'submit',
+                'default' => 'aller à l\'interface de paiement',
             ),
             'password' => array(
-                'section' => 'account',
-                'type' => 'info',
-                'label-message' => 'yourpassword',
-                'default' => '<a href="#">Change password</a>',
-                'raw' => true,
-                'help-message' => 'prefs-resetpass'
-            ),
-            'rememberme' => array(
-                'section' => 'account',
-                'class' => 'HTMLRadioField',
-                'label' => 'Remember me for 30 days :',
-                'help' => 'Select Yes to avoid logging in for 30 days',
-                'options' => array(
-                    'Yes' => 'yes',
-                    'No' => 'no',
-                ),
-            ),
-            'lang' => array(
-                'section' => 'account',
-                'class' => 'HTMLSelectField',
-                'label' => 'Language :',
-                'options' => array('French' => 'french', 'English' => 'english'),
-                'help' => 'Interface Language'
-            ),
-            'signature' => array(
-                'section' => 'bonus',
-                'type' => 'textarea',
-                'rows' => 2,
-                'label' => 'Signature :',
-                'help' => 'This text is added when typing "~~~~" in Wikitext'
-            ),
-            'public' => array(
-                'section' => 'bonus',
-                'type' => 'multiselect',
-                'label' => 'See me publicly :',
-                'options' => array(
-                    'Yes' => 'yes',
-                    'No' => 'no',
-                    'I don\'t know' => 'na'
-                ),
-                'default' => array('na'),
-                'help' => 'Can people find you through Seizam.com'
+                'type' => 'hidden',
+                'default' => '<a href="#">Change password</a>'
             ),
         );
 
@@ -386,6 +201,16 @@ class SpecialSkinzam extends SpecialPage {
 
         $htmlForm->setSubmitText(wfMessage('sz-profil-save'));
         $htmlForm->setTitle($title);
+        
+        
+        $htmlForm->addHeaderText('Ceci est un texte de tete.');
+        
+        $htmlForm->addFooterText('Ceci est un texte de pied.');
+        
+        $htmlForm->addHeaderText('Ceci est un texte de tetesection.','you');
+        
+        $htmlForm->addFooterText('Ceci est un texte de piedsection.','you');
+
 
         $htmlForm->show();
     }

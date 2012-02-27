@@ -36,6 +36,8 @@ $wgAutoloadClasses['TransactionManagerHooks'] = $dir . 'TransactionManager.hooks
 $wgHooks['LoadExtensionSchemaUpdates'][] = 'TransactionManagerHooks::loadExtensionSchemaUpdates';
 # On Electronic Payment action
 $wgHooks['BeforeTransactionSave'][] = 'TransactionManagerHooks::beforeTransactionSave';
+# On Electronic Payment action
+$wgHooks['ElectronicPaymentAttempt'][] = 'TransactionManagerHooks::electronicPaymentAttempt';
 
 # i18n
 $wgExtensionMessagesFiles['TransactionManager'] = $dir . 'TransactionManager.i18n.php';
@@ -45,6 +47,9 @@ $wgExtensionAliasesFiles['TransactionManager'] = $dir . 'TransactionManager.alia
 $wgAutoloadClasses['SpecialTransactionManager'] = $dir . 'SpecialTransactionManager.php';
 $wgSpecialPages['TransactionManager'] = 'SpecialTransactionManager';
 
+# View Elements
+$wgAutoloadClasses['TransactionsTablePager'] = $dir . 'SpecialTransactionManager.php';
+
 $wgSpecialPageGroups['TransactionManager'] = 'other';
 
 # Right for Transaction administration
@@ -53,9 +58,8 @@ $wgGroupPermissions['sysop']['tmadmin'] = true;
 
 Class TMRecord {
     # DB Entry
-    
-    private $tmr_id;
 
+    private $tmr_id;
     public $tmr = array(
         # Params related to Message
         'tmr_id' => '', #int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Primary key'
@@ -73,7 +77,7 @@ Class TMRecord {
         'tmr_desc' => '', # varchar(64) NOT NULL COMMENT 'Record Description',
         'tmr_status' => 'KO' # varchar(2) NOT NULL COMMENT 'Record status (OK, KO, PEnding, TEst)',
     );
-    
+
     /**
      * @return TMRecord
      */
@@ -93,30 +97,30 @@ Class TMRecord {
             $this->__constructFromDB();
         } else # It is a new record
             $this->__constructFromScratch($tmr);
-        
     }
-    
+
     private function __constructFromDB() {
         # Let's fetch the order's data from DB.
         $this->readDB();
     }
-    
+
     # Set TMP and update database from array
-    
+
     public function update($tmr) {
         # Check if we have an existing object entering
         # if not, that means the object has been created with __constructFromScratch and is already in DB
         if (isset($tmr['tmr_id']) && $tmr['tmr_id'] > 0) {
             if ($this->set($tmr)) {
                 return $this->updateDB();
+            } else {
+                throw new MWException('Cannot Set TMRecord from array');
             }
         }
-        
         return false;
     }
-    
+
     # Set TMRecord from array
-    
+
     public function set($tmr) {
         # First we keep only what we want from $tmr
         $tmr = array_intersect_key($tmr, $this->tmr);
@@ -124,7 +128,11 @@ Class TMRecord {
         # We don't want anything telling us these:
         # TODO: Add unique Hash identification?
         unset($tmr['tmr_id']);
-        if ($tmr['tmr_user_id'] === $this->tmr['tmr_user_id']) {
+        if ($tmr['tmr_user_id'] === $this->tmr['tmr_user_id'] ||
+                $tmr['tmr_type'] === $this->tmr['tmr_type'] ||
+                $tmr['tmr_amount'] === $this->tmr['tmr_amount'] ||
+                $tmr['tmr_currency'] === $this->tmr['tmr_currency'] ||
+                $tmr['tmr_status'] === $this->tmr['tmr_status']) {
             # And now, we merge.
             $this->tmr = array_merge($this->tmr, $tmr);
 
@@ -132,32 +140,30 @@ Class TMRecord {
         }
         return false;
     }
-    
+
     private function __constructFromScratch($tmr) {
         global $wgUser;
-        
+
         # First we keep only what we want from $tmr
         $tmr = array_intersect_key($tmr, $this->tmr);
-        
+
         # Now we write the record by merging $this->tmr with $tmr...
-        
         # And now, we merge.
         $this->tmr = array_merge($this->tmr, $tmr);
-        
+
         # See if we can add some missing data...
-        
         # tmr_user_id is empty, let's write it
         if ($this->tmr['tmr_user_id'] == '')
             $this->tmr['tmr_user_id'] = $wgUser->getId();
-        
+
         # tmr_mail is empty, let's write it
         if ($this->tmr['tmr_mail'] == '')
             $this->tmr['tmr_mail'] = $wgUser->getEmail();
-        
+
         # tmr_ip is empty, let's write it
         if ($this->tmr['tmr_ip'] == '')
             $this->tmr['tmr_ip'] = IP::sanitizeIP(wfGetIP());
-        
+
         # Finally, write DB.
         # @TODO: Check if we're not trying to rewrite the same line again...
         $this->writeDB();
@@ -177,12 +183,12 @@ Class TMRecord {
         $return = $dbw->insert('tm_record', $this->tmr);
         # Setting tmr_id from auto incremented id in DB
         $this->tmr['tmr_id'] = $dbw->insertId();
-        
+
         return $return;
     }
-    
+
     # Write current object to DB
-    
+
     private function updateDB() {
         # Setting the date of update
         unset($this->tmr['tmr_date_created']);
@@ -190,8 +196,8 @@ Class TMRecord {
         # We need to write, therefore we need the master
         $dbw = wfGetDB(DB_MASTER);
         # Writing...
-        $return = $dbw->update('tm_record', $this->tmr, array('tmr_id'=>$this->tmr['tmr_id']));
-        
+        $return = $dbw->update('tm_record', $this->tmr, array('tmr_id' => $this->tmr['tmr_id']));
+
         return $return;
     }
 
@@ -201,7 +207,21 @@ Class TMRecord {
         # We are reading, but we need the master table anyway
         # (A record can be updated a lot within instants)
         $dbr = wfGetDB(DB_MASTER);
-        $this->tmr = (array)$dbr->selectRow('tm_record', '*', 'tmr_id = ' . $this->tmr['tmr_id']);
+        $this->tmr = (array) $dbr->selectRow('tm_record', '*', 'tmr_id = ' . $this->tmr['tmr_id']);
+    }
+    
+    
+
+    /**
+     * Look for pending transactions for $user
+     * @return array[]
+     */
+    public static function getPendingTransactions($user_id) {
+        # We are reading, but we need the master table anyway
+        $dbw = wfGetDB(DB_MASTER);
+        $result = $dbw->select('tm_record', array('tmr_id','tmr_type','tmr_date_created','tmr_amount','tmr_currency','tmr_desc'), array('tmr_user_id' => $user_id, 'tmr_status'=>'PE','tmr_amount < 0'));
+        return $result;
+        
     }
 
 }
