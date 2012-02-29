@@ -1693,6 +1693,10 @@ div.form_footer {
     border-bottom: none;
 }
 
+div.form_header table {
+    margin-bottom: 0;
+}
+
 .edit_col_1 p.submit {
     text-align: right;
     margin: 0 0 25px 0;
@@ -1744,4 +1748,42 @@ p.mw-htmlform-invalid-input span.error {
     font-size: 1em;
     margin-left: 192px;
     color: #f0373a;
+}
+
+
+/*
+	Table pager (e.g. Special:ListFiles)
+	- remove underlines from the navigation link
+	- collapse borders
+	- set the borders to outsets (similar to Special:AllMessages)
+	- remove line wrapping for all td and th, set background color
+	- restore line wrapping for the last two table cells (description and size)
+*/
+table.TablePager {
+    margin: 1em auto;
+}
+
+.TablePager_nav {
+	margin: 0 auto;
+}
+.TablePager_nav td {
+	padding: 4px 8px;
+	text-align: center;
+}
+.TablePager_nav a {
+	text-decoration: none;
+}
+.TablePager, .TablePager td, .TablePager th {
+	border: 1px solid #dad9d9;
+	padding: 4px 8px;
+}
+.TablePager th {
+	background-color: #f3f3f3;
+        font-weight: normal;
+}
+.TablePager td {
+	background-color: #ffffff;
+}
+.TablePager tr:hover td {
+	background-color: #f3f3f3;
 }

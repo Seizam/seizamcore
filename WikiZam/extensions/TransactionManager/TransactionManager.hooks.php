@@ -26,18 +26,19 @@ class TransactionManagerHooks {
     }
 
     /**
-     * beforeTransactionSave hook
+     * createTransaction hook
      * 
      * Write Transaction to the DB when required by other extension
      * 
      */
-    public static function beforeTransactionSave(&$tmr) {
+    public static function createTransaction(&$tmr) {
         # Construct TMRecord
         $record = TMRecord::create($tmr);
-        # Set TMRecord from input array
-        $record->update($tmr);
+        # React to new record
+        $record->react();
         # Overwrite input array with new values
-        $tmr = $record->tmr;
+        $tmr = $record->getTMR();
+        # React to created transaction
         return false;
     }
 
@@ -45,6 +46,8 @@ class TransactionManagerHooks {
      * electronicPaymentAttempt hook
      * 
      * Collect PEnding transactions and return them
+     * 
+     * @Deprecated
      * 
      */
     public static function electronicPaymentAttempt($user_id, &$transactions) {

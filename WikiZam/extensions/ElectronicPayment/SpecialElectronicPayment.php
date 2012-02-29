@@ -164,51 +164,48 @@ class SpecialElectronicPayment extends SpecialPage {
         $output = $this->getOutput();
         # The form that is gonna send the user to the bank payment interface
         $html = '<form  class="visualClear" action="' . $epmessage->oTpe->sUrlPaiement . '" method="post" id="PaymentRequest">
-            <div class="form_header informations">' . wfMessage('ep-action', $epmessage->order->epo['epo_amount'] . $epmessage->order->epo['epo_currency'])->parse() . '</div>
-<div class="edit_col_1">
-<fieldset>
-<legend>' . wfMessage('ep-attempt-section')->text() . '</legend>
-<div id="mw-htmlform-you" class="content_block">
-<p class="mw-htmlform-field-HTMLFloatField ">
-<label for="mw-input-wpamount">' . wfMessage('ep-cd-amountlabel')->text() . '</label>
-<input id="mw-input-wpamount" class="disabled" disabled="" value="' . $epmessage->order->epo['epo_amount'] . '" size="27" name="wpamount">
-<span class="sread help htmlform-tip">' . wfMessage('ep-help-amount')->text() . '</span>
-</p>
-<p class="mw-htmlform-field-HTMLTextField ">
-<label for="mw-input-wpemail">' . wfMessage('youremail')->text() . '</label>
-<input id="mw-input-wpemail" class="disabled" disabled="" value="' .  $epmessage->order->epo['epo_mail'] . '" size="27" name="wpemail">
-<span class="sread help htmlform-tip">' . wfMessage('ep-help-mail')->text() . '</span>
-</p>
-</div>
-</fieldset>
-<input type="hidden" name="version"             id="version"        value="' . $epmessage->oTpe->sVersion . '" />
-<input type="hidden" name="TPE"                 id="TPE"            value="' . $epmessage->oTpe->sNumero . '" />
-<input type="hidden" name="date"                id="date"           value="' . $epmessage->epm_date_message_bank_format . '" />
-<input type="hidden" name="montant"             id="montant"        value="' . $epmessage->order->epo['epo_amount'] . $epmessage->order->epo['epo_currency'] . '" />
-<input type="hidden" name="reference"           id="reference"      value="' . $epmessage->epm['epm_epo_id'] . '" />
-<input type="hidden" name="MAC"                 id="MAC"            value="' . $epmessage->epm['epm_mac'] . '" />
-<input type="hidden" name="url_retour"          id="url_retour"     value="' . $epmessage->oTpe->sUrlKO . '" />
-<input type="hidden" name="url_retour_ok"       id="url_retour_ok"  value="' . $epmessage->oTpe->sUrlOK . '" />
-<input type="hidden" name="url_retour_err"      id="url_retour_err" value="' . $epmessage->oTpe->sUrlKO . '" />
-<input type="hidden" name="lgue"                id="lgue"           value="' . $epmessage->oTpe->sLangue . '" />
-<input type="hidden" name="societe"             id="societe"        value="' . $epmessage->oTpe->sCodeSociete . '" />
-<input type="hidden" name="texte-libre"         id="texte-libre"    value="' . HtmlEncode($epmessage->epm['epm_free_text']) . '" />
-<input type="hidden" name="mail"                id="mail"           value="' . $epmessage->order->epo['epo_mail'] . '" />
-                       
-<p class="submit">
-<input type="submit" name="bouton" class="mw-htmlform-submit" id="bouton"  value="' . wfMsg('ep-connect') . '" />
-</p>
-</div>
-<div class="edit_col_2">
-<div id="help_zone" class="content_block">
-<h4>' . wfMessage('sz-htmlform-helpzonetitle')->text() . '</h4>
-<p>
-' . wfMessage('sz-htmlform-helpzonedefault')->text() . '
-</p>
-</div>
-</div>
-<div class="form_footer informations">' . wfMessage('ep-attempt-formfooter')->text() . '</div>
-</form>';
+                    <div class="form_header informations">' . wfMessage('ep-attempt-formheader', $epmessage->order->epo['epo_amount'] . $epmessage->order->epo['epo_currency'])->parse() . '</div>
+                    <div class="edit_col_1">
+                        <fieldset>
+                            <legend>' . wfMessage('ep-section2')->text() . '</legend>
+                            <div id="mw-htmlform-you" class="content_block">
+                                <p class="mw-htmlform-field-HTMLFloatField ">
+                                    <label for="mw-input-wpamount">' . wfMessage('ep-cd-amountlabel')->text() . '</label>
+                                    <input id="mw-input-wpamount" class="disabled" disabled="" value="' . $epmessage->order->epo['epo_amount'] . '" size="27" name="wpamount">
+                                    <span class="sread help htmlform-tip">' . wfMessage('ep-help-amount')->text() . '</span>
+                                </p>
+                                <p class="mw-htmlform-field-HTMLTextField ">
+                                    <label for="mw-input-wpemail">' . wfMessage('youremail')->text() . '</label>
+                                    <input id="mw-input-wpemail" class="disabled" disabled="" value="' .  $epmessage->order->epo['epo_mail'] . '" size="27" name="wpemail">
+                                    <span class="sread help htmlform-tip">' . wfMessage('ep-help-mail')->text() . '</span>
+                                </p>
+                            </div>
+                        </fieldset>
+                        <input type="hidden" name="version"             id="version"        value="' . $epmessage->oTpe->sVersion . '" />
+                        <input type="hidden" name="TPE"                 id="TPE"            value="' . $epmessage->oTpe->sNumero . '" />
+                        <input type="hidden" name="date"                id="date"           value="' . $epmessage->epm_date_message_bank_format . '" />
+                        <input type="hidden" name="montant"             id="montant"        value="' . $epmessage->order->epo['epo_amount'] . $epmessage->order->epo['epo_currency'] . '" />
+                        <input type="hidden" name="reference"           id="reference"      value="' . $epmessage->epm['epm_epo_id'] . '" />
+                        <input type="hidden" name="MAC"                 id="MAC"            value="' . $epmessage->epm['epm_mac'] . '" />
+                        <input type="hidden" name="url_retour"          id="url_retour"     value="' . $epmessage->oTpe->sUrlKO . '" />
+                        <input type="hidden" name="url_retour_ok"       id="url_retour_ok"  value="' . $epmessage->oTpe->sUrlOK . '" />
+                        <input type="hidden" name="url_retour_err"      id="url_retour_err" value="' . $epmessage->oTpe->sUrlKO . '" />
+                        <input type="hidden" name="lgue"                id="lgue"           value="' . $epmessage->oTpe->sLangue . '" />
+                        <input type="hidden" name="societe"             id="societe"        value="' . $epmessage->oTpe->sCodeSociete . '" />
+                        <input type="hidden" name="texte-libre"         id="texte-libre"    value="' . HtmlEncode($epmessage->epm['epm_free_text']) . '" />
+                        <input type="hidden" name="mail"                id="mail"           value="' . $epmessage->order->epo['epo_mail'] . '" />
+                        <p class="submit">
+                            <input type="submit" name="bouton" class="mw-htmlform-submit" id="bouton"  value="' . wfMsg('ep-connect') . '" />
+                        </p>
+                    </div>
+                    <div class="edit_col_2">
+                        <div id="help_zone" class="content_block">
+                            <h4>' . wfMessage('sz-htmlform-helpzonetitle')->text() . '</h4>
+                            <p>' . wfMessage('sz-htmlform-helpzonedefault')->text() . '</p>
+                        </div>
+                    </div>
+                    <div class="form_footer informations">' . wfMessage('ep-attempt-formfooter')->parse() . '</div>
+                </form>';
         $output->addHTML($html);
     }
 
@@ -227,18 +224,15 @@ class SpecialElectronicPayment extends SpecialPage {
         $user = $this->getUser();
         $output = $this->getOutput();
 
+        $min = -TMRecord::getTrueBalanceFromDB($user->getId());
+        # Set Minimum payment value (regarding banking fees)
+        $min = max($min, 5);
+        # Building the pending transaction table and sum
         if ($user->isLoggedIn()) {
-            /*$pending_transactions = array();
-            if (!wfRunHooks('ElectronicPaymentAttempt', array($user->getId(), &$pending_transactions)) && !empty($pending_transactions)) {
-
-                foreach ($pending_transactions as $tmr) {
-                    $this->sayIt($tmr);
-                }
-            }*/
             $table = new TransactionsTablePager();
-            $output->addHTML($table->getNavigationBar() .
-			$table->getBody() .
-			$table->getNavigationBar() );
+            $table->setSelectFields(array('tmr_desc','tmr_date_created','tmr_amount','tmr_currency'));
+            $table->setSelectConds(array('tmr_user_id' => $user->getId(), 'tmr_status' => 'PE', 'tmr_amount < 0', 'tmr_currency'=> 'EUR'));
+            $tableHtml = $table->getBody();
         }
 
         # We check if the user has some pending transaction to pay
@@ -247,14 +241,17 @@ class SpecialElectronicPayment extends SpecialPage {
         $formDescriptor = array(
             'amount' => array(
                 'label-message' => 'ep-cd-amountlabel',
+                'section' => 'section1',
                 'type' => 'float',
                 'required' => 'true',
-                'help-message' => 'ep-help-amount',
-                'min' => 0,
+                'help-message' => array('ep-help-amount', $min),
+                'min' => $min,
+                'default' => ($min == 5 ? '' : $min),
                 'filter-callback' => array($this, 'filterAmount')
             ),
             'mail' => array(
                 'label-message' => 'youremail',
+                'section' => 'section1',
                 'type' => 'email',
                 'required' => 'true',
                 'validation-callback' => array($this, 'validateEmail'),
@@ -274,6 +271,12 @@ class SpecialElectronicPayment extends SpecialPage {
         $htmlForm->setSubmitText(wfMsg('next'));
         $htmlForm->setTitle($this->getTitle());
         $htmlForm->setSubmitCallback(array($this, 'initAttempt'));
+        if ($min > 5) {
+            $htmlForm->addHeaderText(wfMessage('ep-default-formheader').' '.wfMessage('ep-default-formheader-pending',$min.'EUR').$tableHtml);
+            $htmlForm->addFooterText(wfMessage('ep-default-formfooter-pending'));
+        } else {
+            $htmlForm->addHeaderText(wfMessage('ep-default-formheader'));
+        }
 
         $htmlForm->show();
     }
@@ -346,15 +349,6 @@ class SpecialElectronicPayment extends SpecialPage {
             return $matches[1];
         } else
             return "null";
-    }
-
-    # Just an array print fonction
-
-    private function sayIt($in) {
-        $output = $this->getOutput();
-        $output->addHTML('<pre>');
-        $output->addHTML(print_r($in, true));
-        $output->addHTML('</pre>');
     }
 
     /* An attempt to put the form pointing to CIC bank in the HTMLForm Helper

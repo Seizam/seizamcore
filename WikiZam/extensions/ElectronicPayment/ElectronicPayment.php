@@ -443,7 +443,7 @@ Class EPOrder {
         );
 
         # Send to Transaction Manager and fetch assigned reference.
-        if (!wfRunHooks('BeforeTransactionSave', array(&$tmr)) && isset($tmr['tmr_id']) && $tmr['tmr_id'] > 0) {
+        if (!wfRunHooks('CreateTransaction', array(&$tmr)) && isset($tmr['tmr_id']) && $tmr['tmr_id'] > 0) {
             $this->epo['epo_tmr_id'] = $tmr['tmr_id'];
             return true;
         }

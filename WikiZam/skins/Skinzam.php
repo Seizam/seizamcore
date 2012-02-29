@@ -210,7 +210,7 @@ class SkinzamTemplate extends BaseTemplate {
 
             <div class="hgroup inside">
                 <h1><a id="logo_project" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"></a></h1>
-                <h2><?php wfMessage('sz-tagline')->text() ?></h2>
+                <h2><?php echo wfMessage('sz-tagline')->text() ?></h2>
 
             </div>
         </div>
