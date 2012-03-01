@@ -80,13 +80,9 @@ class SpecialTransactionManager extends SpecialPage {
         if ($user->isLoggedIn()) {
             $table = new TransactionsTablePager();
             $table->setSelectFields(array('tmr_id', 'tmr_desc', 'tmr_date_created', 'tmr_amount', 'tmr_currency', 'tmr_status'));
-            $table->setFieldSortable(array('tmr_id', 'tmr_desc', 'tmr_date_created', 'tmr_amount', 'tmr_currency', 'tmr_status'));
             $table->setSelectConds(array('tmr_user_id' => $user->getId(), 'tmr_currency' => 'EUR'));
-            $table->mLimit = 10;
-            $tableHtml = $table->getBody()
-                    . $table->getNavigationBar();
-            $output->addWikiText(wfMessage('tm-balance', TMRecord::getTrueBalanceFromDB($user->getId()))->text() . ' ' . wfMessage('tm-table-desc')->text());
-            $output->addHtml($tableHtml);
+            $table->setHeader(wfMessage('tm-balance', TMRecord::getTrueBalanceFromDB($user->getId()))->parse() . ' ' . wfMessage('tm-table-desc')->parse());
+            $output->addHtml($table->getWholeHtml());
         } else {
             $output->addWikiText(wfMessage('tm-desc')->text());
             $output->addWikiText(wfMessage('resetpass-no-info')->text());

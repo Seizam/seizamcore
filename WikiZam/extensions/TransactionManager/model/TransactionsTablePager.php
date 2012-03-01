@@ -7,47 +7,26 @@ if (!defined('MEDIAWIKI')) {
 /**
  * Use TablePager for prettified Transactions listing. 
  */
-class TransactionsTablePager extends TablePager {
+class TransactionsTablePager extends SkinzamTablePager {
+    # Fields for default behavior
+    protected $selectTable = 'tm_record'; # String
+    protected $selectFields = array('tmr_id', 'tmr_desc', 'tmr_date_created', 'tmr_date_modified', 'tmr_amount', 'tmr_currency', 'tmr_status');
+    protected $defaultSort = 'tmr_date_created';
+    public $mDefaultDirection = true;
+    protected $tableClasses = array('TMRecord'); # Array
+    protected $messagesPrefix = 'tm';
 
-    private $sortableFields = false;
-    private $selectFields = array('tmr_id', 'tmr_desc', 'tmr_date_created', 'tmr_date_modified', 'tmr_amount', 'tmr_currency', 'tmr_status');
-    private $selectConds = array();
-    private $defaultSort = 'tmr_date_created';
-    private $even = true;
-
-    public function getQueryInfo() {
-        global $wgUser;
-        $infos = array();
-        $infos['tables'] = 'tm_record';
-        $infos['fields'] = $this->selectFields;
-        $infos['conds'] = $this->selectConds;
-        return $infos;
-    }
-
-    public function setSelectFields($selectFields) {
-        $this->selectFields = $selectFields;
-    }
-
-    public function setSelectConds($selectConds) {
-        $this->selectConds = $selectConds;
-    }
-
-    public function setFieldSortable($sortableFields) {
-        $this->sortableFields = $sortableFields;
-    }
-
-    public function toggleListDisplay() {
-        $this->listDisplay = true;
-    }
-
-    public function isFieldSortable($field) {
-        if (!is_array($this->sortableFields))
-            return false;
-        else if (in_array($field, $this->sortableFields))
-            return true;
-    }
-
-    public function formatValue($name, $value) {
+    /**
+     * Format a table cell. The return value should be HTML, but use an empty
+     * string not &#160; for empty cells. Do not include the <td> and </td>.
+     *
+     * The current result row is available as $this->mCurrentRow, in case you
+     * need more context.
+     *
+     * @param $name String: the database field name
+     * @param $value String: the value retrieved from the database
+     */
+     function formatValue($name, $value) {
         global $wgLang;
         switch ($name) {
             case 'tmr_type':
@@ -60,26 +39,10 @@ class TransactionsTablePager extends TablePager {
             case 'tmr_status':
                 return wfMessage('tm-status-' . $value)->text();
             case 'tmr_amount':
-                return $value>0 ? '+'.$value : $value;
+                return $value > 0 ? '+' . $value : $value;
             default:
                 return $value;
         }
-    }
-
-    /**
-     * Get any extra attributes to be applied to the given cell. Don't
-     * take this as an excuse to hardcode styles; use classes and
-     * CSS instead.  Row context is available in $this->mCurrentRow
-     *
-     * @param $field The column
-     * @param $value The cell contents
-     * @return Associative array
-     */
-    function getCellAttrs($field, $value) {
-        $classes = array();
-        $classes[] = $field;
-        
-        return array('class' => implode(' ',$classes));
     }
 
     /**
@@ -89,36 +52,16 @@ class TransactionsTablePager extends TablePager {
      * @return String
      */
     function getRowAttrs($row) {
-        $classes = array();
-        
+        $attrs = parent::getRowAttrs($row);
+        $classes = explode(' ', $attrs['class']);
+
         if (isset($row->tmr_status))
             $classes[] = $row->tmr_status;
-        
+
         if ($row->tmr_amount > 0)
             $classes[] = 'positive';
-        
-        if ($this->even)
-            $classes[] = 'even';
-        
-        $this->even = !$this->even;
-        
-        
-        return array('class' => implode(' ',$classes));
-    }
 
-    function getTableClass() {
-        return 'TablePager TMRecord';
-    }
-
-    public function getDefaultSort() {
-        return $this->defaultSort;
-    }
-
-    public function getFieldNames() {
-        $fieldNames = array();
-        foreach ($this->selectFields as $field)
-            $fieldNames[$field] = wfMessage('tm-' . $field)->text();
-        return $fieldNames;
+        return array('class' => implode(' ', $classes));
     }
 
 }

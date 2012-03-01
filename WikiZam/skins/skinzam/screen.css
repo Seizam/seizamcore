@@ -1683,12 +1683,12 @@ input[type="submit"]:focus {
 
 }
 
-div.form_header {
+div.form_header, div.table_header {
     background-color: transparent;
     border-top: none;
 }
 
-div.form_footer {
+div.form_footer, div.table_footer {
     background-color: transparent;
     border-bottom: none;
 }

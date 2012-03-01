@@ -41,7 +41,8 @@ $dir = dirname(__FILE__) . '/';
 
 require_once($dir . 'Skinzam.GlobalFunctions.php');
 
-$wgAutoloadClasses['HTMLFormS'] = $dir . 'HTMLFormS.php';
+$wgAutoloadClasses['HTMLFormS'] = $dir . 'model/HTMLFormS.php';
+$wgAutoloadClasses['SkinzamTablePager'] = $dir . 'model/SkinzamTablePager.php';
 $wgAutoloadClasses['SkinzamHooks'] = $dir . 'Skinzam.hooks.php';
 $wgExtensionMessagesFiles['Skinzam'] = $dir . 'Skinzam.i18n.php';
 $wgExtensionAliasesFiles['Skinzam'] = $dir . 'Skinzam.alias.php';
