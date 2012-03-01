@@ -1,58 +1,33 @@
 <?php 
 
-class SpecialWikiPlace extends SpecialPage {
+class SpecialWikiplace extends SpecialPage {
 	
 	const ACTION_CREATE_WIKIPLACE		= 'create_wikiplace';
 	const ACTION_CREATE_WIKIPLACE_PAGE	= 'create_page';
 	const ACTION_LIST_WIKIPLACES		= 'list_wikiplaces';
 	const ACTION_SUBSCRIBE_PLAN			= 'subscribe';
 	
-	private $newlyCreatedWikiPlace;
+	private $newlyCreatedWikiplace;
 	private $futurNewPage;
 
 	public function __construct() {
 		parent::__construct( 'WikiPlace' );
 	}
 	
-
+	public static function validateUserId($id, $allData) {
+        return self::validateGenericId($id) ? true : wfMessage( 'wikiplace-validate-error-userid' )->text() ;
+	}
+	
+	public static function validateWikiplaceSubPageName($name, $allData) {
+        return ( is_string($name) && preg_match('/^[a-zA-Z0-9]{3,16}$/',$name) ) ? true : wfMessage( 'wikiplace-validate-error-wikiplacepagename' )->text() ;
+	}
+	
 	
 	
 	
 	private static function generateLink($to, $text) {
 		 return Html::rawElement( 'a', array( 'href' => $to, 'class' => 'sz-wikiplace-link' ), $text  );
 	}
-	
-	
-	
-	
-	
-	/*
-	 * The validates method ONLY check if the inputs are well formed, but DO NOT check if the corresponding
-	 * process will accept them<br />
-	 * ie: validateWikiPlaceName only check if the name contains authorized caracters, but the create wikiplace process
-	 * can fail later if the name is already used
-	 */
-	
-	public static function validateWikiPlaceName($name, $allData) {
-        return ( is_string($name) && preg_match('/^[a-zA-Z0-9]{3,16}$/',$name) ) ? true : wfMessage( 'wikiplace-validate-error-wikiplacename' )->text() ;
-	}
-	
-	public static function validateWikiPlaceID($id, $allData) {
-        return self::validateGenericId($id) ? true : wfMessage( 'wikiplace-validate-error-wikiplaceid' )->text() ;
-	}
-	
-	public static function validateUserId($id, $allData) {
-        return self::validateGenericId($id) ? true : wfMessage( 'wikiplace-validate-error-userid' )->text() ;
-	}
-
-	public static function validateWikiPlaceSubPageName($name, $allData) {
-        return ( is_string($name) && preg_match('/^[a-zA-Z0-9]{3,16}$/',$name) ) ? true : wfMessage( 'wikiplace-validate-error-wikiplacepagename' )->text() ;
-	}
-	
-	private static function validateGenericId($id) {
-		return ( is_string($id) && preg_match('/^[1-9]{1}[0-9]{0,9}$/',$id) ) ;
-	}
-	
 	
 	
 	
@@ -107,11 +82,11 @@ class SpecialWikiPlace extends SpecialPage {
   
 				$out->setPageTitle( wfMessage( 'wikiplace-createwp-pagetitle' )->text() );
 				
-				$form = $this->getCreateWikiPlaceForCurrentUserForm( $this->getTitle( self::ACTION_CREATE_WIKIPLACE ) );
+				$form = $this->getCreateWikiplaceForCurrentUserForm( $this->getTitle( self::ACTION_CREATE_WIKIPLACE ) );
 				
 				if( $form->show() ){ // true = submitted and correctly processed, false = not submited or error
 					$out->addHTML( wfMessage( 'wikiplace-createwp-success' )->parse() );
-					$out->addHTML( $this->getWikiPlacesOwnedListing($user->getID()) );
+					$out->addHTML( $this->getWikiplacesOwnedListing($user->getID()) );
 				}
 				
                 break;
@@ -121,7 +96,7 @@ class SpecialWikiPlace extends SpecialPage {
   
 				$out->setPageTitle( wfMessage( 'wikiplace-createpage-pagetitle' )->text() );
 				
-				$form = $this->getCreateWikiPlacePageForCurrentUserForm($this->getTitle( self::ACTION_CREATE_WIKIPLACE_PAGE));
+				$form = $this->getCreateWikiplacePageForCurrentUserForm($this->getTitle( self::ACTION_CREATE_WIKIPLACE_PAGE));
 				
 				if( $form->show() ){
 					$out->addHTML(wfMessage('wikiplace-createpage-link-wikitext', wfEscapeWikiText( $this->futurNewPage->getPrefixedText() ) )->parse());	
@@ -135,7 +110,7 @@ class SpecialWikiPlace extends SpecialPage {
 				
 				$out->setPageTitle( wfMessage( 'wikiplace-listwp-pagetitle' )->text() );
 				
-				$out->addHTML( $this->getWikiPlacesOwnedListing($user->getID()) );
+				$out->addHTML( $this->getWikiplacesOwnedListing($user->getID()) );
 				
                 break;
 			
@@ -169,7 +144,7 @@ class SpecialWikiPlace extends SpecialPage {
 	 * @param Mixed $user The user (User object) or his id (int value)
 	 * @return string An ul / li HTML list
 	 */
-	private function getWikiPlacesOwnedListing($user) {
+	private function getWikiplacesOwnedListing($user) {
 		
 		$userid = null;
 		$display = '';
@@ -184,7 +159,7 @@ class SpecialWikiPlace extends SpecialPage {
 		if ( ($userid == null) || ($user<1) )		// no anons
 			return $display;
 		
-		$wikiplaces = WpWikiPlace::getAllOwnedByUserId($userid);
+		$wikiplaces = WpWikiplace::getAllOwnedByUserId($userid);
 		foreach ($wikiplaces as $wikiplace) {
 			$display .= Html::rawElement( 'li', array(), $wikiplace->getName() );
         }
@@ -195,33 +170,33 @@ class SpecialWikiPlace extends SpecialPage {
 	
 
 	
-	private function getCreateWikiPlacePageForCurrentUserForm($submitTitle) {
+	private function getCreateWikiplacePageForCurrentUserForm($submitTitle) {
 		// http://seizam.localhost/index.php?title=Ploplop&action=edit
 		
         $formDescriptor = array(
-			'WikiPlaceId' => array(
+			'WikiplaceId' => array(
                 'type'					=> 'select',
                 'label-message'			=> 'wikiplace-createpage-form-selectwp',
-				'validation-callback'	=> array(__CLASS__, 'validateWikiPlaceId'),
+				'validation-callback'	=> array(__CLASS__, 'validateWikiplaceId'),
                 'options'				=> array(),
 			),
-			'WikiPlaceSubPageName' => array(
+			'WikiplaceSubPageName' => array(
 				'type'					=> 'text',	
 				'label-message'			=> 'wikiplace-createpage-form-textboxwpsubpagename',	
-				'validation-callback'	=> array(__CLASS__, 'validateWikiPlaceSubPageName'),
+				'validation-callback'	=> array(__CLASS__, 'validateWikiplaceSubPageName'),
                 'size'					=> 16, # Display size of field
                 'maxlength'				=> 16, # Input size of field  
 			),
 		);
 		
-		$wikiplaces = WpWikiPlace::getAllOwnedByUserId($this->getUser()->getId());
+		$wikiplaces = WpWikiplace::getAllOwnedByUserId($this->getUser()->getId());
 		foreach ($wikiplaces as $wikiplace) {
-			$formDescriptor['WikiPlaceId']['options'][$wikiplace->getName()] = $wikiplace->getId();
+			$formDescriptor['WikiplaceId']['options'][$wikiplace->getName()] = $wikiplace->getId();
 		}
 		
 		$htmlForm = new HTMLForm( $formDescriptor );
 		$htmlForm->setTitle( $submitTitle );
-		$htmlForm->setSubmitCallback( array( $this, 'processCreateWikiPlacePageForCurrentUser' ) );
+		$htmlForm->setSubmitCallback( array( $this, 'processCreateWikiplacePageForCurrentUser' ) );
 		
 		$htmlForm->setWrapperLegend(	wfMessage( 'wikiplace-createpage-form-legend' )->text() );
 		$htmlForm->addHeaderText(		wfMessage( 'wikiplace-createpage-form-explain' )->parse() );
@@ -231,21 +206,21 @@ class SpecialWikiPlace extends SpecialPage {
 		
 	}
 	
-	public function processCreateWikiPlacePageForCurrentUser( $formData ) {
+	public function processCreateWikiplacePageForCurrentUser( $formData ) {
 		
-		if ( !isset($formData['WikiPlaceId']) || !isset($formData['WikiPlaceSubPageName']) ) { //check that the keys exist and values are not NULL
+		if ( !isset($formData['WikiplaceId']) || !isset($formData['WikiplaceSubPageName']) ) { //check that the keys exist and values are not NULL
 			return wfMessage('wikiplace-error-unknown')->text(); //invalid form, so maybe a bug, maybe a hack
 		}
 		
-		$wikiplace = WpWikiPlace::getById(intval($formData['WikiPlaceId']));
+		$wikiplace = WpWikiplace::getById(intval($formData['WikiplaceId']));
 		
-		if ( !is_object($wikiplace) || !($wikiplace instanceof WpWikiPlace) || ($wikiplace->getOwnerUserId() != $this->getUser()->getId()) ) {
+		if ( !is_object($wikiplace) || !($wikiplace instanceof WpWikiplace) || ($wikiplace->getOwnerUserId() != $this->getUser()->getId()) ) {
 			// for security reason, same message if wikiplace doesn't exist or the submited wikiplace is not owned by the user
 			// this case only occurs if the form submited bas datas (ie: the visitor hack the selectbox options)
 			return wfMessage( 'wikiplace-createpage-error-notvalidwp')->text(); 
 		}
 		
-		$title = Title::newFromText( $wikiplace->getName() . '/' . $formData['WikiPlaceSubPageName'] );
+		$title = Title::newFromText( $wikiplace->getName() . '/' . $formData['WikiplaceSubPageName'] );
 		
 		if (!($title instanceof Title)) {
 			// not good syntax, but this case should not occurs because the validate passes
@@ -258,6 +233,8 @@ class SpecialWikiPlace extends SpecialPage {
 		
 		//ok, let's go!
 		$this->futurNewPage = $title;
+		
+		$title->get
 		return true;
 				
 	}
@@ -270,21 +247,21 @@ class SpecialWikiPlace extends SpecialPage {
 	 * @param User $user 
 	 * @return HTMLForm 
 	 */
-	private function getCreateWikiPlaceForCurrentUserForm( $submitTitle ) {
+	private function getCreateWikiplaceForCurrentUserForm( $submitTitle ) {
 		
         $formDescriptor = array(
-			'WikiPlaceName' => array(
+			'WikiplaceName' => array(
 				'label-message'			=> 'wikiplace-createwp-form-textboxwpname',
 				'type'					=> 'text',			
                 'size'					=> 16, # Display size of field
                 'maxlength'				=> 16, # Input size of field
-				'validation-callback'	=> array( __CLASS__, 'validateWikiPlaceName'),
+				'validation-callback'	=> array( __CLASS__, 'validateWikiplaceName'),
 			)
 		);
 		
 		$htmlForm = new HTMLForm( $formDescriptor );
 		$htmlForm->setTitle( $submitTitle );
-		$htmlForm->setSubmitCallback( array( $this, 'processCreateWikiPlaceForCurrentUser' ) );
+		$htmlForm->setSubmitCallback( array( $this, 'processCreateWikiplaceForCurrentUser' ) );
 		
 		$htmlForm->setWrapperLegend(	wfMessage( 'wikiplace-createwp-form-legend' )->text() );
 		$htmlForm->addHeaderText(		wfMessage( 'wikiplace-createwp-form-explain' )->parse() );
@@ -301,25 +278,25 @@ class SpecialWikiPlace extends SpecialPage {
 	 * @return boolean true = the form won't display again / false = the form will be redisplayed  / anything else = error to display
 	 * true == Successful submission, false == No submission attempted, .
 	 */
-	public function processCreateWikiPlaceForCurrentUser( $formData ) {
+	public function processCreateWikiplaceForCurrentUser( $formData ) {
 		
-		if ( !isset($formData['WikiPlaceName']) ) { //check that the keys exist and values are not NULL
+		if ( !isset($formData['WikiplaceName']) ) { //check that the keys exist and values are not NULL
 			return wfMessage('wikiplace-error-unknown')->text(); //invalid form, so maybe a bug, maybe a hack
 		}
 		
-		$name = $formData['WikiPlaceName'];
+		$name = $formData['WikiplaceName'];
 
-		if (WpWikiPlace::getByName($name) !== null) {
+		if (WpWikiplace::getByName($name) !== null) {
 			return wfMessage( 'wikiplace-createwp-error-alreadyexists')->text(); // this wikiplace already exists
 		}
 		
-		$new = WpWikiPlace::create($this->getUser()->getId(), $name);
+		$new = WpWikiplace::create($this->getUser()->getId(), $name);
 		
-		if ( !is_object($new) || !($new instanceof WpWikiPlace) ) {
+		if ( !is_object($new) || !($new instanceof WpWikiplace) ) {
 			return wfMessage( 'wikiplace-error-unknown')->text(); // error while saving
 		}
 			
-		$this->newlyCreatedWikiPlace = $new;
+		$this->newlyCreatedWikiplace = $new;
 		return true; // all ok :)
 					
 	}

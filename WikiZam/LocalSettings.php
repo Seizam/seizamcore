@@ -276,7 +276,7 @@ require_once( "$IP/extensions/TransactionManager/TransactionManager.php" );
 
 # WikiPlace
 # still in development, so please, activate it in ServerSetting.php to not have it running on papilusion
-//require_once( "$IP/extensions/WikiPlace/WikiPlace.php" );
+//require_once( "$IP/extensions/WikiPlace/Wikiplace.php" );
 
 // FEEDS
 $wgAdvertisedFeedTypes = array( 'rss', 'atom' );
