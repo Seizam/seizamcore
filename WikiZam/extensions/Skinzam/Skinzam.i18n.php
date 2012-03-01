@@ -39,6 +39,8 @@ $messages['en'] = array(
         'sz-sitemap' => 'SiteMap',
         'sz-moreaboutlicensing' => 'Learn more about <a href="#|Licensing]]',
         'sz-tagline' => 'Community of free artists to build by yourself, but not alone...',
+        'sz-htmlform-helpzonetitle' => 'Need Help?',
+        'sz-htmlform-helpzonedefault' => 'This frame will display text to help you fill this form. Just fly over the "?" beside any field to obtain help or details!',
         'sz-profil-save' => 'Save',
         'sz-profil-you' => 'You',
         'sz-profil-username-help' => 'Your Username, that is the way you\'re authenticated on Seizam',
@@ -96,5 +98,8 @@ $messages['fr'] = array(
         'sz-7freedoms' => 'Les 7 Libertés',
         'sz-sitemap' => 'Plan du site',
         'sz-moreaboutlicensing' => 'En savoir plus sur les <a href="#|Licences]]',
-        'sz-tagline' => 'Communauté d\'artistes libres à constuire soi-même, mais pas tout seul...'
+        'sz-tagline' => 'Communauté d\'artistes libres à constuire soi-même, mais pas tout seul...',
+        'sz-htmlform-helpzonetitle' => 'Besoin d\'aide ?',
+        'sz-htmlform-helpzonedefault' => 'Ce cadre affichera un texte d\'aide pour le remplissage de ce formulaire. Il vous suffit de passer sur le "?" à côté d\'un champ pour obtenir de l\'aide ou des précisions !',
+        
 );

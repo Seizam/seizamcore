@@ -40,44 +40,58 @@ class SpecialTransactionManager extends SpecialPage {
      * @param $request WebRequest : data posted.
      */
     public function __construct($request = null) {
-        parent::__construct('TransactionManager');
+        parent::__construct('TransactionManager', 'user');
     }
 
     /**
      * Special page entry point
      */
     public function execute($par) {
-        global $wgRequest, $wgOut;
+        $output = $this->getOutput();
+        $user = $this->getUser();
 
         $this->setHeaders();
-        $wgOut->addWikiText(wfMessage('tm-desc')->text());
-        //self::sayIt($wgRequest);
+
+        /*$tmr = array(
+            # Params related to Message
+            'tmr_type' => 'sale', # varchar(8) NOT NULL COMMENT 'Type of message (Payment, Sale, Plan)',
+            # Paramas related to User
+            'tmr_user_id' => $user->getId(), # int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Foreign key to user.user_id',
+            'tmr_mail' => $user->getEmail(), # tinyblob COMMENT 'User''s Mail',
+            'tmr_ip' => IP::sanitizeIP(wfGetIP()), # tinyblob COMMENT 'User''s IP'
+            # Params related to Record
+            'tmr_amount' => 1.54, # decimal(9,2) NOT NULL COMMENT 'Record Amount',
+            'tmr_currency' => 'EUR', # varchar(3) NOT NULL DEFAULT 'EUR' COMMENT 'Record Currency',
+            'tmr_desc' => 'sale', # varchar(64) NOT NULL COMMENT 'Record Description',
+            'tmr_status' => 'OK' # varchar(2) NOT NULL COMMENT 'Record status (OK, KO, PEnding, TEst)',
+        );
+
+        wfRunHooks('CreateTransaction', array(&$tmr));
+
+        //$tmrs = TMRecord::getAllOwnedByUserId($user->getId(), array('tmr_status'=>'PE'));
         
-        $wgOut->addWikiText('BALANCE= '.$this->getBalanceFromDB().'€');
+        /*$output->addHTML('<pre>');
+        $output->addHTML(print_r($tmr, true));
+        $output->addHTML('</pre>');*/
         
-        foreach($this->readUserRecordsfromDB() as $record)
-            self::sayIt($record);
-    }
-    
-    static function sayIt($in) {
-        global $wgOut;
-        $wgOut->addHTML('<pre>');
-        $wgOut->addHTML(print_r($in, true));
-        $wgOut->addHTML('</pre>');
-    }
-    
-    public function readUserRecordsfromDB() {
-        global $wgUser;
-        $dbr = wfGetDB(DB_SLAVE);
-        return $dbr->select('tm_record', '*', array('tmr_user_id' => $wgUser->getId()));
-    }
-    
-    public function getBalanceFromDB() {
-        global $wgUser;
-        $dbr = wfGetDB(DB_SLAVE);
-        # @TODO: Remove TE(st) from conditions. Otherwise we count virtual money...
-        $result = $dbr->select('tm_record', 'SUM(tmr_amount) AS balance', array('tmr_user_id' => $wgUser->getId(), 'tmr_status'=>array('OK','TE')));
-        return $result->current()->balance;
+        
+
+        # Building the transaction table and sum
+        if ($user->isLoggedIn()) {
+            $table = new TransactionsTablePager();
+            $table->setSelectFields(array('tmr_id', 'tmr_desc', 'tmr_date_created', 'tmr_amount', 'tmr_currency', 'tmr_status'));
+            $table->setFieldSortable(array('tmr_id', 'tmr_desc', 'tmr_date_created', 'tmr_amount', 'tmr_currency', 'tmr_status'));
+            $table->setSelectConds(array('tmr_user_id' => $user->getId(), 'tmr_currency' => 'EUR'));
+            $table->mLimit = 10;
+            $tableHtml = $table->getBody()
+                    . $table->getNavigationBar();
+            $output->addWikiText(wfMessage('tm-balance', TMRecord::getTrueBalanceFromDB($user->getId()))->text() . ' ' . wfMessage('tm-table-desc')->text());
+            $output->addHtml($tableHtml);
+        } else {
+            $output->addWikiText(wfMessage('tm-desc')->text());
+            $output->addWikiText(wfMessage('resetpass-no-info')->text());
+        }
     }
 
 }
+

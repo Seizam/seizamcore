@@ -372,24 +372,28 @@ class HTMLFormS {
         # For good measure (it is the default)
         $this->getOutput()->preventClickjacking();
         $this->getOutput()->addModules('mediawiki.htmlform');
+        
+        $html = '';
+        
+        if (isset ($this->mHeader) && $this->mHeader != '')
+                $html .= '<div class="form_header informations">' . $this->mHeader . '</div>';
 
-        $html = ''
-                . $this->getErrors($submitResult)
-                . $this->mHeader
-                . "<div class=\"edit_col_1\">\n"
+        $html .= $this->getErrors($submitResult)
+                . '<div class="edit_col_1">'
                 . $this->getBody()
                 . $this->getHiddenFields()
                 . $this->getButtons()
-                . $this->mFooter
-                . "</div>\n"
-                . "<div class=\"edit_col_2\">\n
-			<div id=\"help_zone\" class=\"content_block\">\n
-				<h4>Besoin d’aide ? </h4>\n
-				<p>Ce bloc affichera une aide contextuelle pour le remplissage de ce formulaire.<br /> Il vous suffit de passer sur le \"?\" à côté d'un champ pour obtenir de l'aide ou des précisions.</p>\n
-			</div>\n
-		</div>\n"
-        ;
+                . '</div>'
+                . '<div class="edit_col_2">'
+                . '<div id="help_zone" class="content_block">'
+                . '<h4>' . wfMessage('sz-htmlform-helpzonetitle')->text() . '</h4>'
+                . '<p>' . wfMessage('sz-htmlform-helpzonedefault')->text() . '</p>'
+                . '</div>'
+                . '</div>';
 
+        if (isset ($this->mFooter) && $this->mFooter != '')
+                $html .= '<div class="form_footer informations">' . $this->mFooter . '</div>';
+        
         $html = $this->wrapForm($html);
 
         $this->getOutput()->addHTML(''
@@ -502,7 +506,7 @@ class HTMLFormS {
             $html .= Html::element('input', $attrs);
         }
 
-        return Html::rawElement('p', array('class'=>'submit'), $html);
+        return Html::rawElement('p', array('class' => 'submit'), $html);
     }
 
     /**
@@ -693,12 +697,12 @@ class HTMLFormS {
             } elseif (is_array($value)) {
                 $section = $this->displaySection($value, $key);
                 $legend = $this->getLegend($key);
-                if (isset($this->mSectionHeaders[$key])) {
-                    $section = $this->mSectionHeaders[$key] . $section;
-                }
-                if (isset($this->mSectionFooters[$key])) {
-                    $section .= $this->mSectionFooters[$key];
-                }
+//                if (isset($this->mSectionHeaders[$key])) {
+//                    $section = '<p class="section_header">' . $this->mSectionHeaders[$key] . '</p>' . $section;
+//                }
+//                if (isset($this->mSectionFooters[$key])) {
+//                    $section .= '<p class="section_footer">' . $this->mSectionFooters[$key] . '</p>';
+//                }
                 $attributes = array();
                 if ($fieldsetIDPrefix) {
                     $attributes['id'] = Sanitizer::escapeId("$fieldsetIDPrefix$key");
@@ -713,6 +717,14 @@ class HTMLFormS {
             $classes[] = 'mw-htmlform-nolabel';
         }
 
+
+        if (isset($this->mSectionHeaders[$sectionName])) {
+            $tableHtml = '<p class="section_header">' . $this->mSectionHeaders[$sectionName] . '</p>' . $tableHtml;
+        }
+        if (isset($this->mSectionFooters[$sectionName])) {
+            $tableHtml .= '<p class="section_footer">' . $this->mSectionFooters[$sectionName] . '</p>';
+        }
+
         $attribs = array(
             'class' => implode(' ', $classes),
         );
@@ -720,7 +732,7 @@ class HTMLFormS {
         if ($sectionName) {
             $attribs['id'] = Sanitizer::escapeId("mw-htmlform-$sectionName");
         }
-        
+
         if ($tableHtml != '')
             $tableHtml = Html::rawElement('div', $attribs, $tableHtml) . "\n";
 
@@ -955,22 +967,28 @@ abstract class HTMLFormField {
             $errors = self::formatErrors($errors);
             $errorClass = 'mw-htmlform-invalid-input';
         }
-        
+
         $helptext = null;
 
         if (isset($this->mParams['help-message'])) {
-            $msg = wfMessage($this->mParams['help-message']);
+            if (is_array($this->mParams['help-message']))
+                $msg = wfMessage(array_shift($this->mParams['help-message']), $this->mParams['help-message']);
+            else
+                $msg = wfMessage($this->mParams['help-message']);
             if ($msg->exists()) {
-                $helptext = $msg->plain();
+                $helptext = $msg->text();
             }
         } elseif (isset($this->mParams['help-messages'])) {
             # help-message can be passed a message key (string) or an array containing
             # a message key and additional parameters. This makes it impossible to pass
             # an array of message key
             foreach ($this->mParams['help-messages'] as $name) {
-                $msg = wfMessage($name);
+                if ($name)
+                $msg = wfMessage(array_shift($name), $name);
+            else
+                $msg = wfMessage($this->mParams['help-message']);
                 if ($msg->exists()) {
-                    $helptext .= $msg->plain(); // append message
+                    $helptext .= $msg->text(); // append message
                 }
             }
         } elseif (isset($this->mParams['help'])) {
@@ -1284,7 +1302,7 @@ class HTMLCheckField extends HTMLFormField {
                 Html::rawElement('label', array('for' => $this->mID, 'class' => 'checkfield'), $this->mLabel);
         return $checkbox;
     }
-    
+
     /**
      * For a checkbox, the label goes on the right hand side, and is
      * added in getInputHTML(), rather than HTMLFormField::getRow()
@@ -1292,8 +1310,7 @@ class HTMLCheckField extends HTMLFormField {
     function getLabel() {
         return '&#160;';
     }
-    
-    
+
     /**
      * For a checkbox, the label goes on the right hand side, and is
      * added in getInputHTML(), rather than HTMLFormField::getRow().
@@ -1435,7 +1452,7 @@ class HTMLSelectOrOtherField extends HTMLTextField {
                         $this->mName . '-other', $valInSelect ? '' : $value, 'text', $tbAttribs
         );
 
-        return Html::rawElement('span', array('class'=>'input_like'),"$select<br />\n$textbox");
+        return Html::rawElement('span', array('class' => 'input_like'), "$select<br />\n$textbox");
     }
 
     /**
@@ -1523,7 +1540,7 @@ class HTMLMultiSelectField extends HTMLFormField {
             }
         }
 
-        return Html::rawElement('span', array('class'=>'input_like'),$html);
+        return Html::rawElement('span', array('class' => 'input_like'), $html);
     }
 
     /**
@@ -1661,7 +1678,7 @@ class HTMLSelectAndOtherField extends HTMLSelectField {
                         $this->mName . '-other', $value[2], 'text', $textAttribs
         );
 
-        return Html::rawElement('span', array('class'=>'input_like'),"$select<br />\n$textbox");
+        return Html::rawElement('span', array('class' => 'input_like'), "$select<br />\n$textbox");
     }
 
     /**
@@ -1775,7 +1792,7 @@ class HTMLRadioField extends HTMLFormField {
             }
         }
 
-        return Html::rawElement('span', array('class'=>'input_like'),$html);
+        return Html::rawElement('span', array('class' => 'input_like'), $html);
     }
 
     protected function needsLabel() {
@@ -1797,7 +1814,7 @@ class HTMLInfoField extends HTMLFormField {
 
     function getInputHTML($value) {
         $html = !empty($this->mParams['raw']) ? $value : htmlspecialchars($value);
-        return Html::rawElement('span', array('class'=>'input_like'), $html);
+        return Html::rawElement('span', array('class' => 'input_like'), $html);
     }
 
     function getTableRow($value) {
@@ -1862,7 +1879,7 @@ class HTMLSubmitField extends HTMLFormField {
                     'id' => $this->mID,
                         )
         );
-        return Html::rawElement('p', array('class'=>'submit'), $button);
+        return $button;
     }
 
     protected function needsLabel() {
