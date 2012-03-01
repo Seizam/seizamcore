@@ -120,6 +120,10 @@ class TMRecord {
                 !in_array($tmr['tmr_status'], array('OK', 'KO', 'PE', 'TE'))) {
             throw new MWException('Cannot create TMRecord (invalid argument)');
         }
+        
+        if ($tmr['tmr_amount'] < 0 && $tmr['tmr_status'] !== 'PE') {
+            throw new MWException('Cannot create TMRecord (expense should be PEnding)');
+        }
 
         # Setting the date of update
         $tmr['tmr_date_created'] = $tmr['tmr_date_modified'] = date("Y-m-d:H:i:s");
@@ -151,7 +155,7 @@ class TMRecord {
      * @param array $tmr
      * @return TMRecord the newly created TMRecord or null if an error occured 
      */
-    public static function constructExistingFromArray($tmr) {
+    private static function constructExistingFromArray($tmr) {
 
         if (!is_array($tmr) ||
                 isset($tmr['tmr_id'])) {
@@ -298,10 +302,8 @@ class TMRecord {
         $return = false;
         $pendingExpenses = self::getAllOwnedByUserId($this->getUserId(), array('tmr_status' => 'PE', 'tmr_amount < 0'));
         $balanceOk = self::getBalanceFromDB($this->getUserId(), array('tmr_status' => 'OK'));
-        echo 'balanceOk='.$balanceOk."<br>\n";
         foreach ($pendingExpenses as $expense) {
             $balanceOk += $expense->attemptPEtoOK($balanceOk);
-            echo 'balanceOk='.$balanceOk."<br>\n";
         }
         return $return;
     }

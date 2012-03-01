@@ -54,16 +54,16 @@ class SpecialTransactionManager extends SpecialPage {
 
         /*$tmr = array(
             # Params related to Message
-            'tmr_type' => 'payment', # varchar(8) NOT NULL COMMENT 'Type of message (Payment, Sale, Plan)',
+            'tmr_type' => 'sale', # varchar(8) NOT NULL COMMENT 'Type of message (Payment, Sale, Plan)',
             # Paramas related to User
             'tmr_user_id' => $user->getId(), # int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Foreign key to user.user_id',
             'tmr_mail' => $user->getEmail(), # tinyblob COMMENT 'User''s Mail',
             'tmr_ip' => IP::sanitizeIP(wfGetIP()), # tinyblob COMMENT 'User''s IP'
             # Params related to Record
-            'tmr_amount' => 0.76, # decimal(9,2) NOT NULL COMMENT 'Record Amount',
+            'tmr_amount' => 1.54, # decimal(9,2) NOT NULL COMMENT 'Record Amount',
             'tmr_currency' => 'EUR', # varchar(3) NOT NULL DEFAULT 'EUR' COMMENT 'Record Currency',
-            'tmr_desc' => 'ep-tm-success', # varchar(64) NOT NULL COMMENT 'Record Description',
-            'tmr_status' => 'PE' # varchar(2) NOT NULL COMMENT 'Record status (OK, KO, PEnding, TEst)',
+            'tmr_desc' => 'sale', # varchar(64) NOT NULL COMMENT 'Record Description',
+            'tmr_status' => 'OK' # varchar(2) NOT NULL COMMENT 'Record status (OK, KO, PEnding, TEst)',
         );
 
         wfRunHooks('CreateTransaction', array(&$tmr));

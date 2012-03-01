@@ -1761,6 +1761,8 @@ p.mw-htmlform-invalid-input span.error {
 */
 table.TablePager {
     margin: 1em auto;
+    width: 100%;
+    border: none;
 }
 
 .TablePager_nav {
@@ -1770,20 +1772,49 @@ table.TablePager {
 	padding: 4px 8px;
 	text-align: center;
 }
-.TablePager_nav a {
-	text-decoration: none;
-}
+
 .TablePager, .TablePager td, .TablePager th {
 	border: 1px solid #dad9d9;
 	padding: 4px 8px;
 }
 .TablePager th {
-	background-color: #f3f3f3;
-        font-weight: normal;
+	background-color: transparent;
+        font-weight: bold;
+        border: none;
+	border-bottom: 1px solid #dad9d9;
 }
 .TablePager td {
-	background-color: #ffffff;
+	background-color: transparent;
+        border: none;
+        text-align: center;
+	border-bottom: 1px solid #dad9d9;
 }
+
+.TablePager tr {
+    border-left: 1px solid #dad9d9;
+}
+
+.TablePager tr.even {
+    border-right: 1px solid #dad9d9;
+    border-left: none;
+}
+.TablePager thead tr {
+    border-left: none;
+}
+
 .TablePager tr:hover td {
 	background-color: #f3f3f3;
 }
+
+.TMRecord td.tmr_amount {
+    font-weight: bold;
+}
+
+.TMRecord tr.KO td, .TMRecord tr.KO td.tmr_amount {
+    color: #dad9d9;
+}
+
+.TMRecord tr.PE td, .TMRecord tr.PE td.tmr_amount {
+    color: #888888;
+}
+
