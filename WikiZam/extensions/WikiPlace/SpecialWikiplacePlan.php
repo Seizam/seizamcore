@@ -2,17 +2,18 @@
 
 class SpecialWikiplacePlan extends SpecialPage {
 
-	const ACTION_CREATE			= 'create';
-	const ACTION_SUBSCRIBE		= 'subscribe';
-	const ACTION_LIST_OFFERS	= 'list_offers';
+	const ACTION_SUBSCRIBE				= 'subscribe';
+	const ACTION_LIST_OFFERS			= 'list_offers';
+	const ACTION_LIST_SUBSCRIPTIONS		= 'my_subscriptions';
 	
-	private $newlyCreatedPlan;
 	private $newlySubscribedPlan;
+	private $newSubscription;
+	
+	private $newlyCreatedTMR;
 	
 	
-
 	public function __construct() {
-		parent::__construct( 'WikiPlace Plan' );
+		parent::__construct( 'WikiPlacePlan' );
 	}
 	
 
@@ -24,30 +25,7 @@ class SpecialWikiplacePlan extends SpecialPage {
 	}
 	
 	
-	
-	/*
-	 * The validates method ONLY check if the inputs are well formed, but DO NOT check if the corresponding
-	 * process will accept them<br />
-	 * ie: validateWikiPlaceName only check if the name contains authorized caracters, but the create wikiplace process
-	 * can fail later if the name is already used
-	 */
-
-	public static function validatePlanName($name, $allData) {
-        return ( is_string($name) && preg_match('/^[a-zA-Z0-9]{3,16}$/',$name) ) ? true : wfMessage( 'wikiplace-validate-error-planname' )->text() ;
-	}
-	
-	public static function validatePlanID($id, $allData) {
-        return self::validateGenericId($id) ? true : wfMessage( 'wikiplace-validate-error-wikiplaceid' )->text() ;
-	}
-	
-	private static function validateGenericId($id) {
-		return ( is_string($id) && preg_match('/^[1-9]{1}[0-9]{0,9}$/',$id) ) ;
-	}
-	
-
-	
-	
-	
+		
 	
 	/**
 	 * Show the special page
@@ -94,49 +72,58 @@ class SpecialWikiplacePlan extends SpecialPage {
 		$do = strtolower( $this->getRequest()->getText( 'action', $par ) );
         switch ($do) { 
 
-			
-			case self::ACTION_CREATE :
-  
-				$out->setPageTitle( wfMessage( 'wikiplaceplan-createplan-pagetitle' )->text() );
-				
-				$form = $this->getCreatePlanForm($this->getTitle( self::ACTION_SUBSCRIBE ));
-				
-				if( $form->show() ){
-					$out->addHTML(wfMessage(
-							'wikiplaceplan-createplan-success-wikitext',
-							wfEscapeWikiText( $this->$newlyCreatedPlan->getName() ) 
-						)->parse());	
-				}
-				
-                break;
-							
+								
 			case self::ACTION_SUBSCRIBE :
   
-				$out->setPageTitle( wfMessage( 'wikiplaceplan-subscribe-pagetitle' )->text() );
+				$out->setPageTitle( wfMessage( 'wp-plan-subscribe-pagetitle' )->text());
 				
-				$form = $this->getSubscribePlanForm($this->getTitle( self::ACTION_SUBSCRIBE ));
+				if (WpSubscription::canHaveNewSubscription($user->getId())) {
 				
-				if( $form->show() ){
-					$out->addHTML(wfMessage(
-							'wikiplaceplan-subscribe-success-wikitext',
-							wfEscapeWikiText( $this->newlySubscribedPlan->getName() ) 
-						)->parse());	
+					$form = $this->getSubscribePlanForm($this->getTitle( self::ACTION_SUBSCRIBE ));
+
+					if( $form->show() ){
+
+						$out->addHTML(wfMessage(
+								'wp-plan-subscribe-success-wikitext',
+								wfEscapeWikiText( $this->newlySubscribedPlan->get('name') ) 
+							)->parse() . '<br />' );	
+
+						if ($this->newlyCreatedTMR['tmr_status'] != 'OK') {
+							$out->addHTML(wfMessage( 'wp-plan-payment-pending' )->text());
+						} else {
+							$out->addHTML(wfMessage( 'wp-plan-payment-ok' )->text());
+						}
+
+					}
+					
+				} else {
+					$out->addHTML(wfMessage( 'wp-plan-cannot-subs-anymore' )->text());
 				}
 				
                 break;
  
 				
 			case self::ACTION_LIST_OFFERS :
-            default : // (default  =  action == nothing or "something we cannot handle")
 				
-				$out->setPageTitle( wfMessage( 'wikiplaceplan-listoffers-pagetitle' )->text() );
+				$out->setPageTitle( wfMessage( 'wp-plan-listoffers-pagetitle' )->text() );
 				
 				$out->addHTML( $this->getCurrentPlansOffersListing() );
 				
                 break;
 			
+			
+			case self::ACTION_LIST_SUBSCRIPTIONS :
+			default : // (default  =  action == nothing or "something we cannot handle")
+				
+				$out->setPageTitle( wfMessage( 'wp-plan-listsubs-pagetitle' )->text() );
+				
+				$out->addHTML( $this->getUserSubscriptionsListing() );
+				
+				break;
+			
 
 		}
+		
 		
 	}
 	
@@ -152,8 +139,9 @@ class SpecialWikiplacePlan extends SpecialPage {
 			return '';	//avoid error message on screen, but cannot display if $language not correct, nothing displayed is our error message
 
 		return Html::rawElement( 'span', array(), wfMessage( 'parentheses', $language->pipeList(array(
-				Linker::linkKnown( $this->getTitle( self::ACTION_SUBSCRIBE ), wfMessage( 'wikiplaceplan-linkto-subscribe' )->text() ) ,
-				Linker::linkKnown( $this->getTitle( self::ACTION_LIST_OFFERS ), wfMessage( 'wikiplaceplan-linkto-listoffers' )->text() ) ,
+				Linker::linkKnown( $this->getTitle( self::ACTION_LIST_SUBSCRIPTIONS ), wfMessage( 'wp-plan-linkto-mysubs' )->text() ) ,
+				Linker::linkKnown( $this->getTitle( self::ACTION_SUBSCRIBE ), wfMessage( 'wp-plan-linkto-subscribe' )->text() ) ,
+				Linker::linkKnown( $this->getTitle( self::ACTION_LIST_OFFERS ), wfMessage( 'wp-plan-linkto-listoffers' )->text() ) ,
 		) ) )->text() );
 		
 	}
@@ -170,72 +158,150 @@ class SpecialWikiplacePlan extends SpecialPage {
 
 		$display = '';
 		
-		$wikiplaces = WpWikiPlace::getAllOwnedByUserId($userid);
-		foreach ($wikiplaces as $wikiplace) {
-			$display .= Html::rawElement( 'li', array(), $wikiplace->getName() );
+		$offers = WpPlan::getAvailableOffersNow();
+		foreach ($offers as $offer) {
+			$name = $offer->get('name');
+			$display .= Html::rawElement( 'li', array(), Linker::linkKnown( $this->getTitle( self::ACTION_SUBSCRIBE ), wfMessage($name)->text(), array(), array( 'plan' => $name) ) );
         }
 
         return Html::rawElement('ul', array(), $display);
 
 	}
 	
+	
+	
+	private function getUserSubscriptionsListing() {
+		
+		$user_id = $this->getUser()->getId();
+		
+		$pasts		= WpSubscription::getUserFormers($user_id);
+		$current	= WpSubscription::getUserActive($user_id);
+		$futurs		= WpSubscription::getUserFuturs($user_id);
+		
+		$lang = $this->getLang();
+		$list = '';
+		
+		foreach ($pasts as $sub) {
+			$list .= self::getSubscriptionLine($lang, $sub);
+        }
+		
+		if ($current != null) {
+			$list .= self::getSubscriptionLine($lang, $current);
+		}
+
+		foreach ($futurs as $sub) {
+			$list .= self::getSubscriptionLine($lang, $sub);
+        }
+
+        return Html::rawElement('ul', array(), $list);
+
+	}
+
+	private static function getSubscriptionLine($lang, $sub) {
+		$start		= self::getHumanDate($lang, $sub->get('startDate'));
+		$end		= self::getHumanDate($lang, $sub->get('endDate'));
+		$paid		= $sub->get('paid') ? 'paid' : 'not paid';
+		$active		= $sub->get('active') ? 'active' : 'not active';
+		return Html::rawElement( 'li', array(), $start . ' &gt; ' . $active . ', ' . $paid . ' &gt; ' . $end );
+	}
+	
+	private static function getHumanDate($lang, $date) {
+		if ($date == null)
+			return '--';
+		return $lang->timeanddate(wfTimestamp(TS_MW, $date, true));
+	}
 
 	
-	private function getCreatePlanForm($submitTitle) {
-		
+	
+	private function getSubscribePlanForm( $submitTitle ) {
+
         $formDescriptor = array(
-			'PlanName' => array(
-				'type'					=> 'text',	
-				'label-message'			=> 'wikiplaceplan-createplan-form-textboxplanname',	
-				'validation-callback'	=> array(__CLASS__, 'validatePlanName'),
-                'size'					=> 16, # Display size of field
-                'maxlength'				=> 16, # Input size of field  
+			'Plan' => array(
+                'type'					=> 'select',
+                'label-message'			=> 'wp-plan-subscribe-select',
+				'validation-callback'	=> array('WpPlan', 'validateSubscribePlanId'),
+                'options'				=> array(),
 			),
 		);
 		
+		$plans = WpPlan::getAvailableOffersNow();
+		foreach ($plans as $plan) {
+			$line = wfMessage( 'wp-plan-' . $plan->get('name') . '-short' )->text() . 
+					', '. $plan->get('price') . ' ' . $plan->get('currency') . '/' . wfMessage( 'wp-plan-month' )->text() ;
+			$formDescriptor['Plan']['options'][$line] = $plan->get('id');
+		}
+		
 		$htmlForm = new HTMLForm( $formDescriptor );
 		$htmlForm->setTitle( $submitTitle );
-		$htmlForm->setSubmitCallback( array( $this, 'processCreatePlan' ) );
+		if (WpSubscription::getUserActive($this->getUser()->getId()) != null) {
+			$htmlForm->addHeaderText( wfMessage( 'wp-plan-subscribe-future' )->text() );
+		}
+		$htmlForm->setSubmitCallback( array( $this, 'processSubscribePlan' ) );
 		
-		$htmlForm->setWrapperLegend(	wfMessage( 'wikiplaceplan-createplan-form-legend' )->text() );
-		$htmlForm->addHeaderText(		wfMessage( 'wikiplaceplan-createplan-form-explain' )->parse() );
-		$htmlForm->setSubmitText(		wfMessage( 'wikiplaceplan-createplan-form-submit' )->text() );
+		$htmlForm->setSubmitText(		wfMessage( 'wp-plan-subscribe-submit' )->text() );
 	
 		return $htmlForm;
 		
 	}
 	
-	public function processCreatePlan( $formData ) {
+	/**
+	 *
+	 * @param type $formData 
+	 * @return boolean true = the form won't display again / false = the form will be redisplayed  / anything else = error to display
+	 */
+	public function processSubscribePlan( $formData ) {
 		
-		if ( !isset($formData['PlanName']) ) { //check that the keys exist and values are not NULL
-			return wfMessage('wikiplace-error-unknown')->text(); //invalid form, so maybe a bug, maybe a hack
+		if ( !isset($formData['Plan']) ) { //check that the keys exist and values are not NULL
+			throw new MWException( 'Cannot process to subscription, no data.' );
 		}
 		
-		$new = WpPlan::create($formData['PlanName']);
+		$plan = WpPlan::getById($formData['Plan']);
 		
-		if ( !is_object($new) || !($new instanceof WpPlan) ) {
-			return wfMessage( 'wikiplace-error-unknown')->text(); // error while saving
+		if ( !is_object($plan) || !($plan instanceof WpPlan) ) {
+			throw new MWException( 'Cannot process to subscription, no data.' );
 		}
-			
-		$this->newlyCreatedPlan = $new;
-		return true; // all ok :)
-	}
-	
-	
-	
-
-	private function getSubscribePlanForm( $submitTitle ) {
-
-		return null;
 		
-	}
-	
-	public function processCreateWikiPlaceForCurrentUser( $formData ) {
-
-		return wfMessage('wikiplace-error-unknown')->text(); //invalid form, so maybe a bug, maybe a hack
+		$user = $this->getUser();
 				
+		$tmr = array(
+            # Params related to Message
+            'tmr_type'		=> 'subscrip',
+			
+            # Paramas related to User
+            'tmr_user_id'	=> $user->getId(), 
+            'tmr_mail'		=> $user->getEmail(),
+            'tmr_ip'		=> IP::sanitizeIP(wfGetIP()), 
+			
+            # Params related to Record
+            'tmr_amount'	=> - $plan->get('price'),
+            'tmr_currency'	=> $plan->get('currency'), 
+            'tmr_desc'		=> $plan->get('name'), 
+            'tmr_status'	=> 'PE', // PEnding
+        );
+
+        wfRunHooks('CreateTransaction', array(&$tmr));
+		$this->newlyCreatedTMR = $tmr;
+		
+		switch ($tmr['tmr_status']) {
+			
+			case 'OK':
+				$now =  wfTimestamp(TS_DB) ;
+				$this->newSubscription = WpSubscription::create($plan->get('id'), $user->getId(), $tmr['tmr_id'], true, $now, WpSubscription::generateEndDate($now), true);
+				$this->newlySubscribedPlan = $plan;
+				return true;
+				break;
+			
+			case 'PE':
+				$this->newSubscription = WpSubscription::create($plan->get('id'), $user->getId(), $tmr['tmr_id'], false, null, null, false);
+				$this->newlySubscribedPlan = $plan;
+				return true ;
+				break;
+			
+		}
+		
+		throw new MWException( 'Error while recording the transaction, unknwon status.' );
+		
 	}
-	
 	
 	
 }

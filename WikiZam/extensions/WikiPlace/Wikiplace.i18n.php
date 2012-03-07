@@ -37,7 +37,7 @@ $messages['en'] = array(
 	'wikiplace-createwp-error-alreadyexists'			=> 'This WikiPlace already exists',
 	
 	'wikiplace-createpage-pagetitle'					=> 'Create a new page on Seizam',
-	'wikiplace-createpage-link-wikitext'				=> "'''Click here to create the page \"[[:\$1]]\" on seizam!'''",
+	'wikiplace-createpage-link-wikitext'				=> "'''Click here to create the page \"[[:\$1]]\" on Seizam!'''",
 	'wikiplace-createpage-form-selectwp'				=> 'Select one of your wikiplaces',
 	'wikiplace-createpage-form-textboxwpsubpagename'	=> 'Input the name for the new page',
 	'wikiplace-createpage-form-legend'					=> 'The fieldset "title"',
@@ -49,21 +49,35 @@ $messages['en'] = array(
 	
 	//special:wikiplaceplan
 	
-	'wikiplaceplan-linkto-subscribe'					=> 'Subscribe',
-	'wikiplaceplan-linkto-listoffers'					=> 'Consult offers',
+	'wp-plan-linkto-subscribe'					=> 'Subscribe',
+	'wp-plan-linkto-listoffers'					=> 'Consult offers',
+	'wp-plan-linkto-mysubs'						=> 'My subscriptions',
 	
-	'wikiplaceplan-validate-error-planname'				=> 'Wrong plan name',
+	'wp-plan-validate-error-planname'				=> 'Wrong plan name',
 	
-	'wikiplaceplan-createplan-pagetitle'				=> 'Create a new plan',
-	'wikiplaceplan-createplan-form-legend'				=> 'Fieldset title',
-	'wikiplaceplan-createplan-form-explain'				=> 'Fieldset explanation',
-	'wikiplaceplan-createplan-form-submit'				=> 'Go!',
-	'wikiplaceplan-createplan-form-textboxplanname'		=> 'Plan name',
+	'wp-plan-createplan-pagetitle'				=> 'Create a new plan',
+	'wp-plan-createplan-form-legend'				=> 'Fieldset title',
+	'wp-plan-createplan-form-explain'				=> 'Fieldset explanation',
+	'wp-plan-createplan-form-submit'				=> 'Go!',
+	'wp-plan-createplan-form-textboxplanname'		=> 'Plan name',
 	
-	'wikiplaceplan-subscribe-pagetitle'					=> 'Subscribe to a plan',
-	'wikiplaceplan-subscribe-success-wikitext'			=> 'You successfully subscribe to the plan $1',
+	'wp-plan-subscribe-pagetitle'					=> 'Subscribe to a plan',
+	'wp-plan-subscribe-success-wikitext'			=> 'You successfully subscribed to the plan "$1"',
 	
-	'wikiplaceplan-listoffers-pagetitle'				=> 'Available offers',
+	'wp-plan-listoffers-pagetitle'					=> 'Available offers',
+	
+
+	'wp-plan-subscribe-select'							=> 'Select your plan',
+	'wp-plan-subscribe-submit'							=> 'Subscribe and pay now',
+	'wp-plan-subscribe-future'							=> 'You already have an active subscription, so this new one will not be activated for now.',
+	
+	'wp-plan-month'										=> 'month',
+	
+	'wp-plan-payment-ok'								=> 'Your Seizam account has been succesfully debited.',
+	'wp-plan-payment-pending'							=> 'Your payment is pending. Please credit your Seizam account.',
+	
+	'wp-plan-test_plan-short'							=> 'Test plan',
+	
 	
 	
 );

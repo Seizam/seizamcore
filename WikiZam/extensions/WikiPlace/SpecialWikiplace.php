@@ -234,7 +234,6 @@ class SpecialWikiplace extends SpecialPage {
 		//ok, let's go!
 		$this->futurNewPage = $title;
 		
-		$title->get
 		return true;
 				
 	}
