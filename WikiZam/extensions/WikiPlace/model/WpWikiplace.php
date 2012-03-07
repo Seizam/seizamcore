@@ -1,10 +1,31 @@
 <?php
 
-class WpWikiPlace {  
+class WpWikiplace {  
 
 	private		$id,			//`wpw_id` int(10) unsigned
 				$ownerUserId,	//`wpw_owner_user_id` int(10) unsigned
 				$name ;			//`wpw_name` varbinary(255)
+	
+		/*
+	 * The validates method ONLY check if the inputs are well formed, but DO NOT check if the corresponding
+	 * process will accept them<br />
+	 * ie: validateWikiplaceName only check if the name contains authorized caracters, but the create wikiplace process
+	 * can fail later if the name is already used
+	 */
+	
+	public static function validateWikiplaceName($name, $allData) {
+        return ( is_string($name) && preg_match('/^[a-zA-Z0-9]{3,16}$/',$name) ) ? true : wfMessage( 'wikiplace-validate-error-wikiplacename' )->text() ;
+	}
+	
+	public static function validateWikiplaceID($id, $allData) {
+        return ( is_string($id) && preg_match('/^[1-9]{1}[0-9]{0,9}$/',$id) ) ? true : wfMessage( 'wikiplace-validate-error-wikiplaceid' )->text() ;
+	}
+	
+
+
+
+	
+	
 	
 	private function __construct( $id, $ownerUserId, $name ) {
 
@@ -27,7 +48,7 @@ class WpWikiPlace {
 	}
 	
 	/**
-	 * Get the WikiPlace instance from a SQL row
+	 * Get the Wikiplace instance from a SQL row
 	 * @param ResultWrapper $row
 	 * @return self 
 	 */
@@ -71,7 +92,7 @@ class WpWikiPlace {
 	/**
 	 *
 	 * @param String $name
-	 * @return WpWikiPlace 
+	 * @return WpWikiplace 
 	 */
 	public static function getByName($name) {
 				
@@ -96,7 +117,7 @@ class WpWikiPlace {
 	 * 
 	 * 
 	 * @param int $user_id
-	 * @return array of WpWikiPlaces ("array()" if no wikiplaces)
+	 * @return array of WpWikiplaces ("array()" if no wikiplaces)
 	 */
 	public static function getAllOwnedByUserId($user_id) {
 		
@@ -123,7 +144,7 @@ class WpWikiPlace {
 	 *
 	 * @param int $ownerUserId
 	 * @param string $name
-	 * @return WpWikiPlace the newly created wikiplace or null if an error occured 
+	 * @return WpWikiplace the newly created wikiplace or null if an error occured 
 	 */
 	public static function create($ownerUserId, $name) {
 		
