@@ -33,7 +33,7 @@ class TransactionsTablePager extends SkinzamTablePager {
                 return wfMessage('tm-type-' . $value)->text();
             case 'tmr_date_created':
             case 'tmr_date_modified':
-                return $wgLang->timeanddate($value);
+                return $wgLang->timeanddate($value, true);
             case 'tmr_desc':
                 return wfMessage($value)->text();
             case 'tmr_status':

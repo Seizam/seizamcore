@@ -126,7 +126,7 @@ class TMRecord {
         }
 
         # Setting the date of update
-        $tmr['tmr_date_created'] = $tmr['tmr_date_modified'] = date("Y-m-d:H:i:s");
+        $tmr['tmr_date_created'] = $tmr['tmr_date_modified'] = wfTimestamp(TS_DB);
 
         # We need to write, therefore we need the master
         $dbw = wfGetDB(DB_MASTER);
@@ -194,7 +194,7 @@ class TMRecord {
     private function updateDB() {
         # Setting the date of update
         unset($this->tmr['tmr_date_created']);
-        $this->tmr['tmr_date_modified'] = date("Y-m-d:H:i:s");
+        $this->tmr['tmr_date_modified'] = wfTimestamp(TS_DB);
 
         # We need to write, therefore we need the master
         $dbw = wfGetDB(DB_MASTER);

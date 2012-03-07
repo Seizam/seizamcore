@@ -47,12 +47,26 @@ class SpecialSkinzam extends SpecialPage {
      * Special page entry point
      */
     public function execute($par) {
+        $output = $this->getOutput();
+        $lang = $this->getLang();
         $this->setHeaders();
-        self::bigForm($this->getTitle());
+        $output->addHTML('time : '.time().'<br/>'
+        #.'timaanddate : '. $lang->timeanddate(time(), true).'<br/>'
+        #.'timaanddate, no offset : '. $lang->timeanddate(time()).'<br/><br/>'
+                
+        .'wfTimestamp : '. wfTimestamp(TS_DB).'<br/>'
+        #.'timaanddate : '. $lang->timeanddate(wfTimestamp(TS_MW), true).'<br/>'
+        #.'timaanddate, no offset : '. $lang->timeanddate(wfTimestamp(TS_MW), false).'<br/><br/>'
+                
+        #.'date : '. date("Y-m-d H:i:s").'<br/>'        
+        .'date : '. date("Y-m-d H:i:se",wfTimestamp(TS_UNIX)).'<br/>'
+        .'strtotime : '. strtotime('now').'<br/>'
+        #.'timaanddate : '. $lang->timeanddate(date("Y-m-d H:i:s"),true).'<br/>'
+        .'timaanddate, no offset : '. $lang->timeanddate(date("Y-m-d H:i:s"), false).'<br/>');
     }
 
     static function processInput($formData) {
-            return true;
+        return true;
     }
 
     static function validateSimpleTextField($simpleTextField, $allData) {
@@ -201,15 +215,15 @@ class SpecialSkinzam extends SpecialPage {
 
         $htmlForm->setSubmitText(wfMessage('sz-profil-save'));
         $htmlForm->setTitle($title);
-        
-        
+
+
         $htmlForm->addHeaderText('Ceci est un texte de tete.');
-        
+
         $htmlForm->addFooterText('Ceci est un texte de pied.');
-        
-        $htmlForm->addHeaderText('Ceci est un texte de tetesection.','you');
-        
-        $htmlForm->addFooterText('Ceci est un texte de piedsection.','you');
+
+        $htmlForm->addHeaderText('Ceci est un texte de tetesection.', 'you');
+
+        $htmlForm->addFooterText('Ceci est un texte de piedsection.', 'you');
 
 
         $htmlForm->show();

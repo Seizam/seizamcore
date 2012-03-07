@@ -259,7 +259,7 @@ Class EPMessage {
 
     private function writeDB() {
         # Setting the dates
-        $this->epm['epm_date_created'] = date("Y-m-d:H:i:s");
+        $this->epm['epm_date_created'] = wfTimestamp(TS_DB);
         # We need to write, therefore we need the master
         $dbw = wfGetDB(DB_MASTER);
         # PostgreSQL, null for MySQL
@@ -369,8 +369,7 @@ Class EPOrder {
 
     private function writeDB() {
         # Setting the dates
-        $this->epo['epo_date_created'] = date("Y-m-d:H:i:s");
-        $this->epo['epo_date_modified'] = date("Y-m-d:H:i:s");
+        $this->epo['epo_date_created'] = $this->epo['epo_date_modified'] = wfTimestamp(TS_DB);
         # We need to write, therefore we need the master
         $dbw = wfGetDB(DB_MASTER);
         # PostgreSQL, null for MySQL
@@ -386,7 +385,7 @@ Class EPOrder {
     public function updateDB() {
         # Setting the date of update
         unset($this->epo['epo_date_created']);
-        $this->epo['epo_date_modified'] = date("Y-m-d:H:i:s");
+        $this->epo['epo_date_modified'] = wfTimestamp(TS_DB);
         # We need to write, therefore we need the master
         $dbw = wfGetDB(DB_MASTER);
         # Writing...

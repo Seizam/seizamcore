@@ -52,7 +52,7 @@ class SpecialTransactionManager extends SpecialPage {
 
         $this->setHeaders();
 
-        /*$tmr = array(
+        $tmr = array(
             # Params related to Message
             'tmr_type' => 'sale', # varchar(8) NOT NULL COMMENT 'Type of message (Payment, Sale, Plan)',
             # Paramas related to User
