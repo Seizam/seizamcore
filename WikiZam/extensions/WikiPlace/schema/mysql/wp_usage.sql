@@ -16,4 +16,4 @@ CREATE TABLE IF NOT EXISTS `wp_usage` (
   PRIMARY KEY (`wpu_id`),
   UNIQUE KEY `wpu_wps_id` (`wpu_wps_id`),
   UNIQUE KEY `wpu_wpw_id` (`wpu_wpw_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='WikiPlace usage reports table' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=binary COMMENT='WikiPlace usage reports table' ;

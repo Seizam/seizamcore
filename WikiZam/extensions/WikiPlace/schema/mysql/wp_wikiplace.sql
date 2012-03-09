@@ -11,4 +11,4 @@ CREATE TABLE IF NOT EXISTS `wp_wikiplace` (
   `wpw_name` varbinary(255) NOT NULL COMMENT 'Name of the WikiPlace',
   PRIMARY KEY (`wpw_id`),
   KEY `wpw_owner_user_id` (`wpw_owner_user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=binary ;

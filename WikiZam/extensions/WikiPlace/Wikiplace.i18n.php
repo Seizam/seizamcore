@@ -70,14 +70,19 @@ $messages['en'] = array(
 	'wp-plan-subscribe-select'							=> 'Select your plan',
 	'wp-plan-subscribe-submit'							=> 'Subscribe and pay now',
 	'wp-plan-subscribe-future'							=> 'You already have an active subscription, so this new one will not be activated for now.',
+	'wp-plan-cannot-subs-anymore'						=> 'For now, you cannot subscribe to a new plan, because you already have an active or a pending one.',
 	
 	'wp-plan-month'										=> 'month',
 	
 	'wp-plan-payment-ok'								=> 'Your Seizam account has been succesfully debited.',
 	'wp-plan-payment-pending'							=> 'Your payment is pending. Please credit your Seizam account.',
 	
-	'wp-plan-test_plan-short'							=> 'Test plan',
 	
+	'wp-plan-listsubs-pagetitle'						=> 'My WikiPlace subscriptions',
+	
+	
+	'wp-plan-name-test_plan_normal'						=> 'Test plan normal',
+	'wp-plan-name-test_plan_invitation'					=> 'Test plan invitation only',
 	
 	
 );

@@ -1,30 +1,19 @@
 <?php
 
 class WpSubscription {  
-
-	/*
-CREATE TABLE IF NOT EXISTS `wp_subscription` (
-  `wps_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Primary key',
-  `wps_wpp_id` int(10) unsigned NOT NULL COMMENT 'Foreign key: primary key of the subscribed plan',
-  `wps_buyer_user_id` int(10) unsigned NOT NULL COMMENT 'Foreign key: the user who buyed the plan',
-  `wps_tmr_id` int(10) unsigned NOT NULL COMMENT 'Foreign key: the transaction record of the buy',
-  `wps_paid` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '0 = not paid, 1 = paid',
-  `wps_date_created` datetime NOT NULL COMMENT 'When the record was created',
-  `wps_start_date` datetime NOT NULL COMMENT 'When the subscription starts (can be different from wps_date_created) ',
-  `wps_end_date` datetime NOT NULL COMMENT 'When the subscription ends',
-  `wps_active` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '0 = currently not used, 1 = currently in use',
-	 */
-			  
+		  
 	private		$id,					//`wps_id` int(10) unsigned
 				$planId,				//`wps_wpp_id` int(10) unsigned
 				$buyerUserId,			//'wps_buyer_user_id` int(10) unsigned
 				$transactionId,			//`wps_tmr_id` int(10) unsigned
-				$paid,					//`wps_paid` tinyint(3) unsigned
+				$transactionStatus,		//`wps_tmr_status` varchar(2)
 				$createdDate,			//`wps_date_created` datetime
 				$startDate,				//`wps_start_date` datetime
 				$endDate,				//`wps_end_date` datetime
 				$active;				//`wps_active` tinyint(3) unsigned
-			
+
+	private $_plan;
+		
 	/**
 	 *
 	 * @param type $id
@@ -42,18 +31,18 @@ CREATE TABLE IF NOT EXISTS `wp_subscription` (
 	 */
 	private function __construct(
 			$id, $planId, $buyerUserId,
-			$transactionId, $paid, $createdDate,
+			$transactionId, $transactionStatus, $createdDate,
 			$startDate, $endDate, $active ) {
 		
-		$this->id				= $id;			
-		$this->planId			= $planId;				
-		$this->buyerUserId		= $buyerUserId;
-		$this->transactionId	= $transactionId;
-		$this->paid				= $paid;
-		$this->createdDate		= $createdDate;
-		$this->startDate		= $startDate;
-		$this->endDate			= $endDate;
-		$this->active			= $active;
+		$this->id					= $id;			
+		$this->planId				= $planId;				
+		$this->buyerUserId			= $buyerUserId;
+		$this->transactionId		= $transactionId;
+		$this->transactionStatus	= $transactionStatus;
+		$this->createdDate			= $createdDate;
+		$this->startDate			= $startDate;
+		$this->endDate				= $endDate;
+		$this->active				= $active;
 
 	}
 	
@@ -70,17 +59,38 @@ CREATE TABLE IF NOT EXISTS `wp_subscription` (
 			case 'transactionId':
 				return intval($this->$attribut_name);
 				break;
-			case 'paid':
 			case 'active':
 				return ($this->$attribut_name !== '0');
 				break;
 			case 'createdDate':
 			case 'startDate':
 			case 'endDate':
+			case 'transactionStatus':
 				return $this->$attribut_name;
+			case 'plan':
+				if ($this->_plan === null) {
+					$this->fetchPlan();
+				}
+				return $this->_plan;
 				break;
 		}
 		throw new MWException('Unknown attribut');
+	}
+	
+	private function fetchPlan($databaseRow = null) {
+		
+		if ($databaseRow !== null) {
+			$this->_plan = WpPlan::constructFromDatabaseRow($databaseRow);
+			
+		} else {
+			$this->_plan = WpPlan::getById($this->planId);
+		}
+		
+		if ($this->_plan === null) {
+			// there is a big problem... someone has bought something we don't know!
+			throw new MWException('Unknown plan');
+		} 
+
 	}
 	
 	/**
@@ -95,13 +105,13 @@ CREATE TABLE IF NOT EXISTS `wp_subscription` (
 		}
 
 		if ( !isset($row->wps_id) || !isset($row->wps_wpp_id) || !isset($row->wps_buyer_user_id) ||
-				!isset($row->wps_tmr_id) || !isset($row->wps_paid) || !isset($row->wps_date_created) ||
+				!isset($row->wps_tmr_id) || !isset($row->wps_tmr_status) || !isset($row->wps_date_created) ||
 	//			!isset($row->wps_start_date) || !isset($row->wps_end_date) ||
 				!isset($row->wps_active) ) {
 			throw new MWException( 'Cannot construct the Subscription from the supplied row (missing field)' );
 		}
 			
-		return new self ( $row->wps_id, $row->wps_wpp_id, $row->wps_buyer_user_id, $row->wps_tmr_id, $row->wps_paid, $row->wps_date_created, $row->wps_start_date, $row->wps_end_date, $row->wps_active );
+		return new self ( $row->wps_id, $row->wps_wpp_id, $row->wps_buyer_user_id, $row->wps_tmr_id, $row->wps_tmr_status, $row->wps_date_created, $row->wps_start_date, $row->wps_end_date, $row->wps_active );
 		  
 	}
 	
@@ -112,7 +122,7 @@ CREATE TABLE IF NOT EXISTS `wp_subscription` (
 	 */
 	public static function getById($id) {
 				
-		if ( ($id === null) || !is_int($id) || ($id < 1) ) {
+		if ( ($id === null) || !is_numeric($id) || ($id < 1) ) {
 			throw new MWException( 'Cannot fectch WikiPlace matching the identifier (invalid identifier)' );
 		}
 		
@@ -136,21 +146,32 @@ CREATE TABLE IF NOT EXISTS `wp_subscription` (
 	 */
 	public static function getUserFormers($user_id) {
 				
-		if ( ($user_id === null) || !is_int($user_id) || ($user_id < 1) ) {
-			throw new MWException( 'Cannot fectch Subscription matching the user identifier (invalid identifier)' );
+		if ( ($user_id === null) || !is_numeric($user_id) || ($user_id < 1) ) {
+			throw new MWException( 'Cannot fetch Subscriptions matching the user identifier (invalid identifier)' );
 		}	
 		
 		$dbr = wfGetDB(DB_SLAVE);
 		$now =  $dbr->addQuotes( wfTimestamp(TS_DB) );
-		$conds = $dbr->makeList(array( "wps_active" => 0,  "wps_buyer_user_id" => $user_id, "wps_end_date < $now"), LIST_AND );
-		$result = $dbr->select( 'wp_subscription', '*',	$conds, __METHOD__ );
+		$conds = $dbr->makeList(array( 
+			"wps_active" => 0,  
+			"wps_buyer_user_id" => $user_id, 
+			"wps_end_date < $now",
+			"wps_wpp_id = wpp_id",
+		), LIST_AND );
+		$results = $dbr->select(
+				array( 'wp_subscription' , 'wp_plan' ),
+				'*',
+				$conds,
+				__METHOD__ );
 		
 		$subs = array();
-		foreach ( $result as $row ) {
-			$subs[] = self::constructFromDatabaseRow($row);
+		foreach ( $results as $row ) {
+			$sub = self::constructFromDatabaseRow($row);
+			$sub->fetchPlan($row);
+			$subs[] = $sub;
 		}
 		
-		$dbr->freeResult( $result );
+		$dbr->freeResult( $results );
 		
 		return $subs;
 
@@ -159,46 +180,77 @@ CREATE TABLE IF NOT EXISTS `wp_subscription` (
 	/**
 	 *
 	 * @param int $user_id
-	 * @return WpSubscription the currently active subscription buyed by the user, or null if no active subscription
+	 * @return array(WpSubscription) the currently actives subscriptions buyed by the user, FOR NOW there must be only one
 	 */
-	public static function getUserActive($user_id) {
+	public static function getUserActives($user_id) {
 				
-		if ( ($user_id === null) || !is_int($user_id) || ($user_id < 1) ) {
-			throw new MWException( 'Cannot fectch Subscription matching the user identifier (invalid identifier)' );
+		if ( ($user_id === null) || !is_numeric($user_id) || ($user_id < 1) ) {
+			throw new MWException( 'Cannot fectch Subscriptions matching the user identifier (invalid identifier)' );
 		}
 		
 		$dbr = wfGetDB(DB_SLAVE);
-		$conds = $dbr->makeList(array( "wps_active" => 1,  "wps_buyer_user_id" => $user_id), LIST_AND );
-		$result = $dbr->selectRow( 'wp_subscription', '*',	$conds, __METHOD__ );
+		$conds = $dbr->makeList(array( 
+			"wps_active" => 1,
+			"wps_buyer_user_id" => $user_id,
+			"wps_wpp_id = wpp_id",
+		), LIST_AND );
+		$results = $dbr->select(
+				array( 'wp_subscription' , 'wp_plan' ),
+				array( '*' ),
+				$conds,
+				__METHOD__ );
 		
-		if ( $result === false ) {
-			// not found, so return null
-			return null;
+		$subs = array();
+		foreach ( $results as $row ) {
+			$sub = self::constructFromDatabaseRow($row);
+			$sub->fetchPlan($row);
+			$subs[] = $sub;
 		}
 		
-		return self::constructFromDatabaseRow($result);
+		if ( $dbr->numRows($results) > 1 ) {
+			// not good, not good, not good, ....
+			wfDebugLog( 'wikiplace', '/!\\ user_id ' . $user_id . ' has many actives subscriptions !!!');
+		}
+		
+		$dbr->freeResult( $results );
+		
+		return $subs;
 
 	}
 	
 	public static function getUserFuturs($user_id) {
 				
-		if ( ($user_id === null) || !is_int($user_id) || ($user_id < 1) ) {
-			throw new MWException( 'Cannot fectch Subscription matching the user identifier (invalid identifier)' );
+		if ( ($user_id === null) || !is_numeric($user_id) || ($user_id < 1) ) {
+			throw new MWException( 'Cannot fectch Subscriptions matching the user identifier (invalid identifier)' );
 		}	
 		
 		$dbr = wfGetDB(DB_SLAVE);
 		$now =  $dbr->addQuotes( wfTimestamp(TS_DB) );
-		$conds = $dbr->makeList(array( "wps_active" => 0,  "wps_buyer_user_id" => $user_id, $dbr->makeList(array(
-			"wps_start_date IS NULL", "wps_start_date >= $now" ), LIST_OR ) ), LIST_AND );
-		$result = $dbr->select( 'wp_subscription', '*',	$conds, __METHOD__ );
+		$conds = $dbr->makeList(array( 
+			"wps_active" => 0,  
+			"wps_buyer_user_id" => $user_id, 
+			"wps_tmr_status != 'KO'" , 
+			$dbr->makeList(array(
+					"wps_start_date IS NULL", 
+					"wps_start_date >= $now", 
+			), LIST_OR ),
+			"wps_wpp_id = wpp_id",
+		), LIST_AND );
+		$results = $dbr->select(
+				array( 'wp_subscription' , 'wp_plan' ),
+				array( '*' ),
+				$conds,
+				__METHOD__ );
 		
 		$subs = array();
 		
-		foreach ( $result as $row ) {
-			$subs[] = self::constructFromDatabaseRow($row);
+		foreach ( $results as $row ) {
+			$sub = self::constructFromDatabaseRow($row);
+			$sub->fetchPlan($row);
+			$subs[] = $sub;
 		}
 		
-		$dbr->freeResult( $result );
+		$dbr->freeResult( $results );
 		
 		return $subs;
 
@@ -206,59 +258,198 @@ CREATE TABLE IF NOT EXISTS `wp_subscription` (
 	
 	
 	/**
-	 *
-	 * @param type $user_id
+	 * 
+	 * @param integer $user_id
 	 * @param type $db_accessor null = fefault = check on slave
 	 * @return boolean True = can have new one, False = not 
 	 */
-	public static function canHaveNewSubscription($user_id, $db_accessor = null) {
-		
-		if ( ($user_id === null) || !is_int($user_id) || ($user_id < 1) ) {
+	public static function canMakeAFirstSubscription($user_id, $db_accessor = null) {
+				
+		if ( ($user_id === null) || !is_numeric($user_id) || ($user_id < 1) ) {
 			throw new MWException( 'Cannot check subscriptions matching the user identifier (invalid identifier)' );
 		}	
 		
 		$dbr = ( $db_accessor != null ? $db_accessor : wfGetDB(DB_SLAVE) ) ;
 
 		$now =  $dbr->addQuotes( wfTimestamp(TS_DB) );
-		$conds = $dbr->makeList(array( 
-			"wps_active" => 0,  
+		$conds = $dbr->makeList( array(
 			"wps_buyer_user_id"	=> $user_id, 
-			$dbr->makeList(array(
-				"wps_start_date IS NULL", 
-				"wps_start_date >= $now" ), 
-				LIST_OR ) ),
-			LIST_AND );
+			$dbr->makeList( array(
+				"wps_active" => 1, 
+				$dbr->makeList(array(			
+					"wps_active" => 0,  
+					"wps_tmr_status != 'KO'" , 
+					$dbr->makeList(array(
+							"wps_start_date IS NULL", 
+							"wps_start_date >= $now", 
+					), LIST_OR ),
+				), LIST_AND )
+			), LIST_OR )
+		), LIST_AND );
+		
 		$results = $dbr->select( 'wp_subscription', '*',	$conds, __METHOD__ );
 		
-		return ( $dbr->numRows($results) === 0 );
+		$active = 0; // already active susbcription = cannot subscribe anymore
+		$future = 0; // pending first subscription OR renewal = cannot subscribe anymore
+		foreach ( $results as $row ) {
+			
+			if ($row->wps_active == 0) {
+				$future++;
+			} elseif ($row->wps_active == 1) {
+				$active++;
+			} else {
+				throw new MWException( 'There is an error in the databse about the active state.' );
+			}
+				
+		}
+		
+		if ($future > 1) {
+				throw new MWException( 'The user has already many futures subscriptions. She should have only one.' );
+		}
+		if ($active > 1) {
+				throw new MWException( 'The user has already many actives subscriptions. She should have only one.' );
+		}
+		
+		return ( ($active == 0) && ($future == 0) );
 				
 	}
 	
 	
-	public static function create( $planId,	$buyerUserId, $transactionId, $paid, $startDate, $endDate, $active ) {
+	/**
+	 * Subscribe to a first plan, or upgrade the current plan to a upper one
+	 * Currently, can only subscribe to a frst plan
+	 * @param User $use The user who buy the plan, and will use it (later, it will be possible 
+	 * that one user buy for another one, but for now, a user can only buy for her)
+	 * @param WpPlan $plan The plan
+	 * @return WpSubscription the newly created subscription, or null if not possible
+	 */
+	public static function subscribe($user, $plan) {
+		
+		if ( ($user === null) || !($user instanceof User) ||
+				($plan === null) || !($plan instanceof WpPlan) ) {
+			throw new MWException( 'Cannot subscribe, invalid argument.' );
+		}
+		
+		$user_id = $user->getId();
+		$db_master = $dbw = wfGetDB(DB_MASTER);
+		// is it a first subscription(not a plan change ?
+		
+		// if the user can make a first subscription, this is a first subscription (will be activated as soon as paid)
+		if (self::canMakeAFirstSubscription($user_id, $db_master)) {
+			
+			// this is a first subscriptioon
+			
+			// ok, let's pay
+			$tmr = array(
+				# Params related to Message
+				'tmr_type'		=> 'subscrip',
+
+				# Paramas related to User
+				'tmr_user_id'	=> $user->getId(), 
+				'tmr_mail'		=> $user->getEmail(),
+				'tmr_ip'		=> IP::sanitizeIP(wfGetIP()), 
+
+				# Params related to Record
+				'tmr_amount'	=> - $plan->get('price'),
+				'tmr_currency'	=> $plan->get('currency'), 
+				'tmr_desc'		=> $plan->get('name'), 
+				'tmr_status'	=> 'PE', // PEnding
+			);
+			wfRunHooks('CreateTransaction', array(&$tmr));
+		
+			// already paid, or waiting a payment ?
+			switch ($tmr['tmr_status']) {
+
+				case 'OK': // already paid by user
+					$now =  wfTimestamp(TS_DB) ;
+					return WpSubscription::create(
+							$plan->get('id'), 
+							$user_id,
+							$tmr['tmr_id'],
+							'OK',									// status
+							$now,									// start
+							WpSubscription::generateEndDate($now),	// end
+							true,									// active
+							$db_master
+					);
+					break;
+
+				case 'PE': // waiting payment
+					return WpSubscription::create(
+							$plan->get('id'),
+							$user->getId(),
+							$tmr['tmr_id'],
+							'PE',		// not paid
+							null,		// will start when paid
+							null,		
+							false,		// not active
+							$db_master
+					);
+					break;
+			
+			}
+		
+			// if we arrive here, the status of the payment is unknown
+			throw new MWException( 'Error while recording the transaction, unknwon status.' );
+			
+			
+		} else {
+			
+			// this is something else than a first subscriptioon
+			
+			// for the moment nothing can be done, but later, users will be able to change their current active plan
+			// the code will takes place here
+			return null; // not an error, but the user cannot subscribe to the plan, that's it
+		}
+		
+	}
+	
+	
+	/**
+	 *
+	 * @param type $startDate 
+	 */
+	static function generateEndDate($startDate) {
+
+		$start = date_create( $startDate, new DateTimeZone( 'GMT' ) );
+		$start->modify( 'next month -1 second' );
+		return $start->format( 'Y-m-d H:i:s' );
+		
+	}
+	
+	                           
+	/**
+	 *
+	 * @param type $planId
+	 * @param type $buyerUserId
+	 * @param type $transactionId
+	 * @param type $transactionStatus
+	 * @param type $startDate
+	 * @param type $endDate
+	 * @param type $active
+	 * @param type $db_master The wfGetDB(DB_MASTER) if already have (avoid multiple master db connection)
+	 * @return self 
+	 */
+	private static function create( $planId, $buyerUserId, $transactionId, $transactionStatus, $startDate, $endDate, $active, $db_master = null ) {
 		
 		$_startDate = array();
 		$_endDate = array();
 		
-		if ( ($planId === null) || ($buyerUserId === null) || ($transactionId === null) || ($paid === null) || 
+		if ( ($planId === null) || ($buyerUserId === null) || ($transactionId === null) || ($transactionStatus === null) || 
 				// ($startDate === null) || ($endDate === null) || // can be null
 				($active === null) ) {
 			throw new MWException( 'Cannot create Subscription (missing argument)' );
 		}
 		
-		if ( !is_int($planId) || !is_int($buyerUserId) || !is_int($transactionId) || !is_bool($paid) || 
+		if ( !is_numeric($planId) || !is_numeric($buyerUserId) || !is_numeric($transactionId) || !is_string($transactionStatus) || 
 				( ($startDate !== null) && !preg_match( '/^(\d{4})\-(\d\d)\-(\d\d) (\d\d):(\d\d):(\d\d)$/D', $startDate, $_startDate ) ) || 
 				( ($endDate !== null) && !preg_match( '/^(\d{4})\-(\d\d)\-(\d\d) (\d\d):(\d\d):(\d\d)$/D', $endDate, $_endDate ) ) || 
 				!is_bool($active) ) {
 			throw new MWException( 'Cannot create Subscription (invalid argument)' );
 		}
 						
-		$dbw = wfGetDB(DB_MASTER);
+		$dbw = ( ($db_master != null) ? $db_master : wfGetDB(DB_MASTER) );
 		$dbw->begin();
-				
-		if (!self::canHaveNewSubscription($buyerUserId, $dbw)) {
-			return null;
-		}
 		
         // With PostgreSQL, a value is returned, but null returned for MySQL because of autoincrement system
         $id = $dbw->nextSequenceValue('wp_subscription_wps_id_seq');
@@ -269,7 +460,7 @@ CREATE TABLE IF NOT EXISTS `wp_subscription` (
 			'wps_wpp_id'			=> $planId,
 			'wps_buyer_user_id'		=> $buyerUserId,
 			'wps_tmr_id'			=> $transactionId,
-			'wps_paid'				=> $paid,
+			'wps_tmr_status'		=> $transactionStatus,
 			'wps_date_created'		=> $now,
 			'wps_start_date'		=> $startDate,
 			'wps_end_date'			=> $endDate,
@@ -286,20 +477,8 @@ CREATE TABLE IF NOT EXISTS `wp_subscription` (
 		}		
 				
 		return new self( $id, $planId, $buyerUserId,
-			$transactionId, $paid, $now,
+			$transactionId, $transactionStatus, $now,
 			$startDate, $endDate, $active );
-		
-	}
-	
-	/**
-	 *
-	 * @param type $startDate 
-	 */
-	static function generateEndDate($startDate) {
-
-		$start = date_create( $startDate, new DateTimeZone( 'GMT' ) );
-		$start->modify( 'next month -1 second' );
-		return $start->format( 'Y-m-d H:i:s' );
 		
 	}
 	

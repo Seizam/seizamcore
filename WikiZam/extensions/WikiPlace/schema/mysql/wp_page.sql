@@ -12,4 +12,4 @@ CREATE TABLE IF NOT EXISTS `wp_page` (
   PRIMARY KEY (`wppa_id`),
   UNIQUE KEY `wppa_page_id` (`wppa_page_id`),
   KEY `wppa_wpw_id` (`wppa_wpw_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=binary COMMENT='WikiPlace - Pages association table' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=binary COMMENT='WikiPlace - Pages association table' ;
