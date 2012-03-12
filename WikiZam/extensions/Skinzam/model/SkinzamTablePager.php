@@ -10,13 +10,15 @@ if (!defined('MEDIAWIKI')) {
 class SkinzamTablePager extends TablePager {
     # Fields to be redeclared for default behavior
 
-    protected $selectTable; # String
+    protected $selectTables; # Array
     protected $selectFields = '*'; # Array
     protected $selectConds = array(); # Array
+    protected $selectOptions = array();
+    protected $selectJoinConditions = array();
     protected $sortableFields = '*'; # Array
     protected $tableClasses = array(); # Array
-    protected $defaultSort; # String
-    public $mDefaultDirection = false; # Boolean
+    protected $defaultSort; # String (field)
+    public $mDefaultDirection = true; # Boolean (true=decrescent)
     protected $messagesPrefix = 'sz'; # String
     
     public $mLimit = 20;
@@ -43,7 +45,6 @@ class SkinzamTablePager extends TablePager {
     }
 
     /**
-     * SEMI-ABSTRACT! Can be redeclared, don't forget to call parent and merge results.
      * Get any extra attributes to be applied to the given cell. Don't
      * take this as an excuse to hardcode styles; use classes and
      * CSS instead.  Row context is available in $this->mCurrentRow
@@ -58,16 +59,26 @@ class SkinzamTablePager extends TablePager {
 
         return array('class' => implode(' ', $classes));
     }
-
+    
     /**
      * SEMI-ABSTRACT! Can be redeclared, don't forget to call parent and merge results.
+     * Get array of class names to be applied to the given row.
+     *
+     * @param $row Object: the database result row
+     * @return Array
+     */
+    function getCellClasses($field, $value){
+        return array();
+    }
+
+    /**
      * Get class names to be applied to the given row.
      *
      * @param $row Object: the database result row
      * @return Array
      */
     function getRowAttrs($row) {
-        $classes = array();
+        $classes = $this->getRowClasses();
 
         # Apply class="even" to every even row (theader included)
         if ($this->even)
@@ -76,14 +87,25 @@ class SkinzamTablePager extends TablePager {
 
         return array('class' => implode(' ', $classes));
     }
+    
+    /**
+     * SEMI-ABSTRACT! Can be redeclared.
+     * Get array of class names to be applied to the given row.
+     *
+     * @param $row Object: the database result row
+     * @return Array
+     */
+    function getRowClasses($row){
+        return array();
+    }
 
     /**
-     * Use this function to pass the name of db table
+     * Use this function to pass the name of db tables
      * 
      * @param string $selectTable 
      */
-    public function setSelectTable($selectTable) {
-        $this->selectTable = $selectTable;
+    public function setSelectTables($selectTables) {
+        $this->selectTables = $selectTables;
     }
 
     /**
@@ -103,6 +125,24 @@ class SkinzamTablePager extends TablePager {
      */
     public function setSelectConds($selectConds) {
         $this->selectConds = $selectConds;
+    }
+    
+    /**
+     * Use this function to pass an array of SQL options for the query.
+     * 
+     * @param array $selectOptions 
+     */
+    public function setSelectOptions($selectOptions) {
+        $this->selectOptions = $selectOptions;
+    }
+    
+    /**
+     * Use this function to pass an array of SQL join conditions for the query.
+     * 
+     * @param array $selectJoinConditions 
+     */
+    public function setSelectJoinConditions($selectJoinConditions) {
+        $this->selectJoinConditions = $selectJoinConditions;
     }
 
     /**
@@ -148,6 +188,8 @@ class SkinzamTablePager extends TablePager {
         $infos['tables'] = $this->selectTable;
         $infos['fields'] = $this->selectFields;
         $infos['conds'] = $this->selectConds;
+        $infos['options'] = $this->selectOptions;
+        $infps['join_conds'] = $this->selectJoinConditions;
         return $infos;
     }
 

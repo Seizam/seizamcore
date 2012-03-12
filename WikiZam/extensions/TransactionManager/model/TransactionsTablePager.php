@@ -51,9 +51,8 @@ class TransactionsTablePager extends SkinzamTablePager {
      * @param $row Object: the database result row
      * @return String
      */
-    function getRowAttrs($row) {
-        $attrs = parent::getRowAttrs($row);
-        $classes = explode(' ', $attrs['class']);
+    function getRowClasses($row) {
+        $classes = array();
 
         if (isset($row->tmr_status))
             $classes[] = $row->tmr_status;
@@ -61,7 +60,7 @@ class TransactionsTablePager extends SkinzamTablePager {
         if ($row->tmr_amount > 0)
             $classes[] = 'positive';
 
-        return array('class' => implode(' ', $classes));
+        return $classes;
     }
 
 }
