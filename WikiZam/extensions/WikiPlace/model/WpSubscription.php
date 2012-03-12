@@ -13,6 +13,7 @@ class WpSubscription {
 				$active;				//`wps_active` tinyint(3) unsigned
 
 	private $_plan;
+	private $attributes_to_update;
 		
 	/**
 	 *
@@ -43,6 +44,8 @@ class WpSubscription {
 		$this->startDate			= $startDate;
 		$this->endDate				= $endDate;
 		$this->active				= $active;
+		
+		$this->attributes_to_update = array();
 
 	}
 	
@@ -75,6 +78,63 @@ class WpSubscription {
 				break;
 		}
 		throw new MWException('Unknown attribut');
+	}
+	
+	/**
+	 * 
+	 * @param string $attribut_name
+	 * @param mixed $value
+	 * @param boolean $update_now By default, update the db now, but if multiple set() calls, the db can be updated only last time by setting 
+	 * this argument value to false for the first calls
+	 * @return type 
+	 */
+	public function set($attribut_name, $value, $update_now = true) {
+		switch ($attribut_name) {
+			case 'active':
+				if (!is_bool($value)) { throw new MWException('Value error (boolean needed) for '.$attribut_name); }
+				$this->$attribut_name							= $value;
+				$this->attributes_to_update['wps_active']		= ( $value ? 1 : 0 );
+				break;
+			case 'startDate':
+				if (!is_string($value)) { throw new MWException('Value error (string needed) for '.$attribut_name);	}
+				$this->$attribut_name							= $value;
+				$this->attributes_to_update['wps_start_date']	= $value;
+				break;
+			case 'endDate':
+				if (!is_string($value)) { throw new MWException('Value error (string needed) for '.$attribut_name);	}
+				$this->$attribut_name							= $value;
+				$this->attributes_to_update['wps_end_date']		= $value;
+				break;
+			case 'transactionStatus':
+				if (!is_string($value)) { throw new MWException('Value error (string needed) for '.$attribut_name);	}
+				$this->$attribut_name							= $value;
+				$this->attributes_to_update['wps_tmr_status']	= $value;
+				break;
+			default:
+				throw new MWException('Cannot change the value of this attribut');
+		}
+		
+		if ($update_now) {
+			
+			$dbw = wfGetDB(DB_MASTER);
+			$dbw->begin();
+
+			$success = $dbw->update(
+					'wp_subscription',
+					$this->attributes_to_update,
+					array( 'wps_id' => $this->id) );
+			
+			$dbw->commit();
+
+			if ( !$success ) {	
+				throw new MWException('Error while saving Subscription to database.');
+			}		
+			
+			$this->attributes_to_update = array();
+		
+		}
+		
+		return $value; // maybe useful, one day ...
 	}
 	
 	private function fetchPlan($databaseRow = null) {
@@ -115,6 +175,22 @@ class WpSubscription {
 		  
 	}
 	
+	
+	public static function getByTransactionId($id) {
+		if ( ($id === null) || !is_numeric($id) || ($id < 1) ) {
+			throw new MWException( 'Cannot fectch WikiPlace matching the transaction identifier (invalid identifier)' );
+		}
+		
+		$dbr = wfGetDB(DB_SLAVE);
+		$result = $dbr->selectRow( 'wp_subscription', '*',	array( 'wps_tmr_id' =>  $id ), __METHOD__ );
+		
+		if ( $result === false ) {
+			// not found, so return null
+			return null;
+		}
+		
+		return self::constructFromDatabaseRow($result);
+	}
 	/**
 	 * Restore from DB, using id
 	 * @param int $id 
@@ -138,7 +214,7 @@ class WpSubscription {
 
 	}
 	
-
+	
 	/**
 	 *
 	 * @param int $user_id
@@ -151,7 +227,7 @@ class WpSubscription {
 		}	
 		
 		$dbr = wfGetDB(DB_SLAVE);
-		$now =  $dbr->addQuotes( wfTimestamp(TS_DB) );
+		$now =  $dbr->addQuotes( self::getNow() );
 		$conds = $dbr->makeList(array( 
 			"wps_active" => 0,  
 			"wps_buyer_user_id" => $user_id, 
@@ -225,7 +301,7 @@ class WpSubscription {
 		}	
 		
 		$dbr = wfGetDB(DB_SLAVE);
-		$now =  $dbr->addQuotes( wfTimestamp(TS_DB) );
+		$now =  $dbr->addQuotes( self::getNow() );
 		$conds = $dbr->makeList(array( 
 			"wps_active" => 0,  
 			"wps_buyer_user_id" => $user_id, 
@@ -258,7 +334,7 @@ class WpSubscription {
 	
 	
 	/**
-	 * 
+	 * Can the user make a first subscription? (first sub != renewal)
 	 * @param integer $user_id
 	 * @param type $db_accessor null = fefault = check on slave
 	 * @return boolean True = can have new one, False = not 
@@ -271,7 +347,7 @@ class WpSubscription {
 		
 		$dbr = ( $db_accessor != null ? $db_accessor : wfGetDB(DB_SLAVE) ) ;
 
-		$now =  $dbr->addQuotes( wfTimestamp(TS_DB) );
+		$now =  $dbr->addQuotes( self::getNow() );
 		$conds = $dbr->makeList( array(
 			"wps_buyer_user_id"	=> $user_id, 
 			$dbr->makeList( array(
@@ -289,6 +365,13 @@ class WpSubscription {
 		
 		$results = $dbr->select( 'wp_subscription', '*',	$conds, __METHOD__ );
 		
+		$return = $dbr->numRows($results) == 0;
+		
+		$dbr->freeResult( $results );
+		
+		return $return;
+
+/*		
 		$active = 0; // already active susbcription = cannot subscribe anymore
 		$future = 0; // pending first subscription OR renewal = cannot subscribe anymore
 		foreach ( $results as $row ) {
@@ -311,7 +394,7 @@ class WpSubscription {
 		}
 		
 		return ( ($active == 0) && ($future == 0) );
-				
+*/				
 	}
 	
 	
@@ -361,7 +444,7 @@ class WpSubscription {
 			switch ($tmr['tmr_status']) {
 
 				case 'OK': // already paid by user
-					$now =  wfTimestamp(TS_DB) ;
+					$now =  self::getNow() ;
 					return WpSubscription::create(
 							$plan->get('id'), 
 							$user_id,
@@ -405,14 +488,17 @@ class WpSubscription {
 	}
 	
 	
+	public static function getNow() {
+		return wfTimestamp(TS_DB);
+	}
 	/**
 	 *
 	 * @param type $startDate 
 	 */
-	static function generateEndDate($startDate) {
+	public static function calculatePeriodEndDate($startDate, $nb_of_month) {
 
 		$start = date_create( $startDate, new DateTimeZone( 'GMT' ) );
-		$start->modify( 'next month -1 second' );
+		$start->modify( "+$nb_of_month month -1 second" );
 		return $start->format( 'Y-m-d H:i:s' );
 		
 	}
@@ -453,7 +539,7 @@ class WpSubscription {
 		
         // With PostgreSQL, a value is returned, but null returned for MySQL because of autoincrement system
         $id = $dbw->nextSequenceValue('wp_subscription_wps_id_seq');
-		$now =  wfTimestamp(TS_DB) ;
+		$now =  self::getNow() ;
 		
         $success = $dbw->insert('wp_subscription', array(
 			'wps_id'				=> $id,

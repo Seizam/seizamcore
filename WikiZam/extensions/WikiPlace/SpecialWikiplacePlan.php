@@ -3,8 +3,12 @@
 class SpecialWikiplacePlan extends SpecialPage {
 
 	const ACTION_SUBSCRIBE				= 'subscribe';
-	const ACTION_LIST_OFFERS			= 'list_offers';
 	const ACTION_LIST_SUBSCRIPTIONS		= 'my_subscriptions';
+	const ACTION_CHANGE					= 'change_plan';
+	const ACTION_LIST_OFFERS			= 'list_offers';
+	
+	const ACTION_TEST_GIVE_CREDIT		= 'test';
+
 	
 	/**
 	 *
@@ -74,20 +78,43 @@ class SpecialWikiplacePlan extends SpecialPage {
 		$do = strtolower( $this->getRequest()->getText( 'action', $par ) );
         switch ($do) { 
 
+			/** @todo TODO: remove this test action !!!! */
+			case self::ACTION_TEST_GIVE_CREDIT:
+			    $tmr = array(
+					# Params related to Message
+					'tmr_type'		=> 'PAYTEST', # varchar(8) NOT NULL COMMENT 'Type of message (Payment, Sale, Plan)',
+					# Paramas related to User
+					'tmr_user_id'	=> $user->getId(), # int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Foreign key to user.user_id',
+					'tmr_mail'		=> $user->getEmail(), # tinyblob COMMENT 'User''s Mail',
+					'tmr_ip'		=> IP::sanitizeIP(wfGetIP()), # tinyblob COMMENT 'User''s IP'
+					# Params related to Record
+					'tmr_amount'	=> 10 , # decimal(9,2) NOT NULL COMMENT 'Record Amount',
+					'tmr_currency'	=> 'EUR', # varchar(3) NOT NULL DEFAULT 'EUR' COMMENT 'Record Currency',
+					'tmr_desc'		=> 'WikiPlace plan test, simulate 10 EUR credit to user', # varchar(64) NOT NULL COMMENT 'Record Description',
+					'tmr_status'	=> 'OK' # varchar(2) NOT NULL COMMENT 'Record status (OK, KO, PEnding, TEst)',
+				);
+				wfRunHooks('CreateTransaction', array(&$tmr));
+				$out->addHTML("10 EUR gived to ".$user->getName());
+				break;
 								
 			case self::ACTION_SUBSCRIBE :
   
 				$out->setPageTitle( wfMessage( 'wp-plan-subscribe-pagetitle' )->text());
 				
-				if (WpSubscription::canMakeAFirstSubscription($user->getId())) { // do not process submitted datas if cannot make a first sub
-				
+				if (!WpSubscription::canMakeAFirstSubscription($user->getId())) { 
+					// do not process submitted datas if cannot make a first sub
+					$out->addHTML(wfMessage( 'wp-plan-cannot-subs-anymore' )->text());
+
+					
+				} else {
+					// can subscribe
 					$form = $this->getSubscribePlanForm($this->getTitle( self::ACTION_SUBSCRIBE ));
 
 					if( $form->show() ){
 
 						$out->addHTML(wfMessage(
 								'wp-plan-subscribe-success-wikitext',
-								wfEscapeWikiText( $this->newlySubscribed->get('plan')->get('name') ) 
+								wfEscapeWikiText( wfMessage('wp-plan-name-'.$this->newlySubscribed->get('plan')->get('wpp_name'))->text() ) 
 							)->parse() . '<br />' );	
 
 						$status = $this->newlySubscribed->get('transactionStatus');
@@ -96,26 +123,23 @@ class SpecialWikiplacePlan extends SpecialPage {
 								$out->addHTML(wfMessage( 'wp-plan-payment-ok' )->text());
 								break;
 							case "PE":
-								$out->addHTML(wfMessage( 'wp-plan-payment-pending' )->text());
+								$out->addHTML(wfMessage( 'wp-plan-payment-pending' )->parse());
 								break;
 							default:
+								$out->addHTML(wfMessage( 'wp-plan-unknwon-status' )->text());
 								break;
-						}
-						if ( $status == 'OK') {
-							
-						} elseif ( $status == 'PE') {
-							
-						} else {
-							$out->addHTML(wfMessage( 'wp-plan-unknwon-status' )->text());
 						}
 
 					}
-					
-				} else {
-					$out->addHTML(wfMessage( 'wp-plan-cannot-subs-anymore' )->text());
+
 				}
 				
                 break;
+				
+			case self::ACTION_CHANGE :
+				$out->setPageTitle( wfMessage( 'wp-plan-change-pagetitle' )->text());
+				
+				break;
  
 				
 			case self::ACTION_LIST_OFFERS :
@@ -154,8 +178,10 @@ class SpecialWikiplacePlan extends SpecialPage {
 			return '';	//avoid error message on screen, but cannot display if $language not correct, nothing displayed is our error message
 
 		return Html::rawElement( 'span', array(), wfMessage( 'parentheses', $language->pipeList(array(
-				Linker::linkKnown( $this->getTitle( self::ACTION_LIST_SUBSCRIPTIONS ), wfMessage( 'wp-plan-linkto-mysubs' )->text() ) ,
+
 				Linker::linkKnown( $this->getTitle( self::ACTION_SUBSCRIBE ), wfMessage( 'wp-plan-linkto-subscribe' )->text() ) ,
+				Linker::linkKnown( $this->getTitle( self::ACTION_LIST_SUBSCRIPTIONS ), wfMessage( 'wp-plan-linkto-mysubs' )->text() ) ,
+				Linker::linkKnown( $this->getTitle( self::ACTION_CHANGE ), wfMessage( 'wp-plan-linkto-change' )->text() ) ,
 				Linker::linkKnown( $this->getTitle( self::ACTION_LIST_OFFERS ), wfMessage( 'wp-plan-linkto-listoffers' )->text() ) ,
 		) ) )->text() );
 		
@@ -175,7 +201,7 @@ class SpecialWikiplacePlan extends SpecialPage {
 		
 		$offers = WpPlan::getAvailableOffersNow();
 		foreach ($offers as $offer) {
-			$name = $offer->get('name');
+			$name = $offer->get('wpp_name');
 			$display .= Html::rawElement( 'li', array(), Linker::linkKnown( $this->getTitle( self::ACTION_SUBSCRIBE ), wfMessage('wp-plan-name-'.$name)->text(), array(), array( 'plan' => $name) ) );
         }
 
@@ -194,6 +220,8 @@ class SpecialWikiplacePlan extends SpecialPage {
 		$futurs		= WpSubscription::getUserFuturs($user_id);
 		
 		$lang = $this->getLang();
+		
+		return 'todo';
 		
 		$return = '';
 		
@@ -217,29 +245,6 @@ class SpecialWikiplacePlan extends SpecialPage {
 
         return $return;
 
-	}
-
-	private static function getSubscriptionLine($lang, $sub) {
-		$plan		= $sub->get('plan');
-		
-		$line		= self::getHumanDate($lang, $sub->get('startDate'));
-		$line		.= ' &gt; ' . wfMessage('wp-plan-name-'.$plan->get('name'))->text();
-		$line		.= ' ('. ( $sub->get('active') ? 'active' : 'not active' );
-		$line		.= ',' . $sub->get('transactionStatus');
-		$line		.= ',' . $plan->get('nbWikiplaces');
-		$line		.= ',' . $plan->get('nbWikiplacesPages');
-		$line		.= ',' . $plan->get('diskspace');
-		$line		.= ',' . $plan->get('monthlyPageHits');
-		$line		.= ',' . $plan->get('monthlyBandwidth');
-		$line		.= ') &gt; ' . self::getHumanDate($lang, $sub->get('endDate'));
-	
-		return Html::rawElement( 'li', array(), $line );
-	}
-	
-	private static function getHumanDate($lang, $date) {
-		if ($date == null)
-			return '--';
-		return $lang->timeanddate(wfTimestamp(TS_MW, $date, true));
 	}
 
 	
