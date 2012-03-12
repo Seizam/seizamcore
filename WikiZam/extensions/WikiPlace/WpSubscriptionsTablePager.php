@@ -9,7 +9,7 @@ if (!defined('MEDIAWIKI')) {
  */
 class WpSubscriptionsTablePager extends SkinzamTablePager {
     # Fields for default behavior
-    protected $selectTable = 'wp_subscription', 'wp_plan'; # String
+    protected $selectTables = array( 'wp_subscription', 'wp_plan' ); # String
     protected $selectFields = array(
 		'wps_start_date',			// when the sub starts
 		'wpp_name',					// subscribed plan name
@@ -26,8 +26,6 @@ class WpSubscriptionsTablePager extends SkinzamTablePager {
     public $mDefaultDirection = true; // true = DESC
     protected $tableClasses = array('WPSubscription'); # Array
     protected $messagesPrefix = 'wp';
-
-	public static getTablePager
 	
 
     /**
