@@ -49,7 +49,7 @@ class TransactionsTablePager extends SkinzamTablePager {
      * Get a class name to be applied to the given row.
      *
      * @param $row Object: the database result row
-     * @return String
+     * @return array
      */
     function getRowClasses($row) {
         $classes = array();

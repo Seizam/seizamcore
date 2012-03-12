@@ -54,7 +54,7 @@ class SkinzamTablePager extends TablePager {
      * @return Associative array
      */
     function getCellAttrs($field, $value) {
-        $classes = array();
+        $classes = $this->getCellClasses($field, $value);
         $classes[] = $field;
 
         return array('class' => implode(' ', $classes));
@@ -78,7 +78,7 @@ class SkinzamTablePager extends TablePager {
      * @return Array
      */
     function getRowAttrs($row) {
-        $classes = $this->getRowClasses();
+        $classes = $this->getRowClasses($row);
 
         # Apply class="even" to every even row (theader included)
         if ($this->even)
