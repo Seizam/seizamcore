@@ -319,7 +319,9 @@ class TMRecord {
             $amount = $this->tmr['tmr_amount'];
             $this->tmr['tmr_status'] = 'OK';
             $this->updateDB();
-            wfRunHooks('TransactionUpdated', array_merge($this->tmr, array('tmr_id'=>$this->id)));
+			$tmr = $this->tmr;
+			$tmr['tmr_id'] = $this->id;
+            wfRunHooks('TransactionUpdated',  array($tmr));
         }
         return $amount;
     }

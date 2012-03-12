@@ -94,10 +94,59 @@ class WikiplaceHooks {
 	
 	
 	
-	
+	/**
+	 *
+	 * @param type $tmr
+	 * @return boolean Always true (processing is never stopped) 
+	 */
 	public static function onTransactionUpdated( $tmr ) {	
 		wfDebugLog( 'wikiplace', 'onTransactionUpdated');
-		return true;
+		var_export($tmr);
+		$sub = WpSubscription::getByTransactionId($tmr['tmr_id']);
+		if ($sub === null) {
+			return true; // we are not concerned, so don't stop processing
+		}
+		
+		// $sub != null, so this tmr affects a subscription
+		switch ($sub->get('wps_tmr_status')) {
+			
+			case 'PE':
+				// was pending
+				switch ($tmr['tmr_status']) {
+				
+					case 'OK':
+						// PE -> OK
+						
+						if ($sub->get('wps_start_date') == null) {
+							// first subscription, so activates it from now
+							$now = WpSubscription::getNow();
+							$end = WpSubscription::calculatePeriodEndDate($now, $sub->get('plan')->get('periodMonths'));
+							$sub->set('wps_start_date',	$now, false );	// 3rd p = false = do not update db
+							$sub->set('wps_end_date',	$end, false );	// 3rd p = false = do not update db
+							$sub->set('wps_active',		true, false );	// 3rd p = false = do not update db
+						} 
+						// if startDate not null, this is a renewal, it will be activated later when needed
+						
+						$sub->set('wps_tmr_status', 'OK'); // no 3rd p = update db now
+						return false; // this is our transaction, no more process to be done	
+						
+					case 'KO':
+						// PE -> KO
+						$sub->set('wps_tmr_status'	, 'KO', false);
+						$sub->set('wps_active'		, false);  // in case of a renewal, it can be activated even if pending, so need to ensure that is false
+						return false; // this is our transaction, no more process to be done	
+						
+					case 'PE':
+						// PE -> PE   =>   don't care
+						return false;
+				}
+				break;
+			
+		}
+		
+		// if we arrive here, this transaction is about a subscription, but we do not know what to do... there is a problem!
+		throw new MWException('The transaction of a subscription was updated, but the system doesn\'t know what to do... sorry. ('.$sub->get('transactionStatus').'->'.$tmr['tmr_status'].')');	
+		
 	}
 	
 }

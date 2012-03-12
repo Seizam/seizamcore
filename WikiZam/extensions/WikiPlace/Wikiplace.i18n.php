@@ -49,24 +49,26 @@ $messages['en'] = array(
 	
 	//special:wikiplaceplan
 	
-	'wp-plan-linkto-subscribe'					=> 'Subscribe',
-	'wp-plan-linkto-listoffers'					=> 'Consult offers',
-	'wp-plan-linkto-mysubs'						=> 'My subscriptions',
+	'wp-plan-linkto-subscribe'						=> 'Subscribe',
+	'wp-plan-linkto-listoffers'						=> 'Consult offers',
+	'wp-plan-linkto-mysubs'							=> 'My subscriptions',
+	'wp-plan-linkto-change'							=> 'Change your plan',
+	
 	
 	'wp-plan-validate-error-planname'				=> 'Wrong plan name',
-	
-	'wp-plan-createplan-pagetitle'				=> 'Create a new plan',
+
+/*	
+	'wp-plan-createplan-pagetitle'					=> 'Create a new plan',
 	'wp-plan-createplan-form-legend'				=> 'Fieldset title',
 	'wp-plan-createplan-form-explain'				=> 'Fieldset explanation',
 	'wp-plan-createplan-form-submit'				=> 'Go!',
 	'wp-plan-createplan-form-textboxplanname'		=> 'Plan name',
-	
-	'wp-plan-subscribe-pagetitle'					=> 'Subscribe to a plan',
-	'wp-plan-subscribe-success-wikitext'			=> 'You successfully subscribed to the plan "$1"',
+ */
 	
 	'wp-plan-listoffers-pagetitle'					=> 'Available offers',
 	
-
+	'wp-plan-subscribe-pagetitle'					=> 'Subscribe to a plan',
+	'wp-plan-subscribe-success-wikitext'			=> 'You successfully subscribed to the plan $1',
 	'wp-plan-subscribe-select'							=> 'Select your plan',
 	'wp-plan-subscribe-submit'							=> 'Subscribe and pay now',
 	'wp-plan-subscribe-future'							=> 'You already have an active subscription, so this new one will not be activated for now.',
@@ -75,7 +77,7 @@ $messages['en'] = array(
 	'wp-plan-month'										=> 'month',
 	
 	'wp-plan-payment-ok'								=> 'Your Seizam account has been succesfully debited.',
-	'wp-plan-payment-pending'							=> 'Your payment is pending. Please credit your Seizam account.',
+	'wp-plan-payment-pending'							=> 'Your payment is pending. [[Special:ElectronicPayment|Please credit your Seizam account by cliking here]]',
 	
 	
 	'wp-plan-listsubs-pagetitle'						=> 'My WikiPlace subscriptions',
