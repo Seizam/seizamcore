@@ -213,6 +213,31 @@ class WpSubscription {
 	
 	
 	/**
+	 * This function is DB killer, and should only be used in test environment!
+	 * @param type $are_you_sure
+	 * @param type $really_sure
+	 * @return type 
+	 */
+	public static function getAll($are_you_sure = 'no') {
+		
+		if ( $are_you_sure != 'I know what i am doing')
+			return array(); //good idea :)
+		
+		$dbr = wfGetDB(DB_SLAVE);
+		$results = $dbr->select( 'wp_subscription', '*', '1', __METHOD__ );
+		
+		$subs = array();
+		foreach ( $results as $row ) {
+			$subs[] = self::constructFromDatabaseRow($row);
+		}
+		
+		$dbr->freeResult( $results );
+		
+		return $subs;
+
+	}
+	
+	/**
 	 * Can the user make a first subscription? (first sub != renewal)
 	 * @param integer $user_id
 	 * @param type $db_accessor null = fefault = check on slave

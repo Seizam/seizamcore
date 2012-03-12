@@ -4,10 +4,12 @@ class SpecialWikiplacePlan extends SpecialPage {
 
 	const ACTION_SUBSCRIBE				= 'subscribe';
 	const ACTION_LIST_SUBSCRIPTIONS		= 'my_subscriptions';
-	const ACTION_CHANGE					= 'change_plan';
+	const ACTION_CHANGE					= 'change';
+	const ACTION_RENEW					= 'renew';
 	const ACTION_LIST_OFFERS			= 'list_offers';
 	
-	const ACTION_TEST_GIVE_CREDIT		= 'test';
+	const ACTION_TEST_GIVE_CREDIT		= 'test_give_10eur';
+	const ACTION_TEST_DROP_SUB_TMR		= 'test_drop_all_sub_tmr';
 
 	
 	/**
@@ -96,6 +98,14 @@ class SpecialWikiplacePlan extends SpecialPage {
 				wfRunHooks('CreateTransaction', array(&$tmr));
 				$out->addHTML("10 EUR gived to ".$user->getName());
 				break;
+			
+			/** @todo TODO: remove this test action !!!! */
+			case self::ACTION_TEST_DROP_SUB_TMR:
+				$dbw = wfGetDB(DB_MASTER);
+				$dbw->query("TRUNCATE tm_record");
+				$dbw->query("TRUNCATE wp_subscription");
+				$out->addHTML('All Subscriptions and all TransactionManagerRecords have been deleted!');
+				break;
 								
 			case self::ACTION_SUBSCRIBE :
   
@@ -182,6 +192,11 @@ class SpecialWikiplacePlan extends SpecialPage {
 				Linker::linkKnown( $this->getTitle( self::ACTION_LIST_SUBSCRIPTIONS ), wfMessage( 'wp-plan-linkto-mysubs' )->text() ) ,
 				Linker::linkKnown( $this->getTitle( self::ACTION_CHANGE ), wfMessage( 'wp-plan-linkto-change' )->text() ) ,
 				Linker::linkKnown( $this->getTitle( self::ACTION_LIST_OFFERS ), wfMessage( 'wp-plan-linkto-listoffers' )->text() ) ,
+			
+				$this->generateLink("/Special:TransactionManager", "TransactionManager"),
+				$this->generateLink("/Special:WikiPlacePlan/test_give_10eur", "give me 10 EUR"),
+				$this->generateLink("/Special:WikiPlacePlan/test_drop_all_sub_tmr", "clear all subs and all tmrs"),
+			
 		) ) )->text() );
 		
 	}
