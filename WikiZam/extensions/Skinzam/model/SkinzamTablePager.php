@@ -185,11 +185,11 @@ class SkinzamTablePager extends TablePager {
      */
     function getQueryInfo() {
         $infos = array();
-        $infos['tables'] = $this->selectTable;
+        $infos['tables'] = $this->selectTables;
         $infos['fields'] = $this->selectFields;
         $infos['conds'] = $this->selectConds;
         $infos['options'] = $this->selectOptions;
-        $infps['join_conds'] = $this->selectJoinConditions;
+        $infos['join_conds'] = $this->selectJoinConditions;
         return $infos;
     }
 

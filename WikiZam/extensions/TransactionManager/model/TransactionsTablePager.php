@@ -9,7 +9,7 @@ if (!defined('MEDIAWIKI')) {
  */
 class TransactionsTablePager extends SkinzamTablePager {
     # Fields for default behavior
-    protected $selectTable = 'tm_record'; # String
+    protected $selectTables = 'tm_record'; # String
     protected $selectFields = array('tmr_id', 'tmr_desc', 'tmr_date_created', 'tmr_date_modified', 'tmr_amount', 'tmr_currency', 'tmr_status');
     protected $defaultSort = 'tmr_date_created';
     public $mDefaultDirection = true;

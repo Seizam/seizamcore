@@ -71,7 +71,6 @@ $messages['en'] = array(
 	'wp-plan-subscribe-success-wikitext'			=> 'You successfully subscribed to the plan $1',
 	'wp-plan-subscribe-select'							=> 'Select your plan',
 	'wp-plan-subscribe-submit'							=> 'Subscribe and pay now',
-	'wp-plan-subscribe-future'							=> 'You already have an active subscription, so this new one will not be activated for now.',
 	'wp-plan-cannot-subs-anymore'						=> 'For now, you cannot subscribe to a new plan, because you already have an active or a pending one.',
 	
 	'wp-plan-month'										=> 'month',
@@ -82,6 +81,23 @@ $messages['en'] = array(
 	
 	'wp-plan-listsubs-pagetitle'						=> 'My WikiPlace subscriptions',
 	
+	
+	'wpstp-wps_start_date'								=> "Start",
+	'wpstp-wpp_name'									=> "Plan name",
+	'wpstp-wps_active'									=> "",
+	'wpstp-wps_tmr_status'								=> "Paiement status",
+	'wpstp-wpp_nb_wikiplaces'							=> "WikiPlaces",
+	'wpstp-wpp_nb_wikiplace_pages'						=> "Pages",
+	'wpstp-wpp_diskspace'								=> "Diskspace",
+	'wpstp-wpp_monthly_page_hits'						=> "Monthly page hits",
+	'wpstp-wpp_monthly_bandwidth'						=> "Monthly bandwith",
+	'wpstp-wps_end_date'								=> "End",
+	
+	'wp-sub-unactive'									=> 'not active',
+	'wp-sub-active'										=> 'active',
+	'wp-sub-tmrstatus-OK'								=> 'paid',
+	'wp-sub-tmrstatus-PE'								=> 'pending',
+	'wp-sub-tmrstatus-KO'								=> 'canceled',	
 	
 	'wp-plan-name-test_plan_normal'						=> 'Test plan normal',
 	'wp-plan-name-test_plan_invitation'					=> 'Test plan invitation only',

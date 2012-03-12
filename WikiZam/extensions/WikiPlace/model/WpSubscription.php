@@ -2,17 +2,17 @@
 
 class WpSubscription {  
 		  
-	private		$id,					//`wps_id` int(10) unsigned
-				$planId,				//`wps_wpp_id` int(10) unsigned
-				$buyerUserId,			//'wps_buyer_user_id` int(10) unsigned
-				$transactionId,			//`wps_tmr_id` int(10) unsigned
-				$transactionStatus,		//`wps_tmr_status` varchar(2)
-				$createdDate,			//`wps_date_created` datetime
-				$startDate,				//`wps_start_date` datetime
-				$endDate,				//`wps_end_date` datetime
-				$active;				//`wps_active` tinyint(3) unsigned
+	private		$wps_id,				// int(10) unsigned
+				$wps_wpp_id,			// int(10) unsigned
+				$wps_buyer_user_id,		// int(10) unsigned
+				$wps_tmr_id,			// int(10) unsigned
+				$wps_tmr_status,		// varchar(2)
+				$wps_date_created,		// datetime
+				$wps_start_date,		// datetime
+				$wps_end_date,			// datetime
+				$wps_active;			// tinyint(3) unsigned
 
-	private $_plan;
+	private $plan;
 	private $attributes_to_update;
 		
 	/**
@@ -35,15 +35,15 @@ class WpSubscription {
 			$transactionId, $transactionStatus, $createdDate,
 			$startDate, $endDate, $active ) {
 		
-		$this->id					= $id;			
-		$this->planId				= $planId;				
-		$this->buyerUserId			= $buyerUserId;
-		$this->transactionId		= $transactionId;
-		$this->transactionStatus	= $transactionStatus;
-		$this->createdDate			= $createdDate;
-		$this->startDate			= $startDate;
-		$this->endDate				= $endDate;
-		$this->active				= $active;
+		$this->wps_id					= $id;			
+		$this->wps_wpp_id				= $planId;				
+		$this->wps_buyer_user_id		= $buyerUserId;
+		$this->wps_tmr_id				= $transactionId;
+		$this->wps_tmr_status			= $transactionStatus;
+		$this->wps_date_created			= $createdDate;
+		$this->wps_start_date			= $startDate;
+		$this->wps_end_date				= $endDate;
+		$this->wps_active				= $active;
 		
 		$this->attributes_to_update = array();
 
@@ -56,25 +56,25 @@ class WpSubscription {
 	 */
 	public function get($attribut_name) {
 		switch ($attribut_name) {
-			case 'id':
-			case 'planId':
-			case 'buyerUserId':
-			case 'transactionId':
+			case 'wps_id':
+			case 'wps_wpp_id':
+			case 'wps_buyer_user_id':
+			case 'wps_tmr_id':
 				return intval($this->$attribut_name);
 				break;
-			case 'active':
+			case 'wps_active':
 				return ($this->$attribut_name !== '0');
 				break;
-			case 'createdDate':
-			case 'startDate':
-			case 'endDate':
-			case 'transactionStatus':
+			case 'wps_date_created':
+			case 'wps_start_date':
+			case 'wps_end_date':
+			case 'wps_tmr_status':
 				return $this->$attribut_name;
 			case 'plan':
-				if ($this->_plan === null) {
+				if ($this->plan === null) {
 					$this->fetchPlan();
 				}
-				return $this->_plan;
+				return $this->plan;
 				break;
 		}
 		throw new MWException('Unknown attribut');
@@ -89,30 +89,27 @@ class WpSubscription {
 	 * @return type 
 	 */
 	public function set($attribut_name, $value, $update_now = true) {
+		$db_value = null;
 		switch ($attribut_name) {
-			case 'active':
+			case 'wps_active':
 				if (!is_bool($value)) { throw new MWException('Value error (boolean needed) for '.$attribut_name); }
-				$this->$attribut_name							= $value;
-				$this->attributes_to_update['wps_active']		= ( $value ? 1 : 0 );
+				$db_value = ( $value ? 1 : 0 );
 				break;
-			case 'startDate':
+			case 'wps_start_date':
 				if (!is_string($value)) { throw new MWException('Value error (string needed) for '.$attribut_name);	}
-				$this->$attribut_name							= $value;
-				$this->attributes_to_update['wps_start_date']	= $value;
 				break;
-			case 'endDate':
+			case 'wps_end_date':
 				if (!is_string($value)) { throw new MWException('Value error (string needed) for '.$attribut_name);	}
-				$this->$attribut_name							= $value;
-				$this->attributes_to_update['wps_end_date']		= $value;
 				break;
-			case 'transactionStatus':
+			case 'wps_tmr_status':
 				if (!is_string($value)) { throw new MWException('Value error (string needed) for '.$attribut_name);	}
-				$this->$attribut_name							= $value;
-				$this->attributes_to_update['wps_tmr_status']	= $value;
 				break;
 			default:
-				throw new MWException('Cannot change the value of this attribut');
+				throw new MWException('Cannot change the value of attribut '.$attribut_name);
 		}
+		
+		$this->$attribut_name							= $value;
+		$this->attributes_to_update[$attribut_name]		= ($db_value !== null) ? $db_value : $value; // used by wps_active to convert from boolean to int
 		
 		if ($update_now) {
 			
@@ -122,7 +119,7 @@ class WpSubscription {
 			$success = $dbw->update(
 					'wp_subscription',
 					$this->attributes_to_update,
-					array( 'wps_id' => $this->id) );
+					array( 'wps_id' => $this->wps_id) );
 			
 			$dbw->commit();
 
@@ -140,13 +137,13 @@ class WpSubscription {
 	private function fetchPlan($databaseRow = null) {
 		
 		if ($databaseRow !== null) {
-			$this->_plan = WpPlan::constructFromDatabaseRow($databaseRow);
+			$this->plan = WpPlan::constructFromDatabaseRow($databaseRow);
 			
 		} else {
-			$this->_plan = WpPlan::getById($this->planId);
+			$this->plan = WpPlan::getById($this->wps_wpp_id);
 		}
 		
-		if ($this->_plan === null) {
+		if ($this->plan === null) {
 			// there is a big problem... someone has bought something we don't know!
 			throw new MWException('Unknown plan');
 		} 
@@ -211,124 +208,6 @@ class WpSubscription {
 		}
 		
 		return self::constructFromDatabaseRow($result);
-
-	}
-	
-	
-	/**
-	 *
-	 * @param int $user_id
-	 * @return WpSubscription the currently active subscription buyed by the user
-	 */
-	public static function getUserFormers($user_id) {
-				
-		if ( ($user_id === null) || !is_numeric($user_id) || ($user_id < 1) ) {
-			throw new MWException( 'Cannot fetch Subscriptions matching the user identifier (invalid identifier)' );
-		}	
-		
-		$dbr = wfGetDB(DB_SLAVE);
-		$now =  $dbr->addQuotes( self::getNow() );
-		$conds = $dbr->makeList(array( 
-			"wps_active" => 0,  
-			"wps_buyer_user_id" => $user_id, 
-			"wps_end_date < $now",
-			"wps_wpp_id = wpp_id",
-		), LIST_AND );
-		$results = $dbr->select(
-				array( 'wp_subscription' , 'wp_plan' ),
-				'*',
-				$conds,
-				__METHOD__ );
-		
-		$subs = array();
-		foreach ( $results as $row ) {
-			$sub = self::constructFromDatabaseRow($row);
-			$sub->fetchPlan($row);
-			$subs[] = $sub;
-		}
-		
-		$dbr->freeResult( $results );
-		
-		return $subs;
-
-	}
-	
-	/**
-	 *
-	 * @param int $user_id
-	 * @return array(WpSubscription) the currently actives subscriptions buyed by the user, FOR NOW there must be only one
-	 */
-	public static function getUserActives($user_id) {
-				
-		if ( ($user_id === null) || !is_numeric($user_id) || ($user_id < 1) ) {
-			throw new MWException( 'Cannot fectch Subscriptions matching the user identifier (invalid identifier)' );
-		}
-		
-		$dbr = wfGetDB(DB_SLAVE);
-		$conds = $dbr->makeList(array( 
-			"wps_active" => 1,
-			"wps_buyer_user_id" => $user_id,
-			"wps_wpp_id = wpp_id",
-		), LIST_AND );
-		$results = $dbr->select(
-				array( 'wp_subscription' , 'wp_plan' ),
-				array( '*' ),
-				$conds,
-				__METHOD__ );
-		
-		$subs = array();
-		foreach ( $results as $row ) {
-			$sub = self::constructFromDatabaseRow($row);
-			$sub->fetchPlan($row);
-			$subs[] = $sub;
-		}
-		
-		if ( $dbr->numRows($results) > 1 ) {
-			// not good, not good, not good, ....
-			wfDebugLog( 'wikiplace', '/!\\ user_id ' . $user_id . ' has many actives subscriptions !!!');
-		}
-		
-		$dbr->freeResult( $results );
-		
-		return $subs;
-
-	}
-	
-	public static function getUserFuturs($user_id) {
-				
-		if ( ($user_id === null) || !is_numeric($user_id) || ($user_id < 1) ) {
-			throw new MWException( 'Cannot fectch Subscriptions matching the user identifier (invalid identifier)' );
-		}	
-		
-		$dbr = wfGetDB(DB_SLAVE);
-		$now =  $dbr->addQuotes( self::getNow() );
-		$conds = $dbr->makeList(array( 
-			"wps_active" => 0,  
-			"wps_buyer_user_id" => $user_id, 
-			"wps_tmr_status != 'KO'" , 
-			$dbr->makeList(array(
-					"wps_start_date IS NULL", 
-					"wps_start_date >= $now", 
-			), LIST_OR ),
-			"wps_wpp_id = wpp_id",
-		), LIST_AND );
-		$results = $dbr->select(
-				array( 'wp_subscription' , 'wp_plan' ),
-				array( '*' ),
-				$conds,
-				__METHOD__ );
-		
-		$subs = array();
-		
-		foreach ( $results as $row ) {
-			$sub = self::constructFromDatabaseRow($row);
-			$sub->fetchPlan($row);
-			$subs[] = $sub;
-		}
-		
-		$dbr->freeResult( $results );
-		
-		return $subs;
 
 	}
 	
@@ -433,9 +312,9 @@ class WpSubscription {
 				'tmr_ip'		=> IP::sanitizeIP(wfGetIP()), 
 
 				# Params related to Record
-				'tmr_amount'	=> - $plan->get('price'),
-				'tmr_currency'	=> $plan->get('currency'), 
-				'tmr_desc'		=> $plan->get('name'), 
+				'tmr_amount'	=> - $plan->get('wpp_price'),
+				'tmr_currency'	=> $plan->get('wpp_currency'), 
+				'tmr_desc'		=> $plan->get('wpp_name'), 
 				'tmr_status'	=> 'PE', // PEnding
 			);
 			wfRunHooks('CreateTransaction', array(&$tmr));
@@ -446,7 +325,7 @@ class WpSubscription {
 				case 'OK': // already paid by user
 					$now =  self::getNow() ;
 					return WpSubscription::create(
-							$plan->get('id'), 
+							$plan->get('wpp_id'), 
 							$user_id,
 							$tmr['tmr_id'],
 							'OK',									// status
@@ -459,7 +338,7 @@ class WpSubscription {
 
 				case 'PE': // waiting payment
 					return WpSubscription::create(
-							$plan->get('id'),
+							$plan->get('wpp_id'),
 							$user->getId(),
 							$tmr['tmr_id'],
 							'PE',		// not paid

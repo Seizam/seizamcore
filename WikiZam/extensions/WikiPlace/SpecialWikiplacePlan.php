@@ -117,8 +117,7 @@ class SpecialWikiplacePlan extends SpecialPage {
 								wfEscapeWikiText( wfMessage('wp-plan-name-'.$this->newlySubscribed->get('plan')->get('wpp_name'))->text() ) 
 							)->parse() . '<br />' );	
 
-						$status = $this->newlySubscribed->get('transactionStatus');
-						switch ($this->newlySubscribed->get('transactionStatus')) {
+						switch ($this->newlySubscribed->get('wps_tmr_status')) {
 							case "OK":
 								$out->addHTML(wfMessage( 'wp-plan-payment-ok' )->text());
 								break;
@@ -213,37 +212,11 @@ class SpecialWikiplacePlan extends SpecialPage {
 	
 	private function getUserSubscriptionsListing() {
 		
-		$user_id = $this->getUser()->getId();
-		
-		$pasts		= WpSubscription::getUserFormers($user_id);
-		$actives	= WpSubscription::getUserActives($user_id);
-		$futurs		= WpSubscription::getUserFuturs($user_id);
-		
-		$lang = $this->getLang();
-		
-		return 'todo';
-		
-		$return = '';
-		
-		$list = '';
-		foreach ($pasts as $sub) {
-			$list .= self::getSubscriptionLine($lang, $sub);
-        }
-		$return .= 'Pasts:'.Html::rawElement('ul', array(), $list);
-		
-		$list = '';
-		foreach ($actives as $sub) {
-			$list .= self::getSubscriptionLine($lang, $sub);
-        }
-		$return .= 'Actives:'.Html::rawElement('ul', array(), $list);
+		$table = new WpSubscriptionsTablePager();
 
-		$list = '';
-		foreach ($futurs as $sub) {
-			$list .= self::getSubscriptionLine($lang, $sub);
-        }
-		$return .= 'Futures:'.Html::rawElement('ul', array(), $list);
+		$table->setSelectConds(array('wps_buyer_user_id' => $this->getUser()->getId()));
 
-        return $return;
+		return $table->getWholeHtml();
 
 	}
 
@@ -262,16 +235,14 @@ class SpecialWikiplacePlan extends SpecialPage {
 		
 		$plans = WpPlan::getAvailableOffersNow();
 		foreach ($plans as $plan) {
-			$line = wfMessage( 'wp-plan-name-' . $plan->get('name') )->text() . 
-					', '. $plan->get('price') . ' ' . $plan->get('currency') . '/' . wfMessage( 'wp-plan-month' )->text() ;
-			$formDescriptor['Plan']['options'][$line] = $plan->get('id');
+			$line = wfMessage( 'wp-plan-name-' . $plan->get('wpp_name') )->text() . 
+					', '. $plan->get('wpp_price') . ' ' . $plan->get('wpp_currency') . '/' . wfMessage( 'wp-plan-month' )->text() ;
+			$formDescriptor['Plan']['options'][$line] = $plan->get('wpp_id');
 		}
 		
 		$htmlForm = new HTMLForm( $formDescriptor );
 		$htmlForm->setTitle( $submitTitle );
-		if (WpSubscription::getUserActives($this->getUser()->getId()) !== array()) {
-			$htmlForm->addHeaderText( wfMessage( 'wp-plan-subscribe-future' )->text() );
-		}
+
 		$htmlForm->setSubmitCallback( array( $this, 'processSubscribePlan' ) );
 		
 		$htmlForm->setSubmitText(		wfMessage( 'wp-plan-subscribe-submit' )->text() );

@@ -101,7 +101,7 @@ class WikiplaceHooks {
 	 */
 	public static function onTransactionUpdated( $tmr ) {	
 		wfDebugLog( 'wikiplace', 'onTransactionUpdated');
-		var_export($tmr);
+
 		$sub = WpSubscription::getByTransactionId($tmr['tmr_id']);
 		if ($sub === null) {
 			return true; // we are not concerned, so don't stop processing
@@ -120,7 +120,7 @@ class WikiplaceHooks {
 						if ($sub->get('wps_start_date') == null) {
 							// first subscription, so activates it from now
 							$now = WpSubscription::getNow();
-							$end = WpSubscription::calculatePeriodEndDate($now, $sub->get('plan')->get('periodMonths'));
+							$end = WpSubscription::calculatePeriodEndDate($now, $sub->get('plan')->get('wpp_period_months'));
 							$sub->set('wps_start_date',	$now, false );	// 3rd p = false = do not update db
 							$sub->set('wps_end_date',	$end, false );	// 3rd p = false = do not update db
 							$sub->set('wps_active',		true, false );	// 3rd p = false = do not update db

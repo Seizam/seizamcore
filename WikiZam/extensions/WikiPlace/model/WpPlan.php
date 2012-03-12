@@ -2,20 +2,20 @@
 
 class WpPlan {  
 			  
-	private		$id,					//`wpw_id` int(10) unsigned
-				$name,					//`wpp_name` varbinary(255)
-				$periodMonths,			//`wpp_period_months` tinyint(3) unsigned
-				$price,					//`wpp_price` decimal(9,2) unsigned
-				$currency,				//`wpp_currency` varbinary(3)
-				$startDate,				//`wpp_start_date` datetime NOT NULL 
-				$endDate,				//`wpp_end_date` datetime NOT NULL
-				$nbWikiplaces,			//`wpp_nb_wikiplaces` tinyint(3) unsigned
-				$nbWikiplacesPages,		//`wpp_nb_wikiplace_pages` smallint(5) unsigned
-				$diskspace,				//`wpp_diskspace` bigint(20) unsigned				/!\ PHP MAX INT = 2 147 483 647 = 2 GO, so handled as string
-				$monthlyPageHits,		//`wpp_monthly_page_hits` bigint(20) unsigned		/!\ PHP MAX INT = 2 147 483 647, so handled as string
-				$monthlyBandwidth,		//`wpp_monthly_bandwidth` bigint(20) unsigned		/!\ PHP MAX INT = 2 147 483 647 = 2 GO, so handled as string
-				$renewable,				//`wpp_renewable` tinyint(3)
-				$invitationOnly;		//`wpp_invitation_only` tinyint(3) unsigned
+	private		$wpp_id,					//`wpp_id` int(10) unsigned
+				$wpp_name,					//`wpp_name` varbinary(255)
+				$wpp_period_months,			//`wpp_period_months` tinyint(3) unsigned
+				$wpp_price,					//`wpp_price` decimal(9,2) unsigned
+				$wpp_currency,				//`wpp_currency` varbinary(3)
+				$wpp_start_date,			//`wpp_start_date` datetime NOT NULL 
+				$wpp_end_date,				//`wpp_end_date` datetime NOT NULL
+				$wpp_nb_wikiplaces,			//`wpp_nb_wikiplaces` tinyint(3) unsigned
+				$wpp_nb_wikiplace_pages,	//`wpp_nb_wikiplace_pages` smallint(5) unsigned
+				$wpp_diskspace,				//`wpp_diskspace` bigint(20) unsigned				/!\ PHP MAX INT = 2 147 483 647 = 2 GO, so handled as string
+				$wpp_monthly_page_hits,		//`wpp_monthly_page_hits` bigint(20) unsigned		/!\ PHP MAX INT = 2 147 483 647, so handled as string
+				$wpp_monthly_bandwidth,		//`wpp_monthly_bandwidth` bigint(20) unsigned		/!\ PHP MAX INT = 2 147 483 647 = 2 GO, so handled as string
+				$wpp_renewable,				//`wpp_renewable` tinyint(3)
+				$wpp_invitation_only;		//`wpp_invitation_only` tinyint(3) unsigned
 			
 	/**
 	 *
@@ -37,20 +37,21 @@ class WpPlan {
 			$nbWikiplaces, $nbWikiplacesPages, $diskspace, $monthlyPageHits, $monthlyBandwidth,
 			$renewable, $invitationOnly) {
 		
-		$this->id					= $id;			
-		$this->name					= $name;				
-		$this->periodMonths			= $periodMonths;
-		$this->price				= $price;
-		$this->currency				= $currency;
-		$this->startDate			= $startDate;
-		$this->endDate				= $endDate;
-		$this->nbWikiplaces			= $nbWikiplaces;
-		$this->nbWikiplacesPages	= $nbWikiplacesPages;
-		$this->diskspace			= $diskspace;
-		$this->monthlyPageHits		= $monthlyPageHits;
-		$this->monthlyBandwidth		= $monthlyBandwidth;
-		$this->renewable			= $renewable;
-		$this->invitationOnly		= $invitationOnly;
+		$this->wpp_id					= $id;			
+		$this->wpp_name					= $name;				
+		$this->wpp_period_months		= $periodMonths;
+		$this->wpp_price				= $price;
+		$this->wpp_currency				= $currency;
+		$this->wpp_start_date			= $startDate;
+		$this->wpp_end_date				= $endDate;
+		$this->wpp_nb_wikiplaces		= $nbWikiplaces;
+		$this->wpp_nb_wikiplace_pages	= $nbWikiplacesPages;
+		$this->wpp_diskspace			= $diskspace;
+		$this->wpp_monthly_page_hits	= $monthlyPageHits;
+		$this->wpp_monthly_bandwidth	= $monthlyBandwidth;
+		$this->wpp_renewable			= $renewable;
+		$this->wpp_invitation_only		= $invitationOnly;
+		
 	}
 	
 	/**
@@ -60,24 +61,24 @@ class WpPlan {
 	 */
 	public function get($attribut_name) {
 		switch ($attribut_name) {
-			case 'id':
-			case 'periodMonths':
-			case 'nbWikiplaces':
-			case 'nbWikiplacesPages':
+			case 'wpp_id':
+			case 'wpp_period_months':
+			case 'wpp_nb_wikiplaces':
+			case 'wpp_nb_wikiplace_pages':
 				return intval($this->$attribut_name);
 				break;
-			case 'name':
-			case 'price':
-			case 'currency':
-			case 'startDate':
-			case 'endDate':
-			case 'diskspace':
-			case 'monthlyPageHits':
-			case 'monthlyBandwidth':
+			case 'wpp_name':
+			case 'wpp_price':
+			case 'wpp_currency':
+			case 'wpp_start_date':
+			case 'wpp_end_date':
+			case 'wpp_diskspace':
+			case 'wpp_monthly_page_hits':
+			case 'wpp_monthly_bandwidth':
 				return strval($this->$attribut_name);
 				break;
-			case 'renewable':
-			case 'invitationOnly':
+			case 'wpp_renewable':
+			case 'wpp_invitation_only':
 				return $this->$attribut_name != 0;
 				break;
 		}

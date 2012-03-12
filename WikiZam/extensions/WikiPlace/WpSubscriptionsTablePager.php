@@ -8,24 +8,28 @@ if (!defined('MEDIAWIKI')) {
  * Use TablePager for prettified Transactions listing. 
  */
 class WpSubscriptionsTablePager extends SkinzamTablePager {
+	
+	
     # Fields for default behavior
-    protected $selectTables = array( 'wp_subscription', 'wp_plan' ); # String
+    protected $selectTables = array ( 'wp_subscription', 'wp_plan');
+	
+	protected $selectJoinConditions = array( 'wp_plan' => array('INNER JOIN','wps_wpp_id = wpp_id') );
     protected $selectFields = array(
-		'wps_start_date',			// when the sub starts
-		'wpp_name',					// subscribed plan name
 		'wps_active',
+		'wps_start_date',			// when the sub starts
+		'wps_end_date',
+		'wpp_name',					// subscribed plan name
 		'wps_tmr_status',
 		'wpp_nb_wikiplaces',
 		'wpp_nb_wikiplace_pages',
 		'wpp_diskspace',
 		'wpp_monthly_page_hits',
-		'wpp_monthly_bandwidth',
-		'wps_end_date',		
+		'wpp_monthly_bandwidth',	
 		);
-    protected $defaultSort = 'wps_date_created';
+    protected $defaultSort = 'wps_start_date';
     public $mDefaultDirection = true; // true = DESC
     protected $tableClasses = array('WPSubscription'); # Array
-    protected $messagesPrefix = 'wp';
+    protected $messagesPrefix = 'wpstp';
 	
 
     /**
@@ -64,7 +68,7 @@ class WpSubscriptionsTablePager extends SkinzamTablePager {
 				return $value;
 				break;
             default:
-                throw new MWException( 'Unknown data name');
+                throw new MWException( 'Unknown data name "'.$name.'"');
         }
     }
 
