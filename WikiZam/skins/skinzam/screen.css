@@ -1047,7 +1047,7 @@ div#content .editsection{
 }
 
 #contentSub{
-    display: none;
+    display: block;
 }
 
 /* Search form */
