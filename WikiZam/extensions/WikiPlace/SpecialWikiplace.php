@@ -2,10 +2,10 @@
 
 class SpecialWikiplace extends SpecialPage {
 	
-	const ACTION_CREATE_WIKIPLACE		= 'create_wikiplace';
-	const ACTION_CREATE_WIKIPLACE_PAGE	= 'create_page';
-	const ACTION_LIST_WIKIPLACES		= 'list_wikiplaces';
-	const ACTION_SUBSCRIBE_PLAN			= 'subscribe';
+	const ACTION_CREATE_WIKIPLACE      = 'create_wikiplace';
+	const ACTION_CREATE_WIKIPLACE_PAGE = 'create_page';
+	const ACTION_LIST_WIKIPLACES       = 'list_wikiplaces';
+	const ACTION_SUBSCRIBE_PLAN        = 'subscribe';
 	
 	private $newlyCreatedWikiplace;
 	private $futurNewPage;
@@ -14,19 +14,13 @@ class SpecialWikiplace extends SpecialPage {
 		parent::__construct( 'WikiPlace' );
 	}
 	
-	public static function validateUserId($id, $allData) {
-        return self::validateGenericId($id) ? true : wfMessage( 'wikiplace-validate-error-userid' )->text() ;
-	}
-	
-	public static function validateWikiplaceSubPageName($name, $allData) {
-        return ( is_string($name) && preg_match('/^[a-zA-Z0-9]{3,16}$/',$name) ) ? true : wfMessage( 'wikiplace-validate-error-wikiplacepagename' )->text() ;
-	}
+
 	
 	
 	
 	
 	private static function generateLink($to, $text) {
-		 return Html::rawElement( 'a', array( 'href' => $to, 'class' => 'sz-wikiplace-link' ), $text  );
+		 return Html::rawElement( 'a', array( 'href' => $to, 'class' => 'sz-wp-link' ), $text  );
 	}
 	
 	
@@ -44,14 +38,14 @@ class SpecialWikiplace extends SpecialPage {
 		
 		// Anons can't use this special page
 		if( $user->isAnon() ) {
-			$out->setPageTitle( wfMessage( 'wikiplace-pleaselogin-pagetitle' )->text() );
+			$out->setPageTitle( wfMessage( 'wp-nlogin-pagetitle' )->text() );
 			$link = Linker::linkKnown(
 				SpecialPage::getTitleFor( 'Userlogin' ),
-				wfMessage( 'wikiplace-pleaselogin-link-text' )->text(),
+				wfMessage( 'wp-nlogin-link-text' )->text(),
 				array(),
 				array( 'returnto' => $this->getTitle()->getPrefixedText() )
 			);
-			$out->addHTML( wfMessage( 'wikiplace-pleaselogin-text' )->rawParams( $link )->parse() );
+			$out->addHTML( wfMessage( 'wp-nlogin-text' )->rawParams( $link )->parse() );
 			return;
 		}
 
@@ -67,9 +61,9 @@ class SpecialWikiplace extends SpecialPage {
 
 		// Starts display
 		
-		$this->setHeaders();											// sets robotPolicy = "noindex,nofollow" + set page title
-		$this->outputHeader();											// outputs a summary message on top of special pages
-		$out->setSubtitle( $this->buildToolLinks( $this->getLang()) );	// set a nav bar as subtitle
+		$this->setHeaders(); // sets robotPolicy = "noindex,nofollow" + set page title
+		$this->outputHeader(); // outputs a summary message on top of special pages
+		$out->setSubtitle( $this->buildToolLinks( $this->getLang()) ); // set a nav bar as subtitle
 		
 		// Handle request
 				
@@ -80,13 +74,14 @@ class SpecialWikiplace extends SpecialPage {
 			
 			case self::ACTION_CREATE_WIKIPLACE :
   
-				$out->setPageTitle( wfMessage( 'wikiplace-createwp-pagetitle' )->text() );
+				$out->setPageTitle( wfMessage( 'wp-cwp-pagetitle' )->text() );
 				
 				$form = $this->getCreateWikiplaceForCurrentUserForm( $this->getTitle( self::ACTION_CREATE_WIKIPLACE ) );
 				
 				if( $form->show() ){ // true = submitted and correctly processed, false = not submited or error
-					$out->addHTML( wfMessage( 'wikiplace-createwp-success' )->parse() );
-					$out->addHTML( $this->getWikiplacesOwnedListing($user->getID()) );
+					
+					$out->addHTML(wfMessage('wp-cwp-success-link-wt', wfEscapeWikiText( $this->newlyCreatedWikiplace->get('wpw_name') ) )->parse());	
+
 				}
 				
                 break;
@@ -94,12 +89,25 @@ class SpecialWikiplace extends SpecialPage {
 				
 			case self::ACTION_CREATE_WIKIPLACE_PAGE :
   
-				$out->setPageTitle( wfMessage( 'wikiplace-createpage-pagetitle' )->text() );
+				$out->setPageTitle( wfMessage( 'wp-csp-pagetitle' )->text() );
 				
-				$form = $this->getCreateWikiplacePageForCurrentUserForm($this->getTitle( self::ACTION_CREATE_WIKIPLACE_PAGE));
+				$wikiplaces = WpWikiplace::getAllOwnedByUserId($this->getUser()->getId());
 				
-				if( $form->show() ){
-					$out->addHTML(wfMessage('wikiplace-createpage-link-wikitext', wfEscapeWikiText( $this->futurNewPage->getPrefixedText() ) )->parse());	
+				if (count($wikiplaces) == 0) {
+					// need at least one WikiPlace
+					$out->addHTML(wfMessage('wp-csp-no-wp')->text());	
+					
+				} else {
+				
+					$form = $this->getCreateSubPageIn(
+							$this->getTitle( self::ACTION_CREATE_WIKIPLACE_PAGE) , 
+							$wikiplaces );
+
+					if( $form->show() ){
+						// creation success
+						$out->addHTML(wfMessage('wp-csp-success-link-wt', wfEscapeWikiText( $this->futurNewPage->getPrefixedText() ) )->parse());	
+					}
+					
 				}
 				
                 break;
@@ -108,7 +116,7 @@ class SpecialWikiplace extends SpecialPage {
 			case self::ACTION_LIST_WIKIPLACES :
             default : // (default  =  action == nothing or "something we cannot handle")
 				
-				$out->setPageTitle( wfMessage( 'wikiplace-listwp-pagetitle' )->text() );
+				$out->setPageTitle( wfMessage( 'wp-lwp-pagetitle' )->text() );
 				
 				$out->addHTML( $this->getWikiplacesOwnedListing($user->getID()) );
 				
@@ -131,9 +139,9 @@ class SpecialWikiplace extends SpecialPage {
 			return '';	//avoid error message on screen, but cannot display if $language not correct, nothing displayed is our error message
 
 		return Html::rawElement( 'span', array(), wfMessage( 'parentheses', $language->pipeList(array(
-				Linker::linkKnown( $this->getTitle( self::ACTION_LIST_WIKIPLACES ), wfMessage( 'wikiplace-linkto-listwp' )->text() ),
-				Linker::linkKnown( $this->getTitle( self::ACTION_CREATE_WIKIPLACE ), wfMessage( 'wikiplace-linkto-createwp' )->text() ),
-				Linker::linkKnown( $this->getTitle( self::ACTION_CREATE_WIKIPLACE_PAGE ), wfMessage( 'wikiplace-linkto-createpage' )->text() ) ) ) )->text() );
+			Linker::linkKnown( $this->getTitle( self::ACTION_LIST_WIKIPLACES ), wfMessage( 'wp-tl-lwp' )->text() ),
+			Linker::linkKnown( $this->getTitle( self::ACTION_CREATE_WIKIPLACE ), wfMessage( 'wp-tl-cwp' )->text() ),
+			Linker::linkKnown( $this->getTitle( self::ACTION_CREATE_WIKIPLACE_PAGE ), wfMessage( 'wp-tl-csp' )->text() ) ) ) )->text() );
 		
 	}
 	
@@ -150,18 +158,20 @@ class SpecialWikiplace extends SpecialPage {
 		$display = '';
 		
 		if ($user != null) {
-			if ( is_object($user) && ($user instanceof User) )
+			if ( is_object($user) && ($user instanceof User) ) {
 				$userid = $user->getId();
-			elseif ( is_int($user) )
+			} elseif ( is_int($user) ) {
 				$userid = $user;
+			}
 		}
 		
-		if ( ($userid == null) || ($user<1) )		// no anons
+		if ( ($userid == null) || ($user<1) ) { // no anons
 			return $display;
+		}
 		
 		$wikiplaces = WpWikiplace::getAllOwnedByUserId($userid);
 		foreach ($wikiplaces as $wikiplace) {
-			$display .= Html::rawElement( 'li', array(), $wikiplace->getName() );
+			$display .= Html::rawElement( 'li', array(), $wikiplace->get('wpw_name'));
         }
 
         return Html::rawElement('ul', array(), $display);
@@ -169,38 +179,43 @@ class SpecialWikiplace extends SpecialPage {
 	}
 	
 
-	
-	private function getCreateWikiplacePageForCurrentUserForm($submitTitle) {
+	/**
+	 *
+	 * @param type $submitTitle
+	 * @param Array $wikiplaces Array of WikiPlace in wich the user can create the page
+	 * @return HTMLForm 
+	 */
+	private function getCreateSubPageIn($submitTitle, $wikiplaces) {
 		// http://seizam.localhost/index.php?title=Ploplop&action=edit
 		
         $formDescriptor = array(
 			'WikiplaceId' => array(
-                'type'					=> 'select',
-                'label-message'			=> 'wikiplace-createpage-form-selectwp',
-				'validation-callback'	=> array(__CLASS__, 'validateWikiplaceId'),
-                'options'				=> array(),
+                'type' => 'select',
+                'label-message' => 'wp-csp-f-swp',
+				'validation-callback' => array('WpWikiplace', 'validateExistingWikiplaceIDOfCurrentUser'),
+                'options' => array(),
 			),
 			'WikiplaceSubPageName' => array(
-				'type'					=> 'text',	
-				'label-message'			=> 'wikiplace-createpage-form-textboxwpsubpagename',	
-				'validation-callback'	=> array(__CLASS__, 'validateWikiplaceSubPageName'),
-                'size'					=> 16, # Display size of field
-                'maxlength'				=> 16, # Input size of field  
+				'type' => 'text',	
+				'label-message' => 'wp-csp-f-tspname',	
+				'validation-callback' => array('WpPage', 'validateNewWikiplaceSubPageName'),
+                'size' => 16, # Display size of field
+                'maxlength' => 16, # Input size of field  
 			),
 		);
 		
 		$wikiplaces = WpWikiplace::getAllOwnedByUserId($this->getUser()->getId());
 		foreach ($wikiplaces as $wikiplace) {
-			$formDescriptor['WikiplaceId']['options'][$wikiplace->getName()] = $wikiplace->getId();
+			$formDescriptor['WikiplaceId']['options'][$wikiplace->get('wpw_name')] = $wikiplace->get('wpw_id');
 		}
 		
 		$htmlForm = new HTMLForm( $formDescriptor );
 		$htmlForm->setTitle( $submitTitle );
 		$htmlForm->setSubmitCallback( array( $this, 'processCreateWikiplacePageForCurrentUser' ) );
 		
-		$htmlForm->setWrapperLegend(	wfMessage( 'wikiplace-createpage-form-legend' )->text() );
-		$htmlForm->addHeaderText(		wfMessage( 'wikiplace-createpage-form-explain' )->parse() );
-		$htmlForm->setSubmitText(		wfMessage( 'wikiplace-createpage-form-submit' )->text() );
+		$htmlForm->setWrapperLegend( wfMessage( 'wp-csp-legend' )->text() );
+		$htmlForm->addHeaderText( wfMessage( 'wp-csp-explain' )->parse() );
+		$htmlForm->setSubmitText( wfMessage( 'wp-csp-submit' )->text() );
 	
 		return $htmlForm;
 		
@@ -209,35 +224,41 @@ class SpecialWikiplace extends SpecialPage {
 	public function processCreateWikiplacePageForCurrentUser( $formData ) {
 		
 		if ( !isset($formData['WikiplaceId']) || !isset($formData['WikiplaceSubPageName']) ) { //check that the keys exist and values are not NULL
-			return wfMessage('wikiplace-error-unknown')->text(); //invalid form, so maybe a bug, maybe a hack
+			return wfMessage('wp-err-unknown')->text(); //invalid form, so maybe a bug, maybe a hack
 		}
 		
 		$wikiplace = WpWikiplace::getById(intval($formData['WikiplaceId']));
 		
-		if ( !is_object($wikiplace) || !($wikiplace instanceof WpWikiplace) || ($wikiplace->getOwnerUserId() != $this->getUser()->getId()) ) {
+		if ( !is_object($wikiplace) || !($wikiplace instanceof WpWikiplace) || ($wikiplace->get('wpw_owner_user_id') != $this->getUser()->getId()) ) {
 			// for security reason, same message if wikiplace doesn't exist or the submited wikiplace is not owned by the user
 			// this case only occurs if the form submited bas datas (ie: the visitor hack the selectbox options)
-			return wfMessage( 'wikiplace-createpage-error-notvalidwp')->text(); 
+			return wfMessage( 'wp-csp-perr-notvalidwp')->text(); 
+		}
+
+		$return_code = WpPage::createPage($wikiplace, $formData['WikiplaceSubPageName']);
+
+		if ($return_code instanceof Title) {
+			// everything seems to be ok
+			$this->futurNewPage = $return_code;
+			return true;
 		}
 		
-		$title = Title::newFromText( $wikiplace->getName() . '/' . $formData['WikiplaceSubPageName'] );
-		
-		if (!($title instanceof Title)) {
-			// not good syntax, but this case should not occurs because the validate passes
-			return wfMessage( 'wikiplace-createpage-error-notvalidtitle')->text(); 
+		// an error code has been returned;
+		switch ($return_code) {
+			case 1:
+				return wfMessage( 'wp-csp-perr-notvalidtitle')->text(); 
+				break;
+			case 2:
+				return wfMessage( 'wp-csp-perr-alreadyexists')->text();	
+				break;
+
 		}
+	
+		return wfMessage('wp-err-unknown')->text(); 
 		
-		if ($title->isKnown()) {
-			return wfMessage( 'wikiplace-createpage-error-alreadyexists')->text();			
-		}
-		
-		//ok, let's go!
-		$this->futurNewPage = $title;
-		
-		return true;
-				
 	}
 	
+
 	
 	
 	/**
@@ -250,11 +271,11 @@ class SpecialWikiplace extends SpecialPage {
 		
         $formDescriptor = array(
 			'WikiplaceName' => array(
-				'label-message'			=> 'wikiplace-createwp-form-textboxwpname',
+				'label-message'			=> 'wp-cwp-f-twpname',
 				'type'					=> 'text',			
                 'size'					=> 16, # Display size of field
                 'maxlength'				=> 16, # Input size of field
-				'validation-callback'	=> array( __CLASS__, 'validateWikiplaceName'),
+				'validation-callback'	=> array( 'WpWikiplace', 'validateNewWikiplaceName'),
 			)
 		);
 		
@@ -262,9 +283,9 @@ class SpecialWikiplace extends SpecialPage {
 		$htmlForm->setTitle( $submitTitle );
 		$htmlForm->setSubmitCallback( array( $this, 'processCreateWikiplaceForCurrentUser' ) );
 		
-		$htmlForm->setWrapperLegend(	wfMessage( 'wikiplace-createwp-form-legend' )->text() );
-		$htmlForm->addHeaderText(		wfMessage( 'wikiplace-createwp-form-explain' )->parse() );
-		$htmlForm->setSubmitText(		wfMessage( 'wikiplace-createwp-form-submit' )->text() );
+		$htmlForm->setWrapperLegend(	wfMessage( 'wp-cwp-f-legend' )->text() );
+		$htmlForm->addHeaderText(		wfMessage( 'wp-cwp-f-explain' )->parse() );
+		$htmlForm->setSubmitText(		wfMessage( 'wp-cwp-f-submit' )->text() );
 	
 		return $htmlForm;
 		
@@ -280,19 +301,19 @@ class SpecialWikiplace extends SpecialPage {
 	public function processCreateWikiplaceForCurrentUser( $formData ) {
 		
 		if ( !isset($formData['WikiplaceName']) ) { //check that the keys exist and values are not NULL
-			return wfMessage('wikiplace-error-unknown')->text(); //invalid form, so maybe a bug, maybe a hack
+			return wfMessage('wp-err-unknown')->text(); //invalid form, so maybe a bug, maybe a hack
 		}
 		
 		$name = $formData['WikiplaceName'];
 
 		if (WpWikiplace::getByName($name) !== null) {
-			return wfMessage( 'wikiplace-createwp-error-alreadyexists')->text(); // this wikiplace already exists
+			return wfMessage( 'wp-cwp-perr-alreadyexists')->text(); // this wikiplace already exists
 		}
 		
 		$new = WpWikiplace::create($this->getUser()->getId(), $name);
 		
 		if ( !is_object($new) || !($new instanceof WpWikiplace) ) {
-			return wfMessage( 'wikiplace-error-unknown')->text(); // error while saving
+			return wfMessage( 'wp-err-unknown')->text(); // error while saving
 		}
 			
 		$this->newlyCreatedWikiplace = $new;

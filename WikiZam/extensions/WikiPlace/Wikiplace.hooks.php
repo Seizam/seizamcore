@@ -25,8 +25,63 @@ class WikiplaceHooks {
 		return true;
 	}
 	
+
+	
+	
 	/**
-	 *
+	 * Called when creating a new page or editing an existing page
+	 * This hook but say "OK, you can create" or "no, you can't, I abort the creation"
+	 * @param Article $article the article (Article object) being saved
+	 * @param type $user the user (User object) saving the article
+	 * @param type $text the new article text
+	 * @param type $summary the edit summary
+	 * @param type $minor minor edit flag
+	 * @param type $watchthis  watch the page if true, unwatch the page if false, do nothing if null (since 1.17.0)
+	 * @param type $sectionanchor not used
+	 * @param type $flags bitfield, see documentation for details
+	 * @param type $status 
+	 */
+	public static function onArticleSave( &$article, &$user, &$text, &$summary, $minor, $watchthis, $sectionanchor, &$flags, &$status ) {
+		
+		$title = $article->getTitle();
+		$t = $title->getFullText();
+		$i = $title->getArticleID();
+		
+		if ( WpPage::isItAWikiplacePage($title) ) {
+			// this page belongs to our extension, so we have some checks to do
+	
+			if ($title->isKnown()) {
+				// we are updating an existing wikiplace page
+				wfDebugLog( 'wikiplace', 'onArticleSave: updating the WikiPlace page ['.$i.'}"'.$t.'"');
+
+
+			} else {
+				// we are creating a new page
+				wfDebugLog( 'wikiplace', 'onArticleSave: creating a new WikiPlace page ['.$i.']"'.$t.'"');
+
+				if ( ! WpPage::canThisWikiplacePageBeingCreated($title)) {
+					wfDebugLog( 'wikiplace', 'onArticleSave: creation FORBIDDEN for ['.$i.']"'.$t.'"');
+					// forbidden
+					throw new ErrorPageError( 'cannot_create_wp_page_title', 'cannot_create_wp_page_title_text' );
+//					throw new MWException('Cannot create a WikiPlace page this way.');
+					
+/*					// output as conflict:
+					$status->fatal( 'wp-page-creation-restricted' );
+					return false;
+*/				}
+
+			}
+			
+		} else {
+			wfDebugLog( 'wikiplace', 'onArticleSave: saving a page that does not belong to a wikiplace: ['.$i.']"'.$t.'"');
+		}
+
+		return true; // "OK, you can create"
+		
+	}
+	
+	/**
+	 * Called when creating a new article, but after onArticleSave
 	 * @param type $wikipage the Article or WikiPage (object) saved. Article for MW < 1.18, WikiPage for MW >= 1.18
 	 * @param type $user the user (object) who saved the article
 	 * @param type $text the new article content
@@ -42,57 +97,35 @@ class WikiplaceHooks {
 		$title = $wikipage->getTitle();
 		$namespace = $title->getNamespace();
 		$t = $title->getFullText();
+		$i = $title->getArticleID();
 		
-		wfDebugLog( 'wikiplace', 'onCreateArticle: "'.$t.'"');
+		// now, the page is already stored in db, so if there is a problem, it's too late
 		
-		if ($namespace != NS_MAIN) {
-			return true; // continue without stopping hook processing
+		if ( WpPage::isItAWikiplacePage($title) ) {
+			
+			if ( WpPage::canThisWikiplacePageBeingCreated($title) ) {
+				
+				// ok, this is all good, we resume creation
+				$new_wp_page = WpPage::continueCreation($title);
+				if ($new_wp_page === null) {
+					// but something goes wrong
+					wfDebugLog( 'wikiplace', 'onCreateArticle: ERROR, the page cannot be associated to its wikiplace: ['.$i.']"'.$t.'"');
+					throw new MWException('Error while associating the page to a wikiplace.');
+				}
+				wfDebugLog( 'wikiplace', 'onCreateArticle: OK, the page is now associated to its wikiplace: ['.$i.']"'.$t.'"');
+				
+			} else {
+				// :s we stored a page we shouldn't
+				wfDebugLog( 'wikiplace', 'onCreateArticle: ERROR, we stored a page we should not: ['.$i.']"'.$t.'"');
+				throw new MWException('The page would not have being created.');
+			}
+		} else {
+			wfDebugLog( 'wikiplace', 'onCreateArticle: creating a page that does not belong to a wikiplace: ['.$i.']"'.$t.'"');
 		}
 		
-		WpPage::create(0, $id);
 		return true;
 	}
-	
-	
-	/**
-	 *
-	 * @param type $article the article (Article object) being saved
-	 * @param type $user the user (User object) saving the article
-	 * @param type $text the new article text
-	 * @param type $summary the edit summary
-	 * @param type $minor minor edit flag
-	 * @param type $watchthis  watch the page if true, unwatch the page if false, do nothing if null (since 1.17.0)
-	 * @param type $sectionanchor not used
-	 * @param type $flags bitfield, see documentation for details
-	 * @param type $status 
-	 */
-	public static function onArticleSave( &$article, &$user, &$text, &$summary,
- $minor, $watchthis, $sectionanchor, &$flags, &$status ) {
 		
-		$title = $article->getTitle();
-		$t = $title->getFullText();
-		
-		wfDebugLog( 'wikiplace', 'onArticleSave: "'.$t.'"');
-		
-		if ( count(explode('/', $t)) < 2 ) {
-			//throw new Exception();
-			// too bad you can't pass parameter to errorpage
-			throw new ErrorPageError( 'wikiplace_error_page_title', 'wikiplace_title_error' );
-		}
-
-		return true;
-		
-	}
-	
-	
-	/*
-	public static function onUserCan( $title, &$user, $action, &$result ) {	
-		wfDebugLog( 'wikiplace', 'userCan');
-		return true;
-	}
-	 */
-	
-	
 	
 	/**
 	 *

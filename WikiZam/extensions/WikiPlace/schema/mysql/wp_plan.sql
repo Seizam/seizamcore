@@ -29,4 +29,5 @@ CREATE TABLE IF NOT EXISTS `wp_plan` (
 
 INSERT INTO `wp_plan` (`wpp_name`, `wpp_period_months`, `wpp_price`, `wpp_currency`, `wpp_start_date`, `wpp_end_date`, `wpp_nb_wikiplaces`, `wpp_nb_wikiplace_pages`, `wpp_diskspace`, `wpp_monthly_page_hits`, `wpp_monthly_bandwidth`, `wpp_renewable`, `wpp_invitation_only`) VALUES
 ('test_plan_normal', 1, '10.00', 'EUR', '2012-01-01 00:00:01', '2044-12-31 23:59:59', 3, 10, 1000000, 30, 2000000, -1, 0),
+('test_plan_plus', 1, '20.00', 'EUR', '2012-01-01 00:00:01', '2044-12-31 23:59:59', 5, 20, 2000000, 50, 5000000, -1, 0),
 ('test_plan_invitation', 1, '0.00', 'EUR', '2012-01-01 00:00:01', '2022-12-31 23:59:30', 1, 10, 10000, 30, 500000, 0, 1);

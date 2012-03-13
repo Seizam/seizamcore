@@ -2,49 +2,87 @@
 
 class WpWikiplace {  
 
-	private		$id,			//`wpw_id` int(10) unsigned
-				$ownerUserId,	//`wpw_owner_user_id` int(10) unsigned
-				$name ;			//`wpw_name` varbinary(255)
+	private		$wpw_id,			// int(10) unsigned
+				$wpw_owner_user_id,	// int(10) unsigned
+				$wpw_name ;			// varbinary(255)
 	
-		/*
-	 * The validates method ONLY check if the inputs are well formed, but DO NOT check if the corresponding
-	 * process will accept them<br />
-	 * ie: validateWikiplaceName only check if the name contains authorized caracters, but the create wikiplace process
-	 * can fail later if the name is already used
+	/**
+	 *
+	 * @global type $wgUser
+	 * @param type $id
+	 * @param type $allData
+	 * @return boolean True = well formed, exists, and belongs to current user 
 	 */
-	
-	public static function validateWikiplaceName($name, $allData) {
-        return ( is_string($name) && preg_match('/^[a-zA-Z0-9]{3,16}$/',$name) ) ? true : wfMessage( 'wikiplace-validate-error-wikiplacename' )->text() ;
+	public static function validateExistingWikiplaceIDOfCurrentUser($id, $allData) {
+        if ( !is_string($id) || !preg_match('/^[1-9]{1}[0-9]{0,9}$/',$id) ) {
+			// not well formed
+			return wfMessage( 'wp-vlderr-exwpid-format' )->text() ;
+		}
+		
+		$wikiplace = self::getById(intval($id));
+		
+		if ($wikiplace === null) {
+			// doesn't exist
+			return wfMessage( 'wp-vlderr-exwpid-notex' )->text() ;
+		}
+		
+		global $wgUser;
+		if ($wikiplace->get('wpw_owner_user_id') != $wgUser->getId()) {
+			// doesn't belong to current user
+			return wfMessage( 'wp-vlderr-exwpid-usernotowner' )->text() ;
+		}
+			
+		return true; // well formed, exists, and belongs to current user
+		
 	}
 	
-	public static function validateWikiplaceID($id, $allData) {
-        return ( is_string($id) && preg_match('/^[1-9]{1}[0-9]{0,9}$/',$id) ) ? true : wfMessage( 'wikiplace-validate-error-wikiplaceid' )->text() ;
+	
+	/**
+	 * check that the WikiPlace doesn't already exist
+	 * @param type $name
+	 * @param type $allData
+	 * @return type 
+	 */
+	public static function validateNewWikiplaceName($name, $allData) {
+        if ( !is_string($name) || !preg_match('/^[a-zA-Z0-9]{3,16}$/',$name) ) {
+			return wfMessage( 'wp-vlderr-nwpname-format' )->text() ;
+		}
+		
+		$wp = self::getByName($name);
+		
+		return ( $wp === null ?
+			true :
+			wfMessage( 'wp-vlderr-nwpname-dup' )->text() ) ;
 	}
 	
 
-
-
 	
+
 	
 	
 	private function __construct( $id, $ownerUserId, $name ) {
 
-		$this->id			= $id;
-		$this->ownerUserId	= $ownerUserId;
-		$this->name			= $name;
+		$this->wpw_id				= $id;
+		$this->wpw_owner_user_id	= $ownerUserId;
+		$this->wpw_name				= $name;
 
 	}
 	
-	public function getId() {
-		return $this->id;
-	}
-	
-	public function getName() {
-		return $this->name;
-	}
-	
-	public function getOwnerUserId() {
-		return $this->ownerUserId;
+		/**
+	 *
+	 * @param type $attribut_name
+	 * @return type 
+	 */
+	public function get($attribut_name) {
+		switch ($attribut_name) {
+			case 'wpw_id':
+			case 'wpw_owner_user_id':
+				return intval($this->$attribut_name);
+				break;
+			case 'wpw_name':
+				return $this->$attribut_name;
+		}
+		throw new MWException('Unknown attribut '.$attribut_name);
 	}
 	
 	/**
@@ -126,15 +164,15 @@ class WpWikiplace {
 		}	
 		
 		$dbr = wfGetDB(DB_SLAVE);
-		$result = $dbr->select( 'wp_wikiplace', '*',	array( 'wpw_owner_user_id' =>  $user_id ), __METHOD__ );
+		$results = $dbr->select( 'wp_wikiplace', '*',	array( 'wpw_owner_user_id' =>  $user_id ), __METHOD__ );
 		
 		$wikiplaces = array();
 		
-		foreach ( $result as $row ) {
+		foreach ( $results as $row ) {
 			$wikiplaces[] = self::constructFromDatabaseRow($row);
 		}
 		
-		$dbr->freeResult( $result );
+		$dbr->freeResult( $results );
 		
 		return $wikiplaces;
 
@@ -176,9 +214,13 @@ class WpWikiplace {
 		
 		if ( !$success ) {	
 			return null;
-		}		
+		}
+		
+		$wp = new self( $id, $ownerUserId, $name );
+		
+		WpPage::createPage($wp);
 				
-		return new self( $id, $ownerUserId, $name );
+		return $wp;
 			
 	}
 	

@@ -30,7 +30,7 @@ $wgAutoloadClasses['WpWikiplace']				= $_dir . 'model/WpWikiplace.php';
 $wgAutoloadClasses['WpPage']					= $_dir . 'model/WpPage.php';
 $wgAutoloadClasses['WpPlan']					= $_dir . 'model/WpPlan.php';
 $wgAutoloadClasses['WpSubscription']			= $_dir . 'model/WpSubscription.php';
-$wgAutoloadClasses['WpSubscriptionsTablePager'] = $_dir . 'WpSubscriptionsTablePager.php';
+$wgAutoloadClasses['WpSubscriptionsTablePager'] = $_dir . 'model/WpSubscriptionsTablePager.php';
 
 
 

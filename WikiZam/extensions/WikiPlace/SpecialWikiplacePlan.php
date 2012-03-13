@@ -47,14 +47,14 @@ class SpecialWikiplacePlan extends SpecialPage {
 		
 		// Anons can't use this special page
 		if( $user->isAnon() ) {
-			$out->setPageTitle( wfMessage( 'wikiplace-pleaselogin-pagetitle' )->text() );
+			$out->setPageTitle( wfMessage( 'wp-nlogin-pagetitle' )->text() );
 			$link = Linker::linkKnown(
 				SpecialPage::getTitleFor( 'Userlogin' ),
-				wfMessage( 'wikiplace-pleaselogin-link-text' )->text(),
+				wfMessage( 'wp-nlogin-link-text' )->text(),
 				array(),
 				array( 'returnto' => $this->getTitle()->getPrefixedText() )
 			);
-			$out->addHTML( wfMessage( 'wikiplace-pleaselogin-text' )->rawParams( $link )->parse() );
+			$out->addHTML( wfMessage( 'wp-nlogin-text' )->rawParams( $link )->parse() );
 			return;
 		}
 
@@ -92,7 +92,7 @@ class SpecialWikiplacePlan extends SpecialPage {
 					# Params related to Record
 					'tmr_amount'	=> 10 , # decimal(9,2) NOT NULL COMMENT 'Record Amount',
 					'tmr_currency'	=> 'EUR', # varchar(3) NOT NULL DEFAULT 'EUR' COMMENT 'Record Currency',
-					'tmr_desc'		=> 'WikiPlace plan test, simulate 10 EUR credit to user', # varchar(64) NOT NULL COMMENT 'Record Description',
+					'tmr_desc'		=> 'wp_tmr_desc_sim_credit_10', # varchar(64) NOT NULL COMMENT 'Record Description',
 					'tmr_status'	=> 'OK' # varchar(2) NOT NULL COMMENT 'Record status (OK, KO, PEnding, TEst)',
 				);
 				wfRunHooks('CreateTransaction', array(&$tmr));
@@ -109,11 +109,11 @@ class SpecialWikiplacePlan extends SpecialPage {
 								
 			case self::ACTION_SUBSCRIBE :
   
-				$out->setPageTitle( wfMessage( 'wp-plan-subscribe-pagetitle' )->text());
+				$out->setPageTitle( wfMessage( 'wp-plan-sub-pagetitle' )->text());
 				
 				if (!WpSubscription::canMakeAFirstSubscription($user->getId())) { 
 					// do not process submitted datas if cannot make a first sub
-					$out->addHTML(wfMessage( 'wp-plan-cannot-subs-anymore' )->text());
+					$out->addHTML(wfMessage( 'wp-plan-sub-nomore' )->text());
 
 					
 				} else {
@@ -123,19 +123,19 @@ class SpecialWikiplacePlan extends SpecialPage {
 					if( $form->show() ){
 
 						$out->addHTML(wfMessage(
-								'wp-plan-subscribe-success-wikitext',
+								'wp-plan-sub-success',
 								wfEscapeWikiText( wfMessage('wp-plan-name-'.$this->newlySubscribed->get('plan')->get('wpp_name'))->text() ) 
 							)->parse() . '<br />' );	
 
 						switch ($this->newlySubscribed->get('wps_tmr_status')) {
 							case "OK":
-								$out->addHTML(wfMessage( 'wp-plan-payment-ok' )->text());
+								$out->addHTML(wfMessage( 'wp-plan-sub-tmr-status-ok' )->text());
 								break;
 							case "PE":
-								$out->addHTML(wfMessage( 'wp-plan-payment-pending' )->parse());
+								$out->addHTML(wfMessage( 'wp-plan-sub-tmr-status-pe' )->parse());
 								break;
 							default:
-								$out->addHTML(wfMessage( 'wp-plan-unknwon-status' )->text());
+								$out->addHTML(wfMessage( 'wp-plan-sub-tmr-status-other' )->text());
 								break;
 						}
 
@@ -146,14 +146,14 @@ class SpecialWikiplacePlan extends SpecialPage {
                 break;
 				
 			case self::ACTION_CHANGE :
-				$out->setPageTitle( wfMessage( 'wp-plan-change-pagetitle' )->text());
+				$out->setPageTitle( wfMessage( 'wp-plan-chg-pagetitle' )->text());
 				
 				break;
  
 				
 			case self::ACTION_LIST_OFFERS :
 				
-				$out->setPageTitle( wfMessage( 'wp-plan-listoffers-pagetitle' )->text() );
+				$out->setPageTitle( wfMessage( 'wp-plan-loffers-pagetitle' )->text() );
 				
 				$out->addHTML( $this->getCurrentPlansOffersListing() );
 				
@@ -163,7 +163,7 @@ class SpecialWikiplacePlan extends SpecialPage {
 			case self::ACTION_LIST_SUBSCRIPTIONS :
 			default : // (default  =  action == nothing or "something we cannot handle")
 				
-				$out->setPageTitle( wfMessage( 'wp-plan-listsubs-pagetitle' )->text() );
+				$out->setPageTitle( wfMessage( 'wp-plan-lmysubs-pagetitle' )->text() );
 				
 				$out->addHTML( $this->getUserSubscriptionsListing() );
 				
@@ -188,10 +188,10 @@ class SpecialWikiplacePlan extends SpecialPage {
 
 		return Html::rawElement( 'span', array(), wfMessage( 'parentheses', $language->pipeList(array(
 
-				Linker::linkKnown( $this->getTitle( self::ACTION_SUBSCRIBE ), wfMessage( 'wp-plan-linkto-subscribe' )->text() ) ,
-				Linker::linkKnown( $this->getTitle( self::ACTION_LIST_SUBSCRIPTIONS ), wfMessage( 'wp-plan-linkto-mysubs' )->text() ) ,
-				Linker::linkKnown( $this->getTitle( self::ACTION_CHANGE ), wfMessage( 'wp-plan-linkto-change' )->text() ) ,
-				Linker::linkKnown( $this->getTitle( self::ACTION_LIST_OFFERS ), wfMessage( 'wp-plan-linkto-listoffers' )->text() ) ,
+				Linker::linkKnown( $this->getTitle( self::ACTION_SUBSCRIBE ), wfMessage( 'wp-plan-tl-subscribe' )->text() ) ,
+				Linker::linkKnown( $this->getTitle( self::ACTION_LIST_SUBSCRIPTIONS ), wfMessage( 'wp-plan-tl-mysubs' )->text() ) ,
+				Linker::linkKnown( $this->getTitle( self::ACTION_CHANGE ), wfMessage( 'wp-plan-tl-chg' )->text() ) ,
+				Linker::linkKnown( $this->getTitle( self::ACTION_LIST_OFFERS ), wfMessage( 'wp-plan-tl-loffers' )->text() ) ,
 			
 				$this->generateLink("/Special:TransactionManager", "TransactionManager"),
 				$this->generateLink("/Special:WikiPlacePlan/test_give_10eur", "give me 10 EUR"),
@@ -260,7 +260,7 @@ class SpecialWikiplacePlan extends SpecialPage {
 
 		$htmlForm->setSubmitCallback( array( $this, 'processSubscribePlan' ) );
 		
-		$htmlForm->setSubmitText(		wfMessage( 'wp-plan-subscribe-submit' )->text() );
+		$htmlForm->setSubmitText(		wfMessage( 'wp-plan-sub-submit' )->text() );
 	
 		return $htmlForm;
 		
@@ -285,7 +285,7 @@ class SpecialWikiplacePlan extends SpecialPage {
 		
 		$this->newlySubscribed = WpSubscription::subscribe( $this->getUser() , $plan );
 		
-		return ( ($this->newlySubscribed === null) ? wfMessage('cannot subscribe') : true );
+		return ( ($this->newlySubscribed === null) ? wfMessage('wp-plan-sub-perr') : true );
 		
 	}
 	

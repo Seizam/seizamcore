@@ -77,7 +77,7 @@ class WpSubscription {
 				return $this->plan;
 				break;
 		}
-		throw new MWException('Unknown attribut');
+		throw new MWException('Unknown attribut '.$attribut_name);
 	}
 	
 	/**
@@ -339,7 +339,7 @@ class WpSubscription {
 				# Params related to Record
 				'tmr_amount'	=> - $plan->get('wpp_price'),
 				'tmr_currency'	=> $plan->get('wpp_currency'), 
-				'tmr_desc'		=> $plan->get('wpp_name'), 
+				'tmr_desc'		=> 'wp-plan-name-'.$plan->get('wpp_name'), 
 				'tmr_status'	=> 'PE', // PEnding
 			);
 			wfRunHooks('CreateTransaction', array(&$tmr));
