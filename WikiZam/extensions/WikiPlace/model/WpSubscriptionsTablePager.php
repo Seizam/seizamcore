@@ -28,7 +28,7 @@ class WpSubscriptionsTablePager extends SkinzamTablePager {
 		);
     protected $defaultSort = 'wps_start_date';
     public $mDefaultDirection = true; // true = DESC
-    protected $tableClasses = array('WPSubscription'); # Array
+    protected $tableClasses = array('WpSubscription'); # Array
     protected $messagesPrefix = 'wpstp';
 	
 
@@ -48,25 +48,19 @@ class WpSubscriptionsTablePager extends SkinzamTablePager {
 			
 			case 'wps_start_date':
 			case 'wps_end_date':
-				return $wgLang->timeanddate($value, true);
-				// $lang->timeanddate(wfTimestamp(TS_MW, $date, true)); ?
-				break;
+				return ($value === null) ? '-' : $wgLang->timeanddate($value, true);
 			case 'wpp_name':
 				return  wfMessage('wp-plan-name-' . $value)->text();
-				break;
 			case 'wps_active':
 				return wfMessage( ($value==0) ? 'wp-sub-unactive' : 'wp-sub-active' )->text() ;
-				break;
 			case 'wps_tmr_status':
 				return wfMessage( 'wp-sub-tmrstatus-'.$value )->text() ;
-				break;
 			case 'wpp_nb_wikiplaces':
 			case 'wpp_nb_wikiplace_pages':
 			case 'wpp_diskspace':
 			case 'wpp_monthly_page_hits':
 			case 'wpp_monthly_bandwidth':
 				return $value;
-				break;
             default:
                 throw new MWException( 'Unknown data name "'.$name.'"');
         }

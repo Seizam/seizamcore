@@ -7,6 +7,8 @@ $messages = array();
  */
 $messages['en'] = array(
 	
+	'wp-vlderr-nwpname-dup' => 'This WikiPlace name already exists.',
+	
 	'wp-plan-name-test_plan_normal' => "Test plan",
 	'wp-plan-name-test_plan_plus' => "Test pan +",
 	'wp-plan-name-test_plan_invitation' => "Invitation only test plan",
@@ -37,27 +39,30 @@ $messages['en'] = array(
 
 	'wp-err-unknown' => "An error occured",
 
-	'wp-cwp-pagetitle'  => "New WikiPlace",
-	'wp-cwp-success-link-wt' => "New WikiPlace created, [[:\$1|click here]] to access its homepage.",
-	'wp-cwp-f-legend'  => "legend",
-	'wp-cwp-f-explain'  => "explain",
-	'wp-cwp-f-submit'  => "Go",
-	'wp-cwp-perr-alreadyexists' => "The WikiPlace already exists, please retry with a different name",
-	'wp-cwp-f-twpname' => "Enter the name of the new WikiPlace",
-		
-	'wp-csp-f-swp'  => "Select one of your WikiPlace",
-	'wp-csp-f-tspname'  => "Enter the name of the new WikiPlace page",
+	'wp-cwp-pagetitle'        => "New WikiPlace",
+	'wp-cwp-success-link-wt'  => "New WikiPlace created, [[:\$1|click here]] to access its homepage.",
+	'wp-cwp-f-legend'         => "legend",
+	'wp-cwp-f-explain'        => "explain",
+	'wp-cwp-f-submit'         => "Go",
+	'wp-cwp-f-twpname'        => "Enter the name of the new WikiPlace",
+	'wp-cwp-err-nosub'        => "You need to have an active subscription to create a WikiPlace.",
+	
+	'wp-csp-f-swp'            => "Select one of your WikiPlace",
+	'wp-csp-f-tspname'        => "Enter the name of the new WikiPlace page",
+	'wp-csp-err-nosub'        => "You need to have an active subscription to create a new WikiPlace page.",
 
-	'wp-plan-sub-pagetitle'  => "Subscribe to a WikiPlace plna",
-	'wp-plan-sub-nomore' => "You already subscribe to a plan. You can only change or renew it",
+	'wp-plan-sub-pagetitle'  => "Subscribe to a WikiPlace plan",
+	'wp-plan-sub-nomore'     => "You already subscribe to a plan. You can only change or renew it",
 	'wp-plan-sub-tmr-status-ok' => 'Your Seizam account has been succesfully debited.',
 	'wp-plan-sub-tmr-status-pe' => 'Your payment is pending. [[Special:ElectronicPayment|Please credit your Seizam account by cliking here]]',
+	'wp-plan-sub-f-splan'   => 'Select a plan',
 	
 	'wp-sub-unactive' => 'not active',
 	'wp-sub-active' => 'active',
 	'wp-sub-tmrstatus-OK' => 'paid',
 	'wp-sub-tmrstatus-PE' => 'pending',
 	'wp-sub-tmrstatus-KO' => 'canceled',	
+	'wp-plan-sub-success' => 'You successfully subscribed to the WikiPlace plan',
 	
 	'wp-plan-sub-tmr-status-other' => "error",
 	'wp-plan-sub-submit'  => "Go",

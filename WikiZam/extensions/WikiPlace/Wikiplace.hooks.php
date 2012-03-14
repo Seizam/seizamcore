@@ -152,11 +152,13 @@ class WikiplaceHooks {
 						
 						if ($sub->get('wps_start_date') == null) {
 							// first subscription, so activates it from now
-							$now = WpSubscription::getNow();
-							$end = WpSubscription::calculatePeriodEndDate($now, $sub->get('plan')->get('wpp_period_months'));
+							$now = WpPlan::getNow();
+							$end = WpPlan::calculateTick($now, $sub->get('plan')->get('wpp_period_months'));
+							$tick = WpPlan::calculateTick($now, 1);
 							$sub->set('wps_start_date',	$now, false );	// 3rd p = false = do not update db
-							$sub->set('wps_end_date',	$end, false );	// 3rd p = false = do not update db
-							$sub->set('wps_active',		true, false );	// 3rd p = false = do not update db
+							$sub->set('wps_next_monthly_tick',	$tick, false );	// 3rd p = false = do not update db
+							$sub->set('wps_end_date', $end, false );	// 3rd p = false = do not update db
+							$sub->set('wps_active',	true, false );	// 3rd p = false = do not update db
 						} 
 						// if startDate not null, this is a renewal, it will be activated later when needed
 						
@@ -165,8 +167,8 @@ class WikiplaceHooks {
 						
 					case 'KO':
 						// PE -> KO
-						$sub->set('wps_tmr_status'	, 'KO', false);
-						$sub->set('wps_active'		, false);  // in case of a renewal, it can be activated even if pending, so need to ensure that is false
+						$sub->set('wps_tmr_status', 'KO', false);
+						$sub->set('wps_active', false);  // in case of a renewal, it can be activated even if pending, so need to ensure that is false
 						return false; // this is our transaction, no more process to be done	
 						
 					case 'PE':
@@ -178,7 +180,7 @@ class WikiplaceHooks {
 		}
 		
 		// if we arrive here, this transaction is about a subscription, but we do not know what to do... there is a problem!
-		throw new MWException('The transaction of a subscription was updated, but the system doesn\'t know what to do... sorry. ('.$sub->get('transactionStatus').'->'.$tmr['tmr_status'].')');	
+		throw new MWException('The transaction of a subscription was updated, but the system doesn\'t know what to do... ('.$sub->get('transactionStatus').'->'.$tmr['tmr_status'].')');	
 		
 	}
 	

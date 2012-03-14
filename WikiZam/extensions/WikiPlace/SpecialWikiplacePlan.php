@@ -242,7 +242,7 @@ class SpecialWikiplacePlan extends SpecialPage {
         $formDescriptor = array(
 			'Plan' => array(
                 'type'					=> 'select',
-                'label-message'			=> 'wp-plan-subscribe-select',
+                'label-message'			=> 'wp-plan-sub-f-splan',
 				'validation-callback'	=> array('WpPlan', 'validateSubscribePlanId'),
                 'options'				=> array(),
 			),

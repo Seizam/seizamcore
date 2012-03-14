@@ -76,11 +76,19 @@ class SpecialWikiplace extends SpecialPage {
   
 				$out->setPageTitle( wfMessage( 'wp-cwp-pagetitle' )->text() );
 				
-				$form = $this->getCreateWikiplaceForCurrentUserForm( $this->getTitle( self::ACTION_CREATE_WIKIPLACE ) );
-				
-				if( $form->show() ){ // true = submitted and correctly processed, false = not submited or error
+				if (WpSubscription::getActiveByUserId($this->getUser()->getId()) === null) {
 					
-					$out->addHTML(wfMessage('wp-cwp-success-link-wt', wfEscapeWikiText( $this->newlyCreatedWikiplace->get('wpw_name') ) )->parse());	
+					$out->addHTML(wfMessage('wp-cwp-err-nosub' )->text());	
+					
+				} else {
+				
+					$form = $this->getCreateWikiplaceForCurrentUserForm( $this->getTitle( self::ACTION_CREATE_WIKIPLACE ) );
+
+					if( $form->show() ){ // true = submitted and correctly processed, false = not submited or error
+
+						$out->addHTML(wfMessage('wp-cwp-success-link-wt', wfEscapeWikiText( $this->newlyCreatedWikiplace->get('wpw_name') ) )->parse());	
+
+					}
 
 				}
 				
@@ -91,21 +99,29 @@ class SpecialWikiplace extends SpecialPage {
   
 				$out->setPageTitle( wfMessage( 'wp-csp-pagetitle' )->text() );
 				
-				$wikiplaces = WpWikiplace::getAllOwnedByUserId($this->getUser()->getId());
-				
-				if (count($wikiplaces) == 0) {
-					// need at least one WikiPlace
-					$out->addHTML(wfMessage('wp-csp-no-wp')->text());	
+				if (WpSubscription::getActiveByUserId($this->getUser()->getId()) === null) {
+					
+					$out->addHTML(wfMessage('wp-csp-err-nosub' )->text());	
 					
 				} else {
 				
-					$form = $this->getCreateSubPageIn(
-							$this->getTitle( self::ACTION_CREATE_WIKIPLACE_PAGE) , 
-							$wikiplaces );
+					$wikiplaces = WpWikiplace::getAllOwnedByUserId($this->getUser()->getId());
 
-					if( $form->show() ){
-						// creation success
-						$out->addHTML(wfMessage('wp-csp-success-link-wt', wfEscapeWikiText( $this->futurNewPage->getPrefixedText() ) )->parse());	
+					if (count($wikiplaces) == 0) {
+						// need at least one WikiPlace
+						$out->addHTML(wfMessage('wp-csp-no-wp')->text());	
+
+					} else {
+
+						$form = $this->getCreateSubPageIn(
+								$this->getTitle( self::ACTION_CREATE_WIKIPLACE_PAGE) , 
+								$wikiplaces );
+
+						if( $form->show() ){
+							// creation success
+							$out->addHTML(wfMessage('wp-csp-success-link-wt', wfEscapeWikiText( $this->futurNewPage->getPrefixedText() ) )->parse());	
+						}
+						
 					}
 					
 				}
@@ -300,23 +316,33 @@ class SpecialWikiplace extends SpecialPage {
 	 */
 	public function processCreateWikiplaceForCurrentUser( $formData ) {
 		
-		if ( !isset($formData['WikiplaceName']) ) { //check that the keys exist and values are not NULL
-			return wfMessage('wp-err-unknown')->text(); //invalid form, so maybe a bug, maybe a hack
+		if ( !isset($formData['WikiplaceName']) ) { // might be useless... but just in case
+			return wfMessage('wp-err-unknown')->text(); // invalid form, so maybe a bug, maybe a hack
 		}
 		
 		$name = $formData['WikiplaceName'];
+		$user_id = $this->getUser()->getId();
+		$subscription = WpSubscription::getActiveByUserId($user_id);
 
-		if (WpWikiplace::getByName($name) !== null) {
-			return wfMessage( 'wp-cwp-perr-alreadyexists')->text(); // this wikiplace already exists
+		if ($subscription === null) {
+			// no active subscription
+			return wfMessage('wp-cwp-err-nosub')->text(); // invalid form, so maybe a bug, maybe a hack
 		}
 		
-		$new = WpWikiplace::create($this->getUser()->getId(), $name);
+		$new_wp = WpWikiplace::create($this->getUser()->getId(), $name);
 		
-		if ( !is_object($new) || !($new instanceof WpWikiplace) ) {
-			return wfMessage( 'wp-err-unknown')->text(); // error while saving
+		if ( !is_object($new_wp) || !($new_wp instanceof WpWikiplace) ) {
+			return wfMessage( 'wp-err-unknown')->text(); // error while creating
 		}
 			
-		$this->newlyCreatedWikiplace = $new;
+		$this->newlyCreatedWikiplace = $new_wp;
+		
+		$new_usage_report = WpUsage::createForNewWikiplace($new_wp, $subscription);
+		
+		if ( $new_usage_report === null ) { 
+			return wfMessage('wp-err-unknown')->text();
+		}
+		
 		return true; // all ok :)
 					
 	}

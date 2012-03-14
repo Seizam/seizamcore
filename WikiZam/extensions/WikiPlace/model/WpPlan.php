@@ -188,4 +188,22 @@ class WpPlan {
 	}
 	
 	
+	/**
+	 *
+	 * @param type $startDate 
+	 */
+	public static function calculateTick($startDate, $nb_of_month) {
+
+		$start = date_create_from_format( 'Y-m-d H:i:s', $startDate, new DateTimeZone( 'GMT' ) );
+		if ( $start->format('j') > 28) { // if day > 28
+			$start->modify('first day of next month');
+		}
+		$start->modify( "+$nb_of_month month -1 second" );
+		return $start->format( 'Y-m-d H:i:s' );
+		
+	}
+	
+	public static function getNow() {
+		return wfTimestamp(TS_DB);
+	}
 }

@@ -90,7 +90,7 @@ class WpWikiplace {
 	 * @param ResultWrapper $row
 	 * @return self 
 	 */
-	private static function constructFromDatabaseRow( $row ) {
+	public static function constructFromDatabaseRow( $row ) {
 			
 		if ( $row === null ) {
 			throw new MWException( 'Cannot construct the WikiPlace from the supplied row (null given)' );
