@@ -52,10 +52,13 @@ class WpSubscription {
 
 	}
 	
+	
 	/**
-	 *
-	 * @param type $attribut_name
-	 * @return type 
+	 * 
+	 * @param string $attribut_name wps_id, wps_wpp_id, wps_buyer_user_id, wps_tmr_id, 
+	 * wps_tmr_status, wps_date_created, wps_start_date, wps_next_monthly_tick, 
+	 * wps_end_date, wps_active
+	 * @return mixed 
 	 */
 	public function get($attribut_name) {
 		switch ($attribut_name) {
@@ -100,14 +103,8 @@ class WpSubscription {
 				$db_value = ( $value ? 1 : 0 );
 				break;
 			case 'wps_start_date':
-				if (!is_string($value)) { throw new MWException('Value error (string needed) for '.$attribut_name);	}
-				break;
-			case 'wps_next_monthly_tick':
-				if (!is_string($value)) { throw new MWException('Value error (string needed) for '.$attribut_name);	}
-				break;				
+			case 'wps_next_monthly_tick':		
 			case 'wps_end_date':
-				if (!is_string($value)) { throw new MWException('Value error (string needed) for '.$attribut_name);	}
-				break;
 			case 'wps_tmr_status':
 				if (!is_string($value)) { throw new MWException('Value error (string needed) for '.$attribut_name);	}
 				break;
@@ -256,7 +253,7 @@ class WpSubscription {
 	 */
 	public static function getAll($are_you_sure = 'no') {
 		
-		wfDebugLog( 'wikiplace', 'WpSubscription::getAll WARNING $are_you_sure='.$$are_you_sure);
+		wfDebugLog( 'wikiplace', 'WpSubscription::getAll WARNING $are_you_sure='.$are_you_sure);
 		
 		if ( $are_you_sure != 'I know what i am doing')
 			return array(); //good idea :)

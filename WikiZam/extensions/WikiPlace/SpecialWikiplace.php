@@ -251,7 +251,7 @@ class SpecialWikiplace extends SpecialPage {
 			return wfMessage( 'wp-csp-perr-notvalidwp')->text(); 
 		}
 
-		$return_code = WpPage::createPage($wikiplace, $formData['WikiplaceSubPageName']);
+		$return_code = WpPage::createWikiPlacePage($wikiplace, $formData['WikiplaceSubPageName']);
 
 		if ($return_code instanceof Title) {
 			// everything seems to be ok
@@ -329,19 +329,13 @@ class SpecialWikiplace extends SpecialPage {
 			return wfMessage('wp-cwp-err-nosub')->text(); // invalid form, so maybe a bug, maybe a hack
 		}
 		
-		$new_wp = WpWikiplace::create($this->getUser()->getId(), $name);
+		$new_wp = WpWikiplace::create($name, $subscription);
 		
 		if ( !is_object($new_wp) || !($new_wp instanceof WpWikiplace) ) {
 			return wfMessage( 'wp-err-unknown')->text(); // error while creating
 		}
 			
 		$this->newlyCreatedWikiplace = $new_wp;
-		
-		$new_usage_report = WpUsage::createForNewWikiplace($new_wp, $subscription);
-		
-		if ( $new_usage_report === null ) { 
-			return wfMessage('wp-err-unknown')->text();
-		}
 		
 		return true; // all ok :)
 					

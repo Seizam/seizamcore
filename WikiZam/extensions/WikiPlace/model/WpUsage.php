@@ -9,7 +9,8 @@ class WpUsage {
 				$wpu_end_date,
 				$wpu_active,
 				$wpu_monthly_page_hits, // MySql: bigint(64 bits) =>  PHP float 
-				$wpu_monthly_bandwidth; // MySql: bigint(64 bits) =>  PHP float 
+				$wpu_monthly_bandwidth, // MySql: bigint(64 bits) =>  PHP float 
+				$wpu_updated;
 
 	private $subscription;
 	private $wikiplace; 
@@ -20,7 +21,7 @@ class WpUsage {
 	private function __construct(
 			$id, $subscriptionId, $wikiplaceId,
 			$startDate, $endDate, $active,
-			$monthlyPageHits, $monthlyBandwidth) {
+			$monthlyPageHits, $monthlyBandwidth, $updated) {
 		
 		$this->wpu_id = $id;			
 		$this->wpu_wps_id = $subscriptionId;				
@@ -30,6 +31,7 @@ class WpUsage {
 		$this->wpu_active = $active;
 		$this->wpu_monthly_page_hits = $monthlyPageHits;
 		$this->wpu_monthly_bandwidth = $monthlyBandwidth;
+		$this->wpu_updated = $updated;
 		
 		$this->attributes_to_update = array();
 
@@ -52,9 +54,16 @@ class WpUsage {
 				break;
 			case 'wpu_start_date':
 			case 'wpu_end_date':
+				return $this->$attribut_name;
 			case 'wpu_monthly_page_hits':
 			case 'wpu_monthly_bandwidth':
+			case 'wpu_updated':
+				// update if necessary
+				if ( $this->wpu_updated > WpPlan::getNow(0,0,1) ) {
+					$this->updateCounters();
+				}
 				return $this->$attribut_name;
+				break;
 			case 'subscription':
 				if ($this->subscription === null) {
 					$this->fetchSubscription();
@@ -70,10 +79,118 @@ class WpUsage {
 		throw new MWException('Unknown attribut '.$attribut_name);
 	}
 	
+	
+	private function updateCounters() {
+	
+		$dbw = wfGetDB(DB_MASTER);
+		$dbw->begin();
+		
+		$result = $dbr->selectRow( 
+				array( 'wp_page' , 'page' ),
+				array( 'SUM(page_counter) AS hits'),
+				array( 'wppa_wpw_id' => $this->wpu_wpw_id ),
+				__METHOD__,
+				array(),
+				array( 'page' => array('INNER JOIN','wppa_page_id = page_id') ) );
+		
+		if ( $result === false ) {
+			throw new MWException('Error while computing page_hits.');
+		}
+		
+		$monthly_page_hits = $result->hits;
+		/** @todo compute bandwidth usage */ 
+		$monthly_bandwidth = '0'; // for the moment, not computed
+		$updated = WpPlan::getNow();
+		
+		wfDebugLog( 'wikiplace', 'WpUsage->updateCounters for wpw_id='.$this->wpu_wpw_id.' from '.
+				$this->wpu_updated.'('.$this->wpu_monthly_page_hits.') to '.
+				$updated.'('.$monthly_page_hits.')');
+
+		$success = $dbw->update(
+				'wp_usage',
+				array(
+					'wpu_monthly_page_hits' => $monthly_page_hits,
+					'wpu_monthly_bandwidth' => $monthly_bandwidth,
+					'wpu_updated' => $updated,
+				),
+				array( 'wpu_id' => $this->wpu_id) );
+
+		$dbw->commit();
+
+		if ( !$success ) {	
+			throw new MWException('Error while saving Usage report to database.');
+		}
+		
+		$this->wpu_monthly_page_hits = $monthly_page_hits;
+		$this->wpu_monthly_bandwidth = $monthly_bandwidth;
+		$this->wpu_updated = $updated;
+	}
+	
+	/**
+	 * Should be called by cron. Its execution can take more more more than 30 seconds.
+	 * For the moment, it only updates the page hits counter.
+	 * @return int Nb of updates
+	 * @todo updates also the bandwith counter
+	 */
+	public static function updateAllOutdatedCounters() {
+		
+		$dbw = wfGetDB(DB_MASTER);
+		
+		$dbw->begin();
+		
+		$now = $dbw->addQuotes(WpPlan::getNow());
+		$one_hour_ago = $dbw->addQuotes(WpPlan::getNow(0,0,-1));
+		
+		$sql = "
+CREATE TEMPORARY TABLE wp_tmp_page_hits (
+  SELECT wppa_wpw_id AS wikiplace_id, SUM(page.page_counter) AS page_hits
+  FROM page
+  INNER JOIN wp_page
+  ON wppa_page_id = page_id
+  INNER JOIN wp_usage
+  ON wpu_wpw_id = wppa_wpw_id
+  WHERE wpu_updated < $one_hour_ago
+  GROUP BY wppa_wpw_id ) ;";
+		
+		$result = $dbw->query($sql, __METHOD__);
+		
+		if ($result !== true) {
+			throw new MWException('Error while computing usage counters');
+		}
+		
+		$to_update = $dbw->affectedRows();
+
+		$sql = "
+UPDATE wp_usage
+SET wpu_monthly_page_hits = (
+  SELECT page_hits
+  FROM wp_tmp_page_hits
+  WHERE wikiplace_id = wpu_wpw_id ) ,
+wpu_updated = $now 
+WHERE wpu_updated < $one_hour_ago ;" ;
+				
+		$result = $dbw->query($sql, __METHOD__);
+		
+		if ($result !== true) {
+			throw new MWException('Error while updating outdated usage counters');
+		}
+		
+		$updated = $dbw->affectedRows();
+		
+		$dbw->commit();
+		
+		if ($to_update != $updated) {
+			throw new MWException('Usage counters updated, but '.$to_update.' updates expected and '.$updated.' records updated.');
+		}
+		
+		return $updated;
+		
+	}
+	
 	/**
 	 * Warning, after increment, the attribut value is not valid!
 	 */
-	public function incremementPageHit() {
+/*	public function incremementPageHit() {
 		
 		$dbw = wfGetDB(DB_MASTER);
 		$dbw->begin();
@@ -90,13 +207,13 @@ class WpUsage {
 		}
 		
 	}
-	
+*/	
 	/**
 	 * Warning, after adding, the attribut value is not valid
 	 * Warning, if $value is handled as int, it should not be > 2 147 483 647 because PHP may be 32bits
 	 * @param string $value 
 	 */
-	public function addBandiwidthConsumption($value) {
+/*	public function addBandiwidthConsumption($value) {
 		
 		$dbw = wfGetDB(DB_MASTER);
 		$dbw->begin();
@@ -113,7 +230,7 @@ class WpUsage {
 		}
 	
 	}
-	
+*/	
 	/**
 	 * 
 	 * @param string $attribut_name
@@ -130,9 +247,8 @@ class WpUsage {
 				$db_value = ( $value ? 1 : 0 );
 				break;
 			case 'wpu_start_date':
-				if (!is_string($value)) { throw new MWException('Value error (string needed) for '.$attribut_name);	}
-				break;
 			case 'wpu_end_date':
+			case 'wpu_updated':
 				if (!is_string($value)) { throw new MWException('Value error (string needed) for '.$attribut_name);	}
 				break;
 			default:
@@ -214,11 +330,12 @@ class WpUsage {
 
 		if ( !isset($row->wpu_id) || !isset($row->wpu_wps_id) || !isset($row->wpu_wpw_id) ||
 				!isset($row->wpu_start_date) || !isset($row->wpu_end_date) || !isset($row->wpu_active) ||
-				!isset($row->wpu_monthly_page_hits) || !isset($row->wpu_monthly_bandwidth) ) {
+				!isset($row->wpu_monthly_page_hits) || !isset($row->wpu_monthly_bandwidth) ||
+				!isset($row->wpu_updated) ) {
 			throw new MWException( 'Cannot construct the Usage from the supplied row (missing field)' );
 		}
 			
-		return new self ( $row->wpu_id, $row->wpu_wps_id, $row->wpu_wpw_id, $row->wpu_start_date, $row->wpu_end_date, $row->wpu_active, $row->wpu_monthly_page_hits, $row->wpu_monthly_bandwidth );
+		return new self ( $row->wpu_id, $row->wpu_wps_id, $row->wpu_wpw_id, $row->wpu_start_date, $row->wpu_end_date, $row->wpu_active, $row->wpu_monthly_page_hits, $row->wpu_monthly_bandwidth, $row->wpu_updated );
 		  
 	}
 	
@@ -293,6 +410,17 @@ class WpUsage {
 	
 	
 	/**
+	 *
+	 * @param WpSubscription $subscription
+	 * @param string $date default = null = summarize the active usage reports, not null = summarize all usage reports actives at the date
+	 * @return array monthly_page_hits, monthly_bandwidth 
+	 */
+	public static function getUsagesCountersSummary($subscription, $date = null) {
+		throw new MWException('todo');
+	}
+	
+	
+	/**
 	 * Renew all outdated active reports
 	 */
 	public static function generateNewMonthlyUsages() {
@@ -319,6 +447,7 @@ class WpUsage {
 					'wpu_active'            => 0,
 					'wpu_monthly_page_hits' => 'wpu_monthly_page_hits',
 					'wpu_monthly_bandwidth' => 'wpu_monthly_bandwidth',
+					'wpu_updated'           => 'wpu_updated',
 				),
 				array( 'wpu_active' => 1, 'wpu_end_date < '.$now ),
 				__METHOD__,
@@ -361,12 +490,14 @@ class WpUsage {
 			throw new MWException('Cannot create usage report, subscription has to be active.');
 		}
 		
+		$now = WpPlan::getNow();
+		
 		return self::create(
 				$subscription->get('wps_id'),
 				$wikiplace->get('wpw_id'),
-				WpPlan::getNow(),
+				$now,
 				$subscription->get('wps_next_monthly_tick'),
-				true, 0, 0);
+				true, 0, 0, $now);
 		
 	}
 	
@@ -374,21 +505,19 @@ class WpUsage {
 	/**
 	 * Called when creating a wikiplace, or when renewing reports
 	 */
-	private static function create( $subscriptionId, $wikiplaceId, $startDate, $endDate, $active, $monthlyPageHits, $monthlyBandwidth ) {
+	private static function create( $subscriptionId, $wikiplaceId, $startDate, $endDate, $active, $monthlyPageHits, $monthlyBandwidth, $updated ) {
 		
-		$_startDate = array();
-		$_endDate = array();
-		
-		if ( ($subscriptionId === null) || ($wikiplaceId === null) || ($startDate === null) || ($endDate === null) || ($active === null) || ($monthlyPageHits === null) || ($monthlyBandwidth === null) ) {
+		if ( ($subscriptionId === null) || ($wikiplaceId === null) || ($startDate === null) || ($endDate === null) || ($active === null) || ($monthlyPageHits === null) || ($monthlyBandwidth === null) || ($updated === null) ) {
 			throw new MWException( 'Cannot create Usage (missing argument)' );
 		}
 		
 		if ( !is_numeric($subscriptionId) || !is_numeric($wikiplaceId) ||
-				( ($startDate !== null) && !preg_match( '/^(\d{4})\-(\d\d)\-(\d\d) (\d\d):(\d\d):(\d\d)$/D', $startDate, $_startDate ) ) || 
-				( ($endDate !== null) && !preg_match( '/^(\d{4})\-(\d\d)\-(\d\d) (\d\d):(\d\d):(\d\d)$/D', $endDate, $_endDate ) ) || 
+				( !preg_match( '/^(\d{4})\-(\d\d)\-(\d\d) (\d\d):(\d\d):(\d\d)$/D', $startDate ) ) || 
+				( !preg_match( '/^(\d{4})\-(\d\d)\-(\d\d) (\d\d):(\d\d):(\d\d)$/D', $endDate ) ) || 
 				!is_bool($active) ||
 				( ($monthlyPageHits !== null) && !preg_match( '/^([0-9]{1,20})$/', $monthlyPageHits ) ) || 
-				( ($monthlyBandwidth !== null) && !preg_match( '/^([0-9]{1,20})$/', $monthlyBandwidth ) ) ) {
+				( ($monthlyBandwidth !== null) && !preg_match( '/^([0-9]{1,20})$/', $monthlyBandwidth ) ) || 
+				( !preg_match( '/^(\d{4})\-(\d\d)\-(\d\d) (\d\d):(\d\d):(\d\d)$/D', $updated ) ) ) {
 			throw new MWException( 'Cannot create Usage (invalid argument)' );
 		}
 						
@@ -408,6 +537,7 @@ class WpUsage {
 			'wpu_active'            => $active,
 			'wpu_monthly_page_hits' => $monthlyPageHits,
 			'wpu_monthly_bandwidth' => $monthlyBandwidth,
+			'wpu_updated'           => $updated,
 		));
 
 		// Setting id from auto incremented id in DB
@@ -419,7 +549,7 @@ class WpUsage {
 			return null;
 		}		
 				
-		return new self( $id, $subscriptionId, $wikiplaceId, $startDate, $endDate, $active, $monthlyPageHits, $monthlyBandwidth );
+		return new self( $id, $subscriptionId, $wikiplaceId, $startDate, $endDate, $active, $monthlyPageHits, $monthlyBandwidth, $updated );
 		
 	}
 	

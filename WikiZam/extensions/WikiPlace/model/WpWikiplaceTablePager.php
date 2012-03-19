@@ -11,7 +11,7 @@ class WpWikiplaceTablePager extends SkinzamTablePager {
 	
 	
     # Fields for default behavior
-    protected $selectTables = array ( 'wp_wikiplace', 'wp_page');
+    protected $selectTables = array ( 'wp_wikiplace', 'wp_page', 'wpu_usage');
 	
 	protected $selectJoinConditions = array( 
 		'wp_page' => array('INNER JOIN','wpw_id = wppa_wpw_id') );

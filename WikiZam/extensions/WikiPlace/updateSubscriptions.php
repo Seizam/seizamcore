@@ -22,18 +22,26 @@ class UpdateSubscriptions extends Maintenance {
 
 		$update_db = !($this->hasOption( 'reportonly' ));
 		
-		$this->output( "[START]\n" );
+		$this->output( "For the moment, it just displays all subscriptions.\n" );
+		
+		$this->output( "[".WpPlan::getNow()." START]\n" );
 		
 		$subs = WpSubscription::getAll('I know what i am doing');
 
+		$this->output( "ID / NAME / BUYER USER ID / ACTIVE / TMR STATUS / START DATE / END DATE\n" );
+		
 		foreach ($subs as $sub) {
 			$this->output( 
-					$sub->get('wps_id') . "/" .
-					$sub->get('plan')->get('wpp_name') . "/" .
-					$sub->get('wps_buyer_user_id') . "\n" );
+					$sub->get('wps_id') . " / " .
+					$sub->get('plan')->get('wpp_name') . " / " .
+					$sub->get('wps_buyer_user_id') . " / " .
+					$sub->get('wps_active') . " / " .
+					$sub->get('wps_tmr_status') . " / " .
+					$sub->get('wps_start_date') . " / " .
+					$sub->get('wps_end_date') . "\n" );
 		}
 		
-		$this->output( "[END]\n" );
+		$this->output( "[".WpPlan::getNow()." END]\n" );
 	}
 }
 

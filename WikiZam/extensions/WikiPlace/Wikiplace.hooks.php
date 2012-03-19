@@ -53,30 +53,38 @@ class WikiplaceHooks {
 			if ($title->isKnown()) {
 				// we are updating an existing wikiplace page
 				wfDebugLog( 'wikiplace', 'onArticleSave: updating the WikiPlace page ['.$i.'}"'.$t.'"');
+				return true; // "OK, you can edit"
 
 
 			} else {
 				// we are creating a new page
 				wfDebugLog( 'wikiplace', 'onArticleSave: creating a new WikiPlace page ['.$i.']"'.$t.'"');
-
-				if ( ! WpPage::canThisWikiplacePageBeingCreated($title)) {
-					wfDebugLog( 'wikiplace', 'onArticleSave: creation FORBIDDEN for ['.$i.']"'.$t.'"');
-					// forbidden
-					throw new ErrorPageError( 'cannot_create_wp_page_title', 'cannot_create_wp_page_title_text' );
-//					throw new MWException('Cannot create a WikiPlace page this way.');
-					
-/*					// output as conflict:
-					$status->fatal( 'wp-page-creation-restricted' );
-					return false;
-*/				}
-
+				
+				switch (WpPage::canThisWikiplacePageBeCreated($title)) {
+					case 0:
+						return true; // "OK, you can create"
+						break;
+					case 1:
+						throw new ErrorPageError( 'cannot_create_wp_page_title', 'cannot_identify_container_wikiplace' );
+					case 2:
+						throw new ErrorPageError( 'cannot_create_wp_page_title', 'it_is_not_your_wikiplace' );
+					case 3:
+						throw new ErrorPageError( 'cannot_create_wp_page_title', 'you_need_an_active_subscription' );
+					case 4:
+						throw new ErrorPageError( 'cannot_create_wp_page_title', 'subscription_max_nb_pages_reached' );
+					default:
+						throw new ErrorPageError( 'cannot_create_wp_page_title', 'unknown_error' );
+				}
+				
 			}
 			
 		} else {
+			
+			// we are not concerned
 			wfDebugLog( 'wikiplace', 'onArticleSave: saving a page that does not belong to a wikiplace: ['.$i.']"'.$t.'"');
-		}
+			return true; // "OK, you can create"
 
-		return true; // "OK, you can create"
+		}
 		
 	}
 	
@@ -93,6 +101,7 @@ class WikiplaceHooks {
 	 * @param type $revision The newly inserted revision object (as of 1.11.0)
 	 */
 	public static function onCreateArticle( $wikipage, $user, $text, $summary, $isMinor, $isWatch, $section, $flags, $revision ) {
+		
 		$id = $wikipage->getId();
 		$title = $wikipage->getTitle();
 		$namespace = $title->getNamespace();
@@ -102,24 +111,25 @@ class WikiplaceHooks {
 		// now, the page is already stored in db, so if there is a problem, it's too late
 		
 		if ( WpPage::isItAWikiplacePage($title) ) {
-			
-			if ( WpPage::canThisWikiplacePageBeingCreated($title) ) {
-				
-				// ok, this is all good, we resume creation
-				$new_wp_page = WpPage::continueCreation($title);
-				if ($new_wp_page === null) {
-					// but something goes wrong
-					wfDebugLog( 'wikiplace', 'onCreateArticle: ERROR, the page cannot be associated to its wikiplace: ['.$i.']"'.$t.'"');
-					throw new MWException('Error while associating the page to a wikiplace.');
-				}
-				wfDebugLog( 'wikiplace', 'onCreateArticle: OK, the page is now associated to its wikiplace: ['.$i.']"'.$t.'"');
-				
-			} else {
-				// :s we stored a page we shouldn't
-				wfDebugLog( 'wikiplace', 'onCreateArticle: ERROR, we stored a page we should not: ['.$i.']"'.$t.'"');
-				throw new MWException('The page would not have being created.');
+							
+			$wp = WpWikiplace::identifyContainerWikiPlaceOfThisNewTitle($title);
+			if ($wp === null) {
+				wfDebugLog( 'wikiplace', 'onCreateArticle: ERROR, cannot identify the container wikiplace for title ['.$i.']"'.$t.'"');
+				throw new MWException('cannot identify the container wikiplace');
 			}
+			
+			$new_wp_page = WpPage::associateAPageToAWikiplace($title, $wp);
+			
+			if ($new_wp_page === null) {
+				// something goes wrong
+				wfDebugLog( 'wikiplace', 'onCreateArticle: ERROR, the page cannot be associated to its wikiplace: ['.$i.']"'.$t.'"');
+				throw new MWException('Error while associating the page to a wikiplace.');
+			}
+			
+			wfDebugLog( 'wikiplace', 'onCreateArticle: OK, the page is now associated to its wikiplace: ['.$i.']"'.$t.'"');
+				
 		} else {
+			
 			wfDebugLog( 'wikiplace', 'onCreateArticle: creating a page that does not belong to a wikiplace: ['.$i.']"'.$t.'"');
 		}
 		

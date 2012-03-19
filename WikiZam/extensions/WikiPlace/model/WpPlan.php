@@ -187,11 +187,35 @@ class WpPlan {
 		
 	}
 	
-	
+
+
+
 	/**
 	 *
-	 * @param type $startDate 
+	 * @param int $seconds + or - seconds shift
+	 * @param int $minutes + or - minutes shift
+	 * @param int $hours + or - hours shift
+	 * @return string MySQL DATETIME string
 	 */
+	public static function getNow($seconds = 0, $minutes = 0, $hours = 0) {
+		
+		if ( ($seconds === 0) && ($minutes === 0) && ($hours === 0) ) {
+			return wfTimestamp(TS_DB);
+		}
+		
+		if ( !is_int($seconds) || !is_int($minutes) || !is_int($hours) ) {
+			throw new MWException("Cannot compute 'now with delay', invalid argument.");
+		}
+
+		/** @todo improve this */
+		$start = date_create_from_format( 'Y-m-d H:i:s', wfTimestamp(TS_DB), new DateTimeZone( 'GMT' ) );
+
+		$start->modify( "$seconds second $minutes minute $hours hour" );
+
+		return $start->format( 'Y-m-d H:i:s' );
+	}
+	
+	
 	public static function calculateTick($startDate, $nb_of_month) {
 
 		$start = date_create_from_format( 'Y-m-d H:i:s', $startDate, new DateTimeZone( 'GMT' ) );
@@ -201,9 +225,6 @@ class WpPlan {
 		$start->modify( "+$nb_of_month month -1 second" );
 		return $start->format( 'Y-m-d H:i:s' );
 		
-	}
+	}	
 	
-	public static function getNow() {
-		return wfTimestamp(TS_DB);
-	}
 }

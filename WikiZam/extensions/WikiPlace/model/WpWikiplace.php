@@ -2,9 +2,9 @@
 
 class WpWikiplace {  
 
-	private		$wpw_id,			// int(10) unsigned
-				$wpw_owner_user_id,	// int(10) unsigned
-				$wpw_name ;			// varbinary(255)
+	private		$wpw_id,            // int(10) unsigned
+				$wpw_owner_user_id, // int(10) unsigned
+				$wpw_hpome_wppa_id; // int(10) unsigned
 	
 	/**
 	 *
@@ -60,11 +60,11 @@ class WpWikiplace {
 
 	
 	
-	private function __construct( $id, $ownerUserId, $name ) {
+	private function __construct( $id, $ownerUserId, $homePageId ) {
 
-		$this->wpw_id				= $id;
-		$this->wpw_owner_user_id	= $ownerUserId;
-		$this->wpw_name				= $name;
+		$this->wpw_id            = $id;
+		$this->wpw_owner_user_id = $ownerUserId;
+		$this->wpw_home_wppa_id  = $name;
 
 	}
 	
@@ -77,12 +77,17 @@ class WpWikiplace {
 		switch ($attribut_name) {
 			case 'wpw_id':
 			case 'wpw_owner_user_id':
+			case 'wpw_home_wppa_id':
 				return intval($this->$attribut_name);
 				break;
-			case 'wpw_name':
+			case 'name':
 				return $this->$attribut_name;
 		}
 		throw new MWException('Unknown attribut '.$attribut_name);
+	}
+	
+	public function fetchName() {
+		//todo
 	}
 	
 	/**
@@ -96,11 +101,11 @@ class WpWikiplace {
 			throw new MWException( 'Cannot construct the WikiPlace from the supplied row (null given)' );
 		}
 		
-		if ( !isset($row->wpw_id) || !isset($row->wpw_owner_user_id) || !isset($row->wpw_name) ) {
+		if ( !isset($row->wpw_id) || !isset($row->wpw_owner_user_id) || !isset($row->wpw_home_wppa_id) ) {
 			throw new MWException( 'Cannot construct the WikiPlace from the supplied row (missing field)' );
 		}
 			
-		return new self ( intval($row->wpw_id) , intval($row->wpw_owner_user_id) ,  strval($row->wpw_name) );
+		return new self ( intval($row->wpw_id) , intval($row->wpw_owner_user_id) ,  intval($row->wpw_home_wppa_id) );
 		
 	}
 	
@@ -116,6 +121,7 @@ class WpWikiplace {
 		}
 		
 		$dbr = wfGetDB(DB_SLAVE);
+		//todo
 		$result = $dbr->selectRow( 'wp_wikiplace', '*',	array( 'wpw_id' =>  $id ), __METHOD__ );
 		
 		if ( $result === false ) {
@@ -128,7 +134,7 @@ class WpWikiplace {
 	}
 	
 	/**
-	 *
+	 * Return the wikiplace of this name, or null if not exist
 	 * @param String $name
 	 * @return WpWikiplace 
 	 */
@@ -139,6 +145,7 @@ class WpWikiplace {
 		}
 		
 		$dbr = wfGetDB(DB_SLAVE);
+		//todo
 		$result = $dbr->selectRow( 'wp_wikiplace', '*',	array( 'wpw_name' =>  $name ), __METHOD__ );
 		
 		if ( $result === false ) {
@@ -164,6 +171,7 @@ class WpWikiplace {
 		}	
 		
 		$dbr = wfGetDB(DB_SLAVE);
+		//todo
 		$results = $dbr->select( 'wp_wikiplace', '*',	array( 'wpw_owner_user_id' =>  $user_id ), __METHOD__ );
 		
 		$wikiplaces = array();
@@ -178,21 +186,60 @@ class WpWikiplace {
 
 	}
 	
+	
+	/**
+	 * Get the container wikiplace of the Title, null if the title is not in a wikiplace
+	 * @param Title $title
+	 * @return WpWikiplace Object or null if no one found 
+	 */
+	public static function identifyContainerWikiPlaceOfThisNewTitle($title) {
+		
+		if ($title->getNamespace() != NS_MAIN) {
+			return null; // not in main = not in wikiplace
+		}
+
+		$pages = explode( '/', $title->getPrefixedDBkey() );
+		
+		if (!isset($pages[0])) {
+			//this case shoul never occurs.. but just in case
+			return null;
+		}
+		var_export($pages[0]);
+		return self::getByName($pages[0]);
+		
+	}
+	
+	
 	/**
 	 *
-	 * @param int $ownerUserId
-	 * @param string $name
-	 * @return WpWikiplace the newly created wikiplace or null if an error occured 
+	 * @param string $name The new WikiPlace name
+	 * @param WpSubscription $subscription The active subscription
+	 * @return WpWikiplace/int the newly created wikiplace or int if an error occured 
+	 * 1 = subscription not active
+	 * 2 = errorwhile saving the wikiplace to the db
 	 */
-	public static function create($ownerUserId, $name) {
+	public static function create($name, $subscription) {
 		
-		if ( ($ownerUserId === null) || ($name === null) ) {
+		if ( ($name === null) || ($subscription === null) ) {
 			throw new MWException( 'Cannot create WikiPlace (missing argument)' );
 		}
 		
-		if ( !is_int($ownerUserId) || !is_string($name) ) {
+		if ( !is_string($name) || !($subscription instanceof WpSubscription)) {
 			throw new MWException( 'Cannot create WikiPlace (invalid argument)' );
 		}
+		
+		if (!$subscription->get('wps_active')) {
+			return 1;
+		}
+		
+		$ownerUserId = $subscription->get('wps_buyer_user_id');
+		
+		$homepage = WpPage::createWikiPlaceHomePage($name);
+		if ( ($homepage === null) || !($homepage instanceof Title) ) {
+			throw new MWException('Cannot create the homepage');
+		}
+		$homepageId = $homepage->getArticleID();
+		$homepageName = $homepage->getDBkey();
 		
 		$dbw = wfGetDB(DB_MASTER);
 		
@@ -202,9 +249,9 @@ class WpWikiplace {
         $id = $dbw->nextSequenceValue('wpw_id');
 		
         $success = $dbw->insert('wp_wikiplace', array(
-			'wpw_id'			=> $id,
-			'wpw_owner_user_id'	=> $ownerUserId,
-			'wpw_name'			=> $name,
+			'wpw_id'            => $id,
+			'wpw_owner_user_id' => $ownerUserId,
+			'wpw_home_wppa_id'  => $homepageId,
 		));
 
 		// Setting id from auto incremented id in DB
@@ -213,12 +260,10 @@ class WpWikiplace {
 		$dbw->commit();
 		
 		if ( !$success ) {	
-			return null;
+			return 2;
 		}
 		
 		$wp = new self( $id, $ownerUserId, $name );
-		
-		WpPage::createPage($wp);
 				
 		return $wp;
 			
