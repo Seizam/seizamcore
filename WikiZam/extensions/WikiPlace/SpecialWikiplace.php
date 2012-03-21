@@ -5,7 +5,8 @@ class SpecialWikiplace extends SpecialPage {
 	const ACTION_CREATE_WIKIPLACE      = 'create_wikiplace';
 	const ACTION_CREATE_WIKIPLACE_PAGE = 'create_page';
 	const ACTION_LIST_WIKIPLACES       = 'list_wikiplaces';
-	const ACTION_SUBSCRIBE_PLAN        = 'subscribe';
+	const ACTION_CONSULT_WP            = 'consult';
+	
 	
 	private $newlyCreatedWikiplace;
 	private $futurNewPage;
@@ -129,6 +130,18 @@ class SpecialWikiplace extends SpecialPage {
                 break;
  
 				
+			case self::ACTION_CONSULT_WP :
+				
+				$name = $this->getRequest()->getText('wikiplace', '');
+				
+				if ( strlen($name) > 1 ) {
+					$out->setPageTitle( wfMessage( 'wp-cwp-pagetitle' )->text() );
+					$tp = new WpPageTablePager($name, $user->getID());
+					$out->addHTML( $tp->getWholeHtml() );
+					break;
+				} // if not, will display the default just below
+				
+				
 			case self::ACTION_LIST_WIKIPLACES :
             default : // (default  =  action == nothing or "something we cannot handle")
 				
@@ -175,8 +188,7 @@ class SpecialWikiplace extends SpecialPage {
 			return '';
 		}
 		
-		$table = new WpWikiplaceTablePager();
-		$table->addCondition( array('wpw_owner_user_id' => $user_id) );
+		$table = new WpWikiplaceTablePager( array('wpw_owner_user_id' => $user_id) );
 		return $table->getWholeHtml();
 		
 		$display = '';

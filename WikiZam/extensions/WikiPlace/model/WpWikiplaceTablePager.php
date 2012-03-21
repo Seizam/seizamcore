@@ -32,13 +32,19 @@ class WpWikiplaceTablePager extends SkinzamTablePager {
 	
 	protected $selectConds = array ( 'wpu_active' => 1 );
 	
-	public function addCondition( $cond = array() ) {
-		if ( !is_array($cond) ) {
-			throw new MWException('Cannot add condition, invalid argument');
-		}
-		$this->selectConds = array_merge( $this->selectConds , $cond );
-	}
 	
+	/**
+	 * Contruct a list of wikiplace
+	 * @param type $wikiplace_name
+	 */
+	public function __construct( $conditions = array() ) {
+		parent::__construct();
+		if ( !is_array($conditions) ) {
+			throw new MWException('Cannot construct the TablePager with this conditions, invalid argument');
+		}
+		$this->selectConds = array_merge( $this->selectConds , $conditions );
+	}
+
 
     /**
      * Format a table cell. The return value should be HTML, but use an empty
@@ -55,7 +61,11 @@ class WpWikiplaceTablePager extends SkinzamTablePager {
         switch ($name) {
 			
 			case 'page_title':
-				return Title::makeTitle(WP_PAGE_NAMESPACE, $value)->getPrefixedText();
+				return Linker::linkKnown( 
+						SpecialPage::getTitleFor('Wikiplace', SpecialWikiplace::ACTION_CONSULT_WP), // where to go
+						Title::makeTitle(WP_PAGE_NAMESPACE, $value)->getPrefixedText(), // the link text
+						array(),
+						array( 'wikiplace' => $value) ); // an argument
 			case 'count(*)':
 			case 'wpu_monthly_page_hits':
 			case 'wpu_monthly_bandwidth':
