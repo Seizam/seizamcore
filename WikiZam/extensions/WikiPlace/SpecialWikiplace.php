@@ -170,7 +170,9 @@ class SpecialWikiplace extends SpecialPage {
 		return Html::rawElement( 'span', array(), wfMessage( 'parentheses', $language->pipeList(array(
 			Linker::linkKnown( $this->getTitle( self::ACTION_LIST_WIKIPLACES ), wfMessage( 'wp-tl-lwp' )->text() ),
 			Linker::linkKnown( $this->getTitle( self::ACTION_CREATE_WIKIPLACE ), wfMessage( 'wp-tl-cwp' )->text() ),
-			Linker::linkKnown( $this->getTitle( self::ACTION_CREATE_WIKIPLACE_PAGE ), wfMessage( 'wp-tl-csp' )->text() ) ) ) )->text() );
+			Linker::linkKnown( $this->getTitle( self::ACTION_CREATE_WIKIPLACE_PAGE ), wfMessage( 'wp-tl-csp' )->text() ),
+			Linker::linkKnown( SpecialPage::getTitleFor( 'WikiPlacePlan' ), 'WikiPlacePlan' ),
+			) ) )->text() );
 		
 	}
 	

@@ -281,13 +281,8 @@ class WpPage {
 			return 2;		
 		}
 		
-//		$text;
-//		if ($new_page_name === null) {
-			$text = 'Welcome to Seizam! This is the home page of your wikiPlace.';
-/*		} else {
-			$text = 'This is the default text of a new WikiPlace page.';
-		}
-*/		
+		$text = 'Welcome to Seizam! This is the home page of your wikiPlace.';
+
 		// now store the new page in mediawiki, this will trigger the WikiplaceHook, wich will 
 		// allow the page saving
 		$article = new Article($title);

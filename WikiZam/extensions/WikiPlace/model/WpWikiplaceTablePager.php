@@ -68,10 +68,11 @@ class WpWikiplaceTablePager extends SkinzamTablePager {
 						array( 'wikiplace' => $value) ); // an argument
 			case 'count(*)':
 			case 'wpu_monthly_page_hits':
-			case 'wpu_monthly_bandwidth':
+			case 'wpu_monthly_bandwidth':			
+				return $value;	
 			case 'wpu_updated':
 			case 'wpu_end_date':
-				return $value;
+				return ($value === null) ? '-' : $wgLang->timeanddate($value, true);
             default:
                 throw new MWException( 'Unknown data name "'.$name.'"');
         }
