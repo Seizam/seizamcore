@@ -346,6 +346,26 @@ class WpPage {
 		return count(explode( '/', $title->getPrefixedDBkey() )) == 1;
 	}
 	
+	
+	/**
+	 * Remove the WikiPlace name from the page name, and return the subpage name with a leading slash
+	 * ex: getSubPageNameOnly('WikiPlace1/a_sub_page') returns '/a_sub_page'
+	 * ex: getSubPageNameOnly('WikiPlace1') returns '/'
+	 * @param string $page_name 
+	 * @return string the sub page name
+	 */
+	public static function getSubPageNamePartOnly($full_page_name) {
+		if ( ($full_page_name === null) || !is_string($full_page_name) ) {
+			throw new MWException( 'cannot get subpage name part of full page name, invalid argument' );
+		}
+		$tmp = explode( '/', $full_page_name );
+		$len = strlen($tmp[0]);
+		if ($len == strlen($full_page_name)) {
+			return '/';
+		}
+		return substr($full_page_name, $len);
+	}
+	
 		/**
 	 * 
 	 * @param Title $title

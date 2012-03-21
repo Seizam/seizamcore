@@ -135,7 +135,7 @@ class SpecialWikiplace extends SpecialPage {
 				$name = $this->getRequest()->getText('wikiplace', '');
 				
 				if ( strlen($name) > 1 ) {
-					$out->setPageTitle( wfMessage( 'wp-cwp-pagetitle' )->text() );
+					$out->setPageTitle( wfMessage( 'wp-consultwp-pagetitle' , $name )->parse() );
 					$tp = new WpPageTablePager($name, $user->getID());
 					$out->addHTML( $tp->getWholeHtml() );
 					break;
@@ -146,8 +146,8 @@ class SpecialWikiplace extends SpecialPage {
             default : // (default  =  action == nothing or "something we cannot handle")
 				
 				$out->setPageTitle( wfMessage( 'wp-lwp-pagetitle' )->text() );
-				
-				$out->addHTML( $this->getWikiplacesOwnedListing($user->getID()) );
+				$tp = new WpWikiplaceTablePager( array('wpw_owner_user_id' => $user->getId()) );
+				$out->addHTML( $tp->getWholeHtml() );
 				
                 break;
 			
@@ -181,15 +181,12 @@ class SpecialWikiplace extends SpecialPage {
 	 * @param Mixed $user The user (User object) or his id (int value)
 	 * @return string An ul / li HTML list
 	 */
-	private function getWikiplacesOwnedListing($user_id) {
+/*	private function getWikiplacesOwnedListing($user_id) {
 		
 		if ( ($user_id == null) || !is_int($user_id) || ($user_id < 1) ) {
 			// throw new MWException('cannot prepare wikiplace listing, wrong user identifier');
 			return '';
 		}
-		
-		$table = new WpWikiplaceTablePager( array('wpw_owner_user_id' => $user_id) );
-		return $table->getWholeHtml();
 		
 		$display = '';
 		
@@ -202,7 +199,7 @@ class SpecialWikiplace extends SpecialPage {
         return Html::rawElement('ul', array(), $display);
 
 	}
-	
+*/	
 
 	/**
 	 *

@@ -95,6 +95,10 @@ $messages['en'] = array(
 	'wpwtp-wpu_updated' => 'Date of value',
 	'wpwtp-wpu_end_date' => 'Reset date',
 	
+	'wp-consultwp-pagetitle' => 'WikiPlace $1',
+	
+	'wppatp-page_title' => 'Page name',
+	
 );
 
 /*  Message documentation
