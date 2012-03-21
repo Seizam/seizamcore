@@ -505,5 +505,33 @@ class WpPage {
 			
 	}
 	
+	/**
+	 * Find the user identifier of the wikiplace page owner
+	 * @param Title $title
+	 * @return boolean/int int the user id, or false if the page is not a wikiplace page
+	 */
+	public static function findWikiplacePageOwnerUserId($title) {
+		
+		if ( ($title == null) || !($title instanceof Title)) {
+			throw new MWException('Cannot find the owner, invalid argument.');
+		}
+		
+		$dbr = wfGetDB(DB_SLAVE);
+		$result = $dbr->selectField( 
+				array( 'wp_page', 'wp_wikiplace' ),
+				'wpw_owner_user_id',
+				array ( 
+					'wppa_page_id' => $title->getArticleID(),
+					'wppa_wpw_id = wpw_id' ),
+				__METHOD__ );
+	
+		if ( $result === false ) {
+			// not found, so return null
+			return false;
+		}
+		
+		return intval($result);
+		
+	}
 	
 }
