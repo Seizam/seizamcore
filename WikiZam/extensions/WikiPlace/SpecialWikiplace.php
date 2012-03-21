@@ -86,7 +86,7 @@ class SpecialWikiplace extends SpecialPage {
 
 					if( $form->show() ){ // true = submitted and correctly processed, false = not submited or error
 
-						$out->addHTML(wfMessage('wp-cwp-success-link-wt', wfEscapeWikiText( $this->newlyCreatedWikiplace->get('wpw_name') ) )->parse());	
+						$out->addHTML(wfMessage('wp-cwp-success-link-wt', wfEscapeWikiText( $this->futurNewPage->getText() ) )->parse());	
 
 					}
 
@@ -168,26 +168,23 @@ class SpecialWikiplace extends SpecialPage {
 	 * @param Mixed $user The user (User object) or his id (int value)
 	 * @return string An ul / li HTML list
 	 */
-	private function getWikiplacesOwnedListing($user) {
+	private function getWikiplacesOwnedListing($user_id) {
 		
-		$userid = null;
+		if ( ($user_id == null) || !is_int($user_id) || ($user_id < 1) ) {
+			// throw new MWException('cannot prepare wikiplace listing, wrong user identifier');
+			return '';
+		}
+		
+		$table = new WpWikiplaceTablePager();
+		$table->addCondition( array('wpw_owner_user_id' => $user_id) );
+		return $table->getWholeHtml();
+		
 		$display = '';
-		
-		if ($user != null) {
-			if ( is_object($user) && ($user instanceof User) ) {
-				$userid = $user->getId();
-			} elseif ( is_int($user) ) {
-				$userid = $user;
-			}
-		}
-		
-		if ( ($userid == null) || ($user<1) ) { // no anons
-			return $display;
-		}
 		
 		$wikiplaces = WpWikiplace::getAllOwnedByUserId($userid);
 		foreach ($wikiplaces as $wikiplace) {
-			$display .= Html::rawElement( 'li', array(), $wikiplace->get('wpw_name'));
+			//Linker::linkKnown(Title::makeTitle($ns, $title));
+			$display .= Html::rawElement( 'li', array(), $wikiplace->get('name'));
         }
 
         return Html::rawElement('ul', array(), $display);
@@ -222,7 +219,7 @@ class SpecialWikiplace extends SpecialPage {
 		
 		$wikiplaces = WpWikiplace::getAllOwnedByUserId($this->getUser()->getId());
 		foreach ($wikiplaces as $wikiplace) {
-			$formDescriptor['WikiplaceId']['options'][$wikiplace->get('wpw_name')] = $wikiplace->get('wpw_id');
+			$formDescriptor['WikiplaceId']['options'][$wikiplace->get('name')] = $wikiplace->get('wpw_id');
 		}
 		
 		$htmlForm = new HTMLForm( $formDescriptor );
@@ -322,21 +319,19 @@ class SpecialWikiplace extends SpecialPage {
 		
 		$name = $formData['WikiplaceName'];
 		$user_id = $this->getUser()->getId();
-		$subscription = WpSubscription::getActiveByUserId($user_id);
-
-		if ($subscription === null) {
-			// no active subscription
-			return wfMessage('wp-cwp-err-nosub')->text(); // invalid form, so maybe a bug, maybe a hack
+		
+		if ( ! WpWikiplace::doesTheUserCanCreateANewWikiplace($user_id) ) {
+			return wfMessage('wp-cwp-err-cannot-create')->text(); // no active subscription or quotas exceeded ?
 		}
 		
-		$new_wp = WpWikiplace::create($name, $subscription);
+		$new_wp = WpWikiplace::initiateCreation($name);
 		
-		if ( !is_object($new_wp) || !($new_wp instanceof WpWikiplace) ) {
+		if ( ($new_wp === null) || !($new_wp instanceof Title) ) {
 			return wfMessage( 'wp-err-unknown')->text(); // error while creating
 		}
 			
-		$this->newlyCreatedWikiplace = $new_wp;
-		
+		$this->futurNewPage = $new_wp; 		
+
 		return true; // all ok :)
 					
 	}

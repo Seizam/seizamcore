@@ -2,14 +2,14 @@
 
 class SpecialWikiplacePlan extends SpecialPage {
 
-	const ACTION_SUBSCRIBE				= 'subscribe';
-	const ACTION_LIST_SUBSCRIPTIONS		= 'my_subscriptions';
-	const ACTION_CHANGE					= 'change';
-	const ACTION_RENEW					= 'renew';
-	const ACTION_LIST_OFFERS			= 'list_offers';
+	const ACTION_SUBSCRIBE          = 'subscribe';
+	const ACTION_LIST_SUBSCRIPTIONS = 'my_subscriptions';
+	const ACTION_CHANGE             = 'change';
+	const ACTION_RENEW              = 'renew';
+	const ACTION_LIST_OFFERS        = 'list_offers';
 	
-	const ACTION_TEST_GIVE_CREDIT		= 'test_give_10eur';
-	const ACTION_TEST_DROP_SUB_TMR		= 'test_drop_all_sub_tmr';
+	const ACTION_TEST_GIVE_CREDIT   = 'test_give_10eur';
+	const ACTION_TEST_DROP_ALL      = 'test_drop_all';
 
 	
 	/**
@@ -100,11 +100,14 @@ class SpecialWikiplacePlan extends SpecialPage {
 				break;
 			
 			/** @todo TODO: remove this test action !!!! */
-			case self::ACTION_TEST_DROP_SUB_TMR:
+			case self::ACTION_TEST_DROP_ALL:
 				$dbw = wfGetDB(DB_MASTER);
 				$dbw->query("TRUNCATE tm_record");
 				$dbw->query("TRUNCATE wp_subscription");
-				$out->addHTML('All Subscriptions and all TransactionManagerRecords have been deleted!');
+				$dbw->query("TRUNCATE wp_usage");
+				$dbw->query("TRUNCATE wp_page");
+				$dbw->query("TRUNCATE wp_wikiplace");
+				$out->addHTML('All Wikiplaces, pages, usages, subscriptions and all TMR have been deleted!');
 				break;
 								
 			case self::ACTION_SUBSCRIBE :
@@ -195,7 +198,7 @@ class SpecialWikiplacePlan extends SpecialPage {
 			
 				$this->generateLink("/Special:TransactionManager", "TransactionManager"),
 				$this->generateLink("/Special:WikiPlacePlan/test_give_10eur", "give me 10 EUR"),
-				$this->generateLink("/Special:WikiPlacePlan/test_drop_all_sub_tmr", "clear all subs and all tmrs"),
+				$this->generateLink("/Special:WikiPlacePlan/test_drop_all", "clear wp and tmr"),
 			
 		) ) )->text() );
 		

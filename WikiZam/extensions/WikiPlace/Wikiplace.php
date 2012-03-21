@@ -19,6 +19,8 @@ $wgExtensionCredits['other'][] = array(
    'version'  => 'alpha',
    );
 
+define("WP_PAGE_NAMESPACE", NS_MAIN);
+
 $_dir = dirname( __FILE__ ).'/';
 
 # Load extension's classes
@@ -27,10 +29,15 @@ $wgAutoloadClasses['SpecialWikiplace']          = $_dir . 'SpecialWikiplace.php'
 $wgAutoloadClasses['SpecialWikiplacePlan']      = $_dir . 'SpecialWikiplacePlan.php';
 
 $wgAutoloadClasses['WpWikiplace']               = $_dir . 'model/WpWikiplace.php';
+$wgAutoloadClasses['WpWikiplaceTablePager']     = $_dir . 'model/WpWikiplaceTablePager.php';
+
 $wgAutoloadClasses['WpPage']                    = $_dir . 'model/WpPage.php';
+
 $wgAutoloadClasses['WpPlan']                    = $_dir . 'model/WpPlan.php';
+
 $wgAutoloadClasses['WpSubscription']            = $_dir . 'model/WpSubscription.php';
 $wgAutoloadClasses['WpSubscriptionsTablePager'] = $_dir . 'model/WpSubscriptionsTablePager.php';
+
 $wgAutoloadClasses['WpUsage']                   = $_dir . 'model/WpUsage.php';
 
 

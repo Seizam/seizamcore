@@ -216,9 +216,9 @@ class WpSubscription {
 	}
 	
 	/**
-	 *
+	 * Get the current active subscription of a user
 	 * @param int $user_id
-	 * @return WpSubscription or null 
+	 * @return WpSubscription The user active subscription or null if there is no active one 
 	 */
 	public static function getActiveByUserId($user_id) {
 			

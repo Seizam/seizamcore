@@ -59,7 +59,7 @@ class WpUsage {
 			case 'wpu_monthly_bandwidth':
 			case 'wpu_updated':
 				// update if necessary
-				if ( $this->wpu_updated > WpPlan::getNow(0,0,1) ) {
+				if ( $this->wpu_updated < WpPlan::getNow(0,-5,0) ) { // 5 min
 					$this->updateCounters();
 				}
 				return $this->$attribut_name;
@@ -139,7 +139,7 @@ class WpUsage {
 		$dbw->begin();
 		
 		$now = $dbw->addQuotes(WpPlan::getNow());
-		$one_hour_ago = $dbw->addQuotes(WpPlan::getNow(0,0,-1));
+		$one_hour_ago = $dbw->addQuotes(WpPlan::getNow(0,0,-1)); // 1 hour
 		
 		$sql = "
 CREATE TEMPORARY TABLE wp_tmp_page_hits (

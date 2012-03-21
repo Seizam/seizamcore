@@ -11,19 +11,33 @@ class WpWikiplaceTablePager extends SkinzamTablePager {
 	
 	
     # Fields for default behavior
-    protected $selectTables = array ( 'wp_wikiplace', 'wp_page', 'wpu_usage');
+    protected $selectTables = array ( 'wp_wikiplace', 'wp_page', 'page' , 'wp_usage' );
 	
 	protected $selectJoinConditions = array( 
-		'wp_page' => array('INNER JOIN','wpw_id = wppa_wpw_id') );
-//		'page' => array('INNER JOIN','wppa_page_id = page_id') );
+		'wp_page' => array('INNER JOIN','wpw_id = wppa_wpw_id'),
+		'page' => array('INNER JOIN','wpw_home_page_id = page_id'),
+		'wp_usage' => array('INNER JOIN','wpu_wpw_id = wppa_wpw_id') );
     protected $selectFields = array(
-		'wpw_name',
-		'count(wppa_id) as nb_pages',	
-		);
-    protected $defaultSort = 'wpw_name';
+		'page_title' ,
+		'count(*)',
+		'wpu_monthly_page_hits',
+		'wpu_monthly_bandwidth',
+		'wpu_updated',
+		'wpu_end_date' );
+	protected $selectOptions = array( 'GROUP BY' => 'wpw_id');
+    protected $defaultSort = 'page_title';
     public $mDefaultDirection = true; // true = DESC
     protected $tableClasses = array('WpWikiplace'); # Array
     protected $messagesPrefix = 'wpwtp';
+	
+	protected $selectConds = array ( 'wpu_active' => 1 );
+	
+	public function addCondition( $cond = array() ) {
+		if ( !is_array($cond) ) {
+			throw new MWException('Cannot add condition, invalid argument');
+		}
+		$this->selectConds = array_merge( $this->selectConds , $cond );
+	}
 	
 
     /**
@@ -40,33 +54,18 @@ class WpWikiplaceTablePager extends SkinzamTablePager {
         global $wgLang;
         switch ($name) {
 			
-			case 'wpw_name':
-			case 'nb_page':
+			case 'page_title':
+				return Title::makeTitle(WP_PAGE_NAMESPACE, $value)->getPrefixedText();
+			case 'count(*)':
+			case 'wpu_monthly_page_hits':
+			case 'wpu_monthly_bandwidth':
+			case 'wpu_updated':
+			case 'wpu_end_date':
 				return $value;
-				break;
             default:
                 throw new MWException( 'Unknown data name "'.$name.'"');
         }
     }
-
 	
-    /**
-     * Add "active" class for actives rows, and "warning" for not "OK or PE" tmr
-     *
-     * @param $row Object: the database result row
-     * @return String
-     */
-    function getRowAttrs($row) {
-        $attrs = parent::getRowAttrs($row);
-        $classes = explode(' ', $attrs['class']);
-
-        if ($row->wps_active != '0')
-            $classes[] = 'active';
-		
-		if ( ($row->wps_tmr_status != 'OK') && ($row->wps_tmr_status != 'PE') )
-            $classes[] = 'warning';
-		
-        return array('class' => implode(' ', $classes));
-    }
 
 }

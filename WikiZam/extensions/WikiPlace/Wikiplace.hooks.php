@@ -31,6 +31,8 @@ class WikiplaceHooks {
 	/**
 	 * Called when creating a new page or editing an existing page
 	 * This hook but say "OK, you can create" or "no, you can't, I abort the creation"
+	 * but MediaWiki interpret this "NO" has there is a conflict while editing the page
+	 * @todo:fix this
 	 * @param Article $article the article (Article object) being saved
 	 * @param type $user the user (User object) saving the article
 	 * @param type $text the new article text
@@ -47,33 +49,55 @@ class WikiplaceHooks {
 		$t = $title->getFullText();
 		$i = $title->getArticleID();
 		
-		if ( WpPage::isItAWikiplacePage($title) ) {
+		if ( WpPage::isThisPageInTheWikiplaceDomain($title) ) {
 			// this page belongs to our extension, so we have some checks to do
 	
 			if ($title->isKnown()) {
 				// we are updating an existing wikiplace page
-				wfDebugLog( 'wikiplace', 'onArticleSave: updating the WikiPlace page ['.$i.'}"'.$t.'"');
+				// nothing special to check
+				wfDebugLog( 'wikiplace', 'onArticleSave: ALLOW updating the WikiPlace page ['.$i.']"'.$t.'"');
 				return true; // "OK, you can edit"
 
 
 			} else {
 				// we are creating a new page
-				wfDebugLog( 'wikiplace', 'onArticleSave: creating a new WikiPlace page ['.$i.']"'.$t.'"');
 				
-				switch (WpPage::canThisWikiplacePageBeCreated($title)) {
-					case 0:
-						return true; // "OK, you can create"
-						break;
-					case 1:
-						throw new ErrorPageError( 'cannot_create_wp_page_title', 'cannot_identify_container_wikiplace' );
-					case 2:
-						throw new ErrorPageError( 'cannot_create_wp_page_title', 'it_is_not_your_wikiplace' );
-					case 3:
-						throw new ErrorPageError( 'cannot_create_wp_page_title', 'you_need_an_active_subscription' );
-					case 4:
-						throw new ErrorPageError( 'cannot_create_wp_page_title', 'subscription_max_nb_pages_reached' );
-					default:
-						throw new ErrorPageError( 'cannot_create_wp_page_title', 'unknown_error' );
+				if ( WpPage::isItAWikiplaceHomePage($title)) {
+					
+					// this is a homepage, so we are creating a new wikiplace
+
+					if ( !WpWikiplace::doesTheUserCanCreateANewWikiplace($user->getId()) ) {
+						wfDebugLog( 'wikiplace', 'onArticleSave: DENY new homepage but no sub or no more quota ['.$i.']"'.$t.'"');
+						return false; // no active subscription or a creation quota is exceeded
+					}
+
+					wfDebugLog( 'wikiplace', 'onArticleSave: ALLOW new homepage ['.$i.']"'.$t.'"');
+					return true; // all ok :)
+					
+					
+				} else {
+					
+					// this is a subpage
+
+					$wp = WpWikiplace::identifyContainerWikiPlaceOfThisNewTitle($title);
+					if ($wp === null) { 
+						wfDebugLog( 'wikiplace', 'onArticleSave: DENY new WikiPlace page but cannot identify wikiplace ['.$i.']"'.$t.'"');
+						return false; // no wikiplace can contain this subpage, so cannot create it
+					}
+
+					$wp_owner_id = $wp->get('wpw_owner_user_id');
+					/** @todo:this check would be better if placed in rights management system, and when it will be, this test here will become useless */
+					if ($wp_owner_id != $user->getId()) { // checks the user who creates the page is the owner of the wikiplace
+						wfDebugLog( 'wikiplace', 'onArticleSave: DENY new WikiPlace page but current user != wikiplace owner ['.$i.']"'.$t.'"');
+						return false;
+					}
+
+					if ( ! WpPage::doesTheUserCanCreateANewPage($wp_owner_id) ) {
+						wfDebugLog( 'wikiplace', 'onArticleSave: DENY new WikiPlace page but no sub or no more quota ['.$i.']"'.$t.'"');
+						return false; // no active subscription or page creation quota is exceeded
+					}
+
+					return true; // all ok :)
 				}
 				
 			}
@@ -81,7 +105,7 @@ class WikiplaceHooks {
 		} else {
 			
 			// we are not concerned
-			wfDebugLog( 'wikiplace', 'onArticleSave: saving a page that does not belong to a wikiplace: ['.$i.']"'.$t.'"');
+			wfDebugLog( 'wikiplace', 'onArticleSave: ALLOW saving a page that does not belong to the wikiplace namespace: ['.$i.']"'.$t.'"');
 			return true; // "OK, you can create"
 
 		}
@@ -107,30 +131,48 @@ class WikiplaceHooks {
 		$namespace = $title->getNamespace();
 		$t = $title->getFullText();
 		$i = $title->getArticleID();
+		$user_id = $user->getId();
 		
 		// now, the page is already stored in db, so if there is a problem, it's too late
 		
-		if ( WpPage::isItAWikiplacePage($title) ) {
-							
-			$wp = WpWikiplace::identifyContainerWikiPlaceOfThisNewTitle($title);
-			if ($wp === null) {
-				wfDebugLog( 'wikiplace', 'onCreateArticle: ERROR, cannot identify the container wikiplace for title ['.$i.']"'.$t.'"');
-				throw new MWException('cannot identify the container wikiplace');
-			}
+		if (WpPage::isThisPageInTheWikiplaceDomain($title)) {
 			
-			$new_wp_page = WpPage::associateAPageToAWikiplace($title, $wp);
-			
-			if ($new_wp_page === null) {
-				// something goes wrong
-				wfDebugLog( 'wikiplace', 'onCreateArticle: ERROR, the page cannot be associated to its wikiplace: ['.$i.']"'.$t.'"');
-				throw new MWException('Error while associating the page to a wikiplace.');
-			}
-			
-			wfDebugLog( 'wikiplace', 'onCreateArticle: OK, the page is now associated to its wikiplace: ['.$i.']"'.$t.'"');
+			if (WpPage::isItAWikiplaceHomePage($title)) {
 				
+				// create a wikiplace from this homepage title				
+				$wp = WpWikiplace::create($title, $user_id);
+				if ($wp === null) {
+					wfDebugLog( 'wikiplace', 'onCreateArticle: ERROR while creating wikiplace: ['.$i.']"'.$t.'"');
+					throw new MWException('Cannot create wikiplace.');
+				}		
+				
+				wfDebugLog( 'wikiplace', 'onCreateArticle: OK, wikiplace and its homepage created: ['.$i.']"'.$t.'"');
+				
+			} else {
+				
+				// this is a subpage of an existing existing wikiplace
+			
+				$wp = WpWikiplace::identifyContainerWikiPlaceOfThisNewTitle($title);
+				if ($wp === null) {
+					wfDebugLog( 'wikiplace', 'onCreateArticle: ERROR cannot identify container wikiplace: ['.$i.']"'.$t.'"');
+					throw new MWException('Cannot identify the container wikiplace.');
+				}
+			
+				$new_wp_page = WpPage::associateAPageToAWikiplace($title, $wp);
+				if ($new_wp_page === null) {
+					wfDebugLog( 'wikiplace', 'onCreateArticle: ERROR while associating the page to the container wikiplace: ['.$i.']"'.$t.'"');
+					throw new MWException('Cannot associate the page to a wikiplace.');
+				}
+						
+				wfDebugLog( 'wikiplace', 'onCreateArticle: OK, the page is now associated to its wikiplace: ['.$i.']"'.$t.'"');
+				
+			} 
+		
+			
 		} else {
 			
 			wfDebugLog( 'wikiplace', 'onCreateArticle: creating a page that does not belong to a wikiplace: ['.$i.']"'.$t.'"');
+			
 		}
 		
 		return true;

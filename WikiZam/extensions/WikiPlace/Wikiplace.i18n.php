@@ -39,13 +39,13 @@ $messages['en'] = array(
 
 	'wp-err-unknown' => "An error occured",
 
-	'wp-cwp-pagetitle'        => "New WikiPlace",
-	'wp-cwp-success-link-wt'  => "New WikiPlace created, [[:\$1|click here]] to access its homepage.",
-	'wp-cwp-f-legend'         => "legend",
-	'wp-cwp-f-explain'        => "explain",
-	'wp-cwp-f-submit'         => "Go",
-	'wp-cwp-f-twpname'        => "Enter the name of the new WikiPlace",
-	'wp-cwp-err-nosub'        => "You need to have an active subscription to create a WikiPlace.",
+	'wp-cwp-pagetitle'         => "New WikiPlace",
+	'wp-cwp-success-link-wt'   => "New WikiPlace created, [[:\$1|click here]] to access its homepage.",
+	'wp-cwp-f-legend'          => "legend",
+	'wp-cwp-f-explain'         => "explain",
+	'wp-cwp-f-submit'          => "Go",
+	'wp-cwp-f-twpname'         => "Enter the name of the new WikiPlace",
+	'wp-cwp-err-cannot-create' => "You need to have an active subscription and creation quotas to create a WikiPlace.",
 	
 	'wp-csp-f-swp'            => "Select one of your WikiPlace",
 	'wp-csp-f-tspname'        => "Enter the name of the new WikiPlace page",
@@ -87,6 +87,13 @@ $messages['en'] = array(
 	'wpstp-wpp_monthly_page_hits' => "Monthly page hits",
 	'wpstp-wpp_monthly_bandwidth' => "Monthly bandwith",
 	'wpstp-wps_end_date' => "End",
+	
+	'wpwtp-page_title' => 'WikiPlace',
+	'wpwtp-count(*)' => 'Number of pages',
+	'wpwtp-wpu_monthly_page_hits' => 'Monthly page hits',
+	'wpwtp-wpu_monthly_bandwidth' => 'Monthly bandwith',
+	'wpwtp-wpu_updated' => 'Date of value',
+	'wpwtp-wpu_end_date' => 'Reset date',
 	
 );
 
