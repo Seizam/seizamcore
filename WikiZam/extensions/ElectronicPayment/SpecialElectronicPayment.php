@@ -95,7 +95,6 @@ class SpecialElectronicPayment extends SpecialPage {
 
         # Order related fields
         $epm['epm_ept'] = $request->getText('TPE');
-        $tmp_o_date_bank_format = $request->getText('date');
         $epm['epm_date_message_bank_format'] = $request->getText('date');
         $epm['epm_date_message'] = $this->bankStringToMySqlTime($epm['epm_date_message_bank_format']);
         $epm['epo_id'] = $request->getText('reference');
@@ -146,7 +145,7 @@ class SpecialElectronicPayment extends SpecialPage {
 
         $epm['epo_user_id'] = $user->getId();
         $epm['epm_date_message'] = date("Y-m-d:H:i:s");
-        $epm['epo_amount'] = $alldata['amount']; #How much?
+        $epm['epo_amount'] = number_format($alldata['amount'], 2, '.', ''); #How much?
         $epm['epo_currency'] = 'EUR'; #Of what
         $epm['epo_mail'] = $user->getEmail();
         if ($epm['epo_mail'] == '')
@@ -321,7 +320,7 @@ class SpecialElectronicPayment extends SpecialPage {
         $matches = array();
         $pattern = "/^(?P<d>[0-9]{2})\/(?P<m>[0-9]{2})\/(?P<Y>[0-9]{4})_a_(?P<H>[0-9]{2}):(?P<i>[0-9]{2}):(?P<s>[0-9]{2})$/";
         if (preg_match($pattern, $time, $matches) == 1) {
-            return $matches['Y'] . '-' . $matches['m'] . '-' . $matches['d'] . ':' . $matches['H'] . ':' . $matches['i'] . ':' . $matches['s'];
+            return $matches['Y'] . '-' . $matches['m'] . '-' . $matches['d'] . ' ' . $matches['H'] . ':' . $matches['i'] . ':' . $matches['s'];
         } else
             return "\nbankStringToMySqlTime Error\n";
     }
@@ -332,7 +331,7 @@ class SpecialElectronicPayment extends SpecialPage {
         $matches = array();
         $pattern = "/^(?P<A>[0-9\.]+)(?P<C>[A-Z]{3})$/";
         if (preg_match($pattern, $input, $matches) == 1) {
-            $epm['epo_amount'] = $matches['A'];
+            $epm['epo_amount'] = number_format($matches['A'], 2, '.', '');
             $epm['epo_currency'] = $matches['C'];
             return $epm;
         } else

@@ -50,19 +50,18 @@ class SpecialSkinzam extends SpecialPage {
         $output = $this->getOutput();
         $lang = $this->getLang();
         $this->setHeaders();
-        $output->addHTML('time : '.time().'<br/>'
-        #.'timaanddate : '. $lang->timeanddate(time(), true).'<br/>'
-        #.'timaanddate, no offset : '. $lang->timeanddate(time()).'<br/><br/>'
-                
-        .'wfTimestamp : '. wfTimestamp(TS_DB).'<br/>'
-        #.'timaanddate : '. $lang->timeanddate(wfTimestamp(TS_MW), true).'<br/>'
-        #.'timaanddate, no offset : '. $lang->timeanddate(wfTimestamp(TS_MW), false).'<br/><br/>'
-                
-        #.'date : '. date("Y-m-d H:i:s").'<br/>'        
-        .'date : '. date("Y-m-d H:i:se",wfTimestamp(TS_UNIX)).'<br/>'
-        .'strtotime : '. strtotime('now').'<br/>'
-        #.'timaanddate : '. $lang->timeanddate(date("Y-m-d H:i:s"),true).'<br/>'
-        .'timaanddate, no offset : '. $lang->timeanddate(date("Y-m-d H:i:s"), false).'<br/>');
+        $value1=42;
+        $value2=7.78;
+        $value3=7.984;
+        $output->addHTML($value1.'<br>'.
+                $value2.'<br>'.
+                $value3.'<br>'.
+                number_format($value1, 2, '.', '').'<br>'.
+                number_format($value2, 2, '.', '').'<br>'.
+                number_format($value3, 2, '.', '').'<br>'.
+                round($value2,2).'<br>'.
+                round($value3,2).'<br>'
+                );
     }
 
     static function processInput($formData) {
