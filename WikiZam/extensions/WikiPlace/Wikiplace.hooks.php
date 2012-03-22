@@ -236,4 +236,27 @@ class WikiplaceHooks {
 		
 	}
 	
+	
+	/**
+	 *
+	 * @param Title $title
+	 * @param User $user
+	 * @param boolean $result 
+	 */
+	public static function onIsOwner ( $title, $user, &$result ) {
+				
+		$owner = WpPage::findWikiplacePageOwnerUserId($title);
+		
+		if ($owner === false) {
+			wfDebugLog( 'wikiplace', 'onIsOwner DON\'T KNOW (title "'.$title->getDBkey().'" is not in a wikiplace)');
+			return true; // we don't know, so we don't stop hook processing
+		}
+		
+		$result = $user->getId() == $owner;
+		
+		wfDebugLog( 'wikiplace', 'onIsOwner '.($result ? 'YES':'NO').' (title "'.$title->getDBkey().
+				'" user ['.$user->getId().']"'.$user->getName().'" owner ['.$owner.'])');
+		return false; // stop hook processing, because we have the answer
+	}
+	
 }
