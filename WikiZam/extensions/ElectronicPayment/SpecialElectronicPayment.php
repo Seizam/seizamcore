@@ -145,7 +145,7 @@ class SpecialElectronicPayment extends SpecialPage {
 
         $epm['epo_user_id'] = $user->getId();
         $epm['epm_date_message'] = date("Y-m-d:H:i:s");
-        $epm['epo_amount'] = number_format($alldata['amount'], 2, '.', ''); #How much?
+        $epm['epo_amount'] = $epm['epo_amount_bank_format'] = number_format($alldata['amount'], 2, '.', ''); #How much?
         $epm['epo_currency'] = 'EUR'; #Of what
         $epm['epo_mail'] = $user->getEmail();
         if ($epm['epo_mail'] == '')
@@ -331,6 +331,7 @@ class SpecialElectronicPayment extends SpecialPage {
         $matches = array();
         $pattern = "/^(?P<A>[0-9\.]+)(?P<C>[A-Z]{3})$/";
         if (preg_match($pattern, $input, $matches) == 1) {
+            $epm['epo_amount_bank_format'] = $matches['A'];
             $epm['epo_amount'] = number_format($matches['A'], 2, '.', '');
             $epm['epo_currency'] = $matches['C'];
             return $epm;

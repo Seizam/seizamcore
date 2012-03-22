@@ -246,10 +246,10 @@ Class EPMessage {
         if ($this->epm['epm_type'] == 'out') {
             # Data to certify
             # Fields left out are for mutli-time payment
-            $this->epm_validating_fields = sprintf(CMCIC_CGI1_FIELDS, $this->oTpe->sNumero, $this->epm_date_message_bank_format, $this->order->epo['epo_amount'], $this->order->epo['epo_currency'], $this->epm['epm_epo_id'], $this->epm['epm_free_text'], $this->oTpe->sVersion, $this->oTpe->sLangue, $this->oTpe->sCodeSociete, $this->order->epo['epo_mail'], ''/* $sNbrEch */, ''/* $sDateEcheance1 */, ''/* $sMontantEcheance1 */, ''/* $sDateEcheance2 */, ''/* $sMontantEcheance2 */, ''/* $sDateEcheance3 */, ''/* $sMontantEcheance3 */, ''/* $sDateEcheance4 */, ''/* $sMontantEcheance4 */, $this->epm['epm_options']);
+            $this->epm_validating_fields = sprintf(CMCIC_CGI1_FIELDS, $this->oTpe->sNumero, $this->epm_date_message_bank_format, $this->order->epo_amount_bank_format, $this->order->epo['epo_currency'], $this->epm['epm_epo_id'], $this->epm['epm_free_text'], $this->oTpe->sVersion, $this->oTpe->sLangue, $this->oTpe->sCodeSociete, $this->order->epo['epo_mail'], ''/* $sNbrEch */, ''/* $sDateEcheance1 */, ''/* $sMontantEcheance1 */, ''/* $sDateEcheance2 */, ''/* $sMontantEcheance2 */, ''/* $sDateEcheance3 */, ''/* $sMontantEcheance3 */, ''/* $sDateEcheance4 */, ''/* $sMontantEcheance4 */, $this->epm['epm_options']);
         } else if ($this->epm['epm_type'] == 'in') {
             # Data to certify
-            $this->epm_validating_fields = sprintf(CMCIC_CGI2_FIELDS, $this->oTpe->sNumero, $this->epm_date_message_bank_format, $this->order->epo['epo_amount'] . $this->order->epo['epo_currency'], $this->epm['epm_epo_id'], $this->epm['epm_free_text'], $this->oTpe->sVersion, $this->epm['epm_return_code'], $this->epm['epm_cvx'], $this->epm['epm_vld'], $this->epm['epm_brand'], $this->epm['epm_status3ds'], $this->epm['epm_numauto'], $this->epm['epm_whyrefused'], $this->epm['epm_originecb'], $this->epm['epm_bincb'], $this->epm['epm_hpancb'], $this->epm['epm_ip'], $this->epm['epm_originetr'], $this->epm['epm_veres'], $this->epm['epm_pares']);
+            $this->epm_validating_fields = sprintf(CMCIC_CGI2_FIELDS, $this->oTpe->sNumero, $this->epm_date_message_bank_format, $this->order->epo_amount_bank_format . $this->order->epo['epo_currency'], $this->epm['epm_epo_id'], $this->epm['epm_free_text'], $this->oTpe->sVersion, $this->epm['epm_return_code'], $this->epm['epm_cvx'], $this->epm['epm_vld'], $this->epm['epm_brand'], $this->epm['epm_status3ds'], $this->epm['epm_numauto'], $this->epm['epm_whyrefused'], $this->epm['epm_originecb'], $this->epm['epm_bincb'], $this->epm['epm_hpancb'], $this->epm['epm_ip'], $this->epm['epm_originetr'], $this->epm['epm_veres'], $this->epm['epm_pares']);
         }
         # Hash the validation String
         return $this->oHmac->computeHmac($this->epm_validating_fields);
@@ -308,6 +308,9 @@ Class EPOrder {
         'epo_language' => 'EN', # varchar(2) NOT NULL DEFAULT 'EN' COMMENT 'Order Language',
         'epo_status' => 'KO' # varchar(2) NOT NULL DEFAULT 'ko' COMMENT 'Record status (OK, KO, PEnding, TEst)',
     );
+    
+    # epo_amount in required format by bank.
+    public $epo_amount_bank_format;
 
     /**
      * @return EPOrder
@@ -336,7 +339,10 @@ Class EPOrder {
     # set EPMessage from array
     
     public function setEPO($epm) {
-        # First we keep only what we want from $epm
+        # We keep the amount as received from bank
+        $this->epo_amount_bank_format = $epm['epo_amount_bank_format'];
+        
+        # Then we keep only what we want from $epm
         $epo = array_intersect_key($epm, $this->epo);
 
         # We don't want anything telling us these:
@@ -355,6 +361,9 @@ Class EPOrder {
     }
 
     private function __constructFromScratch($epm) {
+        # We keep the amount as received from bank
+        $this->epo_amount_bank_format = $epm['epo_amount_bank_format'];
+        
         # First we keep only what we want from $epm
         $epo = array_intersect_key($epm, $this->epo);
 
