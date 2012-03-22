@@ -122,7 +122,7 @@ class TMRecord {
         }
         
         if ($tmr['tmr_amount'] < 0 && $tmr['tmr_status'] !== 'PE') {
-            throw new MWException('Cannot create TMRecord (expense should be PEnding)');
+            throw new MWException('Cannot create TMRecord (expense should be PEnding)'.print_r($tmr,true));
         }
 
         # Setting the date of update

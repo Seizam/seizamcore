@@ -440,7 +440,7 @@ Class EPOrder {
         $tmr = array(
             'tmr_type' => 'payment', # varchar(8) NOT NULL COMMENT 'Type of message (Payment, Sale, Plan)',
             # Paramas related to User
-            'tmr_user_id' => $this->epo['epo_user_id'], # int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Foreign key to user.user_id',
+            'tmr_user_id' => intval($this->epo['epo_user_id']), # int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Foreign key to user.user_id',
             'tmr_mail' => $this->epo['epo_mail'], # tinyblob COMMENT 'User''s Mail',
             'tmr_ip' => $message->epm['epm_ip'], # tinyblob COMMENT 'User''s IP'
             # Params related to Record
@@ -461,10 +461,6 @@ Class EPOrder {
 
     public function getId() {
         return $this->epo_id;
-    }
-
-    private function setId($id) {
-        $this->epo_id = $id;
     }
 
 }
