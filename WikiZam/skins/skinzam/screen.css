@@ -909,16 +909,16 @@ span#prettyUserName {
     height: 53px;
     line-height:45px;
     max-width: 450px;
-    
+
     font-family: Verdana, Arial, Helvetica, sans-serif;
     font-size: 80px;
     font-weight: bold;
     font-style: italic;
     text-align: left;
-    
+
     color: #C6C6C6;
     opacity: 0.3;
-    
+
 }
 
 /* footer more info */
@@ -1738,7 +1738,7 @@ div.form_header table {
 .edit_col_1 .content_block .mw-htmlform-invalid-input textarea,
 .edit_col_1 .content_block .mw-htmlform-invalid-input .input_like {
     border: 2px solid #f0373a;
-    
+
 }
 
 p.mw-htmlform-invalid-input span.error {
@@ -1752,13 +1752,9 @@ p.mw-htmlform-invalid-input span.error {
 
 
 /*
-	Table pager (e.g. Special:ListFiles)
-	- remove underlines from the navigation link
-	- collapse borders
-	- set the borders to outsets (similar to Special:AllMessages)
-	- remove line wrapping for all td and th, set background color
-	- restore line wrapping for the last two table cells (description and size)
+    Table pager (e.g. Special:ListFiles)
 */
+
 table.TablePager {
     margin: 1em auto;
     width: 100%;
@@ -1766,28 +1762,28 @@ table.TablePager {
 }
 
 .TablePager_nav {
-	margin: 0 auto;
+    margin: 0 auto;
 }
 .TablePager_nav td {
-	padding: 4px 8px;
-	text-align: center;
+    padding: 8px 8px;
+    text-align: center;
 }
 
 .TablePager, .TablePager td, .TablePager th {
-	border: 1px solid #dad9d9;
-	padding: 4px 8px;
+    border: 1px solid #dad9d9;
+    padding: 8px 8px;
 }
 .TablePager th {
-	background-color: transparent;
-        font-weight: bold;
-        border: none;
-	border-bottom: 1px solid #dad9d9;
+    background-color: transparent;
+    font-weight: bold;
+    border: none;
+    border-bottom: 1px solid #dad9d9;
 }
 .TablePager td {
-	background-color: transparent;
-        border: none;
-        text-align: center;
-	border-bottom: 1px solid #dad9d9;
+    background-color: transparent;
+    border: none;
+    text-align: center;
+    border-bottom: 1px solid #dad9d9;
 }
 
 .TablePager tr {
@@ -1803,8 +1799,16 @@ table.TablePager {
 }
 
 .TablePager tr:hover td {
-	background-color: #f3f3f3;
+    background-color: #f3f3f3;
+    color: black;
 }
+.TablePager tbody tr:hover {
+    border: 1px solid #dad9d9;
+}
+
+/*
+    Specific Table Pagers
+*/
 
 .TMRecord td.tmr_amount {
     font-weight: bold;

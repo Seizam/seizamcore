@@ -66,7 +66,7 @@ class SpecialTransactionManager extends SpecialPage {
             'tmr_status' => 'OK' # varchar(2) NOT NULL COMMENT 'Record status (OK, KO, PEnding, TEst)',
         );
 
-        wfRunHooks('CreateTransaction', array(&$tmr));
+        //wfRunHooks('CreateTransaction', array(&$tmr));
 
         //$tmrs = TMRecord::getAllOwnedByUserId($user->getId(), array('tmr_status'=>'PE'));
         

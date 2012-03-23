@@ -19,9 +19,9 @@ class SkinzamTablePager extends TablePager {
     protected $tableClasses = array(); # Array
     protected $defaultSort; # String (field)
     public $mDefaultDirection = true; # Boolean (true=decrescent)
-    protected $messagesPrefix = 'sz'; # String
+    public $mDefaultLimit = 7;
     
-    public $mLimit = 20;
+    protected $messagesPrefix = 'sz'; # String
     
     # Do not redeclare
     private $defaultTableClasses = array('TablePager');
