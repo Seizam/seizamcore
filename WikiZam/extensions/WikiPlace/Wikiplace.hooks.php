@@ -32,7 +32,7 @@ class WikiplaceHooks {
 	 * Called when creating a new page or editing an existing page
 	 * This hook but say "OK, you can create" or "no, you can't, I abort the creation"
 	 * but MediaWiki interpret this "NO" has there is a conflict while editing the page
-	 * @todo:fix this
+	 * @todo:fix this (use hook userCan)
 	 * @param Article $article the article (Article object) being saved
 	 * @param type $user the user (User object) saving the article
 	 * @param type $text the new article text
@@ -49,7 +49,7 @@ class WikiplaceHooks {
 		$t = $title->getFullText();
 		$i = $title->getArticleID();
 		
-		if ( WpPage::isThisPageInTheWikiplaceDomain($title) ) {
+		if ( WpPage::isInWikiplaceNamespaces($title) ) {
 			// this page belongs to our extension, so we have some checks to do
 	
 			if ($title->isKnown()) {
@@ -66,7 +66,7 @@ class WikiplaceHooks {
 					
 					// this is a homepage, so we are creating a new wikiplace
 
-					if ( !WpWikiplace::doesTheUserCanCreateANewWikiplace($user->getId()) ) {
+					if ( !WpWikiplace::userCanCreateWikiplace($user->getId()) ) {
 						wfDebugLog( 'wikiplace', 'onArticleSave: DENY new homepage but no sub or no more quota ['.$i.']"'.$t.'"');
 						return false; // no active subscription or a creation quota is exceeded
 					}
@@ -135,7 +135,7 @@ class WikiplaceHooks {
 		
 		// now, the page is already stored in db, so if there is a problem, it's too late
 		
-		if (WpPage::isThisPageInTheWikiplaceDomain($title)) {
+		if (WpPage::isInWikiplaceNamespaces($title)) {
 			
 			if (WpPage::isItAWikiplaceHomePage($title)) {
 				

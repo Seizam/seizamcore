@@ -802,13 +802,20 @@ function efRestrictionsMakeForm( $title, $readonly = false ) {
 			
 			// convert from BACK-END to FRONT-END
 			$current_level = ( $current_level=='' ? 'everyone' : $current_level);
-			
+		
 			$form .= Xml::checkLabel( 
 					wfMsg( "setrestrictions-$current_level" ), 
 					"check-$action-$current_level", 
 					"check-$action-$current_level", 
 					$checked ) . $br;
-
+			
+/*			$form .= Xml::radioLabel( 
+					wfMsg( "setrestrictions-$current_level" ),
+					$action, 
+					$current_level, 
+					'',
+					$checked ) ;
+*/
 		}
 		
 		// we arrive here if user can change the permissions

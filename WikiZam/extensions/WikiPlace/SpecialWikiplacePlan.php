@@ -259,7 +259,7 @@ class SpecialWikiplacePlan extends SpecialPage {
 			$formDescriptor['Plan']['options'][$line] = $plan->get('wpp_id');
 		}
 		
-		$htmlForm = new HTMLForm( $formDescriptor );
+		$htmlForm = new HTMLFormS( $formDescriptor );
 		$htmlForm->setTitle( $submitTitle );
 
 		$htmlForm->setSubmitCallback( array( $this, 'processSubscribePlan' ) );

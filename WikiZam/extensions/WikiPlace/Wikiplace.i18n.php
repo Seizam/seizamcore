@@ -24,12 +24,10 @@ $messages['en'] = array(
 	'wp-csp-pagetitle'  => "Create a new WikiPlace page",
 	'wp-csp-no-wp' => "You need to create a WikiPlace before",
 	'wp-csp-success-link-wt' => "Page created, [[:\$1|click here]] to access it.",
-	'wp-csp-legend'  => "legend",
-	'wp-csp-explain'  => "explain",
 	'wp-csp-submit' => "Go",
 	'wp-csp-perr-notvalidwp' => "The WikiPlace was not valid, please retry.",
 	'wp-csp-perr-notvalidtitle' => "The page was not valid, please retry.",
-	'wp-csp-perr-alreadyexists' => "The page already exists, please retry with a different name.",
+	'wp-csp-perr-already-exists' => "The page already exists, please retry with a different name.",
 
 	'wp-lwp-pagetitle' => "My WikiPlaces",
 
@@ -41,8 +39,6 @@ $messages['en'] = array(
 
 	'wp-cwp-pagetitle'         => "New WikiPlace",
 	'wp-cwp-success-link-wt'   => "New WikiPlace created, [[:\$1|click here]] to access its homepage.",
-	'wp-cwp-f-legend'          => "legend",
-	'wp-cwp-f-explain'         => "explain",
 	'wp-cwp-f-submit'          => "Go",
 	'wp-cwp-f-twpname'         => "Enter the name of the new WikiPlace",
 	'wp-cwp-err-cannot-create' => "You need to have an active subscription and creation quotas to create a WikiPlace.",
