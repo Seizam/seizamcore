@@ -236,16 +236,31 @@ class WpWikiplace {
 	 * @param Title $title
 	 * @return boolean/WpWikiplace Wikiplace Object or true if this page is the homepage or false if correpsond to nothing 
 	 */
-	public static function identifyContainerWikiPlaceOfThisNewTitle($title) {
+	public static function extractWikiplaceRoot($title) {
 		
 		if (!WpPage::isInWikiplaceNamespaces($title)) {
 			return null; // not in wikiplace
 		}
 
-		$pages = explode( '/', $title->getPrefixedDBkey() );
+		$pages;
+		
+		switch ($title->getNamespace()) {
+			case NS_MAIN:
+			case NS_TALK:
+				$pages = explode( '/', $title->getDBkey() );
+				break;
+			
+			case NS_FILE:
+			case NS_FILE_TALK:
+				$pages = explode( '.', $title->getDBkey() );
+				break;
+				
+			default:
+				throw new MWException('this namespace cannot store wikiplace item');
+		}
+		
 		
 		if (!isset($pages[0])) {
-			//this case should never occurs.. but just in case
 			return null;
 		}
 
@@ -320,7 +335,7 @@ class WpWikiplace {
 		
 		WpUsage::createForNewWikiplace($wp, $subscription);
 		
-		$new_wp_page = WpPage::associateAPageToAWikiplace($homepage, $wp);
+		$new_wp_page = WpPage::associateNewPageToWikiplace($homepage, $wp);
 		if ($new_wp_page === null) {
 			throw new MWException('Cannot associate the homepage to the newly created wikiplace .');
 		}

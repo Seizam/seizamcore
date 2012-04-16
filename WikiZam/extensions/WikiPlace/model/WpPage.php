@@ -314,11 +314,11 @@ class WpPage {
 	 * @param Title $title
 	 * @return boolean true = a wikiplacer home page
 	 */
-	public static function isItAWikiplaceHomePage($title) {
+	public static function isWikiplaceRoot($title) {
 		if ( ($title === null) || !($title instanceof Title)) {
 			throw new MWException( 'wrong title argument' );
 		}
-		return count(explode( '/', $title->getPrefixedDBkey() )) == 1;
+		return ( ($title->getNamespace() == NS_MAIN) && (count(explode( '/', $title->getPrefixedDBkey() )) == 1) );
 	}
 	
 	
@@ -329,16 +329,40 @@ class WpPage {
 	 * @param string $page_name 
 	 * @return string the sub page name
 	 */
-	public static function getSubPageNamePartOnly($full_page_name) {
-		if ( ($full_page_name === null) || !is_string($full_page_name) ) {
-			throw new MWException( 'cannot get subpage name part of full page name, invalid argument' );
+	public static function getSubPageNamePartOnly($title) {
+		if ( ($title === null) || !($title instanceof Title) ) {
+			throw new MWException( 'cannot get subpage name part, invalid argument' );
 		}
-		$tmp = explode( '/', $full_page_name );
+		
+		$full_page_name = $title->getPrefixedText();
+		
+		$tmp;
+		$after='';
+		
+		switch($title->getNamespace()) {
+
+			case NS_FILE_TALK:
+				$after = ' (talk)';
+			case NS_FILE:
+				$tmp = explode( '.', $full_page_name );
+				break;
+			
+			case NS_TALK:
+				$after = ' (talk)';
+			case NS_MAIN:
+				$tmp = explode( '/', $full_page_name );
+				break;
+			
+			default:
+				throw new MWException( 'cannot get subpage name part, invalid namespace' );
+		}
+	
 		$len = strlen($tmp[0]);
 		if ($len == strlen($full_page_name)) {
-			return '/';
+			return '/'.$after;
 		}
-		return substr($full_page_name, $len);
+		
+		return '/'.substr($full_page_name, $len + 1).$after;
 	}
 	
 		/**
@@ -347,10 +371,17 @@ class WpPage {
 	 * @return boolean
 	 */
 	public static function isInWikiplaceNamespaces($title) {
+		
 		if ( ($title === null) || !($title instanceof Title)) {
 			throw new MWException( 'wrong title argument' );
 		}
-		return $title->getNamespace() == WP_PAGE_NAMESPACE;
+		
+		return in_array( $title->getNamespace(), array(
+			NS_MAIN,
+			NS_TALK,
+			NS_FILE,
+			NS_FILE_TALK,
+		));
 	}
 	
 
@@ -394,7 +425,7 @@ class WpPage {
 	 * @param type $user_id
 	 * @return boolean
 	 */
-	public static function doesTheUserCanCreateANewPage($user_id) {
+	public static function userCanCreateANewPage($user_id) {
 		
 		$sub = WpSubscription::getActiveByUserId($user_id);
 
@@ -424,7 +455,7 @@ class WpPage {
 	 * @param WpWikiplace $wikiplace
 	 * @return type 
 	 */
-	public static function associateAPageToAWikiplace($title, $wikiplace) {
+	public static function associateNewPageToWikiplace($title, $wikiplace) {
 		
 		if ( ($title === null) || !($title instanceof Title) || ($wikiplace === null) || !($wikiplace instanceof WpWikiplace) ) {
 			throw new MWException( 'Cannot associate page to a WikiPlace (wrong argument)' );

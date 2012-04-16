@@ -266,25 +266,18 @@ class SpecialWikiplace extends SpecialPage {
 	
 	public static function validateNewSubpageName($name, $allData) {
 		
-        if ( !is_string($name) || !preg_match('/^[a-zA-Z0-9]{3,16}$/',$name) ) {
-			return wfMessage( 'wikiplace-validate-error-wikiplacepagename' )->text() ;
-		}
-		
-
 		// $allData['WikiplaceId'] is already checked, because it is declared before the subpage name in the form descriptor
-		$wikiplace = WpWikiplace::getById(intval($id));
+		$wikiplace = WpWikiplace::getById( intval($allData['WikiplaceId']) );
+		if ($wikiplace == null) {
+			return false;
+		}
 		
 		$title = Title::newFromText( $wikiplace->get('name') . '/' . $name );
 		
-		/** @todo: check here is the page already exists */
-/*
-		WpPage::getByName($name);
-
-		
-		if ( WpPage::getPageByNameInWikiplaceId($name, intval($allData['WikiplaceId']) ) !== null ) {
-			return wfMessage( 'wikiplace-validate-error-wikiplacepagename' )->text() ;
+		if ($title->isKnown()) {
+			return wfMessage( 'wp-csp-perr-already-exists' )->text() ;
 		}
-*/		
+				
 		return true; // all ok
 		
 	}
