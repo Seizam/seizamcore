@@ -143,14 +143,14 @@ class WpUsage {
 		
 		$sql = "
 CREATE TEMPORARY TABLE wp_tmp_page_hits (
-  SELECT wppa_wpw_id AS wikiplace_id, SUM(page.page_counter) AS page_hits
-  FROM page
+SELECT wppa_wpw_id AS wikiplace_id, SUM(page.page_counter) AS page_hits
+FROM page
   INNER JOIN wp_page
   ON wppa_page_id = page_id
-  INNER JOIN wp_usage
-  ON wpu_wpw_id = wppa_wpw_id
-  WHERE wpu_updated < $one_hour_ago
-  GROUP BY wppa_wpw_id ) ;";
+    INNER JOIN wp_usage
+    ON wpu_wpw_id = wppa_wpw_id
+WHERE wpu_updated < $one_hour_ago
+GROUP BY wppa_wpw_id ) ;";
 		
 		$result = $dbw->query($sql, __METHOD__);
 		

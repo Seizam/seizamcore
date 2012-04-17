@@ -8,58 +8,6 @@ class WpWikiplace {
 	
 	private $name;
 	
-	/**
-	 *
-	 * @global type $wgUser
-	 * @param type $id
-	 * @param type $allData
-	 * @return boolean True = well formed, exists, and belongs to current user 
-	 */
-	public static function validateExistingWikiplaceIDOfCurrentUser($id, $allData) {
-        if ( !is_string($id) || !preg_match('/^[1-9]{1}[0-9]{0,9}$/',$id) ) {
-			// not well formed
-			return wfMessage( 'wp-vlderr-exwpid-format' )->text() ;
-		}
-		
-		$wikiplace = self::getById(intval($id));
-		
-		if ($wikiplace === null) {
-			// doesn't exist
-			return wfMessage( 'wp-vlderr-exwpid-notex' )->text() ;
-		}
-		
-		global $wgUser;
-		if ($wikiplace->get('wpw_owner_user_id') != $wgUser->getId()) {
-			// doesn't belong to current user
-			return wfMessage( 'wp-vlderr-exwpid-usernotowner' )->text() ;
-		}
-			
-		return true; // well formed, exists, and belongs to current user
-		
-	}
-	
-	
-	/**
-	 * check that the WikiPlace doesn't already exist
-	 * @param type $name
-	 * @param type $allData
-	 * @return type 
-	 */
-	public static function validateNewWikiplaceName($name, $allData) {
-        if ( !is_string($name) || !preg_match('/^[a-zA-Z0-9]{3,16}$/',$name) ) {
-			return wfMessage( 'wp-vlderr-nwpname-format' )->text() ;
-		}
-		
-		$wp = self::getByName($name);
-		
-		return ( $wp === null ?
-			true :
-			wfMessage( 'wp-vlderr-nwpname-dup' )->text() ) ;
-	}
-	
-
-	
-
 	
 	
 	private function __construct( $id, $ownerUserId, $homePageId ) {
@@ -89,6 +37,10 @@ class WpWikiplace {
 				return $this->name;
 		}
 		throw new MWException('Unknown attribut '.$attribut_name);
+	}
+	
+	public function isOwner($user_id) {
+		return ( $this->wpw_owner_user_id == $user_id );
 	}
 	
 	/**
@@ -225,7 +177,7 @@ class WpWikiplace {
 			throw new MWException( 'Cannot fectch WikiPlace matching the name (invalid string)' );
 		}
 		
-		return self::getFromDb(array('page_title' => $name));
+		return self::getFromDb( array('page_title' => $name) );
 
 	}
 	
@@ -284,16 +236,31 @@ class WpWikiplace {
 	 * @param Title $title
 	 * @return boolean/WpWikiplace Wikiplace Object or true if this page is the homepage or false if correpsond to nothing 
 	 */
-	public static function identifyContainerWikiPlaceOfThisNewTitle($title) {
+	public static function extractWikiplaceRoot($title) {
 		
-		if (!WpPage::isThisPageInTheWikiplaceDomain($title)) {
+		if (!WpPage::isInWikiplaceNamespaces($title)) {
 			return null; // not in wikiplace
 		}
 
-		$pages = explode( '/', $title->getPrefixedDBkey() );
+		$pages;
+		
+		switch ($title->getNamespace()) {
+			case NS_MAIN:
+			case NS_TALK:
+				$pages = explode( '/', $title->getDBkey() );
+				break;
+			
+			case NS_FILE:
+			case NS_FILE_TALK:
+				$pages = explode( '.', $title->getDBkey() );
+				break;
+				
+			default:
+				throw new MWException('this namespace cannot store wikiplace item');
+		}
+		
 		
 		if (!isset($pages[0])) {
-			//this case should never occurs.. but just in case
 			return null;
 		}
 
@@ -368,7 +335,7 @@ class WpWikiplace {
 		
 		WpUsage::createForNewWikiplace($wp, $subscription);
 		
-		$new_wp_page = WpPage::associateAPageToAWikiplace($homepage, $wp);
+		$new_wp_page = WpPage::associateNewPageToWikiplace($homepage, $wp);
 		if ($new_wp_page === null) {
 			throw new MWException('Cannot associate the homepage to the newly created wikiplace .');
 		}
@@ -411,7 +378,7 @@ class WpWikiplace {
 	 * @param type $user_id
 	 * @return boolean
 	 */
-	public static function doesTheUserCanCreateANewWikiplace($user_id) {
+	public static function userCanCreateWikiplace($user_id) {
 		
 		if ( !is_int($user_id) || ($user_id < 1)) {
 			throw new MWException('cannot check wikiplace creation, invalid argument');

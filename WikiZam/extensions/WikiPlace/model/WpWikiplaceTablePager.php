@@ -19,6 +19,7 @@ class WpWikiplaceTablePager extends SkinzamTablePager {
 		'wp_usage' => array('INNER JOIN','wpu_wpw_id = wppa_wpw_id') );
     protected $selectFields = array(
 		'page_title' ,
+		'page_namespace',
 		'count(*)',
 		'wpu_monthly_page_hits',
 		'wpu_monthly_bandwidth',
@@ -57,13 +58,14 @@ class WpWikiplaceTablePager extends SkinzamTablePager {
      * @param $value String: the value retrieved from the database
      */
      function formatValue($name, $value) {
+				 
         global $wgLang;
         switch ($name) {
 			
 			case 'page_title':
 				return Linker::linkKnown( 
 						SpecialPage::getTitleFor('Wikiplace', SpecialWikiplace::ACTION_CONSULT_WP), // where to go
-						Title::makeTitle(WP_PAGE_NAMESPACE, $value)->getPrefixedText(), // the link text
+						Title::makeTitle($this->mCurrentRow->page_namespace, $value)->getPrefixedText(), // the link text
 						array(),
 						array( 'wikiplace' => $value) ); // an argument
 			case 'count(*)':
@@ -73,9 +75,16 @@ class WpWikiplaceTablePager extends SkinzamTablePager {
 			case 'wpu_updated':
 			case 'wpu_end_date':
 				return ($value === null) ? '-' : $wgLang->timeanddate($value, true);
-            default:
+			default:
                 throw new MWException( 'Unknown data name "'.$name.'"');
+            
         }
+    }
+	
+	function getFieldNames() {
+        $fieldNames = parent::getFieldNames();
+		unset($fieldNames['page_namespace']);
+        return $fieldNames;
     }
 	
 

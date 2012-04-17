@@ -19,8 +19,6 @@ $wgExtensionCredits['other'][] = array(
    'version'  => 'alpha',
    );
 
-define("WP_PAGE_NAMESPACE", NS_MAIN);
-
 $_dir = dirname( __FILE__ ).'/';
 
 # Load extension's classes
@@ -58,10 +56,9 @@ $wgSpecialPageGroups['WikiplacePlan'] = 'other';
 # Attach our own functions to hooks
 $wgHooks['LoadExtensionSchemaUpdates'][] = 'WikiplaceHooks::onLoadExtensionSchemaUpdates'; // Schema updates for update.php
 $wgHooks['ArticleInsertComplete'][] = 'WikiplaceHooks::onCreateArticle';
-$wgHooks['ArticleSave'][] = 'WikiplaceHooks::onArticleSave';
-//$wgHooks['userCan'][] = 'WikiplaceHooks::onUserCan';
+$wgHooks['userCan'][] = 'WikiplaceHooks::userCanCreate';
 $wgHooks['TransactionUpdated'][] = 'WikiplaceHooks::onTransactionUpdated';
-$wgHooks['IsOwner'][] = 'WikiplaceHooks::onIsOwner';
+$wgHooks['IsOwner'][] = 'WikiplaceHooks::isOwner';
 
 
 

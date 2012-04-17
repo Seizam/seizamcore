@@ -20,7 +20,7 @@ class WpPageTablePager extends SkinzamTablePager {
 		'homepage' => array('INNER JOIN','wpw_home_page_id = homepage.page_id'),
 		'wp_page' => array('INNER JOIN','wpw_id = wppa_wpw_id'),
 		'pages' => array('INNER JOIN','wppa_page_id = pages.page_id') );
-    protected $selectFields = array( 'pages.page_title');
+    protected $selectFields = array( 'pages.page_title', 'pages.page_namespace');
 	protected $selectOptions = array( 'ORDER BY' => 'pages.page_title');
     protected $defaultSort = 'pages.page_title';
     public $mDefaultDirection = false; // true = DESC
@@ -46,14 +46,7 @@ class WpPageTablePager extends SkinzamTablePager {
 			'wpw_owner_user_id' => $user_id );
 	}
 
-	/**
-	 * Temporary bugfix, because SkinzamTablePager doesn't handle properly table alias
-	 * @todo: remove this once bug corrected
-	 * @return type 
-	 */
-	function getFieldNames() {
-        return array('page_title'=>wfMessage($this->messagesPrefix . '-' . 'page_title')->text());
-    }
+
 
     /**
      * Format a table cell. The return value should be HTML, but use an empty
@@ -70,10 +63,10 @@ class WpPageTablePager extends SkinzamTablePager {
 			
 			case 'page_title':
 				/** @todo: fix this:$value is null, but should not */
-				$to = Title::makeTitle(WP_PAGE_NAMESPACE, $value);
+				$to = Title::makeTitle($this->mCurrentRow->page_namespace, $value);
 				return Linker::linkKnown( 
 						$to, // where to go
-						WpPage::getSubPageNamePartOnly($to->getPrefixedText()), // the link text
+						WpPage::getSubPageNamePartOnly($to), // the link text
 						array(),
 						array() ); // an arg
 				
@@ -82,5 +75,15 @@ class WpPageTablePager extends SkinzamTablePager {
         }
     }
 	
+
+	
+		/**
+	 * Temporary bugfix, because SkinzamTablePager doesn't handle properly table alias
+	 * @todo: remove this once bug corrected
+	 * @return type 
+	 */
+	function getFieldNames() {
+        return array('page_title'=>wfMessage($this->messagesPrefix . '-' . 'page_title')->text());
+    }
 
 }

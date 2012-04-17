@@ -9,29 +9,7 @@ class WpPage {
 	private $page_namespace;	// int(11)
 	private $page_title;
 	private $wikiplace;
-	
-	/**
-	 * Checks that the page doesn't exist
-	 * @param type $name without "wikiplace/" in
-	 * @param type $allData
-	 * @return type 
-	 */
-	public static function validateNewWikiplaceSubPageName($name, $allData) {
-
-		if ( !isset($allData['WikiplaceId']) || !preg_match('/^[0-9]{1,10}$/',$allData['WikiplaceId']) ) {
-			return wfMessage( 'wikiplace-validate-error-wikiplacepagename' )->text();
-		}
 		
-        if ( !is_string($name) || !preg_match('/^[a-zA-Z0-9]{3,16}$/',$name) ) {
-			return wfMessage( 'wikiplace-validate-error-wikiplacepagename' )->text() ;
-		}
-		
-		return ( ( self::getPageByNameInWikiplaceId($name, intval($allData['WikiplaceId']) ) === null ) ?
-			true :
-			wfMessage( 'wikiplace-validate-error-wikiplacepagename' )->text() ) ;
-		
-	}
-	
 	private function __construct( $id, $wikiplaceId, $pageId ) {
 
 		$this->wppa_id      = $id;
@@ -147,12 +125,9 @@ class WpPage {
 		
 	}
 	
-	/**
-	 * Search a sub page
-	 * @param int $id 
-	 * @return WpWikiplace if found, or null if not
-	 */
-	public static function getPageByNameInWikiplaceId($subpage_name, $wikiplace_id) {
+	
+	/*
+	public static function getByNameInWikiplace($subpage_name, $wikiplace_id) {
 				
 		if ( ($wikiplace_id === null) || !is_int($wikiplace_id) || ($wikiplace_id < 1) ) {
 			throw new MWException( 'Invalid wikiplace identifier' );
@@ -179,6 +154,8 @@ class WpPage {
 		return self::constructFromDatabaseRow($result);
 
 	}
+	
+	*/
 	
 	/**
 	 *
@@ -293,14 +270,12 @@ class WpPage {
 	}
 	
 	/**
-	 * Create a new wikiplace subpage and return the created Title or int in case of error
+	 * Create a new wikiplace subpage and return the created Title
 	 * @param WpWikiplace $wikiplace
 	 * @param string $new_page_name
-	 * @return Title/int The creted Title or 
-	 * int 1 if creation failed, but error not known
-	 * int 2 if creation failed because the title already exist 
+	 * @return Status When good, the value is the created Title object
 	 */
-	public static function createWikiPlacePage( $wikiplace, $new_page_name ) {
+	public static function createWikiplaceSubpage( $wikiplace, $new_page_name ) {
 		
 		if ( ($wikiplace === null) || !($wikiplace instanceof WpWikiplace) ||
 				( $new_page_name === null) || !is_string($new_page_name) ) {
@@ -309,13 +284,18 @@ class WpPage {
 		
 		$title = Title::newFromText( $wikiplace->get('name') . '/' . $new_page_name );
 		
+		// $title can be Title, or null on an error.
+		
 		if (!($title instanceof Title)) {
-			// not good syntax, but this case should not occurs because the validate passes
-			return 1;
+			$status = Status::newFatal('unknown-error');
+			$status->value = 'unknown-error';
+			return $status;
 		}
 		
 		if ($title->isKnown()) {
-			return 2;		
+			$status = Status::newFatal('already-exists');
+			$status->value = 'already-exists';
+			return $status;	
 		}
 		
 		$text = 'This is the default text of a new WikiPlace page.';
@@ -325,7 +305,7 @@ class WpPage {
 		$article = new Article($title);
 		$article->doEdit($text, '',EDIT_NEW);
 		
-		return $title;
+		return Status::newGood($title);
 		
 	}
 	
@@ -334,11 +314,11 @@ class WpPage {
 	 * @param Title $title
 	 * @return boolean true = a wikiplacer home page
 	 */
-	public static function isItAWikiplaceHomePage($title) {
+	public static function isWikiplaceRoot($title) {
 		if ( ($title === null) || !($title instanceof Title)) {
 			throw new MWException( 'wrong title argument' );
 		}
-		return count(explode( '/', $title->getPrefixedDBkey() )) == 1;
+		return ( ($title->getNamespace() == NS_MAIN) && (count(explode( '/', $title->getPrefixedDBkey() )) == 1) );
 	}
 	
 	
@@ -349,16 +329,40 @@ class WpPage {
 	 * @param string $page_name 
 	 * @return string the sub page name
 	 */
-	public static function getSubPageNamePartOnly($full_page_name) {
-		if ( ($full_page_name === null) || !is_string($full_page_name) ) {
-			throw new MWException( 'cannot get subpage name part of full page name, invalid argument' );
+	public static function getSubPageNamePartOnly($title) {
+		if ( ($title === null) || !($title instanceof Title) ) {
+			throw new MWException( 'cannot get subpage name part, invalid argument' );
 		}
-		$tmp = explode( '/', $full_page_name );
+		
+		$full_page_name = $title->getPrefixedText();
+		
+		$tmp;
+		$after='';
+		
+		switch($title->getNamespace()) {
+
+			case NS_FILE_TALK:
+				$after = ' (talk)';
+			case NS_FILE:
+				$tmp = explode( '.', $full_page_name );
+				break;
+			
+			case NS_TALK:
+				$after = ' (talk)';
+			case NS_MAIN:
+				$tmp = explode( '/', $full_page_name );
+				break;
+			
+			default:
+				throw new MWException( 'cannot get subpage name part, invalid namespace' );
+		}
+	
 		$len = strlen($tmp[0]);
 		if ($len == strlen($full_page_name)) {
-			return '/';
+			return '/'.$after;
 		}
-		return substr($full_page_name, $len);
+		
+		return '/'.substr($full_page_name, $len + 1).$after;
 	}
 	
 		/**
@@ -366,11 +370,18 @@ class WpPage {
 	 * @param Title $title
 	 * @return boolean
 	 */
-	public static function isThisPageInTheWikiplaceDomain($title) {
+	public static function isInWikiplaceNamespaces($title) {
+		
 		if ( ($title === null) || !($title instanceof Title)) {
 			throw new MWException( 'wrong title argument' );
 		}
-		return $title->getNamespace() == WP_PAGE_NAMESPACE;
+		
+		return in_array( $title->getNamespace(), array(
+			NS_MAIN,
+			NS_TALK,
+			NS_FILE,
+			NS_FILE_TALK,
+		));
 	}
 	
 
@@ -414,7 +425,7 @@ class WpPage {
 	 * @param type $user_id
 	 * @return boolean
 	 */
-	public static function doesTheUserCanCreateANewPage($user_id) {
+	public static function userCanCreateANewPage($user_id) {
 		
 		$sub = WpSubscription::getActiveByUserId($user_id);
 
@@ -444,7 +455,7 @@ class WpPage {
 	 * @param WpWikiplace $wikiplace
 	 * @return type 
 	 */
-	public static function associateAPageToAWikiplace($title, $wikiplace) {
+	public static function associateNewPageToWikiplace($title, $wikiplace) {
 		
 		if ( ($title === null) || !($title instanceof Title) || ($wikiplace === null) || !($wikiplace instanceof WpWikiplace) ) {
 			throw new MWException( 'Cannot associate page to a WikiPlace (wrong argument)' );
