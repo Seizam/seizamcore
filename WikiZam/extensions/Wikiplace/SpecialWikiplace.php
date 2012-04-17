@@ -12,7 +12,7 @@ class SpecialWikiplace extends SpecialPage {
 	private $futurNewPage;
 
 	public function __construct() {
-		parent::__construct( 'WikiPlace' );
+		parent::__construct( 'Wikiplace' );
 	}
 	
 
@@ -109,7 +109,7 @@ class SpecialWikiplace extends SpecialPage {
 					$wikiplaces = WpWikiplace::getAllOwnedByUserId($this->getUser()->getId());
 
 					if (count($wikiplaces) == 0) {
-						// need at least one WikiPlace
+						// need at least one Wikiplace
 						$out->addHTML(wfMessage('wp-csp-no-wp')->text());	
 
 					} else {
@@ -171,7 +171,7 @@ class SpecialWikiplace extends SpecialPage {
 			Linker::linkKnown( $this->getTitle( self::ACTION_LIST_WIKIPLACES ), wfMessage( 'wp-tl-lwp' )->text() ),
 			Linker::linkKnown( $this->getTitle( self::ACTION_CREATE_WIKIPLACE ), wfMessage( 'wp-tl-cwp' )->text() ),
 			Linker::linkKnown( $this->getTitle( self::ACTION_CREATE_WIKIPLACE_PAGE ), wfMessage( 'wp-tl-csp' )->text() ),
-			Linker::linkKnown( SpecialPage::getTitleFor( 'WikiPlacePlan' ), 'WikiPlacePlan' ),
+			Linker::linkKnown( SpecialPage::getTitleFor( 'WikiplacePlan' ), 'WikiplacePlan' ),
 			) ) )->text() );
 		
 	}
@@ -223,8 +223,8 @@ class SpecialWikiplace extends SpecialPage {
 				'type' => 'text',	
 				'label-message' => 'wp-csp-f-tspname',	
 				'validation-callback' => array($this, 'validateNewSubpageName'),
-                'size' => 16, # Display size of field
-                'maxlength' => 16, # Input size of field  
+  //              'size' => 16, # Display size of field
+  //              'maxlength' => 16, # Input size of field  
 			),
 		);
 		
@@ -266,6 +266,10 @@ class SpecialWikiplace extends SpecialPage {
 	
 	public static function validateNewSubpageName($name, $allData) {
 		
+		if ($name == null) {
+			return false;
+		}
+		
 		// $allData['WikiplaceId'] is already checked, because it is declared before the subpage name in the form descriptor
 		$wikiplace = WpWikiplace::getById( intval($allData['WikiplaceId']) );
 		if ($wikiplace == null) {
@@ -296,7 +300,7 @@ class SpecialWikiplace extends SpecialPage {
 			return wfMessage( 'wp-csp-perr-notvalidwp')->text(); 
 		}
 
-		$status = WpPage::createWikiplaceSubpage($wikiplace, $formData['WikiplaceSubPageName']);
+		$status = WpPage::createSubpage($wikiplace, $formData['WikiplaceSubPageName']);
 
 		if (!$status->isGood()) { // at least one error or warning
 			return wfMessage('wp-csp-perr-'.$status->value)->text();
@@ -322,8 +326,8 @@ class SpecialWikiplace extends SpecialPage {
 			'WikiplaceName' => array(
 				'label-message'	=> 'wp-cwp-f-twpname',
 				'type' => 'text',			
-                'size' => 16, # Display size of field
-                'maxlength'	=> 16, # Input size of field
+ //               'size' => 16, # Display size of field
+ //               'maxlength'	=> 16, # Input size of field
 				'validation-callback' => array( $this, 'validateNewWikiplaceName'),
 			)
 		);
@@ -347,7 +351,8 @@ class SpecialWikiplace extends SpecialPage {
 	 * @return type 
 	 */
 	public static function validateNewWikiplaceName($name, $allData) {
-        if ( !is_string($name) || !preg_match('/^[a-zA-Z0-9]{4,16}$/',$name) ) {
+
+        if ( !is_string($name) || preg_match('/[.\\/]/',$name) ) {
 			return wfMessage( 'wp-vlderr-nwpname-format' )->text() ;
 		}
 		

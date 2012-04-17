@@ -36,7 +36,7 @@ class WikiplaceHooks {
 	 * but MediaWiki interpret this "NO" has there is a conflict while editing the page
 	 * @todo:fix this (use hook userCan)
 	 * @param Article $article the article (Article object) being saved
-	 * @param type $user the user (User object) saving the article
+	 * @param User $user the user (User object) saving the article
 	 * @param type $text the new article text
 	 * @param type $summary the edit summary
 	 * @param type $minor minor edit flag
@@ -59,6 +59,12 @@ class WikiplaceHooks {
 			return true;
 		}
 				
+		if ( $user->getID() == 0 ) {
+			wfDebugLog( 'wikiplace', 'userCanCreate: DENY user is not logged in');
+			$result = false;
+			return false;
+		}
+		
 		$full_text = $title->getFullText();
 		$article_id = $title->getArticleID();
 		$user_id = $user->getId();
@@ -72,7 +78,7 @@ class WikiplaceHooks {
 			return false; // stop hook processing
 		}
 		
-		if ( WpPage::isWikiplaceRoot($title)) {
+		if ( WpPage::isHomepage($title)) {
 
 			// this is a root, so we are creating a new wikiplace
 
@@ -91,21 +97,44 @@ class WikiplaceHooks {
 
 			$wp = WpWikiplace::extractWikiplaceRoot($title);
 			if ( $wp === null ) { 
-				wfDebugLog( 'wikiplace', 'userCanCreate: DENY new sub page but cannot identify container wikiplace ['.$article_id.']"'.$full_text.'"');
+				wfDebugLog( 'wikiplace', 'userCanCreate: DENY cannot identify container wikiplace ['.$article_id.']"'.$full_text.'"');
 				$result = false; // no wikiplace can contain this subpage, so cannot create it
 				
 			} elseif ( ! $wp->isOwner($user_id) ) { // checks the user who creates the page is the owner of the wikiplace
-				wfDebugLog( 'wikiplace', 'userCanCreate: DENY new WikiPlace page but current user is not wikiplace owner ['.$article_id.']"'.$full_text.'"');
+				wfDebugLog( 'wikiplace', 'userCanCreate: DENY new Wikiplace page but current user is not wikiplace owner ['.$article_id.']"'.$full_text.'"');
 				$result = false;
 				
-			} elseif ( ! WpPage::userCanCreateANewPage($user_id) ) {
-				wfDebugLog( 'wikiplace', 'userCanCreate: DENY new WikiPlace page but no sub or no more quota ['.$article_id.']"'.$full_text.'"');
-				$result = false; // no active subscription or page creation quota is exceeded
-				
 			} else {
-				wfDebugLog( 'wikiplace', 'userCanCreate: ALLOW new sub page ['.$article_id.']"'.$full_text.'"');
-				$result = true;
-			}	
+				
+				if ($title->getNamespace() == NS_FILE) {
+					
+					// the user is uploading a file
+			
+					/** @todo: complete test */
+					if (!WpPage::userCanCreateNewPage($user_id)) {
+						wfDebugLog('wikiplace', 'userCanCreate: DENY new Wikiplace page but no sub or no more quota [' . $article_id . ']"' . $full_text . '"');
+						$result = false; // no active subscription or page creation quota is exceeded
+					} else {
+						wfDebugLog('wikiplace', 'userCanCreate: ALLOW new sub page [' . $article_id . ']"' . $full_text . '"');
+						$result = true;
+					}
+					
+			
+				} else {
+					
+					// the user is creating a new page
+					
+					if (!WpPage::userCanCreateNewPage($user_id)) {
+						wfDebugLog('wikiplace', 'userCanCreate: DENY new Wikiplace page but no sub or no more quota [' . $article_id . ']"' . $full_text . '"');
+						$result = false; // no active subscription or page creation quota is exceeded
+					} else {
+						wfDebugLog('wikiplace', 'userCanCreate: ALLOW new sub page [' . $article_id . ']"' . $full_text . '"');
+						$result = true;
+					}
+					
+				}
+				
+			}
 			
 		}
 		
@@ -127,7 +156,7 @@ class WikiplaceHooks {
 	 * @param type $flags bitfield, see source code for details; passed to Article::doedit()
 	 * @param type $revision The newly inserted revision object (as of 1.11.0)
 	 */
-	public static function onCreateArticle( $wikipage, $user, $text, $summary, $isMinor, $isWatch, $section, $flags, $revision ) {
+	public static function onArticleInsertComplete( $wikipage, $user, $text, $summary, $isMinor, $isWatch, $section, $flags, $revision ) {
 		
 		$title = $wikipage->getTitle();
 		
@@ -141,7 +170,7 @@ class WikiplaceHooks {
 		
 		// now, the page is already stored in db, so if it should not, it's too late, so we just record it
 			
-		if (WpPage::isWikiplaceRoot($title)) {
+		if (WpPage::isHomepage($title)) {
 
 			// create a wikiplace from this homepage title				
 			$wp = WpWikiplace::create($title, $user->getId());
@@ -162,7 +191,7 @@ class WikiplaceHooks {
 				throw new MWException('Cannot identify the container wikiplace.');
 			}
 
-			$new_wp_page = WpPage::associateNewPageToWikiplace($title, $wp);
+			$new_wp_page = WpPage::attachNewPageToWikiplace($title, $wp);
 			if ($new_wp_page === null) {
 				wfDebugLog( 'wikiplace', 'onCreateArticle: ERROR while associating the page to the container wikiplace: ['.$article_id.']"'.$full_text.'"');
 				throw new MWException('Cannot associate the page to a wikiplace.');
@@ -246,7 +275,7 @@ class WikiplaceHooks {
 			return true; // skip
 		}
 			
-		$owner = WpPage::findWikiplacePageOwnerUserId($title);
+		$owner = WpPage::findPageOwnerUserId($title);
 
 		if ($owner === false) {
 			wfDebugLog( 'wikiplace', 'isOwner DON\'T KNOW (current value = '.( $result ? 'YES' : 'NO' ).') because title "'.$title->getFullText().'" is not in a wikiplace');

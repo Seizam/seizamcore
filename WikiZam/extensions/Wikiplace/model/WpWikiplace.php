@@ -95,11 +95,11 @@ class WpWikiplace {
 	public static function constructFromDatabaseRow( $row ) {
 			
 		if ( $row === null ) {
-			throw new MWException( 'Cannot construct the WikiPlace from the supplied row (null given)' );
+			throw new MWException( 'Cannot construct the Wikiplace from the supplied row (null given)' );
 		}
 		
 		if ( !isset($row->wpw_id) || !isset($row->wpw_owner_user_id) || !isset($row->wpw_home_page_id) ) {
-			throw new MWException( 'Cannot construct the WikiPlace from the supplied row (missing field)' );
+			throw new MWException( 'Cannot construct the Wikiplace from the supplied row (missing field)' );
 		}
 			
 		return new self ( intval($row->wpw_id) , intval($row->wpw_owner_user_id) ,  intval($row->wpw_home_page_id) );
@@ -114,7 +114,7 @@ class WpWikiplace {
 	public static function getById($id) {
 				
 		if ( ($id === null) || !is_int($id) || ($id < 1) ) {
-			throw new MWException( 'Cannot fectch WikiPlace matching the identifier (invalid identifier)' );
+			throw new MWException( 'Cannot fetch Wikiplace matching the identifier (invalid identifier)' );
 		}
 		
 		return self::getFromDb( array( 'wpw_id' =>  $id ) );
@@ -174,7 +174,7 @@ class WpWikiplace {
 	public static function getByName($name) {
 				
 		if ( ($name === null) || !is_string($name) ) {
-			throw new MWException( 'Cannot fectch WikiPlace matching the name (invalid string)' );
+			throw new MWException( 'Cannot fectch Wikiplace matching the name (invalid string)' );
 		}
 		
 		return self::getFromDb( array('page_title' => $name) );
@@ -191,7 +191,7 @@ class WpWikiplace {
 	public static function getAllOwnedByUserId($user_id) {
 		
 		if ( ($user_id === null) || !is_int($user_id) || ($user_id < 1) ) {
-			throw new MWException( 'Cannot fetch WikiPlaces owned by the specified user (invalid user identifier)' );
+			throw new MWException( 'Cannot fetch Wikiplaces owned by the specified user (invalid user identifier)' );
 		}	
 		
 		return self::getFromDb( array( 'wpw_owner_user_id' =>  $user_id ), true);
@@ -278,7 +278,7 @@ class WpWikiplace {
 		
 		// the creation of the homapage will trigger the page creation hook, 
 		// wich will call self::create(...) wich will process the real creation of the wikiplace
-		return WpPage::createWikiPlaceHomePage($name);
+		return WpPage::createHomepage($name);
 		
 	}
 	
@@ -292,11 +292,11 @@ class WpWikiplace {
 	public static function create($homepage, $user_id) {
 		
 		if ( ($homepage === null) || ($user_id === null) ) {
-			throw new MWException( 'Cannot create WikiPlace (missing argument)' );
+			throw new MWException( 'Cannot create Wikiplace (missing argument)' );
 		}
 		
 		if ( !($homepage instanceof Title) || !is_int($user_id) ) {
-			throw new MWException( 'Cannot create WikiPlace (invalid argument)' );
+			throw new MWException( 'Cannot create Wikiplace (invalid argument)' );
 		}
 		
 		$subscription = WpSubscription::getActiveByUserId($user_id);
@@ -335,7 +335,7 @@ class WpWikiplace {
 		
 		WpUsage::createForNewWikiplace($wp, $subscription);
 		
-		$new_wp_page = WpPage::associateNewPageToWikiplace($homepage, $wp);
+		$new_wp_page = WpPage::attachNewPageToWikiplace($homepage, $wp);
 		if ($new_wp_page === null) {
 			throw new MWException('Cannot associate the homepage to the newly created wikiplace .');
 		}

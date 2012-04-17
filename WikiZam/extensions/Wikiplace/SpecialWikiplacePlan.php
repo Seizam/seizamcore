@@ -21,7 +21,7 @@ class SpecialWikiplacePlan extends SpecialPage {
 	
 	
 	public function __construct() {
-		parent::__construct( 'WikiPlacePlan' );
+		parent::__construct( 'WikiplacePlan' );
 	}
 	
 
@@ -195,11 +195,11 @@ class SpecialWikiplacePlan extends SpecialPage {
 				Linker::linkKnown( $this->getTitle( self::ACTION_LIST_SUBSCRIPTIONS ), wfMessage( 'wp-plan-tl-mysubs' )->text() ) ,
 				Linker::linkKnown( $this->getTitle( self::ACTION_CHANGE ), wfMessage( 'wp-plan-tl-chg' )->text() ) ,
 				Linker::linkKnown( $this->getTitle( self::ACTION_LIST_OFFERS ), wfMessage( 'wp-plan-tl-loffers' )->text() ) ,
-				Linker::linkKnown( SpecialPage::getTitleFor( 'WikiPlace' ), 'WikiPlace' ),
+				Linker::linkKnown( SpecialPage::getTitleFor( 'Wikiplace' ), 'Wikiplace' ),
 			
 				$this->generateLink("/Special:TransactionManager", "TransactionManager"),
-				$this->generateLink("/Special:WikiPlacePlan/test_give_10eur", "give me 10 EUR"),
-				$this->generateLink("/Special:WikiPlacePlan/test_drop_all", "clear wp and tmr"),
+				$this->generateLink("/Special:WikiplacePlan/test_give_10eur", "give me 10 EUR"),
+				$this->generateLink("/Special:WikiplacePlan/test_drop_all", "clear wp and tmr"),
 			
 		) ) )->text() );
 		

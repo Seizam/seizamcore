@@ -6,13 +6,13 @@
  */
 
 if (!defined('MEDIAWIKI')) {
-	echo "WikiPlace extension\n";
+	echo "Wikiplace extension\n";
     die(-1);
 }
 
 $wgExtensionCredits['other'][] = array(
    'path' => __FILE__,
-   'name' => 'WikiPlace',
+   'name' => 'Wikiplace',
    'author' =>'Yann Missler, Seizam SARL', 
    'url' => 'http://www.seizam.com', 
    'description' => 'Provide a personal place in MediaWiki.',
@@ -55,7 +55,7 @@ $wgSpecialPageGroups['WikiplacePlan'] = 'other';
 
 # Attach our own functions to hooks
 $wgHooks['LoadExtensionSchemaUpdates'][] = 'WikiplaceHooks::onLoadExtensionSchemaUpdates'; // Schema updates for update.php
-$wgHooks['ArticleInsertComplete'][] = 'WikiplaceHooks::onCreateArticle';
+$wgHooks['ArticleInsertComplete'][] = 'WikiplaceHooks::onArticleInsertComplete';
 $wgHooks['userCan'][] = 'WikiplaceHooks::userCanCreate';
 $wgHooks['TransactionUpdated'][] = 'WikiplaceHooks::onTransactionUpdated';
 $wgHooks['IsOwner'][] = 'WikiplaceHooks::isOwner';

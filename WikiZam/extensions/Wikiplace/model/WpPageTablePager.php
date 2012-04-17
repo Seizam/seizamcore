@@ -66,7 +66,7 @@ class WpPageTablePager extends SkinzamTablePager {
 				$to = Title::makeTitle($this->mCurrentRow->page_namespace, $value);
 				return Linker::linkKnown( 
 						$to, // where to go
-						WpPage::getSubPageNamePartOnly($to), // the link text
+						WpPage::getSubpageNamePartOnly($to), // the link text
 						array(),
 						array() ); // an arg
 				

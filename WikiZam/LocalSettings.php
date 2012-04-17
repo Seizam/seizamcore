@@ -277,8 +277,8 @@ $wgNamespacesWithSubpages[NS_MAIN] = true;
 # Transaction Manager
 require_once( "$IP/extensions/TransactionManager/TransactionManager.php" );
 
-# WikiPlace
-require_once( "$IP/extensions/WikiPlace/Wikiplace.php" );
+# Wikiplace
+require_once( "$IP/extensions/Wikiplace/Wikiplace.php" );
 
 // FEEDS
 $wgAdvertisedFeedTypes = array( 'rss', 'atom' );

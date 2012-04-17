@@ -114,11 +114,11 @@ class WpPage {
 	private static function constructFromDatabaseRow( $row ) {
 			
 		if ( $row === null ) {
-			throw new MWException( 'Cannot construct the WikiPlace page from the supplied row (null given)' );
+			throw new MWException( 'Cannot construct the Wikiplace page from the supplied row (null given)' );
 		}
 		
 		if ( !isset($row->wppa_id) || !isset($row->wppa_wpw_id) || !isset($row->wppa_page_id) ) {
-			throw new MWException( 'Cannot construct the WikiPlace page from the supplied row (missing field)' );
+			throw new MWException( 'Cannot construct the Wikiplace page from the supplied row (missing field)' );
 		}
 			
 		return new self ( intval($row->wppa_id) , intval($row->wppa_wpw_id) ,  intval($row->wppa_page_id) );
@@ -208,7 +208,7 @@ class WpPage {
 	public static function getById($id) {
 				
 		if ( ($id === null) || !is_int($id) || ($id < 1) ) {
-			throw new MWException( 'Cannot fectch WikiPlace page matching the identifier (invalid identifier)' );
+			throw new MWException( 'Cannot fectch Wikiplace page matching the identifier (invalid identifier)' );
 		}
 		
 		$dbr = wfGetDB(DB_SLAVE);
@@ -227,7 +227,7 @@ class WpPage {
 	public static function getByName($name) {
 				
 		if ( ($name === null) || !is_string($name) ) {
-			throw new MWException( 'Cannot fectch WikiPlace page matching the name (invalid argument)' );
+			throw new MWException( 'Cannot fectch Wikiplace page matching the name (invalid argument)' );
 		}
 		
 		return self::getFromDb(array('page_title' => $name));
@@ -241,10 +241,10 @@ class WpPage {
 	 * int 1 if creation failed, but error not known
 	 * int 2 if creation failed because the title already exist 
 	 */
-	public static function createWikiPlaceHomePage( $new_wikiplace_name = null ) {
+	public static function createHomepage( $new_wikiplace_name = null ) {
 		
 		if ( ( $new_wikiplace_name!==null && !is_string($new_wikiplace_name) ) ) {
-			throw new MWException( 'Cannot create WikiPlace homepage (wrong argument)' );
+			throw new MWException( 'Cannot create Wikiplace homepage (wrong argument)' );
 		}
 		
 		$title = Title::newFromText( $new_wikiplace_name );
@@ -258,7 +258,7 @@ class WpPage {
 			return 2;		
 		}
 		
-		$text = 'Welcome to Seizam! This is the home page of your wikiPlace.';
+		$text = '{{subst:Wikiplace Root}}';
 
 		// now store the new page in mediawiki, this will trigger the WikiplaceHook, wich will 
 		// allow the page saving
@@ -275,11 +275,11 @@ class WpPage {
 	 * @param string $new_page_name
 	 * @return Status When good, the value is the created Title object
 	 */
-	public static function createWikiplaceSubpage( $wikiplace, $new_page_name ) {
+	public static function createSubpage( $wikiplace, $new_page_name ) {
 		
 		if ( ($wikiplace === null) || !($wikiplace instanceof WpWikiplace) ||
 				( $new_page_name === null) || !is_string($new_page_name) ) {
-			throw new MWException( 'Cannot create WikiPlace page (wrong argument)' );
+			throw new MWException( 'Cannot create Wikiplace page (wrong argument)' );
 		}
 		
 		$title = Title::newFromText( $wikiplace->get('name') . '/' . $new_page_name );
@@ -298,7 +298,7 @@ class WpPage {
 			return $status;	
 		}
 		
-		$text = 'This is the default text of a new WikiPlace page.';
+		$text = 'This is the default text of a new Wikiplace page.';
 		
 		// now store the new page in mediawiki, this will trigger the WikiplaceHook, wich will 
 		// allow the page saving
@@ -314,7 +314,7 @@ class WpPage {
 	 * @param Title $title
 	 * @return boolean true = a wikiplacer home page
 	 */
-	public static function isWikiplaceRoot($title) {
+	public static function isHomepage($title) {
 		if ( ($title === null) || !($title instanceof Title)) {
 			throw new MWException( 'wrong title argument' );
 		}
@@ -323,13 +323,13 @@ class WpPage {
 	
 	
 	/**
-	 * Remove the WikiPlace name from the page name, and return the subpage name with a leading slash
-	 * ex: getSubPageNameOnly('WikiPlace1/a_sub_page') returns '/a_sub_page'
-	 * ex: getSubPageNameOnly('WikiPlace1') returns '/'
+	 * Remove the Wikiplace name from the page name, and return the subpage name with a leading slash
+	 * ex: getSubPageNameOnly('Wikiplace1/a_sub_page') returns '/a_sub_page'
+	 * ex: getSubPageNameOnly('Wikiplace1') returns '/'
 	 * @param string $page_name 
 	 * @return string the sub page name
 	 */
-	public static function getSubPageNamePartOnly($title) {
+	public static function getSubpageNamePartOnly($title) {
 		if ( ($title === null) || !($title instanceof Title) ) {
 			throw new MWException( 'cannot get subpage name part, invalid argument' );
 		}
@@ -420,12 +420,44 @@ class WpPage {
 	}
 
 	
+	public static function getDiskspaceUsageByUser($user_id) {
+				
+		if ( ($user_id === null) || !is_int($user_id) || ($user_id < 1) ) {
+			throw new MWException( 'invalid user identifier' );
+		}	
+		
+		$dbr = wfGetDB(DB_SLAVE);
+		$result = $dbr->selectRow( 
+				'wp_wikiplace',
+				array(
+					'sum(img_size) as total'
+					),
+				array(
+					'wpw_owner_user_id' =>  $user_id,
+					'page_namespace' => NS_FILE,
+					),
+				__METHOD__,
+				array(),
+				array( 
+					'wp_page' => array('INNER JOIN','wpw_id = wppa_wpw_id'),
+					'page' => array('INNER JOIN','wppa_page_id = page_id'),
+					'image' => array('INNER JOIN','page_title = img_name'),
+					) );
+		
+		if ($result === null) {
+			return 0;
+		}
+		
+		return intval($result->total);
+		
+	}
+	
 	/**
 	 * Check the user has an active subscription and page creation quota is not exceeded
 	 * @param type $user_id
 	 * @return boolean
 	 */
-	public static function userCanCreateANewPage($user_id) {
+	public static function userCanCreateNewPage($user_id) {
 		
 		$sub = WpSubscription::getActiveByUserId($user_id);
 
@@ -433,8 +465,24 @@ class WpPage {
 			return false;
 		}
 
-		// TODO: forbid creation if usage counter are exceed ?
-		// $counters = WpUsage::getUsagesCountersSummary($sub); // this is only page_hits and bandwidth
+		$max_pages = $sub->get('plan')->get('wpp_nb_wikiplace_pages');
+		$user_pages_nb = self::countPagesOwnedByUser($user_id);
+
+		if ($user_pages_nb >= $max_pages) { 
+			return false;
+		}
+
+		return true;
+		
+	}
+	
+	public static function userCanUploadNewFile($user_id) {
+		
+		$sub = WpSubscription::getActiveByUserId($user_id);
+
+		if ($sub === null) { 
+			return false;
+		}
 
 		$max_pages = $sub->get('plan')->get('wpp_nb_wikiplace_pages');
 		$user_pages_nb = self::countPagesOwnedByUser($user_id);
@@ -455,10 +503,10 @@ class WpPage {
 	 * @param WpWikiplace $wikiplace
 	 * @return type 
 	 */
-	public static function associateNewPageToWikiplace($title, $wikiplace) {
+	public static function attachNewPageToWikiplace($title, $wikiplace) {
 		
 		if ( ($title === null) || !($title instanceof Title) || ($wikiplace === null) || !($wikiplace instanceof WpWikiplace) ) {
-			throw new MWException( 'Cannot associate page to a WikiPlace (wrong argument)' );
+			throw new MWException( 'Cannot associate page to a Wikiplace (wrong argument)' );
 		}
 		
 		// store the new page in our extension
@@ -476,11 +524,11 @@ class WpPage {
 	 */
 	private static function create($page_title, $wikiplace) {
 		if ( ($wikiplace === null) || ($page_title === null) ) {
-			throw new MWException( 'Cannot create WikiPlace page (missing argument)' );
+			throw new MWException( 'Cannot create Wikiplace page (missing argument)' );
 		}
 		
 		if ( !($wikiplace instanceof WpWikiplace) || !($page_title instanceof Title) ) {
-			throw new MWException( 'Cannot create WikiPlace page(invalid argument)' );
+			throw new MWException( 'Cannot create Wikiplace page(invalid argument)' );
 		}
 		
 		$pageId	= $page_title->getArticleID();
@@ -521,7 +569,7 @@ class WpPage {
 	 * @param Title $title
 	 * @return boolean/int int the user id, or false if the page is not a wikiplace page
 	 */
-	public static function findWikiplacePageOwnerUserId($title) {
+	public static function findPageOwnerUserId($title) {
 		
 		if ( ($title == null) || !($title instanceof Title)) {
 			throw new MWException('Cannot find the owner, invalid argument.');

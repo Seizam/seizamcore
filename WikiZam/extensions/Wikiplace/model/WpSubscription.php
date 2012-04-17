@@ -179,7 +179,7 @@ class WpSubscription {
 	
 	public static function getByTransactionId($id) {
 		if ( ($id === null) || !is_numeric($id) || ($id < 1) ) {
-			throw new MWException( 'Cannot fectch WikiPlace matching the transaction identifier (invalid identifier)' );
+			throw new MWException( 'Cannot fectch Wikiplace matching the transaction identifier (invalid identifier)' );
 		}
 		
 		$dbr = wfGetDB(DB_SLAVE);
@@ -200,7 +200,7 @@ class WpSubscription {
 	public static function getById($id) {
 				
 		if ( ($id === null) || !is_numeric($id) || ($id < 1) ) {
-			throw new MWException( 'Cannot fectch WikiPlace matching the identifier (invalid identifier)' );
+			throw new MWException( 'Cannot fectch Wikiplace matching the identifier (invalid identifier)' );
 		}
 		
 		$dbr = wfGetDB(DB_SLAVE);
