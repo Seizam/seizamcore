@@ -251,13 +251,16 @@ unset($wgRestrictionTypes[array_search('move', $wgRestrictionTypes)]);
 // by default 'user' is allowed to edit, even if '*' is not.
 $wgGroupPermissions['*']['edit'] = true; 
 // disable move (but sysop can still move, because sysop group have seperates rights
-$wgGroupPermissions['user']['move']					= false;
-$wgGroupPermissions['user']['move-subpages']		= false;
-$wgGroupPermissions['user']['move-rootuserpages']	= false; // can move root userpages
-$wgGroupPermissions['*']['transactionmanager']          = false;
+$wgGroupPermissions['user']['move'] = false;
+$wgGroupPermissions['user']['move-subpages'] = false;
+$wgGroupPermissions['user']['move-rootuserpages'] = false; // can move root userpages
+$wgGroupPermissions['*']['transactionmanager'] = false;
 
+$wgGroupPermissions['bureaucrat']['editprotectedns'] = true;
+$wgGroupPermissions['sysop']['editprotectedns'] = true;
 
 $wgNamespaceProtection[NS_PROJECT] = array('editprotectedns');
+
 
 # Where is the favicon ?
 $wgFavicon = "/favicon.ico";
