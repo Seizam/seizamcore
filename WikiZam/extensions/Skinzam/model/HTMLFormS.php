@@ -372,11 +372,11 @@ class HTMLFormS {
         # For good measure (it is the default)
         $this->getOutput()->preventClickjacking();
         $this->getOutput()->addModules('mediawiki.htmlform');
-        
+
         $html = '';
-        
-        if (isset ($this->mHeader) && $this->mHeader != '')
-                $html .= '<div class="form_header informations">' . $this->mHeader . '</div>';
+
+        if (isset($this->mHeader) && $this->mHeader != '')
+            $html .= '<div class="form_header informations">' . $this->mHeader . '</div>';
 
         $html .= $this->getErrors($submitResult)
                 . '<div class="edit_col_1">'
@@ -391,9 +391,9 @@ class HTMLFormS {
                 . '</div>'
                 . '</div>';
 
-        if (isset ($this->mFooter) && $this->mFooter != '')
-                $html .= '<div class="form_footer informations">' . $this->mFooter . '</div>';
-        
+        if (isset($this->mFooter) && $this->mFooter != '')
+            $html .= '<div class="form_footer informations">' . $this->mFooter . '</div>';
+
         $html = $this->wrapForm($html);
 
         $this->getOutput()->addHTML(''
@@ -971,8 +971,11 @@ abstract class HTMLFormField {
         $helptext = null;
 
         if (isset($this->mParams['help-message'])) {
+            // If msg has parameters (to be parsed by i18n logic, help-message is an array.
             if (is_array($this->mParams['help-message']))
+                // Then first element is i18n id, the rest are parameters.
                 $msg = wfMessage(array_shift($this->mParams['help-message']), $this->mParams['help-message']);
+            // otherwise, regular, parameter-less msg.
             else
                 $msg = wfMessage($this->mParams['help-message']);
             if ($msg->exists()) {
@@ -984,9 +987,9 @@ abstract class HTMLFormField {
             # an array of message key
             foreach ($this->mParams['help-messages'] as $name) {
                 if ($name)
-                $msg = wfMessage(array_shift($name), $name);
-            else
-                $msg = wfMessage($this->mParams['help-message']);
+                    $msg = wfMessage(array_shift($name), $name);
+                else
+                    $msg = wfMessage($this->mParams['help-message']);
                 if ($msg->exists()) {
                     $helptext .= $msg->text(); // append message
                 }

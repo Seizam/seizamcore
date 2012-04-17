@@ -257,8 +257,11 @@ $wgGroupPermissions['user']['move-rootuserpages'] = false; // can move root user
 $wgGroupPermissions['*']['transactionmanager'] = false;
 $wgGroupPermissions['artist'] = array();
 
+$wgGroupPermissions['bureaucrat']['editprotectedns'] = true;
+$wgGroupPermissions['sysop']['editprotectedns'] = true;
 
 $wgNamespaceProtection[NS_PROJECT] = array('editprotectedns');
+
 
 # Where is the favicon ?
 $wgFavicon = "/favicon.ico";
