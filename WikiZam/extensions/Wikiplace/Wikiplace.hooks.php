@@ -14,7 +14,7 @@ class WikiplaceHooks {
 		$tables = array(
 			'wp_plan', 
 			'wp_subscription',
-			'wp_usage',
+			'wp_old_usage',
 			'wp_wikiplace',
 			'wp_page'
 		);
@@ -49,7 +49,7 @@ class WikiplaceHooks {
 	public static function userCanCreate( $title, &$user, $action, &$result ) {
 		
 		wfDebugLog( 'wikiplace', 'userCanCreate: '
-				.' title="'.$title->getPrefixedDBkey().'"['.$title->getArticleId().'] $title->isKnown()='.var_export($title->isKnown(),true)
+				.' title="'.$title->getPrefixedDBkey().'"['.$title->getArticleId().'] isKnown()='.var_export($title->isKnown(),true)
 				.' user="'.$user->getName().'"['.$user->getID().']'
 				.' action="'.$action.'"');
 		
@@ -80,28 +80,28 @@ class WikiplaceHooks {
 		
 		if ( WpPage::isHomepage($title)) {
 
-			// this is a root, so we are creating a new wikiplace
+			// this is a new Wikiplace
 
 			if ( !WpWikiplace::userCanCreateWikiplace($user->getId()) ) {
-				wfDebugLog( 'wikiplace', 'userCanCreate: DENY new homepage but no sub or no more quota ['.$article_id.']"'.$full_text.'"');
+				wfDebugLog( 'wikiplace', 'userCanCreate: DENY new Wikiplace, but no active sub or no more quota ['.$article_id.']"'.$full_text.'"');
 				$result = false; // no active subscription or a creation quota is exceeded
 				
 			} else {
-				wfDebugLog( 'wikiplace', 'userCanCreate: ALLOW new homepage ['.$article_id.']"'.$full_text.'"');
+				wfDebugLog( 'wikiplace', 'userCanCreate: ALLOW new Wikiplace ['.$article_id.']"'.$full_text.'"');
 				$result = true;
 			}
 			
 		} else {
 
-			// this is a subpage or talk or file
+			// this is a Wikipage (can be regular article or talk or file)
 
 			$wp = WpWikiplace::extractWikiplaceRoot($title);
 			if ( $wp === null ) { 
-				wfDebugLog( 'wikiplace', 'userCanCreate: DENY cannot identify container wikiplace ['.$article_id.']"'.$full_text.'"');
+				wfDebugLog( 'wikiplace', 'userCanCreate: DENY cannot extract container Wikiplace ['.$article_id.']"'.$full_text.'"');
 				$result = false; // no wikiplace can contain this subpage, so cannot create it
 				
 			} elseif ( ! $wp->isOwner($user_id) ) { // checks the user who creates the page is the owner of the wikiplace
-				wfDebugLog( 'wikiplace', 'userCanCreate: DENY new Wikiplace page but current user is not wikiplace owner ['.$article_id.']"'.$full_text.'"');
+				wfDebugLog( 'wikiplace', 'userCanCreate: DENY new Wikipage, but current user is not Wikiplace owner ['.$article_id.']"'.$full_text.'"');
 				$result = false;
 				
 			} else {
@@ -111,8 +111,8 @@ class WikiplaceHooks {
 					// the user is uploading a file
 			
 					/** @todo: complete test */
-					if (!WpPage::userCanCreateNewPage($user_id)) {
-						wfDebugLog('wikiplace', 'userCanCreate: DENY new Wikiplace page but no sub or no more quota [' . $article_id . ']"' . $full_text . '"');
+					if (!WpPage::userCanUploadNewFile($user_id)) {
+						wfDebugLog('wikiplace', 'userCanCreate: DENY new file, but no active sub or no more quota [' . $article_id . ']"' . $full_text . '"');
 						$result = false; // no active subscription or page creation quota is exceeded
 					} else {
 						wfDebugLog('wikiplace', 'userCanCreate: ALLOW new sub page [' . $article_id . ']"' . $full_text . '"');
@@ -122,13 +122,13 @@ class WikiplaceHooks {
 			
 				} else {
 					
-					// the user is creating a new page
+					// the user is creating a new page (regular or talk)
 					
 					if (!WpPage::userCanCreateNewPage($user_id)) {
-						wfDebugLog('wikiplace', 'userCanCreate: DENY new Wikiplace page but no sub or no more quota [' . $article_id . ']"' . $full_text . '"');
+						wfDebugLog('wikiplace', 'userCanCreate: DENY new Wikipage, but no active sub or no more quota [' . $article_id . ']"' . $full_text . '"');
 						$result = false; // no active subscription or page creation quota is exceeded
 					} else {
-						wfDebugLog('wikiplace', 'userCanCreate: ALLOW new sub page [' . $article_id . ']"' . $full_text . '"');
+						wfDebugLog('wikiplace', 'userCanCreate: ALLOW new Wikipage [' . $article_id . ']"' . $full_text . '"');
 						$result = true;
 					}
 					

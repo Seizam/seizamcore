@@ -42,6 +42,8 @@ class SpecialWikiplacePlan extends SpecialPage {
 	 */
 	public function execute( $par ) {
 		
+		$this->setHeaders(); // sets robotPolicy = "noindex,nofollow" + set page title
+		
 		$out = $this->getOutput();
 		$user = $this->getUser();
 		
@@ -70,8 +72,6 @@ class SpecialWikiplacePlan extends SpecialPage {
 
 		// Starts display
 		
-		$this->setHeaders();											// sets robotPolicy = "noindex,nofollow" + set page title
-		$this->outputHeader();											// outputs a summary message on top of special pages
 		$out->setSubtitle( $this->buildToolLinks( $this->getLang()) );	// set a nav bar as subtitle
 		
 		// Handle request

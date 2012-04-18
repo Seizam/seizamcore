@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS `wp_subscription` (
   `wps_tmr_status` varbinary(2) NOT NULL COMMENT 'PE,KO = not paid, OK = paid',
   `wps_date_created` datetime NOT NULL COMMENT 'When the record was created',
   `wps_start_date` datetime DEFAULT NULL COMMENT 'When the subscription starts (can be different from wps_date_created) ',
-  `wps_next_monthly_tick` datetime DEFAULT NULL COMMENT 'Next monthly tick, used by wp_usage',
+  `wps_next_monthly_tick` datetime DEFAULT NULL COMMENT 'Next monthly tick, used by wikiplace usage reports',
   `wps_end_date` datetime DEFAULT NULL COMMENT 'When the subscription ends',
   `wps_active` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '0 = currently not used, 1 = currently in use',
   PRIMARY KEY (`wps_id`)

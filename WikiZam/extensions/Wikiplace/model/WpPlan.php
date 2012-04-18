@@ -11,9 +11,9 @@ class WpPlan {
 				$wpp_end_date,				//`wpp_end_date` datetime NOT NULL
 				$wpp_nb_wikiplaces,			//`wpp_nb_wikiplaces` tinyint(3) unsigned
 				$wpp_nb_wikiplace_pages,	//`wpp_nb_wikiplace_pages` smallint(5) unsigned
-				$wpp_diskspace,				//`wpp_diskspace` bigint(20) unsigned         /!\ PHP MAX INT = 2 147 483 647 = 2 GO, so handled as string
-				$wpp_monthly_page_hits,		//`wpp_monthly_page_hits` bigint(20) unsigned /!\ PHP MAX INT = 2 147 483 647, so handled as string
-				$wpp_monthly_bandwidth,		//`wpp_monthly_bandwidth` bigint(20) unsigned /!\ PHP MAX INT = 2 147 483 647 = 2 GO, so handled as string
+				$wpp_diskspace,				//`wpp_diskspace` int(10) unsigned             /!\  value in MB !!
+				$wpp_monthly_page_hits,		//`wpp_monthly_page_hits` bigint(20) unsigned  /!\  PHP MAX INT = 2 147 483 647, so handled as string
+				$wpp_monthly_bandwidth,		//`wpp_monthly_bandwidth` int(10) unsigned     /!\  value in MB !!
 				$wpp_renewable,				//`wpp_renewable` tinyint(3)
 				$wpp_invitation_only;		//`wpp_invitation_only` tinyint(3) unsigned
 			

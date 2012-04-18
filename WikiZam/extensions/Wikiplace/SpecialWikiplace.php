@@ -34,6 +34,8 @@ class SpecialWikiplace extends SpecialPage {
 	 */
 	public function execute( $par ) {
 		
+		$this->setHeaders(); // sets robotPolicy = "noindex,nofollow" + set page title
+				
 		$out = $this->getOutput();
 		$user = $this->getUser();
 		
@@ -61,9 +63,7 @@ class SpecialWikiplace extends SpecialPage {
 		}
 
 		// Starts display
-		
-		$this->setHeaders(); // sets robotPolicy = "noindex,nofollow" + set page title
-		$this->outputHeader(); // outputs a summary message on top of special pages
+
 		$out->setSubtitle( $this->buildToolLinks( $this->getLang()) ); // set a nav bar as subtitle
 		
 		// Handle request
@@ -131,6 +131,9 @@ class SpecialWikiplace extends SpecialPage {
  
 				
 			case self::ACTION_CONSULT_WP :
+
+//				var_export(WpPage::countPagesOwnedByUser(12));
+				var_export(WpPage::getDiskspaceUsageByUser(12));
 				
 				$name = $this->getRequest()->getText('wikiplace', '');
 				
@@ -146,7 +149,8 @@ class SpecialWikiplace extends SpecialPage {
             default : // (default  =  action == nothing or "something we cannot handle")
 				
 				$out->setPageTitle( wfMessage( 'wp-lwp-pagetitle' )->text() );
-				$tp = new WpWikiplaceTablePager( array('wpw_owner_user_id' => $user->getId()) );
+				$tp = new WpWikiplaceTablePager();
+				$tp->setSelectConds( array('wpw_owner_user_id' => $user->getId()) );
 				$out->addHTML( $tp->getWholeHtml() );
 				
                 break;

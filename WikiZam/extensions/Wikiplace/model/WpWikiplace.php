@@ -301,7 +301,7 @@ class WpWikiplace {
 		
 		$subscription = WpSubscription::getActiveByUserId($user_id);
 		
-		if (!$subscription->get('wps_active')) {
+		if ( $subscription === null ) {
 			return 1;
 		}
 		

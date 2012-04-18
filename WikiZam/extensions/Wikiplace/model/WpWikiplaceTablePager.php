@@ -14,9 +14,9 @@ class WpWikiplaceTablePager extends SkinzamTablePager {
     protected $selectTables = array ( 'wp_wikiplace', 'wp_page', 'page' , 'wp_usage' );
 	
 	protected $selectJoinConditions = array( 
-		'wp_page' => array('INNER JOIN','wpw_id = wppa_wpw_id'),
+		'wp_page' => array('LEFT JOIN','wpw_id = wppa_wpw_id'),
 		'page' => array('INNER JOIN','wpw_home_page_id = page_id'),
-		'wp_usage' => array('INNER JOIN','wpu_wpw_id = wppa_wpw_id') );
+		'wp_usage' => array('LEFT JOIN','wpw_id = wpu_wpw_id AND wpu_active = 1') );
     protected $selectFields = array(
 		'page_title' ,
 		'page_namespace',
@@ -31,20 +31,8 @@ class WpWikiplaceTablePager extends SkinzamTablePager {
     protected $tableClasses = array('WpWikiplace'); # Array
     protected $messagesPrefix = 'wpwtp';
 	
-	protected $selectConds = array ( 'wpu_active' => 1 );
-	
-	
-	/**
-	 * Contruct a list of wikiplace
-	 * @param type $wikiplace_name
-	 */
-	public function __construct( $conditions = array() ) {
-		parent::__construct();
-		if ( !is_array($conditions) ) {
-			throw new MWException('Cannot construct the TablePager with this conditions, invalid argument');
-		}
-		$this->selectConds = array_merge( $this->selectConds , $conditions );
-	}
+	protected $selectConds = array ();
+
 
 
     /**
