@@ -13,7 +13,7 @@ if (!defined('MEDIAWIKI')) {
 $wgExtensionCredits['other'][] = array(
    'path' => __FILE__,
    'name' => 'Wikiplace',
-   'author' =>'Yann Missler, Seizam SARL', 
+   'author' => array('Yann Missler', 'Seizam'), 
    'url' => 'http://www.seizam.com', 
    'description' => 'Provide a personal place in MediaWiki.',
    'version'  => 'alpha',
