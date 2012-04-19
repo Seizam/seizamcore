@@ -2,19 +2,42 @@
 
 class WpWikiplace {  
 
-	private		$wpw_id,            // int(10) unsigned
-				$wpw_owner_user_id, // int(10) unsigned
-				$wpw_home_page_id;  // int(10) unsigned
+	private	$wpw_id,            // int(10) unsigned
+			$wpw_owner_user_id, // int(10) unsigned
+			$wpw_home_page_id,  // int(10) unsigned
+			$wpw_wps_id,
+			$wpw_previous_total_page_hits,
+			$wpw_monthly_page_hits,
+			$wpw_previous_total_bandwidth,
+			$wpw_monthly_bandwidth,
+			$wpw_report_updated;
+	
+	private $subscription;
 	
 	private $name;
 	
+	private $attributes_to_update;
 	
 	
-	private function __construct( $id, $ownerUserId, $homePageId ) {
+	
+	private function __construct( $id, $ownerUserId, $homePageId,
+			$subscriptionId,
+			$previousTotalPageHits, $monthlyPageHits,
+			$previousTotalBandwidth, $monthlyBandwidth,
+			$reportUpdated) {
 
-		$this->wpw_id            = $id;
+		$this->wpw_id = $id;
 		$this->wpw_owner_user_id = $ownerUserId;
-		$this->wpw_home_page_id  = $homePageId;
+		$this->wpw_home_page_id = $homePageId;
+		
+		$this->wpw_wps_id = $subscriptionId;
+		$this->wpw_previous_total_page_hits = $previousTotalPageHits;
+		$this->wpw_monthly_page_hits = $monthlyPageHits;
+		$this->wpw_previous_total_bandwidth = $previousTotalBandwidth;
+		$this->wpw_monthly_bandwidth = $monthlyBandwidth;
+		$this->wpw_report_updated = $reportUpdated;
+		
+		$this->attributes_to_update = array();
 
 	}
 	
@@ -28,16 +51,295 @@ class WpWikiplace {
 			case 'wpw_id':
 			case 'wpw_owner_user_id':
 			case 'wpw_home_page_id':
+			case 'wpw_wps_id':
 				return intval($this->$attribut_name);
+				break;
+			case 'wpw_monthly_page_hits':
+			case 'wpw_monthly_bandwidth':
+				// update if report is more than 5 min age
+				if ($this->wpw_report_updated < WpPlan::getNow(0, -5, 0)) { 
+					$this->updateUsage();
+				}
+			case 'wpw_previous_total_page_hits':
+			case 'wpw_previous_total_bandwidth':
+			case 'wpw_report_updated':
+				return $this->$attribut_name;
 				break;
 			case 'name':
 				if ($this->name === null) {
 					$this->fetchName();
 				}
 				return $this->name;
+			case 'subscription':
+				if ($this->subscription === null) {
+					$this->fetchSubscription();
+				}
+				return $this->subscription;
+
 		}
 		throw new MWException('Unknown attribut '.$attribut_name);
 	}
+	
+/*
+	public function set($attribut_name, $value, $update_now = true) {
+		$db_value = null;
+		switch ($attribut_name) {
+			case 'wpu_active':
+				if (!is_bool($value)) { throw new MWException('Value error (boolean needed) for '.$attribut_name); }
+				$db_value = ( $value ? 1 : 0 );
+				break;
+			case 'wpu_start_date':
+			case 'wpu_end_date':
+			case 'wpu_updated':
+				if (!is_string($value)) { throw new MWException('Value error (string needed) for '.$attribut_name);	}
+				break;
+			default:
+				throw new MWException('Cannot change the value of attribut '.$attribut_name);
+		}
+		
+		$this->$attribut_name							= $value;
+		$this->attributes_to_update[$attribut_name]		= ($db_value !== null) ? $db_value : $value; // used by wps_active to convert from boolean to int
+		
+		if ($update_now) {
+			
+			$dbw = wfGetDB(DB_MASTER);
+			$dbw->begin();
+
+			$success = $dbw->update(
+					'wp_usage',
+					$this->attributes_to_update,
+					array( 'wpu_id' => $this->wpu_id) );
+			
+			$dbw->commit();
+
+			if ( !$success ) {	
+				throw new MWException('Error while saving Usage report to database.');
+			}		
+			
+			$this->attributes_to_update = array();
+		
+		}
+		
+		return $value; // maybe useful, one day ...
+	}
+*/
+	
+	
+	/**
+	 * For now, updates only the page hits. In futur release, it will also update the bandwith usage.
+	 */
+	private function updateUsage() {
+	
+		$dbw = wfGetDB(DB_MASTER);
+		$dbw->begin();
+		
+		// mysql computes the new value because it can be larger than PHP_INT_MAX, and we handle the result as string
+		
+		$result = $dbr->selectRow( 
+				array( 'wp_page' , 'page' ),
+				array( '( SUM(page_counter) - '.$this->wpw_previous_total_page_hits.') AS hits'),
+				array( 'wppa_wpw_id' => $this->wpw_id ),
+				__METHOD__,
+				array(),
+				array( 'page' => array('INNER JOIN','wppa_page_id = page_id') ) );
+		
+		if ( $result === false ) {
+			throw new MWException('Error while computing page_hits.');
+		}
+		
+		$hits = $result->hits; // handle as string because it can be larger than PHP_INT_MAX
+		
+		/** @todo compute bandwidth usage */ 
+
+		$now = WpPlan::getNow();
+		
+		wfDebugLog( 'wikiplace', "WpWikiplace->updateUsage for wp[$this->wpw_id] from $this->wpw_report_updated($this->wpw_monthly_page_hits) to $now($hits)");
+
+		$success = $dbw->update(
+				'wp_wikiplace',
+				array(
+					'wpw_monthly_page_hits' => $hits,
+					'wpw_report_updated' => $now,
+				),
+				array( 'wpw_id' => $this->wpw_id) );
+
+		$dbw->commit();
+
+		if ( !$success ) {	
+			throw new MWException('Error while updating wikiplace usages to database.');
+		}
+		
+		$this->wpw_monthly_page_hits = $hits;
+		$this->wpw_report_updated = $now;
+	}
+	
+	
+	/**
+	 * Should be called by cron. Its execution can take more more more than 30 seconds.
+	 * For the moment, it only updates the page hits.
+	 * In futur release, in will also update the bandwidth usage.
+	 * @return int Nb of updates
+	 * @todo updates also the bandwith usage
+	 */
+	public static function updateAllOutdatedUsages() {
+		
+		/** @todo update bandwidth usage */ 
+		
+		$dbw = wfGetDB(DB_MASTER);
+		
+		$dbw->begin();
+		
+		$now = $dbw->addQuotes(WpPlan::getNow());
+		$one_hour_ago = $dbw->addQuotes(WpPlan::getNow(0,0,-1));
+		
+		$sql = "
+CREATE TEMPORARY TABLE wp_tmp_page_hits (
+SELECT wppa_wpw_id AS wikiplace_id, SUM(page.page_counter) AS page_hits
+FROM wp_wikiplace
+  INNER JOIN wp_page
+  ON wpw_id = wppa_wpw_id
+  AND wpw_report_updated < $one_hour_ago
+    INNER JOIN page
+    ON wppa_page_id = page_id
+GROUP BY wppa_wpw_id ) ;";
+		
+		$result = $dbw->query($sql, __METHOD__);
+		
+		if ($result !== true) {
+			throw new MWException('Error while computing usages');
+		}
+		
+		$to_update = $dbw->affectedRows();
+
+		$sql = "
+UPDATE wp_wikiplace
+SET wpw_monthly_page_hits = ( (
+  SELECT page_hits
+  FROM wp_tmp_page_hits
+  WHERE wikiplace_id = wpw_id ) - wpw_previous_total_page_hits ) ,
+wpw_report_updated = $now
+WHERE wpw_report_updated < $one_hour_ago ;" ;
+				
+		$result = $dbw->query($sql, __METHOD__);
+		
+		if ($result !== true) {
+			throw new MWException('Error while updating outdated wikiplace usages');
+		}
+		
+		$updated = $dbw->affectedRows();
+		
+		$dbw->commit();
+		
+		if ($to_update != $updated) {
+			throw new MWException("Wikiplace usages updated, but $to_update updates expected and $updated  updated.");
+		}
+		
+		return $updated;
+		
+	}
+	
+	
+		/**
+	 * Warning, after adding, the attribut value is not valid
+	 * Warning, if $value is handled as int, it should not be > 2 147 483 647 because PHP may be 32bits
+	 * @param string $value 
+	 */
+/*	public function addBandiwidthConsumption($value) {
+		
+		$dbw = wfGetDB(DB_MASTER);
+		$dbw->begin();
+
+		$success = $dbw->update(
+				'wp_usage',
+				'wpu_monthly_bandwidth = wpu_monthly_bandwidth + '.$value,
+				array( 'wpu_id' => $this->wpu_id) );
+
+		$dbw->commit();
+		
+		if ( !$success ) {	
+			throw new MWException('Error while updating bandwidth usage.');
+		}
+	
+	}
+*/	
+	
+	/**
+	 * Reset all usages when outdated
+	 * @return int Nb of Wikiplace reset
+	 */
+	public static function archiveAndResetMonthlyUsages() {
+		
+			$dbw = wfGetDB(DB_MASTER);
+			$dbw->begin();
+			
+			$now =  $dbw->addQuotes( WpPlan::getNow() );
+
+			// archiving current usages
+
+			// 3rd arg : must be an associative array of the form
+			// array( 'dest1' => 'source1', ...). Source items may be literals
+			// rather than field names, but strings should be quoted with
+			// DatabaseBase::addQuotes()
+			$success = $dbw->insertSelect( 'wp_old_usage', 'wp_wikiplace',
+				array(
+					'wpou_wps_id' => 'wpw_wps_id',
+					'wpou_wpw_id' => 'wpw_id',
+					'wpou_end_date' => $now,
+					'wpou_monthly_page_hits' => 'wpw_monthly_page_hits',
+					'wpou_monthly_bandwidth' => 'wpw_monthly_bandwidth',
+				),
+				array( 'wpw_date_expires < '.$now ),
+				__METHOD__,
+				array( 'IGNORE' )
+			);
+			
+			if ( !$success ) {	
+				throw new MWException('Error while renewing archiving outdated usage reports.');
+			}
+			
+			// renewing all active outdated records
+			$success = $dbw->update(
+					'wp_wikiplace',
+					array(
+						'wpw_date_expires = DATE_ADD(wpw_date_expires,INTERVAL 1 MONTH)',
+						'wpw_monthly_page_hits' => 0,
+						'wpw_monthly_bandwidth' => 0,
+						'wpw_previous_total_page_hits' => '( wpw_monthly_page_hits + wpw_previous_total_page_hits)',
+						'wpw_previous_total_bandwidth' => '( wpw_monthly_bandwidth + wpw_previous_total_bandwidth)',
+					),
+					array( 'wpw_date_expires < '.$now ) );
+				
+			if ( !$success ) {	
+				throw new MWException('Error while resetting outdated usage reports.');
+			}
+			
+			$updated = $dbw->affectedRows();
+			
+			$dbw->commit();
+			
+			return $updated;
+		
+	}
+	
+		private function fetchSubscription($databaseRow = null) {
+		
+		if ($databaseRow !== null) {
+			if ($databaseRow->wps_id != $this->wpu_wps_id) {
+				throw new MWException('The given subscription does not match with the current usage.');
+			}
+			$this->subscription = WpSubscription::constructFromDatabaseRow($databaseRow);
+			
+		} else {
+			$this->subscription = WpSubscription::getById($this->wpu_wps_id);
+		}
+		
+		if ($this->subscription === null) {
+			throw new MWException('Unknown subscription');
+		} 
+
+	}
+	
+	
 	
 	public function isOwner($user_id) {
 		return ( $this->wpw_owner_user_id == $user_id );

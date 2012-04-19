@@ -16,7 +16,8 @@ class WikiplaceHooks {
 			'wp_subscription',
 			'wp_old_usage',
 			'wp_wikiplace',
-			'wp_page'
+			'wp_page',
+			'wp_old_subscription'
 		);
 		
 		$mysql_dir = dirname( __FILE__ ).'/schema/mysql';
@@ -230,11 +231,9 @@ class WikiplaceHooks {
 						
 						if ($sub->get('wps_start_date') == null) {
 							// first subscription, so activates it from now
-							$now = WpPlan::getNow();
-							$end = WpPlan::calculateTick($now, $sub->get('plan')->get('wpp_period_months'));
-							$tick = WpPlan::calculateTick($now, 1);
-							$sub->set('wps_start_date',	$now, false );	// 3rd p = false = do not update db
-							$sub->set('wps_next_monthly_tick',	$tick, false );	// 3rd p = false = do not update db
+							$start = WpPlan::getNow();
+							$end = WpPlan::calculateTick($start, $sub->get('plan')->get('wpp_period_months'));
+							$sub->set('wps_start_date',	$start, false );	// 3rd p = false = do not update db
 							$sub->set('wps_end_date', $end, false );	// 3rd p = false = do not update db
 							$sub->set('wps_active',	true, false );	// 3rd p = false = do not update db
 						} 
@@ -258,7 +257,7 @@ class WikiplaceHooks {
 		}
 		
 		// if we arrive here, this transaction is about a subscription, but we do not know what to do... there is a problem!
-		throw new MWException('The transaction of a subscription was updated, but the system doesn\'t know what to do... ('.$sub->get('transactionStatus').'->'.$tmr['tmr_status'].')');	
+		throw new MWException('The transaction of a subscription was updated, but this update is not managed ('.$sub->get('transactionStatus').'->'.$tmr['tmr_status'].')');	
 		
 	}
 	

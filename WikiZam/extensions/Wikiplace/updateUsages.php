@@ -13,9 +13,13 @@ class UpdateUsages extends Maintenance {
 
 	public function execute() {
 
-		$this->output( "[".WpPlan::getNow()." START]\n" );		
-		$nb = WpUsage::updateAllOutdatedCounters();	
-		$this->output( "[".WpPlan::getNow()." END $nb usage rows updated]\n" );
+		$this->output( "[Update usages ".WpPlan::getNow()." START]\n" );		
+		$nb = WpWikiplace::updateAllOutdatedUsages();	
+		$this->output( "[".WpPlan::getNow()." END $nb rows updated]\n" );
+		
+		$this->output( "[Archive and reset usages ".WpPlan::getNow()." START]\n" );		
+		$nb = WpWikiplace::archiveAndResetMonthlyUsages();	
+		$this->output( "[".WpPlan::getNow()." END $nb rows updated]\n" );
 		
 	}
 }

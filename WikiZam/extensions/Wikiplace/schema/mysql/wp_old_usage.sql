@@ -6,7 +6,6 @@
 
 CREATE TABLE IF NOT EXISTS `wp_old_usage` (
   `wpou_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Primary key',
-  `wpou_wps_id` int(10) unsigned NOT NULL COMMENT 'Foreign key: associated subscription',
   `wpou_wpw_id` int(10) unsigned NOT NULL COMMENT 'Foreign key: associated WikiPlace',
   `wpou_end_date` datetime NOT NULL COMMENT 'When the usage report ended',
   `wpou_monthly_page_hits` bigint(20) unsigned NOT NULL COMMENT 'Number of page hits of the current report',

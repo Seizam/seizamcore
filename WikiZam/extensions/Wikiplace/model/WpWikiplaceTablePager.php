@@ -11,20 +11,19 @@ class WpWikiplaceTablePager extends SkinzamTablePager {
 	
 	
     # Fields for default behavior
-    protected $selectTables = array ( 'wp_wikiplace', 'wp_page', 'page' , 'wp_usage' );
+    protected $selectTables = array ( 'wp_wikiplace', 'wp_page', 'page' );
 	
 	protected $selectJoinConditions = array( 
 		'wp_page' => array('LEFT JOIN','wpw_id = wppa_wpw_id'),
-		'page' => array('INNER JOIN','wpw_home_page_id = page_id'),
-		'wp_usage' => array('LEFT JOIN','wpw_id = wpu_wpw_id AND wpu_active = 1') );
+		'page' => array('INNER JOIN','wpw_home_page_id = page_id') );
     protected $selectFields = array(
 		'page_title' ,
 		'page_namespace',
 		'count(*)',
-		'wpu_monthly_page_hits',
-		'wpu_monthly_bandwidth',
-		'wpu_updated',
-		'wpu_end_date' );
+		'wpw_monthly_page_hits',
+		'wpw_monthly_bandwidth',
+		'wpw_report_updated',
+		'wpw_date_expires' );
 	protected $selectOptions = array( 'GROUP BY' => 'wpw_id');
     protected $defaultSort = 'page_title';
     public $mDefaultDirection = true; // true = DESC
@@ -57,11 +56,12 @@ class WpWikiplaceTablePager extends SkinzamTablePager {
 						array(),
 						array( 'wikiplace' => $value) ); // an argument
 			case 'count(*)':
-			case 'wpu_monthly_page_hits':
-			case 'wpu_monthly_bandwidth':			
-				return $value;	
-			case 'wpu_updated':
-			case 'wpu_end_date':
+			case 'wpw_monthly_page_hits':
+				return $value;
+			case 'wpw_monthly_bandwidth':			
+				return "$value Mb";	
+			case 'wpw_report_updated':
+			case 'wpu_date_expires':
 				return ($value === null) ? '-' : $wgLang->timeanddate($value, true);
 			default:
                 throw new MWException( 'Unknown data name "'.$name.'"');

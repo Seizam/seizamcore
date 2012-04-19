@@ -2,17 +2,16 @@
 
 class WpSubscription {  
 		  
-	private		$wps_id,                // int(10) unsigned
-				$wps_wpp_id,            // int(10) unsigned
-				$wps_buyer_user_id,     // int(10) unsigned
-				$wps_tmr_id,            // int(10) unsigned
-				$wps_tmr_status,        // varchar(2)
-				$wps_date_created,      // datetime
-				$wps_start_date,        // datetime
-				$wps_next_monthly_tick, // dattime
-				$wps_end_date,          // datetime
-				$wps_active;            // tinyint(3) unsigned
-
+	private		$wps_id, // int(10) unsigned
+				$wps_wpp_id, // int(10) unsigned
+				$wps_buyer_user_id, // int(10) unsigned
+				$wps_tmr_id, // int(10) unsigned
+				$wps_tmr_status, // varchar(2)
+				$wps_start_date, // datetime
+				$wps_end_date, // datetime
+				$wps_active, // tinyint(3) unsigned
+				$wps_renew;// tinyint(3) unsigned
+			
 	private $plan;
 	private $attributes_to_update;
 		
@@ -33,20 +32,20 @@ class WpSubscription {
 	 */
 	private function __construct(
 			$id, $planId, $buyerUserId,
-			$transactionId, $transactionStatus, $createdDate,
-			$startDate, $nextMonthlyTick, $endDate,
-			$active ) {
+			$transactionId, $transactionStatus,
+			$startDate, $endDate,
+			$active, $renew ) {
 		
-		$this->wps_id                   = $id;			
-		$this->wps_wpp_id               = $planId;				
-		$this->wps_buyer_user_id        = $buyerUserId;
-		$this->wps_tmr_id               = $transactionId;
-		$this->wps_tmr_status           = $transactionStatus;
-		$this->wps_date_created         = $createdDate;
-		$this->wps_start_date           = $startDate;
-		$this->wps_next_monthly_tick    = $nextMonthlyTick;
-		$this->wps_end_date             = $endDate;
-		$this->wps_active               = $active;
+		$this->wps_id = $id;			
+		$this->wps_wpp_id = $planId;				
+		$this->wps_buyer_user_id = $buyerUserId;
+		$this->wps_tmr_id = $transactionId;
+		$this->wps_tmr_status = $transactionStatus;
+		$this->wps_start_date = $startDate;
+		$this->wps_end_date = $endDate;
+		$this->wps_active = $active;
+		$this->wps_renew = $renew;
+		
 		
 		$this->attributes_to_update = array();
 
@@ -69,11 +68,10 @@ class WpSubscription {
 				return intval($this->$attribut_name);
 				break;
 			case 'wps_active':
+			case 'wps_renew':
 				return ($this->$attribut_name !== '0');
 				break;
-			case 'wps_date_created':
 			case 'wps_start_date':
-			case 'wps_next_monthly_tick':
 			case 'wps_end_date':
 			case 'wps_tmr_status':
 				return $this->$attribut_name;
@@ -99,11 +97,11 @@ class WpSubscription {
 		$db_value = null;
 		switch ($attribut_name) {
 			case 'wps_active':
+			case 'wps_renew':
 				if (!is_bool($value)) { throw new MWException('Value error (boolean needed) for '.$attribut_name); }
 				$db_value = ( $value ? 1 : 0 );
 				break;
-			case 'wps_start_date':
-			case 'wps_next_monthly_tick':		
+			case 'wps_start_date':		
 			case 'wps_end_date':
 			case 'wps_tmr_status':
 				if (!is_string($value)) { throw new MWException('Value error (string needed) for '.$attribut_name);	}
@@ -166,13 +164,13 @@ class WpSubscription {
 		}
 
 		if ( !isset($row->wps_id) || !isset($row->wps_wpp_id) || !isset($row->wps_buyer_user_id) ||
-				!isset($row->wps_tmr_id) || !isset($row->wps_tmr_status) || !isset($row->wps_date_created) ||
+				!isset($row->wps_tmr_id) || !isset($row->wps_tmr_status) ||
 	//			!isset($row->wps_start_date) || !isset($row->wps_end_date) ||
-				!isset($row->wps_active) ) {
+				!isset($row->wps_active) || !isset($row->wps_renew) ) {
 			throw new MWException( 'Cannot construct the Subscription from the supplied row (missing field)' );
 		}
 			
-		return new self ( $row->wps_id, $row->wps_wpp_id, $row->wps_buyer_user_id, $row->wps_tmr_id, $row->wps_tmr_status, $row->wps_date_created, $row->wps_start_date, $row->wps_next_monthly_tick, $row->wps_end_date, $row->wps_active );
+		return new self ( $row->wps_id, $row->wps_wpp_id, $row->wps_buyer_user_id, $row->wps_tmr_id, $row->wps_tmr_status, $row->wps_start_date, $row->wps_end_date, $row->wps_active, $row->wps_renew );
 		  
 	}
 	
@@ -255,8 +253,9 @@ class WpSubscription {
 		
 		wfDebugLog( 'wikiplace', 'WpSubscription::getAll WARNING $are_you_sure='.$are_you_sure);
 		
-		if ( $are_you_sure != 'I know what i am doing')
+		if ( $are_you_sure != 'I know what i am doing') {
 			return array(); //good idea :)
+		}
 		
 		$dbr = wfGetDB(DB_SLAVE);
 		$results = $dbr->select( 'wp_subscription', '*', '1', __METHOD__ );
@@ -337,6 +336,39 @@ class WpSubscription {
 	}
 	
 	
+	public static function archiveOldSubscriptions() {
+		
+		$dbw = wfGetDB(DB_MASTER);
+		$dbw->begin();
+
+		$now =  $dbw->addQuotes( WpPlan::getNow() );
+
+		// 3rd arg : must be an associative array of the form
+		// array( 'dest1' => 'source1', ...). Source items may be literals
+		// rather than field names, but strings should be quoted with
+		// DatabaseBase::addQuotes()
+		$success = $dbw->insertSelect( 'wp_old_subscription', 'wp_subscrption',
+			array(
+				'wpos_wpp_id' => 'wps_wpp_id',
+				'wpos_buyer_user_id' => 'wps_buyer_user_id',
+				'wpos_tmr_id' => 'wpos_tmr_id',
+				'wpos_tmr_status' => 'wps_tmr_status',
+				'wpos_start_date' => 'wps_start_date',
+				'wpos_end_date' => 'wps_end_date'
+			),
+			array( "wps_end_date > $now", 'wps_active' => 0 ),
+			__METHOD__,
+			array( 'IGNORE' )
+		);
+
+		if ( !$success ) {	
+			throw new MWException('Error while archiving outdated inactive subscriptions.');
+		}
+
+		$dbw->commit();
+		
+	}
+	
 	/**
 	 * Subscribe to a first plan, or upgrade the current plan to a upper one
 	 * Currently, can only subscribe to a frst plan
@@ -390,9 +422,9 @@ class WpSubscription {
 							$tmr['tmr_id'],
 							'OK', // paid
 							$now, // start
-							WpPlan::calculateTick($now,1), // tick
 							WpPlan::calculateTick($now, $plan->get('wpp_period_months')), // end
 							true, // active
+							$plan->get('wpp_renewable'),
 							$db_master
 					);
 					break;
@@ -404,9 +436,9 @@ class WpSubscription {
 							$tmr['tmr_id'],
 							'PE', // not paid
 							null, // will start when paid
-							null, // no tick
-							null, // no end
+							null, // unknown for now
 							false, // not active
+							$plan->get('wpp_renewable'),
 							$db_master
 					);
 					break;
@@ -442,17 +474,17 @@ class WpSubscription {
 	 * @param type $db_master The wfGetDB(DB_MASTER) if already have (avoid multiple master db connection)
 	 * @return self 
 	 */
-	private static function create( $planId, $buyerUserId, $transactionId, $transactionStatus, $startDate, $nextTickDate, $endDate, $active, $db_master = null ) {
+	private static function create( $planId, $buyerUserId, $transactionId, $transactionStatus, $startDate, $endDate, $active, $renew, $db_master = null ) {
 		
-		if ( ($planId === null) || ($buyerUserId === null) || ($transactionId === null) || ($transactionStatus === null) || ($active === null) ) {
+		if ( ($planId === null) || ($buyerUserId === null) || ($transactionId === null) ||
+				($transactionStatus === null) || ($active === null) || ($renew === null) ) {
 			throw new MWException( 'Cannot create Subscription (missing argument)' );
 		}
 		
 		if ( !is_numeric($planId) || !is_numeric($buyerUserId) || !is_numeric($transactionId) || !is_string($transactionStatus) || 
 				( ($startDate !== null) && !preg_match( '/^(\d{4})\-(\d\d)\-(\d\d) (\d\d):(\d\d):(\d\d)$/D', $startDate ) ) || 
-				( ($nextTickDate !== null) && !preg_match( '/^(\d{4})\-(\d\d)\-(\d\d) (\d\d):(\d\d):(\d\d)$/D', $nextTickDate ) ) || 
 				( ($endDate !== null) && !preg_match( '/^(\d{4})\-(\d\d)\-(\d\d) (\d\d):(\d\d):(\d\d)$/D', $endDate ) ) || 
-				!is_bool($active) ) {
+				!is_bool($active) || !is_bool($renew) ) {
 			throw new MWException( 'Cannot create Subscription (invalid argument)' );
 		}
 						
@@ -461,19 +493,17 @@ class WpSubscription {
 		
         // With PostgreSQL, a value is returned, but null returned for MySQL because of autoincrement system
         $id = $dbw->nextSequenceValue('wp_subscription_wps_id_seq');
-		$now =  WpPlan::getNow() ;
 		
         $success = $dbw->insert('wp_subscription', array(
-			'wps_id'                => $id,
-			'wps_wpp_id'            => $planId,
-			'wps_buyer_user_id'     => $buyerUserId,
-			'wps_tmr_id'            => $transactionId,
-			'wps_tmr_status'        => $transactionStatus,
-			'wps_date_created'      => $now,
-			'wps_start_date'        => $startDate,
-			'wps_next_monthly_tick' => $nextTickDate,
-			'wps_end_date'          => $endDate,
-			'wps_active'            => $active,
+			'wps_id' => $id,
+			'wps_wpp_id' => $planId,
+			'wps_buyer_user_id' => $buyerUserId,
+			'wps_tmr_id' => $transactionId,
+			'wps_tmr_status' => $transactionStatus,
+			'wps_start_date' => $startDate,
+			'wps_end_date' => $endDate,
+			'wps_active' => $active ? 1 : 0,
+			'wps_renew' => $renew ? 1 : 0,
 		));
 
 		// Setting id from auto incremented id in DB
@@ -486,8 +516,8 @@ class WpSubscription {
 		}		
 				
 		return new self( $id, $planId, $buyerUserId,
-			$transactionId, $transactionStatus, $now,
-			$startDate, $nextTickDate, $endDate, $active );
+			$transactionId, $transactionStatus,
+			$startDate, $endDate, $active, $renew );
 		
 	}
 	

@@ -28,7 +28,7 @@ class UpdateSubscriptions extends Maintenance {
 		
 		$subs = WpSubscription::getAll('I know what i am doing');
 
-		$this->output( "ID / NAME / BUYER USER ID / ACTIVE / TMR STATUS / START DATE / END DATE\n" );
+		$this->output( "ID / NAME / BUYER USER ID / ACTIVE / TMR STATUS / START DATE / END DATE / RENEW\n" );
 		
 		foreach ($subs as $sub) {
 			$this->output( 
@@ -38,7 +38,8 @@ class UpdateSubscriptions extends Maintenance {
 					$sub->get('wps_active') . " / " .
 					$sub->get('wps_tmr_status') . " / " .
 					$sub->get('wps_start_date') . " / " .
-					$sub->get('wps_end_date') . "\n" );
+					$sub->get('wps_end_date') . " / " .
+					$sub->get('wps_renew'). "\n" );
 		}
 		
 		$this->output( "[".WpPlan::getNow()." END]\n" );

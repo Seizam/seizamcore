@@ -104,7 +104,8 @@ class SpecialWikiplacePlan extends SpecialPage {
 				$dbw = wfGetDB(DB_MASTER);
 				$dbw->query("TRUNCATE tm_record");
 				$dbw->query("TRUNCATE wp_subscription");
-				$dbw->query("TRUNCATE wp_usage");
+				$dbw->query("TRUNCATE wp_old_subscription");
+				$dbw->query("TRUNCATE wp_old_usage");
 				$dbw->query("TRUNCATE wp_page");
 				$dbw->query("TRUNCATE wp_wikiplace");
 				$out->addHTML('All Wikiplaces, pages, usages, subscriptions and all TMR have been deleted!');
