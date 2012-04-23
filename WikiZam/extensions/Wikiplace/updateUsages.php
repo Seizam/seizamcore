@@ -7,19 +7,21 @@ class UpdateUsages extends Maintenance {
 	public function __construct() {
 		
 		parent::__construct();
-		$this->mDescription = "Script to update Usages.";
+		$this->mDescription = "Update outdated usages + archive and reset ending usages.";
 		
 	}
 
 	public function execute() {
 
-		$this->output( "[Update usages ".WpSubscription::getNow()." START]\n" );		
+		$this->output( "[Update usages START at ".WpSubscription::getNow()."]\n" );		
 		$nb = WpWikiplace::updateAllOutdatedUsages();	
-		$this->output( "[".WpSubscription::getNow()." END $nb rows updated]\n" );
+		$this->output("$nb rows updated\n");
+		$this->output( "[END at ".WpSubscription::getNow()."]\n" );
 		
-		$this->output( "[Archive and reset usages ".WpSubscription::getNow()." START]\n" );		
-		$nb = WpWikiplace::archiveAndResetMonthlyUsages();	
-		$this->output( "[".WpSubscription::getNow()." END $nb rows updated]\n" );
+		$this->output( "[Archive and reset usages START at ".WpSubscription::getNow()."]\n" );		
+		$nb = WpWikiplace::archiveAndResetMonthlyUsages();
+		$this->output("$nb rows updated\n");
+		$this->output( "[END at ".WpSubscription::getNow()."]\n" );
 		
 	}
 }

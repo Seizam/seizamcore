@@ -240,7 +240,28 @@ class SpecialWikiplacePlan extends SpecialPage {
 
 	}
 
-	
+	public function validateSubscribePlanId($id, $allData) {
+		
+		if (!preg_match('/^[0-9]{1,10}$/',$id) ) {
+			return wfMessage( 'wp-plan-subscribe-invalid-plan' )->text();
+		}
+		
+		// var_export($allData);
+		// array ('Plan' =&gt; '1')
+		
+		$dbr = wfGetDB(DB_SLAVE);
+		$now =  $dbr->addQuotes( wfTimestamp(TS_DB) );
+		$conds = $dbr->makeList(array( "wpp_id" => $id, "wpp_start_date <= $now", "wpp_end_date > $now" ), LIST_AND );
+		
+		$result = $dbr->selectRow( 'wp_plan', '*',	$conds, __METHOD__ );
+		
+		if ( $result === false ) {
+			return wfMessage( 'wp-plan-subscribe-invalid-plan' )->text();
+		}
+		
+        return true ;
+		
+	}
 	
 	private function getSubscribePlanForm( $submitTitle ) {
 
@@ -248,7 +269,7 @@ class SpecialWikiplacePlan extends SpecialPage {
 			'Plan' => array(
                 'type'					=> 'select',
                 'label-message'			=> 'wp-plan-sub-f-splan',
-				'validation-callback'	=> array('WpPlan', 'validateSubscribePlanId'),
+				'validation-callback'	=> array($this, 'validateSubscribePlanId'),
                 'options'				=> array(),
 			),
 		);

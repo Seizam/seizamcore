@@ -5,44 +5,49 @@ require_once( dirname( __FILE__ ) . '/../../maintenance/Maintenance.php' );
 class UpdateSubscriptions extends Maintenance {
 	public function __construct() {
 		parent::__construct();
-		$this->mDescription = "Script to update Subscriptions.";
-		$this->addOption( 'reportonly', 'Generate a report but do not update DB' );
-//		$this->addOption( 'semiprotect', 'Adds semi-protection' );
-//		$this->addOption( 'u', 'Username to protect with', false, true );
-//		$this->addOption( 'r', 'Reason for un/protection', false, true );
-//		$this->addArg( 'title', 'Title to protect', true );
+		$this->mDescription = "Automaticaly renew ending subscriptions, and archive old ones.";
+
 	}
 
 	public function execute() {
-//		global $wgUser;
-//		$wgUser = User::newFromName( 'Maintenance script' );
-
-//		$userName = $this->getOption( 'u', 'Maintenance script' );
-//		$reason = $this->getOption( 'r', '' );
-
-		$update_db = !($this->hasOption( 'reportonly' ));
 		
-		$this->output( "For the moment, it just displays all subscriptions.\n" );
+		$when = WpSubscription::getNow();
+		$this->output("Considering 'now' = $when\n");
 		
-		$this->output( "[".WpSubscription::getNow()." START]\n" );
 		
-		$subs = WpSubscription::getAll('I know what i am doing');
-
-		$this->output( "ID / NAME / BUYER USER ID / ACTIVE / TMR STATUS / START DATE / END DATE / RENEW\n" );
 		
+		$this->output( "[Archive all subscriptions to renew START at ".WpSubscription::getNow()."]\n" );
+		
+		$nb = WpSubscription::archiveAllToRenew($when);
+		$this->output( "$nb subscriptions archived\n" );
+		
+		$this->output( "[END at ".WpSubscription::getNow()."]\n" );
+		
+		
+		
+		$this->output( "[Renewing subscriptions START at ".WpSubscription::getNow()."]\n" );	
+		
+		$subs = WpSubscription::getAllToRenew($when);
+		
+		$this->output( count($subs)." subscriptions to process, progress:\nwps_id ; OK/KO ; wps_buyer_user_id ; wps_tmr_id ; wps_tmr_status\n" );		
 		foreach ($subs as $sub) {
-			$this->output( 
-					$sub->get('wps_id') . " / " .
-					$sub->get('plan')->get('wpp_name') . " / " .
-					$sub->get('wps_buyer_user_id') . " / " .
-					$sub->get('wps_active') . " / " .
-					$sub->get('wps_tmr_status') . " / " .
-					$sub->get('wps_start_date') . " / " .
-					$sub->get('wps_end_date') . " / " .
-					$sub->get('wps_renew'). "\n" );
+			$status = $sub->renew($when);			
+			$this->output( $sub->get('wps_id').';'
+					.( $status->isGood() ? 'OK':'KO('.$status->value.')' ).';'
+					.$sub->get('wps_buyer_user_id').';'
+					.$sub->get('wps_tmr_id').';'
+					.$sub->get('wps_tmr_status')."\n");
 		}
 		
-		$this->output( "[".WpSubscription::getNow()." END]\n" );
+		$this->output( "[END at ".WpSubscription::getNow()."]\n" );
+		
+		
+		
+		$this->output( "[Deactivate all outdated subscriptions START at ".WpSubscription::getNow()."]\n" );
+		$nb = WpSubscription::deactivateAllOutdated($when);
+		$this->output( "$nb subscriptions updated" );
+		
+		$this->output( "[END at ".WpSubscription::getNow()."]\n" );
 	}
 }
 

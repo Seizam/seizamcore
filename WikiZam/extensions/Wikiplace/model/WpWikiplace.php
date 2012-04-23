@@ -297,7 +297,7 @@ WHERE wpw_report_updated < $one_hour_ago ;" ;
 			);
 			
 			if ( !$success ) {	
-				throw new MWException('Error while renewing archiving outdated usage reports.');
+				throw new MWException('Error while renewing archiving outdated usages.');
 			}
 			
 			// renewing all active outdated records
@@ -313,7 +313,7 @@ WHERE wpw_report_updated < $one_hour_ago ;" ;
 					array( 'wpw_date_expires < '.$now ) );
 				
 			if ( !$success ) {	
-				throw new MWException('Error while resetting outdated usage reports.');
+				throw new MWException('Error while resetting outdated usages.');
 			}
 			
 			$updated = $dbw->affectedRows();
