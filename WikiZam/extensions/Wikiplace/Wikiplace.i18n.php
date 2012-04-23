@@ -86,10 +86,10 @@ $messages['en'] = array(
 	
 	'wpwtp-page_title' => 'Wikiplace',
 	'wpwtp-count(*)' => 'Number of pages',
-	'wpwtp-wpu_monthly_page_hits' => 'Monthly page hits',
-	'wpwtp-wpu_monthly_bandwidth' => 'Monthly bandwith',
-	'wpwtp-wpu_updated' => 'Date of value',
-	'wpwtp-wpu_end_date' => 'Reset date',
+	'wpwtp-wpw_monthly_page_hits' => 'Monthly page hits',
+	'wpwtp-wpw_monthly_bandwidth' => 'Monthly bandwith',
+	'wpwtp-wpw_report_updated' => 'Date of value',
+	'wpwtp-wpw_date_expires' => 'Reset date',
 	
 	'wp-consultwp-pagetitle' => 'Wikiplace $1',
 	

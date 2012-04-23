@@ -254,7 +254,6 @@ $wgGroupPermissions['*']['edit'] = true;
 $wgGroupPermissions['user']['move']	= false;
 $wgGroupPermissions['user']['move-subpages'] = false;
 $wgGroupPermissions['user']['move-rootuserpages'] = false; // can move root userpages
-$wgGroupPermissions['*']['transactionmanager'] = false;
 $wgGroupPermissions['artist'] = array();
 
 $wgGroupPermissions['bureaucrat']['editprotectedns'] = true;

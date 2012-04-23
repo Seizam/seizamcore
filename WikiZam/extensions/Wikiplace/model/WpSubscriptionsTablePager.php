@@ -57,10 +57,11 @@ class WpSubscriptionsTablePager extends SkinzamTablePager {
 				return wfMessage( 'wp-sub-tmrstatus-'.$value )->text() ;
 			case 'wpp_nb_wikiplaces':
 			case 'wpp_nb_wikiplace_pages':
-			case 'wpp_diskspace':
 			case 'wpp_monthly_page_hits':
+				return $value;	
 			case 'wpp_monthly_bandwidth':
-				return $value;
+			case 'wpp_diskspace':
+				return "$value Mb";
             default:
                 throw new MWException( 'Unknown data name "'.$name.'"');
         }

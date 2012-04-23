@@ -22,22 +22,23 @@ $wgExtensionCredits['other'][] = array(
 $_dir = dirname( __FILE__ ).'/';
 
 # Load extension's classes
-$wgAutoloadClasses['WikiplaceHooks']            = $_dir . 'Wikiplace.hooks.php';
-$wgAutoloadClasses['SpecialWikiplace']          = $_dir . 'SpecialWikiplace.php';
-$wgAutoloadClasses['SpecialWikiplacePlan']      = $_dir . 'SpecialWikiplacePlan.php';
+$wgAutoloadClasses['WikiplaceHooks'] = $_dir . 'Wikiplace.hooks.php';
+$wgAutoloadClasses['SpecialWikiplace'] = $_dir . 'SpecialWikiplace.php';
+$wgAutoloadClasses['SpecialWikiplacePlan'] = $_dir . 'SpecialWikiplacePlan.php';
 
-$wgAutoloadClasses['WpWikiplace']               = $_dir . 'model/WpWikiplace.php';
-$wgAutoloadClasses['WpWikiplaceTablePager']     = $_dir . 'model/WpWikiplaceTablePager.php';
+$wgAutoloadClasses['WpWikiplace'] = $_dir . 'model/WpWikiplace.php';
+$wgAutoloadClasses['WpWikiplaceTablePager'] = $_dir . 'model/WpWikiplaceTablePager.php';
 
-$wgAutoloadClasses['WpPage']                    = $_dir . 'model/WpPage.php';
-$wgAutoloadClasses['WpPageTablePager']          = $_dir . 'model/WpPageTablePager.php';
+$wgAutoloadClasses['WpPage'] = $_dir . 'model/WpPage.php';
+$wgAutoloadClasses['WpPageTablePager'] = $_dir . 'model/WpPageTablePager.php';
 
-$wgAutoloadClasses['WpPlan']                    = $_dir . 'model/WpPlan.php';
+$wgAutoloadClasses['WpPlan'] = $_dir . 'model/WpPlan.php';
 
-$wgAutoloadClasses['WpSubscription']            = $_dir . 'model/WpSubscription.php';
+$wgAutoloadClasses['WpSubscription'] = $_dir . 'model/WpSubscription.php';
+$wgAutoloadClasses['WpOldSubscription'] = $_dir . 'model/WpOldSubscription.php';
 $wgAutoloadClasses['WpSubscriptionsTablePager'] = $_dir . 'model/WpSubscriptionsTablePager.php';
 
-$wgAutoloadClasses['WpUsage']                   = $_dir . 'model/WpUsage.php';
+$wgAutoloadClasses['WpOldUsage'] = $_dir . 'model/WpOldUsage.php';
 
 
 
@@ -59,6 +60,3 @@ $wgHooks['ArticleInsertComplete'][] = 'WikiplaceHooks::onArticleInsertComplete';
 $wgHooks['userCan'][] = 'WikiplaceHooks::userCanCreate';
 $wgHooks['TransactionUpdated'][] = 'WikiplaceHooks::onTransactionUpdated';
 $wgHooks['IsOwner'][] = 'WikiplaceHooks::isOwner';
-
-
-

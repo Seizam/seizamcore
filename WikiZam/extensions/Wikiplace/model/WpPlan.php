@@ -11,9 +11,9 @@ class WpPlan {
 				$wpp_end_date,				//`wpp_end_date` datetime NOT NULL
 				$wpp_nb_wikiplaces,			//`wpp_nb_wikiplaces` tinyint(3) unsigned
 				$wpp_nb_wikiplace_pages,	//`wpp_nb_wikiplace_pages` smallint(5) unsigned
-				$wpp_diskspace,				//`wpp_diskspace` bigint(20) unsigned         /!\ PHP MAX INT = 2 147 483 647 = 2 GO, so handled as string
-				$wpp_monthly_page_hits,		//`wpp_monthly_page_hits` bigint(20) unsigned /!\ PHP MAX INT = 2 147 483 647, so handled as string
-				$wpp_monthly_bandwidth,		//`wpp_monthly_bandwidth` bigint(20) unsigned /!\ PHP MAX INT = 2 147 483 647 = 2 GO, so handled as string
+				$wpp_diskspace,				//`wpp_diskspace` int(10) unsigned             /!\  value in MB !!
+				$wpp_monthly_page_hits,		//`wpp_monthly_page_hits` bigint(20) unsigned  /!\  PHP MAX INT = 2 147 483 647, so handled as string
+				$wpp_monthly_bandwidth,		//`wpp_monthly_bandwidth` int(10) unsigned     /!\  value in MB !!
 				$wpp_renewable,				//`wpp_renewable` tinyint(3)
 				$wpp_invitation_only;		//`wpp_invitation_only` tinyint(3) unsigned
 			
@@ -186,48 +186,5 @@ class WpPlan {
         return true ;
 		
 	}
-	
-
-
-
-	/**
-	 *
-	 * @param int $seconds + or - seconds shift
-	 * @param int $minutes + or - minutes shift
-	 * @param int $hours + or - hours shift
-	 * @return string MySQL DATETIME string
-	 */
-	public static function getNow($seconds = 0, $minutes = 0, $hours = 0) {
-		
-		if ( !is_int($seconds) || !is_int($minutes) || !is_int($hours) ) {
-			throw new MWException("Cannot compute 'now with delay', invalid argument.");
-		}
-		
-		$start = new DateTime( 'now', new DateTimeZone( 'GMT' ) );
-		
-		if ( ($seconds != 0) || ($minutes != 0) || ($hours != 0) ) {
-			$start->modify( "$seconds second $minutes minute $hours hour" );
-		}
-		
-		return $start->format( 'Y-m-d H:i:s' );
-	}
-	
-	
-	/**
-	 *
-	 * @param type $startDate
-	 * @param type $nb_of_month
-	 * @return type 
-	 */
-	public static function calculateTick($startDate, $nb_of_month) {
-
-		$start = date_create_from_format( 'Y-m-d H:i:s', $startDate, new DateTimeZone( 'GMT' ) );
-		if ( $start->format('j') > 28) { // if day > 28
-			$start->modify('first day of next month');
-		}
-		$start->modify( "+$nb_of_month month -1 second" );
-		return $start->format( 'Y-m-d H:i:s' );
-		
-	}	
 	
 }

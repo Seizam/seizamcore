@@ -42,6 +42,8 @@ class SpecialWikiplacePlan extends SpecialPage {
 	 */
 	public function execute( $par ) {
 		
+		$this->setHeaders(); // sets robotPolicy = "noindex,nofollow" + set page title
+		
 		$out = $this->getOutput();
 		$user = $this->getUser();
 		
@@ -70,8 +72,6 @@ class SpecialWikiplacePlan extends SpecialPage {
 
 		// Starts display
 		
-		$this->setHeaders();											// sets robotPolicy = "noindex,nofollow" + set page title
-		$this->outputHeader();											// outputs a summary message on top of special pages
 		$out->setSubtitle( $this->buildToolLinks( $this->getLang()) );	// set a nav bar as subtitle
 		
 		// Handle request
@@ -104,7 +104,8 @@ class SpecialWikiplacePlan extends SpecialPage {
 				$dbw = wfGetDB(DB_MASTER);
 				$dbw->query("TRUNCATE tm_record");
 				$dbw->query("TRUNCATE wp_subscription");
-				$dbw->query("TRUNCATE wp_usage");
+				$dbw->query("TRUNCATE wp_old_subscription");
+				$dbw->query("TRUNCATE wp_old_usage");
 				$dbw->query("TRUNCATE wp_page");
 				$dbw->query("TRUNCATE wp_wikiplace");
 				$out->addHTML('All Wikiplaces, pages, usages, subscriptions and all TMR have been deleted!');

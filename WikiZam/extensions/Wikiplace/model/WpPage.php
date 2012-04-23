@@ -420,6 +420,11 @@ class WpPage {
 	}
 
 	
+	/**
+	 * Get current diskpace usage
+	 * @param type $user_id
+	 * @return int The diskpace usage <b>in MB</b>
+	 */
 	public static function getDiskspaceUsageByUser($user_id) {
 				
 		if ( ($user_id === null) || !is_int($user_id) || ($user_id < 1) ) {
@@ -428,9 +433,9 @@ class WpPage {
 		
 		$dbr = wfGetDB(DB_SLAVE);
 		$result = $dbr->selectRow( 
-				'wp_wikiplace',
+				array('wp_wikiplace','wp_page','page','image'),
 				array(
-					'sum(img_size) as total'
+					'sum(img_size) >> 20  as total'
 					),
 				array(
 					'wpw_owner_user_id' =>  $user_id,
@@ -488,6 +493,13 @@ class WpPage {
 		$user_pages_nb = self::countPagesOwnedByUser($user_id);
 
 		if ($user_pages_nb >= $max_pages) { 
+			return false;
+		}
+		
+		$max_diskspace = $sub->get('plan')->get('wpp_diskspace');
+		$user_diskspace_usage = self::getDiskspaceUsageByUser($user_id);
+
+		if ($user_diskspace_usage >= $max_diskspace) { 
 			return false;
 		}
 

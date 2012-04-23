@@ -217,14 +217,6 @@ function efRestrictionsUserCan( $title, &$user, $action, &$result ) {
 	
 	// userCan is called before title->checkPageRestrictions
 	
-/*	wfDebugLog( 'restrictions', 'UserCan: enter'
-			.' title="'.$title->getPrefixedDBkey().'"['.$title->getArticleId().']'
-			."\n".wfGetPrettyBacktrace()
-			);
-*/	
-	
-//	wfDebugLog( 'restrictions', 'UserCan: title is '.get_class($title));
-	
 	$act = $action;
 
 	//just in case, but shouldn't occur
@@ -316,15 +308,9 @@ function efRestrictionsIsOwner( $title, $user ) {
 	
 //		wfDebugLog( 'restrictions', 'IsOwner: '.  wfGetPrettyBacktrace());
     
-	if ( !$title instanceOf Title ) {
-	    return false; // quick hack to prevent the API from messing up.
+	if ( (!$title instanceOf Title) || ( $user->getID() === 0 ) || ($title->isSpecialPage()) ) {
+	    return false; 
 	}
-	
-	if ( $user->getID() === 0 ) { // if anonymous
-	    return false; // don't allow anons, they shouldn't even get this far but just in case...
-	}
-	
-	
 	
 	global $wgRestrictionsIsOwnerCache;
 	if (isset($wgRestrictionsIsOwnerCache[$user->getID()][$title->getArticleId()])) {

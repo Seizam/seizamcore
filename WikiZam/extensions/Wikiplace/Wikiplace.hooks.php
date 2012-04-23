@@ -14,9 +14,10 @@ class WikiplaceHooks {
 		$tables = array(
 			'wp_plan', 
 			'wp_subscription',
-			'wp_usage',
+			'wp_old_usage',
 			'wp_wikiplace',
-			'wp_page'
+			'wp_page',
+			'wp_old_subscription'
 		);
 		
 		$mysql_dir = dirname( __FILE__ ).'/schema/mysql';
@@ -49,7 +50,7 @@ class WikiplaceHooks {
 	public static function userCanCreate( $title, &$user, $action, &$result ) {
 		
 		wfDebugLog( 'wikiplace', 'userCanCreate: '
-				.' title="'.$title->getPrefixedDBkey().'"['.$title->getArticleId().'] $title->isKnown()='.var_export($title->isKnown(),true)
+				.' title="'.$title->getPrefixedDBkey().'"['.$title->getArticleId().'] isKnown()='.var_export($title->isKnown(),true)
 				.' user="'.$user->getName().'"['.$user->getID().']'
 				.' action="'.$action.'"');
 		
@@ -80,28 +81,28 @@ class WikiplaceHooks {
 		
 		if ( WpPage::isHomepage($title)) {
 
-			// this is a root, so we are creating a new wikiplace
+			// this is a new Wikiplace
 
 			if ( !WpWikiplace::userCanCreateWikiplace($user->getId()) ) {
-				wfDebugLog( 'wikiplace', 'userCanCreate: DENY new homepage but no sub or no more quota ['.$article_id.']"'.$full_text.'"');
+				wfDebugLog( 'wikiplace', 'userCanCreate: DENY new Wikiplace, but no active sub or no more quota ['.$article_id.']"'.$full_text.'"');
 				$result = false; // no active subscription or a creation quota is exceeded
 				
 			} else {
-				wfDebugLog( 'wikiplace', 'userCanCreate: ALLOW new homepage ['.$article_id.']"'.$full_text.'"');
+				wfDebugLog( 'wikiplace', 'userCanCreate: ALLOW new Wikiplace ['.$article_id.']"'.$full_text.'"');
 				$result = true;
 			}
 			
 		} else {
 
-			// this is a subpage or talk or file
+			// this is a Wikipage (can be regular article or talk or file)
 
 			$wp = WpWikiplace::extractWikiplaceRoot($title);
 			if ( $wp === null ) { 
-				wfDebugLog( 'wikiplace', 'userCanCreate: DENY cannot identify container wikiplace ['.$article_id.']"'.$full_text.'"');
+				wfDebugLog( 'wikiplace', 'userCanCreate: DENY cannot extract container Wikiplace ['.$article_id.']"'.$full_text.'"');
 				$result = false; // no wikiplace can contain this subpage, so cannot create it
 				
 			} elseif ( ! $wp->isOwner($user_id) ) { // checks the user who creates the page is the owner of the wikiplace
-				wfDebugLog( 'wikiplace', 'userCanCreate: DENY new Wikiplace page but current user is not wikiplace owner ['.$article_id.']"'.$full_text.'"');
+				wfDebugLog( 'wikiplace', 'userCanCreate: DENY new Wikipage, but current user is not Wikiplace owner ['.$article_id.']"'.$full_text.'"');
 				$result = false;
 				
 			} else {
@@ -111,8 +112,8 @@ class WikiplaceHooks {
 					// the user is uploading a file
 			
 					/** @todo: complete test */
-					if (!WpPage::userCanCreateNewPage($user_id)) {
-						wfDebugLog('wikiplace', 'userCanCreate: DENY new Wikiplace page but no sub or no more quota [' . $article_id . ']"' . $full_text . '"');
+					if (!WpPage::userCanUploadNewFile($user_id)) {
+						wfDebugLog('wikiplace', 'userCanCreate: DENY new file, but no active sub or no more quota [' . $article_id . ']"' . $full_text . '"');
 						$result = false; // no active subscription or page creation quota is exceeded
 					} else {
 						wfDebugLog('wikiplace', 'userCanCreate: ALLOW new sub page [' . $article_id . ']"' . $full_text . '"');
@@ -122,13 +123,13 @@ class WikiplaceHooks {
 			
 				} else {
 					
-					// the user is creating a new page
+					// the user is creating a new page (regular or talk)
 					
 					if (!WpPage::userCanCreateNewPage($user_id)) {
-						wfDebugLog('wikiplace', 'userCanCreate: DENY new Wikiplace page but no sub or no more quota [' . $article_id . ']"' . $full_text . '"');
+						wfDebugLog('wikiplace', 'userCanCreate: DENY new Wikipage, but no active sub or no more quota [' . $article_id . ']"' . $full_text . '"');
 						$result = false; // no active subscription or page creation quota is exceeded
 					} else {
-						wfDebugLog('wikiplace', 'userCanCreate: ALLOW new sub page [' . $article_id . ']"' . $full_text . '"');
+						wfDebugLog('wikiplace', 'userCanCreate: ALLOW new Wikipage [' . $article_id . ']"' . $full_text . '"');
 						$result = true;
 					}
 					
@@ -230,13 +231,11 @@ class WikiplaceHooks {
 						
 						if ($sub->get('wps_start_date') == null) {
 							// first subscription, so activates it from now
-							$now = WpPlan::getNow();
-							$end = WpPlan::calculateTick($now, $sub->get('plan')->get('wpp_period_months'));
-							$tick = WpPlan::calculateTick($now, 1);
-							$sub->set('wps_start_date',	$now, false );	// 3rd p = false = do not update db
-							$sub->set('wps_next_monthly_tick',	$tick, false );	// 3rd p = false = do not update db
-							$sub->set('wps_end_date', $end, false );	// 3rd p = false = do not update db
-							$sub->set('wps_active',	true, false );	// 3rd p = false = do not update db
+							$start = WpSubscription::getNow();
+							$end = WpSubscription::calculateEndDate($start, $sub->get('plan')->get('wpp_period_months'));
+							$sub->set('wps_start_date',	$start, false ); // 3rd param = false = do not update db now
+							$sub->set('wps_end_date', $end, false ); 
+							$sub->set('wps_active',	true, false ); 
 						} 
 						// if startDate not null, this is a renewal, it will be activated later when needed
 						
@@ -258,7 +257,7 @@ class WikiplaceHooks {
 		}
 		
 		// if we arrive here, this transaction is about a subscription, but we do not know what to do... there is a problem!
-		throw new MWException('The transaction of a subscription was updated, but the system doesn\'t know what to do... ('.$sub->get('transactionStatus').'->'.$tmr['tmr_status'].')');	
+		throw new MWException('The transaction of a subscription was updated, but this update is not managed ('.$sub->get('transactionStatus').'->'.$tmr['tmr_status'].')');	
 		
 	}
 	
