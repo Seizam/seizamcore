@@ -11,7 +11,6 @@ CREATE TABLE IF NOT EXISTS `wp_old_usage` (
   `wpou_monthly_page_hits` bigint(20) unsigned NOT NULL COMMENT 'Number of page hits of the current report',
   `wpou_monthly_bandwidth` bigint(20) unsigned NOT NULL COMMENT 'Total size in bytes of all downloads WikiPlace s files',
   PRIMARY KEY (`wpou_id`),
-  KEY `wpou_wps_id` (`wpou_wps_id`),
   KEY `wpou_wpw_id` (`wpou_wpw_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=binary COMMENT='WikiPlace old usage reports table';
 
