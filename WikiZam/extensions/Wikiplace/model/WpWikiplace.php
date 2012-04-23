@@ -10,7 +10,8 @@ class WpWikiplace {
 			$wpw_monthly_page_hits,
 			$wpw_previous_total_bandwidth,
 			$wpw_monthly_bandwidth,
-			$wpw_report_updated;
+			$wpw_report_updated,
+			$wpw_date_expires;
 	
 	private $subscription;
 	
@@ -24,7 +25,7 @@ class WpWikiplace {
 			$subscriptionId,
 			$previousTotalPageHits, $monthlyPageHits,
 			$previousTotalBandwidth, $monthlyBandwidth,
-			$reportUpdated) {
+			$reportUpdated, $dateExpires) {
 
 		$this->wpw_id = $id;
 		$this->wpw_owner_user_id = $ownerUserId;
@@ -36,6 +37,7 @@ class WpWikiplace {
 		$this->wpw_previous_total_bandwidth = $previousTotalBandwidth;
 		$this->wpw_monthly_bandwidth = $monthlyBandwidth;
 		$this->wpw_report_updated = $reportUpdated;
+		$this->wpw_date_expires = $dateExpires;
 		
 		$this->attributes_to_update = array();
 
@@ -57,12 +59,13 @@ class WpWikiplace {
 			case 'wpw_monthly_page_hits':
 			case 'wpw_monthly_bandwidth':
 				// update if report is more than 5 min age
-				if ($this->wpw_report_updated < WpPlan::getNow(0, -5, 0)) { 
+				if ($this->wpw_report_updated < WpSubscription::getNow(0, -5, 0)) { 
 					$this->updateUsage();
 				}
 			case 'wpw_previous_total_page_hits':
 			case 'wpw_previous_total_bandwidth':
 			case 'wpw_report_updated':
+			case 'wpw_date_expires':
 				return $this->$attribut_name;
 				break;
 			case 'name':
@@ -151,7 +154,7 @@ class WpWikiplace {
 		
 		/** @todo compute bandwidth usage */ 
 
-		$now = WpPlan::getNow();
+		$now = WpSubscription::getNow();
 		
 		wfDebugLog( 'wikiplace', "WpWikiplace->updateUsage for wp[$this->wpw_id] from $this->wpw_report_updated($this->wpw_monthly_page_hits) to $now($hits)");
 
@@ -189,8 +192,8 @@ class WpWikiplace {
 		
 		$dbw->begin();
 		
-		$now = $dbw->addQuotes(WpPlan::getNow());
-		$one_hour_ago = $dbw->addQuotes(WpPlan::getNow(0,0,-1));
+		$now = $dbw->addQuotes(WpSubscription::getNow());
+		$one_hour_ago = $dbw->addQuotes(WpSubscription::getNow(0,0,-1));
 		
 		$sql = "
 CREATE TEMPORARY TABLE wp_tmp_page_hits (
@@ -272,7 +275,7 @@ WHERE wpw_report_updated < $one_hour_ago ;" ;
 			$dbw = wfGetDB(DB_MASTER);
 			$dbw->begin();
 			
-			$now =  $dbw->addQuotes( WpPlan::getNow() );
+			$now =  $dbw->addQuotes( WpSubscription::getNow() );
 
 			// archiving current usages
 
@@ -400,11 +403,18 @@ WHERE wpw_report_updated < $one_hour_ago ;" ;
 			throw new MWException( 'Cannot construct the Wikiplace from the supplied row (null given)' );
 		}
 		
-		if ( !isset($row->wpw_id) || !isset($row->wpw_owner_user_id) || !isset($row->wpw_home_page_id) ) {
+		if ( !isset($row->wpw_id) || !isset($row->wpw_owner_user_id) || !isset($row->wpw_home_page_id) || !isset($row->wpw_wps_id) ||
+				!isset($row->wpw_previous_total_page_hits) || !isset($row->wpw_monthly_page_hits) ||
+				!isset($row->wpw_previous_total_bandwidth) || !isset($row->wpw_monthly_bandwidth) || 
+				!isset($row->wpw_report_updated) || !isset($row->wpw_date_expires) ) {
+						
 			throw new MWException( 'Cannot construct the Wikiplace from the supplied row (missing field)' );
 		}
 			
-		return new self ( intval($row->wpw_id) , intval($row->wpw_owner_user_id) ,  intval($row->wpw_home_page_id) );
+		return new self ( intval($row->wpw_id) , intval($row->wpw_owner_user_id) ,  intval($row->wpw_home_page_id), intval($row->wpw_wps_id),
+			$row->wpw_previous_total_page_hits, $row->wpw_monthly_page_hits,
+			$row->wpw_previous_total_bandwidth, $row->wpw_monthly_bandwidth,
+			$row->wpw_report_updated, $row->wpw_date_expires);
 		
 	}
 	
@@ -437,7 +447,9 @@ WHERE wpw_report_updated < $one_hour_ago ;" ;
 		//todo
 		
 		$tables = array( 'wp_wikiplace', 'page' );
-		$vars = array( 'wpw_id', 'wpw_owner_user_id', 'wpw_home_page_id', 'page_title');
+		$vars = array( 'wpw_id', 'wpw_owner_user_id', 'wpw_home_page_id', 'page_title',
+			'wpw_wps_id', 'wpw_previous_total_page_hits', 'wpw_monthly_page_hits', 'wpw_previous_total_bandwidth', 'wpw_monthly_bandwidth',
+			'wpw_report_updated','wpw_date_expires'	);
 		$fname = __METHOD__;
 		$options = array();
 		$join_conds = array( 'page' => array('INNER JOIN', 'wpw_home_page_id = page_id')); /** @todo:maybe a left join? */
@@ -609,6 +621,7 @@ WHERE wpw_report_updated < $one_hour_ago ;" ;
 		
 		$homepageId = $homepage->getArticleID();
 		$homepageName = $homepage->getDBkey();
+		$now = WpSubscription::getNow();
 		
 		$dbw = wfGetDB(DB_MASTER);
 		
@@ -617,10 +630,21 @@ WHERE wpw_report_updated < $one_hour_ago ;" ;
         // With PostgreSQL, a value is returned, but null returned for MySQL because of autoincrement system
         $id = $dbw->nextSequenceValue('wpw_id');
 		
+		$wps_id = $subscription->get('wps_id');
+		$wpw_date_expires = self::calculateDateExpiresFromSubscription($subscription);
+		
         $success = $dbw->insert('wp_wikiplace', array(
-			'wpw_id'            => $id,
+			'wpw_id' => $id,
 			'wpw_owner_user_id' => $user_id,
-			'wpw_home_page_id'  => $homepageId,
+			'wpw_home_page_id' => $homepageId,
+			
+			'wpw_wps_id' => $wps_id,
+			'wpw_previous_total_page_hits' => 0,
+			'wpw_monthly_page_hits' => 0,
+			'wpw_previous_total_bandwidth' => 0,
+			'wpw_monthly_bandwidth' => 0,
+			'wpw_report_updated' => $now,
+			'wpw_date_expires' => $wpw_date_expires
 		));
 
 		// Setting id from auto incremented id in DB
@@ -632,12 +656,12 @@ WHERE wpw_report_updated < $one_hour_ago ;" ;
 			return 3;
 		}
 		
-		$wp = new self( $id, $user_id, $homepageId );
+		$wp = new self( $id, $user_id, $homepageId,
+				$wps_id, 0, 0, 0, 0, $now, $wpw_date_expires);
 		$wp->fetchName(null, $homepage);
-		
-		WpUsage::createForNewWikiplace($wp, $subscription);
-		
+				
 		$new_wp_page = WpPage::attachNewPageToWikiplace($homepage, $wp);
+		
 		if ($new_wp_page === null) {
 			throw new MWException('Cannot associate the homepage to the newly created wikiplace .');
 		}
@@ -709,6 +733,26 @@ WHERE wpw_report_updated < $one_hour_ago ;" ;
 
 		return true; // all ok
 
+	}
+	
+	
+	public static function calculateDateExpiresFromSubscription($subscription) {
+		
+		// contains the needed day/hour/minute/second
+		$end = date_create_from_format( 'Y-m-d H:i:s', $subscription->get('wps_end_date'), new DateTimeZone( 'GMT' ) );
+		
+		$now = new DateTime( 'now', new DateTimeZone( 'GMT' ) );
+		
+		$expire = date_create_from_format( 'Y-m-d H:i:s', 
+				$now->format( 'Y-m-' ) . $end->format( 'd H:i:s' ) ,
+				new DateTimeZone( 'GMT' ) );
+		
+		if ( $expire < $now ) {
+			$expire->modify('+1 month');
+		}
+		
+		return $expire->format( 'Y-m-d H:i:s' );
+		
 	}
 	
 	

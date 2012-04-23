@@ -60,6 +60,3 @@ $wgHooks['ArticleInsertComplete'][] = 'WikiplaceHooks::onArticleInsertComplete';
 $wgHooks['userCan'][] = 'WikiplaceHooks::userCanCreate';
 $wgHooks['TransactionUpdated'][] = 'WikiplaceHooks::onTransactionUpdated';
 $wgHooks['IsOwner'][] = 'WikiplaceHooks::isOwner';
-
-
-

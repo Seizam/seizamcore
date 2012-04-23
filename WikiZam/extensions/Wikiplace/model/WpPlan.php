@@ -187,47 +187,4 @@ class WpPlan {
 		
 	}
 	
-
-
-
-	/**
-	 *
-	 * @param int $seconds + or - seconds shift
-	 * @param int $minutes + or - minutes shift
-	 * @param int $hours + or - hours shift
-	 * @return string MySQL DATETIME string
-	 */
-	public static function getNow($seconds = 0, $minutes = 0, $hours = 0) {
-		
-		if ( !is_int($seconds) || !is_int($minutes) || !is_int($hours) ) {
-			throw new MWException("Cannot compute 'now with delay', invalid argument.");
-		}
-		
-		$start = new DateTime( 'now', new DateTimeZone( 'GMT' ) );
-		
-		if ( ($seconds != 0) || ($minutes != 0) || ($hours != 0) ) {
-			$start->modify( "$seconds second $minutes minute $hours hour" );
-		}
-		
-		return $start->format( 'Y-m-d H:i:s' );
-	}
-	
-	
-	/**
-	 *
-	 * @param type $startDate
-	 * @param type $nb_of_month
-	 * @return type 
-	 */
-	public static function calculateTick($startDate, $nb_of_month) {
-
-		$start = date_create_from_format( 'Y-m-d H:i:s', $startDate, new DateTimeZone( 'GMT' ) );
-		if ( $start->format('j') > 28) { // if day > 28
-			$start->modify('first day of next month');
-		}
-		$start->modify( "+$nb_of_month month -1 second" );
-		return $start->format( 'Y-m-d H:i:s' );
-		
-	}	
-	
 }

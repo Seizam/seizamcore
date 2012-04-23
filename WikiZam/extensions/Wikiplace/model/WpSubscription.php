@@ -226,7 +226,7 @@ class WpSubscription {
 
 		$dbr = wfGetDB(DB_SLAVE) ;
 
-		$now =  $dbr->addQuotes( WpPlan::getNow() );
+		$now =  $dbr->addQuotes( self::getNow() );
 		$conds = $dbr->makeList( array(
 			"wps_buyer_user_id"	=> $user_id, 
 			"wps_active" => 1, 
@@ -285,7 +285,7 @@ class WpSubscription {
 		
 		$dbr = ( $db_accessor != null ? $db_accessor : wfGetDB(DB_SLAVE) ) ;
 
-		$now =  $dbr->addQuotes( WpPlan::getNow() );
+		$now =  $dbr->addQuotes( self::getNow() );
 		$conds = $dbr->makeList( array(
 			"wps_buyer_user_id"	=> $user_id, 
 			$dbr->makeList( array(
@@ -341,7 +341,7 @@ class WpSubscription {
 		$dbw = wfGetDB(DB_MASTER);
 		$dbw->begin();
 
-		$now =  $dbw->addQuotes( WpPlan::getNow() );
+		$now =  $dbw->addQuotes( self::getNow() );
 
 		// 3rd arg : must be an associative array of the form
 		// array( 'dest1' => 'source1', ...). Source items may be literals
@@ -415,14 +415,14 @@ class WpSubscription {
 			switch ($tmr['tmr_status']) {
 
 				case 'OK': // already paid by user
-					$now =  WpPlan::getNow() ;
+					$now =  self::getNow() ;
 					return WpSubscription::create(
 							$plan->get('wpp_id'), 
 							$user_id,
 							$tmr['tmr_id'],
 							'OK', // paid
 							$now, // start
-							WpPlan::calculateTick($now, $plan->get('wpp_period_months')), // end
+							self::calculateEndDate($now, $plan->get('wpp_period_months')), // end
 							true, // active
 							$plan->get('wpp_renewable'),
 							$db_master
@@ -519,6 +519,46 @@ class WpSubscription {
 			$transactionId, $transactionStatus,
 			$startDate, $endDate, $active, $renew );
 		
+	}
+	
+		/**
+	 *
+	 * @param type $startDate
+	 * @param type $nb_of_month
+	 * @return type 
+	 */
+	public static function calculateEndDate($startDate, $nb_of_month) {
+
+		$start = date_create_from_format( 'Y-m-d H:i:s', $startDate, new DateTimeZone( 'GMT' ) );
+		if ( $start->format('j') > 28) { // if day > 28
+			$start->modify('first day of next month');
+		}
+		$start->modify( "+$nb_of_month month -1 second" );
+		return $start->format( 'Y-m-d H:i:s' );
+		
+	}
+	
+	
+	/**
+	 *
+	 * @param int $seconds + or - seconds shift
+	 * @param int $minutes + or - minutes shift
+	 * @param int $hours + or - hours shift
+	 * @return string MySQL DATETIME string
+	 */
+	public static function getNow($seconds = 0, $minutes = 0, $hours = 0) {
+		
+		if ( !is_int($seconds) || !is_int($minutes) || !is_int($hours) ) {
+			throw new MWException("Cannot compute 'now with delay', invalid argument.");
+		}
+		
+		$start = new DateTime( 'now', new DateTimeZone( 'GMT' ) );
+		
+		if ( ($seconds != 0) || ($minutes != 0) || ($hours != 0) ) {
+			$start->modify( "$seconds second $minutes minute $hours hour" );
+		}
+		
+		return $start->format( 'Y-m-d H:i:s' );
 	}
 	
 	

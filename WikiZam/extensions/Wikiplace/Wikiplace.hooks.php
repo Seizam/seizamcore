@@ -231,11 +231,11 @@ class WikiplaceHooks {
 						
 						if ($sub->get('wps_start_date') == null) {
 							// first subscription, so activates it from now
-							$start = WpPlan::getNow();
-							$end = WpPlan::calculateTick($start, $sub->get('plan')->get('wpp_period_months'));
-							$sub->set('wps_start_date',	$start, false );	// 3rd p = false = do not update db
-							$sub->set('wps_end_date', $end, false );	// 3rd p = false = do not update db
-							$sub->set('wps_active',	true, false );	// 3rd p = false = do not update db
+							$start = WpSubscription::getNow();
+							$end = WpSubscription::calculateEndDate($start, $sub->get('plan')->get('wpp_period_months'));
+							$sub->set('wps_start_date',	$start, false ); // 3rd param = false = do not update db now
+							$sub->set('wps_end_date', $end, false ); 
+							$sub->set('wps_active',	true, false ); 
 						} 
 						// if startDate not null, this is a renewal, it will be activated later when needed
 						

@@ -132,8 +132,7 @@ class SpecialWikiplace extends SpecialPage {
 				
 			case self::ACTION_CONSULT_WP :
 
-//				var_export(WpPage::countPagesOwnedByUser(12));
-				var_export(WpPage::getDiskspaceUsageByUser(12));
+				// var_export(WpPage::countPagesOwnedByUser(12).' pages, '.WpPage::getDiskspaceUsageByUser(12).' Mb for files ');
 				
 				$name = $this->getRequest()->getText('wikiplace', '');
 				

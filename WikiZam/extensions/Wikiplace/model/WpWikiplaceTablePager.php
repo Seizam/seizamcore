@@ -61,7 +61,7 @@ class WpWikiplaceTablePager extends SkinzamTablePager {
 			case 'wpw_monthly_bandwidth':			
 				return "$value Mb";	
 			case 'wpw_report_updated':
-			case 'wpu_date_expires':
+			case 'wpw_date_expires':
 				return ($value === null) ? '-' : $wgLang->timeanddate($value, true);
 			default:
                 throw new MWException( 'Unknown data name "'.$name.'"');

@@ -210,7 +210,7 @@ class WpOldUsage {
 			throw new MWException('Cannot create usage report, subscription has to be active.');
 		}
 		
-		$now = WpPlan::getNow();
+		$now = WpSubscription::getNow();
 		
 		return self::create(
 				$subscription->get('wps_id'),
@@ -246,7 +246,7 @@ class WpOldUsage {
 		
         // With PostgreSQL, a value is returned, but null returned for MySQL because of autoincrement system
         $id = $dbw->nextSequenceValue('wp_usage_wpu_id_seq');
-		$now =  WpPlan::getNow() ;
+		$now =  WpSubscription::getNow() ;
 		
         $success = $dbw->insert('wp_usage', array(
 			'wpu_id'                => $id,

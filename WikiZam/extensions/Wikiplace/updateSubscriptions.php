@@ -24,7 +24,7 @@ class UpdateSubscriptions extends Maintenance {
 		
 		$this->output( "For the moment, it just displays all subscriptions.\n" );
 		
-		$this->output( "[".WpPlan::getNow()." START]\n" );
+		$this->output( "[".WpSubscription::getNow()." START]\n" );
 		
 		$subs = WpSubscription::getAll('I know what i am doing');
 
@@ -42,7 +42,7 @@ class UpdateSubscriptions extends Maintenance {
 					$sub->get('wps_renew'). "\n" );
 		}
 		
-		$this->output( "[".WpPlan::getNow()." END]\n" );
+		$this->output( "[".WpSubscription::getNow()." END]\n" );
 	}
 }
 
