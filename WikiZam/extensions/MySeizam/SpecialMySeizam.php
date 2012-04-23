@@ -64,18 +64,27 @@ class SpecialMySeizam extends SpecialPage {
             return;
         }
 
-        $output->addHTML('MySeizam');
+        $output->addHTML('<div id="ms-quicklinks">'.$this->buildQuickLinks().'</div>');
+        $output->addHTML('<div id="ms-quickwikispaces">'.$this->buildQuickWikispaces().'</div>');
+        $output->addHTML('<div id="ms-morelinks">'.$this->buildMoreLinks().'</div>');
         $output->addHTML('<div id="ms-quickwatchlist">'.$this->buildQuickWatchlist().'</div>');
         
     }
-
-    # Just an array print fonction
-
-    static function sayIt($in) {
-        global $wgOut;
-        $wgOut->addHTML('<pre>');
-        $wgOut->addHTML(print_r($in, true));
-        $wgOut->addHTML('</pre>');
+    
+    private function buildQuickLinks() {
+        $return = '<h3>QuickLinks</h3><ul>';
+        for ($i=0 ; $i < 7 ; $i++) {
+            $return .= '<li><a href="plop">Pitiplop'.$i.'</a></li>';
+        }
+        $return .= '</ul>';
+        return $return;
+    }
+    
+    private function buildQuickWikispaces() {
+        $user = $this->getUser();
+        $tp = new WpWikiplaceTablePager();
+		$tp->setSelectConds( array('wpw_owner_user_id' => $user->getId()) );
+        return '<h3>QuickWikiplaces</h3>'.$tp->getWholeHtml();
     }
     
     // Makes a short html list of Watchlist items
@@ -100,7 +109,7 @@ class SpecialMySeizam extends SpecialPage {
 			'watchlist' => array('INNER JOIN',"wl_user='{$user->getId()}' AND wl_namespace=rc_namespace AND wl_title=rc_title")
 		);
             
-        $options = array( 'LIMIT' => 10, 'ORDER BY' => 'rc_timestamp DESC' );
+        $options = array( 'LIMIT' => 5, 'ORDER BY' => 'rc_timestamp DESC' );
         
         $rollbacker = $user->isAllowed('rollback');
 		if ( $usePage || $rollbacker ) {
@@ -137,8 +146,10 @@ class SpecialMySeizam extends SpecialPage {
 
 		$list = ChangesList::newFromContext( $this->getContext() );
 		$list->setWatchlistDivs();
+        
+        $s = '<h3>QuickWatchList</h3>';
 
-		$s = $list->beginRecentChangesList();
+		$s .= $list->beginRecentChangesList();
         
         $counter = 1;
         
@@ -160,4 +171,12 @@ class SpecialMySeizam extends SpecialPage {
 		return $s;
     }
 
+    private function buildMoreLinks() {
+        $return = '<h3>MoreLinks</h3><ul>';
+        for ($i=0 ; $i < 5 ; $i++) {
+            $return .= '<li><a href="plop">Plopinou'.$i.'</a></li>';
+        }
+        $return .= '</ul>';
+        return $return;
+    }
 }

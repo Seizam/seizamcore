@@ -428,9 +428,11 @@ class SkinzamTemplate extends BaseTemplate {
         <!-- tagline (invisible)-->
         <div id="siteSub"><?php wfMessage('tagline')->text() ?></div>
         <!-- /tagline -->
+        <?php if ($this->data['subtitle']): ?>
         <!-- subtitle -->
         <div id="contentSub"<?php $this->html('userlangattributes') ?>><?php $this->html('subtitle') ?></div>
         <!-- /subtitle -->
+        <?php endif; ?>
         <?php if ($this->data['undelete']): ?>
             <!-- undelete -->
             <div id="contentSub2"><?php $this->html('undelete') ?></div>

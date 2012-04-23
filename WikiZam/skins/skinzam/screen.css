@@ -97,22 +97,9 @@ sub { bottom: -0.25em; }
    ==  Lists
    -------------------------------------------------------------------------- */
 
-ul, ol { margin: 0; padding: 0; }
+ul, ol { margin: 1em 0; padding: 0 0 0 40px; }
 dd { margin: 0 0 0 40px; }
-
-li {
-    list-style: none;
-    padding: 8px 16px;
-    border-bottom: 1px solid #dad9d9;
-}
-
-li.mw-line-odd {
-    border-left: 1px solid #dad9d9;
-}
-
-li.mw-line-even {
-    border-right: 1px solid #dad9d9;
-}
+#nav ul, #nav ol { list-style: none; margin: 0; padding: 0; }
 
 
 /* -----------------------------------------------------------------------------
@@ -175,7 +162,7 @@ a.important:hover,
 a.important:focus {
     color: #4d4e4f;
 }
-.informations {
+.informations, div#contentSub {
     margin: 0 0 2em;
     padding: 15px;
     border: 1px solid #ddd;
@@ -350,9 +337,6 @@ a {
 /* ----------------------------------------
    ==  NAVIGATION
    ---------------------------------------- */
-
-#nav ul, #nav ol { list-style: none; margin: 0; padding: 0; }
-
 /* Personal */
 #nav_personal {
     position: absolute;
@@ -1496,10 +1480,10 @@ img.thumbborder {
 
 form { margin: 0; }
 fieldset {
-	border: 1px solid #dad9d9;
-	margin: 1em 0 1em 0;
-	padding: 0 1em 1em;
-	line-height: 1.5em;
+    border: 1px solid #dad9d9;
+    margin: 1em 0 1em 0;
+    padding: 0 1em 1em;
+    line-height: 1.5em;
 }
 legend { 
     border: 0;
@@ -1534,9 +1518,11 @@ textarea { overflow: auto; vertical-align: top; }
 input:valid, textarea:valid {  }
 input:invalid, textarea:invalid { background-color: #f0dddd; }
 
+
 /* -----------------------------------------------------------------------------
    ==  edit profile
    -------------------------------------------------------------------------- */
+
 .edit_col_1 {
     float: left;
     width: 460px;
@@ -1706,7 +1692,7 @@ input:invalid, textarea:invalid { background-color: #f0dddd; }
 
 }
 
-div.form_header, div.table_header {
+div.form_header, div.table_header, div#contentSub {
     background-color: transparent;
     border-top: none;
 }
@@ -1774,19 +1760,80 @@ p.mw-htmlform-invalid-input span.error {
 }
 
 /* -----------------------------------------------------------------------------
-   ==  RecentChanges (ie Special:WatchList
+   ==  ChangeList (e.g. Special:History) & Log (e.g. Special:Log
    -------------------------------------------------------------------------- */
 
-body.mw-special-Recentchanges h4,
-body.mw-special-Watchlist h4,
-div.ms-quickwatchlist h4 {
+
+
+/*
+    Basic (li) (used also for log)
+*/
+
+body.ns-special #bodyContent ul {
     margin: 0;
     padding: 0;
+}
+
+body.ns-special #bodyContent li {
+    margin: 0;
+    padding: 8px 16px;
+    list-style: none;
     border-bottom: 1px solid #dad9d9;
 }
 
+body.ns-special #bodyContent form li {
+    margin: 0;
+    padding: 0;
+    border-bottom: none;
+}
+
+body.ns-special #bodyContent li.mw-line-even {
+    border-right: 1px solid #dad9d9;
+}
+
+
+
+body.ns-special #bodyContent li.mw-line-odd {
+    border-left: 1px solid #dad9d9;
+}
+
+/*
+    Log prettifier (hurts Special:Preferences)
+
+body.ns-special #bodyContent li a {
+    font-weight: bold;
+}
+body.ns-special #bodyContent li span a {
+    font-weight: normal;
+}
+*/
+
+
+/*
+    Enhanced (tables+js)
+*/
+
+table.mw-enhanced-rc {
+    padding: 8px 0;
+    border-bottom: 1px solid #dad9d9;
+    display: block;
+}
+
+/*
+    General (used in both basic and enhanced versions)
+*/
+
+body.ns-special #bodyContent h4 {
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid #dad9d9;
+    color: #666666;
+    text-align: left;
+    margin: 16px 0 0 0;
+}
+
 /* -----------------------------------------------------------------------------
-   ==  TablePager (ie Special:ListFiles)
+   ==  Table pager (e.g. Special:ListFiles)
    -------------------------------------------------------------------------- */
 
 table.TablePager {
@@ -1863,9 +1910,58 @@ table.TablePager {
     QuickWatchList
 */
 
-div#ms-quickwatchlist {
+.mw-special-MySeizam div#ms-quicklinks {
     float: left;
-    width: 70%;
-    border: 1px solid #dad9d9;
+    width: 200px;
+    min-height: 300px;
+    border: 1px solid #666666;
+    border-left: none;
+    padding: 16px;
 }
+
+
+.mw-special-MySeizam div#ms-quicklinks li {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+}
+
+.mw-special-MySeizam div#ms-quickwikispaces {
+    margin-left: 232px;
+    padding: 16px;
+}
+
+.mw-special-MySeizam div#ms-quickwatchlist {
+    clear:left;
+    margin-right: 182px;
+    border: 1px solid #666666;
+    border-top: none;
+    padding: 16px;
+}
+
+.mw-special-MySeizam div#ms-morelinks {
+    float:right;
+    clear:left;
+    width: 150px;
+    border-top: 1px solid #666666;
+    border-right: 1px solid #666666;
+    
+    padding: 16px;
+}
+
+.mw-special-MySeizam div#ms-morelinks li {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+}
+
+.mw-special-MySeizam .inside h3 {
+    margin: 0;
+    padding: 0;
+}
+
+
+
 
