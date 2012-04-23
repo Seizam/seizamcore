@@ -14,7 +14,7 @@ $messages = array();
 $messages['en'] = array(
         'skinzam' => 'SkinZam',
 	'sz-skinzam' => 'UI elements for Seizam',
-	'sz-skinzam-desc' => 'Holds UI elements for Seizam\'s skin',
+	'sz-skinzam-desc' => 'Holds UI elements for Seizam\'s skin.',
         'sz-myseizam' => 'My Seizam',
         'sz-browse' => 'Browse Seizam',
         'lessdotdotdot' => 'Less...',
@@ -74,7 +74,7 @@ $messages['qqq'] = array(
 /** French */
 $messages['fr'] = array(
         'sz-seizam' => 'Éléments IHM pout Seizam',
-	'sz-seizam-desc' => 'Contient éléments IHM pour l\'interface Seizam',
+	'sz-seizam-desc' => 'Contient éléments IHM pour l\'interface Seizam.',
         'sz-myseizam' => 'Mon Seizam',
         'sz-browse' => 'Parcourir Seizam',
         'lessdotdotdot' => 'Moins...',

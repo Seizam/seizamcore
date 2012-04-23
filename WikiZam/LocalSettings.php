@@ -282,5 +282,8 @@ require_once( "$IP/extensions/TransactionManager/TransactionManager.php" );
 # Wikiplace
 require_once( "$IP/extensions/Wikiplace/Wikiplace.php" );
 
+# MySeizam (to be inclueded after the integrated extensions
+require_once( "$IP/extensions/MySeizam/MySeizam.php" );
+
 // FEEDS
 $wgAdvertisedFeedTypes = array( 'rss', 'atom' );

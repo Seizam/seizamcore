@@ -1,0 +1,9 @@
+# MySkinzam provides a special page Special:MySeizam that articulates every tools useful for Seizam Users.
+
+# This extension requires MediaWiki 1.17+ because it makes use of ResourceLoader.
+
+# Example LocalSettings.php additions
+# Careful! Import required extensions first
+# Required extensions are : ElectronicPayment, TransactionManager, WikiPlace
+
+require_once( "$IP/extensions/MySeizam/MySeizam.php" );

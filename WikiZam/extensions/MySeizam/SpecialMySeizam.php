@@ -4,7 +4,7 @@ if (!defined('MEDIAWIKI'))
     die();
 
 /**
- * Implements Special:ElectronicPayment
+ * Implements Special:Skinzam
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ if (!defined('MEDIAWIKI'))
  * @ingroup SpecialPage
  * @ingroup Upload
  */
-class SpecialTransactionManager extends SpecialPage {
+class SpecialMySeizam extends SpecialPage {
 
     /**
      * Constructor : initialise object
@@ -40,30 +40,41 @@ class SpecialTransactionManager extends SpecialPage {
      * @param $request WebRequest : data posted.
      */
     public function __construct($request = null) {
-        parent::__construct('TransactionManager', 'user');
+        parent::__construct('MySeizam');
     }
 
     /**
      * Special page entry point
      */
     public function execute($par) {
-        $output = $this->getOutput();
-        $user = $this->getUser();
-
         $this->setHeaders();
+        $user = $this->getUser();
+        $output = $this->getOutput();
 
-        if (!$user->isLoggedIn()) {
-            $output->addWikiText(wfMessage('tm-desc')->text());
-            $output->addWikiText(wfMessage('resetpass-no-info')->text());
+        if ($user->isAnon()) {
+            $link = Linker::linkKnown(
+                            SpecialPage::getTitleFor('Userlogin'), wfMessage('wp-nlogin-link-text')->text(), array(), array('returnto' => $this->getTitle()->getPrefixedText())
+            );
+            $output->addHTML('<p>' . wfMessage('wp-nlogin-text')->rawParams($link)->parse() . '</p>');
+            $output->addHTML('<p>' . wfMessage('myseizam')->text() . ': ' . wfMessage('ms-myseizam-desc')->text() . '</p>');
             return;
         }
-        
-        $table = new TransactionsTablePager();
-        $table->setSelectFields(array('tmr_id', 'tmr_desc', 'tmr_date_created', 'tmr_amount', 'tmr_currency', 'tmr_status'));
-        $table->setSelectConds(array('tmr_user_id' => $user->getId(), 'tmr_currency' => 'EUR'));
-        $table->setHeader(wfMessage('tm-balance', TMRecord::getTrueBalanceFromDB($user->getId()))->parse() . ' ' . wfMessage('tm-table-desc')->parse());
-        $output->addHtml($table->getWholeHtml());
+
+        if (!$this->userCanExecute($user)) {
+            $this->displayRestrictionError();
+            return;
+        }
+
+        $output->addHTML('MySeizam');
+    }
+
+    # Just an array print fonction
+
+    static function sayIt($in) {
+        global $wgOut;
+        $wgOut->addHTML('<pre>');
+        $wgOut->addHTML(print_r($in, true));
+        $wgOut->addHTML('</pre>');
     }
 
 }
-

@@ -19,7 +19,7 @@ $messages['en'] = array(
 
 	'wp-nlogin-pagetitle' => "Please login",
 	'wp-nlogin-link-text' => "log in ",
-	'wp-nlogin-text' => "Please $1 to access this configuration page.",
+	'wp-nlogin-text' => "Please $1 to access this page.",
 
 	'wp-csp-pagetitle'  => "Create a new Wikiplace page",
 	'wp-csp-no-wp' => "You need to create a Wikiplace before",
