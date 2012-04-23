@@ -97,9 +97,22 @@ sub { bottom: -0.25em; }
    ==  Lists
    -------------------------------------------------------------------------- */
 
-ul, ol { margin: 1em 0; padding: 0 0 0 40px; }
+ul, ol { margin: 0; padding: 0; }
 dd { margin: 0 0 0 40px; }
-#nav ul, #nav ol { list-style: none; margin: 0; padding: 0; }
+
+li {
+    list-style: none;
+    padding: 8px 16px;
+    border-bottom: 1px solid #dad9d9;
+}
+
+li.mw-line-odd {
+    border-left: 1px solid #dad9d9;
+}
+
+li.mw-line-even {
+    border-right: 1px solid #dad9d9;
+}
 
 
 /* -----------------------------------------------------------------------------
@@ -337,6 +350,9 @@ a {
 /* ----------------------------------------
    ==  NAVIGATION
    ---------------------------------------- */
+
+#nav ul, #nav ol { list-style: none; margin: 0; padding: 0; }
+
 /* Personal */
 #nav_personal {
     position: absolute;
@@ -1479,10 +1495,11 @@ img.thumbborder {
    -------------------------------------------------------------------------- */
 
 form { margin: 0; }
-fieldset { 
-    border: 0;
-    margin: 0;
-    padding: 0;
+fieldset {
+	border: 1px solid #dad9d9;
+	margin: 1em 0 1em 0;
+	padding: 0 1em 1em;
+	line-height: 1.5em;
 }
 legend { 
     border: 0;
@@ -1540,6 +1557,12 @@ input:invalid, textarea:invalid { background-color: #f0dddd; }
 
 .content_block h4 {
     margin:0 0 1em;
+}
+
+.edit_col_1 fieldset {
+    border: 0;
+    padding: 0;
+    margin: 0;
 }
 
 .edit_col_1 .content_block { 
@@ -1677,8 +1700,8 @@ input:invalid, textarea:invalid { background-color: #f0dddd; }
     width: 184px;
     text-align: center;
 }
-input[type="submit"]:hover,
-input[type="submit"]:focus {
+.edit_col_1 input[type="submit"]:hover,
+.edit_col_1 input[type="submit"]:focus {
     background: #7C2122;
 
 }
@@ -1750,10 +1773,21 @@ p.mw-htmlform-invalid-input span.error {
     color: #f0373a;
 }
 
+/* -----------------------------------------------------------------------------
+   ==  RecentChanges (ie Special:WatchList
+   -------------------------------------------------------------------------- */
 
-/*
-    Table pager (e.g. Special:ListFiles)
-*/
+body.mw-special-Recentchanges h4,
+body.mw-special-Watchlist h4,
+div.ms-quickwatchlist h4 {
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid #dad9d9;
+}
+
+/* -----------------------------------------------------------------------------
+   ==  TablePager (ie Special:ListFiles)
+   -------------------------------------------------------------------------- */
 
 table.TablePager {
     margin: 1em auto;
@@ -1786,13 +1820,12 @@ table.TablePager {
     border-bottom: 1px solid #dad9d9;
 }
 
-.TablePager tr {
+.TablePager tr.mw-line-odd {
     border-left: 1px solid #dad9d9;
 }
 
-.TablePager tr.even {
+.TablePager tr.mw-line-even {
     border-right: 1px solid #dad9d9;
-    border-left: none;
 }
 .TablePager thead tr {
     border-left: none;
@@ -1820,5 +1853,19 @@ table.TablePager {
 
 .TMRecord tr.PE td, .TMRecord tr.PE td.tmr_amount {
     color: #888888;
+}
+
+/* -----------------------------------------------------------------------------
+   ==  MySeizam
+   -------------------------------------------------------------------------- */
+
+/*
+    QuickWatchList
+*/
+
+div#ms-quickwatchlist {
+    float: left;
+    width: 70%;
+    border: 1px solid #dad9d9;
 }
 

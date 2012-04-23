@@ -82,7 +82,8 @@ class SkinzamTablePager extends TablePager {
 
         # Apply class="even" to every even row (theader included)
         if ($this->even)
-            $classes[] = 'even';
+            $classes[] = 'mw-line-even';
+        else $classes[] = 'mw-line-odd';
         $this->even = !$this->even;
 
         return array('class' => implode(' ', $classes));
