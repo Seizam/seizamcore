@@ -277,7 +277,7 @@ $wgDefaultUserOptions['wikieditor-preview'] = 1;
 $wgNamespacesWithSubpages[NS_MAIN] = true;
 
 # Transaction Manager
-require_once( "$IP/extensions/TransactionManager/TransactionManager.php" );
+require_once( "$IP/extensions/Transactions/Transactions.php" );
 
 # Wikiplace
 require_once( "$IP/extensions/Wikiplace/Wikiplace.php" );

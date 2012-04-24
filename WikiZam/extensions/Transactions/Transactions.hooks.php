@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Hooks for ElectronicPayment extension
+ * Hooks for Transactions extension
  * 
  * @file
  * @ingroup Extensions
@@ -10,7 +10,7 @@ if (!defined('MEDIAWIKI')) {
     die(-1);
 }
 
-class TransactionManagerHooks {
+class TransactionsHooks {
     /* Static Methods */
 
     /**

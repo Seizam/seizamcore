@@ -10,10 +10,10 @@ $specialPageAliases = array();
 
 /** English (English) */
 $specialPageAliases['en'] = array(
-	'TransactionManager' => array( 'TransactionManager' ),
+	'Transactions' => array( 'Transactions' ),
 );
 
 /** French (Français) */
 $specialPageAliases['fr'] = array(
-	'TransactionManager' => array( 'GestionnaireDeTransaction' ),
+	'Transactions' => array( 'Transactions' ),
 );

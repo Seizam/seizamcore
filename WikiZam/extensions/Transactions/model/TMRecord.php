@@ -4,6 +4,10 @@ if (!defined('MEDIAWIKI')) {
     die(-1);
 }
 
+/*
+ * Transaction Manager Record Main Class
+ */
+
 class TMRecord {
 
     private $id; #int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Primary key'
