@@ -12,7 +12,7 @@ $messages = array();
  * @author Trevor Parscal
  */
 $messages['en'] = array(
-	'transactions'=>'Transactions Manager',
+	'transactions'=>'My Transactions',
 	'tm-desc'=>'Central manager for all transactions accross Seizam.',
         'tm-tmr_id' => 'Number',
         'tm-tmr_type' => 'Type',
@@ -41,7 +41,7 @@ $messages['qqq'] = array(
 
 /** French */
 $messages['fr'] = array(
-        'transactions' => 'Gestionnaire de Transactions',
+        'transactions' => 'Mes Transactions',
 	'tm-desc' => 'Gestionnaire central pour toutes transactions à travers Seizam.',
         'tm-tmr_id' => 'Numéro',
         'tm-tmr_type' => 'Type',

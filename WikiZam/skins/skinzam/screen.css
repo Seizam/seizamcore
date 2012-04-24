@@ -165,7 +165,7 @@ a.important:focus {
 .informations, div#contentSub {
     margin: 0 0 2em;
     padding: 15px;
-    border: 1px solid #ddd;
+    border: 1px solid #dad9d9;
     background: #f2f2f2;
     color: #666;
     clear: both;
@@ -245,7 +245,7 @@ a {
     background-image: url(images/sh_block_full.png);
     background-color: transparent;
     background-repeat: no-repeat;
-    background-position: center bottom;
+    background-position: bottom center;
 }
 
 .block .inside {
@@ -256,7 +256,7 @@ a {
     background-image: url(images/sh_block_full_in.png);
     background-color: #fcfcfc;
     background-repeat: no-repeat;
-    background-position: center bottom;
+    background-position: bottom center;
     overflow:hidden;
 }
 #header.block {
@@ -264,7 +264,7 @@ a {
     background-image: url(images/sh_block_header.png);
     background-color: transparent;
     background-repeat: no-repeat;
-    background-position: center bottom;
+    background-position: bottom center;
 }
 
 /* block with no 3D effect on bottom */
@@ -329,8 +329,8 @@ a {
     left: 18px;
     top: -59px;
     padding: 4px;
-    background: #e7e2e2;
-    border: 1px solid #dedbdb;
+    background: #e5e5e5;
+    border: 1px solid #d8d7d7;
 }
 
 
@@ -389,12 +389,12 @@ a {
     font-weight: bold;
     color: #232020;
 }
-#nav li a:visited,  #footer-places a {
-    color: #232020;
-}
+
 #nav li a:hover,
-#nav li a:focus,  #footer-places a:hover,  #footer-places a:focus   {
-    color: #da1b1e;
+#nav li a:focus,
+#footer-places a:hover,
+#footer-places a:focus   {
+    color: #E22C2E;
 }
 
 #header.profil #nav li a {
@@ -446,7 +446,7 @@ a {
 #nav #nav_plus ul li a {
     display:block;
     padding: 4px 0 4px 8px;
-    border-bottom:1px solid #333;
+    border-bottom:1px solid #4d4e4f;
 }
 #nav #nav_plus ul li:last-child a {
     border-bottom:none;
@@ -592,7 +592,7 @@ a {
 }
 #self_general_links li a:hover,
 #self_general_links li a:focus {
-    color: #F0373A;
+    color: #e22c2e;
 }
 
 #self_general p {
@@ -632,7 +632,7 @@ a {
     position: absolute;
     bottom: 22px;
     right: 22px;
-    color: #4c4c4c;
+    color: #4d4e4f;
     font-size: 14px;
     font-weight: normal;
     text-align: right;
@@ -810,10 +810,10 @@ a {
 }
 #footer .content li a:hover,
 #footer .content li a:focus {
-    color: #F0373A;
+    color: #e22c2e;
 }
 #footer .inside {
-    border: 1px solid #d6d4d4;
+    border: 1px solid #d8d7d7;
     /* @embed */
     background-image: url(images/bg_footer.png);
     background-color: #fff;
@@ -1074,7 +1074,7 @@ div#simpleSearch {
     margin-top: 0.65em;
     position: relative;
     min-height: 1px; /* Gotta trigger hasLayout for IE7 */
-    border: 1px solid #e2e1e1;
+    border: 1px solid #ececec;
     color: black;
     background-color: white;
     /* @embed */
@@ -1221,10 +1221,10 @@ div#simpleSearch button#searchButton > img {
 }
 #preferences fieldset.prefsection fieldset {
     border: none;
-    border-top: solid 1px #cccccc;
+    border-top: solid 1px #dad9d9;
 }
 #preferences legend {
-    color: #666666;
+    color: #686a6b;
 }
 #preferences fieldset.prefsection legend.mainLegend {
     display: none;
@@ -1235,7 +1235,7 @@ div#simpleSearch button#searchButton > img {
 #preferences td.htmlform-tip {
     font-size: x-small;
     padding: .2em 2em;
-    color: #666666;
+    color: #686a6b;
 }
 #preferences div.mw-prefs-buttons {
     padding: 1em;
@@ -1248,7 +1248,7 @@ div#simpleSearch button#searchButton > img {
  * Styles for the user login and create account forms
 */
 #userlogin, #userloginForm {
-    border: solid 1px #cccccc;
+    border: solid 1px #ccced1;
     padding: 1.2em;
     margin: .5em;
     float: left;
@@ -1269,13 +1269,13 @@ div#simpleSearch button#searchButton > img {
     overflow: hidden;
     padding-top: .5em;
     padding-bottom: .17em;
-    border-bottom: 1px solid #aaa;
+    border-bottom: 1px solid #dad9d9;
     width: auto;
 }
 
 /* Forms */
 fieldset {
-    border: 1px solid #cccccc;
+    border: 1px solid #dad9d9;
     margin: 1em 0 1em 0;
     padding: 0 1em 1em;
     line-height: 1.5em;
@@ -1306,8 +1306,8 @@ select {
 #toc,
 .toc,
 .mw-warning {
-    border: 1px solid #aaa;
-    background-color: #f9f9f9;
+    border: 1px solid #dad9d9;
+    background-color: #f2f2f2;
     padding: 5px;
     font-size: 95%;
 }
@@ -1356,7 +1356,7 @@ div#self_general ul li {
     padding: 0;
     padding-top: 0.5em;
     padding-bottom: 0.5em;
-    color: #333333;
+    color: #232020;
     font-size: 0.7em;
 }
 div#self_general #footer-icons {
@@ -1407,7 +1407,7 @@ div.thumb {
     background-color: transparent;
 }
 div.thumbinner {
-    border: 1px solid #ccc;
+    border: 1px solid #ccced1;
     padding: 3px !important;
     background-color: #f9f9f9;
     font-size: 94%;
@@ -1415,7 +1415,7 @@ div.thumbinner {
     overflow: hidden;
 }
 html .thumbimage {
-    border: 1px solid #ccc;
+    border: 1px solid #ccced1;
 }
 html .thumbcaption {
     border: none;
@@ -1447,7 +1447,7 @@ div.tleft {
     margin: .5em 1.4em 1.3em 0;
 }
 img.thumbborder {
-    border: 1px solid #dddddd;
+    border: 1px solid #dad9d9;
 }
 .hiddenStructure {
     display: none;
@@ -1516,7 +1516,68 @@ textarea { overflow: auto; vertical-align: top; }
 
 /* Colors for form validity */
 input:valid, textarea:valid {  }
-input:invalid, textarea:invalid { background-color: #f0dddd; }
+input:invalid, textarea:invalid { background-color: #f2e3e4; }
+
+/* -----------------------------------------------------------------------------
+   ==  ChangeList (e.g. Special:History) & Log (e.g. Special:Log
+   -------------------------------------------------------------------------- */
+
+
+
+/*
+    Basic (li) (used also for log)
+*/
+
+body.ns-special #bodyContent ul {
+    margin: 0;
+    padding: 0;
+}
+
+body.ns-special #bodyContent li {
+    margin: 0;
+    padding: 8px 16px;
+    list-style: none;
+    border-bottom: 1px solid #dad9d9;
+}
+
+body.ns-special #bodyContent form li {
+    margin: 0;
+    padding: 0;
+    border-bottom: none;
+}
+
+body.ns-special #bodyContent li.mw-line-even {
+    border-right: 1px solid #dad9d9;
+}
+
+
+
+body.ns-special #bodyContent li.mw-line-odd {
+    border-left: 1px solid #dad9d9;
+}
+
+
+/*
+    Enhanced (tables+js)
+*/
+
+table.mw-enhanced-rc {
+    padding: 8px 0;
+    border-bottom: 1px solid #dad9d9;
+    display: block;
+}
+
+/*
+    General (used in both basic and enhanced versions)
+*/
+
+body.ns-special #bodyContent h4 {
+    margin: 16px 0 0 0;
+    padding: 0;
+    border-bottom: 1px solid #dad9d9;
+    color: #686a6b;
+    text-align: left;
+}
 
 
 /* -----------------------------------------------------------------------------
@@ -1533,6 +1594,8 @@ input:invalid, textarea:invalid { background-color: #f0dddd; }
     width: 300px;
     margin-top: 25px;
 }
+
+
 .content_block {
     padding: 18px 18px 0 18px;
     margin: 0;
@@ -1726,10 +1789,12 @@ div.form_header table {
 }
 
 
-#help_zone h4 {
-    margin-bottom: 0;
+body.ns-special #bodyContent .edit_col_2 #help_zone h4 {
+    margin: 0;
+    border: 0;
 }
-#help_zone p {
+
+body.ns-special #bodyContent .edit_col_2 #help_zone p {
     margin-top: 0.5em;
     margin-bottom: 18px;
     font-style: italic;
@@ -1759,85 +1824,14 @@ p.mw-htmlform-invalid-input span.error {
     color: #f0373a;
 }
 
-/* -----------------------------------------------------------------------------
-   ==  ChangeList (e.g. Special:History) & Log (e.g. Special:Log
-   -------------------------------------------------------------------------- */
 
-
-
-/*
-    Basic (li) (used also for log)
-*/
-
-body.ns-special #bodyContent ul {
-    margin: 0;
-    padding: 0;
-}
-
-body.ns-special #bodyContent li {
-    margin: 0;
-    padding: 8px 16px;
-    list-style: none;
-    border-bottom: 1px solid #dad9d9;
-}
-
-body.ns-special #bodyContent form li {
-    margin: 0;
-    padding: 0;
-    border-bottom: none;
-}
-
-body.ns-special #bodyContent li.mw-line-even {
-    border-right: 1px solid #dad9d9;
-}
-
-
-
-body.ns-special #bodyContent li.mw-line-odd {
-    border-left: 1px solid #dad9d9;
-}
-
-/*
-    Log prettifier (hurts Special:Preferences)
-
-body.ns-special #bodyContent li a {
-    font-weight: bold;
-}
-body.ns-special #bodyContent li span a {
-    font-weight: normal;
-}
-*/
-
-
-/*
-    Enhanced (tables+js)
-*/
-
-table.mw-enhanced-rc {
-    padding: 8px 0;
-    border-bottom: 1px solid #dad9d9;
-    display: block;
-}
-
-/*
-    General (used in both basic and enhanced versions)
-*/
-
-body.ns-special #bodyContent h4 {
-    margin: 0;
-    padding: 0;
-    border-bottom: 1px solid #dad9d9;
-    color: #666666;
-    text-align: left;
-    margin: 16px 0 0 0;
-}
 
 /* -----------------------------------------------------------------------------
    ==  Table pager (e.g. Special:ListFiles)
    -------------------------------------------------------------------------- */
 
 table.TablePager {
-    margin: 1em auto;
+    margin: 8px auto 0;
     width: 100%;
     border: none;
 }
@@ -1910,56 +1904,89 @@ table.TablePager {
     QuickWatchList
 */
 
-.mw-special-MySeizam div#ms-quicklinks {
+.mw-special-MySeizam div#ms-quickaccount {
     float: left;
-    width: 200px;
-    min-height: 300px;
-    border: 1px solid #666666;
-    border-left: none;
-    padding: 16px;
+    width: 180px;
+    padding: 18px;
+    margin-bottom: 40px;
 }
 
 
-.mw-special-MySeizam div#ms-quicklinks li {
+.mw-special-MySeizam div#ms-quickaccount li,
+.mw-special-MySeizam div#ms-morelinks li{
     border: 0;
-    padding: 0;
-    margin: 0;
-    text-align: center;
+    border-top: 1px solid #dad9d9;
+    padding: 8px 0;
 }
 
-.mw-special-MySeizam div#ms-quickwikispaces {
-    margin-left: 232px;
-    padding: 16px;
+.mw-special-MySeizam div#ms-quickwikiplaces {
+    margin: 0 0 40px 260px;
+}
+
+.mw-special-MySeizam div#ms-quickwikiplaces *
+{
+    border-color: #d0debd;
+}
+
+.mw-special-MySeizam div#ms-quickwikiplaces th
+{
+    color: #d0debd;
 }
 
 .mw-special-MySeizam div#ms-quickwatchlist {
     clear:left;
-    margin-right: 182px;
-    border: 1px solid #666666;
-    border-top: none;
-    padding: 16px;
+    margin: 40px 210px 0 0;
+}
+
+.mw-special-MySeizam #bodyContent div#ms-quickwatchlist *
+{
+    border-color: #babfda;
+}
+
+.mw-special-MySeizam #bodyContent div#ms-quickwatchlist h4
+{
+    color: #babfda;
 }
 
 .mw-special-MySeizam div#ms-morelinks {
     float:right;
-    clear:left;
-    width: 150px;
-    border-top: 1px solid #666666;
-    border-right: 1px solid #666666;
-    
-    padding: 16px;
-}
-
-.mw-special-MySeizam div#ms-morelinks li {
-    border: 0;
-    padding: 0;
-    margin: 0;
-    text-align: center;
+    width: 130px;
+    padding: 18px;
 }
 
 .mw-special-MySeizam .inside h3 {
     margin: 0;
     padding: 0;
+}
+
+.ms-info-qa{
+    text-align: center;
+    font-weight: bold;
+}
+
+
+.ms-info-ws{
+    margin: 0;
+    padding: 15px;
+    border: 1px solid #dad9d9;
+    border-right:none;
+    border-bottom: none;
+    font-weight: bold;
+}
+
+
+.ms-info-wl{
+    margin: 0;
+    padding: 15px;
+    border: 1px solid #dad9d9;
+    border-left:none;
+    border-bottom: none;
+    font-weight: bold;
+}
+
+.ms-info-ml{
+    text-align: center;
+    font-weight: bold;
 }
 
 

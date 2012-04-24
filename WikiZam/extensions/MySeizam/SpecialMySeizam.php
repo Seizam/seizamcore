@@ -64,27 +64,41 @@ class SpecialMySeizam extends SpecialPage {
             return;
         }
 
-        $output->addHTML('<div id="ms-quicklinks">'.$this->buildQuickLinks().'</div>');
-        $output->addHTML('<div id="ms-quickwikispaces">'.$this->buildQuickWikispaces().'</div>');
-        $output->addHTML('<div id="ms-morelinks">'.$this->buildMoreLinks().'</div>');
-        $output->addHTML('<div id="ms-quickwatchlist">'.$this->buildQuickWatchlist().'</div>');
+        $output->addHTML($this->buildQuickAccount()
+                .$this->buildQuickWikiplaces()
+                .$this->buildMoreLinks()
+                .$this->buildQuickWatchlist());
         
     }
     
-    private function buildQuickLinks() {
-        $return = '<h3>QuickLinks</h3><ul>';
-        for ($i=0 ; $i < 7 ; $i++) {
-            $return .= '<li><a href="plop">Pitiplop'.$i.'</a></li>';
-        }
-        $return .= '</ul>';
-        return $return;
+    private function buildQuickAccount() {
+        $user = $this->getUser();
+        
+        $balance = TMRecord::getTrueBalanceFromDB($user->getId());
+        
+        $html = '<div id="ms-quickaccount" class="content_block">';
+        $html .= '<div class="ms-info-qa">'.wfMessage('ms-quickaccount')->parse().'</div>';
+        $html .= '<ul>';
+        $html .= '<li>'.wfMessage('ms-accountbalance', $balance.'EUR')->parse().'</li>';
+        $html .= '<li>'.wfMessage('ms-subscriptions')->parse().'</li>';
+        $html .= '<li>'.wfMessage('ms-transactions')->parse().'</li>';
+        $html .= '<li>'.wfMessage('ms-electronicpayment')->parse().'</li>';
+        $html .= '<li>'.wfMessage('ms-privateprofile')->parse().'</li>';
+        $html .= '</ul>';
+        $html .= '</div>';
+        return $html;
     }
     
-    private function buildQuickWikispaces() {
+    private function buildQuickWikiplaces() {
         $user = $this->getUser();
         $tp = new WpWikiplaceTablePager();
 		$tp->setSelectConds( array('wpw_owner_user_id' => $user->getId()) );
-        return '<h3>QuickWikiplaces</h3>'.$tp->getWholeHtml();
+        $tp->setFieldSortable(array());
+        $html = '<div id="ms-quickwikiplaces">';
+        $html .= '<div class="ms-info-ws">'.wfMessage('ms-wikiplaces')->parse().'</div>';
+        $html .= $tp->getWholeHtml();
+        $html .= '</div>';
+        return $html;
     }
     
     // Makes a short html list of Watchlist items
@@ -147,7 +161,8 @@ class SpecialMySeizam extends SpecialPage {
 		$list = ChangesList::newFromContext( $this->getContext() );
 		$list->setWatchlistDivs();
         
-        $s = '<h3>QuickWatchList</h3>';
+        $s = '<div id="ms-quickwatchlist">';
+        $s .= '<div class="ms-info-wl">'.  wfMessage('ms-watchlist')->parse().'</div>';
 
 		$s .= $list->beginRecentChangesList();
         
@@ -167,16 +182,25 @@ class SpecialMySeizam extends SpecialPage {
 			$s .= $list->recentChangesLine( $rc, $updated, $counter );
 		}
 		$s .= $list->endRecentChangesList();
+        $s .= '</div>';
 
 		return $s;
     }
 
     private function buildMoreLinks() {
-        $return = '<h3>MoreLinks</h3><ul>';
-        for ($i=0 ; $i < 5 ; $i++) {
-            $return .= '<li><a href="plop">Plopinou'.$i.'</a></li>';
-        }
-        $return .= '</ul>';
-        return $return;
+        $user = $this->getUser();
+        $html = '<div id="ms-morelinks" class="content_block">';
+        $html .= '<div class="ms-info-ml">'.wfMessage('ms-morelinks')->parse().'</div>';
+        $html .= '<ul>';
+        $html .= '<li>'.wfMessage('ms-upload')->parse().'</li>';
+        $html .= '<li>'.wfMessage('ms-contributions',$user->getName())->parse().'</li>';
+        $html .= '<li>'.wfMessage('ms-preferences')->parse().'</li>';
+        $html .= '<li>'.wfMessage('ms-talk',$user->getName())->parse().'</li>';
+        $html .= '<li>'.wfMessage('ms-userpage',$user->getName())->parse().'</li>';
+        $html .= '<li>'.wfMessage('ms-contact')->parse().'</li>';
+        $html .= '</ul>';
+        $html .= '</div>';
+        
+        return $html;
     }
 }
