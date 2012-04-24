@@ -305,8 +305,8 @@ class SpecialWikiplace extends SpecialPage {
 
 		$status = WpPage::createSubpage($wikiplace, $formData['WikiplaceSubPageName']);
 
-		if (!$status->isGood()) { // at least one error or warning
-			return wfMessage('wp-csp-perr-'.$status->value)->text();
+		if ( ! $status->isGood() ) { 
+			return wfMessage('wp-err-unknown')->text();
 		} 
 		
 		$this->futurNewPage = $status->value;
@@ -389,13 +389,13 @@ class SpecialWikiplace extends SpecialPage {
 			return wfMessage('wp-cwp-err-cannot-create')->text(); // no active subscription or quotas exceeded ?
 		}
 		
-		$new_wp = WpWikiplace::initiateCreation($name);
+		$status = WpWikiplace::initiateCreation($name);
 		
-		if ( ($new_wp === null) || !($new_wp instanceof Title) ) {
-			return wfMessage( 'wp-err-unknown')->text(); // error while creating
+		if ( ! $status->isGood() ) {
+			return wfMessage( 'wp-err-unknown' )->text(); // error while creating
 		}
 			
-		$this->futurNewPage = $new_wp; 		
+		$this->futurNewPage = $status->value; 		
 
 		return true; // all ok :)
 					

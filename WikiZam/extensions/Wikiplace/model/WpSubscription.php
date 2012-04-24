@@ -13,6 +13,7 @@ class WpSubscription {
 				$wps_renew_wpp_id;// int(10) unsigned
 			
 	private $plan;
+	private $next_plan;
 	private $attributes_to_update;
 		
 	/**
@@ -54,8 +55,17 @@ class WpSubscription {
 	
 	/**
 	 * 
-	 * @param string $attribut_name wps_id, wps_wpp_id, wps_buyer_user_id, wps_tmr_id, 
-	 * wps_tmr_status, wps_start_date, wps_end_date, wps_active, wps_renew
+	 * @param string $attribut_name <ul><li>wps_id</li>
+	 * <li>wps_wpp_id</li>
+	 * <li>wps_buyer_user_id</li>
+	 * <li>wps_tmr_id</li>
+	 * <li>wps_renew_wpp_id</li>
+	 * <li>wps_active</li>
+	 * <li>wps_start_date</li>
+	 * <li>wps_end_date</li>
+	 * <li>wps_tmr_status</li>
+	 * <li>plan</li>
+	 * <li>next_plan</li></ul>
 	 * @return mixed 
 	 */
 	public function get($attribut_name) {
@@ -68,7 +78,6 @@ class WpSubscription {
 				return intval($this->$attribut_name);
 				break;
 			case 'wps_active':
-			
 				return ($this->$attribut_name !== '0');
 				break;
 			case 'wps_start_date':
@@ -81,13 +90,29 @@ class WpSubscription {
 				}
 				return $this->plan;
 				break;
+			case 'next_plan':
+				if ($this->wps_renew_wpp_id == 0) {
+					return null;
+				}
+				if ($this->next_plan === null) {
+					$this->fetchNextPlan();
+				}
+				return $this->next_plan;
+				break;
 		}
 		throw new MWException('Unknown attribut '.$attribut_name);
 	}
 	
 	/**
 	 * 
-	 * @param string $attribut_name
+	 * @param string $attribut_name <ul><li>wps_renew_wpp_id</li>
+	 * <li>wps_tmr_id</li>
+	 * <li>wps_wpp_id</li>
+	 * <li>wps_active</li>
+	 * <li>wps_start_date</li>
+	 * <li>wps_end_date</li>
+	 * <li>wps_tmr_status</li>
+	 * </ul>
 	 * @param mixed $value
 	 * @param boolean $update_now By default, update the db now, but if multiple set() calls, the db can be updated only last time by setting 
 	 * this argument value to false for the first calls
@@ -97,6 +122,8 @@ class WpSubscription {
 		$db_value = null;
 		switch ($attribut_name) {
 			case 'wps_renew_wpp_id':
+			case 'wps_tmr_id':
+			case 'wps_wpp_id':
 				if ( !is_int($value) || ($value<0) )  { throw new MWException('Value error (int >= 0 needed) for '.$attribut_name); }
 				$db_value = intval($value);
 				break;
@@ -129,36 +156,75 @@ class WpSubscription {
 			$dbw->commit();
 
 			if ( !$success ) {	
-				throw new MWException('Error while saving Subscription to database.');
+				throw new MWException('Error while updating Subscription to database.');
 			}		
 			
 			$this->attributes_to_update = array();
 		
 		}
-		
-		return $value; // maybe useful, one day ...
+
 	}
 	
+	
+
+	/**
+	 * Load the plan (wps_wpp_id)
+	 * @param ResultWrapper $databaseRow Use this database row if given, or perform a new database request
+	 */
 	private function fetchPlan($databaseRow = null) {
 		
 		if ($databaseRow !== null) {
+			
 			$this->plan = WpPlan::constructFromDatabaseRow($databaseRow);
+			
+			if ($this->plan->get('wpp_id') != $this->get('wps_wpp_id')) {
+				throw new MWException('The given plan is not the subscribed one');
+			}
 			
 		} else {
 			$this->plan = WpPlan::getById($this->wps_wpp_id);
 		}
 		
 		if ($this->plan === null) {
-			// there is a big problem... someone has bought something we don't know!
 			throw new MWException('Unknown plan');
+		} 
+
+	}
+
+	/**
+	 * Fetch the next plan, as defined by wps_renew_wpp_id field. This function can be called even
+	 * if no next plan is defined (in this case, nothing is fetch)
+	 * @param ResultWrapper $databaseRow Use this database row if given, or perform a new database request
+	 */
+	private function fetchNextPlan($databaseRow = null) {
+		
+		if ($this->wps_renew_wpp_id == 0) {
+			// no next plan defined, so nothing to fetch
+			return;
+		}
+		
+		if ($databaseRow !== null) {
+			
+			$this->next_plan = WpPlan::constructFromDatabaseRow($databaseRow);
+			
+			if ($this->next_plan->get('wpp_id') != $this->get('wps_renew_wpp_id')) {
+				throw new MWException('The given plan is not the next one');
+			}
+			
+		} else {
+			$this->next_plan = WpPlan::getById($this->wps_renew_wpp_id);
+		}
+		
+		if ($this->next_plan === null) {
+			throw new MWException('Unknown next plan');
 		} 
 
 	}
 	
 	/**
-	 * Get the WpPlan instance from a SQL row
+	 * Contruct a new instance from a SQL row
 	 * @param ResultWrapper $row
-	 * @return self 
+	 * @return WpSubscription 
 	 */
 	public static function constructFromDatabaseRow( $row ) {
 			
@@ -166,9 +232,9 @@ class WpSubscription {
 			throw new MWException( 'Cannot construct the Subscription from the supplied row (null given)' );
 		}
 
+		// wps_start_date and wps_end_date can be null, but nothing else
 		if ( !isset($row->wps_id) || !isset($row->wps_wpp_id) || !isset($row->wps_buyer_user_id) ||
 				!isset($row->wps_tmr_id) || !isset($row->wps_tmr_status) ||
-	//			!isset($row->wps_start_date) || !isset($row->wps_end_date) ||
 				!isset($row->wps_active) || !isset($row->wps_renew_wpp_id) ) {
 			throw new MWException( 'Cannot construct the Subscription from the supplied row (missing field)' );
 		}
@@ -177,7 +243,11 @@ class WpSubscription {
 		  
 	}
 	
-	
+	/**
+	 * Get the subscription associated to the given TMR_id
+	 * @param int $id TMR_id
+	 * @return WpSubscription The requested WpSubscription, or null if none associated to the TMR_id 
+	 */
 	public static function getByTransactionId($id) {
 		if ( ($id === null) || !is_numeric($id) || ($id < 1) ) {
 			throw new MWException( 'Cannot fectch Wikiplace matching the transaction identifier (invalid identifier)' );
@@ -194,14 +264,14 @@ class WpSubscription {
 		return self::constructFromDatabaseRow($result);
 	}
 	/**
-	 * Restore from DB, using id
+	 * Get the subscription having the given id
 	 * @param int $id 
-	 * @return WpPlan if found, or null if not
+	 * @return WpSubscription if found, or null if not
 	 */
 	public static function getById($id) {
 				
 		if ( ($id === null) || !is_numeric($id) || ($id < 1) ) {
-			throw new MWException( 'Cannot fectch Wikiplace matching the identifier (invalid identifier)' );
+			throw new MWException( 'Cannot fetch Subscription matching the identifier (invalid identifier)' );
 		}
 		
 		$dbr = wfGetDB(DB_SLAVE);
@@ -217,14 +287,14 @@ class WpSubscription {
 	}
 	
 	/**
-	 * Get the current active subscription of a user
+	 * Get the active subscription of a user
 	 * @param int $user_id
-	 * @return WpSubscription The user active subscription or null if there is no active one 
+	 * @return WpSubscription The user active subscription or null if she has no active one 
 	 */
 	public static function getActiveByUserId($user_id) {
 			
 		if ( ($user_id === null) || !is_numeric($user_id) || ($user_id < 1) ) {
-			throw new MWException( 'Cannot fetch subscriptions matching the user identifier (invalid identifier)' );
+			throw new MWException( 'Cannot fetch Subscription matching the user identifier (invalid identifier)' );
 		}	
 
 		$dbr = wfGetDB(DB_SLAVE) ;
@@ -238,7 +308,6 @@ class WpSubscription {
 		$result = $dbr->selectRow( 'wp_subscription', '*',	$conds, __METHOD__ );
 
 		if ( $result === false ) {
-			// not found, so return null
 			return null;
 		}
 		
@@ -247,17 +316,16 @@ class WpSubscription {
 	
 	
 	/**
-	 * This function is DB killer, and should only be used in test environment!
-	 * @param type $are_you_sure
-	 * @param type $really_sure
-	 * @return type 
+	 * <b>WARNING:</b>This function is DB killer, and should only be used in test environment!
+	 * @param boolean $are_you_sure If you really want to get all, set to 'yes' 
+	 * @return array Array of WpSubscription 
 	 */
 	public static function getAll($are_you_sure = 'no') {
 		
 		wfDebugLog( 'wikiplace', 'WpSubscription::getAll WARNING $are_you_sure='.$are_you_sure);
 		
-		if ( $are_you_sure != 'I know what i am doing') {
-			return array(); //good idea :)
+		if ( $are_you_sure != 'yes') {
+			return array();
 		}
 		
 		$dbr = wfGetDB(DB_SLAVE);
@@ -276,8 +344,8 @@ class WpSubscription {
 	
 	/**
 	 * Can the user make a first subscription? (first sub != renewal)
-	 * @param integer $user_id
-	 * @param type $db_accessor null = fefault = check on slave
+	 * @param int $user_id
+	 * @param DatabaseBase $db_accessor If null, will use wfGetDB(DB_SLAVE)
 	 * @return boolean True = can have new one, False = not 
 	 */
 	public static function canMakeAFirstSubscription($user_id, $db_accessor = null) {
@@ -311,31 +379,7 @@ class WpSubscription {
 		$dbr->freeResult( $results );
 		
 		return $return;
-
-/*		
-		$active = 0; // already active susbcription = cannot subscribe anymore
-		$future = 0; // pending first subscription OR renewal = cannot subscribe anymore
-		foreach ( $results as $row ) {
-			
-			if ($row->wps_active == 0) {
-				$future++;
-			} elseif ($row->wps_active == 1) {
-				$active++;
-			} else {
-				throw new MWException( 'There is an error in the databse about the active state.' );
-			}
 				
-		}
-		
-		if ($future > 1) {
-				throw new MWException( 'The user has already many futures subscriptions. She should have only one.' );
-		}
-		if ($active > 1) {
-				throw new MWException( 'The user has already many actives subscriptions. She should have only one.' );
-		}
-		
-		return ( ($active == 0) && ($future == 0) );
-*/				
 	}
 	
 
@@ -344,29 +388,72 @@ class WpSubscription {
 	
 	
 	/**
-	 * Renew the subscription.
+	 * Renew the subscription. This method should be called by a cron, for each getAllOutdatedToRenew()<br/>
 	 * WARNING: <ul>
-	 * <li>this function assumes that the current subscription <b>can</b> AND <b>need</b> to be renewed ( isRenewable() should be called before this function )</li>
-	 * <li>it renews the subscription <b>but id doesn't archive it</b></li>
-	 * <li>this function alter the current db record (start_date, ...) but the primary key stay untouched</li></ul>
-	 * @param string $now MySQL datetime (can be WpSubscription::getNow() )
-	 * @return Status 
+	 * <li>this function assumes that the current subscription <b>can</b> AND <b>need</b> to be renewed</li>
+	 * <li><b>only use it to renew the subscription when it ends normally</b> (this function doesn't re-credit
+	 * user account balance and it doesn't change the wikiplaces 'monthly tick')</li>
+	 * <li>it renews the subscription <b>but it doesn't archive it</b>, records should be already archived by 
+	 * calling archiveAllToRenew($now) just before</li>
+	 * <li>this function alter the current db record (start_date, ...) but the primary key stay untouched</li>
+	 * <li>it creates a new TMR</li>
+	 * </ul>
+	 * @return Status Its value is the Transaction Record as array
 	 */
-	public function renew( $now ) {
+	public function renew() {
+		
+		$user_id = $this->get('wps_buyer_user_id');
+		$user = User::newFromId($user_id);
+		if (!$user->loadFromId()) { // ensure we know the user
+			$msg = 'unknown user, id='.$user_id;
+			$return = Status::newFatal($msg);
+			$return->value = $msg;
+			return $return;
+		}
+		$user_email = $user->getEmail();
+		
+		$next_plan = $this->get('next_plan');
+		if ($next_plan === null) { // ensure we know the next plan
+			$msg = 'unknown next plan';
+			$return = Status::newFatal($msg);
+			$return->value = $msg;
+			return $return;
+		}
+		
+		$tmr = self::createTMR($user_id, $user_email, $next_plan);
+
+		if ( ($tmr['tmr_status']!='OK') && ($tmr['tmr_status']!='PE') ) { // not ( OK or PE ) so it cannot be renewed 			
 			
-		$return = Status::newFatal($title);
-		$return->value = 'not yet implemented';
-		return $return;
+			$this->set('wpp_renew_wpp_id', 0); //will not try anymore to renew
+			$msg = 'error while paying, TMR_status='.$tmr['tmr_status'].', renewal has been deactivated';
+			
+			$return = Status::newFatal($msg);
+			$return->value = $msg;
+			return $return;
+			
+		}
+				
+		$start =  self::calculateStartDateFromPreviousEnd( $this->wps_end_date );
+		$end = self::calculateEndDateFromStart( $start, $next_plan->get('wpp_period_months') );
+
+		$this->set('wps_wpp_id', $next_plan->get('wpp_id'), false);
+		$this->set('wps_tmr_id', $tmr['tmr_id'], false);
+		$this->set('wps_tmr_status', $tmr['tmr_status'], false);
+		$this->set('wps_start_date', $start, false);
+		$this->set('wps_end_date', $end, false);
+		$this->set('wps_renew_wpp_id', $next_plan->get('wpp_renew_wpp_id')); // 3rd arg != false, so saving record now
+		
+		return Status::newGood($tmr);
 				
 	}
 	
 	
-		/**
-	 * Copy all subscriptions having their end_date before $now
+	/**
+	 * Copy all subscriptions outdated (having their end_date before $now)
 	 * @param string $now MySQL datetime (can be WpSubscription::getNow() )
-	 * @return int Nb of archived subscriptions
+	 * @return Status int nb of archived subscriptions as Status value if good
 	 */
-	public static function archiveAllToRenew( $now ) {
+	public static function archiveAllOutdatedToRenew( $now ) {
 		
 		$dbw = wfGetDB(DB_MASTER);
 		$dbw->begin();
@@ -384,20 +471,21 @@ class WpSubscription {
 				'wpos_start_date' => 'wps_start_date',
 				'wpos_end_date' => 'wps_end_date'
 			),
-			array( self::getAllToRenewDbConditions($dbw, $now) ),
-			__METHOD__,
-			array( 'IGNORE' )
-		);
+			array( self::getAllOutdatedToRenewDbConditions($dbw, $now) ),
+			__METHOD__ );
 
 		if ( !$success ) {	
-			throw new MWException('Error while archiving outdated subscriptions.');
+			$msg = 'Error while archiving outdated subscriptions.';
+			$status = Status::newFatal($msg);
+			$status->value = $msg;
+			return $status;
 		}
 		
 		$updated = $dbw->affectedRows();
 
 		$dbw->commit();
 		
-		return $updated;
+		return Status::newGood($updated);
 		
 	}
 	
@@ -406,31 +494,33 @@ class WpSubscription {
 	 * @param Database $db
 	 * @param string $now DB DATETIME timestamp (can be WpSubscription::getNow() )
 	 */
-	private static function getAllToRenewDbConditions( $db, $now ) {
+	private static function getAllOutdatedToRenewDbConditions( $db, $now ) {
 		$now = $db->addQuotes($now);
 		return $db->makeList( array(
 			'wps_renew_wpp_id != 0',
 			'wps_active ' => 1,
-			'wps_tmr_status' => 'OK',
 			"wps_end_date > $now"
 		), LIST_AND );
 	}
 	
 	/**
 	 * @param string $now MySQL datetime (can be WpSubscription::getNow() )
-	 * @return Array(WpSubscription) 
+	 * @return Array Array of WpSubscription
 	 */
-	public static function getAllToRenew( $now ) {
+	public static function getAllOutdatedToRenew( $now ) {
 		
 		$dbr = wfGetDB(DB_MASTER) ;
-		$conds = self::getAllToRenewDbConditions($dbr, $now);
+		$conds = self::getAllOutdatedToRenewDbConditions($dbr, $now);
 		
-		$results = $dbr->select( 'wp_subscription', '*',	$conds, __METHOD__ );
+		$results = $dbr->select( 
+				array('wp_subscription', 'wp_plan'),
+				'*', $conds, __METHOD__, array(),
+				array( 'wp_plan' => array('LEFT JOIN','wps_renew_wpp_id = wpp_id') ) );
 		
 		$subs = array();
 		foreach ( $results as $row ) {
 			$sub = self::constructFromDatabaseRow($row);
-			$sub->fetchPlan($row);
+			$sub->fetchNextPlan($row);
 			$subs[] = $sub;
 		}
 		
@@ -444,31 +534,34 @@ class WpSubscription {
 	 * Unactive all subscriptions having wps_end_date < $now. Their records are not archived
 	 * because they can still have Wikiplaces attached to them
 	 * @param string $now SQL DATETIME (can be WpSubscription::getNow() )
-	 * @return int Nb of unactivated subscriptions
+	 * @return Status int Nb of unactivated subscriptions as Status value if good
 	 */
-	public static function deactivateAllOutdated( $now ) {
+	public static function deactivateAllOutdated( $now = null ) {
 		
 		$dbw = wfGetDB(DB_MASTER);
 		$dbw->begin();
 
-		$now =  $dbw->addQuotes( WpSubscription::getNow() );
+		$now =  $dbw->addQuotes( $now );
 
 		// renewing all active outdated records
 		$success = $dbw->update(
 				'wp_subscription',
-				array( 'wps_active' => 0 ),
-				array( "wps_end_date < $now" ),
+				array( 'wps_active' => 0 ), // value
+				array( 'wps_active' => 1, "wps_end_date < $now" ), // conds
 				__METHOD__ );
 
 		if ( !$success ) {	
-			throw new MWException('Error while unactivating outdated subscriptions.');
+			$msg = 'Error while unactivating outdated subscriptions.';
+			$status = Status::newFatal($msg);
+			$status->value = $msg;
+			return $status;
 		}
 
 		$updated = $dbw->affectedRows();
 
 		$dbw->commit();
 
-		return $updated;
+		return Status::newGood($updated);
 	}
 	
 	
@@ -478,7 +571,7 @@ class WpSubscription {
 	 * @param User $use The user who buy the plan, and will use it (later, it will be possible 
 	 * that one user buy for another one, but for now, a user can only buy for her)
 	 * @param WpPlan $plan The plan
-	 * @return WpSubscription the newly created subscription, or null if not possible
+	 * @return Status WpSubscription (the newly created subscription) as Status value if good
 	 */
 	public static function subscribe($user, $plan) {
 		
@@ -492,75 +585,87 @@ class WpSubscription {
 		// is it a first subscription(not a plan change ?
 		
 		// if the user can make a first subscription, this is a first subscription (will be activated as soon as paid)
-		if (self::canMakeAFirstSubscription($user_id, $db_master)) {
+		if (!self::canMakeAFirstSubscription($user_id, $db_master)) {
 			
-			// this is a first subscriptioon
-			
-			// ok, let's pay
-			$tmr = array(
-				# Params related to Message
-				'tmr_type'		=> 'subscrip',
-
-				# Paramas related to User
-				'tmr_user_id'	=> $user->getId(), 
-				'tmr_mail'		=> $user->getEmail(),
-				'tmr_ip'		=> IP::sanitizeIP(wfGetIP()), 
-
-				# Params related to Record
-				'tmr_amount'	=> - $plan->get('wpp_price'),
-				'tmr_currency'	=> $plan->get('wpp_currency'), 
-				'tmr_desc'		=> 'wp-plan-name-'.$plan->get('wpp_name'), 
-				'tmr_status'	=> 'PE', // PEnding
-			);
-			wfRunHooks('CreateTransaction', array(&$tmr));
-		
-			// already paid, or waiting a payment ?
-			switch ($tmr['tmr_status']) {
-
-				case 'OK': // already paid by user
-					$now =  self::getNow() ;
-					return WpSubscription::create(
-							$plan->get('wpp_id'), 
-							$user_id,
-							$tmr['tmr_id'],
-							'OK', // paid
-							$now, // start
-							self::calculateEndDate($now, $plan->get('wpp_period_months')), // end
-							true, // active
-							$plan->get('wpp_renew_wpp_id'),
-							$db_master
-					);
-					break;
-
-				case 'PE': // waiting payment
-					return WpSubscription::create(
-							$plan->get('wpp_id'),
-							$user_id,
-							$tmr['tmr_id'],
-							'PE', // not paid
-							null, // will start when paid
-							null, // unknown for now
-							false, // not active
-							$plan->get('wpp_renew_wpp_id'),
-							$db_master
-					);
-					break;
-			
-			}
-		
-			// if we arrive here, the status of the payment is unknown
-			throw new MWException( 'Error while recording the transaction, unknwon status.' );
-			
-			
-		} else {
-			
-			// this is something else than a first subscriptioon
-			
+			// this is something else than a first subscription
 			// for the moment nothing can be done, but later, users will be able to change their current active plan
 			// the code will takes place here
-			return null; // not an error, but the user cannot subscribe to the plan, that's it
+			$msg = 'Cannot subscribe, only first subscription can be done this way.';
+			$status = Status::newFatal($msg);
+			$status->value = $msg;
+			return $status;
 		}
+			
+		// this is a first subscriptioon
+			
+		$tmr = self::createTMR($user_id, $user->getEmail(), $plan);
+
+		// already paid, or waiting a payment ?
+		switch ($tmr['tmr_status']) {
+
+			case 'OK': // already paid by user
+				$now =  self::getNow() ;
+				return self::create(
+						$plan->get('wpp_id'), 
+						$user_id,
+						$tmr['tmr_id'],
+						'OK', // paid
+						$now, // start
+						self::calculateEndDateFromStart($now, $plan->get('wpp_period_months')), // end
+						true, // active
+						$plan->get('wpp_renew_wpp_id'),
+						$db_master
+				);
+
+			case 'PE': // waiting payment
+				return self::create(
+						$plan->get('wpp_id'),
+						$user_id,
+						$tmr['tmr_id'],
+						'PE', // not paid
+						null, // will start when paid
+						null, // unknown for now
+						false, // not active
+						$plan->get('wpp_renew_wpp_id'),
+						$db_master
+				);
+
+		}
+
+		// if we arrive here, the payment status is unknown
+		throw new MWException( 'Error while recording the transaction, unknwon status.' );
+
+	}
+	
+	/**
+	 * Create a transaction record and return it. 
+	 * @param int $user_id
+	 * @param string $user_email
+	 * @param WpPlan $plan
+	 * @return array TMR as array
+	 */
+	private static function createTMR( $user_id, $user_email, $plan ) {
+				
+		$tmr = array(
+			# Params related to Message
+			'tmr_type'		=> 'subscrip',
+
+			# Paramas related to User
+			'tmr_user_id'	=> $user_id, 
+			'tmr_mail'		=> $user_email,
+			'tmr_ip'		=> IP::sanitizeIP(wfGetIP()), 
+
+			# Params related to Record
+			'tmr_amount'	=> - $plan->get('wpp_price'),
+			'tmr_currency'	=> $plan->get('wpp_currency'), 
+			'tmr_desc'		=> 'wp-plan-name-'.$plan->get('wpp_name'), 
+			'tmr_status'	=> 'PE', // PEnding
+		);
 		
+		wfRunHooks('CreateTransaction', array(&$tmr));
+		
+		return $tmr;
+
 	}
 	
 	
@@ -580,20 +685,21 @@ class WpSubscription {
 	 * @param type $endDate
 	 * @param type $active
 	 * @param type $db_master The wfGetDB(DB_MASTER) if already have (avoid multiple master db connection)
-	 * @return self 
+	 * @return Status
 	 */
-	private static function create( $planId, $buyerUserId, $transactionId, $transactionStatus, $startDate, $endDate, $active, $renewPlanId, $db_master = null ) {
+	private static function create( $planId, $buyerUserId, $transactionId, $transactionStatus, 
+			$startDate, $endDate, $active, $renewPlanId, $db_master = null ) {
 		
 		if ( ($planId === null) || ($buyerUserId === null) || ($transactionId === null) ||
 				($transactionStatus === null) || ($active === null) || ($renewPlanId === null) ) {
-			throw new MWException( 'Cannot create Subscription (missing argument)' );
+			throw new MWException( 'Cannot create Subscription, missing argument.' );
 		}
 		
 		if ( !is_numeric($planId) || !is_numeric($buyerUserId) || !is_numeric($transactionId) || !is_string($transactionStatus) || 
 				( ($startDate !== null) && !preg_match( '/^(\d{4})\-(\d\d)\-(\d\d) (\d\d):(\d\d):(\d\d)$/D', $startDate ) ) || 
 				( ($endDate !== null) && !preg_match( '/^(\d{4})\-(\d\d)\-(\d\d) (\d\d):(\d\d):(\d\d)$/D', $endDate ) ) || 
 				!is_bool($active) || !is_numeric($renewPlanId) ) {
-			throw new MWException( 'Cannot create Subscription (invalid argument)' );
+			throw new MWException( 'Cannot create Subscription, invalid argument.' );
 		}
 						
 		$dbw = ( ($db_master != null) ? $db_master : wfGetDB(DB_MASTER) );
@@ -620,28 +726,39 @@ class WpSubscription {
 		$dbw->commit();
 		
 		if ( !$success ) {	
-			return null;
+			$msg = 'Error while recording Subscription in database.';
+			$status = Status::newFatal($msg);
+			$status->value = $msg;
+			return $status;
 		}		
 				
-		return new self( $id, $planId, $buyerUserId,
+		return Status::newGood( new self( $id, $planId, $buyerUserId,
 			$transactionId, $transactionStatus,
-			$startDate, $endDate, $active, $renewPlanId );
+			$startDate, $endDate, $active, $renewPlanId ) );
 		
 	}
 	
 		/**
 	 *
-	 * @param type $startDate
+	 * @param type $start_date
 	 * @param type $nb_of_month
 	 * @return type 
 	 */
-	public static function calculateEndDate($startDate, $nb_of_month) {
+	public static function calculateEndDateFromStart($start_date, $nb_of_month) {
 
-		$start = date_create_from_format( 'Y-m-d H:i:s', $startDate, new DateTimeZone( 'GMT' ) );
-		if ( $start->format('j') > 28) { // if day > 28
-			$start->modify('first day of next month');
+		$end = date_create_from_format( 'Y-m-d H:i:s', $start_date, new DateTimeZone( 'GMT' ) );
+		if ( $end->format('j') > 28) { // if day > 28
+			$end->modify('first day of next month');
 		}
-		$start->modify( "+$nb_of_month month -1 second" );
+		$end->modify( "+$nb_of_month month -1 second" );
+		return $end->format( 'Y-m-d H:i:s' );
+		
+	}
+	
+	public static function calculateStartDateFromPreviousEnd($previous_end_date) {
+
+		$start = date_create_from_format( 'Y-m-d H:i:s', $previous_end_date, new DateTimeZone( 'GMT' ) );
+		$start->modify( "+1 second" );
 		return $start->format( 'Y-m-d H:i:s' );
 		
 	}

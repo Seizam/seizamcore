@@ -96,7 +96,7 @@ class SpecialWikiplacePlan extends SpecialPage {
 					'tmr_status'	=> 'OK' # varchar(2) NOT NULL COMMENT 'Record status (OK, KO, PEnding, TEst)',
 				);
 				wfRunHooks('CreateTransaction', array(&$tmr));
-				$out->addHTML("10 EUR gived to ".$user->getName());
+				$out->addHTML("10 EUR given to ".$user->getName());
 				break;
 			
 			/** @todo TODO: remove this test action !!!! */
@@ -309,9 +309,14 @@ class SpecialWikiplacePlan extends SpecialPage {
 			throw new MWException( 'Cannot process to subscription, plan not found data.' );
 		}
 		
-		$this->newlySubscribed = WpSubscription::subscribe( $this->getUser() , $plan );
+		$status = WpSubscription::subscribe( $this->getUser() , $plan );
 		
-		return ( ($this->newlySubscribed === null) ? wfMessage('wp-plan-sub-perr') : true );
+		if ( ! $status->isGood() ) {
+			return wfMessage('wp-err-unknown');
+		}
+		
+		$this->newlySubscribed = $status->value;
+		return true;
 		
 	}
 	

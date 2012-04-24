@@ -83,55 +83,11 @@ class WpWikiplace {
 		throw new MWException('Unknown attribut '.$attribut_name);
 	}
 	
-/*
-	public function set($attribut_name, $value, $update_now = true) {
-		$db_value = null;
-		switch ($attribut_name) {
-			case 'wpu_active':
-				if (!is_bool($value)) { throw new MWException('Value error (boolean needed) for '.$attribut_name); }
-				$db_value = ( $value ? 1 : 0 );
-				break;
-			case 'wpu_start_date':
-			case 'wpu_end_date':
-			case 'wpu_updated':
-				if (!is_string($value)) { throw new MWException('Value error (string needed) for '.$attribut_name);	}
-				break;
-			default:
-				throw new MWException('Cannot change the value of attribut '.$attribut_name);
-		}
-		
-		$this->$attribut_name							= $value;
-		$this->attributes_to_update[$attribut_name]		= ($db_value !== null) ? $db_value : $value; // used by wps_active to convert from boolean to int
-		
-		if ($update_now) {
-			
-			$dbw = wfGetDB(DB_MASTER);
-			$dbw->begin();
-
-			$success = $dbw->update(
-					'wp_usage',
-					$this->attributes_to_update,
-					array( 'wpu_id' => $this->wpu_id) );
-			
-			$dbw->commit();
-
-			if ( !$success ) {	
-				throw new MWException('Error while saving Usage report to database.');
-			}		
-			
-			$this->attributes_to_update = array();
-		
-		}
-		
-		return $value; // maybe useful, one day ...
-	}
-*/
-	
 	
 	/**
 	 * For now, updates only the page hits. In futur release, it will also update the bandwith usage.
 	 */
-	private function updateUsage() {
+	public function updateUsage() {
 	
 		$dbw = wfGetDB(DB_MASTER);
 		$dbw->begin();
@@ -177,14 +133,18 @@ class WpWikiplace {
 	}
 	
 	
+
 	/**
-	 * Should be called by cron. Its execution can take more more more than 30 seconds.
+	 * Its execution can take more more more than 30 seconds, so should be called by 
+	 * a cron, except if $wpw_owner_user_id is given. 
 	 * For the moment, it only updates the page hits.
 	 * In futur release, in will also update the bandwidth usage.
-	 * @return int Nb of updates
 	 * @todo updates also the bandwith usage
+	 * @param int $wpw_owner_user_id Can only update usages of a specific user (default: null = all)
+	 * @param int $lifespan_minutes Lifespan above wich to consider a usage outdated (default: 60 minutes)
+	 * @return Status Nb of updates as Status value if is good
 	 */
-	public static function updateAllOutdatedUsages() {
+	public static function updateOutdatedUsages( $wpw_owner_user_id = null, $lifespan_minutes = 60 ) {
 		
 		/** @todo update bandwidth usage */ 
 		
@@ -193,15 +153,15 @@ class WpWikiplace {
 		$dbw->begin();
 		
 		$now = $dbw->addQuotes(WpSubscription::getNow());
-		$one_hour_ago = $dbw->addQuotes(WpSubscription::getNow(0,0,-1));
+		$outdated = $dbw->addQuotes(WpSubscription::getNow(0,-$lifespan_minutes,0));
 		
 		$sql = "
 CREATE TEMPORARY TABLE wp_tmp_page_hits (
 SELECT wppa_wpw_id AS wikiplace_id, SUM(page.page_counter) AS page_hits
 FROM wp_wikiplace
   INNER JOIN wp_page
-  ON wpw_id = wppa_wpw_id
-  AND wpw_report_updated < $one_hour_ago
+  ON ".( ($wpw_owner_user_id!=null) ? " wpw_owner_user_id = $wpw_owner_user_id AND " : '')
+."wpw_report_updated < $outdated AND wpw_id = wppa_wpw_id
     INNER JOIN page
     ON wppa_page_id = page_id
 GROUP BY wppa_wpw_id ) ;";
@@ -209,7 +169,10 @@ GROUP BY wppa_wpw_id ) ;";
 		$result = $dbw->query($sql, __METHOD__);
 		
 		if ($result !== true) {
-			throw new MWException('Error while computing usages');
+			$msg = 'Problem while computing new usages value.';
+			$status = Status::newFatal($msg);
+			$status->value = $msg;
+			return $status;
 		}
 		
 		$to_update = $dbw->affectedRows();
@@ -221,12 +184,15 @@ SET wpw_monthly_page_hits = ( (
   FROM wp_tmp_page_hits
   WHERE wikiplace_id = wpw_id ) - wpw_previous_total_page_hits ) ,
 wpw_report_updated = $now
-WHERE wpw_report_updated < $one_hour_ago ;" ;
+WHERE wpw_report_updated < $outdated ;" ;
 				
 		$result = $dbw->query($sql, __METHOD__);
 		
 		if ($result !== true) {
-			throw new MWException('Error while updating outdated wikiplace usages');
+			$msg = 'Problem while updating outdated wikiplace usages.';
+			$status = Status::newFatal($msg);
+			$status->value = $msg;
+			return $status;
 		}
 		
 		$updated = $dbw->affectedRows();
@@ -240,37 +206,13 @@ WHERE wpw_report_updated < $one_hour_ago ;" ;
 		return $updated;
 		
 	}
-	
-	
-		/**
-	 * Warning, after adding, the attribut value is not valid
-	 * Warning, if $value is handled as int, it should not be > 2 147 483 647 because PHP may be 32bits
-	 * @param string $value 
-	 */
-/*	public function addBandiwidthConsumption($value) {
-		
-		$dbw = wfGetDB(DB_MASTER);
-		$dbw->begin();
 
-		$success = $dbw->update(
-				'wp_usage',
-				'wpu_monthly_bandwidth = wpu_monthly_bandwidth + '.$value,
-				array( 'wpu_id' => $this->wpu_id) );
-
-		$dbw->commit();
-		
-		if ( !$success ) {	
-			throw new MWException('Error while updating bandwidth usage.');
-		}
-	
-	}
-*/	
 	
 	/**
 	 * Reset all usages when outdated
 	 * @return int Nb of Wikiplace reset
 	 */
-	public static function archiveAndResetMonthlyUsages() {
+	public static function archiveAndResetExpiredUsages() {
 		
 			$dbw = wfGetDB(DB_MASTER);
 			$dbw->begin();
@@ -285,7 +227,6 @@ WHERE wpw_report_updated < $one_hour_ago ;" ;
 			// DatabaseBase::addQuotes()
 			$success = $dbw->insertSelect( 'wp_old_usage', 'wp_wikiplace',
 				array(
-					'wpou_wps_id' => 'wpw_wps_id',
 					'wpou_wpw_id' => 'wpw_id',
 					'wpou_end_date' => $now,
 					'wpou_monthly_page_hits' => 'wpw_monthly_page_hits',
@@ -324,7 +265,70 @@ WHERE wpw_report_updated < $one_hour_ago ;" ;
 		
 	}
 	
-		private function fetchSubscription($databaseRow = null) {
+	
+	/**
+	 * Force archiving current usage, then reset, even if 'expires_date' is not outdated.
+	 * It uses $now as end date in archives table. <b>Doesn't update 'wpw_expires_date'</b>
+	 * @param string $now DATETIME Sql timestamp. If null, WpSubscription::getNow() is used.
+	 * @return Status Status
+	 */
+	public function forceArchiveAndResetUsage( $now = null ) {
+			
+		$dbw = wfGetDB(DB_MASTER);
+		$dbw->begin();
+
+		if ( $now == null) {
+			$now =  WpSubscription::getNow();
+		} 
+		$now =  $dbw->addQuotes( $now );
+
+		// archiving current usages
+
+		// 3rd arg : must be an associative array of the form
+		// array( 'dest1' => 'source1', ...). Source items may be literals
+		// rather than field names, but strings should be quoted with
+		// DatabaseBase::addQuotes()
+		$success = $dbw->insert( 'wp_old_usage', 
+			array(
+				'wpou_wpw_id' => $this->wpw_id,
+				'wpou_end_date' => $now,
+				'wpou_monthly_page_hits' => $this->wpw_monthly_page_hits,
+				'wpou_monthly_bandwidth' => $this->wpw_monthly_bandwidth,
+			),
+			__METHOD__ );
+		
+		if ( !$success ) {	
+			$msg = 'Error while archiving usage.';
+			$status = Status::newFatal($msg);
+			$status->value = $msg;
+			return $status;
+		}
+		// reset usage
+		$success = $dbw->update(
+				'wp_wikiplace',
+				array(
+					'wpw_date_expires = DATE_ADD(wpw_date_expires,INTERVAL 1 MONTH)',
+					'wpw_monthly_page_hits' => 0,
+					'wpw_monthly_bandwidth' => 0,
+					'wpw_previous_total_page_hits' => '( wpw_monthly_page_hits + wpw_previous_total_page_hits)',
+					'wpw_previous_total_bandwidth' => '( wpw_monthly_bandwidth + wpw_previous_total_bandwidth)',
+				),
+				array( 'wpw_id' => $this->wpw_id ) );
+
+		if ( !$success ) {	
+			$msg = 'Error while resetting usage.';
+			$status = Status::newFatal($msg);
+			$status->value = $msg;
+			return $status;
+		}
+
+		$dbw->commit();
+
+		return Status::newGood();
+		
+	}
+	
+	private function fetchSubscription($databaseRow = null) {
 		
 		if ($databaseRow !== null) {
 			if ($databaseRow->wps_id != $this->wpu_wps_id) {
@@ -583,15 +587,15 @@ WHERE wpw_report_updated < $one_hour_ago ;" ;
 	}
 
 	
-		/**
-	 *
-	 * @param type $name
-	 * @return Title The created homapge Title if OK, null if error 
+	/**
+	 * Trigger homepage creation, wich will trigger Wikiplace creation.
+	 * @param string $name
+	 * @return Status The created homepage Title as Status value if OK
 	 */
 	public static function initiateCreation($name) {
 		
 		// the creation of the homapage will trigger the page creation hook, 
-		// wich will call self::create(...) wich will process the real creation of the wikiplace
+		// wich will call WpWikiplace::create() wich will process the real creation of the wikiplace
 		return WpPage::createHomepage($name);
 		
 	}
@@ -600,8 +604,7 @@ WHERE wpw_report_updated < $one_hour_ago ;" ;
 	 * Create a wikiplace from this homepage, owned by this user
 	 * @param Title $homepage
 	 * @param int $user_id
-	 * @return WpWikiplace/int The created Wikiplace if creation succesfull, or an int error code
-	 * 1 = no active subscription for this user
+	 * @return Status 
 	 */
 	public static function create($homepage, $user_id) {
 		
@@ -616,7 +619,10 @@ WHERE wpw_report_updated < $one_hour_ago ;" ;
 		$subscription = WpSubscription::getActiveByUserId($user_id);
 		
 		if ( $subscription === null ) {
-			return 1;
+			$msg = 'The user has no active subscription. Cannot create Wikiplace.';
+			$status = Status::newFatal($msg);
+			$status->value = $msg;
+			return $status;
 		}
 		
 		$homepageId = $homepage->getArticleID();
@@ -653,7 +659,10 @@ WHERE wpw_report_updated < $one_hour_ago ;" ;
 		$dbw->commit();
 		
 		if ( !$success ) {	
-			return 3;
+			$msg = 'Problem while creating Wikiplace record.';
+			$status = Status::newFatal($msg);
+			$status->value = $msg;
+			return $status;
 		}
 		
 		$wp = new self( $id, $user_id, $homepageId,
@@ -663,10 +672,21 @@ WHERE wpw_report_updated < $one_hour_ago ;" ;
 		$new_wp_page = WpPage::attachNewPageToWikiplace($homepage, $wp);
 		
 		if ($new_wp_page === null) {
-			throw new MWException('Cannot associate the homepage to the newly created wikiplace .');
+			$msg = 'Problem while associating the homepage to the newly created Wikiplace .';
+			$status = Status::newFatal($msg);
+			$status->value = $msg;
+			return $status;
+		}
+		
+		$status = $wp->forceArchiveAndResetUsage($now);
+		if ( ! $status->isGood() ) {
+			$msg = 'Problem while initiating Wikiplace usage.';
+			$status = Status::newFatal($msg);
+			$status->value = $msg;
+			return $status;			
 		}
 				
-		return $wp;
+		return Status::newGood($wp);
 			
 	}
 	

@@ -232,7 +232,7 @@ class WikiplaceHooks {
 						if ($sub->get('wps_start_date') == null) {
 							// first subscription, so activates it from now
 							$start = WpSubscription::getNow();
-							$end = WpSubscription::calculateEndDate($start, $sub->get('plan')->get('wpp_period_months'));
+							$end = WpSubscription::calculateEndDateFromStart($start, $sub->get('plan')->get('wpp_period_months'));
 							$sub->set('wps_start_date',	$start, false ); // 3rd param = false = do not update db now
 							$sub->set('wps_end_date', $end, false ); 
 							$sub->set('wps_active',	true, false ); 

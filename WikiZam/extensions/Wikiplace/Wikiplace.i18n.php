@@ -62,7 +62,6 @@ $messages['en'] = array(
 	
 	'wp-plan-sub-tmr-status-other' => "error",
 	'wp-plan-sub-submit'  => "Go",
-	'wp-plan-sub-perr' => "The subscription failed, please retry",
 
 	'wp-plan-chg-pagetitle' => "Change a Wikiplace plan",
 	'wp-plan-loffers-pagetitle'  => "Available offers",

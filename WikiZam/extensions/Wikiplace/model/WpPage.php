@@ -237,9 +237,7 @@ class WpPage {
 	
 	/**
 	 * @param string $new_wikiplace_name The new 'wikiplace_name'
-	 * @return Title/int The created home page, or
-	 * int 1 if creation failed, but error not known
-	 * int 2 if creation failed because the title already exist 
+	 * @return Status The created homepage as Status value if status is good 
 	 */
 	public static function createHomepage( $new_wikiplace_name = null ) {
 		
@@ -250,12 +248,17 @@ class WpPage {
 		$title = Title::newFromText( $new_wikiplace_name );
 		
 		if (!($title instanceof Title)) {
-			// not good syntax, but this case should not occurs because the validate passes
-			return 1;
+			$msg = 'MediaWiki is unable to create this homepage. Title may contain bad characters.';
+			$status = Status::newFatal($msg);
+			$status->value = $msg;
+			return $status;
 		}
 		
 		if ($title->isKnown()) {
-			return 2;		
+			$msg = 'This title already exists, cannot use it as a new homepage.';
+			$status = Status::newFatal($msg);
+			$status->value = $msg;
+			return $status;	
 		}
 		
 		$text = '{{subst:Wikiplace Root}}';
@@ -265,7 +268,7 @@ class WpPage {
 		$article = new Article($title);
 		$article->doEdit($text, '',EDIT_NEW);
 		
-		return $title;
+		return Status::newGood($title);
 		
 	}
 	
