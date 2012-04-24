@@ -249,7 +249,7 @@ class SpecialWikiplacePlan extends SpecialPage {
 		// var_export($allData);
 		// array ('Plan' =&gt; '1')
 		
-		$dbr = wfGetDB(DB_SLAVE);
+/*		$dbr = wfGetDB(DB_SLAVE);
 		$now =  $dbr->addQuotes( wfTimestamp(TS_DB) );
 		$conds = $dbr->makeList(array( "wpp_id" => $id, "wpp_start_date <= $now", "wpp_end_date > $now" ), LIST_AND );
 		
@@ -258,7 +258,7 @@ class SpecialWikiplacePlan extends SpecialPage {
 		if ( $result === false ) {
 			return wfMessage( 'wp-plan-subscribe-invalid-plan' )->text();
 		}
-		
+*/		
         return true ;
 		
 	}

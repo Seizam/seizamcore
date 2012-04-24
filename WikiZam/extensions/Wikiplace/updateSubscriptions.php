@@ -16,8 +16,12 @@ class UpdateSubscriptions extends Maintenance {
 		
 		
 		$this->output( "[".WpSubscription::getNow()." Archiving all subscriptions to renew...]\n" );
-		$nb = WpSubscription::archiveAllOutdatedToRenew($when);
-		$this->output( "$nb subscriptions archived\n" );
+		$status = WpSubscription::archiveAllOutdatedToRenew($when);
+		if ( ! $status->isGood() ) {
+			$this->output( "a problem occured: ".$status->$value."\n" );
+		} else {
+			$this->output( "OK, ".$status->value." subscriptions archived\n" );
+		}
 		$this->output( "[".WpSubscription::getNow()." END]\n\n" );
 		
 		
@@ -38,8 +42,12 @@ class UpdateSubscriptions extends Maintenance {
 		
 		
 		$this->output( "[".WpSubscription::getNow()." Deactivating all remaining outdated subscriptions...]\n" );
-		$nb = WpSubscription::deactivateAllOutdated($when);
-		$this->output( "$nb subscriptions updated\n" );
+		$status = WpSubscription::deactivateAllOutdated($when);
+		if ( ! $status->isGood() ) {
+			$this->output( "a problem occured: ".$status->$value."\n" );
+		} else {
+			$this->output( "OK, ".$status->value." subscriptions updated\n" );
+		}
 		$this->output( "[".WpSubscription::getNow()." END]\n" );
 		
 	}
