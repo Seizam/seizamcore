@@ -198,7 +198,7 @@ class SpecialWikiplacePlan extends SpecialPage {
 				Linker::linkKnown( $this->getTitle( self::ACTION_LIST_OFFERS ), wfMessage( 'wp-plan-tl-loffers' )->text() ) ,
 				Linker::linkKnown( SpecialPage::getTitleFor( 'Wikiplace' ), 'Wikiplace' ),
 			
-				$this->generateLink("/Special:TransactionManager", "TransactionManager"),
+				$this->generateLink("/Special:Transactions", "Transactions"),
 				$this->generateLink("/Special:WikiplacePlan/test_give_10eur", "give me 10 EUR"),
 				$this->generateLink("/Special:WikiplacePlan/test_drop_all", "clear wp and tmr"),
 			

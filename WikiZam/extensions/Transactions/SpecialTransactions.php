@@ -32,7 +32,7 @@ if (!defined('MEDIAWIKI'))
  * @ingroup SpecialPage
  * @ingroup Upload
  */
-class SpecialTransactionManager extends SpecialPage {
+class SpecialTransactions extends SpecialPage {
 
     /**
      * Constructor : initialise object
@@ -40,7 +40,7 @@ class SpecialTransactionManager extends SpecialPage {
      * @param $request WebRequest : data posted.
      */
     public function __construct($request = null) {
-        parent::__construct('TransactionManager', 'user');
+        parent::__construct('Transactions', 'user');
     }
 
     /**
