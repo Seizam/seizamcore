@@ -79,7 +79,7 @@ class SpecialWikiplace extends SpecialPage {
 				
 				if (WpSubscription::getActiveByUserId($this->getUser()->getId()) === null) {
 					
-					$out->addHTML(wfMessage('wp-cwp-err-nosub' )->text());	
+					$out->addHTML(wfMessage('wp-need-active-sub' )->text());	
 					
 				} else {
 				
@@ -102,7 +102,7 @@ class SpecialWikiplace extends SpecialPage {
 				
 				if (WpSubscription::getActiveByUserId($this->getUser()->getId()) === null) {
 					
-					$out->addHTML(wfMessage('wp-csp-err-nosub' )->text());	
+					$out->addHTML(wfMessage('wp-need-active-sub' )->text());	
 					
 				} else {
 				
@@ -282,7 +282,7 @@ class SpecialWikiplace extends SpecialPage {
 		$title = Title::newFromText( $wikiplace->get('name') . '/' . $name );
 		
 		if ($title->isKnown()) {
-			return wfMessage( 'wp-csp-perr-already-exists' )->text() ;
+			return wfMessage( 'wp-name-already-exists' )->text() ;
 		}
 				
 		return true; // all ok
@@ -292,14 +292,14 @@ class SpecialWikiplace extends SpecialPage {
 	
 	public function processCreateWikiplacePage( $formData ) {
 		
-		if ( !isset($formData['WikiplaceId']) || !isset($formData['WikiplaceSubPageName']) ) { //check that the keys exist and values are not NULL
-			return wfMessage('wp-err-unknown')->text(); //invalid form, so maybe a bug, maybe a hack
+		if ( !isset($formData['WikiplaceId']) || !isset($formData['WikiplaceSubPageName']) ) { 
+			return wfMessage('wp-err-unknown')->text(); 
 		}
 		
 		$wikiplace = WpWikiplace::getById( intval($formData['WikiplaceId']) );
 		
 		// check that the user owns the wikiplace
-		if ( !is_object($wikiplace) || !($wikiplace instanceof WpWikiplace) || ($wikiplace->get('wpw_owner_user_id') != $this->getUser()->getId()) ) {
+		if ( !($wikiplace instanceof WpWikiplace) || ($wikiplace->get('wpw_owner_user_id') != $this->getUser()->getId()) ) {
 			return wfMessage( 'wp-csp-perr-notvalidwp')->text(); 
 		}
 
@@ -357,6 +357,12 @@ class SpecialWikiplace extends SpecialPage {
 
         if ( !is_string($name) || preg_match('/[.\\/]/',$name) ) {
 			return wfMessage( 'wp-vlderr-nwpname-format' )->text() ;
+		}
+		
+		$title = Title::newFromText( $name );
+		
+		if ($title->isKnown()) {
+			return wfMessage( 'wp-name-already-exists' )->text() ;
 		}
 		
 /*		$wp = WpWikiplace::getByName($name);

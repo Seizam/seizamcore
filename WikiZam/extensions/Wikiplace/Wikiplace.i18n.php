@@ -7,8 +7,6 @@ $messages = array();
  */
 $messages['en'] = array(
 	
-	'wp-vlderr-nwpname-dup' => 'This Wikiplace name already exists.',
-	
 	'wp-plan-name-test_plan_normal' => "Test plan",
 	'wp-plan-name-test_plan_plus' => "Test pan +",
 	'wp-plan-name-test_plan_invitation' => "Invitation only test plan",
@@ -27,7 +25,7 @@ $messages['en'] = array(
 	'wp-csp-submit' => "Go",
 	'wp-csp-perr-notvalidwp' => "The Wikiplace was not valid, please retry.",
 	'wp-csp-perr-notvalidtitle' => "The page was not valid, please retry.",
-	'wp-csp-perr-already-exists' => "The page already exists, please retry with a different name.",
+
 
 	'wp-lwp-pagetitle' => "My Wikiplaces",
 
@@ -36,6 +34,9 @@ $messages['en'] = array(
 	'wp-tl-csp'  => "New page",
 
 	'wp-err-unknown' => "An error occured",
+	'wp-name-already-exists' => "The page already exists, please retry with a different name.",
+	'wp-need-active-sub' => 'You need to have an active subscription to do this.',
+	
 
 	'wp-cwp-pagetitle'         => "New Wikiplace",
 	'wp-cwp-success-link-wt'   => "New Wikiplace created, [[:\$1|click here]] to access its homepage.",
