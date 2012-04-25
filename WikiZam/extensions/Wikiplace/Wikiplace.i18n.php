@@ -84,15 +84,19 @@ $messages['en'] = array(
 	'wpstp-wps_end_date' => "End",
 	
 	'wpwtp-page_title' => 'Wikiplace',
-	'wpwtp-count(*)' => 'Number of pages',
-	'wpwtp-wpw_monthly_page_hits' => 'Monthly page hits',
-	'wpwtp-wpw_monthly_bandwidth' => 'Monthly bandwith',
+	'wpwtp-count(*)' => 'Subpages',
+	'wpwtp-wpw_monthly_page_hits' => 'Page hits',
+	'wpwtp-wpw_monthly_bandwidth' => 'Bandwith',
 	'wpwtp-wpw_report_updated' => 'Date of value',
 	'wpwtp-wpw_date_expires' => 'Reset date',
 	
 	'wp-consultwp-pagetitle' => 'Wikiplace $1',
 	
 	'wppatp-page_title' => 'Page name',
+    
+    'wp-seeall' => 'see all',
+    'wp-createpage' => 'create',
+    'wp-items' => 'items'
 	
 );
 

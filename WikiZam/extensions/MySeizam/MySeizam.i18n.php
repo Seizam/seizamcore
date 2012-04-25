@@ -29,7 +29,9 @@ $messages['en'] = array(
         'ms-userpage' => '[[User:$1|My Userpage]]',
         'ms-watchlist' => 'And this is My Watchlist. [[Special:Watchlist|More...]]',
         'ms-quickaccount' => 'About My Account:',
-        'ms-morelinks' => 'What else?'
+        'ms-morelinks' => 'What else?',
+        'ms-help' => '[[Help:Contents|Help]]',
+        'ms-specialpages' => 'And [[Special:SpecialPages|much more...]]'
 );
 
 /** Message documentation (Message documentation)

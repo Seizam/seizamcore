@@ -36,7 +36,6 @@ class SkinzamHooks {
         return true;
     }
 
-    
     /**
      * parserClearState hook
      * 
@@ -48,7 +47,7 @@ class SkinzamHooks {
         $parser->mShowToc = false;
         return true;
     }
-    
+
     /**
      * skinTemplateOutputPageBeforeExec hook
      * 
@@ -58,31 +57,29 @@ class SkinzamHooks {
      */
     public static function skinTemplateOutputPageBeforeExec(&$skin, &$tpl) {
         $szFooterUrls = array();
-        // Second Link "My Seizam" (logged in) or "Sign in/Login" (not logged in)
-        
+
+
         if ($skin->loggedin) {
-        // First Link "Browse Seizam"
-        $szFooterUrls['allpages'] = array(
-				'text' => wfMessage('sz-browse'),
-				'href' => Skin::makeSpecialUrl( 'AllPages' ),
-				'active' => ( $skin->thispage == 'Special:AllPages' )
-			);
+            $szFooterUrls['allpages'] = array(
+                'text' => wfMessage('sz-browse'),
+                'href' => Skin::makeSpecialUrl('AllPages'),
+                'active' => ( $skin->thispage == 'Special:AllPages' )
+            );
+
             $szFooterUrls['myseizam'] = array(
-				'text' => wfMessage('sz-myseizam'),
-				'href' => Skin::makeSpecialUrl( 'Preferences' ),
-				'class' => false,
-				'active' => ( $skin->thispage == 'Special:Preferences' )
-			);
-         $szPrettyUserName = $skin->username;
-        $tpl->set('sz_pretty_username', $szPrettyUserName);
+                'text' => wfMessage('sz-myseizam'),
+                'href' => Skin::makeSpecialUrl('MySeizam'),
+                'class' => false,
+                'active' => ( $skin->thispage == 'Special:MySeizam' )
+            );
+            $szPrettyUserName = $skin->username;
+            $tpl->set('sz_pretty_username', $szPrettyUserName);
         } else {
             $szFooterUrls['myseizam'] = $tpl->data['personal_urls']['login'];
         }
-        
+
         $tpl->set('sz_footer_urls', $szFooterUrls);
         return true;
     }
-    
-    
 
 }

@@ -198,6 +198,8 @@ class SpecialMySeizam extends SpecialPage {
         $html .= '<li>'.wfMessage('ms-talk',$user->getName())->parse().'</li>';
         $html .= '<li>'.wfMessage('ms-userpage',$user->getName())->parse().'</li>';
         $html .= '<li>'.wfMessage('ms-contact')->parse().'</li>';
+        $html .= '<li>'.wfMessage('ms-help')->parse().'</li>';
+        $html .= '<li>'.wfMessage('ms-specialpages')->parse().'</li>';
         $html .= '</ul>';
         $html .= '</div>';
         

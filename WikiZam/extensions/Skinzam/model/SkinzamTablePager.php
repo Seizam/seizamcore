@@ -25,7 +25,7 @@ class SkinzamTablePager extends TablePager {
     
     # Do not redeclare
     private $defaultTableClasses = array('TablePager');
-    private $even = true;
+    protected $even = true;
     private $header = '';
     private $footer = '';
 

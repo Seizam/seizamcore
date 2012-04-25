@@ -97,7 +97,7 @@ sub { bottom: -0.25em; }
    ==  Lists
    -------------------------------------------------------------------------- */
 
-ul, ol { margin: 1em 0; padding: 0 0 0 40px; }
+ul, ol { margin: 1em 0; padding: 0 0 0 40px;}
 dd { margin: 0 0 0 40px; }
 #nav ul, #nav ol { list-style: none; margin: 0; padding: 0; }
 
@@ -445,7 +445,7 @@ a {
 }
 #nav #nav_plus ul li a {
     display:block;
-    padding: 4px 0 4px 8px;
+    padding: 6px 0 6px 8px;
     border-bottom:1px solid #4d4e4f;
 }
 #nav #nav_plus ul li:last-child a {
@@ -1528,12 +1528,12 @@ input:invalid, textarea:invalid { background-color: #f2e3e4; }
     Basic (li) (used also for log)
 */
 
-body.ns-special #bodyContent ul {
+body.ns-special #bodyContent div>ul {
     margin: 0;
     padding: 0;
 }
 
-body.ns-special #bodyContent li {
+body.ns-special #bodyContent div>ul>li {
     margin: 0;
     padding: 8px 16px;
     list-style: none;
@@ -1565,6 +1565,10 @@ table.mw-enhanced-rc {
     padding: 8px 0;
     border-bottom: 1px solid #dad9d9;
     display: block;
+}
+
+table.mw-enhanced-rc:hover {
+    background: #f2f2f2;
 }
 
 /*
@@ -1830,9 +1834,12 @@ p.mw-htmlform-invalid-input span.error {
    ==  Table pager (e.g. Special:ListFiles)
    -------------------------------------------------------------------------- */
 
-table.TablePager {
+table {
     margin: 8px auto 0;
     width: 100%;
+}
+
+table.TablePager {
     border: none;
 }
 
@@ -1884,6 +1891,8 @@ table.TablePager {
     Specific Table Pagers
 */
 
+/* TMRecord */
+
 .TMRecord td.tmr_amount {
     font-weight: bold;
 }
@@ -1896,6 +1905,26 @@ table.TablePager {
     color: #888888;
 }
 
+/* WpWikiplace */
+
+table.WpWikiplace td ul {
+    display: inline-block;
+    border: none;
+    border-left: 1px solid #dad9d9;
+    padding: 0;
+    margin: 0 8px;
+    vertical-align: middle;
+}
+
+table.WpWikiplace td ul li {
+    border: none;
+    padding: 0 8px;
+    margin: 0;
+    list-style: none;
+}
+
+
+
 /* -----------------------------------------------------------------------------
    ==  MySeizam
    -------------------------------------------------------------------------- */
@@ -1907,16 +1936,28 @@ table.TablePager {
 .mw-special-MySeizam div#ms-quickaccount {
     float: left;
     width: 180px;
-    padding: 18px;
+    padding: 18px 18px 10px 18px;
     margin-bottom: 40px;
+    border: 1px solid #debdbf;
+    background: #f2e3e4;
 }
 
+body.mw-special-MySeizam #bodyContent div#ms-quickaccount>ul,
+body.mw-special-MySeizam #bodyContent div#ms-morelinks>ul{
+    margin: 0;
+    padding: 0;
+}
 
-.mw-special-MySeizam div#ms-quickaccount li,
-.mw-special-MySeizam div#ms-morelinks li{
-    border: 0;
+body.mw-special-MySeizam #bodyContent div#ms-quickaccount>ul>li,
+body.mw-special-MySeizam #bodyContent div#ms-morelinks>ul>li{
+    border: none;
     border-top: 1px solid #dad9d9;
     padding: 8px 0;
+    list-style: none;
+}
+
+body.mw-special-MySeizam #bodyContent div#ms-quickaccount>ul>li {
+    border-top: 1px solid #debdbf;
 }
 
 .mw-special-MySeizam div#ms-quickwikiplaces {
@@ -1951,7 +1992,7 @@ table.TablePager {
 .mw-special-MySeizam div#ms-morelinks {
     float:right;
     width: 130px;
-    padding: 18px;
+    padding: 18px 18px 10px 18px;
 }
 
 .mw-special-MySeizam .inside h3 {
@@ -1962,6 +2003,7 @@ table.TablePager {
 .ms-info-qa{
     text-align: center;
     font-weight: bold;
+    color: #974349;
 }
 
 
