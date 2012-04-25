@@ -44,41 +44,45 @@ class WpPage {
 	}
 	
 	/**
-	 * Fetch the page from the Title, or from the database row, or by reading db internally
-	 * @param type $databaseRow
-	 * @param Title $title 
+	 * Fetch the page
+	 * @param StdClass/Title/WikiPage $data if null, this function will query the database
 	 */
-	private function fetchPage($databaseRow = null, $title = null) {
+	private function fetchPage( $data = null ) {
 		
-		if ($title != null) {
-			if (!($title instanceof Title)) {
-				throw new MWException('The given Title argument is not a valid Title object.');
-			}
-			$this->page_namespace = $title->getNamespace();	
-			$this->page_title     = $title->getText();
+		if ($data === null) {
+			$dbr = wfGetDB(DB_SLAVE);
+			$data = $dbr->selectRow( 
+					'page', 
+					array('page_id', 'page_namespace','page_title'),
+					array( 'page_id' =>  $this->wppa_page_id ),
+					__METHOD__ );
 		}
 		
-		if ($databaseRow === null) {
+		if ( $data instanceof WikiPage ) {
+			$data = $data->getTitle();
+		}
+		
+		if ( $data instanceof Title) {
 			
-			$dbr = wfGetDB(DB_SLAVE);
-			$result = $dbr->selectRow( 'page', array('page_id', 'page_namespace','page_title'),	array( 'page_id' =>  $this->wppa_page_id ), __METHOD__ );
-			if ( $result === false ) {
-				throw new MWException('Page not found.');
+			if ( $data->getArticleID() != $this->wppa_page_id) {
+				throw new MWException('Cannot fetch page, the Title does not match with the current page.');
 			} 
-			$databaseRow = $result;
+			$this->page_namespace = $data->getNamespace();	
+			$this->page_title     = $data->getText();
+			
+		} elseif ( isset($data->page_id) && isset($data->page_title) && isset($data->page_namespace) ) {
+			
+			if ($data->page_id != $this->wppa_page_id) {
+				throw new MWException('Cannot fetch page, the database row does not match with the current object.');
+			} 
+			$this->page_namespace = $data->page_namespace;	
+			$this->page_title     = $data->page_title;
 			
 		} else {
 			
-			if ( !isset($databaseRow->page_id) || !isset($databaseRow->page_title) || !isset($databaseRow->page_namespace) ) {
-				throw new MWException('Invalid argument, missing page field.');
-			} 
-			if ($databaseRow->page_id != $this->wppa_page_id) {
-				throw new MWException('The given page does not match with the current record.');
-			} 
-			$this->page_namespace = $databaseRow->page_namespace;	
-			$this->page_title     = $databaseRow->page_title;
+			throw new MWException('Cannot fetch page.');
 			
-		} 
+		}
 
 	}
 	
@@ -313,15 +317,16 @@ class WpPage {
 	}
 	
 	/**
-	 *
+	 * Check that the $title is a homepage and not a subpage. The test is performed using
+	 * the MediaWiki Title object of the page, and doesn't ensure that the corresponding wikiplace already exists.
 	 * @param Title $title
-	 * @return boolean true = a wikiplacer home page
+	 * @return boolean 
 	 */
 	public static function isHomepage($title) {
-		if ( ($title === null) || !($title instanceof Title)) {
-			throw new MWException( 'wrong title argument' );
+		if ( !($title instanceof Title) ) {
+			throw new MWException( 'argument need to be a WikiPage' );
 		}
-		return ( ($title->getNamespace() == NS_MAIN) && (count(explode( '/', $title->getPrefixedDBkey() )) == 1) );
+		return ( ($title->getNamespace() == NS_MAIN) && (count(explode( '/', $title->getDBkey() )) == 1) );
 	}
 	
 	
@@ -368,18 +373,18 @@ class WpPage {
 		return '/'.substr($full_page_name, $len + 1).$after;
 	}
 	
-		/**
+	/**
 	 * 
-	 * @param Title $title
+	 * @param int $namespace
 	 * @return boolean
 	 */
-	public static function isInWikiplaceNamespaces($title) {
+	public static function isInWikiplaceNamespaces($namespace) {
 		
-		if ( ($title === null) || !($title instanceof Title)) {
-			throw new MWException( 'wrong title argument' );
+		if ( !is_int($namespace) ) {
+			throw new MWException( 'invalid namespace argument' );
 		}
 		
-		return in_array( $title->getNamespace(), array(
+		return in_array( $namespace, array(
 			NS_MAIN,
 			NS_TALK,
 			NS_FILE,
@@ -510,44 +515,24 @@ class WpPage {
 		
 	}
 	
-
 	
 	/**
-	 * Called 
-	 * @param Title $title
+	 * Create a new WpPage record, associating a Wikipage to a Wikiplace
+	 * @param WikiPage $wikipage
 	 * @param WpWikiplace $wikiplace
-	 * @return type 
+	 * @return Status value the newly created WpPage if good
 	 */
-	public static function attachNewPageToWikiplace($title, $wikiplace) {
+	public static function create( $wikipage, $wikiplace ) {
 		
-		if ( ($title === null) || !($title instanceof Title) || ($wikiplace === null) || !($wikiplace instanceof WpWikiplace) ) {
-			throw new MWException( 'Cannot associate page to a Wikiplace (wrong argument)' );
+		if ( !($wikiplace instanceof WpWikiplace) ) {
+			throw new MWException( 'Cannot create wikiplace page (invalid wikiplace argument)' );
 		}
 		
-		// store the new page in our extension
-		return self::create($title, $wikiplace);
-		
-	}
-	
-	
-	
-	/**
-	 *
-	 * @param Wikiplace $wikiplace
-	 * @param Title $page_title
-	 * @return WpPage the newly created page or null if an error occured 
-	 */
-	private static function create($page_title, $wikiplace) {
-		if ( ($wikiplace === null) || ($page_title === null) ) {
-			throw new MWException( 'Cannot create Wikiplace page (missing argument)' );
+		if ( !($wikipage instanceof WikiPage) ) {
+			throw new MWException( 'Cannot create wikiplace page (invalid wikipage argument)' );
 		}
-		
-		if ( !($wikiplace instanceof WpWikiplace) || !($page_title instanceof Title) ) {
-			throw new MWException( 'Cannot create Wikiplace page(invalid argument)' );
-		}
-		
-		$pageId	= $page_title->getArticleID();
-		$pageNamespace = $page_title->getNamespace();
+						
+		$pageId = $wikipage->getTitle()->getArticleID();
 		$wikiplaceId = $wikiplace->get('wpw_id');
 		
 		$dbw = wfGetDB(DB_MASTER);
@@ -568,25 +553,28 @@ class WpPage {
 		
 		$dbw->commit();
 		
-		if ( !$success ) {	
-			return null;
+		if ( !$success ) {
+			$msg = 'Database error while saving the new WpPage.';
+			$status = Status::newFatal($msg);
+			$status->value = $msg;
+			return $status;
 		}		
 				
-		$return = new self( $id, $wikiplaceId, $pageId, $pageNamespace );
-		$return->fetchPage(null, $page_title);
+		$wpp = new self( $id, $wikiplaceId, $pageId );
+		$wpp->fetchPage( $wikipage );
 		
-		return $return;
+		return Status::newGood($wpp);
 			
 	}
 	
 	/**
-	 * Find the user identifier of the wikiplace page owner
-	 * @param Title $title
-	 * @return boolean/int int the user id, or false if the page is not a wikiplace page
+	 * Find the owner "user id" of a wikiplace page
+	 * @param int $title
+	 * @return boolean/int the user id, or false if the page is not a wikiplace page
 	 */
-	public static function findPageOwnerUserId($title) {
+	public static function findOwnerUserIdByArticleId( $article_id ) {
 		
-		if ( ($title == null) || !($title instanceof Title)) {
+		if ( ! is_int($article_id) || ($article_id < 0) ) {
 			throw new MWException('Cannot find the owner, invalid argument.');
 		}
 		
@@ -595,7 +583,7 @@ class WpPage {
 				array( 'wp_page', 'wp_wikiplace' ),
 				'wpw_owner_user_id',
 				array ( 
-					'wppa_page_id' => $title->getArticleID(),
+					'wppa_page_id' => $article_id,
 					'wppa_wpw_id = wpw_id' ),
 				__METHOD__ );
 	
