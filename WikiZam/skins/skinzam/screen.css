@@ -66,6 +66,10 @@ a:visited { color: #E22C2E; }
 a:focus { outline: thin dotted; }
 a:hover, a:active { outline:0; color:#7C2122; }
 
+a.stub, a.new {
+    text-decoration: underline;
+}
+
 
 /* -----------------------------------------------------------------------------
    ==  Typography
@@ -196,7 +200,9 @@ input[type="submit"],
 .block_join .submit input,
 .help,
 .edit_avatar .button,
-.block_join .subscription {
+.block_join .subscription,
+.TablePager tr td,
+table.mw-enhanced-rc {
     -webkit-transition: background 0.75s;
     -moz-transition: background 0.75s;
     -ms-transition: background 0.75s;
@@ -212,7 +218,7 @@ input[type="submit"],
     transition: all 0.50s;
 }
 
-a {
+a, a span {
     -webkit-transition: color 0.75s;
     -moz-transition: color 0.75s;
     -ms-transition: color 0.75s;
@@ -1568,13 +1574,17 @@ body.ns-special #bodyContent li.mw-line-odd {
 */
 
 table.mw-enhanced-rc {
-    padding: 8px 0;
+    padding: 8px 1px;
+    margin: 0;
     border-bottom: 1px solid #dad9d9;
     display: block;
 }
 
 table.mw-enhanced-rc:hover {
+    padding: 8px 0;
     background: #f2f2f2;
+    border: 1px solid #dad9d9;
+    border-top: none;
 }
 
 /*
@@ -1886,7 +1896,7 @@ table.TablePager {
 }
 
 .TablePager tr:hover td {
-    background-color: #f3f3f3;
+    background-color: #f2f2f2;
     color: black;
 }
 .TablePager tbody tr:hover {
@@ -1927,7 +1937,56 @@ table.WpWikiplace td ul li {
     padding: 0 8px;
     margin: 0;
     list-style: none;
+    text-align: left;
 }
+
+/* WpPage */
+
+table.WpPage td.subpage_title {
+    text-align: left;
+}
+
+table.WpPage td ul {
+    display: inline;
+    border: none;
+    padding: 0;
+    margin: 0 8px;
+}
+
+table.WpPage td ul li {
+    display: inline;
+    border-left: 1px solid #dad9d9;
+    padding: 0 8px;
+    margin: 0;
+    list-style: none;
+    text-align: left;
+}
+
+table.WpPage td ul li.first {
+    border-left: none;
+}
+
+table.WpPage span.wpp-hp {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+table.WpPage span.wpp-sp {
+    font-weight: bold;
+    color: #e22c2e;
+}
+
+table.WpPage span.wpp-sp-hp {
+    color: #e2a3a3;
+}
+table.WpPage span.wpp-ns {
+    color: #686a6b;
+}
+
+table.WpPage a:hover span {
+    color:#7c2122;
+}
+
 
 
 

@@ -23,7 +23,10 @@ if (!defined('MEDIAWIKI')) {
 //  # group 'owner' is virtual and used only by this extension (never stored in db)
 // any other group added to this var need to exist (in $wgGroupPermissions)
 // NOTE: $wgRestrictionLevels will be updated in order for theses level to be accessed via protect
-$wgRestrictionsGroups = array( '', 'owner'); 
+$wgRestrictionsGroups = array( '', 'owner');
+
+// This value is used in other extensions to link to the restrictions interface
+define('RESTRICTIONS_ACTION', 'setrestrictions');
 
 
 # ==================================== 

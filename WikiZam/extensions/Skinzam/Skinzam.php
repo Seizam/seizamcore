@@ -55,6 +55,13 @@ $wgHooks['ParserClearState'][] = 'SkinzamHooks::parserClearState';
 $wgHooks['SkinTemplateOutputPageBeforeExec'][] = 'SkinzamHooks::skinTemplateOutputPageBeforeExec';
 
 
+
+/*$wgResourceModules['skins.skinzam'] = array(
+		'styles' => array( 'skinzam/screen.css' => array( 'media' => 'screen' ) ),
+		'remoteBasePath' => $GLOBALS['wgStylePath'],
+		'localBasePath' => $GLOBALS['wgStyleDirectory'],
+		'dependancies' => 'skinzam.global');*/
+
 // JS Resources Declaration
 $skinzamResourceTemplate = array(
 	'localBasePath' => $dir . 'modules',

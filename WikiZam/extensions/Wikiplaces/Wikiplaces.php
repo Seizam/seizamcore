@@ -27,10 +27,10 @@ $wgAutoloadClasses['SpecialWikiplaces'] = $_dir . 'SpecialWikiplaces.php';
 $wgAutoloadClasses['SpecialWikiplacesPlan'] = $_dir . 'SpecialWikiplacesPlan.php';
 
 $wgAutoloadClasses['WpWikiplace'] = $_dir . 'model/WpWikiplace.php';
-$wgAutoloadClasses['WpWikiplaceTablePager'] = $_dir . 'model/WpWikiplaceTablePager.php';
+$wgAutoloadClasses['WpWikiplacesTablePager'] = $_dir . 'model/WpWikiplacesTablePager.php';
 
 $wgAutoloadClasses['WpPage'] = $_dir . 'model/WpPage.php';
-$wgAutoloadClasses['WpPageTablePager'] = $_dir . 'model/WpPageTablePager.php';
+$wgAutoloadClasses['WpPagesTablePager'] = $_dir . 'model/WpPagesTablePager.php';
 
 $wgAutoloadClasses['WpPlan'] = $_dir . 'model/WpPlan.php';
 

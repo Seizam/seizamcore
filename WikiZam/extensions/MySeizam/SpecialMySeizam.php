@@ -91,7 +91,7 @@ class SpecialMySeizam extends SpecialPage {
     
     private function buildQuickWikiplaces() {
         $user = $this->getUser();
-        $tp = new WpWikiplaceTablePager();
+        $tp = new WpWikiplacesTablePager();
 		$tp->setSelectConds( array('wpw_owner_user_id' => $user->getId()) );
         $tp->setFieldSortable(array());
         $html = '<div id="ms-quickwikiplaces">';
@@ -140,7 +140,7 @@ class SpecialMySeizam extends SpecialPage {
 		$numRows = $dbr->numRows( $res );
         
         if( $numRows == 0 ) {
-			$output->addWikiMsg( 'watchnochange' );
+			$this->getOutput()->addWikiMsg( 'watchnochange' );
 			return wfMessage('watchnochange')->parse();
 		}
         

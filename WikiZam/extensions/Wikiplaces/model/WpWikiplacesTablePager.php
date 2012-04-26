@@ -5,9 +5,9 @@ if (!defined('MEDIAWIKI')) {
 }
 
 /**
- * Use TablePager for prettified Transactions listing. 
+ * Use TablePager for prettified Wikiplaces listing. 
  */
-class WpWikiplaceTablePager extends SkinzamTablePager {
+class WpWikiplacesTablePager extends SkinzamTablePager {
     # Fields for default behavior
 
     protected $selectTables = array('wp_wikiplace', 'wp_page', 'page');
@@ -49,18 +49,18 @@ class WpWikiplaceTablePager extends SkinzamTablePager {
                 return Linker::linkKnown($title, $title->getPrefixedText());
             case 'count(*)':
                 $title = SpecialPage::getTitleFor('Wikiplaces');
-                $html = '<span class="wptp-items"><b>'.$value.'</b> '.  wfMessage('wp-items').'</span>';
+                $html = '<b>'.$value.'</b> '.  wfMessage('wp-items');
                 $html .= '<ul>';
                 $html .= '<li>'
-                        . Linker::linkKnown($title, wfMessage('wp-seeall')->text(), array(), array('name' => $this->mCurrentRow->page_title))
+                        . Linker::linkKnown($title, wfMessage('wp-seeall')->text(), array(), array('name' => $this->mCurrentRow->page_title, 'action' => SpecialWikiplaces::ACTION_CONSULT_WP))
                         . '</li>';
                 $html .= '<li>'
-                        . Linker::linkKnown($title, wfMessage('wp-createpage')->text(), array(), array('action' => 'create_page', 'name' => $this->mCurrentRow->page_title))
+                        . Linker::linkKnown($title, wfMessage('wp-create')->text(), array(), array('action' => SpecialWikiplaces::ACTION_CREATE_WIKIPLACE_PAGE, 'name' => $this->mCurrentRow->page_title))
                         . '</li>';
                 $html .= '</ul>';
                 return $html;
             case 'wpw_monthly_page_hits':
-                return $value . ' hits';
+                return wgformatNumber($value).' hits';
             case 'wpw_monthly_bandwidth':
                 if (intval($value) < 1)
                     return '< ' . wgformatSizeMB(1);
@@ -91,7 +91,7 @@ class WpWikiplaceTablePager extends SkinzamTablePager {
         $this->even = !$this->even;
         
         $html = "<tr class=\"$class\"><td colspan=\"$colums\">";
-        $html .= Linker::linkKnown(SpecialPage::getTitleFor('Wikiplaces'), wfMessage('wp-createwp')->text(), array(), array('action' => 'create_wikiplace'));
+        $html .= Linker::linkKnown(SpecialPage::getTitleFor('Wikiplaces'), wfMessage('wp-createwp')->text(), array(), array('action' => SpecialWikiplaces::ACTION_CREATE_WIKIPLACE));
         $html .= "</td></tr>";
         $html .= "</tbody></table>\n";
 		return $html;
