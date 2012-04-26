@@ -93,12 +93,15 @@ $messages['en'] = array(
 	
 	'wp-consultwp-pagetitle' => 'Wikiplace $1',
 	
-	'wppatp-page_title' => 'Page name',
+	'wppatp-subpage_title' => 'Name',
+    'wppatp-subpage_namespace' => 'Type',
     
     'wp-seeall' => 'see all',
     'wp-createpage' => 'create',
-    'wp-items' => 'items'
-	
+    'wp-createwp' => 'Create a new Wikiplace',
+    'wp-items' => 'items',
+    'wp-homepage' => 'Homepage',
+	'wp-subpage' => 'Subpage'
 );
 
 /*  Message documentation

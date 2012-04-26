@@ -164,12 +164,20 @@ a.important:focus {
 }
 .informations, div#contentSub {
     margin: 0 0 2em;
-    padding: 15px;
+    padding: 8px;
     border: 1px solid #dad9d9;
     background: #f2f2f2;
     color: #666;
     clear: both;
 }
+
+.informations ul>li {
+    margin: 0;
+    padding: 0;
+    border: none;
+    list-style: none;
+}
+
 div.success {
     border-color: #d0debd;
     background: #edf3e6;
@@ -179,8 +187,6 @@ div.error {
     border-color: #debdbf;
     background: #f2e3e4;
     color: #974349;
-    font-size: 1em;
-    padding: 0;
 }
 
 /* transitions */
@@ -1533,7 +1539,7 @@ body.ns-special #bodyContent div>ul {
     padding: 0;
 }
 
-body.ns-special #bodyContent div>ul>li {
+body.ns-special div.inside>ul>li {
     margin: 0;
     padding: 8px 16px;
     list-style: none;

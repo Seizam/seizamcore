@@ -20,10 +20,9 @@ class SkinzamTablePager extends TablePager {
     protected $defaultSort; # String (field)
     public $mDefaultDirection = true; # Boolean (true=decrescent)
     public $mDefaultLimit = 7;
-    
     protected $messagesPrefix = 'sz'; # String
-    
     # Do not redeclare
+    protected $fieldNames = null;
     private $defaultTableClasses = array('TablePager');
     protected $even = true;
     private $header = '';
@@ -59,7 +58,7 @@ class SkinzamTablePager extends TablePager {
 
         return array('class' => implode(' ', $classes));
     }
-    
+
     /**
      * SEMI-ABSTRACT! Can be redeclared, don't forget to call parent and merge results.
      * Get array of class names to be applied to the given row.
@@ -67,7 +66,7 @@ class SkinzamTablePager extends TablePager {
      * @param $row Object: the database result row
      * @return Array
      */
-    function getCellClasses($field, $value){
+    function getCellClasses($field, $value) {
         return array();
     }
 
@@ -83,12 +82,13 @@ class SkinzamTablePager extends TablePager {
         # Apply class="even" to every even row (theader included)
         if ($this->even)
             $classes[] = 'mw-line-even';
-        else $classes[] = 'mw-line-odd';
+        else
+            $classes[] = 'mw-line-odd';
         $this->even = !$this->even;
 
         return array('class' => implode(' ', $classes));
     }
-    
+
     /**
      * SEMI-ABSTRACT! Can be redeclared.
      * Get array of class names to be applied to the given row.
@@ -96,7 +96,7 @@ class SkinzamTablePager extends TablePager {
      * @param $row Object: the database result row
      * @return Array
      */
-    function getRowClasses($row){
+    function getRowClasses($row) {
         return array();
     }
 
@@ -127,7 +127,7 @@ class SkinzamTablePager extends TablePager {
     public function setSelectConds($selectConds) {
         $this->selectConds = $selectConds;
     }
-    
+
     /**
      * Use this function to pass an array of SQL options for the query.
      * 
@@ -136,7 +136,7 @@ class SkinzamTablePager extends TablePager {
     public function setSelectOptions($selectOptions) {
         $this->selectOptions = $selectOptions;
     }
-    
+
     /**
      * Use this function to pass an array of SQL join conditions for the query.
      * 
@@ -230,15 +230,24 @@ class SkinzamTablePager extends TablePager {
         $this->defaultSort = $field;
     }
 
+    function setFieldNames($fieldNames = null) {
+        if (is_null($fieldNames))
+            foreach ($this->selectFields as $field) {
+                preg_match('/([\w\*\(\)]*)$/', $field, $matches);
+                $field = $matches[0];
+                $fieldNames[$field] = wfMessage($this->messagesPrefix . '-' . $field)->text();
+            }
+        $this->fieldNames = $fieldNames;
+    }
+
     /**
      * Get array of field names to be displayed in thead
      * 
      */
     function getFieldNames() {
-        $fieldNames = array();
-        foreach ($this->selectFields as $field)
-            $fieldNames[$field] = wfMessage($this->messagesPrefix . '-' . $field)->text();
-        return $fieldNames;
+        if (is_null($this->fieldNames))
+                $this->setFieldNames();
+        return $this->fieldNames;
     }
 
     /**
@@ -248,7 +257,7 @@ class SkinzamTablePager extends TablePager {
     public function setMessagesPrefix($prefix) {
         $this->messagesPrefix = $prefix;
     }
-    
+
     /**
      * Set Header Text
      *
@@ -257,7 +266,7 @@ class SkinzamTablePager extends TablePager {
     public function setHeader($html) {
         $this->header = Html::rawElement('div', array('class' => 'table_header informations'), $html);
     }
-    
+
     /**
      * Set Footer Text
      *
@@ -266,7 +275,7 @@ class SkinzamTablePager extends TablePager {
     public function setFooter($html) {
         $this->footer = Html::rawElement('div', array('class' => 'table_footer informations'), $html);
     }
-    
+
     /**
      *
      * @return string 
@@ -274,7 +283,7 @@ class SkinzamTablePager extends TablePager {
     public function getHeader() {
         return $this->header;
     }
-    
+
     /**
      *
      * @return string 
@@ -282,7 +291,6 @@ class SkinzamTablePager extends TablePager {
     public function getFooter() {
         return $this->footer;
     }
-    
 
     /**
      * Easy Form Printout

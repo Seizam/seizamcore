@@ -46,8 +46,7 @@ class WpWikiplaceTablePager extends SkinzamTablePager {
 
             case 'page_title':
                 $title = Title::makeTitle($this->mCurrentRow->page_namespace, $value);
-                return Linker::linkKnown($title,
-                                /* SpecialPage::getTitleFor('Wikiplace', SpecialWikiplace::ACTION_CONSULT_WP), // where to go */ $title->getPrefixedText()); // an argument
+                return Linker::linkKnown($title, $title->getPrefixedText());
             case 'count(*)':
                 $title = SpecialPage::getTitleFor('Wikiplaces');
                 $html = '<span class="wptp-items"><b>'.$value.'</b> '.  wfMessage('wp-items').'</span>';
@@ -71,7 +70,7 @@ class WpWikiplaceTablePager extends SkinzamTablePager {
             case 'wpw_date_expires':
                 return ($value === null) ? '-' : $wgLang->timeanddate($value, true);
             default:
-                throw new MWException('Unknown data name "' . $name . '"');
+                return htmlspecialchars($value);
         }
     }
 
@@ -92,7 +91,7 @@ class WpWikiplaceTablePager extends SkinzamTablePager {
         $this->even = !$this->even;
         
         $html = "<tr class=\"$class\"><td colspan=\"$colums\">";
-        $html .= "THIS IS A TEST";
+        $html .= Linker::linkKnown(SpecialPage::getTitleFor('Wikiplaces'), wfMessage('wp-createwp')->text(), array(), array('action' => 'create_wikiplace'));
         $html .= "</td></tr>";
         $html .= "</tbody></table>\n";
 		return $html;

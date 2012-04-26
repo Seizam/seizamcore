@@ -324,51 +324,7 @@ class WpPage {
 		return ( ($title->getNamespace() == NS_MAIN) && (count(explode( '/', $title->getPrefixedDBkey() )) == 1) );
 	}
 	
-	
-	/**
-	 * Remove the Wikiplace name from the page name, and return the subpage name with a leading slash
-	 * ex: getSubPageNameOnly('Wikiplace1/a_sub_page') returns '/a_sub_page'
-	 * ex: getSubPageNameOnly('Wikiplace1') returns '/'
-	 * @param string $page_name 
-	 * @return string the sub page name
-	 */
-	public static function getSubpageNamePartOnly($title) {
-		if ( ($title === null) || !($title instanceof Title) ) {
-			throw new MWException( 'cannot get subpage name part, invalid argument' );
-		}
-		
-		$full_page_name = $title->getPrefixedText();
-		
-		$tmp;
-		$after='';
-		
-		switch($title->getNamespace()) {
-
-			case NS_FILE_TALK:
-				$after = ' (talk)';
-			case NS_FILE:
-				$tmp = explode( '.', $full_page_name );
-				break;
-			
-			case NS_TALK:
-				$after = ' (talk)';
-			case NS_MAIN:
-				$tmp = explode( '/', $full_page_name );
-				break;
-			
-			default:
-				throw new MWException( 'cannot get subpage name part, invalid namespace' );
-		}
-	
-		$len = strlen($tmp[0]);
-		if ($len == strlen($full_page_name)) {
-			return '/'.$after;
-		}
-		
-		return '/'.substr($full_page_name, $len + 1).$after;
-	}
-	
-		/**
+    /**
 	 * 
 	 * @param Title $title
 	 * @return boolean
