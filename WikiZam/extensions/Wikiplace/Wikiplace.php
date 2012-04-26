@@ -60,3 +60,8 @@ $wgHooks['ArticleInsertComplete'][] = 'WikiplaceHooks::onArticleInsertComplete';
 $wgHooks['userCan'][] = 'WikiplaceHooks::userCanCreate';
 $wgHooks['TransactionUpdated'][] = 'WikiplaceHooks::onTransactionUpdated';
 $wgHooks['IsOwner'][] = 'WikiplaceHooks::isOwner';
+
+
+// define the group to put the user in when she makes her first subscription
+// (not removed later, even if she has no more active subscription)
+define('WP_SUBSCRIBERS_USER_GROUP', 'artist');

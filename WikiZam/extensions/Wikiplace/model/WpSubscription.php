@@ -116,7 +116,6 @@ class WpSubscription {
 	 * @param mixed $value
 	 * @param boolean $update_now By default, update the db now, but if multiple set() calls, the db can be updated only last time by setting 
 	 * this argument value to false for the first calls
-	 * @return type 
 	 */
 	public function set($attribut_name, $value, $update_now = true) {
 		$db_value = null;
@@ -605,6 +604,7 @@ class WpSubscription {
 
 			case 'OK': // already paid by user
 				$now =  self::getNow() ;
+				self::addSubscribersGroupToUser($user);
 				return self::create(
 						$plan->get('wpp_id'), 
 						$user_id,
@@ -618,6 +618,7 @@ class WpSubscription {
 				);
 
 			case 'PE': // waiting payment
+				self::addSubscribersGroupToUser($user);
 				return self::create(
 						$plan->get('wpp_id'),
 						$user_id,
@@ -635,6 +636,19 @@ class WpSubscription {
 		// if we arrive here, the payment status is unknown
 		throw new MWException( 'Error while recording the transaction, unknwon status.' );
 
+	}
+	
+	/**
+	 * Put the user in the effective group 'artist' if she is not already in.
+	 * @param User $user 
+	 * @return boolean false if she is already in the group, true if just added
+	 */
+	private static function addSubscribersGroupToUser($user) {
+		if (!in_array(WP_SUBSCRIBERS_USER_GROUP, $user->getGroups())) {
+			$user->addGroup(WP_SUBSCRIBERS_USER_GROUP);
+			return true;
+		}
+		return false;
 	}
 	
 	/**

@@ -32,35 +32,25 @@ class WikiplaceHooks {
 	
 	
 	/**
-	 * Called when creating a new page or editing an existing page
-	 * This hook but say "OK, you can create" or "no, you can't, I abort the creation"
-	 * but MediaWiki interpret this "NO" has there is a conflict while editing the page
-	 * @todo:fix this (use hook userCan)
-	 * @param Article $article the article (Article object) being saved
+	 * @param Title $title the article (Article object) being saved
 	 * @param User $user the user (User object) saving the article
-	 * @param type $text the new article text
-	 * @param type $summary the edit summary
-	 * @param type $minor minor edit flag
-	 * @param type $watchthis  watch the page if true, unwatch the page if false, do nothing if null (since 1.17.0)
-	 * @param type $sectionanchor not used
-	 * @param type $flags bitfield, see documentation for details
-	 * @param type $status 
+	 * @param string $action the action
+	 * @param boolean $result 
 	 */
-	// public static function onArticleSave( &$article, &$user, &$text, &$summary, $minor, $watchthis, $sectionanchor, &$flags, &$status ) {
 	public static function userCanCreate( $title, &$user, $action, &$result ) {
 		
-		wfDebugLog( 'wikiplace', 'userCanCreate: '
-				.' title="'.$title->getPrefixedDBkey().'"['.$title->getArticleId().'] isKnown()='.var_export($title->isKnown(),true)
-				.' user="'.$user->getName().'"['.$user->getID().']'
-				.' action="'.$action.'"');
-		
 		if ( ( ($action != 'create') && ($action != 'edit') && ($action != 'upload') && ($action != 'createpage') ) ||
-				!WpPage::isInWikiplaceNamespaces($title) ||
+				!WpPage::isInWikiplaceNamespaces($title->getNamespace()) ||
 				$title->isKnown() ) {
 			return true;
 		}
+
+		wfDebugLog('wikiplace', 'userCanCreate: '
+				. ' title="' . $title->getPrefixedDBkey() . '"[' . $title->getArticleId() . '] isKnown()=' . var_export($title->isKnown(), true)
+				. ' user="' . $user->getName() . '"[' . $user->getID() . ']'
+				. ' action="' . $action . '"');
 				
-		if ( $user->getID() == 0 ) {
+		if ( ! $user->isLoggedIn() ) {
 			wfDebugLog( 'wikiplace', 'userCanCreate: DENY user is not logged in');
 			$result = false;
 			return false;
@@ -147,8 +137,8 @@ class WikiplaceHooks {
 	
 	/**
 	 * Called when creating a new article, but after onArticleSave
-	 * @param type $wikipage the Article or WikiPage (object) saved. Article for MW < 1.18, WikiPage for MW >= 1.18
-	 * @param type $user the user (object) who saved the article
+	 * @param WikiPage $wikipage the Article or WikiPage (object) saved. Article for MW < 1.18, WikiPage for MW >= 1.18
+	 * @param User $user the user (object) who saved the article
 	 * @param type $text the new article content
 	 * @param type $summary the article summary (comment)
 	 * @param type $isMinor minor edit flag
@@ -161,46 +151,59 @@ class WikiplaceHooks {
 		
 		$title = $wikipage->getTitle();
 		
-		if ( ! WpPage::isInWikiplaceNamespaces($title)) {
+		if ( ! WpPage::isInWikiplaceNamespaces( $title->getNamespace() ) ) {
 			return true; // skip
 		}
 		
-		$namespace = $title->getNamespace();
-		$full_text = $title->getFullText();
+		// these 2 vars are only used to generate debug messages
+		$prefixed_db_key = $title->getPrefixedDBkey();
 		$article_id = $title->getArticleID();
 		
-		// now, the page is already stored in db, so if it should not, it's too late, so we just record it
+		// currently, the page is already stored in 'page' db table
 			
-		if (WpPage::isHomepage($title)) {
+		if ( WpPage::isHomepage($title) ) {
 
-			// create a wikiplace from this homepage title				
-			$wp = WpWikiplace::create($title, $user->getId());
-			if ($wp === null) {
-				wfDebugLog( 'wikiplace', 'onCreateArticle: ERROR while creating wikiplace: ['.$article_id.']"'.$full_text.'"');
+			// create a wikiplace from this homepage				
+			$status = WpWikiplace::create($wikipage, $user->getId());
+			if ( ! $status->isGood() ) {
+				wfDebugLog( 'wikiplace', 'onArticleInsertComplete: ERROR while creating wikiplace: ['.$article_id.']"'.$prefixed_db_key.'"');
 				throw new MWException('Cannot create wikiplace.');
 			}		
 
-			wfDebugLog( 'wikiplace', 'onCreateArticle: OK, wikiplace and its homepage created: ['.$article_id.']"'.$full_text.'"');
+			wfDebugLog( 'wikiplace', 'onArticleInsertComplete: OK, wikiplace and its homepage created: ['.$article_id.']"'.$prefixed_db_key.'"');
 
 		} else {
 
 			// this is a subpage of an existing existing wikiplace
 
-			$wp = WpWikiplace::extractWikiplaceRoot($title);
+			$wp = WpWikiplace::extractWikiplaceRoot( $title->getDBkey(), $title->getNamespace() );
 			if ($wp === null) {
-				wfDebugLog( 'wikiplace', 'onCreateArticle: ERROR cannot identify container wikiplace: ['.$article_id.']"'.$full_text.'"');
+				wfDebugLog( 'wikiplace', 'onArticleInsertComplete: ERROR cannot identify container wikiplace: ['.$article_id.']"'.$prefixed_db_key.'"');
 				throw new MWException('Cannot identify the container wikiplace.');
 			}
 
-			$new_wp_page = WpPage::attachNewPageToWikiplace($title, $wp);
-			if ($new_wp_page === null) {
-				wfDebugLog( 'wikiplace', 'onCreateArticle: ERROR while associating the page to the container wikiplace: ['.$article_id.']"'.$full_text.'"');
+			$status = WpPage::create($wikipage, $wp);
+			if ( ! $status->isGood() ) {
+				wfDebugLog( 'wikiplace', 'onArticleInsertComplete: ERROR while associating the page to the container wikiplace: ['.$article_id.']"'.$prefixed_db_key.'"');
 				throw new MWException('Cannot associate the page to a wikiplace.');
 			}
 
-			wfDebugLog( 'wikiplace', 'onCreateArticle: OK, the page is now associated to its wikiplace: ['.$article_id.']"'.$full_text.'"');
+			wfDebugLog( 'wikiplace', 'onArticleInsertComplete: OK, the page is now associated to its wikiplace: ['.$article_id.']"'.$prefixed_db_key.'"');
 
 		} 
+		
+		$restrictions = array(
+			'edit' => 'owner',
+			'move' => 'owner',
+			'upload' => 'owner' ) ;
+		
+		$ok = false;
+		wfRunHooks( 'SetRestrictions', array( $wikipage , $restrictions , &$ok ) );
+		if ( !$ok ) {
+			wfDebugLog( 'wikiplace', 'onArticleInsertComplete: ERROR while setting default restrictions to new page: ['.$article_id.']"'.$prefixed_db_key.'"');
+		} else {
+			wfDebugLog( 'wikiplace', 'onArticleInsertComplete: OK default restrictions set to new page: ['.$article_id.']"'.$prefixed_db_key.'"');
+		}
 		
 		return true;
 	}
@@ -212,13 +215,18 @@ class WikiplaceHooks {
 	 * @return boolean Always true (processing is never stopped) 
 	 */
 	public static function onTransactionUpdated( $tmr ) {	
-		wfDebugLog( 'wikiplace', 'onTransactionUpdated');
 
-		$sub = WpSubscription::getByTransactionId($tmr['tmr_id']);
+		$sub = WpSubscription::getByTransactionId( $tmr['tmr_id'] );
 		if ($sub === null) {
 			return true; // we are not concerned, so don't stop processing
 		}
 		
+		wfDebugLog( 'wikiplace', 'onTransactionUpdated:'
+				.' tmr_id='.$tmr['tmr_id']
+				.' wps_id='.$sub->get('wps_id') 
+				.' old_tmr_status='.$sub->get('wps_tmr_status')
+				.' new_tmr_status='.$tmr['tmr_status'] );
+				
 		// $sub != null, so this tmr affects a subscription
 		switch ($sub->get('wps_tmr_status')) {
 			
@@ -256,8 +264,8 @@ class WikiplaceHooks {
 			
 		}
 		
-		// if we arrive here, this transaction is about a subscription, but we do not know what to do... there is a problem!
-		throw new MWException('The transaction of a subscription was updated, but this update is not managed ('.$sub->get('transactionStatus').'->'.$tmr['tmr_status'].')');	
+		// if we arrive here, this transaction is about a subscription, but we do not know what to do
+		throw new MWException('The transaction of a subscription was updated, but this update is not managed ('.$sub->get('wps_tmr_status').'->'.$tmr['tmr_status'].')');	
 		
 	}
 	
@@ -270,22 +278,26 @@ class WikiplaceHooks {
 	 */
 	public static function isOwner ( $title, $user, &$result ) {
 				
-		if ( !WpPage::isInWikiplaceNamespaces($title) || !$title->isKnown() ) {
+		if ( ! WpPage::isInWikiplaceNamespaces( $title->getNamespace() )  || ! $title->isKnown() ) {
 			return true; // skip
 		}
 			
-		$owner = WpPage::findPageOwnerUserId($title);
+		$owner = WpPage::findOwnerUserIdByArticleId( $title->getArticleID() );
 
 		if ($owner === false) {
-			wfDebugLog( 'wikiplace', 'isOwner DON\'T KNOW (current value = '.( $result ? 'YES' : 'NO' ).') because title "'.$title->getFullText().'" is not in a wikiplace');
+			wfDebugLog( 'wikiplace', 'isOwner: WARNING, unknown page in wikiplace namespace (isOwner hook current result = '.( $result ? 'YES' : 'NO' ).' title = "'.$title->getPrefixedDBkey().'")');
 			return true; // we don't know, so we don't stop hook processing
 		}
 
+		// set answer
 		$result = $user->getId() == $owner;
 
-		wfDebugLog( 'wikiplace', 'isOwner '.($result ? 'YES':'NO').' (title "'.$title->getDBkey().
+		wfDebugLog( 'wikiplace', 'isOwner: '.($result ? 'YES':'NO').' (title "'.$title->getPrefixedDBkey().
 				'" user ['.$user->getId().']"'.$user->getName().'" owner ['.$owner.'])');
-		return false; // stop hook processing, because we have the answer
+		
+		// stop hook processing, because we have the answer
+		return false; 
+		
 	}
 	
 }

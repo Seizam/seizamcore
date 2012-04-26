@@ -353,44 +353,41 @@ WHERE wpw_report_updated < $outdated ;" ;
 	}
 	
 	/**
-	 * Fetch a name from a db row or a Title objet
-	 * @param type $databaseRow
-	 * @param type $title 
+	 * Fetch the Wikiplace name, using given data is available or read from DB if none given
+	 * @param StdClass/WikiPage/Title $data
 	 */
-	private function fetchName($databaseRow = null, $title = null) {
+	private function fetchName($data = null) {
 		
-		if ($title !== null) {
-			
-			if ( !($title instanceof Title)) {
-				throw new MWException('cannot fetch name, invalid title argument');
+		if ($data === null) {
+			$dbr = wfGetDB(DB_SLAVE);
+			$databaseRow = $dbr->selectRow('page', 'page_title', array('page_id' => $this->wpw_home_page_id), __METHOD__);
+			if ($databaseRow === false) {
+				throw new MWException('Page not found.');
 			}
-			if ($title->getArticleID() != $this->wpw_home_page_id) {
-				throw new MWException('cannot fetch name from this title object, this title is not the homepage ('.
-						$title->getArticleID().'!='.$this->wpw_home_page_id.')');
-			}
-			$this->name = $title->getText();
+		}
+		
+		if ( $data instanceof WikiPage) {	
+			$data = $data->getTitle();
+		}
+		
+		if ( $data instanceof Title ) {
 			
+			if ($data->getArticleID() != $this->wpw_home_page_id) {
+				throw new MWException('cannot fetch name, the given title is not the homepage ('.
+						$data->getArticleID().'!='.$this->wpw_home_page_id.')');
+			}
+			$this->name = $data->getText();
+			
+			
+		} elseif ( isset($data->page_title) ) {
+			
+			// str_replace as seen in Title line 305
+			// necessary because the db contains the title with underscores
+			$this->name = str_replace( '_', ' ', $data->page_title );
 			
 		} else {
 			
-			
-			if ($databaseRow === null) {
-			
-				$dbr = wfGetDB(DB_SLAVE);
-				$databaseRow = $dbr->selectRow( 'page', 'page_title', array( 'page_id' =>  $this->wpw_home_page_id ), __METHOD__ );
-				if ( $databaseRow === false ) {
-					throw new MWException('Page not found.');
-				} 
-				
-			}
-		
-			if (!isset($databaseRow->page_title)) {
-				throw new MWException('cannot fetch the name, invalid database row');
-			}
-
-			// str_replace seen in Title line 305
-			// necessary because the db contains the title with underscores
-			$this->name = str_replace( '_', ' ', $databaseRow->page_title );
+			throw new MWException('cannot fetch name: '.var_export($data, true));
 					
 		}
 
@@ -549,40 +546,43 @@ WHERE wpw_report_updated < $outdated ;" ;
 	}
 */	
 	
-			/**
-	 * Get the container wikiplace of the Title, null if the title is not in a wikiplace
+				/**
+	 * 
 	 * @param Title $title
 	 * @return boolean/WpWikiplace Wikiplace Object or true if this page is the homepage or false if correpsond to nothing 
 	 */
-	public static function extractWikiplaceRoot($title) {
+	
+	/**
+	 * Get the container Wikiplace, or null if the title db key can't belong to an existing Wikiplace
+	 * 
+	 * @param string $db_key can be $wikipage->getTitle()->getDBkey()
+	 * @param int $namespace can be $wikipage->getTitle()->getNamespace()
+	 * @return WpWikiplace 
+	 */
+	public static function extractWikiplaceRoot($db_key, $namespace) {
 		
-		if (!WpPage::isInWikiplaceNamespaces($title)) {
-			return null; // not in wikiplace
-		}
-
-		$pages;
+		$hierarchy;
 		
-		switch ($title->getNamespace()) {
+		switch ( $namespace ) {
 			case NS_MAIN:
 			case NS_TALK:
-				$pages = explode( '/', $title->getDBkey() );
+				$hierarchy = explode( '/', $db_key );
 				break;
 			
 			case NS_FILE:
 			case NS_FILE_TALK:
-				$pages = explode( '.', $title->getDBkey() );
+				$hierarchy = explode( '.', $db_key );
 				break;
 				
 			default:
-				throw new MWException('this namespace cannot store wikiplace item');
+				throw new MWException('this namespace cannot store wikiplace page');
 		}
 		
-		
-		if (!isset($pages[0])) {
+		if ( ! isset($hierarchy[0]) ) {
 			return null;
 		}
 
-		return self::getByName($pages[0]);
+		return self::getByName($hierarchy[0]);
 		
 	}
 
@@ -602,7 +602,7 @@ WHERE wpw_report_updated < $outdated ;" ;
 	
 	/**
 	 * Create a wikiplace from this homepage, owned by this user
-	 * @param Title $homepage
+	 * @param WikiPage $homepage
 	 * @param int $user_id
 	 * @return Status 
 	 */
@@ -612,7 +612,7 @@ WHERE wpw_report_updated < $outdated ;" ;
 			throw new MWException( 'Cannot create Wikiplace (missing argument)' );
 		}
 		
-		if ( !($homepage instanceof Title) || !is_int($user_id) ) {
+		if ( !($homepage instanceof WikiPage) || !is_int($user_id) ) {
 			throw new MWException( 'Cannot create Wikiplace (invalid argument)' );
 		}
 		
@@ -625,8 +625,9 @@ WHERE wpw_report_updated < $outdated ;" ;
 			return $status;
 		}
 		
-		$homepageId = $homepage->getArticleID();
-		$homepageName = $homepage->getDBkey();
+		$homepageTitle = $homepage->getTitle();
+		$homepageId = $homepageTitle->getArticleID();
+		$homepageName = $homepageTitle->getDBkey();
 		$now = WpSubscription::getNow();
 		
 		$dbw = wfGetDB(DB_MASTER);
@@ -667,9 +668,9 @@ WHERE wpw_report_updated < $outdated ;" ;
 		
 		$wp = new self( $id, $user_id, $homepageId,
 				$wps_id, 0, 0, 0, 0, $now, $wpw_date_expires);
-		$wp->fetchName(null, $homepage);
+		$wp->fetchName($homepage);
 				
-		$new_wp_page = WpPage::attachNewPageToWikiplace($homepage, $wp);
+		$new_wp_page = WpPage::create($homepage, $wp);
 		
 		if ($new_wp_page === null) {
 			$msg = 'Problem while associating the homepage to the newly created Wikiplace .';

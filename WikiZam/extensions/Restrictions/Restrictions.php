@@ -81,6 +81,7 @@ $wgHooks['SearchUpdate'][] = 'efRestrictionsSearchUpdate';
 // add a "read restrictions" check when trying to add a page to a watchlist
 $wgHooks['WatchArticle'][] = 'efRestrictionsWatchArticle';
 
+
 // registering our defered setup function
 $wgExtensionFunctions[] = 'efRestrictionsSetup';
 
@@ -121,6 +122,10 @@ $wgRestrictionTypes[] = "read";
 // disable automatic summary, because api.php can always see comments, even if the page is read restricted
 // so, only protection log and user's comment are visible via history
 $wgUseAutomaticEditSummaries = false;
+
+// NEW EXTENSION'S HOOK
+// this hook is called if an extension wants to set restrictions to a page
+$wgHooks['SetRestrictions'][] = 'efRestrictionsSetRestrictions';
 
 
 # 2) defered setup 
@@ -330,7 +335,9 @@ function efRestrictionsIsOwner( $title, $user ) {
 	// ownership using a different way 
 	$result = false;
 	if ( wfRunHooks( 'IsOwner', array( $title, $user, &$result ) ) ) {
-	    // no hook  or  no hook functions stopped processing, so we have use the default method:
+
+		/*
+		// no hook  or  no hook functions stopped processing, so we have use the default method:
 		// looking for the first revisonner
 		$id = $title->getArticleId();
 		$dbr = wfGetDB( DB_SLAVE ); // grab the slave for reading
@@ -338,8 +345,11 @@ function efRestrictionsIsOwner( $title, $user ) {
 			__METHOD__, array( 'ORDER BY' => 'rev_timestamp ASC'  ) );
 
 		$userid = $user->getID();
-		$result = ( $userid == $firstrevionnerid );;
-
+		$result = ( $userid == $firstrevionnerid );
+		*/
+		
+		// hook has no answer
+		$result = false;
 	}
 	
 	// store to cache
@@ -497,7 +507,7 @@ function efRestrictionsForm( $action, $article ) {
 		return true; //don't stop processing
 	}
 	
-	global $wgOut, $wgUser, $wgRequest, $wgSetRestrictionsDoProtect;;
+	global $wgOut, $wgUser, $wgRequest, $wgSetRestrictionsDoProtect;
 
 	// is the user allowed to use setrestrictions
 	if ( !$wgUser->isAllowed( 'setrestrictions' ) ) {
@@ -660,42 +670,10 @@ function efRestrictionsForm( $action, $article ) {
 	// don't cascade the owner restriction, because a subpage may not have the same owner
 	// so casacing won't make sens, and can be very problematic
 	// don't change this unless you know serioulsy what you are doing !!!
-	$cascade = false;
 
-	# temporary assign protect right, in order to update the restricitons
-
-	$wgSetRestrictionsDoProtect = true;  // tells spSetRestrictionsAssignDynamicRights to add the "protect" right
-//	wfDebugLog( 'restrictions', 'Form: purge user\'s rights then force reload');
-	$wgUser->mRights = null;			// clear current user rights
-	$wgUser->getRights();				// force rights reloading
-	$wgSetRestrictionsDoProtect = false;
-	
-	wfDebugLog( 'restrictions', "Form: updating restrictions to\n "
-			.var_export( $new_restrictions, true ));
-	
-	// update restrictions
-	$success = $article->updateRestrictions(
-		$new_restrictions,		// array of restrictions
-		'Restrictions',			// reason
-		$cascade,				// cascading protection disabled, need to pass by reference
-		$expiration				// expiration
-	);  // note that this article function check that the user has sufficient rights
-		
-	# clear userCan and isOwner caches
-	# because of protect right granted few instants
-	# IsOwner cache clearing should not be necessary, but IsOwner hook may be affected by restrictions update
-//	wfDebugLog( 'restrictions', 'Form: purge userCan and isOwner caches');
-	global $wgRestrictionsUserCanCache, $wgRestrictionsIsOwnerCache;
-	$wgRestrictionsUserCanCache = array();
-	$wgRestrictionsIsOwnerCache = array();
-	
-	# remove temporary assigned protect right by reloading rights with $wgSetRestrictionsDoProtect = false
-//	wfDebugLog( 'restrictions', 'Form: purge user\'s rights then force reload');
-	$wgUser->mRights = null;    // clear current user rights (and clear the "protect" right
-	$wgUser->getRights();	    // force rights reloading
 	
 	// display error/succes message
-	if ( $success ) {
+	if ( efRestrictionsUpdateRestrictions($article, $restrictions) ) {
 		$wgOut->addWikiMsg( 'setrestrictions-success' );
 	} else {
 		$wgOut->addWikiMsg( 'setrestrictions-failure' );
@@ -707,6 +685,54 @@ function efRestrictionsForm( $action, $article ) {
 	// stop hook processing, and doesn't throw an error message
 	return false;
 
+}
+
+
+function efRestrictionsUpdateRestrictions( $article , $restrictions , $cascade = false , $expiration = null ) {
+	
+	global $wgSetRestrictionsDoProtect, $wgUser, $wgRestrictionsUserCanCache, $wgRestrictionsIsOwnerCache;
+	
+	if ($expiration === null) {
+		$expiration = array();
+		$infinity =  Block::infinity();
+		foreach ($restrictions as $action => $level) {
+			$expiration[$action] = $infinity;
+		}
+	}
+	
+	# temporary assign protect right, in order to update the restricitons
+
+	$wgSetRestrictionsDoProtect = true;  // tells spSetRestrictionsAssignDynamicRights to add the "protect" right
+//	wfDebugLog( 'restrictions', 'Form: purge user\'s rights then force reload');
+	$wgUser->mRights = null;			// clear current user rights
+	$wgUser->getRights();				// force rights reloading
+	$wgSetRestrictionsDoProtect = false;
+
+	wfDebugLog( 'restrictions', "UpdateRestrictions: restrictions =\n "
+			.var_export( $restrictions, true )
+			."\nexpiration=\n".var_export( $expiration, true ));
+	
+	// update restrictions
+	$success = $article->updateRestrictions(
+		$restrictions,		// array of restrictions
+		'Restrictions',			// reason
+		$cascade,				// cascading protection disabled, need to pass by reference
+		$expiration				// expiration
+	);  // note that this article function check that the user has sufficient rights
+		
+	# clear userCan and isOwner caches
+	# because of protect right granted few instants
+	# IsOwner cache clearing should not be necessary, but IsOwner hook may be affected by restrictions update
+//	wfDebugLog( 'restrictions', 'Form: purge userCan and isOwner caches');
+	$wgRestrictionsUserCanCache = array();
+	$wgRestrictionsIsOwnerCache = array();
+	
+	# remove temporary assigned protect right by reloading rights with $wgSetRestrictionsDoProtect = false
+//	wfDebugLog( 'restrictions', 'Form: purge user\'s rights then force reload');
+	$wgUser->mRights = null;    // clear current user rights (and clear the "protect" right
+	$wgUser->getRights();	    // force rights reloading
+	
+	return $success;
 }
 
 
@@ -930,6 +956,35 @@ function efRestrictionsWatchArticle( &$user, &$article ) {
 		.' has no read restriction');
 	
 	return true;
+}
+
+
+
+/**
+ *
+ * @param WikiPage $wikipage
+ * @param array $restrictions examle:<br/>
+ * array(<br/>
+ * 'edit' => 'owner',<br/>
+ * 'move' => 'owner',<br/>
+ * 'upload' => 'owner' )
+ * @param boolean $ok Restrictions successfully applied (false = error)
+ * @return boolean true = continue hook processing
+ */
+function efRestrictionsSetRestrictions( $wikipage , $restrictions , &$ok ) {
+	
+	$ok = efRestrictionsUpdateRestrictions( $wikipage , $restrictions ); 
+	
+	if ( $ok ) {
+		wfDebugLog( 'restrictions', 'OnWikiplacePageCreated: restrictions set page "'
+				.$wikipage->getTitle()->getPrefixedDBkey().'"['.$wikipage->getTitle()->getArticleId().']');
+	} else {
+		wfDebugLog( 'restrictions', 'OnWikiplacePageCreated: ERROR while setting restrictions to page "'
+				.$wikipage->getTitle()->getPrefixedDBkey().'"['.$wikipage->getTitle()->getArticleId().']');
+	}
+	
+	return true; //continue hook processing
+	
 }
 
 
