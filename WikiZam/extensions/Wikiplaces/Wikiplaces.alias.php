@@ -4,5 +4,5 @@ $specialPageAliases = array();
 
 /** English (English) */
 $specialPageAliases['en'] = array(
-	'Wikiplace' => array( 'Wikiplace' ),
+	'Wikiplaces' => array( 'Wikiplaces' ),
 );

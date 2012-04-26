@@ -112,7 +112,7 @@ class WpWikiplace {
 
 		$now = WpSubscription::getNow();
 		
-		wfDebugLog( 'wikiplace', "WpWikiplace->updateUsage for wp[$this->wpw_id] from $this->wpw_report_updated($this->wpw_monthly_page_hits) to $now($hits)");
+		wfDebugLog( 'wikiplaces', "WpWikiplace->updateUsage for wp[$this->wpw_id] from $this->wpw_report_updated($this->wpw_monthly_page_hits) to $now($hits)");
 
 		$success = $dbw->update(
 				'wp_wikiplace',

@@ -4,7 +4,7 @@ if (!defined('MEDIAWIKI')) {
 	die(-1);
 }
 
-class WikiplaceHooks {
+class WikiplacesHooks {
 	
 	private static $userCanCreateCache = array(); // ['title']['user']
 
@@ -39,19 +39,28 @@ class WikiplaceHooks {
 	 */
 	public static function userCanCreate( $title, &$user, $action, &$result ) {
 		
+
+		
 		if ( ( ($action != 'create') && ($action != 'edit') && ($action != 'upload') && ($action != 'createpage') ) ||
 				!WpPage::isInWikiplaceNamespaces($title->getNamespace()) ||
 				$title->isKnown() ) {
+			
+			wfDebugLog('wikiplaces', 'userCanCreate: SKIP '
+					. ' title="' . $title->getPrefixedDBkey() . '"[' . $title->getArticleId() . '] isKnown()=' . var_export($title->isKnown(), true)
+					. ' user="' . $user->getName() . '"[' . $user->getID() . ']'
+					. ' action="' . $action . '"');
+			
 			return true;
 		}
 
-		wfDebugLog('wikiplace', 'userCanCreate: '
+		wfDebugLog( 'wikiplaces', 'userCanCreate: EVALUATE '
 				. ' title="' . $title->getPrefixedDBkey() . '"[' . $title->getArticleId() . '] isKnown()=' . var_export($title->isKnown(), true)
 				. ' user="' . $user->getName() . '"[' . $user->getID() . ']'
 				. ' action="' . $action . '"');
-				
+		 
+		
 		if ( ! $user->isLoggedIn() ) {
-			wfDebugLog( 'wikiplace', 'userCanCreate: DENY user is not logged in');
+			wfDebugLog( 'wikiplaces', 'userCanCreate: DENY user is not logged in');
 			$result = false;
 			return false;
 		}
@@ -62,10 +71,12 @@ class WikiplaceHooks {
 		
 		if ( isset(self::$userCanCreateCache[$full_text][$user_id]) ) {
 			$result = self::$userCanCreateCache[$full_text][$user_id];
-			wfDebugLog( 'wikiplace', 'userCanCreate: CACHE HIT "'
+			/*
+			wfDebugLog( 'wikiplaces', 'userCanCreate: CACHE HIT "'
 					.( $result ? 'YES': 'NO' ).'" ['
 					.$article_id.']"'.$full_text.'" ['
 					.$user->getID().']"'.$user->getName().'"');
+			 */
 			return false; // stop hook processing
 		}
 		
@@ -74,11 +85,11 @@ class WikiplaceHooks {
 			// this is a new Wikiplace
 
 			if ( !WpWikiplace::userCanCreateWikiplace($user->getId()) ) {
-				wfDebugLog( 'wikiplace', 'userCanCreate: DENY new Wikiplace, but no active sub or no more quota ['.$article_id.']"'.$full_text.'"');
+				wfDebugLog( 'wikiplaces', 'userCanCreate: DENY new Wikiplace, but no active sub or no more quota ['.$article_id.']"'.$full_text.'"');
 				$result = false; // no active subscription or a creation quota is exceeded
 				
 			} else {
-				wfDebugLog( 'wikiplace', 'userCanCreate: ALLOW new Wikiplace ['.$article_id.']"'.$full_text.'"');
+				wfDebugLog( 'wikiplaces', 'userCanCreate: ALLOW new Wikiplace ['.$article_id.']"'.$full_text.'"');
 				$result = true;
 			}
 			
@@ -86,13 +97,13 @@ class WikiplaceHooks {
 
 			// this is a Wikipage (can be regular article or talk or file)
 
-			$wp = WpWikiplace::extractWikiplaceRoot($title);
+			$wp = WpWikiplace::extractWikiplaceRoot( $title->getDBkey(), $title->getNamespace() );
 			if ( $wp === null ) { 
-				wfDebugLog( 'wikiplace', 'userCanCreate: DENY cannot extract container Wikiplace ['.$article_id.']"'.$full_text.'"');
+				wfDebugLog( 'wikiplaces', 'userCanCreate: DENY cannot extract container Wikiplace ['.$article_id.']"'.$full_text.'"');
 				$result = false; // no wikiplace can contain this subpage, so cannot create it
 				
 			} elseif ( ! $wp->isOwner($user_id) ) { // checks the user who creates the page is the owner of the wikiplace
-				wfDebugLog( 'wikiplace', 'userCanCreate: DENY new Wikipage, but current user is not Wikiplace owner ['.$article_id.']"'.$full_text.'"');
+				wfDebugLog( 'wikiplaces', 'userCanCreate: DENY new Wikipage, but current user is not Wikiplace owner ['.$article_id.']"'.$full_text.'"');
 				$result = false;
 				
 			} else {
@@ -103,10 +114,10 @@ class WikiplaceHooks {
 			
 					/** @todo: complete test */
 					if (!WpPage::userCanUploadNewFile($user_id)) {
-						wfDebugLog('wikiplace', 'userCanCreate: DENY new file, but no active sub or no more quota [' . $article_id . ']"' . $full_text . '"');
+						wfDebugLog( 'wikiplaces', 'userCanCreate: DENY new file, but no active sub or no more quota [' . $article_id . ']"' . $full_text . '"');
 						$result = false; // no active subscription or page creation quota is exceeded
 					} else {
-						wfDebugLog('wikiplace', 'userCanCreate: ALLOW new sub page [' . $article_id . ']"' . $full_text . '"');
+						wfDebugLog( 'wikiplaces', 'userCanCreate: ALLOW new sub page [' . $article_id . ']"' . $full_text . '"');
 						$result = true;
 					}
 					
@@ -116,10 +127,10 @@ class WikiplaceHooks {
 					// the user is creating a new page (regular or talk)
 					
 					if (!WpPage::userCanCreateNewPage($user_id)) {
-						wfDebugLog('wikiplace', 'userCanCreate: DENY new Wikipage, but no active sub or no more quota [' . $article_id . ']"' . $full_text . '"');
+						wfDebugLog( 'wikiplaces', 'userCanCreate: DENY new Wikipage, but no active sub or no more quota [' . $article_id . ']"' . $full_text . '"');
 						$result = false; // no active subscription or page creation quota is exceeded
 					} else {
-						wfDebugLog('wikiplace', 'userCanCreate: ALLOW new Wikipage [' . $article_id . ']"' . $full_text . '"');
+						wfDebugLog( 'wikiplaces', 'userCanCreate: ALLOW new Wikipage [' . $article_id . ']"' . $full_text . '"');
 						$result = true;
 					}
 					
@@ -166,11 +177,11 @@ class WikiplaceHooks {
 			// create a wikiplace from this homepage				
 			$status = WpWikiplace::create($wikipage, $user->getId());
 			if ( ! $status->isGood() ) {
-				wfDebugLog( 'wikiplace', 'onArticleInsertComplete: ERROR while creating wikiplace: ['.$article_id.']"'.$prefixed_db_key.'"');
+				wfDebugLog( 'wikiplaces', 'onArticleInsertComplete: ERROR while creating wikiplace: ['.$article_id.']"'.$prefixed_db_key.'"');
 				throw new MWException('Cannot create wikiplace.');
 			}		
 
-			wfDebugLog( 'wikiplace', 'onArticleInsertComplete: OK, wikiplace and its homepage created: ['.$article_id.']"'.$prefixed_db_key.'"');
+			wfDebugLog( 'wikiplaces', 'onArticleInsertComplete: OK, wikiplace and its homepage created: ['.$article_id.']"'.$prefixed_db_key.'"');
 
 		} else {
 
@@ -178,17 +189,17 @@ class WikiplaceHooks {
 
 			$wp = WpWikiplace::extractWikiplaceRoot( $title->getDBkey(), $title->getNamespace() );
 			if ($wp === null) {
-				wfDebugLog( 'wikiplace', 'onArticleInsertComplete: ERROR cannot identify container wikiplace: ['.$article_id.']"'.$prefixed_db_key.'"');
+				wfDebugLog( 'wikiplaces', 'onArticleInsertComplete: ERROR cannot identify container wikiplace: ['.$article_id.']"'.$prefixed_db_key.'"');
 				throw new MWException('Cannot identify the container wikiplace.');
 			}
 
 			$status = WpPage::create($wikipage, $wp);
 			if ( ! $status->isGood() ) {
-				wfDebugLog( 'wikiplace', 'onArticleInsertComplete: ERROR while associating the page to the container wikiplace: ['.$article_id.']"'.$prefixed_db_key.'"');
+				wfDebugLog( 'wikiplaces', 'onArticleInsertComplete: ERROR while associating the page to the container wikiplace: ['.$article_id.']"'.$prefixed_db_key.'"');
 				throw new MWException('Cannot associate the page to a wikiplace.');
 			}
 
-			wfDebugLog( 'wikiplace', 'onArticleInsertComplete: OK, the page is now associated to its wikiplace: ['.$article_id.']"'.$prefixed_db_key.'"');
+			wfDebugLog( 'wikiplaces', 'onArticleInsertComplete: OK, the page is now associated to its wikiplace: ['.$article_id.']"'.$prefixed_db_key.'"');
 
 		} 
 		
@@ -200,9 +211,9 @@ class WikiplaceHooks {
 		$ok = false;
 		wfRunHooks( 'SetRestrictions', array( $wikipage , $restrictions , &$ok ) );
 		if ( !$ok ) {
-			wfDebugLog( 'wikiplace', 'onArticleInsertComplete: ERROR while setting default restrictions to new page: ['.$article_id.']"'.$prefixed_db_key.'"');
+			wfDebugLog( 'wikiplaces', 'onArticleInsertComplete: ERROR while setting default restrictions to new page: ['.$article_id.']"'.$prefixed_db_key.'"');
 		} else {
-			wfDebugLog( 'wikiplace', 'onArticleInsertComplete: OK default restrictions set to new page: ['.$article_id.']"'.$prefixed_db_key.'"');
+			wfDebugLog( 'wikiplaces', 'onArticleInsertComplete: OK default restrictions set to new page: ['.$article_id.']"'.$prefixed_db_key.'"');
 		}
 		
 		return true;
@@ -221,7 +232,7 @@ class WikiplaceHooks {
 			return true; // we are not concerned, so don't stop processing
 		}
 		
-		wfDebugLog( 'wikiplace', 'onTransactionUpdated:'
+		wfDebugLog( 'wikiplaces', 'onTransactionUpdated:'
 				.' tmr_id='.$tmr['tmr_id']
 				.' wps_id='.$sub->get('wps_id') 
 				.' old_tmr_status='.$sub->get('wps_tmr_status')
@@ -285,15 +296,19 @@ class WikiplaceHooks {
 		$owner = WpPage::findOwnerUserIdByArticleId( $title->getArticleID() );
 
 		if ($owner === false) {
-			wfDebugLog( 'wikiplace', 'isOwner: WARNING, unknown page in wikiplace namespace (isOwner hook current result = '.( $result ? 'YES' : 'NO' ).' title = "'.$title->getPrefixedDBkey().'")');
+			wfDebugLog('wikiplaces', 'isOwner: WARNING (title="' . $title->getPrefixedDBkey() .
+					'" user=[' . $user->getId() . ']"' . $user->getName() .
+					'" hookCurrentResult=' . ( $result ? 'YES' : 'NO' ) . 
+					') unknown page in wikiplace namespace');
 			return true; // we don't know, so we don't stop hook processing
 		}
 
 		// set answer
 		$result = $user->getId() == $owner;
 
-		wfDebugLog( 'wikiplace', 'isOwner: '.($result ? 'YES':'NO').' (title "'.$title->getPrefixedDBkey().
-				'" user ['.$user->getId().']"'.$user->getName().'" owner ['.$owner.'])');
+		wfDebugLog( 'wikiplaces', 'isOwner: '.($result ? 'YES':'NO').' (title="'.$title->getPrefixedDBkey().
+				'" user=['.$user->getId().']"'.$user->getName().
+				'" owner=['.$owner.'])');
 		
 		// stop hook processing, because we have the answer
 		return false; 

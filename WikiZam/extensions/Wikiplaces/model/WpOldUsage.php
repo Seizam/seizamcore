@@ -170,7 +170,7 @@ class WpOldUsage {
 	 */
 /*	public static function getAll($are_you_sure = 'no') {
 		
-		wfDebugLog( 'wikiplace', 'WpUsage::getAll WARNING $are_you_sure='.$$are_you_sure);
+		wfDebugLog( 'wikiplaces', 'WpUsage::getAll WARNING $are_you_sure='.$$are_you_sure);
 		
 		if ( $are_you_sure != 'I know what i am doing')
 			return array(); //good idea :)

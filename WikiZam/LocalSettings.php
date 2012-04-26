@@ -279,8 +279,8 @@ $wgNamespacesWithSubpages[NS_MAIN] = true;
 # Transaction Manager
 require_once( "$IP/extensions/Transactions/Transactions.php" );
 
-# Wikiplace
-require_once( "$IP/extensions/Wikiplace/Wikiplace.php" );
+# Wikiplaces
+require_once( "$IP/extensions/Wikiplaces/Wikiplaces.php" );
 
 # MySeizam (to be inclueded after the integrated extensions
 require_once( "$IP/extensions/MySeizam/MySeizam.php" );

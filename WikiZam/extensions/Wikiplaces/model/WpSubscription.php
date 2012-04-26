@@ -321,7 +321,7 @@ class WpSubscription {
 	 */
 	public static function getAll($are_you_sure = 'no') {
 		
-		wfDebugLog( 'wikiplace', 'WpSubscription::getAll WARNING $are_you_sure='.$are_you_sure);
+		wfDebugLog( 'wikiplaces', 'WpSubscription::getAll WARNING $are_you_sure='.$are_you_sure);
 		
 		if ( $are_you_sure != 'yes') {
 			return array();

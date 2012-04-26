@@ -22,9 +22,9 @@ $wgExtensionCredits['other'][] = array(
 $_dir = dirname( __FILE__ ).'/';
 
 # Load extension's classes
-$wgAutoloadClasses['WikiplaceHooks'] = $_dir . 'Wikiplace.hooks.php';
-$wgAutoloadClasses['SpecialWikiplace'] = $_dir . 'SpecialWikiplace.php';
-$wgAutoloadClasses['SpecialWikiplacePlan'] = $_dir . 'SpecialWikiplacePlan.php';
+$wgAutoloadClasses['WikiplacesHooks'] = $_dir . 'Wikiplaces.hooks.php';
+$wgAutoloadClasses['SpecialWikiplaces'] = $_dir . 'SpecialWikiplaces.php';
+$wgAutoloadClasses['SpecialWikiplacesPlan'] = $_dir . 'SpecialWikiplacesPlan.php';
 
 $wgAutoloadClasses['WpWikiplace'] = $_dir . 'model/WpWikiplace.php';
 $wgAutoloadClasses['WpWikiplaceTablePager'] = $_dir . 'model/WpWikiplaceTablePager.php';
@@ -43,23 +43,23 @@ $wgAutoloadClasses['WpOldUsage'] = $_dir . 'model/WpOldUsage.php';
 
 
 # i18n
-$wgExtensionMessagesFiles['Wikiplace'] = $_dir . 'Wikiplace.i18n.php';
+$wgExtensionMessagesFiles['Wikiplaces'] = $_dir . 'Wikiplaces.i18n.php';
 
 # Name aliases
-$wgExtensionAliasesFiles['Wikiplace'] = $_dir . 'Wikiplace.alias.php';
+$wgExtensionAliasesFiles['Wikiplaces'] = $_dir . 'Wikiplaces.alias.php';
 
 # Add the SpecialPage
-$wgSpecialPages['Wikiplace'] = 'SpecialWikiplace';
-$wgSpecialPageGroups['Wikiplace'] = 'other';
-$wgSpecialPages['WikiplacePlan'] = 'SpecialWikiplacePlan';
-$wgSpecialPageGroups['WikiplacePlan'] = 'other';
+$wgSpecialPages['Wikiplaces'] = 'SpecialWikiplaces';
+$wgSpecialPageGroups['Wikiplaces'] = 'other';
+$wgSpecialPages['WikiplacesPlan'] = 'SpecialWikiplacesPlan';
+$wgSpecialPageGroups['WikiplacesPlan'] = 'other';
 
 # Attach our own functions to hooks
-$wgHooks['LoadExtensionSchemaUpdates'][] = 'WikiplaceHooks::onLoadExtensionSchemaUpdates'; // Schema updates for update.php
-$wgHooks['ArticleInsertComplete'][] = 'WikiplaceHooks::onArticleInsertComplete';
-$wgHooks['userCan'][] = 'WikiplaceHooks::userCanCreate';
-$wgHooks['TransactionUpdated'][] = 'WikiplaceHooks::onTransactionUpdated';
-$wgHooks['IsOwner'][] = 'WikiplaceHooks::isOwner';
+$wgHooks['LoadExtensionSchemaUpdates'][] = 'WikiplacesHooks::onLoadExtensionSchemaUpdates'; // Schema updates for update.php
+$wgHooks['ArticleInsertComplete'][] = 'WikiplacesHooks::onArticleInsertComplete';
+$wgHooks['userCan'][] = 'WikiplacesHooks::userCanCreate';
+$wgHooks['TransactionUpdated'][] = 'WikiplacesHooks::onTransactionUpdated';
+$wgHooks['IsOwner'][] = 'WikiplacesHooks::isOwner';
 
 
 // define the group to put the user in when she makes her first subscription

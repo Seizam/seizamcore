@@ -1,6 +1,6 @@
 <?php 
 
-class SpecialWikiplacePlan extends SpecialPage {
+class SpecialWikiplacesPlan extends SpecialPage {
 
 	const ACTION_SUBSCRIBE          = 'subscribe';
 	const ACTION_LIST_SUBSCRIPTIONS = 'my_subscriptions';
@@ -21,7 +21,7 @@ class SpecialWikiplacePlan extends SpecialPage {
 	
 	
 	public function __construct() {
-		parent::__construct( 'WikiplacePlan' );
+		parent::__construct( 'WikiplacesPlan' );
 	}
 	
 
@@ -196,11 +196,11 @@ class SpecialWikiplacePlan extends SpecialPage {
 				Linker::linkKnown( $this->getTitle( self::ACTION_LIST_SUBSCRIPTIONS ), wfMessage( 'wp-plan-tl-mysubs' )->text() ) ,
 				Linker::linkKnown( $this->getTitle( self::ACTION_CHANGE ), wfMessage( 'wp-plan-tl-chg' )->text() ) ,
 				Linker::linkKnown( $this->getTitle( self::ACTION_LIST_OFFERS ), wfMessage( 'wp-plan-tl-loffers' )->text() ) ,
-				Linker::linkKnown( SpecialPage::getTitleFor( 'Wikiplace' ), 'Wikiplace' ),
+				Linker::linkKnown( SpecialPage::getTitleFor( 'Wikiplaces' ), 'Wikiplaces' ),
 			
 				$this->generateLink("/Special:Transactions", "Transactions"),
-				$this->generateLink("/Special:WikiplacePlan/test_give_10eur", "give me 10 EUR"),
-				$this->generateLink("/Special:WikiplacePlan/test_drop_all", "clear wp and tmr"),
+				$this->generateLink("/Special:WikiplacesPlan/test_give_10eur", "give me 10 EUR"),
+				$this->generateLink("/Special:WikiplacesPlan/test_drop_all", "clear wp and tmr"),
 			
 		) ) )->text() );
 		
@@ -286,7 +286,7 @@ class SpecialWikiplacePlan extends SpecialPage {
 
 		$htmlForm->setSubmitCallback( array( $this, 'processSubscribePlan' ) );
 		
-		$htmlForm->setSubmitText(		wfMessage( 'wp-plan-sub-submit' )->text() );
+		$htmlForm->setSubmitText( wfMessage( 'wp-plan-sub-submit' )->text() );
 	
 		return $htmlForm;
 		
