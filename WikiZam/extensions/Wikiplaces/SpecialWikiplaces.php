@@ -246,13 +246,13 @@ class SpecialWikiplaces extends SpecialPage {
 			return wfMessage('wp-csp-perr-notvalidwp')->text();
 		}
 
-		$status = WpPage::createSubpage($wikiplace, $formData['WikiplaceSubPageName']);
+		$subpage = WpPage::createSubpage($wikiplace, $formData['WikiplaceSubPageName']);
 
-		if (!$status->isGood()) {
-			return wfMessage('wp-err-unknown')->text();
+		if ( ! ( $subpage instanceof Title ) ) {
+			return wfMessage($subpage)->text();
 		}
 
-		$this->futurNewPage = $status->value;
+		$this->futurNewPage = $subpage;
 		return true; // all ok
 	}
 
@@ -332,13 +332,13 @@ class SpecialWikiplaces extends SpecialPage {
 			return wfMessage('wp-cwp-err-cannot-create')->text(); // no active subscription or quotas exceeded ?
 		}
 
-		$status = WpWikiplace::initiateCreation($name);
+		$homepage = WpWikiplace::initiateCreation($name);
 
-		if (!$status->isGood()) {
-			return wfMessage('wp-err-unknown')->text(); // error while creating
+		if ( ! ( $homepage instanceof Title ) ) {
+			return wfMessage($homepage)->text(); // error while creating
 		}
 
-		$this->futurNewPage = $status->value;
+		$this->futurNewPage = $homepage;
 
 		return true; // all ok :)
 	}

@@ -194,7 +194,7 @@ class WpSubscription {
 			$this->plan = WpPlan::constructFromDatabaseRow($databaseRow);
 			
 			if ($this->plan->get('wpp_id') != $this->get('wps_wpp_id')) {
-				throw new MWException('The given plan is not the subscribed one');
+				throw new MWException('The given plan is not the subscribed one.');
 			}
 			
 		} else {
@@ -202,7 +202,7 @@ class WpSubscription {
 		}
 		
 		if ($this->plan === null) {
-			throw new MWException('Unknown plan');
+			throw new MWException('Unknown plan.');
 		} 
 
 	}
@@ -245,7 +245,7 @@ class WpSubscription {
 			$this->next_plan = WpPlan::constructFromDatabaseRow($databaseRow);
 			
 			if ($this->next_plan->get('wpp_id') != $this->get('wps_renew_wpp_id')) {
-				throw new MWException('The given plan is not the next one');
+				throw new MWException('The given plan is not the next one.');
 			}
 			
 		} else {
@@ -253,7 +253,7 @@ class WpSubscription {
 		}
 		
 		if ($this->next_plan === null) {
-			throw new MWException('Unknown next plan');
+			throw new MWException('Unknown next plan.');
 		} 
 
 	}
@@ -266,14 +266,14 @@ class WpSubscription {
 	public static function constructFromDatabaseRow( $row ) {
 			
 		if ( $row === null ) {
-			throw new MWException( 'Cannot construct the Subscription from the supplied row (null given)' );
+			throw new MWException( 'Cannot construct the Subscription from the supplied row (null given).' );
 		}
 
 		// wps_start_date and wps_end_date can be null, but nothing else
 		if ( !isset($row->wps_id) || !isset($row->wps_wpp_id) || !isset($row->wps_buyer_user_id) ||
 				!isset($row->wps_tmr_id) || !isset($row->wps_tmr_status) ||
 				!isset($row->wps_active) || !isset($row->wps_renew_wpp_id) ) {
-			throw new MWException( 'Cannot construct the Subscription from the supplied row (missing field)' );
+			throw new MWException( 'Cannot construct the Subscription from the supplied row (missing field).' );
 		}
 			
 		return new self ( $row->wps_id, $row->wps_wpp_id, $row->wps_buyer_user_id, $row->wps_tmr_id, $row->wps_tmr_status, $row->wps_start_date, $row->wps_end_date, $row->wps_active, $row->wps_renew_wpp_id );
@@ -287,7 +287,7 @@ class WpSubscription {
 	 */
 	public static function getByTransactionId($id) {
 		if ( ($id === null) || !is_numeric($id) || ($id < 1) ) {
-			throw new MWException( 'Cannot fectch Wikiplace matching the transaction identifier (invalid identifier)' );
+			throw new MWException( 'Cannot search subscription, invalid transaction identifier.' );
 		}
 		
 		$dbr = wfGetDB(DB_SLAVE);
@@ -308,7 +308,7 @@ class WpSubscription {
 	public static function getById($id) {
 				
 		if ( ($id === null) || !is_numeric($id) || ($id < 1) ) {
-			throw new MWException( 'Cannot fetch Subscription matching the identifier (invalid identifier)' );
+			throw new MWException( 'Cannot search subscription, invalid identifier.' );
 		}
 		
 		$dbr = wfGetDB(DB_SLAVE);
@@ -331,7 +331,7 @@ class WpSubscription {
 	public static function getActiveByUserId($user_id) {
 			
 		if ( ($user_id === null) || !is_numeric($user_id) || ($user_id < 1) ) {
-			throw new MWException( 'Cannot fetch Subscription matching the user identifier (invalid identifier)' );
+			throw new MWException( 'Cannot search subscription, invalid user identifier.' );
 		}	
 
 		$dbr = wfGetDB(DB_SLAVE) ;
@@ -373,35 +373,33 @@ class WpSubscription {
 			$subs[] = self::constructFromDatabaseRow($row);
 		}
 		
-		$dbr->freeResult( $results );
-		
 		return $subs;
 
 	}
 	
 	/**
-	 * Can the user make a first subscription? (first sub != renewal)
+	 * Can the user take a subscription? (not renewal or a plan change, but a simple subscription)
 	 * @param User $user
 	 * @param DatabaseBase $db_accessor If null, will use wfGetDB(DB_SLAVE)
 	 * @return boolean/string true = can subscribe , string = reason (i18n message key) why cannot subscribe:
 	 * <ul>
-	 * <li>loggedout</li>User need to be logged in to subscribe
-	 * <li>email-not-confirmed</li>User has not yet confirmed her email address
-	 * <li>active-or-pending-subscription</li>User has already an active or a "payment pending" subscription
+	 * <li>wp-subscribe-loggedout</li>User need to be logged in to subscribe
+	 * <li>wp-subscribe-email</li>User has not yet confirmed her email address
+	 * <li>wp-subscribe-already</li>User has already an active or a "payment pending" subscription
 	 * </ul>
 	 */
 	public static function canSubscribe($user, $db_accessor = null) {
 				
 		if ( ! $user instanceof User ) {
-			throw new MWException( 'invalid argument' );
+			throw new MWException( 'Invalid user argument.' );
 		}	
 		
 		if ( ! $user->isLoggedIn() ) {
-			return 'loggedout';
+			return 'wp-subscribe-loggedout';
 		}
 		
 		if ( ! $user->isEmailConfirmed() ) {
-			return 'email-not-confirmed';
+			return 'wp-subscribe-email';
 		}
 		
 		$dbr = ( $db_accessor != null ? $db_accessor : wfGetDB(DB_SLAVE) ) ;
@@ -425,7 +423,7 @@ class WpSubscription {
 		$results = $dbr->select( 'wp_subscription', '*',	$conds, __METHOD__ );
 		
 		if ( $dbr->numRows($results) != 0 ) {
-			return 'active-or-pending-subscription';
+			return 'wp-subscribe-already';
 		}
 		
 		return true;
@@ -438,7 +436,7 @@ class WpSubscription {
 	
 	
 	/**
-	 * Renew the subscription. This method should be called by a cron, for each getAllOutdatedToRenew()<br/>
+	 * Renew the subscription. This method should be called by a cron, for ONLY each getAllOutdatedToRenew()<br/>
 	 * WARNING: <ul>
 	 * <li>this function assumes that the current subscription <b>can</b> AND <b>need</b> to be renewed</li>
 	 * <li><b>only use it to renew the subscription when it ends normally</b> (this function doesn't re-credit
@@ -448,33 +446,34 @@ class WpSubscription {
 	 * <li>this function alter the current db record (start_date, ...) but the primary key stay untouched</li>
 	 * <li>it creates a new TMR</li>
 	 * </ul>
-	 * @return Status Its value is the Transaction Record as array
+	 * @return boolean/string "true" if ok, a string message if an error occured
+	 * <ul>
+	 * <li>'wp-internal-error' if cannot find buyer user of the current subscription</li>
+	 * <li>'wp-no-next-plan' if no next plan specified</li>
+	 * <li>'wp-payment-error' if new tmr_status is neither OK or PE</li>
+	 * </ul>
 	 */
 	public function renew() {
 		
 		$user_id = $this->get('wps_buyer_user_id');
 		$user = User::newFromId($user_id);
 		if ( ! $user->loadFromId() ) { // ensure we know the user
-			return Status::newFatal('wp-internal-error', 'unknown user id '.$user_id );
+			return 'wp-internal-error';
 		}
 		$this->fetchBuyer($user);
 		$user_email = $user->getEmail();
 		
 		$next_plan = $this->get('next_plan');
 		if ($next_plan === null) { // ensure we know the next plan
-			return Status::newFatal('wp-internal-error', 'unknown next plan');
+			return 'wp-no-next-plan';
 		}
 		
 		$tmr = self::createTMR($user_id, $user_email, $next_plan);
 
 		if ( ($tmr['tmr_status']!='OK') && ($tmr['tmr_status']!='PE') ) { // not ( OK or PE ) so it cannot be renewed 			
 			
-			$this->set('wpp_renew_wpp_id', 0); //will not try anymore to renew
-			$msg = 'error while paying, TMR_status='.$tmr['tmr_status'].', renewal has been deactivated';
-			
-			$return = Status::newFatal($msg);
-			$return->value = $msg;
-			return $return;
+			$this->set('wpp_renew_wpp_id', 0); //will not try anymore to renew			
+			return 'wp-payment-error';
 			
 		}
 				
@@ -492,7 +491,7 @@ class WpSubscription {
 			$this->next_plan = null;
 		}
 		
-		return Status::newGood($tmr);
+		return $tmr;
 				
 	}
 	
@@ -500,7 +499,7 @@ class WpSubscription {
 	/**
 	 * Copy all subscriptions outdated (having their end_date before $now)
 	 * @param string $now MySQL datetime (can be WpSubscription::getNow() )
-	 * @return Status int nb of archived subscriptions as Status value if good
+	 * @return int/boolean nb of archived subscriptions if ok, "false" if an error occured
 	 */
 	public static function archiveAllOutdatedToRenew( $now ) {
 		
@@ -524,17 +523,14 @@ class WpSubscription {
 			__METHOD__ );
 
 		if ( !$success ) {	
-			$msg = 'Error while archiving outdated subscriptions.';
-			$status = Status::newFatal($msg);
-			$status->value = $msg;
-			return $status;
+			return false;
 		}
 		
 		$updated = $dbw->affectedRows();
 
 		$dbw->commit();
 		
-		return Status::newGood($updated);
+		return $updated;
 		
 	}
 	
@@ -553,7 +549,7 @@ class WpSubscription {
 	}
 	
 	/**
-	 * @param string $now MySQL datetime (can be WpSubscription::getNow() )
+	 * @param string $now MySQL datetime string (can be WpSubscription::getNow() )
 	 * @return Array Array of WpSubscription
 	 */
 	public static function getAllOutdatedToRenew( $now ) {
@@ -573,17 +569,15 @@ class WpSubscription {
 			$subs[] = $sub;
 		}
 		
-		$dbr->freeResult( $results );
-		
 		return $subs;		
 	}
 	
 	
 	/**
 	 * Unactive all subscriptions having wps_end_date < $now. Their records are not archived
-	 * because they can still have Wikiplaces attached to them
+	 * because they can still have Wikiplaces attached to them.
 	 * @param string $now SQL DATETIME (can be WpSubscription::getNow() )
-	 * @return Status int Nb of unactivated subscriptions as Status value if good
+	 * @return int/boolean nb of unactivated subscriptions if ok, "false" if an error occured
 	 */
 	public static function deactivateAllOutdated( $now = null ) {
 		
@@ -600,17 +594,14 @@ class WpSubscription {
 				__METHOD__ );
 
 		if ( !$success ) {	
-			$msg = 'Error while unactivating outdated subscriptions.';
-			$status = Status::newFatal($msg);
-			$status->value = $msg;
-			return $status;
+			return false;
 		}
 
 		$updated = $dbw->affectedRows();
 
 		$dbw->commit();
 
-		return Status::newGood($updated);
+		return $updated;
 	}
 	
 	
@@ -618,7 +609,13 @@ class WpSubscription {
 	 * Subscribe to a plan (= no current active plan)
 	 * @param User $use The user who buy the plan, and will use it 
 	 * @param WpPlan $plan
-	 * @return Status WpSubscription (the newly created subscription) as Status->value if good
+	 * @return WpSubscription/string the newly created subscription if ok, a string message if an error occured
+	 * <ul>
+	 * <li>wp-db-error</li>
+	 * <li>wp-subscribe-loggedout User need to be logged in to subscribe</li>
+	 * <li>wp-subscribe-email User has not yet confirmed her email address</li>
+	 * <li>wp-subscribe-already User has already an active or a "payment pending" subscription</li>
+	 * </ul>
 	 */
 	public static function subscribe($user, $plan) {
 		
@@ -634,7 +631,7 @@ class WpSubscription {
 		// if the user can make a first subscription, this is a first subscription (will be activated as soon as paid)
 		$canSubscribe = self::canSubscribe($user, $db_master);
 		if ( $canSubscribe !== true ) {			
-			return Status::newFatal('wp-internal-error', $canSubscribe);
+			return $canSubscribe;
 		}
 			
 		// this is a first subscriptioon
@@ -646,7 +643,7 @@ class WpSubscription {
 
 			case 'OK': // already paid by user
 				$now =  self::getNow() ;
-				$status = self::create(
+				$sub = self::create(
 						$plan->get('wpp_id'), 
 						$user_id,
 						$tmr['tmr_id'],
@@ -657,18 +654,16 @@ class WpSubscription {
 						$plan->get('wpp_renew_wpp_id'),
 						$db_master
 				);
-				if ( ! $status->isGood() ) {
-					return Status::newFatal('wp-internal-error' , $status->getMessage());
+				if ( ! $sub == null ) {
+					return 'wp-db-error';
 				}
 				self::addSubscribersGroupToUser($user);
-				$sub = $status->value;
-				$status = $sub->sendActivationNotification();
-				if ( ! $status->isGood() ) {
+				if ( ! $sub->sendActivationNotification() ) {
 					// error while sending notification
 					wfDebugLog( 'wikiplaces' , 'WpSubscription ERROR while sending activation notification to ['
 							.$user->getId().']'.$user->getRealName());
 				}
-				return Status::newGood($sub);
+				return $sub;
 
 			case 'PE': // waiting payment
 				self::addSubscribersGroupToUser($user);
@@ -687,7 +682,7 @@ class WpSubscription {
 		}
 
 		// if we arrive here, the payment status is unknown
-		throw new MWException( 'Error while recording the transaction, unknwon status.' );
+		throw new MWException( 'Error while subscribing, the transaction status is unknown.' );
 
 	}
 	
@@ -752,7 +747,7 @@ class WpSubscription {
 	 * @param type $endDate
 	 * @param type $active
 	 * @param type $db_master The wfGetDB(DB_MASTER) if already have (avoid multiple master db connection)
-	 * @return Status
+	 * @return the created WpSubscription, or null if a db error occured
 	 */
 	private static function create( $planId, $buyerUserId, $transactionId, $transactionStatus, 
 			$startDate, $endDate, $active, $renewPlanId, $db_master = null ) {
@@ -793,23 +788,20 @@ class WpSubscription {
 		$dbw->commit();
 		
 		if ( !$success ) {	
-			$msg = 'Error while recording Subscription in database.';
-			$status = Status::newFatal($msg);
-			$status->value = $msg;
-			return $status;
+			return false;
 		}		
 				
-		return Status::newGood( new self( $id, $planId, $buyerUserId,
+		return new self( $id, $planId, $buyerUserId,
 			$transactionId, $transactionStatus,
-			$startDate, $endDate, $active, $renewPlanId ) );
+			$startDate, $endDate, $active, $renewPlanId );
 		
 	}
 	
-		/**
+	/**
 	 *
-	 * @param type $start_date
-	 * @param type $nb_of_month
-	 * @return type 
+	 * @param string $start_date MySQL DATETIME formated date
+	 * @param type $nb_of_month 
+	 * @return string MySQL DATETIME formated end date
 	 */
 	public static function calculateEndDateFromStart($start_date, $nb_of_month) {
 
@@ -822,6 +814,12 @@ class WpSubscription {
 		
 	}
 	
+	/**
+	 *
+	 * @param string $start_date MySQL DATETIME formated date
+	 * @param type $nb_of_month 
+	 * @return string MySQL DATETIME formated start date
+	 */
 	public static function calculateStartDateFromPreviousEnd($previous_end_date) {
 
 		$start = date_create_from_format( 'Y-m-d H:i:s', $previous_end_date, new DateTimeZone( 'GMT' ) );
@@ -855,7 +853,9 @@ class WpSubscription {
 	
 
 	/**
-	 * Update the current subscription according to new tmr status
+	 * This function should be called by hook. 
+	 * Update the current subscription according to new tmr status. 
+	 * (can activate or unactive the subscription)
 	 * @param type $tmr
 	 * @return void
 	 */
@@ -877,20 +877,19 @@ class WpSubscription {
 						// PE -> OK
 						
 						if ($this->wps_start_date == null) {
-							// first subscription, so activates it from now
+							// first subscription
 							$start = WpSubscription::getNow();
 							$end = WpSubscription::calculateEndDateFromStart($start, $this->get('plan')->get('wpp_period_months'));
 							$this->set('wps_start_date',	$start, false ); // 3rd param = false = do not update db now
 							$this->set('wps_end_date', $end, false ); 
 							$this->set('wps_active',	true, false ); 
+							$this->sendActivationNotification();
 						} 
-						// if startDate not null, this is a renewal, it will be activated later when needed
+						// if startDate not null, this is a renewal so it's already activated
 						
 						$this->set('wps_tmr_status', 'OK'); // no 3rd p = update db now
 						
-						$this->sendActivationNotification();
-						
-						return false; // this is our transaction, no more process to be done	
+						return false; // this is our transaction, no more hook process to be done	
 						
 					case 'KO':
 						// PE -> KO
@@ -911,20 +910,18 @@ class WpSubscription {
 		}
 		
 		// if we arrive here, this transaction is about a subscription, but we do not know what to do
-		throw new MWException('The transaction was updated, but its new status is not managed (old='.$this->tmr_status.'new='.$tmr['tmr_status'].')');	
+		throw new MWException('The transaction was updated, but its new status is not managed (old='.$this->tmr_status.'new='.$tmr['tmr_status'].').');	
 		
 	}
 	
 	/**
 	 * Send an email when the subscription is activated, when:
 	 * <ul>
-	 * <li>User make a first subscription, and the subscription is activated (=only when tmr_status is OK)</li>
-	 * <li>The system activate the "next plan" (=tmr_status can be OK or PE)</li>
-	 * <li></li>
-	 * 
+	 * <li>User makes a first subscription, and the subscription is activated (=only when tmr_status is OK)</li>
+	 * <li>System activates the "next plan" (=tmr_status can be OK or PE)</li>
 	 * </ul>
 	 * @global type $wgContLang
-	 * @return Status 
+	 * @return boolean true=ok, false=error 
 	 */
 	public function sendActivationNotification( ) {
 		
@@ -935,14 +932,14 @@ class WpSubscription {
 
 		return $user->sendMail(
 				wfMessage( 'wp-sub-activation-email-subj' )->text(),
-				wfMessage( 'wp-sub-activation-email-body' , $user->getName() , $plan->get('wpp_name') , $this->get('wps_end_date') )->text());
+				wfMessage( 'wp-sub-activation-email-body' , $user->getName() , $plan->get('wpp_name') , $this->get('wps_end_date') )->text())->isGood();
 		
 	}
 	
 	/**
-	 * Send an email when the subscription paiyment status is errored.
+	 * Send an email when the subscription payment status is errored.
 	 * @global type $wgContLang
-	 * @return type 
+	 * @return boolean true=ok, false=error 
 	 */
 	public function sendTransactionErrorNotification( ) {
 		
@@ -952,7 +949,7 @@ class WpSubscription {
 
 		return $user->sendMail(
 				wfMessage( 'wp-sub-tmrko-email-subj' )->text(),
-				wfMessage( 'wp-sub-tmrko-email-body' , $user->getName() )->text());
+				wfMessage( 'wp-sub-tmrko-email-body' , $user->getName() )->text())->isGood();
 		
 	}
 

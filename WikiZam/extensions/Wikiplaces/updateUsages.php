@@ -14,13 +14,22 @@ class UpdateUsages extends Maintenance {
 	public function execute() {
 
 		$this->output( "[Update usages START at ".WpSubscription::getNow()."]\n" );		
-		$nb = WpWikiplace::updateOutdatedUsages();	
-		$this->output("$nb rows updated\n");
+		$ok = WpWikiplace::updateOutdatedUsages();	
+		if ( $ok === false ) {
+			$this->output("error: $ok\n");
+		} else {
+			$this->output("$ok rows updated\n");
+		}
 		$this->output( "[END at ".WpSubscription::getNow()."]\n" );
 		
+		
 		$this->output( "[Archive and reset usages START at ".WpSubscription::getNow()."]\n" );		
-		$nb = WpWikiplace::archiveAndResetExpiredUsages();
-		$this->output("$nb rows updated\n");
+		$ok = WpWikiplace::archiveAndResetExpiredUsages();
+		if ( $ok === false ) {
+			$this->output("error: $ok\n");
+		} else {
+			$this->output("$ok rows updated\n");
+		}
 		$this->output( "[END at ".WpSubscription::getNow()."]\n" );
 		
 	}

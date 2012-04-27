@@ -310,13 +310,12 @@ class SpecialWikiplacesPlan extends SpecialPage {
 			throw new MWException( 'Cannot process to subscription, plan not found data.' );
 		}
 		
-		$status = WpSubscription::subscribe( $this->getUser() , $plan );
-		
-		if ( ! $status->isGood() ) {
-			return wfMessage('wp-err-unknown');
+		$subscription = WpSubscription::subscribe( $this->getUser() , $plan );
+		if ( ! ( $subscription instanceof WpSubscription ) ) {
+			return wfMessage($subscription)->text();
 		}
 		
-		$this->newlySubscribed = $status->value;
+		$this->newlySubscribed = $subscription;
 		return true;
 		
 	}
