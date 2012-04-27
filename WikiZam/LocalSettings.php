@@ -114,24 +114,10 @@ $wgSkipSkins = array("chick", "cologneblue", "nostalgia", "simple", "standard", 
 ## Usability extension for Vector (base of Skinzam)
 require_once( "$IP/extensions/Vector/Vector.php" );
 $wgVectorUseSimpleSearch = true;
-# Vector extension (improve Vector skin) options
-$wgDefaultUserOptions['useeditwarning'] = 1;
-$wgVectorFeatures['collapsibletabs']['global'] = false;
-$wgVectorFeatures['collapsiblenav']['global'] = false;
-$wgVectorFeatures['footercleanup']['global'] = false;
 
 ## UI Elements extension for Seizam's skin
 require_once( "$IP/extensions/Skinzam/Skinzam.php" );
 
-## For attaching licensing metadata to pages, and displaying an
-## appropriate copyright notice / icon. GNU Free Documentation
-## License and Creative Commons licenses are supported so far.
-$wgEnableCreativeCommonsRdf = true;
-$wgRightsPage = ""; # Set to the title of a wiki page that describes your license/copyright
-$wgRightsUrl  = "http://creativecommons.org/licenses/by-nc-sa/3.0/";
-$wgRightsText = "Creative Commons Attribution Non-Commercial Share Alike";
-$wgRightsIcon = "{$wgStylePath}/common/images/cc-by-nc-sa.png";
-# $wgRightsCode = ""; # Not yet used
 
 # Path to the GNU diff3 utility. Used for conflict resolution.
 $wgDiff3 = "/usr/bin/diff3";

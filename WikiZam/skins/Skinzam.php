@@ -61,7 +61,7 @@ class SkinSkinzam extends SkinTemplate {
 }
 
 /**
- * QuickTemplate class for Vector skin
+ * QuickTemplate class for Skinzam skin
  * @ingroup Skins
  */
 class SkinzamTemplate extends BaseTemplate {
@@ -122,8 +122,6 @@ class SkinzamTemplate extends BaseTemplate {
             <a id="top"></a>
             <?php $this->renderContent() ?>
             <!-- contentFooter -->
-            <?php $this->renderContentFooter() ?>
-            <!-- /contentFooter -->
         </div>
         <!-- /content -->
 
@@ -168,7 +166,7 @@ class SkinzamTemplate extends BaseTemplate {
         <div id="header" class="block_full">
             <?php $this->renderNav(); ?>
             <!-- firstHeading -->
-            <div class="block_flat block_half">
+            <div class="block block_half block_flat">
                 <div class="inside">
                     <h1 id="firstHeading" class="firstHeading"><?php $this->html('title') ?></h1>
                 </div>
@@ -177,18 +175,23 @@ class SkinzamTemplate extends BaseTemplate {
         </div>
         <!-- /header -->
         <!-- bodyCcontent -->
-        <div id="bodyContent" role="main"<?php $this->html('specialpageattributes') ?>> <!--<div id="main" role="main">-->
-            <!-- block_full -->
-            <div class="block_flat block_full">
-                <!-- inside -->
-                <div class="inside">
-                    <?php $this->renderInsideContent(); ?>
-                </div>
-                <!-- /inside -->
+        <div id="bodyContent" class="block block_full block_flat " role="main"<?php $this->html('specialpageattributes') ?>> <!--<div id="main" role="main">-->
+            <!-- inside -->
+            <div class="inside">
+                <?php $this->renderInsideContent(); ?>
             </div>
-            <!-- /block_full -->
+            <!-- /inside -->
         </div>
         <!-- /bodyContent -->
+        <?php $this->renderHorizontalActions() ?>
+        <!-- contentFooter -->
+        <div id="contentFooter" class="block block_full block_flat ">
+            <!-- inside -->
+            <div class="inside">
+                <?php $this->renderContentFooter(); ?>
+            </div>
+        </div>
+        <!-- /contentFooter -->
         <?php
     }
 
@@ -199,7 +202,6 @@ class SkinzamTemplate extends BaseTemplate {
         ?>
         <!-- header -->
         <div id="header" class="block block_full homepage">
-
             <div class="hgroup inside">
                 <h1><a id="logo_project" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"></a></h1>
                 <h2><?php echo wfMessage('sz-tagline')->text() ?></h2>
@@ -208,30 +210,27 @@ class SkinzamTemplate extends BaseTemplate {
         </div>
         <!-- /header -->
         <!-- bodyCcontent -->
-        <div id="bodyContent" role="main"<?php $this->html('specialpageattributes') ?>> <!--<div id="main" role="main">-->
-            <!-- block_full -->
-            <div class="block block_full">
-                <h3 class="title"><?php $this->html('title') ?></h3>
-                <!-- inside -->
-                <div class="inside">
-                    <?php $this->renderNav(); ?>
-                    <?php $this->renderInsideContent(); ?>
-                </div>
-                <!-- /inside -->
+        <div id="bodyContent" class="block block_full block_flat" role="main"<?php $this->html('specialpageattributes') ?>> <!--<div id="main" role="main">-->
+            <h3 class="title"><?php $this->html('title') ?></h3>
+            <!-- inside -->
+            <div class="inside">
+                <?php $this->renderNav(); ?>
+                <?php $this->renderInsideContent(); ?>
             </div>
-            <!-- /block_full -->
+            <!-- /inside -->
         </div>
         <!-- /bodyContent -->
-        <?php if ($this->data['sitenotice']): ?>
-            <!-- sitenotice -->
-            <div class="block_flat block_full">
-                <div class="inside">
-                    <div id="siteNotice"><?php $this->html('sitenotice') ?></div>
-                </div>
+        <?php $this->renderHorizontalActions() ?>
+        <!-- contentFooter -->
+        <div id="contentFooter" class="block block_full">
+            <!-- inside -->
+            <div class="inside">
+                <?php $this->renderContentFooter(); ?>
             </div>
-            <!-- /sitenotice -->
-            <?php
-        endif;
+            <!-- /inside -->
+        </div>
+        <!-- /contentFooter -->
+        <?php
     }
 
     /**
@@ -241,7 +240,7 @@ class SkinzamTemplate extends BaseTemplate {
         ?>
         <!-- header -->
 
-        <div id="header" class="block block_full profil">
+        <div id="header" class="block block_full special">
             <div class="inside">
                 <h1><a id="logo_special" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"></a></h1>
 
@@ -254,17 +253,13 @@ class SkinzamTemplate extends BaseTemplate {
         </div>
         <!-- /header -->
         <!-- bodyCcontent -->
-        <div id="bodyContent" role="main"<?php $this->html('specialpageattributes') ?>> <!--<div id="main" role="main">-->
-            <!-- block_full -->
-            <div class="block block_full">
-                <h3 class="title"><?php $this->html('title') ?></h3>
-                <!-- inside -->
-                <div class="inside">
-                    <?php $this->renderInsideContent(); ?>
-                </div>
-                <!-- /inside -->
+        <div id="bodyContent"  class="block block_full" role="main"<?php $this->html('specialpageattributes') ?>> <!--<div id="main" role="main">-->
+            <h3 class="title"><?php $this->html('title') ?></h3>
+            <!-- inside -->
+            <div class="inside">
+                <?php $this->renderInsideContent(); ?>
             </div>
-            <!-- /block_full -->
+            <!-- /inside -->
         </div>
         <!-- /bodyContent -->
         <?php
@@ -276,31 +271,15 @@ class SkinzamTemplate extends BaseTemplate {
     private function renderContentFooter() {
         ?>
 
-        <div id="self_general" class="block block_full">
-            <div class="inside">
-                <?php foreach ($this->getFooterLinks() as $category => $links): ?>
-                    <ul id="footer-<?php echo $category ?>">
-                        <?php foreach ($links as $link): ?>
-                            <li id="footer-<?php echo $category ?>-<?php echo $link ?>"><?php $this->html($link) ?></li>
-                        <?php endforeach; ?>
-                    </ul>
+        <?php foreach ($this->getFooterLinks() as $category => $links): ?>
+            <ul id="footer-<?php echo $category ?>">
+                <?php foreach ($links as $link): ?>
+                    <li id="footer-<?php echo $category ?>-<?php echo $link ?>"><?php $this->html($link) ?></li>
                 <?php endforeach; ?>
-                <?php $footericons = $this->getFooterIcons("icononly");
-                if (count($footericons) > 0): ?>
-                    <ul id="footer-icons" class="noprint">
-                        <?php foreach ($footericons as $blockName => $footerIcons): ?>
-                            <li id="footer-<?php echo htmlspecialchars($blockName); ?>ico">
-                                <?php foreach ($footerIcons as $icon): ?>
-                                    <?php echo $this->skin->makeFooterIcon($icon); ?>
+            </ul>
+        <?php endforeach; ?>
 
-                                <?php endforeach; ?>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                <?php endif; ?>
-                <div style="clear:both"></div>
-            </div>
-        </div>
+        <div style="clear:both"></div>
         <?php
     }
 
@@ -309,14 +288,25 @@ class SkinzamTemplate extends BaseTemplate {
      */
     private function renderFooter() {
         ?>
-        <div id="footer">
+        <!-- regular footer -->
+        <div id="footer"  class="noprint">
             <div class="inside">
                 <div class="content">
-                <?php if (isset($this->data['sz_pretty_username'])): ?>
-                <span id="prettyUserName">
-                    <?php echo $this->data['sz_pretty_username'] ?>
-                </span>
-                <? endif; ?>
+                    <?php $this->renderMore(); ?>
+                </div>
+            </div>
+        </div>
+        <!-- /regular footer -->
+
+        <!-- Absolute bottom menu -->
+        <div id="absoluteFooter"  class="noprint">
+            <div class="inside">
+                <div class="content">
+                    <?php if (isset($this->data['sz_pretty_username'])): ?>
+                        <span id="prettyUserName">
+                            <?php echo $this->data['sz_pretty_username'] ?>
+                        </span>
+                    <? endif; ?>
                     <!-- logo -->
                     <a id="logo_mini" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>" <?php echo $this->skin->tooltipAndAccesskeyAttribs('p-logo') ?>></a>
                     <!-- /logo -->
@@ -328,20 +318,16 @@ class SkinzamTemplate extends BaseTemplate {
                         <?php $this->renderNavigation(array('SZ-FOOTER')); ?>
                         <li class="more">
                             <a href="#">
-                                <span class="show_more"><?php echo wfMessage('moredotdotdot')->text() ?></span>
-                                <span class="show_less" aria-hidden="true"><?php echo wfMessage('lessdotdotdot')->text() ?></span>
+                                <span class="show_footer"><?php echo wfMessage('moredotdotdot')->text() ?></span>
+                                <span class="show_back" aria-hidden="true"><?php echo wfMessage('sz-back')->text() ?></span>
                             </a>
                         </li>
                     </ul>
                     <!-- /quicklinks -->
-                    <!-- moreInfo -->
-                    <div class="more_infos" style="display: none;">
-                        <?php $this->renderMore(); ?>
-                    </div>
-                    <!-- /moreInfo -->
                 </div>
             </div>
         </div>
+        <!-- /Absolute bottom menu -->
         <?php
     }
 
@@ -390,23 +376,49 @@ class SkinzamTemplate extends BaseTemplate {
                 <li class="fcbk"><a href="http://www.facebook.com/davidcanwin">Facebook</a></li>
                 <li class="linkedin"><a href="http://www.linkedin.com/company/seizam">LinkedIn</a></li>
             </ul>
+            <?php $footericons = $this->getFooterIcons("icononly");
+            if (count($footericons) > 0): ?>
+                <ul id="footer-icons">
+                    <?php foreach ($footericons as $blockName => $footerIcons): ?>
+                        <li id="footer-<?php echo htmlspecialchars($blockName); ?>ico">
+                            <?php foreach ($footerIcons as $icon): ?>
+                                <?php echo $this->skin->makeFooterIcon($icon); ?>
+
+                            <?php endforeach; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
         </div>
         <?php
     }
 
     /**
-     * Render #nav (#nav_artist + #nav_plus)
+     * Render #nav (.nav_artist + .nav_actions)
      */
     private function renderNav() {
         ?>
         <div id="nav">
-            <ul id="nav_plus">
+            <ul class="nav_actions">
                 <li>
                     <a href="#"><?php echo wfMessage('actions')->text() ?></a>
                     <ul>
                         <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
                     </ul>
                 </li>
+            </ul>
+        </div>
+        <?php
+    }
+
+    /**
+     * Render #horizontalActions (#nav_actions)
+     */
+    private function renderHorizontalActions() {
+        ?>
+        <div id="nav_horizontal" class="block block_full block_flat">
+            <ul class="nav_actions">
+                <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
             </ul>
         </div>
         <?php
@@ -421,9 +433,9 @@ class SkinzamTemplate extends BaseTemplate {
         <div id="siteSub"><?php wfMessage('tagline')->text() ?></div>
         <!-- /tagline -->
         <?php if ($this->data['subtitle']): ?>
-        <!-- subtitle -->
-        <div id="contentSub"<?php $this->html('userlangattributes') ?>><?php $this->html('subtitle') ?></div>
-        <!-- /subtitle -->
+            <!-- subtitle -->
+            <div id="contentSub"<?php $this->html('userlangattributes') ?>><?php $this->html('subtitle') ?></div>
+            <!-- /subtitle -->
         <?php endif; ?>
         <?php if ($this->data['undelete']): ?>
             <!-- undelete -->
@@ -438,7 +450,7 @@ class SkinzamTemplate extends BaseTemplate {
         <?php if ($this->data['showjumplinks']): ?>
             <!-- jumpto (invisible)-->
             <div id="jump-to-nav">
-                <?php wfMessage('jumpto')->text() ?> <a href="#mw-head"><?php wfMessage('jumptonavigation')->text() ?></a>,
+            <?php wfMessage('jumpto')->text() ?> <a href="#mw-head"><?php wfMessage('jumptonavigation')->text() ?></a>,
                 <a href="#p-search"><?php wfMessage('jumptosearch')->text() ?></a>
             </div>
             <!-- /jumpto -->
@@ -525,31 +537,31 @@ class SkinzamTemplate extends BaseTemplate {
                     endforeach;
                     break;
                 case 'SZ-FOOTER' :
-                    foreach ($this->getSzFooterUrls() as $key => $item):
+                    foreach ($this->getSzAbsoluteFooterUrls() as $key => $item):
                         echo $this->makeListItem($key, $item);
                     endforeach;
                     break;
                 case 'SEARCH':
                     ?>
                     <div id="p-search">
-                        <h5<?php $this->html('userlangattributes') ?>><label for="searchInput"><?php wfMessage('search') ?></label></h5>
+                        <h5<?php $this->html('userlangattributes') ?>><label for="searchInput"><?php $this->msg('search') ?></label></h5>
                         <form action="<?php $this->text('wgScript') ?>" id="searchform">
                             <input type='hidden' name="title" value="<?php $this->text('searchtitle') ?>"/>
-                                <?php if ($wgVectorUseSimpleSearch && $wgUser->getOption('vector-simplesearch')): ?>
+                    <?php if ($wgVectorUseSimpleSearch && $wgUser->getOption('vector-simplesearch')): ?>
                                 <div id="simpleSearch">
-                                    <?php if ($this->data['rtl']): ?>
+                                <?php if ($this->data['rtl']): ?>
                                         <?php echo $this->makeSearchButton('image', array('id' => 'searchButton', 'src' => $this->skin->getSkinStylePath('images/search-rtl.png'))); ?>
                                     <?php endif; ?>
                                     <?php echo $this->makeSearchInput(array('id' => 'searchInput', 'type' => 'text')); ?>
                                     <?php if (!$this->data['rtl']): ?>
-                                    <?php echo $this->makeSearchButton('image', array('id' => 'searchButton', 'src' => $this->skin->getSkinStylePath('images/search-ltr.png'))); ?>
-                                <?php endif; ?>
+                                        <?php echo $this->makeSearchButton('image', array('id' => 'searchButton', 'src' => $this->skin->getSkinStylePath('images/search-ltr.png'))); ?>
+                                    <?php endif; ?>
                                 </div>
-                            <?php else: ?>
+                                <?php else: ?>
                                 <?php echo $this->makeSearchInput(array('id' => 'searchInput')); ?>
                                 <?php echo $this->makeSearchButton('go', array('id' => 'searchGoButton', 'class' => 'searchButton')); ?>
-                        <?php echo $this->makeSearchButton('fulltext', array('id' => 'mw-searchButton', 'class' => 'searchButton')); ?>
-                    <?php endif; ?>
+                                <?php echo $this->makeSearchButton('fulltext', array('id' => 'mw-searchButton', 'class' => 'searchButton')); ?>
+                            <?php endif; ?>
                         </form>
                     </div>
                     <?php
@@ -568,7 +580,7 @@ class SkinzamTemplate extends BaseTemplate {
      * however it is reformatted so that you can just pass the individual items
      * to makeListItem instead of hardcoding the element creation boilerplate.
      */
-    function getSzFooterUrls() {
+    function getSzAbsoluteFooterUrls() {
         $szFooterUrls = array();
         foreach ($this->data['sz_footer_urls'] as $key => $szfurl) {
             # The class on a personal_urls item is meant to go on the <a> instead

@@ -11,15 +11,54 @@ if (!defined('MEDIAWIKI')) {
 }
 
 class SkinzamHooks {
+    
     /* Protected Static Members */
-
-    protected static $features = array(
-        'global' => array(
-            'modules' => array('ext.seizam.global'),
-        )
-    );
-
-    /* Static Methods */
+	
+	protected static $features = array(
+		'editwarning' => array(
+			'preferences' => array(
+				// Ideally this would be 'vector-editwarning'
+				'useeditwarning' => array(
+					'type' => 'toggle',
+					'label-message' => 'vector-editwarning-preference',
+					'section' => 'editing/advancedediting',
+				),
+			),
+			'requirements' => array(
+				'useeditwarning' => true,
+			),
+			'modules' => array( 'ext.vector.editWarning' ),
+		),
+		'simplesearch' => array(
+			'requirements' => array( 'vector-simplesearch' => true, 'disablesuggest' => false ),
+			'modules' => array( 'ext.skinzam.simpleSearch' ),
+		)
+	);
+    
+    
+    
+    protected static function isEnabled( $name ) {
+		global $wgSkinzamFeatures, $wgUser;
+		
+		// Features with global set to true are always enabled
+		if ( !isset( $wgSkinzamFeatures[$name] ) || $wgSkinzamFeatures[$name]['global'] ) {
+			return true;
+		}
+		// Features with user preference control can have any number of preferences to be specific values to be enabled
+		if ( $wgSkinzamFeatures[$name]['user'] ) {
+			if ( isset( self::$features[$name]['requirements'] ) ) {
+				foreach ( self::$features[$name]['requirements'] as $requirement => $value ) {
+					// Important! We really do want fuzzy evaluation here
+					if ( $wgUser->getOption( $requirement ) != $value ) {
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+		// Features controlled by $wgSkinzamFeatures with both global and user set to false are awlways disabled 
+		return false;
+	}
 
     /**
      * BeforePageDisplay hook
@@ -32,6 +71,13 @@ class SkinzamHooks {
     public static function beforePageDisplay($out, $skin) {
         if ($skin instanceof SkinSkinzam) {
             $out->addModules('ext.skinzam.global');
+            $out->addModules('ext.skinzam.jquery.scrollto-min');
+			// Add modules for enabled features
+			foreach ( self::$features as $name => $feature ) {
+				if ( isset( $feature['modules'] ) && self::isEnabled( $name ) ) {
+					$out->addModules( $feature['modules'] );
+				}
+			}
         }
         return true;
     }
@@ -57,8 +103,7 @@ class SkinzamHooks {
      */
     public static function skinTemplateOutputPageBeforeExec(&$skin, &$tpl) {
         $szFooterUrls = array();
-
-
+        
         if ($skin->loggedin) {
             $szFooterUrls['allpages'] = array(
                 'text' => wfMessage('sz-browse'),
@@ -77,6 +122,16 @@ class SkinzamHooks {
         } else {
             $szFooterUrls['myseizam'] = $tpl->data['personal_urls']['login'];
         }
+        
+        $tpl->set( 'footerlinks', array(
+			'info' => array(
+				'lastmod',
+				'viewcount',
+				'numberofwatchingusers',
+				'credits',
+				'copyright',
+			)
+		) );
 
         $tpl->set('sz_footer_urls', $szFooterUrls);
         return true;

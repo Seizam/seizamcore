@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Skinzam extension
  * 
@@ -24,17 +25,19 @@ if (!defined('MEDIAWIKI')) {
 
 // Each module may be configured individually to be globally on/off or user preference based
 $wgSkinzamFeatures = array(
+    'editwarning' => array('global' => true, 'user' => true),
+    'simplesearch' => array('global' => false, 'user' => false)
 );
 
 /* Setup */
 
 $wgExtensionCredits['other'][] = array(
-	'path' => __FILE__,
-	'name' => 'Skinzam',
-	'author' => array( 'Clément Dietschy', 'Seizam'),
-	'version' => '0.1.0',
-	'url' => 'http://www.seizam.com/',
-	'descriptionmsg' => 'sz-skinzam-desc',
+    'path' => __FILE__,
+    'name' => 'Skinzam',
+    'author' => array('Clément Dietschy', 'Seizam'),
+    'version' => '0.1.0',
+    'url' => 'http://www.seizam.com/',
+    'descriptionmsg' => 'sz-skinzam-desc',
 );
 
 $dir = dirname(__FILE__) . '/';
@@ -56,34 +59,70 @@ $wgHooks['SkinTemplateOutputPageBeforeExec'][] = 'SkinzamHooks::skinTemplateOutp
 
 
 
-/*$wgResourceModules['skins.skinzam'] = array(
-		'styles' => array( 'skinzam/screen.css' => array( 'media' => 'screen' ) ),
-		'remoteBasePath' => $GLOBALS['wgStylePath'],
-		'localBasePath' => $GLOBALS['wgStyleDirectory'],
-		'dependancies' => 'skinzam.global');*/
+/* $wgResourceModules['skins.skinzam'] = array(
+  'styles' => array( 'skinzam/screen.css' => array( 'media' => 'screen' ) ),
+  'remoteBasePath' => $GLOBALS['wgStylePath'],
+  'localBasePath' => $GLOBALS['wgStyleDirectory'],
+  'dependancies' => 'skinzam.global'); */
 
 // JS Resources Declaration
 $skinzamResourceTemplate = array(
-	'localBasePath' => $dir . 'modules',
-	'remoteExtPath' => 'Skinzam/modules',
-	'group' => 'ext.skinzam',
-);
-$wgResourceModules += array(
-	'ext.skinzam.global' => $skinzamResourceTemplate + array(
-		'scripts' => 'ext.skinzam.global.js')
+    'localBasePath' => $dir . 'modules',
+    'remoteExtPath' => 'Skinzam/modules',
+    'group' => 'ext.skinzam',
 );
 
+$wgResourceModules += array(
+    'ext.skinzam.global' => $skinzamResourceTemplate + array(
+        'scripts' => 'ext.skinzam.global.js'
+        ),
+    'ext.skinzam.jquery.scrollto-min' => $skinzamResourceTemplate + array(
+         'scripts' => 'ext.skinzam.jquery.scrollto-min.js'
+        ),
+    'ext.skinzam.simpleSearch' => $skinzamResourceTemplate + array(
+		'scripts' => 'ext.skinzam.simpleSearch.js',
+		'messages' => array(
+			'vector-simplesearch-search',
+			'vector-simplesearch-containing',
+		),
+		'dependencies' => array(
+			'jquery.client',
+			'jquery.suggestions',
+			'jquery.autoEllipsis',
+			'jquery.placeholder',
+		),
+	),
+    );
+
+
 # Special Skinzam (UI test class)
-$wgAutoloadClasses['SpecialSkinzam'] = $dir . 'SpecialSkinzam.php';
+/*$wgAutoloadClasses['SpecialSkinzam'] = $dir . 'SpecialSkinzam.php';
 
 $wgSpecialPages['Skinzam'] = 'SpecialSkinzam';
 
-$wgSpecialPageGroups['Skinzam'] = 'other';
+$wgSpecialPageGroups['Skinzam'] = 'other';*/
 
 # Some global settings
 # Tune Special:Preferences
-$wgHiddenPrefs = array('userid','underline','stubthreshold','showtoc','showjumplinks','editsection','externaldiff','externaleditor','diffonly','norollbackdiff');
+$wgHiddenPrefs = array('userid', 'underline', 'stubthreshold', 'showtoc', 'showjumplinks', 'editsection', 'externaldiff', 'externaleditor', 'diffonly', 'norollbackdiff');
 # Do not display IP as a username-like. (Careful, breaks SeizamFooter if turned true).
 $wgShowIPinHeader = false;
+
+# Do not display license icon in absolutefooter
+$wgFooterIcons = $wgFooterIcons = array(
+	"poweredby" => array(
+		"mediawiki" => array(
+			"src" => null, // Defaults to "$wgStylePath/common/images/poweredby_mediawiki_88x31.png"
+			"url" => "http://www.mediawiki.org/",
+			"alt" => "Powered by MediaWiki",
+		)
+	),
+);
+
+# Try something cool
+$wgPageShowWatchingUsers = true;
+$wgMaxCredits = 1;
+
+
 
 

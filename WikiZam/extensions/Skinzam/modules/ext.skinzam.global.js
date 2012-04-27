@@ -10,30 +10,45 @@
 	
     // footer slide
     var clicked = false;
+    
+    $('#absoluteFooter li.more').show();
+    var intElemScrollTop = 0;
 	
-    $('.more_infos').hide();
-    $('#footer li.more:not(".current") a').live("click", function() {
-        $('.more_infos').stop(true,true).slideDown(400);
-        $(this).closest('li').addClass('current');
-        $(this).find('.show_more').hide();
-        $(this).find('.show_less').show();
+    $('#absoluteFooter li.more:not(.current, .inactive) a').live("click", function() {
+        intElemScrollTop = $('html').scrollTop();
+        $('html').scrollTo('div#footer',1000);
+        $(this).closest('li').addClass('inactive');
+        setTimeout(function() {
+            $('#absoluteFooter li.more').closest('li').removeClass('inactive');
+            $('#absoluteFooter li.more').closest('li').addClass('current');
+            $('#absoluteFooter li.more').find('.show_footer').hide();
+            $('#absoluteFooter li.more').find('.show_back').show();;
+        }, 1000);
         clicked = false;
         return false;
     });
-    $('#footer li.more.current a').live("click", function() {
-        $('.more_infos').stop(true,true).slideUp(250);
-        $(this).closest('li').removeClass('current');
-        $(this).find('.show_more').show();
-        $(this).find('.show_less').hide();
+    
+    $('#absoluteFooter li.more.current a').live("click", function() {
+        $('html').scrollTo({
+            top:intElemScrollTop, 
+            left:0
+        },1000);
+        $(this).closest('li').addClass('inactive');
+        setTimeout(function() {
+            $('#absoluteFooter li.more').closest('li').removeClass('inactive');
+            $('#absoluteFooter li.more').closest('li').removeClass('current');
+            $('#absoluteFooter li.more').find('.show_footer').show();
+            $('#absoluteFooter li.more').find('.show_back').hide();
+        },1000);
         clicked = true;
         return false;
     });
 	
     // dropdown menu - menu déroulant
 	
-    if($('#nav_plus').length == 1) {
+    if($('#nav .nav_actions').length == 1) {
 	
-        var $dd = $('#nav_plus');
+        var $dd = $('#nav .nav_actions');
 		
         $dd.hover(function(){
             $("ul", $dd).stop(false, true).slideDown(400);
