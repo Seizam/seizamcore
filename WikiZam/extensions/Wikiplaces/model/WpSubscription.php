@@ -14,6 +14,7 @@ class WpSubscription {
 			
 	private $plan;
 	private $next_plan;
+	private $buyer;
 	private $attributes_to_update;
 		
 	/**
@@ -65,7 +66,9 @@ class WpSubscription {
 	 * <li>wps_end_date</li>
 	 * <li>wps_tmr_status</li>
 	 * <li>plan</li>
-	 * <li>next_plan</li></ul>
+	 * <li>next_plan</li>
+	 * <li>buyer</li>
+	 * </ul>
 	 * @return mixed 
 	 */
 	public function get($attribut_name) {
@@ -99,6 +102,12 @@ class WpSubscription {
 				}
 				return $this->next_plan;
 				break;
+			case 'buyer':
+				if ($this->buyer === null) {
+					$this->fetchBuyer();
+				}
+				return $this->buyer;
+				break;
 		}
 		throw new MWException('Unknown attribut '.$attribut_name);
 	}
@@ -121,8 +130,16 @@ class WpSubscription {
 		$db_value = null;
 		switch ($attribut_name) {
 			case 'wps_renew_wpp_id':
-			case 'wps_tmr_id':
+				if ( !is_int($value) || ($value<0) )  { throw new MWException('Value error (int >= 0 needed) for '.$attribut_name); }
+				$db_value = intval($value);
+				$this->next_plan = null;
+				break;
 			case 'wps_wpp_id':
+				if ( !is_int($value) || ($value<0) )  { throw new MWException('Value error (int >= 0 needed) for '.$attribut_name); }
+				$db_value = intval($value);
+				$this->plan = null;
+				break;
+			case 'wps_tmr_id':
 				if ( !is_int($value) || ($value<0) )  { throw new MWException('Value error (int >= 0 needed) for '.$attribut_name); }
 				$db_value = intval($value);
 				break;
@@ -187,6 +204,27 @@ class WpSubscription {
 		if ($this->plan === null) {
 			throw new MWException('Unknown plan');
 		} 
+
+	}
+	
+	/**
+	 * Load the buyer user
+	 * @param User $user If null, consctruct a new User object
+	 */
+	private function fetchBuyer($user = null) {
+		
+		if ( ! $user instanceof User ) {
+			$user = User::newFromId($this->wps_buyer_user_id);
+			if ( ! $user->loadFromId() ) {
+				throw new MWException('Unknown buyer User, id='.$this->wps_buyer_user_id);
+			}
+		}
+		
+		if ( $user->getId() != $this->wps_buyer_user_id ) {
+			throw new MWException('Invalid buyer User given in arg (expected='.$this->wps_buyer_user_id.' passed='.$user->getId().')');
+		}
+		
+		$this->buyer = $user;
 
 	}
 
@@ -343,21 +381,34 @@ class WpSubscription {
 	
 	/**
 	 * Can the user make a first subscription? (first sub != renewal)
-	 * @param int $user_id
+	 * @param User $user
 	 * @param DatabaseBase $db_accessor If null, will use wfGetDB(DB_SLAVE)
-	 * @return boolean True = can have new one, False = not 
+	 * @return boolean/string true = can subscribe , string = reason (i18n message key) why cannot subscribe:
+	 * <ul>
+	 * <li>loggedout</li>User need to be logged in to subscribe
+	 * <li>email-not-confirmed</li>User has not yet confirmed her email address
+	 * <li>active-or-pending-subscription</li>User has already an active or a "payment pending" subscription
+	 * </ul>
 	 */
-	public static function canMakeAFirstSubscription($user_id, $db_accessor = null) {
+	public static function canSubscribe($user, $db_accessor = null) {
 				
-		if ( ($user_id === null) || !is_numeric($user_id) || ($user_id < 1) ) {
-			throw new MWException( 'Cannot check subscriptions matching the user identifier (invalid identifier)' );
+		if ( ! $user instanceof User ) {
+			throw new MWException( 'invalid argument' );
 		}	
+		
+		if ( ! $user->isLoggedIn() ) {
+			return 'loggedout';
+		}
+		
+		if ( ! $user->isEmailConfirmed() ) {
+			return 'email-not-confirmed';
+		}
 		
 		$dbr = ( $db_accessor != null ? $db_accessor : wfGetDB(DB_SLAVE) ) ;
 
 		$now =  $dbr->addQuotes( self::getNow() );
 		$conds = $dbr->makeList( array(
-			"wps_buyer_user_id"	=> $user_id, 
+			"wps_buyer_user_id"	=> $user->getId(), 
 			$dbr->makeList( array(
 				"wps_active" => 1, 
 				$dbr->makeList(array(			
@@ -373,11 +424,11 @@ class WpSubscription {
 		
 		$results = $dbr->select( 'wp_subscription', '*',	$conds, __METHOD__ );
 		
-		$return = $dbr->numRows($results) == 0;
+		if ( $dbr->numRows($results) != 0 ) {
+			return 'active-or-pending-subscription';
+		}
 		
-		$dbr->freeResult( $results );
-		
-		return $return;
+		return true;
 				
 	}
 	
@@ -403,20 +454,15 @@ class WpSubscription {
 		
 		$user_id = $this->get('wps_buyer_user_id');
 		$user = User::newFromId($user_id);
-		if (!$user->loadFromId()) { // ensure we know the user
-			$msg = 'unknown user, id='.$user_id;
-			$return = Status::newFatal($msg);
-			$return->value = $msg;
-			return $return;
+		if ( ! $user->loadFromId() ) { // ensure we know the user
+			return Status::newFatal('wp-internal-error', 'unknown user id '.$user_id );
 		}
+		$this->fetchBuyer($user);
 		$user_email = $user->getEmail();
 		
 		$next_plan = $this->get('next_plan');
 		if ($next_plan === null) { // ensure we know the next plan
-			$msg = 'unknown next plan';
-			$return = Status::newFatal($msg);
-			$return->value = $msg;
-			return $return;
+			return Status::newFatal('wp-internal-error', 'unknown next plan');
 		}
 		
 		$tmr = self::createTMR($user_id, $user_email, $next_plan);
@@ -436,11 +482,15 @@ class WpSubscription {
 		$end = self::calculateEndDateFromStart( $start, $next_plan->get('wpp_period_months') );
 
 		$this->set('wps_wpp_id', $next_plan->get('wpp_id'), false);
+		$this->plan = $next_plan;
 		$this->set('wps_tmr_id', $tmr['tmr_id'], false);
 		$this->set('wps_tmr_status', $tmr['tmr_status'], false);
 		$this->set('wps_start_date', $start, false);
 		$this->set('wps_end_date', $end, false);
 		$this->set('wps_renew_wpp_id', $next_plan->get('wpp_renew_wpp_id')); // 3rd arg != false, so saving record now
+		if ($this->wps_renew_wpp_id != $next_plan->get('id')) {
+			$this->next_plan = null;
+		}
 		
 		return Status::newGood($tmr);
 				
@@ -565,12 +615,10 @@ class WpSubscription {
 	
 	
 	/**
-	 * Subscribe to a first plan, or upgrade the current plan to a upper one
-	 * Currently, can only subscribe to a frst plan
-	 * @param User $use The user who buy the plan, and will use it (later, it will be possible 
-	 * that one user buy for another one, but for now, a user can only buy for her)
-	 * @param WpPlan $plan The plan
-	 * @return Status WpSubscription (the newly created subscription) as Status value if good
+	 * Subscribe to a plan (= no current active plan)
+	 * @param User $use The user who buy the plan, and will use it 
+	 * @param WpPlan $plan
+	 * @return Status WpSubscription (the newly created subscription) as Status->value if good
 	 */
 	public static function subscribe($user, $plan) {
 		
@@ -584,15 +632,9 @@ class WpSubscription {
 		// is it a first subscription(not a plan change ?
 		
 		// if the user can make a first subscription, this is a first subscription (will be activated as soon as paid)
-		if (!self::canMakeAFirstSubscription($user_id, $db_master)) {
-			
-			// this is something else than a first subscription
-			// for the moment nothing can be done, but later, users will be able to change their current active plan
-			// the code will takes place here
-			$msg = 'Cannot subscribe, only first subscription can be done this way.';
-			$status = Status::newFatal($msg);
-			$status->value = $msg;
-			return $status;
+		$canSubscribe = self::canSubscribe($user, $db_master);
+		if ( $canSubscribe !== true ) {			
+			return Status::newFatal('wp-internal-error', $canSubscribe);
 		}
 			
 		// this is a first subscriptioon
@@ -604,8 +646,7 @@ class WpSubscription {
 
 			case 'OK': // already paid by user
 				$now =  self::getNow() ;
-				self::addSubscribersGroupToUser($user);
-				return self::create(
+				$status = self::create(
 						$plan->get('wpp_id'), 
 						$user_id,
 						$tmr['tmr_id'],
@@ -616,6 +657,18 @@ class WpSubscription {
 						$plan->get('wpp_renew_wpp_id'),
 						$db_master
 				);
+				if ( ! $status->isGood() ) {
+					return Status::newFatal('wp-internal-error' , $status->getMessage());
+				}
+				self::addSubscribersGroupToUser($user);
+				$sub = $status->value;
+				$status = $sub->sendActivationNotification();
+				if ( ! $status->isGood() ) {
+					// error while sending notification
+					wfDebugLog( 'wikiplaces' , 'WpSubscription ERROR while sending activation notification to ['
+							.$user->getId().']'.$user->getRealName());
+				}
+				return Status::newGood($sub);
 
 			case 'PE': // waiting payment
 				self::addSubscribersGroupToUser($user);
@@ -800,5 +853,107 @@ class WpSubscription {
 		return $start->format( 'Y-m-d H:i:s' );
 	}
 	
+
+	/**
+	 * Update the current subscription according to new tmr status
+	 * @param type $tmr
+	 * @return void
+	 */
+	public function onTransactionUpdated( $tmr ) {
+		
+		wfDebugLog( 'wikiplaces', 'onTransactionUpdated:'
+		.' tmr_id='.$tmr['tmr_id']
+		.' wps_id='.$this->wps_id 
+		.' old_tmr_status='.$this->wps_tmr_status
+		.' new_tmr_status='.$tmr['tmr_status'] );
+				
+		switch ($this->wps_tmr_status) {
+			
+			case 'PE':
+				// was pending
+				switch ($tmr['tmr_status']) {
+				
+					case 'OK':
+						// PE -> OK
+						
+						if ($this->wps_start_date == null) {
+							// first subscription, so activates it from now
+							$start = WpSubscription::getNow();
+							$end = WpSubscription::calculateEndDateFromStart($start, $this->get('plan')->get('wpp_period_months'));
+							$this->set('wps_start_date',	$start, false ); // 3rd param = false = do not update db now
+							$this->set('wps_end_date', $end, false ); 
+							$this->set('wps_active',	true, false ); 
+						} 
+						// if startDate not null, this is a renewal, it will be activated later when needed
+						
+						$this->set('wps_tmr_status', 'OK'); // no 3rd p = update db now
+						
+						$this->sendActivationNotification();
+						
+						return false; // this is our transaction, no more process to be done	
+						
+					case 'KO':
+						// PE -> KO
+						$this->set('wps_tmr_status', 'KO', false);
+						$this->set('wps_end_date', WpSubscription::getNow(), false ); 
+						$this->set('wps_active', false);  // in case of a renewal, it can be activated even if pending, so need to ensure that is false
+						
+						$this->sendTransactionErrorNotification();
+						
+						return false; // this is our transaction, no more process to be done	
+						
+					case 'PE':
+						// PE -> PE   =>   don't care
+						return false;
+				}
+				break;
+			
+		}
+		
+		// if we arrive here, this transaction is about a subscription, but we do not know what to do
+		throw new MWException('The transaction was updated, but its new status is not managed (old='.$this->tmr_status.'new='.$tmr['tmr_status'].')');	
+		
+	}
 	
+	/**
+	 * Send an email when the subscription is activated, when:
+	 * <ul>
+	 * <li>User make a first subscription, and the subscription is activated (=only when tmr_status is OK)</li>
+	 * <li>The system activate the "next plan" (=tmr_status can be OK or PE)</li>
+	 * <li></li>
+	 * 
+	 * </ul>
+	 * @global type $wgContLang
+	 * @return Status 
+	 */
+	public function sendActivationNotification( ) {
+		
+		global $wgContLang;
+
+		$user = $this->get('buyer');
+		$plan = $this->get('plan');
+
+		return $user->sendMail(
+				wfMessage( 'wp-sub-activation-email-subj' )->text(),
+				wfMessage( 'wp-sub-activation-email-body' , $user->getName() , $plan->get('wpp_name') , $this->get('wps_end_date') )->text());
+		
+	}
+	
+	/**
+	 * Send an email when the subscription paiyment status is errored.
+	 * @global type $wgContLang
+	 * @return type 
+	 */
+	public function sendTransactionErrorNotification( ) {
+		
+		global $wgContLang;
+
+		$user = $this->get('buyer');
+
+		return $user->sendMail(
+				wfMessage( 'wp-sub-tmrko-email-subj' )->text(),
+				wfMessage( 'wp-sub-tmrko-email-body' , $user->getName() )->text());
+		
+	}
+
 }

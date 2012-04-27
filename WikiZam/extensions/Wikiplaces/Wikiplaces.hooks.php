@@ -39,26 +39,20 @@ class WikiplacesHooks {
 	 */
 	public static function userCanCreate( $title, &$user, $action, &$result ) {
 		
-
-		
 		if ( ( ($action != 'create') && ($action != 'edit') && ($action != 'upload') && ($action != 'createpage') ) ||
 				!WpPage::isInWikiplaceNamespaces($title->getNamespace()) ||
 				$title->isKnown() ) {
 			
+			/*
 			wfDebugLog('wikiplaces', 'userCanCreate: SKIP '
 					. ' title="' . $title->getPrefixedDBkey() . '"[' . $title->getArticleId() . '] isKnown()=' . var_export($title->isKnown(), true)
 					. ' user="' . $user->getName() . '"[' . $user->getID() . ']'
 					. ' action="' . $action . '"');
+			*/
 			
 			return true;
 		}
 
-		wfDebugLog( 'wikiplaces', 'userCanCreate: EVALUATE '
-				. ' title="' . $title->getPrefixedDBkey() . '"[' . $title->getArticleId() . '] isKnown()=' . var_export($title->isKnown(), true)
-				. ' user="' . $user->getName() . '"[' . $user->getID() . ']'
-				. ' action="' . $action . '"');
-		 
-		
 		if ( ! $user->isLoggedIn() ) {
 			wfDebugLog( 'wikiplaces', 'userCanCreate: DENY user is not logged in');
 			$result = false;
@@ -71,15 +65,20 @@ class WikiplacesHooks {
 		
 		if ( isset(self::$userCanCreateCache[$full_text][$user_id]) ) {
 			$result = self::$userCanCreateCache[$full_text][$user_id];
-			/*
+			
 			wfDebugLog( 'wikiplaces', 'userCanCreate: CACHE HIT "'
 					.( $result ? 'YES': 'NO' ).'" ['
 					.$article_id.']"'.$full_text.'" ['
 					.$user->getID().']"'.$user->getName().'"');
-			 */
+			 
 			return false; // stop hook processing
 		}
 		
+		wfDebugLog( 'wikiplaces', 'userCanCreate: EVALUATE '
+		. ' title="' . $title->getPrefixedDBkey() . '"[' . $title->getArticleId() . '] isKnown()=' . var_export($title->isKnown(), true)
+		. ' user="' . $user->getName() . '"[' . $user->getID() . ']'
+		. ' action="' . $action . '"');
+				
 		if ( WpPage::isHomepage($title)) {
 
 			// this is a new Wikiplace
@@ -203,11 +202,15 @@ class WikiplacesHooks {
 
 		} 
 		
-		$restrictions = array(
-			'edit' => 'owner',
-			'move' => 'owner',
-			'upload' => 'owner' ) ;
-		
+		// restriction all applicable actions to owner, except for read
+		$actions_to_rectrict = array_diff(
+				$wikipage->getTitle()->getRestrictionTypes(), // array( 'read', 'edit', ... )
+				array( 'read') );
+		$restrictions = array();
+		foreach ( $actions_to_rectrict as $action) {
+			$restrictions[$action] = 'owner';
+		} 
+
 		$ok = false;
 		wfRunHooks( 'SetRestrictions', array( $wikipage , $restrictions , &$ok ) );
 		if ( !$ok ) {
@@ -232,51 +235,9 @@ class WikiplacesHooks {
 			return true; // we are not concerned, so don't stop processing
 		}
 		
-		wfDebugLog( 'wikiplaces', 'onTransactionUpdated:'
-				.' tmr_id='.$tmr['tmr_id']
-				.' wps_id='.$sub->get('wps_id') 
-				.' old_tmr_status='.$sub->get('wps_tmr_status')
-				.' new_tmr_status='.$tmr['tmr_status'] );
-				
-		// $sub != null, so this tmr affects a subscription
-		switch ($sub->get('wps_tmr_status')) {
-			
-			case 'PE':
-				// was pending
-				switch ($tmr['tmr_status']) {
-				
-					case 'OK':
-						// PE -> OK
-						
-						if ($sub->get('wps_start_date') == null) {
-							// first subscription, so activates it from now
-							$start = WpSubscription::getNow();
-							$end = WpSubscription::calculateEndDateFromStart($start, $sub->get('plan')->get('wpp_period_months'));
-							$sub->set('wps_start_date',	$start, false ); // 3rd param = false = do not update db now
-							$sub->set('wps_end_date', $end, false ); 
-							$sub->set('wps_active',	true, false ); 
-						} 
-						// if startDate not null, this is a renewal, it will be activated later when needed
-						
-						$sub->set('wps_tmr_status', 'OK'); // no 3rd p = update db now
-						return false; // this is our transaction, no more process to be done	
-						
-					case 'KO':
-						// PE -> KO
-						$sub->set('wps_tmr_status', 'KO', false);
-						$sub->set('wps_active', false);  // in case of a renewal, it can be activated even if pending, so need to ensure that is false
-						return false; // this is our transaction, no more process to be done	
-						
-					case 'PE':
-						// PE -> PE   =>   don't care
-						return false;
-				}
-				break;
-			
-		}
+		$sub->onTransactionUpdated($tmr);
 		
-		// if we arrive here, this transaction is about a subscription, but we do not know what to do
-		throw new MWException('The transaction of a subscription was updated, but this update is not managed ('.$sub->get('wps_tmr_status').'->'.$tmr['tmr_status'].')');	
+		return false; // the transaction update has been processed, so no other hook should take care of it
 		
 	}
 	
@@ -300,6 +261,7 @@ class WikiplacesHooks {
 					'" user=[' . $user->getId() . ']"' . $user->getName() .
 					'" hookCurrentResult=' . ( $result ? 'YES' : 'NO' ) . 
 					') unknown page in wikiplace namespace');
+			
 			return true; // we don't know, so we don't stop hook processing
 		}
 

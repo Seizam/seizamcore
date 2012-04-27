@@ -210,15 +210,23 @@ function efRestrictionsBeforeParserFetchTemplateAndtitle( $parser, Title $title,
 	
 }
 
-// donner le droit dans le userCan
-// 
-// meme si le pageRestrictions ne restreint pas alors qu'il devrait
-// ,mon code lui sera juste et fera le bon test d'appartenance à un groupe
-// 
-// avant l'exécution (problématique) de title->checkPagesRestriction, 
-// le hook userCan est appelé dans Title->checkPermissionHooks
-// donc quoiqu'il arrive, mon bon usercan aura la main
+
+/**
+ * Grant rights as needed later by $title->checkPagesRestriction(). Hook userCan is always called
+ * in function $title->checkPermissionHooks(), before calling checkPagesRestriction(). So, it ensures
+ * that correct rights are available when checkPagesRestriction() will be executed.
+ * @global array $wgRestrictionsUserCanCache
+ * @param Title $title
+ * @param User $user
+ * @param string $action
+ * @param boolean $result
+ * @return boolean 
+ */
 function efRestrictionsUserCan( $title, &$user, $action, &$result ) {
+	
+	if ( ($title->getNamespace()==NS_SPECIAL) || ( ! $title->isKnown()) ) {
+		return true; // skip
+	}
 	
 	// userCan is called before title->checkPageRestrictions
 	
@@ -240,10 +248,11 @@ function efRestrictionsUserCan( $title, &$user, $action, &$result ) {
 	if ( $title_restrictions === array() ) {
 		wfDebugLog( 'restrictions', 'UserCan: action not restricted, resume other hooks'
 				.' title="'.$title->getPrefixedDBkey().'"['.$title->getArticleId().']'
+				.' isKnown()='.($title->isKnown()?'YES':'NO')
 				.' user="'.$user->getName().'"['.$user->getID().']'
 				.' action="'.$action.'"'
 				);
-		return true;		// continue userCan hooks processing (another hook can still disallow user)
+		return true; // continue userCan hooks processing (another hook can still disallow user)
 	}
 	
 	//check if cached
@@ -252,6 +261,7 @@ function efRestrictionsUserCan( $title, &$user, $action, &$result ) {
 		$result = $wgRestrictionsUserCanCache[$user->getID()][$title->getArticleId()][$act];
 		wfDebugLog( 'restrictions', 'UserCan: '.($result?'YES':'NO').', CACHE HIT '
 				.' title="'.$title->getPrefixedDBkey().'"['.$title->getArticleId().']'
+				.' isKnown()='.($title->isKnown()?'YES':'NO')
 				.' user="'.$user->getName().'"['.$user->getID().']'
 				.' action="'.$action.'"'
 				);
@@ -299,6 +309,7 @@ function efRestrictionsUserCan( $title, &$user, $action, &$result ) {
 	
 	wfDebugLog( 'restrictions', 'UserCan: '.($result?'YES':'NO'). ', CACHE MISS '
 			.' title="'.$title->getPrefixedDBkey().'"['.$title->getArticleId().']'
+			.' isKnown()='.($title->isKnown()?'YES':'NO')
 			.' user="'.$user->getName().'"['.$user->getID().']'
 			.' action="'.$action.'"'
 			.' restrictions="'.implode(',',$title_restrictions).'"'
@@ -673,7 +684,7 @@ function efRestrictionsForm( $action, $article ) {
 
 	
 	// display error/succes message
-	if ( efRestrictionsUpdateRestrictions($article, $restrictions) ) {
+	if ( efRestrictionsUpdateRestrictions($article, $new_restrictions) ) {
 		$wgOut->addWikiMsg( 'setrestrictions-success' );
 	} else {
 		$wgOut->addWikiMsg( 'setrestrictions-failure' );

@@ -115,9 +115,10 @@ class SpecialWikiplacesPlan extends SpecialPage {
   
 				$out->setPageTitle( wfMessage( 'wp-plan-sub-pagetitle' )->text());
 				
-				if (!WpSubscription::canMakeAFirstSubscription($user->getId())) { 
+				$check = WpSubscription::canSubscribe($user);
+				if ( $check !== true ) { 
 					// do not process submitted datas if cannot make a first sub
-					$out->addHTML(wfMessage( 'wp-plan-sub-nomore' )->text());
+					$out->addHTML(wfMessage( 'wp-cannot-subscribe-'.$check )->text());
 
 					
 				} else {
