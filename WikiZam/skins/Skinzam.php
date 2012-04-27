@@ -15,14 +15,6 @@ if (!defined('MEDIAWIKI')) {
     die(-1);
 }
 
-/* The Following registeration is advised at http://www.mediawiki.org/wiki/Manual:Skinning/Vector but seems redundant as skin.seizam is registered in resources/Resources.php.
- * 
-  $wgResourceModules['skins.seizam'] = array(
-  'styles' => array( 'seizam/screen.css' => array( 'media' => 'screen' ) ),
-  'remoteBasePath' => $GLOBALS['wgStylePath'],
-  'localBasePath' => $GLOBALS['wgStyleDirectory'],
-  ); */
-
 /**
  * SkinTemplate class for Vector skin
  * @ingroup Skins

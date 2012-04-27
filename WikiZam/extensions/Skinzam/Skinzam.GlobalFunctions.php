@@ -31,3 +31,99 @@ function wgformatSizeMB($size) {
     $text = $wgLang->getMessageFromDB($msg);
     return str_replace('$1', $wgLang->formatNum($size), $text);
 }
+
+/**
+ * Format a number with K, M, G
+ *
+ * @param $size number
+ * @return string Plain text (not HTML)
+ */
+function wgformatNumber($number) {
+    global $wgLang;
+    $unit = '';
+    if ($number >= 10000) {
+        $number = $number / 1000;
+        $unit = 'k';
+        if ($number >= 10000) {
+            $number = $number / 1000;
+            $unit = 'M';
+            if ($number >= 10000) {
+                $number = $number / 1000;
+                $unit = 'G';
+                if ($number >= 10000) {
+                    $number = $number / 1000;
+                    $unit = 'T';
+                }
+            }
+        }
+    }
+    $number = intval($number);
+    return $wgLang->formatNum($number) . $unit;
+}
+
+//
+/**
+ * special backtrace method
+ * original from http://php.net/manual/en/function.debug-backtrace.php
+ * by diz at ysagoon dot com 
+ * 
+ * @return string A pretty summarized backtrace (filenames, lines, functions names, ...)
+ */
+function wfGetPrettyBacktrace()
+{
+
+    $backtrace = debug_backtrace();
+    $output = null;
+
+    foreach ($backtrace as $bt) {
+        $args = '';
+        foreach ($bt['args'] as $a) {
+            if (!empty($args)) {
+                $args .= ', ';
+            }
+            switch (gettype($a)) {
+            case 'integer':
+            case 'double':
+                $args .= $a;
+                break;
+            case 'string':
+                $a = htmlspecialchars(substr($a, 0, 64)).((strlen($a) > 64) ? '...' : '');
+                $args .= "\"$a\"";
+                break;
+            case 'array':
+                $args .= 'Array('.count($a).')';
+                break;
+            case 'object':
+                $args .= 'Object('.get_class($a).')';
+                break;
+            case 'resource':
+                $args .= 'Resource('.strstr($a, '#').')';
+                break;
+            case 'boolean':
+                $args .= $a ? 'True' : 'False';
+                break;
+            case 'NULL':
+                $args .= 'Null';
+                break;
+            default:
+                $args .= 'Unknown';
+            }
+        }
+	
+	if ($output==null)
+	    $output = '';
+	else
+	    $output.="\n" ;
+	
+        $output .= " file: ".( isset($bt['file']) ? $bt['file'] : '?' ).
+		" line: ".( isset($bt['line']) ? $bt['line'] : '?' ) ;
+        $output .= " call: ".( isset($bt['class']) ? $bt['class'] : '' ). 
+		(isset($bt['type']) ? $bt['type'] : '' ) .
+		(isset($bt['function']) ? $bt['function'] : '') ."($args)";;
+    }
+
+    return $output;
+    
+}
+
+

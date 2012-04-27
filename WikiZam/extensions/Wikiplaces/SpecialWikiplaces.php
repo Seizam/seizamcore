@@ -110,11 +110,12 @@ class SpecialWikiplaces extends SpecialPage {
 
 				// var_export(WpPage::countPagesOwnedByUser(12).' pages, '.WpPage::getDiskspaceUsageByUser(12).' Mb for files ');
 
-				$name = $this->getRequest()->getText('wikiplace', '');
+				$name = $this->getRequest()->getText('name', '');
 
 				if (strlen($name) > 1) {
 					$out->setPageTitle(wfMessage('wp-consultwp-pagetitle', $name)->parse());
-					$tp = new WpPageTablePager();
+					$tp = new WpPagesTablePager();
+                    $tp->setWPName($name);
 					$tp->setSelectConds(array(
 						'wpw_owner_user_id' => $user->getID(),
 						'homepage.page_title' => $name));
@@ -127,7 +128,7 @@ class SpecialWikiplaces extends SpecialPage {
 			default : // (default  =  action == nothing or "something we cannot handle")
 
 				$out->setPageTitle(wfMessage('wp-lwp-pagetitle')->text());
-				$tp = new WpWikiplaceTablePager();
+				$tp = new WpWikiplacesTablePager();
 				$tp->setSelectConds(array('wpw_owner_user_id' => $user->getId()));
 				$out->addHTML($tp->getWholeHtml());
 

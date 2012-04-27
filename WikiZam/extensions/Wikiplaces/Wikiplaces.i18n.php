@@ -89,14 +89,12 @@ To continue using your services, please take out a new offer.',
 	'wpstp-wpp_nb_wikiplaces' => "Wikiplaces",
 	'wpstp-wpp_nb_wikiplace_pages' => "Pages",
 	'wpstp-wpp_diskspace' => "Diskspace",
-	'wpstp-wpp_monthly_page_hits' => "Monthly page hits",
-	'wpstp-wpp_monthly_bandwidth' => "Monthly bandwith",
+	'wpwtp-wpw_monthly_page_hits' => "Monthly hits",
+	'wpwtp-wpw_monthly_bandwidth' => "Monthly bandwidth",
 	'wpstp-wps_end_date' => "End",
 	
 	'wpwtp-page_title' => 'Wikiplace',
 	'wpwtp-count(*)' => 'Subpages',
-	'wpwtp-wpw_monthly_page_hits' => 'Page hits',
-	'wpwtp-wpw_monthly_bandwidth' => 'Bandwith',
 	'wpwtp-wpw_report_updated' => 'Date of value',
 	'wpwtp-wpw_date_expires' => 'Reset date',
 	
@@ -104,13 +102,22 @@ To continue using your services, please take out a new offer.',
 	
 	'wppatp-subpage_title' => 'Name',
     'wppatp-subpage_namespace' => 'Type',
+    'wppatp-subpage_touched' => 'Modification Date',
+    'wppatp-subpage_counter' => 'Total hits',
+    
     
     'wp-seeall' => 'see all',
-    'wp-createpage' => 'create',
+    'wp-see' => 'see',
+    'wp-create' => 'create',
+    'wp-edit' => 'edit',
+    'wp-restrict' => 'restrict',
+    'wp-talk' => 'talk',
+    'wp-history' => 'history',
+    'wp-createpage' => 'Create a new Page',
     'wp-createwp' => 'Create a new Wikiplace',
     'wp-items' => 'items',
     'wp-homepage' => 'Homepage',
-	'wp-subpage' => 'Subpage'
+	'wp-subpage' => 'Subpage',
 );
 
 /*  Message documentation
