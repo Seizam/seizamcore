@@ -16,11 +16,10 @@ class UpdateSubscriptions extends Maintenance {
 		
 		
 		$this->output( "[".WpSubscription::getNow()." Archiving all subscriptions to renew...]\n" );
-		$status = WpSubscription::archiveAllOutdatedToRenew($when);
-		if ( ! $status->isGood() ) {
-			$this->output( "a problem occured: ".$status->$value."\n" );
+		if ( ($nb=WpSubscription::archiveAllOutdatedToRenew($when)) === false ) {
+			$this->output( "a problem occured\n" );
 		} else {
-			$this->output( "OK, ".$status->value." subscriptions archived\n" );
+			$this->output( "OK, $nb subscriptions archived\n" );
 		}
 		$this->output( "[".WpSubscription::getNow()." END]\n\n" );
 		
@@ -29,9 +28,9 @@ class UpdateSubscriptions extends Maintenance {
 		$subs = WpSubscription::getAllOutdatedToRenew($when);
 		$this->output( count($subs)." subscriptions to process, progress:\nwps_id ; OK/KO ; wps_buyer_user_id ; wps_start_date ; wps_end_date ; wps_tmr_id ; wps_tmr_status\n\n" );
 		foreach ($subs as $sub) {
-			$status = $sub->renew();			
+			$result = $sub->renew();			
 			$this->output( $sub->get('wps_id').';'
-					.( $status->isGood() ? 'OK':'KO('.$status->value.')' ).';'
+					.( ($result === true) ? 'OK' : $result ).';'
 					.$sub->get('wps_buyer_user_id').';'
 					.$sub->get('wps_start_date').';'
 					.$sub->get('wps_end_date').';'
@@ -42,11 +41,10 @@ class UpdateSubscriptions extends Maintenance {
 		
 		
 		$this->output( "[".WpSubscription::getNow()." Deactivating all remaining outdated subscriptions...]\n" );
-		$status = WpSubscription::deactivateAllOutdated($when);
-		if ( ! $status->isGood() ) {
-			$this->output( "a problem occured: ".$status->$value."\n" );
+		if ( ($nb=WpSubscription::deactivateAllOutdated($when)) === false ) {
+			$this->output( "a problem occured\n" );
 		} else {
-			$this->output( "OK, ".$status->value." subscriptions updated\n" );
+			$this->output( "OK, $nb subscriptions updated\n" );
 		}
 		$this->output( "[".WpSubscription::getNow()." END]\n" );
 		

@@ -142,7 +142,7 @@ class WpWikiplace {
 	 * @todo updates also the bandwith usage
 	 * @param int $wpw_owner_user_id Can only update usages of a specific user (default: null = all)
 	 * @param int $lifespan_minutes Lifespan above wich to consider a usage outdated (default: 60 minutes)
-	 * @return Status Nb of updates as Status value if is good
+	 * @return int/string int:Nb of updates if OK, string: the error message
 	 */
 	public static function updateOutdatedUsages( $wpw_owner_user_id = null, $lifespan_minutes = 60 ) {
 		
@@ -169,10 +169,7 @@ GROUP BY wppa_wpw_id ) ;";
 		$result = $dbw->query($sql, __METHOD__);
 		
 		if ($result !== true) {
-			$msg = 'Problem while computing new usages value.';
-			$status = Status::newFatal($msg);
-			$status->value = $msg;
-			return $status;
+			return 'error while computing new usages value';
 		}
 		
 		$to_update = $dbw->affectedRows();
@@ -189,10 +186,7 @@ WHERE wpw_report_updated < $outdated ;" ;
 		$result = $dbw->query($sql, __METHOD__);
 		
 		if ($result !== true) {
-			$msg = 'Problem while updating outdated wikiplace usages.';
-			$status = Status::newFatal($msg);
-			$status->value = $msg;
-			return $status;
+			return 'error while updating outdated wikiplace usages';
 		}
 		
 		$updated = $dbw->affectedRows();
@@ -200,7 +194,7 @@ WHERE wpw_report_updated < $outdated ;" ;
 		$dbw->commit();
 		
 		if ($to_update != $updated) {
-			throw new MWException("Wikiplace usages updated, but $to_update updates expected and $updated  updated.");
+			return "usages updated, but $to_update updates expected and $updated really updated";
 		}
 		
 		return $updated;
@@ -210,7 +204,7 @@ WHERE wpw_report_updated < $outdated ;" ;
 	
 	/**
 	 * Reset all usages when outdated
-	 * @return int Nb of Wikiplace reset
+	 * @return int/string int:Nb of Wikiplace usages reset if OK, string: the message if an error occured
 	 */
 	public static function archiveAndResetExpiredUsages() {
 		
@@ -238,7 +232,7 @@ WHERE wpw_report_updated < $outdated ;" ;
 			);
 			
 			if ( !$success ) {	
-				throw new MWException('Error while renewing archiving outdated usages.');
+				return 'error while renewing archiving outdated usages.';
 			}
 			
 			// renewing all active outdated records
@@ -254,7 +248,7 @@ WHERE wpw_report_updated < $outdated ;" ;
 					array( 'wpw_date_expires < '.$now ) );
 				
 			if ( !$success ) {	
-				throw new MWException('Error while resetting outdated usages.');
+				return 'error while resetting outdated usages';
 			}
 			
 			$updated = $dbw->affectedRows();
@@ -270,7 +264,7 @@ WHERE wpw_report_updated < $outdated ;" ;
 	 * Force archiving current usage, then reset, even if 'expires_date' is not outdated.
 	 * It uses $now as end date in archives table. <b>Doesn't update 'wpw_expires_date'</b>
 	 * @param string $now DATETIME Sql timestamp. If null, WpSubscription::getNow() is used.
-	 * @return Status Status
+	 * @return boolean true if OK, false if db error occured
 	 */
 	public function forceArchiveAndResetUsage( $now = null ) {
 			
@@ -298,10 +292,7 @@ WHERE wpw_report_updated < $outdated ;" ;
 			__METHOD__ );
 		
 		if ( !$success ) {	
-			$msg = 'Error while archiving usage.';
-			$status = Status::newFatal($msg);
-			$status->value = $msg;
-			return $status;
+			return false;
 		}
 		// reset usage
 		$success = $dbw->update(
@@ -316,17 +307,15 @@ WHERE wpw_report_updated < $outdated ;" ;
 				array( 'wpw_id' => $this->wpw_id ) );
 
 		if ( !$success ) {	
-			$msg = 'Error while resetting usage.';
-			$status = Status::newFatal($msg);
-			$status->value = $msg;
-			return $status;
+			return false;
 		}
 
 		$dbw->commit();
 
-		return Status::newGood();
+		return true;
 		
 	}
+	
 	
 	private function fetchSubscription($databaseRow = null) {
 		
@@ -341,7 +330,7 @@ WHERE wpw_report_updated < $outdated ;" ;
 		}
 		
 		if ($this->subscription === null) {
-			throw new MWException('Unknown subscription');
+			throw new MWException('Unknown subscription.');
 		} 
 
 	}
@@ -396,12 +385,12 @@ WHERE wpw_report_updated < $outdated ;" ;
 	/**
 	 * Get the Wikiplace instance from a SQL row
 	 * @param ResultWrapper $row
-	 * @return self 
+	 * @return WpWikiplace 
 	 */
 	public static function constructFromDatabaseRow( $row ) {
 			
 		if ( $row === null ) {
-			throw new MWException( 'Cannot construct the Wikiplace from the supplied row (null given)' );
+			throw new MWException( 'Cannot construct the Wikiplace from the supplied row, null given.' );
 		}
 		
 		if ( !isset($row->wpw_id) || !isset($row->wpw_owner_user_id) || !isset($row->wpw_home_page_id) || !isset($row->wpw_wps_id) ||
@@ -409,7 +398,7 @@ WHERE wpw_report_updated < $outdated ;" ;
 				!isset($row->wpw_previous_total_bandwidth) || !isset($row->wpw_monthly_bandwidth) || 
 				!isset($row->wpw_report_updated) || !isset($row->wpw_date_expires) ) {
 						
-			throw new MWException( 'Cannot construct the Wikiplace from the supplied row (missing field)' );
+			throw new MWException( 'Cannot construct the Wikiplace from the supplied row, missing field.' );
 		}
 			
 		return new self ( intval($row->wpw_id) , intval($row->wpw_owner_user_id) ,  intval($row->wpw_home_page_id), intval($row->wpw_wps_id),
@@ -427,7 +416,7 @@ WHERE wpw_report_updated < $outdated ;" ;
 	public static function getById($id) {
 				
 		if ( ($id === null) || !is_int($id) || ($id < 1) ) {
-			throw new MWException( 'Cannot fetch Wikiplace matching the identifier (invalid identifier)' );
+			throw new MWException( 'Cannot search Wikiplace, invalid identifier.' );
 		}
 		
 		return self::getFromDb( array( 'wpw_id' =>  $id ) );
@@ -489,7 +478,7 @@ WHERE wpw_report_updated < $outdated ;" ;
 	public static function getByName($name) {
 				
 		if ( ($name === null) || !is_string($name) ) {
-			throw new MWException( 'Cannot fectch Wikiplace matching the name (invalid string)' );
+			throw new MWException( 'Cannot search Wikiplace, invalid name.' );
 		}
 		
 		return self::getFromDb( array('page_title' => $name) );
@@ -506,7 +495,7 @@ WHERE wpw_report_updated < $outdated ;" ;
 	public static function getAllOwnedByUserId($user_id) {
 		
 		if ( ($user_id === null) || !is_int($user_id) || ($user_id < 1) ) {
-			throw new MWException( 'Cannot fetch Wikiplaces owned by the specified user (invalid user identifier)' );
+			throw new MWException( 'Cannot search Wikiplaces, invalid owner user identifier.' );
 		}	
 		
 		return self::getFromDb( array( 'wpw_owner_user_id' =>  $user_id ), true);
@@ -516,48 +505,13 @@ WHERE wpw_report_updated < $outdated ;" ;
 	
 	
 	/**
-	 *
-	 * @param Title $title The homepage of this wikiplace
-	 */
-/*	public function setHomepage($title) {
-		
-		if ( ($title === null) || !($title instanceof Title) ) {
-			throw new MWException('cannot set homapge, invalid Title argument');
-		}
-		
-		$page_id = $title->getArticleID();
-		
-		$dbw = wfGetDB(DB_MASTER);
-		$dbw->begin();
-		$success = $dbw->update(
-			'wp_wikiplace',
-			array( 'wpw_home_page_id' => $page_id ),
-			array( 'wpw_id' => $this->wpw_id) );
-						
-
-		$dbw->commit();
-
-		if ( !$success ) {	
-			throw new MWException('Error while saving Wikiplace to database.');
-		}		
-
-		$this->wpw_home_page_id = $page_id;
-		
-	}
-*/	
-	
-				/**
-	 * 
-	 * @param Title $title
-	 * @return boolean/WpWikiplace Wikiplace Object or true if this page is the homepage or false if correpsond to nothing 
-	 */
-	
-	/**
-	 * Get the container Wikiplace, or null if the title db key can't belong to an existing Wikiplace
-	 * 
-	 * @param string $db_key can be $wikipage->getTitle()->getDBkey()
-	 * @param int $namespace can be $wikipage->getTitle()->getNamespace()
-	 * @return WpWikiplace 
+	 * Parse the db_key depending on the namespace, extract the name of the wikiplace
+	 * that the page should belong, and search a Wikiplace with that name. 
+	 * Note that this function can return a Wikiplace even if the page doesn't not already 
+	 * belongs to ( = newly created page ).
+	 * @param string $db_key should be $wikipage->getTitle()->getDBkey()
+	 * @param int $namespace should be $wikipage->getTitle()->getNamespace()
+	 * @return WpWikiplace The Wikiplace or null the page doesn't belong to an exsiting Wikiplace
 	 */
 	public static function extractWikiplaceRoot($db_key, $namespace) {
 		
@@ -575,7 +529,7 @@ WHERE wpw_report_updated < $outdated ;" ;
 				break;
 				
 			default:
-				throw new MWException('this namespace cannot store wikiplace page');
+				throw new MWException("The namespace $namespace cannot store Wikiplaces.");
 		}
 		
 		if ( ! isset($hierarchy[0]) ) {
@@ -588,9 +542,9 @@ WHERE wpw_report_updated < $outdated ;" ;
 
 	
 	/**
-	 * Trigger homepage creation, wich will trigger Wikiplace creation.
+	 * Trigger homepage creation, which will than trigger Wikiplace creation using hook.
 	 * @param string $name
-	 * @return Status The created homepage Title as Status value if OK
+	 * @return Title/string The created homepage Title if creation OK, a string message if an error occured
 	 */
 	public static function initiateCreation($name) {
 		
@@ -601,56 +555,38 @@ WHERE wpw_report_updated < $outdated ;" ;
 	}
 	
 	/**
-	 * Create a wikiplace from this homepage, owned by this user
+	 * Create a wikiplace from homepage, owned by this user
 	 * @param WikiPage $homepage
-	 * @param int $user_id
-	 * @return Status 
+	 * @param WpSubscription $subscription
+	 * @return WpWikiplace The created Wikiplace, or null if a db error occured
 	 */
-	public static function create($homepage, $user_id) {
+	public static function create($homepage, $subscription) {
 		
-		if ( ($homepage === null) || ($user_id === null) ) {
-			throw new MWException( 'Cannot create Wikiplace (missing argument)' );
+		if ( !($homepage instanceof WikiPage) || !($subscription instanceof WpSubscription) ) {
+			throw new MWException( 'Cannot create Wikiplace, invalid argument.' );
 		}
 		
-		if ( !($homepage instanceof WikiPage) || !is_int($user_id) ) {
-			throw new MWException( 'Cannot create Wikiplace (invalid argument)' );
-		}
-		
-		$subscription = WpSubscription::getActiveByUserId($user_id);
-		
-		if ( $subscription === null ) {
-			$msg = 'The user has no active subscription. Cannot create Wikiplace.';
-			$status = Status::newFatal($msg);
-			$status->value = $msg;
-			return $status;
-		}
-		
-		$homepageTitle = $homepage->getTitle();
-		$homepageId = $homepageTitle->getArticleID();
-		$homepageName = $homepageTitle->getDBkey();
-		$now = WpSubscription::getNow();
+		$user_id = $subscription->get('wps_buyer_user_id');
+		$homepage_id = $homepage->getId();
+		$wps_id = $subscription->get('wps_id');
+		$wpw_report_updated = WpSubscription::getNow();
+		$wpw_date_expires = self::calculateNextDateExpiresFromSubscription($subscription);
 		
 		$dbw = wfGetDB(DB_MASTER);
-		
 		$dbw->begin();
-		
-        // With PostgreSQL, a value is returned, but null returned for MySQL because of autoincrement system
         $id = $dbw->nextSequenceValue('wpw_id');
-		
-		$wps_id = $subscription->get('wps_id');
-		$wpw_date_expires = self::calculateDateExpiresFromSubscription($subscription);
-		
+			
         $success = $dbw->insert('wp_wikiplace', array(
 			'wpw_id' => $id,
 			'wpw_owner_user_id' => $user_id,
-			'wpw_home_page_id' => $homepageId,
+			'wpw_home_page_id' => $homepage_id,
 			
 			'wpw_wps_id' => $wps_id,
 			'wpw_previous_total_page_hits' => 0,
 			'wpw_monthly_page_hits' => 0,
 			'wpw_previous_total_bandwidth' => 0,
 			'wpw_monthly_bandwidth' => 0,
-			'wpw_report_updated' => $now,
+			'wpw_report_updated' => $wpw_report_updated,
 			'wpw_date_expires' => $wpw_date_expires
 		));
 
@@ -660,42 +596,35 @@ WHERE wpw_report_updated < $outdated ;" ;
 		$dbw->commit();
 		
 		if ( !$success ) {	
-			$msg = 'Problem while creating Wikiplace record.';
-			$status = Status::newFatal($msg);
-			$status->value = $msg;
-			return $status;
+			return null;
 		}
 		
-		$wp = new self( $id, $user_id, $homepageId,
-				$wps_id, 0, 0, 0, 0, $now, $wpw_date_expires);
+		$wp = new self( 
+				$id,
+				$user_id,
+				$homepage_id,
+				$wps_id,
+				0,
+				0,
+				0,
+				0,
+				$wpw_report_updated,
+				$wpw_date_expires);
 		$wp->fetchName($homepage);
-				
-		$new_wp_page = WpPage::create($homepage, $wp);
-		
-		if ($new_wp_page === null) {
-			$msg = 'Problem while associating the homepage to the newly created Wikiplace .';
-			$status = Status::newFatal($msg);
-			$status->value = $msg;
-			return $status;
-		}
-		
-		$status = $wp->forceArchiveAndResetUsage($now);
-		if ( ! $status->isGood() ) {
-			$msg = 'Problem while initiating Wikiplace usage.';
-			$status = Status::newFatal($msg);
-			$status->value = $msg;
-			return $status;			
-		}
-				
-		return Status::newGood($wp);
+
+		return $wp;
 			
 	}
 	
-	
+	/**
+	 *
+	 * @param int $user_id
+	 * @return int Return 0 if the user doesn't exist or doesn't have any wikiplaces
+	 */
 	public static function countWikiplacesOwnedByUser($user_id) {
 				
 		if ( ($user_id === null) || !is_int($user_id) || ($user_id < 1) ) {
-			throw new MWException( 'invalid user identifier' );
+			throw new MWException( 'Invalid user identifier.' );
 		}	
 		
 		$dbr = wfGetDB(DB_SLAVE);
@@ -723,17 +652,22 @@ WHERE wpw_report_updated < $outdated ;" ;
 	 * wikiplace creation quota is not exceeded and 
 	 * page creation quota is not exceeded
 	 * @param type $user_id
-	 * @return boolean
+	 * @return boolean/string True if user can, string message explaining why she can't:
+	 * <ul>
+	 * <li><b>wp-no-active-sub</b> user has no active subscription</li>
+	 * <li><b>wp-wikiplace-quota-exceeded</b> wikiplace creation quota exceeded</li>
+	 * <li><b>wp-page-quota-exceeded</b> page creation quota exceeded</li>
+	 * </ul>
 	 */
 	public static function userCanCreateWikiplace($user_id) {
 		
 		if ( !is_int($user_id) || ($user_id < 1)) {
-			throw new MWException('cannot check wikiplace creation, invalid argument');
+			throw new MWException('Cannot check if user can create a Wikiplace, invalid user identifier.');
 		}
 		
 		$sub = WpSubscription::getActiveByUserId($user_id);
 		if ($sub === null) { 
-			return false;
+			return 'wp-no-active-sub';
 		}	
 
 		$plan = $sub->get('plan');
@@ -742,22 +676,26 @@ WHERE wpw_report_updated < $outdated ;" ;
 		$user_wikiplaces_nb = WpWikiplace::countWikiplacesOwnedByUser($user_id);
 
 		if ($user_wikiplaces_nb >= $max_wikiplaces) { 
-			return false;
+			return 'wp-wikiplace-quota-exceeded';
 		}
 
 		$max_pages = $plan->get('wpp_nb_wikiplace_pages');
 		$user_pages_nb = WpPage::countPagesOwnedByUser($user_id);
 
 		if ($user_pages_nb >= $max_pages) { 
-			return false;
+			return 'wp-page-quota-exceeded';
 		}
 
 		return true; // all ok
 
 	}
 	
-	
-	public static function calculateDateExpiresFromSubscription($subscription) {
+	/**
+	 *
+	 * @param WpSubscription $subscription
+	 * @return string MySQL DATETIME string format 
+	 */
+	public static function calculateNextDateExpiresFromSubscription($subscription) {
 		
 		// contains the needed day/hour/minute/second
 		$end = date_create_from_format( 'Y-m-d H:i:s', $subscription->get('wps_end_date'), new DateTimeZone( 'GMT' ) );
@@ -776,6 +714,5 @@ WHERE wpw_report_updated < $outdated ;" ;
 		
 	}
 	
-	
-	
+
 }

@@ -115,9 +115,10 @@ class SpecialWikiplacesPlan extends SpecialPage {
   
 				$out->setPageTitle( wfMessage( 'wp-plan-sub-pagetitle' )->text());
 				
-				if (!WpSubscription::canMakeAFirstSubscription($user->getId())) { 
+				$check = WpSubscription::canSubscribe($user);
+				if ( $check !== true ) { 
 					// do not process submitted datas if cannot make a first sub
-					$out->addHTML(wfMessage( 'wp-plan-sub-nomore' )->text());
+					$out->addHTML(wfMessage( 'wp-cannot-subscribe-'.$check )->text());
 
 					
 				} else {
@@ -309,13 +310,12 @@ class SpecialWikiplacesPlan extends SpecialPage {
 			throw new MWException( 'Cannot process to subscription, plan not found data.' );
 		}
 		
-		$status = WpSubscription::subscribe( $this->getUser() , $plan );
-		
-		if ( ! $status->isGood() ) {
-			return wfMessage('wp-err-unknown');
+		$subscription = WpSubscription::subscribe( $this->getUser() , $plan );
+		if ( ! ( $subscription instanceof WpSubscription ) ) {
+			return wfMessage($subscription)->text();
 		}
 		
-		$this->newlySubscribed = $status->value;
+		$this->newlySubscribed = $subscription;
 		return true;
 		
 	}
