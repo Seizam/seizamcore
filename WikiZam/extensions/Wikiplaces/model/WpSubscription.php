@@ -378,9 +378,31 @@ class WpSubscription {
 	}
 	
 	/**
+	 * <b>INVITATION SYSTEM TO BE IMPLEMENTED HERE</b>
+	 * Check that a user can subscribe to a specific plan.
+	 * Invitation system can take place here, if we use e-mail address as invitation identifier
+	 * @todo: add invitation system here
+	 * @param User $user
+	 * @param int $subscription_id
+	 * @return boolean 
+	 */
+	public static function canSubscribeTo($user, $plan_id) {
+		
+		$dbr = wfGetDB(DB_SLAVE);
+		$now =  $dbr->addQuotes( wfTimestamp(TS_DB) );
+		$conds = $dbr->makeList(array(
+			"wpp_id" => $plan_id,
+			"wpp_start_date <= $now",
+			"wpp_end_date > $now"), LIST_AND);
+		
+		$result = $dbr->selectRow( 'wp_plan', '*',	$conds, __METHOD__ );
+		return ( $result !== false );
+
+	}
+	
+	/**
 	 * Can the user take a subscription? (not renewal or a plan change, but a simple subscription)
 	 * @param User $user
-	 * @param DatabaseBase $db_accessor If null, will use wfGetDB(DB_SLAVE)
 	 * @return boolean/string true = can subscribe , string = reason (i18n message key) why cannot subscribe:
 	 * <ul>
 	 * <li>wp-subscribe-loggedout</li>User need to be logged in to subscribe
@@ -388,7 +410,7 @@ class WpSubscription {
 	 * <li>wp-subscribe-already</li>User has already an active or a "payment pending" subscription
 	 * </ul>
 	 */
-	public static function canSubscribe($user, $db_accessor = null) {
+	public static function canSubscribe($user) {
 				
 		if ( ! $user instanceof User ) {
 			throw new MWException( 'Invalid user argument.' );
@@ -402,7 +424,7 @@ class WpSubscription {
 			return 'wp-subscribe-email';
 		}
 		
-		$dbr = ( $db_accessor != null ? $db_accessor : wfGetDB(DB_SLAVE) ) ;
+		$dbr = wfGetDB(DB_MASTER) ;
 
 		$now =  $dbr->addQuotes( self::getNow() );
 		$conds = $dbr->makeList( array(
@@ -607,15 +629,10 @@ class WpSubscription {
 	
 	/**
 	 * Subscribe to a plan (= no current active plan)
+	 * WARNING, you should ensure the user can subscribe before calling this: use canSubscribe() and canSubscribeTo()
 	 * @param User $use The user who buy the plan, and will use it 
 	 * @param WpPlan $plan
-	 * @return WpSubscription/string the newly created subscription if ok, a string message if an error occured
-	 * <ul>
-	 * <li>wp-db-error</li>
-	 * <li>wp-subscribe-loggedout User need to be logged in to subscribe</li>
-	 * <li>wp-subscribe-email User has not yet confirmed her email address</li>
-	 * <li>wp-subscribe-already User has already an active or a "payment pending" subscription</li>
-	 * </ul>
+	 * @return WpSubscription the newly created subscription if ok, or null if an error occured (db error)
 	 */
 	public static function subscribe($user, $plan) {
 		
@@ -628,12 +645,12 @@ class WpSubscription {
 		$db_master = $dbw = wfGetDB(DB_MASTER);
 		// is it a first subscription(not a plan change ?
 		
-		// if the user can make a first subscription, this is a first subscription (will be activated as soon as paid)
+/*		// if the user can make a first subscription, this is a first subscription (will be activated as soon as paid)
 		$canSubscribe = self::canSubscribe($user, $db_master);
 		if ( $canSubscribe !== true ) {			
 			return $canSubscribe;
 		}
-			
+*/			
 		// this is a first subscriptioon
 			
 		$tmr = self::createTMR($user_id, $user->getEmail(), $plan);
@@ -654,8 +671,8 @@ class WpSubscription {
 						$plan->get('wpp_renew_wpp_id'),
 						$db_master
 				);
-				if ( ! $sub == null ) {
-					return 'wp-db-error';
+				if ( $sub == null ) {
+					return null;
 				}
 				self::addSubscribersGroupToUser($user);
 				if ( ! $sub->sendActivationNotification() ) {

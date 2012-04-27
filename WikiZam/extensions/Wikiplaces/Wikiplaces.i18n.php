@@ -7,117 +7,52 @@ $messages = array();
  */
 $messages['en'] = array(
 	
-	'wp-plan-name-test_plan_normal' => "Test plan",
-	'wp-plan-name-test_plan_plus' => "Test pan +",
-	'wp-plan-name-test_plan_invitation' => "Invitation only test plan",
+	'wikiplacesadmin' => 'Wikiplaces administration',
+	'subscriptions' => 'My Subscriptions',
+	'offers' => 'Offers',
 	
-	'wp_tmr_desc_sim_credit_10' => 'Wikiplace plan test, simulate 10 EUR credit to user',
-
-	'wp-plan-month' => "months",
-
-	'wp-nlogin-pagetitle' => "Please login",
-	'wp-nlogin-link-text' => "log in ",
-	'wp-nlogin-text' => "Please $1 to access this page.",
-
-	'wp-csp-pagetitle'  => "Create a new Wikiplace page",
-	'wp-csp-no-wp' => "You need to create a Wikiplace before",
-	'wp-csp-success-link-wt' => "Page created, [[:\$1|click here]] to access it.",
-	'wp-csp-submit' => "Go",
-	'wp-csp-perr-notvalidwp' => "The Wikiplace was not valid, please retry.",
-	'wp-csp-perr-notvalidtitle' => "The page was not valid, please retry.",
-
-
-	'wp-lwp-pagetitle' => "My Wikiplaces",
-
-	'wp-tl-lwp'  => "My Wikiplaces",
-	'wp-tl-cwp'  => "New Wikiplace",
-	'wp-tl-csp'  => "New page",
-
-	'wp-err-unknown' => "An error occured",
-	'wp-name-already-exists' => "The page already exists, please retry with a different name.",
-	'wp-need-active-sub' => 'You need to have an active subscription to do this.',
+	'wp-internal-error' => 'An error occured. Please try again.',
 	
+	'wp-nologintext' => 'You need to be <span class="plainlinks">[{{fullurl:{{#Special:UserLogin}}|returnto=$1}} logged in]</span> to continue.',
 
-	'wp-cwp-pagetitle'         => "New Wikiplace",
-	'wp-cwp-success-link-wt'   => "New Wikiplace created, [[:\$1|click here]] to access its homepage.",
-	'wp-cwp-f-submit'          => "Go",
-	'wp-cwp-f-twpname'         => "Enter the name of the new Wikiplace",
-	'wp-cwp-err-cannot-create' => "You need to have an active subscription and creation quotas to create a Wikiplace.",
+	'wp-subscribe-new' => 'Take a subscription',
+	'wp-subscribe-change' => 'Change plan',
+	'wp-subscribe-renew' => 'Choose renewal plan',
+	'wp-subscribe-list' => 'Subscription history',
 	
-	'wp-csp-f-swp'            => "Select one of your Wikiplace",
-	'wp-csp-f-tspname'        => "Enter the name of the new Wikiplace page",
-	'wp-csp-err-nosub'        => "You need to have an active subscription to create a new Wikiplace page.",
+	'wp-subscribe-already' => 'You already subscribed to a plan.',
+	'wp-subscribe-email' => 'Before taking a subscription, you need to validate your e-mail address. Please follow the instructions in the e-mail you have received when creating your account, to ensure that you can be contacted.',
 
-	'wp-plan-sub-pagetitle'  => "Subscribe to a Wikiplace plan",
-	'wp-plan-sub-nomore'     => "You already subscribe to a plan. You can only change or renew it",
-	'wp-plan-sub-tmr-status-ok' => 'Your Seizam account has been succesfully debited.',
-	'wp-plan-sub-tmr-status-pe' => 'Your payment is pending. [[Special:ElectronicPayment|Please credit your Seizam account by cliking here]]',
-	'wp-plan-sub-f-splan'   => 'Select a plan',
+	'wp-select-a-plan' => 'Please select an offer',
+	'wp-invalid-plan' => 'This plan is invalid.',
+	'wp-cannot-subscribe-plan' => 'You cannot subscribe to this plan. Please choose another one.',
 	
-	'wp-sub-unactive' => 'not active',
-	'wp-sub-active' => 'active',
-	'wp-sub-tmrstatus-OK' => 'paid',
-	'wp-sub-tmrstatus-PE' => 'pending',
-	'wp-sub-tmrstatus-KO' => 'canceled',	
-	'wp-plan-sub-success' => 'You successfully subscribed to the Wikiplace plan',
+	'wp-plan-desc-short' => '$1: $2 $3 for $4 months',
+	'wp-plan-subscribe-go' => 'Subscribe now!',
 	
-	'wp-sub-activation-email-subj' => 'Your subscription is now active',
-	'wp-sub-activation-email-body' => '$1,
-Your subscription to the offer "$2" is now active.
-It will ends at $3.',
-	'wp-sub-tmrko-email-subj' => 'Payment error',
-	'wp-sub-tmrko-email-body' => '$1,
-We inform you that your payment was rejected. Accordingly, your subscription is not active.
-To continue using your services, please take out a new offer.',
+	'wp-subscribe-success' => 'You successfully subscribed to our offer $1.',
+	'wp-subscribe-tmr-ok' => 'Your payment has been validated, so you can start using your plan.',
+	'wp-subscribe-tmr-pe' => 'Your payment is pending. [[Special:ElectronicPayment|Please credit your Seizam account]]. Once paid, your plan will be activated and you will be able to use it.',
+	'wp-subscribe-tmr-other' => 'Please check [[Special:Transactions|your transactions]].',
 	
-	'wp-plan-sub-tmr-status-other' => "error",
-	'wp-plan-sub-submit'  => "Go",
+	
+	
+	
+	'wp-list-all-my-wp' => 'My Wikiplaces',
+	'wp-create-wp' => 'New Wikiplace',
+	'wp-create-subpage' => 'New Wikiplace subpage',
+	
+	
+	
+	// wp-transaction-plan-XXXX for each plan in database, with XXXX = wpp_name field value
 
-	'wp-plan-chg-pagetitle' => "Change a Wikiplace plan",
-	'wp-plan-loffers-pagetitle'  => "Available offers",
-	'wp-plan-lmysubs-pagetitle'  => "My subscriptions",
-
-	'wp-plan-tl-subscribe'  => "Subscribe to a plan",
-	'wp-plan-tl-mysubs'  => "My subscriptions",
-	'wp-plan-tl-chg'  => "Change my plan",
-	'wp-plan-tl-loffers'  => "Available offers",	
 	
-	'wpstp-wps_start_date' => "Start",
-	'wpstp-wpp_name' => "Plan name",
-	'wpstp-wps_active' => "",
-	'wpstp-wps_tmr_status' => "Paiement status",
-	'wpstp-wpp_nb_wikiplaces' => "Wikiplaces",
-	'wpstp-wpp_nb_wikiplace_pages' => "Pages",
-	'wpstp-wpp_diskspace' => "Diskspace",
-	'wpwtp-wpw_monthly_page_hits' => "Monthly hits",
-	'wpwtp-wpw_monthly_bandwidth' => "Monthly bandwidth",
-	'wpstp-wps_end_date' => "End",
+	/** @todo: remove the next lines after tests complete */
+	'wp-plan-name-test-normal' => "Test plan",
+	'wp-plan-name-test-plus' => "Test plan +",
+	'wp-plan-name-invitation' => "Invitation only test plan",
+	'wp-transaction-test-add-10' => 'Credit 10 EUR for testing purpose',
 	
-	'wpwtp-page_title' => 'Wikiplace',
-	'wpwtp-count(*)' => 'Subpages',
-	'wpwtp-wpw_report_updated' => 'Date of value',
-	'wpwtp-wpw_date_expires' => 'Reset date',
-	
-	'wp-consultwp-pagetitle' => 'Wikiplace $1',
-	
-	'wppatp-subpage_title' => 'Name',
-    'wppatp-subpage_namespace' => 'Type',
-    'wppatp-subpage_touched' => 'Modification Date',
-    'wppatp-subpage_counter' => 'Total hits',
-    
-    
-    'wp-seeall' => 'see all',
-    'wp-see' => 'see',
-    'wp-create' => 'create',
-    'wp-edit' => 'edit',
-    'wp-restrict' => 'restrict',
-    'wp-talk' => 'talk',
-    'wp-history' => 'history',
-    'wp-createpage' => 'Create a new Page',
-    'wp-createwp' => 'Create a new Wikiplace',
-    'wp-items' => 'items',
-    'wp-homepage' => 'Homepage',
-	'wp-subpage' => 'Subpage',
 );
 
 /*  Message documentation

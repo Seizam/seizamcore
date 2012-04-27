@@ -223,7 +223,7 @@ class WikiplacesHooks {
 				array( 'read') );
 		$restrictions = array();
 		foreach ( $actions_to_rectrict as $action) {
-			$restrictions[$action] = 'owner';
+			$restrictions[$action] = WP_DEFAULT_RESTRICTION_LEVEL;
 		} 
 
 		$ok = false;

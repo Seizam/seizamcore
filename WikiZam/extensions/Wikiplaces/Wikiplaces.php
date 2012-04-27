@@ -24,7 +24,9 @@ $_dir = dirname( __FILE__ ).'/';
 # Load extension's classes
 $wgAutoloadClasses['WikiplacesHooks'] = $_dir . 'Wikiplaces.hooks.php';
 $wgAutoloadClasses['SpecialWikiplaces'] = $_dir . 'SpecialWikiplaces.php';
-$wgAutoloadClasses['SpecialWikiplacesPlan'] = $_dir . 'SpecialWikiplacesPlan.php';
+$wgAutoloadClasses['SpecialSubscriptions'] = $_dir . 'SpecialSubscriptions.php';
+$wgAutoloadClasses['SpecialOffers'] = $_dir . 'SpecialOffers.php';
+$wgAutoloadClasses['SpecialWikiplacesAdmin'] = $_dir . 'SpecialWikiplacesAdmin.php';
 
 $wgAutoloadClasses['WpWikiplace'] = $_dir . 'model/WpWikiplace.php';
 $wgAutoloadClasses['WpWikiplacesTablePager'] = $_dir . 'model/WpWikiplacesTablePager.php';
@@ -35,10 +37,7 @@ $wgAutoloadClasses['WpPagesTablePager'] = $_dir . 'model/WpPagesTablePager.php';
 $wgAutoloadClasses['WpPlan'] = $_dir . 'model/WpPlan.php';
 
 $wgAutoloadClasses['WpSubscription'] = $_dir . 'model/WpSubscription.php';
-$wgAutoloadClasses['WpOldSubscription'] = $_dir . 'model/WpOldSubscription.php';
 $wgAutoloadClasses['WpSubscriptionsTablePager'] = $_dir . 'model/WpSubscriptionsTablePager.php';
-
-$wgAutoloadClasses['WpOldUsage'] = $_dir . 'model/WpOldUsage.php';
 
 
 
@@ -48,11 +47,15 @@ $wgExtensionMessagesFiles['Wikiplaces'] = $_dir . 'Wikiplaces.i18n.php';
 # Name aliases
 $wgExtensionAliasesFiles['Wikiplaces'] = $_dir . 'Wikiplaces.alias.php';
 
-# Add the SpecialPage
+# Add SpecialPages
 $wgSpecialPages['Wikiplaces'] = 'SpecialWikiplaces';
 $wgSpecialPageGroups['Wikiplaces'] = 'other';
-$wgSpecialPages['WikiplacesPlan'] = 'SpecialWikiplacesPlan';
-$wgSpecialPageGroups['WikiplacesPlan'] = 'other';
+$wgSpecialPages['Subscriptions'] = 'SpecialSubscriptions';
+$wgSpecialPageGroups['Subscriptions'] = 'other';
+$wgSpecialPages['WikiplacesAdmin'] = 'SpecialWikiplacesAdmin';
+$wgSpecialPageGroups['WikiplacesAdmin'] = 'other';
+$wgSpecialPages['Offers'] = 'SpecialOffers';
+$wgSpecialPageGroups['Offers'] = 'other';
 
 # Attach our own functions to hooks
 $wgHooks['LoadExtensionSchemaUpdates'][] = 'WikiplacesHooks::onLoadExtensionSchemaUpdates'; // Schema updates for update.php
@@ -61,7 +64,13 @@ $wgHooks['userCan'][] = 'WikiplacesHooks::userCanCreate';
 $wgHooks['TransactionUpdated'][] = 'WikiplacesHooks::onTransactionUpdated';
 $wgHooks['IsOwner'][] = 'WikiplacesHooks::isOwner';
 
+define('WP_ADMIN_RIGHT', 'wp-admin');
+$wgAvailableRights[] = WP_ADMIN_RIGHT; 
+$wgGroupPermissions['sysop'][WP_ADMIN_RIGHT] = true;
 
-// define the group to put the user in when she makes her first subscription
-// (not removed later, even if she has no more active subscription)
+// define the group in which to add the user in when she makes her first subscription
+// (whe will not be removed, even if she has no more active subscription)
 define('WP_SUBSCRIBERS_USER_GROUP', 'artist');
+
+// all applicable actions except 'read' will be set to this level when creating a page/file in wikiplace namespaces
+define('WP_DEFAULT_RESTRICTION_LEVEL', 'owner');

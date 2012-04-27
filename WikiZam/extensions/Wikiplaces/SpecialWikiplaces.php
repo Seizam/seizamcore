@@ -1,20 +1,33 @@
 <?php
 
 class SpecialWikiplaces extends SpecialPage {
-	const ACTION_CREATE_WIKIPLACE = 'create_wikiplace';
-	const ACTION_CREATE_WIKIPLACE_PAGE = 'create_page';
-	const ACTION_LIST_WIKIPLACES = 'list_wikiplaces';
-	const ACTION_CONSULT_WP = 'consult';
+	
+	const TITLE_NAME = 'Wikiplaces';
+	
+	const ACTION_CREATE_WIKIPLACE = 'create';
+	const ACTION_CREATE_SUBPAGE = 'create_page';
+	const ACTION_LIST_WIKIPLACES = 'list'; // == no $par
+	const ACTION_CONSULT_WP = 'consult'; // == ( $par = WikiplaceName )
 
 	private $newlyCreatedWikiplace;
 	private $futurNewPage;
 
+	
 	public function __construct() {
-		parent::__construct('Wikiplaces');
+		parent::__construct( self::TITLE_NAME );
 	}
+	
+	public function userCanExecute( User $user ) {
+		if ( wfReadOnly() ) {
+			throw new ReadOnlyError();
+		}
 
-	private static function generateLink($to, $text) {
-		return Html::rawElement('a', array('href' => $to, 'class' => 'sz-wp-link'), $text);
+		if ( $user->isBlocked() ) {
+			$block = $user->mBlock;
+			throw new UserBlockedError( $block );
+		}
+
+		return true;
 	}
 
 	/**
@@ -25,123 +38,58 @@ class SpecialWikiplaces extends SpecialPage {
 	public function execute($par) {
 
 		$this->setHeaders(); // sets robotPolicy = "noindex,nofollow" + set page title
-
-		$out = $this->getOutput();
+		
 		$user = $this->getUser();
-
-		// Anons can't use this special page
-		if ($user->isAnon()) {
-			$out->setPageTitle(wfMessage('wp-nlogin-pagetitle')->text());
-			$link = Linker::linkKnown(
-							SpecialPage::getTitleFor('Userlogin'), wfMessage('wp-nlogin-link-text')->text(), array(), array('returnto' => $this->getTitle()->getPrefixedText())
-			);
-			$out->addHTML(wfMessage('wp-nlogin-text')->rawParams($link)->parse());
+		
+		if ( ! $user->isLoggedIn() ) {
+			$this->getOutput()->showErrorPage( self::TITLE_NAME, 'wp-nologintext', array( $this->getTitle()->getPrefixedDBkey() ) );
 			return;
 		}
+		
+		// This will throw exceptions if there's a problem
+		$this->userCanExecute( $this->getUser() );
 
-		// check that the user is not blocked
-		if ($user->isBlocked()) {
-			$out->blockedPage();
-		}
+		/** @todo: replace this header with something nicer */
+		$this->getOutput()->setSubtitle(Html::rawElement('span', array(), $this->getLang()->pipeList(array(
+				Linker::linkKnown($this->getTitle(self::ACTION_LIST_WIKIPLACES), wfMessage( 'wp-list-all-my-wp')->text()),
+				Linker::linkKnown($this->getTitle(self::ACTION_CREATE_WIKIPLACE), wfMessage( 'wp-create-wp')->text()),
+				Linker::linkKnown($this->getTitle(self::ACTION_CREATE_SUBPAGE), wfMessage( 'wp-create-subpage')->text()),
+				Linker::linkKnown(SpecialPage::getTitleFor(SpecialSubscriptions::TITLE_NAME), wfMessage( 'subscriptions' )->text()),
+			))));
 
-		if (!$this->userCanExecute($user)) {
-			$this->displayRestrictionError();
-			return;
-		}
+		$action = strtolower($this->getRequest()->getText('action', $par));
+		switch ($action) {
 
-		// Starts display
-
-		$out->setSubtitle($this->buildToolLinks($this->getLang())); // set a nav bar as subtitle
-		// Handle request
-		// what to do is specified in the url (as a subpage) or somewhere in the request (this has the priority)
-		$do = strtolower($this->getRequest()->getText('action', $par));
-		switch ($do) {
-
-
-			case self::ACTION_CREATE_WIKIPLACE :
-
-				$out->setPageTitle(wfMessage('wp-cwp-pagetitle')->text());
-
-				if (WpSubscription::getActiveByUserId($this->getUser()->getId()) === null) {
-
-					$out->addHTML(wfMessage('wp-need-active-sub')->text());
-				} else {
-
-					$form = $this->getCreateWikiplaceForm($this->getTitle(self::ACTION_CREATE_WIKIPLACE));
-
-					if ($form->show()) { // true = submitted and correctly processed, false = not submited or error
-						$out->addHTML(wfMessage('wp-cwp-success-link-wt', wfEscapeWikiText($this->futurNewPage->getText()))->parse());
-					}
-				}
-
-				break;
-
-
-			case self::ACTION_CREATE_WIKIPLACE_PAGE :
-
-				$out->setPageTitle(wfMessage('wp-csp-pagetitle')->text());
-
-				if (WpSubscription::getActiveByUserId($this->getUser()->getId()) === null) {
-
-					$out->addHTML(wfMessage('wp-need-active-sub')->text());
-				} else {
-
-					$wikiplaces = WpWikiplace::getAllOwnedByUserId($this->getUser()->getId());
-
-					if (count($wikiplaces) == 0) {
-						// need at least one Wikiplace
-						$out->addHTML(wfMessage('wp-csp-no-wp')->text());
-					} else {
-
-						$form = $this->getCreateSubPageForm(
-								$this->getTitle(self::ACTION_CREATE_WIKIPLACE_PAGE), $wikiplaces);
-
-						if ($form->show()) {
-							// creation success
-							$out->addHTML(wfMessage('wp-csp-success-link-wt', wfEscapeWikiText($this->futurNewPage->getPrefixedText()))->parse());
-						}
-					}
-				}
-
-				break;
-
-
-			case self::ACTION_CONSULT_WP :
-
-				// var_export(WpPage::countPagesOwnedByUser(12).' pages, '.WpPage::getDiskspaceUsageByUser(12).' Mb for files ');
-
-				$name = $this->getRequest()->getText('name', '');
-
-				if (strlen($name) > 1) {
-					$out->setPageTitle(wfMessage('wp-consultwp-pagetitle', $name)->parse());
-					$tp = new WpPagesTablePager();
-                    $tp->setWPName($name);
-					$tp->setSelectConds(array(
-						'wpw_owner_user_id' => $user->getID(),
-						'homepage.page_title' => $name));
-					$out->addHTML($tp->getWholeHtml());
-					break;
-				} // if not, will display the default just below
-
-
-			case self::ACTION_LIST_WIKIPLACES :
-			default : // (default  =  action == nothing or "something we cannot handle")
-
-				$out->setPageTitle(wfMessage('wp-lwp-pagetitle')->text());
-				$tp = new WpWikiplacesTablePager();
-				$tp->setSelectConds(array('wpw_owner_user_id' => $user->getId()));
-				$out->addHTML($tp->getWholeHtml());
-
-				break;
+			case self::ACTION_LIST_WIKIPLACES:
+			default:
+				$this->displayList();
+	
 		}
 	}
+	
+	private function displayList() {
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	/**
 	 *
 	 * @param Language $language
 	 * @return type 
 	 */
-	public function buildToolLinks($language) {
+/*	public function buildToolLinks($language) {
 
 		if (($language == null) || !($language instanceof Language))
 			return ''; //avoid error message on screen, but cannot display if $language not correct, nothing displayed is our error message
@@ -150,10 +98,10 @@ class SpecialWikiplaces extends SpecialPage {
 									Linker::linkKnown($this->getTitle(self::ACTION_LIST_WIKIPLACES), wfMessage('wp-tl-lwp')->text()),
 									Linker::linkKnown($this->getTitle(self::ACTION_CREATE_WIKIPLACE), wfMessage('wp-tl-cwp')->text()),
 									Linker::linkKnown($this->getTitle(self::ACTION_CREATE_WIKIPLACE_PAGE), wfMessage('wp-tl-csp')->text()),
-									Linker::linkKnown(SpecialPage::getTitleFor('WikiplacesPlan'), 'WikiplacesPlan'),
+									,
 								)))->text());
 	}
-
+*/
 	/**
 	 *
 	 * @param type $submitTitle
