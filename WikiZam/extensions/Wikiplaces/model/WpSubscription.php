@@ -900,11 +900,20 @@ class WpSubscription {
 							$this->set('wps_start_date',	$start, false ); // 3rd param = false = do not update db now
 							$this->set('wps_end_date', $end, false ); 
 							$this->set('wps_active',	true, false ); 
-							$this->sendActivationNotification();
-						} 
-						// if startDate not null, this is a renewal so it's already activated
-						
-						$this->set('wps_tmr_status', 'OK'); // no 3rd p = update db now
+							$this->set('wps_tmr_status', 'OK'); // no 3rd p = update db now
+							try {
+								$this->sendActivationNotification();
+							} catch (Exception $e) {
+								wfDebugLog('wikiplaces', 'onTransactionUpdated: ERROR SENDING EMAIL "'.$e->getMessage().'"'
+										.' tmr_id=' . $tmr['tmr_id']
+										.' wps_id='.$this->wps_id 
+										.' old_tmr_status='.$this->wps_tmr_status
+										.' new_tmr_status='.$tmr['tmr_status'] );
+							}
+						} else {
+							// if startDate not null, this is a renewal so it's already activated
+							$this->set('wps_tmr_status', 'OK'); // no 3rd p = update db now
+						}
 						
 						return false; // this is our transaction, no more hook process to be done	
 						
@@ -913,8 +922,15 @@ class WpSubscription {
 						$this->set('wps_tmr_status', 'KO', false);
 						$this->set('wps_end_date', WpSubscription::getNow(), false ); 
 						$this->set('wps_active', false);  // in case of a renewal, it can be activated even if pending, so need to ensure that is false
-						
-						$this->sendTransactionErrorNotification();
+						try {
+							$this->sendTransactionErrorNotification();
+						} catch (Exception $e) {
+							wfDebugLog('wikiplaces', 'onTransactionUpdated: ERROR SENDING EMAIL "'.$e->getMessage().'"'
+									.' tmr_id=' . $tmr['tmr_id']
+									.' wps_id='.$this->wps_id 
+									.' old_tmr_status='.$this->wps_tmr_status
+									.' new_tmr_status='.$tmr['tmr_status'] );
+						}
 						
 						return false; // this is our transaction, no more process to be done	
 						

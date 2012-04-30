@@ -11,77 +11,9 @@ class SpecialWikiplaces extends SpecialPage {
 
 	private $title_just_created;
 	
-		
-	public static function getLinkToMyWikiplaces( $i18n_key = 'wikiplaces' ) {
-		return Linker::linkKnown(
-				SpecialPage::getTitleFor(self::TITLE_NAME), wfMessage( $i18n_key )->text());
-	}
-	
-	public static function getLinkListMyWikiplaces($i18n_key = 'wp-list-all-my-wp') {
-		return Linker::linkKnown( self::getTitleFor(self::TITLE_NAME, self::ACTION_LIST_WIKIPLACES), wfMessage( $i18n_key )->text());
-	}
-	
-	
-	/**
-	 * Generate a link to consult a listing of a wikiplace all items.
-	 * @param String $homepage_title_name should be $homepageTitle->getText()
-	 * @return string a HTML link
-	 */
-	public static function getLinkConsultWikiplace( $homepage_title_name ) {
-		return Linker::linkKnown(
-				self::getTitleFor(self::TITLE_NAME), 
-				wfMessage('wp-seeall')->text(),
-				array(),
-				array( 'name' => $homepage_title_name, 'action' => SpecialWikiplaces::ACTION_CONSULT_WIKIPLACE ));
-		// Linker::linkKnown($title, wfMessage('wp-seeall')->text(), array(), array('name' => $this->mCurrentRow->page_title, 'action' => SpecialWikiplaces::ACTION_CONSULT_WP))
-	}
-	
-	
-	/**
-	 * Generate a link to the form for creating a subpage in a wikiplace
-	 * @param String $homepage_title_name should be $homepageTitle->getText()
-	 * @return string a HTML link
-	 */
-	public static function getLinkCreateSubpage( $homepage_title_name = null, $i18n_key = 'wp-create') {
-		$params = array( 'action' => self::ACTION_CREATE_SUBPAGE);
-		if ($homepage_title_name != null) {
-			$params['name'] = $homepage_title_name;
-		}
-		return Linker::linkKnown(
-				self::getTitleFor(self::TITLE_NAME),
-				wfMessage($i18n_key)->text(),
-				array(),
-				$params );
-		// Linker::linkKnown($title, wfMessage('wp-create')->text(), array(), array('action' => SpecialWikiplaces::ACTION_CREATE_WIKIPLACE_PAGE, 'name' => $this->mCurrentRow->page_title))
-	}
-	
-	
-	public static function getLinkCreateWikiplace() {
-		return Linker::linkKnown(
-				self::getTitleFor(self::TITLE_NAME),
-				wfMessage( 'wp-create-wp')->text(),
-				array(),
-				array( 'action' => self::ACTION_CREATE_WIKIPLACE ));
-		// Linker::linkKnown(SpecialPage::getTitleFor('Wikiplaces'), wfMessage('wp-creat-ewp')->text(), array(), array('action' => SpecialWikiplaces::ACTION_CREATE_WIKIPLACE)
-	}
-	
 	
 	public function __construct() {
 		parent::__construct( self::TITLE_NAME );
-	}
-	
-	
-	public function userCanExecute( User $user ) {
-		if ( wfReadOnly() ) {
-			throw new ReadOnlyError();
-		}
-
-		if ( $user->isBlocked() ) {
-			$block = $user->mBlock;
-			throw new UserBlockedError( $block );
-		}
-
-		return true;
 	}
 
 	
@@ -137,6 +69,19 @@ class SpecialWikiplaces extends SpecialPage {
 				break;
 			
 		}
+	}
+	
+	public function userCanExecute( User $user ) {
+		if ( wfReadOnly() ) {
+			throw new ReadOnlyError();
+		}
+
+		if ( $user->isBlocked() ) {
+			$block = $user->mBlock;
+			throw new UserBlockedError( $block );
+		}
+
+		return true;
 	}
 	
 	
@@ -334,6 +279,62 @@ class SpecialWikiplaces extends SpecialPage {
 			'homepage.page_title' => $wikiplace_name));
 		$this->getOutput()->addHTML($tp->getWholeHtml());
 		
+	}
+	
+	
+	
+	
+		public static function getLinkToMyWikiplaces( $i18n_key = 'wikiplaces' ) {
+		return Linker::linkKnown(
+				SpecialPage::getTitleFor(self::TITLE_NAME), wfMessage( $i18n_key )->text());
+	}
+	
+	public static function getLinkListMyWikiplaces($i18n_key = 'wp-list-all-my-wp') {
+		return Linker::linkKnown( self::getTitleFor(self::TITLE_NAME, self::ACTION_LIST_WIKIPLACES), wfMessage( $i18n_key )->text());
+	}
+	
+	
+	/**
+	 * Generate a link to consult a listing of a wikiplace all items.
+	 * @param String $homepage_title_name should be $homepageTitle->getText()
+	 * @return string a HTML link
+	 */
+	public static function getLinkConsultWikiplace( $homepage_title_name ) {
+		return Linker::linkKnown(
+				self::getTitleFor(self::TITLE_NAME), 
+				wfMessage('wp-seeall')->text(),
+				array(),
+				array( 'name' => $homepage_title_name, 'action' => SpecialWikiplaces::ACTION_CONSULT_WIKIPLACE ));
+		// Linker::linkKnown($title, wfMessage('wp-seeall')->text(), array(), array('name' => $this->mCurrentRow->page_title, 'action' => SpecialWikiplaces::ACTION_CONSULT_WP))
+	}
+	
+	
+	/**
+	 * Generate a link to the form for creating a subpage in a wikiplace
+	 * @param String $homepage_title_name should be $homepageTitle->getText()
+	 * @return string a HTML link
+	 */
+	public static function getLinkCreateSubpage( $homepage_title_name = null, $i18n_key = 'wp-create') {
+		$params = array( 'action' => self::ACTION_CREATE_SUBPAGE);
+		if ($homepage_title_name != null) {
+			$params['name'] = $homepage_title_name;
+		}
+		return Linker::linkKnown(
+				self::getTitleFor(self::TITLE_NAME),
+				wfMessage($i18n_key)->text(),
+				array(),
+				$params );
+		// Linker::linkKnown($title, wfMessage('wp-create')->text(), array(), array('action' => SpecialWikiplaces::ACTION_CREATE_WIKIPLACE_PAGE, 'name' => $this->mCurrentRow->page_title))
+	}
+	
+	
+	public static function getLinkCreateWikiplace() {
+		return Linker::linkKnown(
+				self::getTitleFor(self::TITLE_NAME),
+				wfMessage( 'wp-create-wp')->text(),
+				array(),
+				array( 'action' => self::ACTION_CREATE_WIKIPLACE ));
+		// Linker::linkKnown(SpecialPage::getTitleFor('Wikiplaces'), wfMessage('wp-creat-ewp')->text(), array(), array('action' => SpecialWikiplaces::ACTION_CREATE_WIKIPLACE)
 	}
 
 	

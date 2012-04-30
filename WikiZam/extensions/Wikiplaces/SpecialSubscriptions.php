@@ -96,6 +96,8 @@ class SpecialSubscriptions extends SpecialPage {
 				break;
 			case self::ACTION_CHANGE:	
 			case self::ACTION_RENEW:
+				$this->displayRenew( $this->getRequest()->getText( 'plan', null ) );
+				break;
 			case self::ACTION_LIST:
 			default:
 				$this->displayList();
@@ -215,11 +217,65 @@ class SpecialSubscriptions extends SpecialPage {
 	}
 	
 	
-	/**
-	 * @todo: implement this functionality
-	 */
-	private function displayRenew() {
-		// not yet implemented		
+
+	private function displayRenew($plan_name ) {
+		
+			// at this point, user is logged, so canSubscribe() never return message "wp-subscribe-loggedout"
+		$check = WpSubscription::canSubscribe( $this->getUser() );
+		if ($check !== true) {
+			$this->getOutput()->addHTML( wfMessage( $check )->text() );
+			return;
+		}
+		
+		$formDescriptor = array(
+			'Plan' => array(
+                'type' => 'select',
+                'label-message' => 'wp-select-a-plan',
+				'validation-callback' => array( $this, 'validateSubscribePlanId' ),
+                'options' => array(),
+			),
+		);
+		
+		$plans = WpPlan::getAvailableOffersNow();
+		foreach ($plans as $plan) {
+			$wpp_name = $plan->get('wpp_name');
+			$formDescriptor['Plan']['options'][ wfMessage( 
+					'wp-plan-desc-short',
+					wfMessage( 'wp-plan-name-'.$wpp_name)->text(), 
+					$plan->get('wpp_price'),
+					$plan->get('wpp_currency'),
+					$plan->get('wpp_period_months') )->text() ] = $plan->get('wpp_id');
+			if ( $plan_name == $wpp_name) {
+				$formDescriptor['Plan']['default'] = $plan->get('wpp_id') ;
+			}
+		}
+		$htmlForm = new HTMLFormS( $formDescriptor );
+		$htmlForm->setTitle( $this->getTitle( self::ACTION_NEW ) );
+		$htmlForm->setSubmitCallback( array( $this, 'processNew' ) );
+		$htmlForm->setSubmitText( wfMessage( 'wp-plan-subscribe-go' )->text() );
+	
+		// validate and process the form is data sent
+		if( $htmlForm->show() ) {
+			
+			$out = $this->getOutput();
+			
+			$out->addHTML( wfMessage( 
+					'wp-subscribe-success',
+					wfMessage('wp-plan-name-'.$this->just_subscribed->get('plan')->get('wpp_name'))->text() )->text() . '<br/>' );
+
+			switch ($this->just_subscribed->get('wps_tmr_status')) {
+				case "OK":
+					$out->addHTML(wfMessage('wp-subscribe-tmr-ok')->parse());
+					break;
+				case "PE":
+					$out->addHTML(wfMessage('wp-subscribe-tmr-pe')->parse());
+					break;
+				default:
+					$out->addHTML(wfMessage('wp-subscribe-tmr-other')->parse());
+			}
+			
+		}
+		
 	}
 	
 	private function displayList() {
