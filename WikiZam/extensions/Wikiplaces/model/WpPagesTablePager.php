@@ -128,7 +128,7 @@ class WpPagesTablePager extends SkinzamTablePager {
         $title = Title::makeTitle($this->mCurrentRow->subpage_namespace, $this->mCurrentRow->subpage_title);
 
         $html = '<ul>';
-        $html .= '<li class="first">'
+        $html .= '<li>'
                 . Linker::linkKnown($title, wfMessage('wp-see')->text())
                 . '</li>';
         $html .= '<li>'

@@ -116,7 +116,7 @@ class SkinzamTablePager extends TablePager {
      */
     public function setSelectFields($selectFields) {
         $this->selectFields = $selectFields;
-        ;
+        $this->setFieldNames();
     }
 
     /**

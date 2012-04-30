@@ -63,7 +63,7 @@ a {
 }
 a:visited { color: #E22C2E; }
 a:focus { outline: thin dotted; }
-a:hover, a:active { outline:0; color:#7C2122; }
+a:hover, a:active { outline:0; color:#7C2122;}
 
 a.stub, a.new {
     text-decoration: underline;
@@ -101,6 +101,7 @@ sub { bottom: -0.25em; }
    -------------------------------------------------------------------------- */
 
 ul, ol { margin: 1em 0; padding: 0 0 0 40px;}
+li { margin: 0; padding: 0;}
 dd { margin: 0 0 0 40px; }
 #nav ul, #nav ol { list-style: none; margin: 0; padding: 0; }
 
@@ -165,13 +166,21 @@ a.important:hover,
 a.important:focus {
     color: #4d4e4f;
 }
-.informations, div#contentSub {
-    margin: 0 0 2em;
-    padding: 8px;
+.informations, div#contentSub, .errorbox, .warningbox, .successbox {
+    float: none;
+    clear: both;
+    margin: 0 0 18px;
+    padding: 12px;
     border: 1px solid #dad9d9;
     background: #f2f2f2;
     color: #666;
-    clear: both;
+    font-size: 1em;
+    font-weight: bold;
+}
+
+.informations p, div#contentSub p, .errorbox p, .warningbox p, .successbox p {
+    margin: 0;
+    padding: 0;
 }
 
 .informations ul>li {
@@ -181,12 +190,12 @@ a.important:focus {
     list-style: none;
 }
 
-div.success {
+div.success, .successbox {
     border-color: #d0debd;
     background: #edf3e6;
     color: #6b8c40;
 }
-div.error {
+div.error, .errorbox, .warningbox {
     border-color: #debdbf;
     background: #f2e3e4;
     color: #974349;
@@ -234,7 +243,7 @@ a, a span {
 #content {
     width: 881px;
     margin: auto;
-    padding: 30px 0; 
+    padding: 32px 0 48px; 
     border: 1px solid #D8D7D7;
     /* @embed */
     background-image: url(images/bg_transp.png);
@@ -256,6 +265,7 @@ a, a span {
 
 .block {
     padding-bottom: 6px;
+    margin-bottom: 18px;
     /* @embed */
     background-image: url(images/sh_block_full.png);
     background-color: transparent;
@@ -265,7 +275,7 @@ a, a span {
 
 .block .inside {
     clear: left;
-    padding: 18px 20px 36px 20px;
+    padding: 18px 18px 36px 18px;
     border: 1px solid #d8d7d7;
     /* @embed */
     background-image: url(images/sh_block_full_in.png);
@@ -385,7 +395,7 @@ a, a span {
 }
 
 #nav li a:hover,
-#nav li a:focus,  {
+#nav li a:focus  {
     color: #E22C2E;
 }
 
@@ -520,8 +530,8 @@ a, a span {
    ==  BODYCONTENT
    ---------------------------------------- */
 
-.ns-0 #bodyContent  .inside{
-    padding-bottom: 28px;
+body.ns--1 #bodyContent .inside{
+    padding-bottom: 18px;
 }
 
 /* ----------------------------------------
@@ -1094,17 +1104,10 @@ div#simpleSearch button#searchButton > img {
     border-bottom: 1px solid #dad9d9;
     width: auto;
 }
-
-/* Forms */
-fieldset {
-    border: 1px solid #dad9d9;
-    margin: 1em 0 1em 0;
-    padding: 0 1em 1em;
-    line-height: 1.5em;
-}
+ 
 fieldset.nested {
-    margin: 0 0 0.5em 0;
-    padding: 0 0.5em 0.5em;
+    margin: 0 0 4px 0;
+    padding: 0 4px 4px;
 }
 legend {
     padding: .5em;
@@ -1284,11 +1287,11 @@ img.thumbborder {
    -------------------------------------------------------------------------- */
 
 form { margin: 0; }
+
 fieldset {
     border: 1px solid #dad9d9;
-    margin: 1em 0 1em 0;
-    padding: 0 1em 1em;
-    line-height: 1.5em;
+    padding: 12px;
+    margin: 0 auto 16px;
 }
 legend { 
     border: 0;
@@ -1323,46 +1326,58 @@ textarea { overflow: auto; vertical-align: top; }
 input:valid, textarea:valid {  }
 input:invalid, textarea:invalid { background-color: #f2e3e4; }
 
+/* -----------------------------------------------------------------------------
+   ==  ListFiles (gallery)
+   -------------------------------------------------------------------------- */
+
+ul.gallery {
+    text-align: center;
+}
+
+ul.gallery li {
+    margin: 12px;
+}
 
 
 /* -----------------------------------------------------------------------------
    ==  ChangeList (e.g. Special:History) & Log (e.g. Special:Log
    -------------------------------------------------------------------------- */
 
-body.mw-special-Contributions #bodyContent ul {
+body.mw-special-Contributions #bodyContent ul,
+body.mw-special-Log #bodyContent ul,
+body.mw-special-Watchlist #bodyContent ul,
+body.mw-special-Recentchanges #bodyContent ul,
+div#ms-quickwatchlist ul{ 
     margin: 0;
     padding: 0;
 }
 
-body.mw-special-Contributions #bodyContent li {
+body.mw-special-Contributions #bodyContent li,
+body.mw-special-Log #bodyContent li,
+body.mw-special-Watchlist #bodyContent li,
+body.mw-special-Recentchanges #bodyContent li,
+div#ms-quickwatchlist li{
     margin: 0;
     padding: 8px 16px;
     list-style: none;
     border-bottom: 1px solid #dad9d9;
 }
 
-body.mw-special-Contributions #bodyContent li:last-child {
+body.mw-special-Contributions #bodyContent li:last-child,
+body.mw-special-Log #bodyContent li:last-child {
     border-bottom: none;
 }
 
-/*
-    Basic (li) (used also for log)
 
-body.ns-special div.inside>ul>li {
-    margin: 0;
-    padding: 8px 16px;
-    list-style: none;
-    border-bottom: 1px solid #dad9d9;
-}
-
-
-body.ns-special li.mw-line-even {
+div#ms-quickwatchlist li.mw-line-even,
+body.mw-special-Watchlist #bodyContent li.mw-line-even,
+body.mw-special-Recentchanges #bodyContent li.mw-line-even {
     border-right: 1px solid #dad9d9;
 }
 
-
-
-body.ns-special li.mw-line-odd {
+div#ms-quickwatchlist li.mw-line-odd,
+body.mw-special-Watchlist #bodyContent li.mw-line-odd,
+body.mw-special-Recentchanges #bodyContent li.mw-line-odd {
     border-left: 1px solid #dad9d9;
 }
 
@@ -1372,6 +1387,7 @@ body.ns-special li.mw-line-odd {
 */
 
 body.mw-special-Watchlist #bodyContent h4,
+body.mw-special-Recentchanges #bodyContent h4,
 div#ms-quickwatchlist h4 {
     margin: 16px 0 0 0;
     padding: 0;
@@ -1589,6 +1605,7 @@ div.form_header, div.table_header, div#contentSub {
 }
 
 div.form_footer, div.table_footer {
+    margin-bottom : 0;
     background-color: transparent;
     border-bottom: none;
 }
@@ -1770,7 +1787,7 @@ table.WpPage td ul li {
     text-align: left;
 }
 
-table.WpPage td ul li.first {
+table.WpPage td ul li:first-child {
     border-left: none;
 }
 
