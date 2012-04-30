@@ -11,6 +11,11 @@ class SpecialWikiplaces extends SpecialPage {
 
 	private $title_just_created;
 	
+		
+	public static function getLinkToMyWikiplaces( $i18n_key = 'wikiplaces' ) {
+		return Linker::linkKnown(
+				SpecialPage::getTitleFor(self::TITLE_NAME), wfMessage( $i18n_key )->text());
+	}
 	
 	public static function getLinkListMyWikiplaces($i18n_key = 'wp-list-all-my-wp') {
 		return Linker::linkKnown( self::getTitleFor(self::TITLE_NAME, self::ACTION_LIST_WIKIPLACES), wfMessage( $i18n_key )->text());
@@ -53,8 +58,10 @@ class SpecialWikiplaces extends SpecialPage {
 	
 	public static function getLinkCreateWikiplace() {
 		return Linker::linkKnown(
-				self::getTitleFor(self::TITLE_NAME, self::ACTION_CREATE_WIKIPLACE),
-				wfMessage( 'wp-create-wp')->text() );
+				self::getTitleFor(self::TITLE_NAME),
+				wfMessage( 'wp-create-wp')->text(),
+				array(),
+				array( 'action' => self::ACTION_CREATE_WIKIPLACE ));
 		// Linker::linkKnown(SpecialPage::getTitleFor('Wikiplaces'), wfMessage('wp-creat-ewp')->text(), array(), array('action' => SpecialWikiplaces::ACTION_CREATE_WIKIPLACE)
 	}
 	
@@ -101,8 +108,8 @@ class SpecialWikiplaces extends SpecialPage {
 		$this->getOutput()->setSubtitle(Html::rawElement('span', array(), $this->getLang()->pipeList(array(
 				self::getLinkListMyWikiplaces(),
 				self::getLinkCreateWikiplace(),
-				self::getLinkCreateSubpage( null, 'wp-create-subpage'),
-				Linker::linkKnown(SpecialPage::getTitleFor(SpecialSubscriptions::TITLE_NAME), wfMessage( 'subscriptions' )->text()),
+				self::getLinkCreateSubpage( null, 'wp-create-page'),
+				SpecialSubscriptions::getLinkToMySubscriptions(),
 			))));
 
 		$name = $this->getRequest()->getText('name', null);
@@ -145,7 +152,8 @@ class SpecialWikiplaces extends SpecialPage {
 	private function displayCreateWikiplace() {
 		
 		if ( ( $reason=WpWikiplace::userCanCreateWikiplace($this->getUser()->getId())) !== true ) {
-			return wfMessage($reason)->text(); // no active subscription or quotas exceeded 
+			$this->getOutput()->addHTML( wfMessage($reason)->text() ); // no active subscription or quotas exceeded 
+			return;
 		}
 
 		$formDescriptor = array(
@@ -210,7 +218,8 @@ class SpecialWikiplaces extends SpecialPage {
 	public function displayCreateSubpage( $name ) {
 		
 		if ( ( $reason=WpPage::userCanCreateNewPage($this->getUser()->getId())) !== true ) {
-			return wfMessage($reason)->text(); // no active subscription or quotas exceeded 
+			$this->getOutput()->addHTML( wfMessage($reason)->text() ); // no active subscription or quotas exceeded 
+			return;
 		}
 
 		$wikiplaces = WpWikiplace::getAllOwnedByUserId($this->getUser()->getId());

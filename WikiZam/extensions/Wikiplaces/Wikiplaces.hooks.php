@@ -84,7 +84,6 @@ class WikiplacesHooks {
 			} elseif ( ($reason=WpWikiplace::userCanCreateWikiplace($user->getId())) !== true ) {
 				wfDebugLog( 'wikiplaces', 'userCanCreate: DENY new wikiplace, reason='.$reason.', article=['.$article_id.']"'.$full_text.'"');
 				$result = false; // can't
-				
 			} else {
 				wfDebugLog( 'wikiplaces', 'userCanCreate: ALLOW new Wikiplace, article=['.$article_id.']"'.$full_text.'"');
 				$result = true; // can

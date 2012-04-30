@@ -11,17 +11,36 @@ class SpecialSubscriptions extends SpecialPage {
 	
 	private $subscription_just_subscribed;
 	
+	public static function getLinkToMySubscriptions( $i18n_key = 'subscriptions' ) {
+		return Linker::linkKnown(
+				SpecialPage::getTitleFor(self::TITLE_NAME), wfMessage( $i18n_key )->text());
+	}
+	
 	/**
 	 * Generate link to subscribe to plan $wpp_name
 	 * @param type $wpp_name
 	 * @return string HTML <a> attribute 
 	 */
-	public static function getLinkNew( $wpp_name ) {
-		return Linker::linkKnown(
+	public static function getLinkNew( $wpp_name = null, $i18n_key = null ) {
+		if ($wpp_name == null) {
+			if ($i18n_key == null) {
+				$i18n_key = 'wp-subscribe-new';
+			}
+			return Linker::linkKnown(
+				self::getTitleFor( self::TITLE_NAME, self::ACTION_NEW ),
+				wfMessage($i18n_key)->text() );
+		} else {
+			if ($i18n_key == null) {
+				$i18n_key = 'wp-plan-name-'.$wpp_name;
+			}
+			return Linker::linkKnown(
 				self::getTitleFor( self::TITLE_NAME ),
-				wfMessage('wp-plan-name-'.$wpp_name)->text(),
+				wfMessage($i18n_key)->text() ,
 				array(),
-				array( 'action' => self::ACTION_NEW, 'plan' => $wpp_name) );
+				array( 
+					'action' => self::ACTION_NEW,
+					'plan' => $wpp_name) );
+		}
 	}
 	
 	public function __construct() {
@@ -66,13 +85,14 @@ class SpecialSubscriptions extends SpecialPage {
 				Linker::linkKnown($this->getTitle(self::ACTION_CHANGE), wfMessage( 'wp-subscribe-change')->text()),
 				Linker::linkKnown($this->getTitle(self::ACTION_RENEW), wfMessage( 'wp-subscribe-renew')->text()),
 				Linker::linkKnown($this->getTitle(self::ACTION_LIST), wfMessage( 'wp-subscribe-list')->text()),
+				SpecialWikiplaces::getLinkToMyWikiplaces(),
 			))));
 		
 		// dispatch
 		$action = strtolower( $this->getRequest()->getText( 'action', $par ) );
         switch ($action) { 
 			case self::ACTION_NEW :
-				$this->displayNew();
+				$this->displayNew( $this->getRequest()->getText( 'plan', null ) );
 				break;
 			case self::ACTION_CHANGE:	
 			case self::ACTION_RENEW:
@@ -87,7 +107,7 @@ class SpecialSubscriptions extends SpecialPage {
 	/**
 	 * User wants to take a new subscription
 	 */
-	private function displayNew() {
+	private function displayNew( $plan_name ) {
 		
 		// at this point, user is logged, so canSubscribe() never return message "wp-subscribe-loggedout"
 		$check = WpSubscription::canSubscribe( $this->getUser() );
@@ -107,12 +127,16 @@ class SpecialSubscriptions extends SpecialPage {
 		
 		$plans = WpPlan::getAvailableOffersNow();
 		foreach ($plans as $plan) {
+			$wpp_name = $plan->get('wpp_name');
 			$formDescriptor['Plan']['options'][ wfMessage( 
 					'wp-plan-desc-short',
-					wfMessage( 'wp-plan-name-'.$plan->get('wpp_name'))->text(), 
+					wfMessage( 'wp-plan-name-'.$wpp_name)->text(), 
 					$plan->get('wpp_price'),
 					$plan->get('wpp_currency'),
 					$plan->get('wpp_period_months') )->text() ] = $plan->get('wpp_id');
+			if ( $plan_name == $wpp_name) {
+				$formDescriptor['Plan']['default'] = $plan->get('wpp_id') ;
+			}
 		}
 		$htmlForm = new HTMLFormS( $formDescriptor );
 		$htmlForm->setTitle( $this->getTitle( self::ACTION_NEW ) );
