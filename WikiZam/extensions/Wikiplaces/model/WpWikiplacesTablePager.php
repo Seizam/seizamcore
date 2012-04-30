@@ -48,14 +48,13 @@ class WpWikiplacesTablePager extends SkinzamTablePager {
                 $title = Title::makeTitle($this->mCurrentRow->page_namespace, $value);
                 return Linker::linkKnown($title, $title->getPrefixedText());
             case 'count(*)':
-                $title = SpecialPage::getTitleFor('Wikiplaces');
                 $html = '<b>'.$value.'</b> '.  wfMessage('wp-items');
                 $html .= '<ul>';
                 $html .= '<li>'
-                        . Linker::linkKnown($title, wfMessage('wp-seeall')->text(), array(), array('name' => $this->mCurrentRow->page_title, 'action' => SpecialWikiplaces::ACTION_CONSULT_WP))
+						. SpecialWikiplaces::getLinkConsultWikiplace( $this->mCurrentRow->page_title )
                         . '</li>';
                 $html .= '<li>'
-                        . Linker::linkKnown($title, wfMessage('wp-create')->text(), array(), array('action' => SpecialWikiplaces::ACTION_CREATE_WIKIPLACE_PAGE, 'name' => $this->mCurrentRow->page_title))
+                        . SpecialWikiplaces::getLinkCreateSubpage( $this->mCurrentRow->page_title )
                         . '</li>';
                 $html .= '</ul>';
                 return $html;
@@ -91,7 +90,7 @@ class WpWikiplacesTablePager extends SkinzamTablePager {
         $this->even = !$this->even;
         
         $html = "<tr class=\"$class\"><td colspan=\"$colums\">";
-        $html .= Linker::linkKnown(SpecialPage::getTitleFor('Wikiplaces'), wfMessage('wp-createwp')->text(), array(), array('action' => SpecialWikiplaces::ACTION_CREATE_WIKIPLACE));
+        $html .= SpecialWikiplaces::getLinkCreateWikiplace();
         $html .= "</td></tr>";
         $html .= "</tbody></table>\n";
 		return $html;

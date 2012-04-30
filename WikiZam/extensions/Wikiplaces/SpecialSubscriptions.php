@@ -16,7 +16,7 @@ class SpecialSubscriptions extends SpecialPage {
 	 * @param type $wpp_name
 	 * @return string HTML <a> attribute 
 	 */
-	public static function getSubscribeLink( $wpp_name ) {
+	public static function getLinkNew( $wpp_name ) {
 		return Linker::linkKnown(
 				self::getTitleFor( self::TITLE_NAME ),
 				wfMessage('wp-plan-name-'.$wpp_name)->text(),
@@ -100,7 +100,7 @@ class SpecialSubscriptions extends SpecialPage {
 			'Plan' => array(
                 'type' => 'select',
                 'label-message' => 'wp-select-a-plan',
-				'validation-callback' => array( $this, 'validatePlanId' ),
+				'validation-callback' => array( $this, 'validateSubscribePlanId' ),
                 'options' => array(),
 			),
 		);
@@ -143,7 +143,7 @@ class SpecialSubscriptions extends SpecialPage {
 		
 	}
 	
-	public function validatePlanId($id, $allData) {
+	public function validateSubscribePlanId($id, $allData) {
 		
 		if ( ! preg_match('/^[0-9]{1,10}$/',$id) ) {
 			return wfMessage( 'wp-invalid-plan' )->text();

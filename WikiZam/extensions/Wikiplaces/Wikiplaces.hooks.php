@@ -77,8 +77,11 @@ class WikiplacesHooks {
 		if ( WpPage::isHomepage($title) ) {
 
 			// this is a new Wikiplace
-
-			if ( ($reason=WpWikiplace::userCanCreateWikiplace($user->getId())) !== true ) {
+			
+			if ( preg_match('/[.]/', $title->getText()) ) {
+				wfDebugLog( 'wikiplaces', 'userCanCreate: DENY bad character in name, article=['.$article_id.']"'.$full_text.'"');
+				$result = false;
+			} elseif ( ($reason=WpWikiplace::userCanCreateWikiplace($user->getId())) !== true ) {
 				wfDebugLog( 'wikiplaces', 'userCanCreate: DENY new wikiplace, reason='.$reason.', article=['.$article_id.']"'.$full_text.'"');
 				$result = false; // can't
 				

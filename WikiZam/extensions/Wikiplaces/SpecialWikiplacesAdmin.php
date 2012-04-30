@@ -106,7 +106,7 @@ class SpecialWikiplacesAdmin extends SpecialPage {
 		$dbw->query("TRUNCATE wp_old_usage");
 		$dbw->query("TRUNCATE wp_page");
 		$dbw->query("TRUNCATE wp_wikiplace");
-		$out->addHTML('All wikiplaces, pages, subscriptions, transactions have been deleted!');
+		$this->getOutput()->addHTML('All wikiplaces, pages, subscriptions, transactions have been deleted!');
 	}
 	
 	

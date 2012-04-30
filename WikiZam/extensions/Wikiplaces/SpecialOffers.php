@@ -13,7 +13,7 @@ class SpecialOffers extends SpecialPage {
 		$offers = WpPlan::getAvailableOffersNow();
 		$display = '';
 		foreach ($offers as $offer) {
-			$display .= "\n".Html::rawElement( 'li', array(), SpecialSubscriptions::getSubscribeLink($offer->get('wpp_name')) );
+			$display .= "\n".Html::rawElement( 'li', array(), SpecialSubscriptions::getLinkNew($offer->get('wpp_name')) );
         }
         $this->getOutput()->addHTML( Html::rawElement('ul', array(), "$display\n") );
 		

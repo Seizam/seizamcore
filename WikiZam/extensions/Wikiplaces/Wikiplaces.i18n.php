@@ -9,7 +9,23 @@ $messages['en'] = array(
 	
 	'wikiplacesadmin' => 'Wikiplaces administration',
 	'subscriptions' => 'My Subscriptions',
+	'wikiplaces' => 'My Wikiplaces',
 	'offers' => 'Offers',
+	
+	'wp-sub-activation-email-subj' => 'Your subscription is now active',
+	'wp-sub-activation-email-body' => '$1,
+		
+Your subscription to the offer "$2" is now active.
+It will ends at $3.',
+	'wp-sub-tmrko-email-subj' => 'Payment error',
+	'wp-sub-tmrko-email-body' => '$1,
+		
+We inform you that your payment was rejected. Accordingly, your subscription is not active.
+To continue using your services, please take out a new offer.',
+	
+	'wp-no-active-sub' => 'You need an active subscription to perform this action.',
+	'wp-wikiplace-quota-exceeded' => 'Your wikiplace creation quota is exceeded. You need to upgrade your plan to perform this action.',
+	'wp-page-quota-exceeded' => 'Your page creation quota is exceeded. You need to upgrade your plan to perform this action.',
 	
 	'wp-internal-error' => 'An error occured. Please try again.',
 	
@@ -37,12 +53,65 @@ $messages['en'] = array(
 	
 	
 	
+	'wp-enter-new-wp-name' => 'Please enter your new Wikiplace name',
+	'wp-invalid-name' => 'This name is invalid.',
+	'wp-name-already-exists' => 'This name already exists. Please retry with a different name.',
+	'wp-create-wp-go' => 'Create!',
+	'wp-create-wp-success' => 'You successfully created your Wikiplace $1.',
+	
+	'wp-create-wp-first' => 'You need to create a Wikiplace first.',
 	
 	'wp-list-all-my-wp' => 'My Wikiplaces',
-	'wp-create-wp' => 'New Wikiplace',
 	'wp-create-subpage' => 'New Wikiplace subpage',
 	
 	
+	'wp-select-wp' => 'Please select a Wikiplace',
+	'wp-enter-new-sp-name' => 'Please enter your new subpage name',
+	'wp-invalid-wp' => 'This Wikiplace is invalid.',
+	'wp-create-sp-go' => 'Create!',
+	'wp-create-sp-success' => 'You successfully created your subpage $1.',
+	
+	
+	'wp-seeall' => 'see all',
+    'wp-see' => 'see',
+    'wp-create' => 'create',
+    'wp-edit' => 'edit',
+    'wp-restrict' => 'restrict',
+    'wp-talk' => 'talk',
+    'wp-history' => 'history',
+    'wp-create-page' => 'Create a new Page',
+    'wp-create-wp' => 'Create a new Wikiplace',
+    'wp-items' => 'items',
+    'wp-homepage' => 'Homepage',
+	'wp-subpage' => 'Subpage',
+	
+	
+	'wpwtp-page_title' => 'Wikiplace',
+	'wpwtp-count(*)' => 'Subpages',
+	'wpwtp-wpw_monthly_page_hits' => "Monthly hits",
+	'wpwtp-wpw_monthly_bandwidth' => "Monthly bandwidth",
+	
+	'wpstp-wps_active' => "",
+	'wpstp-wps_start_date' => "Start",
+	'wpstp-wps_end_date' => "End",
+	'wpstp-wpp_name' => "Plan name",
+	'wpstp-wps_tmr_status' => "Paiement status",
+	'wpstp-wpp_nb_wikiplaces' => "Wikiplaces",
+	'wpstp-wpp_nb_wikiplace_pages' => "Pages",
+	'wpstp-wpp_diskspace' => "Diskspace",
+	'wpstp-wpp_monthly_page_hits' => 'Monthly page hits',
+	'wpstp-wpp_monthly_bandwidth' => 'Monthly bandwidth',
+	'wp-sub-unactive' => 'not active',
+	'wp-sub-active' => 'active',
+	'wp-sub-tmrstatus-OK' => 'paid',
+	'wp-sub-tmrstatus-PE' => 'pending',
+	'wp-sub-tmrstatus-KO' => 'canceled',
+	
+	'wppatp-subpage_title' => 'Name',
+    'wppatp-subpage_namespace' => 'Type',
+    'wppatp-subpage_touched' => 'Modification Date',
+    'wppatp-subpage_counter' => 'Total hits',
+
 	
 	// wp-transaction-plan-XXXX for each plan in database, with XXXX = wpp_name field value
 

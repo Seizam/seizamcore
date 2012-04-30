@@ -168,7 +168,7 @@ class WpPagesTablePager extends SkinzamTablePager {
         $this->even = !$this->even;
 
         $html = "<tr class=\"$class\"><td colspan=\"$colums\">";
-        $html .= Linker::linkKnown(SpecialPage::getTitleFor('Wikiplaces'), wfMessage('wp-createpage')->text(), array(), array('action' => SpecialWikiplaces::ACTION_CREATE_WIKIPLACE_PAGE, 'name' => $this->wpName));
+		$html .= SpecialWikiplaces::getLinkCreateSubpage( $this->wpName);
         $html .= "</td></tr>";
         $html .= "</tbody></table>\n";
         return $html;
