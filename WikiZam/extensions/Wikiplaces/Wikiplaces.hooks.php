@@ -232,11 +232,11 @@ class WikiplacesHooks {
 			return true; // skip
 		}
 		
-		self::onWikiplaceItemCreated();
+		self::onWikiplaceItemCreated( $title, $user );
 		
 		// restrict applicable actions to owner, except for read
 		$actions_to_rectrict = array_diff(
-				$wikipage->getTitle()->getRestrictionTypes(), // array( 'read', 'edit', ... )
+				$$title->getRestrictionTypes(), // array( 'read', 'edit', ... )
 				array( 'read') );
 		$restrictions = array();
 		foreach ( $actions_to_rectrict as $action) {
@@ -255,10 +255,13 @@ class WikiplacesHooks {
 		
 	}
 	
+	/**
+	 *
+	 * @param Title $title
+	 * @param User $user 
+	 */
 	private static function onWikiplaceItemCreated( $title, $user ) {
 		
-		// these 2 vars are only used to generate debug messages
-		$prefixed_db_key = $title->getPrefixedDBkey();
 		$article_id = $title->getArticleID();
 		
 		// currently, the page is already stored in 'page' db table
@@ -267,32 +270,27 @@ class WikiplacesHooks {
 			
 			// create a wikiplace from this homepage				
 			
-			$subscription = WpSubscription::getActiveByUserId($user->getId());
+			$subscription = WpSubscription::getActiveByUserId( $user->getId() );
 			if ( $subscription == null ) {
-				// the user has no subscription, so we can't create her wikiplace
-				wfDebugLog( 'wikiplaces', 'onWikiplaceItemCreated: ERROR no active subscription, article=['.$article_id.']"'.$prefixed_db_key.'", user=['.$user->getId().']');
-				throw new MWException('Cannot create wikiplace because user has no active subscription.');
+				throw new MWException('Cannot create wikiplace, user has no active subscription.');
 			}
 			
-			$wikiplace = WpWikiplace::create( $wikipage, $subscription );
+			$wikiplace = WpWikiplace::create( $article_id , $subscription );
 			if ( $wikiplace == null ) {
-				wfDebugLog( 'wikiplaces', 'onWikiplaceItemCreated: ERROR while creating wikiplace, article=['.$article_id.']"'.$prefixed_db_key.'"');
 				throw new MWException('Error while creating wikiplace.');
 			}	
 			
-			if ( ! $wikiplace->forceArchiveAndResetUsage( WpSubscription::getNow() )) {
-				wfDebugLog( 'wikiplaces', 'onWikiplaceItemCreated: ERROR while initialization of wikiplace usage, article=['.$article_id.']"'.$prefixed_db_key.'"');
+			if ( ! $wikiplace->forceArchiveAndResetUsage( WpSubscription::getNow() ) ) {
 				throw new MWException('Error while initialization of wikiplace usage.');		
 			}
 			
-			$new_wp_page = WpPage::create( $wikipage->getId() , $wikiplace->get('wpw_id'));
+			$new_wp_page = WpPage::create( $article_id , $wikiplace->get('wpw_id') );
 
 			if ($new_wp_page === null) {
-				wfDebugLog( 'wikiplaces', 'onWikiplaceItemCreated: ERROR while associating homepage to its container wikiplace, article=['.$article_id.']"'.$prefixed_db_key.'"');
 				throw new MWException('Error while associating homepage to its container wikiplace.');
 			}
 			
-			wfDebugLog( 'wikiplaces', 'onWikiplaceItemCreated: OK, wikiplace and its homepage created and initialized, article=['.$article_id.']"'.$prefixed_db_key.'"');
+			wfDebugLog( 'wikiplaces', 'onWikiplaceItemCreated: OK, wikiplace and its homepage created and initialized, article=['.$article_id.']"'.$title->getPrefixedDBkey().'"');
 
 			
 		} else {
@@ -301,16 +299,14 @@ class WikiplacesHooks {
 
 			$wikiplace = WpWikiplace::getBySubpage( $title->getDBkey(), $title->getNamespace() );
 			if ($wikiplace === null) {
-				wfDebugLog( 'wikiplaces', 'onWikiplaceItemCreated: ERROR cannot identify container wikiplace: ['.$article_id.']"'.$prefixed_db_key.'"');
 				throw new MWException('Cannot identify the container wikiplace.');
 			}
 
-			if ( WpPage::create($wikipage->getId(), $wikiplace->get('wpw_id')) == null ) {
-				wfDebugLog( 'wikiplaces', 'onWikiplaceItemCreated: ERROR while associating subpage to its container wikiplace, article=['.$article_id.']"'.$prefixed_db_key.'"');
+			if ( WpPage::create( $article_id, $wikiplace->get('wpw_id') ) == null ) {
 				throw new MWException('Error while associating subpage to its container wikiplace.');
 			}
 
-			wfDebugLog( 'wikiplaces', 'onWikiplaceItemCreated: OK, the page is now associated to its wikiplace, article=['.$article_id.']"'.$prefixed_db_key.'"');
+			wfDebugLog( 'wikiplaces', 'onWikiplaceItemCreated: OK, the page is now associated to its wikiplace, article=['.$article_id.']"'.$title->getPrefixedDBkey().'"');
 
 		} 
 		
@@ -335,27 +331,16 @@ class WikiplacesHooks {
 		
 		wfDebugLog( 'wikiplaces', 'onTitleMoveComplete: ['.$oldid.']"'.$title->getPrefixedDBkey().'" renamed to "'.$newtitle->getPrefixedDBkey().'", redirect['.$newid.']');
 		
-		// first step, move the old page to the new wikiplace if necessary
+		// first step, associate a new page (with the new name) to the corresponding wikiplace
+		
+		// WARNING, this is not the good id !!
+		self::onWikiplaceItemCreated($newtitle, $user);
 		
 		$renamed_page = WpPage::getByArticleId( $oldid );
 		if ($renamed_page === null) {
 			wfDebugLog( 'wikiplaces', 'onTitleMoveComplete: ERROR cannot find original wikiplace page: ['.$oldid.']"');
 			throw new MWException('Cannot find the original page.');
 		}
-		
-		$new_wikiplace = WpWikiplace::extractWikiplaceRoot( $newtitle->getPrefixedDBkey(), $newtitle->getNamespace() );
-		if ($new_wikiplace === null) {
-			wfDebugLog( 'wikiplaces', 'onTitleMoveComplete: ERROR cannot identify container wikiplace: "'.$newtitle->getPrefixedDBkey().'"');
-			throw new MWException('Cannot identify the container wikiplace.');
-		}
-		
-		$old_wikiplace_id = $renamed_page->get('wppa_wpw_id');
-		$new_wikiplace_id = $new_wikiplace->get('wpw_id');
-		
-		if ( $old_wikiplace_id != $new_wikiplace_id ) {
-			$renamed_page->setWikiplaceId($new_wikiplace_id);
-		}
-					
 					
 		// second step, if a redirect was created, associate this new page to original wikiplace
 		

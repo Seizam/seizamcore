@@ -570,18 +570,17 @@ WHERE wpw_report_updated < $outdated ;" ;
 	
 	/**
 	 * Create a wikiplace from homepage, owned by this user
-	 * @param WikiPage $homepage
+	 * @param int $homepage_id The Article id of the homepage
 	 * @param WpSubscription $subscription
 	 * @return WpWikiplace The created Wikiplace, or null if a db error occured
 	 */
-	public static function create($homepage, $subscription) {
+	public static function create($homepage_id, $subscription) {
 		
-		if ( !($homepage instanceof WikiPage) || !($subscription instanceof WpSubscription) ) {
+		if (  ! is_int($homepage)  ||  ! ($subscription instanceof WpSubscription)  ) {
 			throw new MWException( 'Cannot create Wikiplace, invalid argument.' );
 		}
 		
 		$user_id = $subscription->get('wps_buyer_user_id');
-		$homepage_id = $homepage->getId();
 		$wps_id = $subscription->get('wps_id');
 		$wpw_report_updated = WpSubscription::getNow();
 		$wpw_date_expires = self::calculateNextDateExpiresFromSubscription($subscription);
