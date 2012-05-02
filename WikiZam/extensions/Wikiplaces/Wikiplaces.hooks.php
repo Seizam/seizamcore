@@ -132,7 +132,7 @@ class WikiplacesHooks {
 			$msg = 'new wikiplace item';
 			$namespace = $title->getNamespace();
 
-			$wp = WpWikiplace::extractWikiplaceRoot( $title->getDBkey(), $namespace );
+			$wp = WpWikiplace::getBySubpage( $title->getDBkey(), $title->getNamespace() );
 			
 			if ( $wp === null ) { 
 				$result = false; // no wikiplace can contain this subpage, so cannot create it
@@ -299,7 +299,7 @@ class WikiplacesHooks {
 
 			// this is a subpage of an existing existing wikiplace
 
-			$wikiplace = WpWikiplace::extractWikiplaceRoot( $title->getDBkey(), $title->getNamespace() );
+			$wikiplace = WpWikiplace::getBySubpage( $title->getDBkey(), $title->getNamespace() );
 			if ($wikiplace === null) {
 				wfDebugLog( 'wikiplaces', 'onWikiplaceItemCreated: ERROR cannot identify container wikiplace: ['.$article_id.']"'.$prefixed_db_key.'"');
 				throw new MWException('Cannot identify the container wikiplace.');
