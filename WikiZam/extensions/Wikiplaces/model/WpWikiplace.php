@@ -506,12 +506,12 @@ WHERE wpw_report_updated < $outdated ;" ;
 	
 	/**
 	 * Parse the db_key depending on the namespace, extract the name of the wikiplace
-	 * that the page should belong, and search a Wikiplace with that name. 
+	 * that the page should belong. 
 	 * Note that this function can return a Wikiplace even if the page doesn't not already 
 	 * belongs to ( = newly created page ).
 	 * @param string $db_key should be $wikipage->getTitle()->getDBkey()
 	 * @param int $namespace should be $wikipage->getTitle()->getNamespace()
-	 * @return WpWikiplace The Wikiplace or null the page doesn't belong to an exsiting Wikiplace
+	 * @return String The wikiplace name or null the page doesn't belong to an exsiting Wikiplace
 	 */
 	public static function extractWikiplaceRoot($db_key, $namespace) {
 		
@@ -536,7 +536,21 @@ WHERE wpw_report_updated < $outdated ;" ;
 			return null;
 		}
 
-		return self::getByName($hierarchy[0]);
+		return $hierarchy[0];
+		
+	}
+    
+    /**
+	 * Parse the db_key depending on the namespace, extract the name of the wikiplace
+	 * that the page should belong, and return the Wikiplace with that name. 
+	 * Note that this function can return a Wikiplace even if the page doesn't not already 
+	 * belongs to ( = newly created page ).
+	 * @param string $db_key should be $wikipage->getTitle()->getDBkey()
+	 * @param int $namespace should be $wikipage->getTitle()->getNamespace()
+	 * @return WpWikiplace The Wikiplace or null the page doesn't belong to an exsiting Wikiplace
+	 */
+	public static function getBySubpage($db_key, $namespace) {
+		return self::getByName(self::extractWikiplaceRoot($db_key, $namespace));
 		
 	}
 

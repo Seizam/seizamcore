@@ -26,21 +26,28 @@ audio[controls], canvas, video { display: inline-block; }
 
 html { 
     font-size: 100%;
+    overflow-y: scroll;
+    margin: 0;
+    padding: 0;
+    
     /* @embed */
     background-image: url(images/bg.jpg);
     background-color: #e5e5e5;
     background-repeat: no-repeat;
     background-position: center top;
-    overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
     -webkit-tap-highlight-color: rgba(0,0,0,0);
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
 }
 
-body { 
+body {
+    background-repeat: no-repeat;
+    background-position: top center;
+    background-attachment: fixed;
+    background-color: transparent;
     margin: 0;
-    padding: 0;
+    padding: 24px 0 0 0;
     font-size: 13px;
     line-height: 1.231;
 }
@@ -246,7 +253,7 @@ a, a span {
 
 #content {
     width: 881px;
-    margin: 24px auto 48px;
+    margin: 0 auto 42px;
     padding: 32px 0 32px; 
     border: 1px solid #D8D7D7;
     /* @embed */
@@ -541,6 +548,10 @@ a, a span {
 
 body.ns--1 #bodyContent .inside{
     padding-bottom: 18px;
+}
+
+html.client-nojs #bodyContent>.inside {
+    min-height: 300px;
 }
 
 /* ----------------------------------------

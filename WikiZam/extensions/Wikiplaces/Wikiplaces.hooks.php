@@ -93,7 +93,7 @@ class WikiplacesHooks {
 
 			// this is a subpage (can be regular article or talk or file)
 
-			$wp = WpWikiplace::extractWikiplaceRoot( $title->getDBkey(), $title->getNamespace() );
+			$wp = WpWikiplace::getBySubpage( $title->getDBkey(), $title->getNamespace() );
 			
 			if ( $wp === null ) { 
 				wfDebugLog( 'wikiplaces', 'userCanCreate: DENY cannot extract container Wikiplace, article=['.$article_id.']"'.$full_text.'"');
@@ -204,7 +204,7 @@ class WikiplacesHooks {
 
 			// this is a subpage of an existing existing wikiplace
 
-			$wikiplace = WpWikiplace::extractWikiplaceRoot( $title->getDBkey(), $title->getNamespace() );
+			$wikiplace = WpWikiplace::getBySubpage( $title->getDBkey(), $title->getNamespace() );
 			if ($wikiplace === null) {
 				wfDebugLog( 'wikiplaces', 'onArticleInsertComplete: ERROR cannot identify container wikiplace: ['.$article_id.']"'.$prefixed_db_key.'"');
 				throw new MWException('Cannot identify the container wikiplace.');
