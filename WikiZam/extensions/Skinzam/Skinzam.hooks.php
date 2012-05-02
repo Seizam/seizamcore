@@ -99,19 +99,22 @@ class SkinzamHooks {
      * 
      * Cooks the skin template Seizam-Style!
      * 
-     * @param $parser Parser Object
+     * @param SkinSkinzam $skin
+     * @param SkinzamTemplate $tpl
      */
     public static function skinTemplateOutputPageBeforeExec(&$skin, &$tpl) {
-        $szFooterUrls = array();
+        // The links on the absolute footer
+        
+        $AbsoluteFooterUrls = array();
         
         if ($skin->loggedin) {
-            $szFooterUrls['allpages'] = array(
+            $AbsoluteFooterUrls['allpages'] = array(
                 'text' => wfMessage('sz-browse'),
                 'href' => Skin::makeSpecialUrl('AllPages'),
                 'active' => ( $skin->thispage == 'Special:AllPages' )
             );
 
-            $szFooterUrls['myseizam'] = array(
+            $AbsoluteFooterUrls['myseizam'] = array(
                 'text' => wfMessage('sz-myseizam'),
                 'href' => Skin::makeSpecialUrl('MySeizam'),
                 'class' => false,
@@ -120,8 +123,13 @@ class SkinzamHooks {
             $szPrettyUserName = $skin->username;
             $tpl->set('sz_pretty_username', $szPrettyUserName);
         } else {
-            $szFooterUrls['myseizam'] = $tpl->data['personal_urls']['login'];
+            $AbsoluteFooterUrls['myseizam'] = $tpl->data['personal_urls']['login'];
         }
+
+        $tpl->set('absolute_footer_urls', $AbsoluteFooterUrls);
+        
+        
+        // The links on the content footer
         
         $tpl->set( 'footerlinks', array(
 			'info' => array(
@@ -132,8 +140,8 @@ class SkinzamHooks {
 				'copyright',
 			)
 		) );
-
-        $tpl->set('sz_footer_urls', $szFooterUrls);
+        
+        
         return true;
     }
 

@@ -15,6 +15,8 @@ if (!defined('MEDIAWIKI')) {
     die(-1);
 }
 
+define('BACKGROUNDKEY', 'background');
+
 /**
  * SkinTemplate class for Vector skin
  * @ingroup Skins
@@ -55,7 +57,30 @@ class SkinSkinzam extends SkinTemplate {
     }
 
     function getNamespace() {
-        return $this->getTitle()->getNamespace();
+        return $this->getRelevantTitle()->getNamespace();
+    }
+
+    function addToBodyAttributes($out, &$bodyAttrs) {
+        $url = $this->getWikiplaceBackgroundUrl();
+        if ($url)
+            $bodyAttrs['style'] = 'background-image: url(' . $url . ');';
+    }
+
+    function getWikiplaceBackgroundUrl() {
+        if (!WpPage::isInWikiplaceNamespaces($this->getNamespace()))
+            return false;
+            
+        $wikiplaceText = WpWikiplace::extractWikiplaceRoot($this->getRelevantTitle()->getDBkey(), $this->getNamespace());
+        $backgroundText = $wikiplaceText.'/'.BACKGROUNDKEY;
+        $backgroundTitle = Title::newFromText($backgroundText);
+        $backgroundPage = WikiPage::factory($backgroundTitle);
+        $backgroundPageContent = $backgroundPage->getText();
+        $urls = array();
+        $pattern = '/^https?\:\/\/[\w\-%\.\/\?\&]*\.(jpe?g|png|gif)$/i';
+        if (preg_match($pattern, $backgroundPageContent, $urls)) {
+            return htmlspecialchars($backgroundPageContent);
+        } else
+            return false;
     }
 
 }
@@ -450,7 +475,7 @@ class SkinzamTemplate extends BaseTemplate {
         <?php if ($this->data['showjumplinks']): ?>
             <!-- jumpto (invisible)-->
             <div id="jump-to-nav">
-            <?php wfMessage('jumpto')->text() ?> <a href="#mw-head"><?php wfMessage('jumptonavigation')->text() ?></a>,
+                <?php wfMessage('jumpto')->text() ?> <a href="#mw-head"><?php wfMessage('jumptonavigation')->text() ?></a>,
                 <a href="#p-search"><?php wfMessage('jumptosearch')->text() ?></a>
             </div>
             <!-- /jumpto -->
@@ -547,9 +572,9 @@ class SkinzamTemplate extends BaseTemplate {
                         <h5<?php $this->html('userlangattributes') ?>><label for="searchInput"><?php $this->msg('search') ?></label></h5>
                         <form action="<?php $this->text('wgScript') ?>" id="searchform">
                             <input type='hidden' name="title" value="<?php $this->text('searchtitle') ?>"/>
-                    <?php if ($wgVectorUseSimpleSearch && $wgUser->getOption('vector-simplesearch')): ?>
+                            <?php if ($wgVectorUseSimpleSearch && $wgUser->getOption('vector-simplesearch')): ?>
                                 <div id="simpleSearch">
-                                <?php if ($this->data['rtl']): ?>
+                                    <?php if ($this->data['rtl']): ?>
                                         <?php echo $this->makeSearchButton('image', array('id' => 'searchButton', 'src' => $this->skin->getSkinStylePath('images/search-rtl.png'))); ?>
                                     <?php endif; ?>
                                     <?php echo $this->makeSearchInput(array('id' => 'searchInput', 'type' => 'text')); ?>
@@ -557,7 +582,7 @@ class SkinzamTemplate extends BaseTemplate {
                                         <?php echo $this->makeSearchButton('image', array('id' => 'searchButton', 'src' => $this->skin->getSkinStylePath('images/search-ltr.png'))); ?>
                                     <?php endif; ?>
                                 </div>
-                                <?php else: ?>
+                            <?php else: ?>
                                 <?php echo $this->makeSearchInput(array('id' => 'searchInput')); ?>
                                 <?php echo $this->makeSearchButton('go', array('id' => 'searchGoButton', 'class' => 'searchButton')); ?>
                                 <?php echo $this->makeSearchButton('fulltext', array('id' => 'mw-searchButton', 'class' => 'searchButton')); ?>
@@ -576,13 +601,15 @@ class SkinzamTemplate extends BaseTemplate {
      * stored by the SkinTemplate Hook in extensions/Skinzam/Skinzam.hooks.php.
      * The resulting array is built acording to a format intended to be passed
      * through makeListItem to generate the html.
-     * This is in reality the same list as already stored in sz_footer_urls
+     * This is in reality the same list as already stored in absolute_footer_urls
      * however it is reformatted so that you can just pass the individual items
      * to makeListItem instead of hardcoding the element creation boilerplate.
+     * 
+     * @return array
      */
-    function getSzAbsoluteFooterUrls() {
+    private function getSzAbsoluteFooterUrls() {
         $szFooterUrls = array();
-        foreach ($this->data['sz_footer_urls'] as $key => $szfurl) {
+        foreach ($this->data['absolute_footer_urls'] as $key => $szfurl) {
             # The class on a personal_urls item is meant to go on the <a> instead
             # of the <li> so we have to use a single item "links" array instead
             # of using most of the personal_url's keys directly
