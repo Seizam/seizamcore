@@ -74,9 +74,11 @@ class SkinSkinzam extends SkinTemplate {
     }
 
     function getWikiplaceBackgroundUrl() {
-        //return 'http://localhost/WikiZam/img_auth.php/d/d7/WPONE.bg_artiste.jpg';
+        $backgroundPageContent = 'http://localhost/WikiZam/img_auth.php/d/d7/WPONE.bg_artiste.jpg';
+        return $backgroundPageContent;
         if (!WpPage::isInWikiplaceNamespaces($this->getNamespace()))
             return false;
+        
 
         $wikiplaceText = WpWikiplace::extractWikiplaceRoot($this->getRelevantTitle()->getDBkey(), $this->getNamespace());
         $backgroundText = $wikiplaceText . '/' . BACKGROUNDKEY;
@@ -85,6 +87,7 @@ class SkinSkinzam extends SkinTemplate {
         $backgroundPageContent = $backgroundPage->getText();
         $pattern = '/^https?\:\/\/[\w\-%\.\/\?\&]*\.(jpe?g|png|gif)$/i';
         if (preg_match($pattern, $backgroundPageContent)) {
+            $this->template->set('background_url',$backgroundPageContent);
             return htmlspecialchars($backgroundPageContent);
         } else
             return false;
@@ -523,7 +526,7 @@ class SkinzamTemplate extends BaseTemplate {
         
         <!-- background -->
         <script>
-            $.backstretch("http://www.seizam.com/files/davidcanwin.png");
+            $.backstretch(<?php $this->text('background_url')?>);
         </script>
         <!-- /background -->
         
