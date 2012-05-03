@@ -170,7 +170,7 @@ class SpecialWikiplaces extends SpecialPage {
 	
 	public function displayCreateSubpage( $name ) {
 		
-		if ( ( $reason=WpPage::userCanCreateNewPage($this->getUser()->getId())) !== true ) {
+		if ( ( $reason=WpSubscription::userCanCreateNewPage($this->getUser()->getId())) !== true ) {
 			$this->getOutput()->addHTML( wfMessage($reason)->text() ); // no active subscription or quotas exceeded 
 			return;
 		}
