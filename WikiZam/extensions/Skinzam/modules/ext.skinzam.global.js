@@ -3,7 +3,9 @@
 	@Date : Oct. 2011
 */
 
+    
 (function ($) {
+    
     
     // footer margin
     $('#content').wrap('<div id="heightwrapper" />');
