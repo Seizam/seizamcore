@@ -39,6 +39,8 @@ class WikiplacesHooks {
 	 */
 	public static function userCan( $title, &$user, $action, &$result ) {
 		
+		wfDebugLog('wikiplaces', 'userCan: '.$action);
+		
 		if ( ! WpPage::isInWikiplaceNamespaces($title->getNamespace())  ||  ($action=='read') ) {
 			return true; // skip
 		}
@@ -63,11 +65,11 @@ class WikiplacesHooks {
 		
 		if ( isset(self::$userCanCache[$article_id][$user_id][$do]) ) {
 			$result = self::$userCanCache[$article_id][$user_id][$do];
-			wfDebugLog('wikiplaces', 'userCan: ' . $do .' '. ($result ? 'ALLOWED' : 'DENIED') . '(cache hit)'.
+/*			wfDebugLog('wikiplaces', 'userCan: ' . $do .' '. ($result ? 'ALLOWED' : 'DENIED') . '(cache hit)'.
 					' article=[' . $article_id . ']' .
 					' user=[' . $user_id . ']' .
 					' action=' . $action ) ;
-			return false;
+*/			return false;
 		}
 		
 		switch ($do) {
@@ -118,7 +120,7 @@ class WikiplacesHooks {
 				$result = false;
 				$msg .= ', bad character in page title';
 				
-			} elseif ( ($reason=WpWikiplace::userCanCreateWikiplace($user_id)) !== true ) {
+			} elseif ( ($reason=WpSubscription::userCanCreateWikiplace($user_id)) !== true ) {
 				$result = false; 
 				$msg .= ', '.$reason;
 				
@@ -149,7 +151,7 @@ class WikiplacesHooks {
 					// the user is uploading a file
 					$msg .= ', new file';
 			
-					if ( ($reason=WpPage::userCanUploadNewFile($user_id)) !== true ) {
+					if ( ($reason=  WpSubscription::userCanUploadNewFile($user_id)) !== true ) {
 						$result = false; // no active subscription or page creation quota is exceeded
 						$msg .= ', '.$reason;
 						
@@ -163,7 +165,7 @@ class WikiplacesHooks {
 					// the user is creating a new page (regular or talk)
 					$msg .= ', new subpage';
 					
-					if ( ($reason=WpPage::userCanCreateNewPage($user_id)) !== true ) {
+					if ( ($reason=WpSubscription::userCanCreateNewPage($user_id)) !== true ) {
 						$result = false; // no active subscription or page creation quota is exceeded
 						$msg .= ', '.$reason;
 						
@@ -191,7 +193,8 @@ class WikiplacesHooks {
 	 */
 	private static function userCanMove( &$title, &$user ) {
 
-		return (  $user->isLoggedIn()  && 
+		return (  $user->isLoggedIn()  &&
+				( WpSubscription::getActiveByUserId($user->getId()) != null )  &&
 				! WpPage::isHomepage($title)  &&
 				WpPage::isOwner($title->getArticleID(), $user->getId()) ) ;
 		

@@ -87,16 +87,24 @@ class SpecialWikiplaces extends SpecialPage {
 	
 	private function displayList() {
 		
+		$user_id = $this->getUser()->getId();
+		$output = $this->getOutput();
+		
+		$diskspace = WpPage::getDiskspaceUsageByUser($user_id);	
+		$output->addHTML( wfMessage(
+				'wp-your-total-diskspace', 
+				 ($diskspace < 1) ? '< '.wgformatSizeMB(1) : wgformatSizeMB($diskspace) )->text() );
+
 		$tp = new WpWikiplacesTablePager();
-		$tp->setSelectConds(array( 'wpw_owner_user_id' => $this->getUser()->getId() ));
-		$this->getOutput()->addHTML($tp->getWholeHtml());
+		$tp->setSelectConds(array( 'wpw_owner_user_id' => $user_id ));
+		$output->addHTML($tp->getWholeHtml());
 		
 	}
 	
 	
 	private function displayCreateWikiplace() {
 		
-		if ( ( $reason=WpWikiplace::userCanCreateWikiplace($this->getUser()->getId())) !== true ) {
+		if ( ( $reason= WpSubscription::userCanCreateWikiplace($this->getUser()->getId())) !== true ) {
 			$this->getOutput()->addHTML( wfMessage($reason)->text() ); // no active subscription or quotas exceeded 
 			return;
 		}

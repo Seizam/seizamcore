@@ -1014,5 +1014,114 @@ class WpSubscription {
 				wfMessage( 'wp-sub-tmrko-email-body' , $user->getName() )->text())->isGood();
 		
 	}
+	
+	
+	/**
+	 * Check the user has an active subscription, page creation quota is not exceeded and
+	 * diskpace quota is not exceeded.
+	 * @param int $user_id
+	 * @return boolean/string True if user can, string message explaining why she can't
+	 * <ul>
+	 * <li><b>wp-no-active-sub</b> user has no active subscription</li>
+	 * <li><b>wp-page-quota-exceeded</b> page quota exceeded</li>
+	 * <li><b>wp-diskspace-quota-exceeded</b> diskspace quota exceeded</li>
+	 * </ul>
+	 */
+	public static function userCanUploadNewFile($user_id) {
+		
+		$sub = self::getActiveByUserId($user_id);
+
+		if ($sub === null) { 
+			return 'wp-no-active-sub';
+		}
+
+		$max_pages = $sub->get('plan')->get('wpp_nb_wikiplace_pages');
+		$user_pages_nb = WpPage::countPagesOwnedByUser($user_id);
+
+		if ($user_pages_nb >= $max_pages) { 
+			return 'wp-page-quota-exceeded';
+		}
+		
+		$max_diskspace = $sub->get('plan')->get('wpp_diskspace');
+		$user_diskspace_usage = WpPage::getDiskspaceUsageByUser($user_id);
+
+		if ($user_diskspace_usage >= $max_diskspace) { 
+			return 'wp-diskspace-quota-exceeded';
+		}
+
+		return true;
+		
+	}
+	
+	/**
+	 * Check the user has an active subscription and page creation quota is not exceeded
+	 * @param int $user_id
+	 * @return boolean/string True if user can, string message explaining why she can't
+	 * <ul>
+	 * <li><b>wp-no-active-sub</b> user has no active subscription</li>
+	 * <li><b>wp-page-quota-exceeded</b> page quota exceeded</li>
+	 * </ul>
+	 */
+	public static function userCanCreateNewPage($user_id) {
+		
+		$sub = self::getActiveByUserId($user_id);
+
+		if ($sub === null) { 
+			return 'wp-no-active-sub';
+		}
+
+		$max_pages = $sub->get('plan')->get('wpp_nb_wikiplace_pages');
+		$user_pages_nb = WpPage::countPagesOwnedByUser($user_id);
+
+		if ($user_pages_nb >= $max_pages) { 
+			return 'wp-page-quota-exceeded';
+		}
+
+		return true;
+		
+	}
+	
+		/**
+	 * Check the user has an active subscription and 
+	 * wikiplace creation quota is not exceeded and 
+	 * page creation quota is not exceeded
+	 * @param type $user_id
+	 * @return boolean/string True if user can, string message explaining why she can't:
+	 * <ul>
+	 * <li><b>wp-no-active-sub</b> user has no active subscription</li>
+	 * <li><b>wp-wikiplace-quota-exceeded</b> wikiplace creation quota exceeded</li>
+	 * <li><b>wp-page-quota-exceeded</b> page creation quota exceeded</li>
+	 * </ul>
+	 */
+	public static function userCanCreateWikiplace($user_id) {
+		
+		if ( !is_int($user_id) || ($user_id < 1)) {
+			throw new MWException('Cannot check if user can create a Wikiplace, invalid user identifier.');
+		}
+		
+		$sub = self::getActiveByUserId($user_id);
+		if ($sub === null) { 
+			return 'wp-no-active-sub';
+		}	
+
+		$plan = $sub->get('plan');
+		
+		$max_wikiplaces = $plan->get('wpp_nb_wikiplaces');
+		$user_wikiplaces_nb = WpWikiplace::countWikiplacesOwnedByUser($user_id);
+
+		if ($user_wikiplaces_nb >= $max_wikiplaces) { 
+			return 'wp-wikiplace-quota-exceeded';
+		}
+
+		$max_pages = $plan->get('wpp_nb_wikiplace_pages');
+		$user_pages_nb = WpPage::countPagesOwnedByUser($user_id);
+
+		if ($user_pages_nb >= $max_pages) { 
+			return 'wp-page-quota-exceeded';
+		}
+
+		return true; // all ok
+
+	}
 
 }
