@@ -178,9 +178,9 @@ class WpPage {
 	
 	
 	/**
-	 * Restore from DB, using article id
+	 * Restore from DB, using <b>article id</b>
 	 * @param int $id 
-	 * @return WpWikiplace if found, or null if not
+	 * @return WpPage if found, or null if not
 	 */
 	public static function getByArticleId($id) {
 				
@@ -338,7 +338,8 @@ class WpPage {
 	
 	/**
 	 * Check that the $title is a homepage and not a subpage. The test is performed using
-	 * the MediaWiki Title object of the page, and doesn't ensure that the corresponding wikiplace already exists.
+	 * the MediaWiki Title db_key and namespace, but doesn't ensure that the corresponding 
+	 * wikiplace already exists.
 	 * @param Title $title
 	 * @return boolean 
 	 */

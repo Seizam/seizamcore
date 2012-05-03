@@ -351,6 +351,35 @@ class WpSubscription {
 		return self::constructFromDatabaseRow($result);
 	}
 	
+	/**
+	 * Get the last subscription of a user, which can be unactive.
+	 * @param int $user_id
+	 * @return WpSubscription The user active subscription or null if she has no active one 
+	 */
+	public static function getLastSubscription($user_id) {
+			
+		if ( ($user_id === null) || !is_numeric($user_id) || ($user_id < 1) ) {
+			throw new MWException( 'Cannot search subscription, invalid user identifier.' );
+		}	
+
+		$dbr = wfGetDB(DB_SLAVE) ;
+
+		$now =  $dbr->addQuotes( self::getNow() );
+		$conds = $dbr->makeList( array(
+			"wps_buyer_user_id"	=> $user_id,  
+		), LIST_AND );
+
+		$result = $dbr->selectRow( 'wp_subscription', '*',	$conds, __METHOD__, 
+				array( 'ORDER BY' => ' wps_active DESC, wps_start_date DESC' )  );
+
+		if ( $result === false ) {
+			return null;
+		}
+		
+		return self::constructFromDatabaseRow($result);
+	}
+	
+	
 	
 	/**
 	 * <b>WARNING:</b>This function is DB killer, and should only be used in test environment!

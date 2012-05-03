@@ -232,37 +232,8 @@ class WikiplacesHooks {
 			return true; // skip
 		}
 		
-		self::onWikiplaceItemCreated( $title, $user );
-		
-		// restrict applicable actions to owner, except for read
-		$actions_to_rectrict = array_diff(
-				$$title->getRestrictionTypes(), // array( 'read', 'edit', ... )
-				array( 'read') );
-		$restrictions = array();
-		foreach ( $actions_to_rectrict as $action) {
-			$restrictions[$action] = WP_DEFAULT_RESTRICTION_LEVEL;
-		} 
-
-		$ok = false;
-		wfRunHooks( 'SetRestrictions', array( $wikipage , $restrictions , &$ok ) );
-		if ( !$ok ) {
-			wfDebugLog( 'wikiplaces', 'onArticleInsertComplete: ERROR while setting default restrictions to new page, article=['.$article_id.']"'.$prefixed_db_key.'"');
-		} else {
-			wfDebugLog( 'wikiplaces', 'onArticleInsertComplete: OK default restrictions set to new page, article=['.$article_id.']"'.$prefixed_db_key.'"');
-		}
-		
-		return true;
-		
-	}
-	
-	/**
-	 *
-	 * @param Title $title
-	 * @param User $user 
-	 */
-	private static function onWikiplaceItemCreated( $title, $user ) {
-		
-		$article_id = $title->getArticleID();
+		$article_id = $wikipage->getId();
+		$wikiplace;
 		
 		// currently, the page is already stored in 'page' db table
 			
@@ -270,27 +241,8 @@ class WikiplacesHooks {
 			
 			// create a wikiplace from this homepage				
 			
-			$subscription = WpSubscription::getActiveByUserId( $user->getId() );
-			if ( $subscription == null ) {
-				throw new MWException('Cannot create wikiplace, user has no active subscription.');
-			}
-			
-			$wikiplace = WpWikiplace::create( $article_id , $subscription );
-			if ( $wikiplace == null ) {
-				throw new MWException('Error while creating wikiplace.');
-			}	
-			
-			if ( ! $wikiplace->forceArchiveAndResetUsage( WpSubscription::getNow() ) ) {
-				throw new MWException('Error while initialization of wikiplace usage.');		
-			}
-			
-			$new_wp_page = WpPage::create( $article_id , $wikiplace->get('wpw_id') );
-
-			if ($new_wp_page === null) {
-				throw new MWException('Error while associating homepage to its container wikiplace.');
-			}
-			
-			wfDebugLog( 'wikiplaces', 'onWikiplaceItemCreated: OK, wikiplace and its homepage created and initialized, article=['.$article_id.']"'.$title->getPrefixedDBkey().'"');
+			$wikiplace = self::doCreateWikiplace($user->getId(), $article_id);	
+			wfDebugLog( 'wikiplaces', 'onArticleInsertComplete: wikiplace created and initialized, article=['.$article_id.']"'.$title->getPrefixedDBkey().'"');
 
 			
 		} else {
@@ -302,17 +254,65 @@ class WikiplacesHooks {
 				throw new MWException('Cannot identify the container wikiplace.');
 			}
 
-			if ( WpPage::create( $article_id, $wikiplace->get('wpw_id') ) == null ) {
-				throw new MWException('Error while associating subpage to its container wikiplace.');
-			}
-
-			wfDebugLog( 'wikiplaces', 'onWikiplaceItemCreated: OK, the page is now associated to its wikiplace, article=['.$article_id.']"'.$title->getPrefixedDBkey().'"');
-
 		} 
 		
+		$new_wp_page = WpPage::create( $article_id , $wikiplace->get('wpw_id') );
 
-	}
+		if ($new_wp_page === null) {
+				throw new MWException('Error while associating new page to its container wikiplace.');
+		}
 		
+		wfDebugLog( 'wikiplaces', 'onArticleInsertComplete: new page associated to its wikiplace, article=['.$article_id.']"'.$title->getPrefixedDBkey().'"');
+		
+		// restrict applicable actions to owner, except for read
+		$actions_to_rectrict = array_diff(
+				$title->getRestrictionTypes(), // array( 'read', 'edit', ... )
+				array( 'read') );
+		$restrictions = array();
+		foreach ( $actions_to_rectrict as $action) {
+			$restrictions[$action] = WP_DEFAULT_RESTRICTION_LEVEL;
+		} 
+
+		$ok = false;
+		wfRunHooks( 'SetRestrictions', array( $wikipage , $restrictions , &$ok ) );
+		if ( !$ok ) {
+			wfDebugLog( 'wikiplaces', 'onArticleInsertComplete: ERROR while setting default restrictions to new page, article=['.$wikipage->getId().']"'.$title->getPrefixedDBkey().'"');
+		} else {
+			wfDebugLog( 'wikiplaces', 'onArticleInsertComplete: OK default restrictions set to new page, article=['.$wikipage->getId().']"'.$title->getPrefixedDBkey().'"');
+		}
+		
+		return true;
+		
+	}
+	
+		
+
+	/**
+	 *
+	 * @param int $user_id
+	 * @param int $homepage_article_id
+	 * @return WpWikiplace 
+	 */
+	private static function doCreateWikiplace( $user_id, $homepage_article_id ) {
+		
+		// creating a new wikiplace
+		$subscription = WpSubscription::getLastSubscription( $user_id );
+		if ( $subscription == null ) {
+			throw new MWException('Cannot create wikiplace, user has no subscription.');
+		}
+
+		$wikiplace = WpWikiplace::create( $homepage_article_id , $subscription );
+		if ( $wikiplace == null ) {
+			throw new MWException('Error while creating wikiplace.');
+		}	
+
+		if ( ! $wikiplace->forceArchiveAndResetUsage( WpSubscription::getNow() ) ) {
+			throw new MWException('Error while initialization of wikiplace usage.');		
+		}
+
+		return $wikiplace;
+		
+	}
 
 	/**
 	 * Occurs when moving a page:
@@ -320,40 +320,59 @@ class WikiplacesHooks {
 	 * <li>old page renamed</li>
 	 * <li>new page created, with old name, containing a redirect to the new one</li>
 	 * </ul>
-	 * @param Title $title old title
-	 * @param Title $newtitle
+	 * @param Title $old_name_title old title
+	 * @param Title $new_name_title
 	 * @param User $user user who did the move
-	 * @param int $oldid database ID of the page that's been moved
-	 * @param int $newid database ID of the created redirect
+	 * @param int $renamed_page_id database ID of the page that's been moved
+	 * @param int $redirect_page_id database ID of the created redirect
 	 * @return boolean true to continue hook processing or false to abort
 	 */
-	public static function onTitleMoveComplete ( &$title, &$newtitle, &$user, $oldid, $newid  ) {
+	public static function onTitleMoveComplete ( &$old_name_title, &$new_name_title, &$user, $renamed_page_id, $redirect_page_id  ) {
 		
-		wfDebugLog( 'wikiplaces', 'onTitleMoveComplete: ['.$oldid.']"'.$title->getPrefixedDBkey().'" renamed to "'.$newtitle->getPrefixedDBkey().'", redirect['.$newid.']');
+		wfDebugLog( 'wikiplaces', 'onTitleMoveComplete: '
+				.'['.$renamed_page_id.']"'.$old_name_title->getPrefixedDBkey().'"'
+				.' renamed to "'.$new_name_title->getPrefixedDBkey().'", redirect['.$redirect_page_id.']');
 		
-		// first step, associate a new page (with the new name) to the corresponding wikiplace
+		$dest_wikiplace;
 		
-		// WARNING, this is not the good id !!
-		self::onWikiplaceItemCreated($newtitle, $user);
-		
-		$renamed_page = WpPage::getByArticleId( $oldid );
-		if ($renamed_page === null) {
-			wfDebugLog( 'wikiplaces', 'onTitleMoveComplete: ERROR cannot find original wikiplace page: ['.$oldid.']"');
-			throw new MWException('Cannot find the original page.');
+		if ( WpPage::isHomepage($new_name_title) ) {
+			
+			$dest_wikiplace = self::doCreateWikiplace($user->getId(), $renamed_page_id);
+			wfDebugLog( 'wikiplaces', 'onTitleMoveComplete: new wikiplace created and initialized, article="'.$new_name_title->getPrefixedDBkey().'"');
+			
+		} else {
+			
+			// destination is a subpage
+			$dest_wikiplace = WpWikiplace::getBySubpage($new_name_title->getDBkey(), $new_name_title->getNamespace());
+			if ( $dest_wikiplace == null ) {
+				throw new MWException('Error while searching destination wikiplace.');
+			}
+			
 		}
-					
-		// second step, if a redirect was created, associate this new page to original wikiplace
 		
-		if ( $newid == 0 ) {
-			// no redirect created
-			return true;
+		// move the page if necessary
+		$renamed_wp_page = WpPage::getByArticleId($renamed_page_id);
+		if ( $renamed_wp_page == null ) {
+			throw new MWException('Error while searching Wikiplace page to move.');
 		}
 
-		if ( WpPage::create( $newid, $old_wikiplace_id ) == null ) {
-			wfDebugLog( 'wikiplaces', 'onTitleMoveComplete: ERROR while associating redirect to its container wikiplace, article=['.$newid.']"'.$title->getPrefixedDBkey().'"');
-			throw new MWException('Error while associating subpage to its container wikiplace.');
+		$dest_wp_id = $dest_wikiplace->get('wpw_id');
+		$old_wp_id = $renamed_wp_page->get('wppa_wpw_id');
+		if ($dest_wp_id != $old_wp_id) {
+			// wikiplace has changed
+			wfDebugLog( 'wikiplaces', 'onTitleMoveComplete: changing container wikiplace for page "'.$new_name_title->getPrefixedDBkey().'"');
+			$renamed_wp_page->setWikiplaceId($dest_wp_id);
 		}
+			
+		// if a redirect was created, associate this new page to original wikiplace
 		
+		if ( $redirect_page_id != 0 ) {
+			wfDebugLog( 'wikiplaces', 'onTitleMoveComplete: associating the redirect to old wikiplace, old title="'.$old_name_title->getPrefixedDBkey().'"');
+			if ( WpPage::create( $redirect_page_id, $old_wp_id ) == null ) {
+				throw new MWException('Error while associating redirect subpage to its container wikiplace.');
+			}
+		}
+
 		return true;
 	}
 	
@@ -428,10 +447,10 @@ class WikiplacesHooks {
 				.', title=['.$article_id.']"'.$title->getPrefixedDBkey().
 				'", user=['.$user_id.']"'.$user->getName().'"');
 
-		if ( ! $result ) {
+/*		if ( ! $result ) {
 			wfDebugLog( 'wikiplaces',  wfGetPrettyBacktrace() );
 		}
-		
+*/		
 		return false; // stop hook processing, because we have the answer
 		
 	}
