@@ -65,13 +65,12 @@ class SkinzamHooks {
      * 
      * Adds the modules to the page
      * 
-     * @param $out OutputPage output page
-     * @param $skin Skin current skin
+     * @param OutputPage $out output page
+     * @param Skin $skin current skin
      */
     public static function beforePageDisplay($out, $skin) {
         if ($skin instanceof SkinSkinzam) {
-            $out->addModules('ext.skinzam.global');
-            $out->addModules('ext.skinzam.jquery.scrollto-min');
+            $out->addModules(array('jquery.scrollto','jquery.backstretch','ext.skinzam.global'));
 			// Add modules for enabled features
 			foreach ( self::$features as $name => $feature ) {
 				if ( isset( $feature['modules'] ) && self::isEnabled( $name ) ) {

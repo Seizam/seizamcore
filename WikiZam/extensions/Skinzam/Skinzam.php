@@ -74,10 +74,14 @@ $skinzamResourceTemplate = array(
 
 $wgResourceModules += array(
     'ext.skinzam.global' => $skinzamResourceTemplate + array(
-        'scripts' => 'ext.skinzam.global.js'
+        'scripts' => 'ext.skinzam.global.js',
+        'position' => 'bottom'
         ),
-    'ext.skinzam.jquery.scrollto-min' => $skinzamResourceTemplate + array(
-         'scripts' => 'ext.skinzam.jquery.scrollto-min.js'
+    'jquery.scrollto' => array(
+         'scripts' => 'extensions/Skinzam/modules/jquery/jquery.scrollto.js'
+        ),
+    'jquery.backstretch' => array(
+         'scripts' => 'extensions/Skinzam/modules/jquery/jquery.backstretch.js',
         ),
     'ext.skinzam.simpleSearch' => $skinzamResourceTemplate + array(
 		'scripts' => 'ext.skinzam.simpleSearch.js',
@@ -122,7 +126,4 @@ $wgFooterIcons = $wgFooterIcons = array(
 # Try something cool
 $wgPageShowWatchingUsers = true;
 $wgMaxCredits = 1;
-
-
-
 

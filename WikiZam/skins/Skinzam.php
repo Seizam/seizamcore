@@ -60,6 +60,13 @@ class SkinSkinzam extends SkinTemplate {
         return $this->getRelevantTitle()->getNamespace();
     }
 
+    /**
+	 * This will be called by OutputPage::headElement when it is creating the
+	 * <body> tag, skins can override it if they have a need to add in any
+	 * body attributes or classes of their own.
+	 * @param OutputPage $out 
+	 * @param Array $bodyAttrs
+	 */
     function addToBodyAttributes($out, &$bodyAttrs) {
         $url = $this->getWikiplaceBackgroundUrl();
         if ($url)
@@ -67,17 +74,17 @@ class SkinSkinzam extends SkinTemplate {
     }
 
     function getWikiplaceBackgroundUrl() {
+        //return 'http://localhost/WikiZam/img_auth.php/d/d7/WPONE.bg_artiste.jpg';
         if (!WpPage::isInWikiplaceNamespaces($this->getNamespace()))
             return false;
-            
+
         $wikiplaceText = WpWikiplace::extractWikiplaceRoot($this->getRelevantTitle()->getDBkey(), $this->getNamespace());
-        $backgroundText = $wikiplaceText.'/'.BACKGROUNDKEY;
+        $backgroundText = $wikiplaceText . '/' . BACKGROUNDKEY;
         $backgroundTitle = Title::newFromText($backgroundText);
         $backgroundPage = WikiPage::factory($backgroundTitle);
         $backgroundPageContent = $backgroundPage->getText();
-        $urls = array();
         $pattern = '/^https?\:\/\/[\w\-%\.\/\?\&]*\.(jpe?g|png|gif)$/i';
-        if (preg_match($pattern, $backgroundPageContent, $urls)) {
+        if (preg_match($pattern, $backgroundPageContent)) {
             return htmlspecialchars($backgroundPageContent);
         } else
             return false;
@@ -513,6 +520,13 @@ class SkinzamTemplate extends BaseTemplate {
         <!-- fixalpha -->
         <script type="<?php $this->text('jsmimetype') ?>"> if ( window.isMSIE55 ) fixalpha(); </script>
         <!-- /fixalpha -->
+        
+        <!-- background -->
+        <script>
+            $.backstretch("http://www.seizam.com/files/davidcanwin.png");
+        </script>
+        <!-- /background -->
+        
         <?php
         $this->printTrail();
     }
