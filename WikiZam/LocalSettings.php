@@ -240,6 +240,8 @@ $wgGroupPermissions['*']['edit'] = true;
 $wgGroupPermissions['user']['move']	= true;
 $wgGroupPermissions['user']['move-subpages'] = true;
 $wgGroupPermissions['user']['suppressredirect'] = true;
+$wgGroupPermissions['user']['deletedhistory'] = true;
+$wgGroupPermissions['user']['undelete'] = true;
 $wgGroupPermissions['user']['move-rootuserpages'] = false; // can move root userpages
 $wgGroupPermissions['artist'] = array();
 

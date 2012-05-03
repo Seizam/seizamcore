@@ -85,7 +85,7 @@ To continue using your services, please take out a new offer.',
     'wp-homepage' => 'Homepage',
 	'wp-subpage' => 'Subpage',
 	
-	
+	'wp-your-total-diskspace' => 'Total diskspace usage: $1',
 	'wpwtp-page_title' => 'Wikiplace',
 	'wpwtp-count(*)' => 'Subpages',
 	'wpwtp-wpw_monthly_page_hits' => "Monthly hits",
