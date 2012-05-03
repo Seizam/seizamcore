@@ -60,7 +60,11 @@ $wgSpecialPageGroups['Offers'] = 'other';
 # Attach our own functions to hooks
 $wgHooks['LoadExtensionSchemaUpdates'][] = 'WikiplacesHooks::onLoadExtensionSchemaUpdates'; // Schema updates for update.php
 $wgHooks['ArticleInsertComplete'][] = 'WikiplacesHooks::onArticleInsertComplete';
-$wgHooks['userCan'][] = 'WikiplacesHooks::userCanCreate';
+$wgHooks['TitleMoveComplete'][] = 'WikiplacesHooks::onTitleMoveComplete';
+$wgHooks['ArticleDeleteComplete'][] = 'WikiplacesHooks::onArticleDeleteComplete';
+$wgHooks['ArticleUndelete'][] = 'WikiplacesHooks::onArticleUndelete';
+
+$wgHooks['userCan'][] = 'WikiplacesHooks::userCan';
 $wgHooks['TransactionUpdated'][] = 'WikiplacesHooks::onTransactionUpdated';
 $wgHooks['IsOwner'][] = 'WikiplacesHooks::isOwner';
 

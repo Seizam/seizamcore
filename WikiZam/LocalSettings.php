@@ -237,8 +237,9 @@ unset($wgRestrictionTypes[array_search('move', $wgRestrictionTypes)]);
 // by default 'user' is allowed to edit, even if '*' is not.
 $wgGroupPermissions['*']['edit'] = true; 
 // disable move (but sysop can still move, because sysop group have seperates rights
-$wgGroupPermissions['user']['move']	= false;
-$wgGroupPermissions['user']['move-subpages'] = false;
+$wgGroupPermissions['user']['move']	= true;
+$wgGroupPermissions['user']['move-subpages'] = true;
+$wgGroupPermissions['user']['suppressredirect'] = true;
 $wgGroupPermissions['user']['move-rootuserpages'] = false; // can move root userpages
 $wgGroupPermissions['artist'] = array();
 

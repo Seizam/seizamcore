@@ -262,13 +262,13 @@ function efRestrictionsUserCan( $title, &$user, $action, &$result ) {
 	global $wgRestrictionsUserCanCache;
 	if (isset($wgRestrictionsUserCanCache[$user->getID()][$title->getArticleId()][$act])) {
 		$result = $wgRestrictionsUserCanCache[$user->getID()][$title->getArticleId()][$act];
-		wfDebugLog( 'restrictions', 'UserCan: '.($result?'YES':'NO').', CACHE HIT '
+/*		wfDebugLog( 'restrictions', 'UserCan: '.($result?'YES':'NO').', CACHE HIT '
 				.' title="'.$title->getPrefixedDBkey().'"['.$title->getArticleId().']'
 				.' isKnown()='.($title->isKnown()?'YES':'NO')
 				.' user="'.$user->getName().'"['.$user->getID().']'
 				.' action="'.$action.'"'
 				);
-		
+*/		
 		return false; //stop processing
 	}
 
@@ -336,12 +336,12 @@ function efRestrictionsIsOwner( $title, $user ) {
 		
 		$result = $wgRestrictionsIsOwnerCache[$user->getID()][$title->getArticleId()];
 		
-		wfDebugLog( 'restrictions', 'IsOwner: '.( $result ? 'YES' : 'NO')
+/*		wfDebugLog( 'restrictions', 'IsOwner: '.( $result ? 'YES' : 'NO')
 				.', CACHE HIT '
 				.' title="'.$title->getPrefixedDBkey().'"['.$title->getArticleId().']'
 				.' user="'.$user->getName().'"['.$user->getID().']'
 				);
-		
+*/		
 		return $result;
 	}
 	
@@ -370,7 +370,7 @@ function efRestrictionsIsOwner( $title, $user ) {
 	$wgRestrictionsIsOwnerCache[$user->getID()][$title->getArticleId()] = $result;
 	
 	wfDebugLog( 'restrictions', 'IsOwner: '.( $result ? 'YES' : 'NO')
-			.', CACHE MISS '
+//			.', CACHE MISS '
 			.' title="'.$title->getPrefixedDBkey().'"['.$title->getArticleId().']'
 			.' user="'.$user->getName().'"['.$user->getID().']'
 			);

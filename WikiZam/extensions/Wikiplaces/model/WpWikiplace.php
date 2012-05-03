@@ -506,9 +506,9 @@ WHERE wpw_report_updated < $outdated ;" ;
 	
 	/**
 	 * Parse the db_key depending on the namespace, extract the name of the wikiplace
-	 * that the page should belong. 
-	 * Note that this function can return a Wikiplace even if the page doesn't not already 
-	 * belongs to ( = newly created page ).
+	 * that the page should belong. Work with both homepages and subpages db_key.
+	 * Note that this function can return a Wikiplace name even if the page doesn't not already 
+	 * belongs to ( = newly created page ) or even if the Wikiplace doesn't already exists.
 	 * @param string $db_key should be $wikipage->getTitle()->getDBkey()
 	 * @param int $namespace should be $wikipage->getTitle()->getNamespace()
 	 * @return String The wikiplace name or null the page doesn't belong to an exsiting Wikiplace
@@ -544,13 +544,17 @@ WHERE wpw_report_updated < $outdated ;" ;
 	 * Parse the db_key depending on the namespace, extract the name of the wikiplace
 	 * that the page should belong, and return the Wikiplace with that name. 
 	 * Note that this function can return a Wikiplace even if the page doesn't not already 
-	 * belongs to ( = newly created page ).
+	 * belongs to ( = newly created page ), but the Wikiplace already exists.
 	 * @param string $db_key should be $wikipage->getTitle()->getDBkey()
 	 * @param int $namespace should be $wikipage->getTitle()->getNamespace()
 	 * @return WpWikiplace The Wikiplace or null the page doesn't belong to an exsiting Wikiplace
 	 */
 	public static function getBySubpage($db_key, $namespace) {
-		return self::getByName(self::extractWikiplaceRoot($db_key, $namespace));
+		$name = self::extractWikiplaceRoot($db_key, $namespace);
+		if ($name == null) {
+			return null;
+		}
+		return self::getByName($name);
 		
 	}
 
@@ -570,18 +574,17 @@ WHERE wpw_report_updated < $outdated ;" ;
 	
 	/**
 	 * Create a wikiplace from homepage, owned by this user
-	 * @param WikiPage $homepage
+	 * @param int $homepage_id The Article id of the homepage
 	 * @param WpSubscription $subscription
 	 * @return WpWikiplace The created Wikiplace, or null if a db error occured
 	 */
-	public static function create($homepage, $subscription) {
+	public static function create($homepage_id, $subscription) {
 		
-		if ( !($homepage instanceof WikiPage) || !($subscription instanceof WpSubscription) ) {
+		if (  ! is_int($homepage_id)  ||  ! ($subscription instanceof WpSubscription)  ) {
 			throw new MWException( 'Cannot create Wikiplace, invalid argument.' );
 		}
 		
 		$user_id = $subscription->get('wps_buyer_user_id');
-		$homepage_id = $homepage->getId();
 		$wps_id = $subscription->get('wps_id');
 		$wpw_report_updated = WpSubscription::getNow();
 		$wpw_date_expires = self::calculateNextDateExpiresFromSubscription($subscription);
@@ -624,7 +627,6 @@ WHERE wpw_report_updated < $outdated ;" ;
 				0,
 				$wpw_report_updated,
 				$wpw_date_expires);
-		$wp->fetchName($homepage);
 
 		return $wp;
 			

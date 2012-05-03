@@ -104,6 +104,11 @@ class WpPage {
 					$this->fetchPage();
 				}
 				return $this->$attribut_name;
+			case 'wikiplace':
+				if ($this->wikiplace === null) {
+					$this->fetchWikiplace();
+				}
+				return $this->wikiplace;
 				break;
 		}
 		throw new MWException('Unknown attribut '.$attribut_name);
@@ -171,6 +176,29 @@ class WpPage {
 				
 	}
 	
+	
+	/**
+	 * Restore from DB, using <b>article id</b>
+	 * @param int $id 
+	 * @return WpPage if found, or null if not
+	 */
+	public static function getByArticleId($id) {
+				
+		if ( ($id === null) || !is_int($id) || ($id < 1) ) {
+			throw new MWException( 'Cannot search page, invalid article identifier.' );
+		}
+		
+		$dbr = wfGetDB(DB_SLAVE);
+		$result = $dbr->selectRow( 'wp_page', '*',	array( 'wppa_page_id' =>  $id ), __METHOD__ );
+		
+		if ( $result === false ) {
+			// not found, so return null
+			return null;
+		}
+		
+		return self::constructFromDatabaseRow($result);
+
+	}
 	
 	/**
 	 * Restore from DB, using id
@@ -310,7 +338,8 @@ class WpPage {
 	
 	/**
 	 * Check that the $title is a homepage and not a subpage. The test is performed using
-	 * the MediaWiki Title object of the page, and doesn't ensure that the corresponding wikiplace already exists.
+	 * the MediaWiki Title db_key and namespace, but doesn't ensure that the corresponding 
+	 * wikiplace already exists.
 	 * @param Title $title
 	 * @return boolean 
 	 */
@@ -320,6 +349,9 @@ class WpPage {
 		}
 		return ( ($title->getNamespace() == NS_MAIN) && (count(explode( '/', $title->getDBkey() )) == 1) );
 	}
+	
+	
+
 	
     /**
 	 * 
@@ -481,22 +513,16 @@ class WpPage {
 	
 	/**
 	 * Create a new WpPage record, which will associate a MediaWiki page to a Wikiplace.
-	 * @param WikiPage $wikipage
-	 * @param WpWikiplace $wikiplace
+	 * @param int $article_id the WikiPage/Article id
+	 * @param int $wikiplace_id the WpWikiplace id
 	 * @return WpPage The newly created WpPage, or null if a db error occured
 	 */
-	public static function create( $wikipage, $wikiplace ) {
+	public static function create( $article_id, $wikiplace_id ) {
 		
-		if ( !($wikiplace instanceof WpWikiplace) ) {
-			throw new MWException( 'Cannot create wikiplace page, invalid wikiplace argument.' );
+		if (  ! is_int($article_id)  ||  ! is_int($wikiplace_id)  ||
+				($article_id < 1)  ||  ($wikiplace_id < 1) ) {
+			throw new MWException( 'Cannot create wikiplace page, invalid argument.' );
 		}
-		
-		if ( !($wikipage instanceof WikiPage) ) {
-			throw new MWException( 'Cannot create wikiplace page, invalid wikipage argument.' );
-		}
-						
-		$pageId = $wikipage->getTitle()->getArticleID();
-		$wikiplaceId = $wikiplace->get('wpw_id');
 		
 		$dbw = wfGetDB(DB_MASTER);
 		
@@ -507,9 +533,9 @@ class WpPage {
 		
         $success = $dbw->insert('wp_page', array(
 			'wppa_id'             => $id,
-			'wppa_wpw_id'         => $wikiplaceId,
-			'wppa_page_id'        => $pageId
-		));
+			'wppa_wpw_id'         => $wikiplace_id,
+			'wppa_page_id'        => $article_id
+		), __METHOD__);
 
 		// Setting id from auto incremented id in DB
 		$id = $dbw->insertId();
@@ -520,11 +546,78 @@ class WpPage {
 			return null;
 		}		
 				
-		$wpp = new self( $id, $wikiplaceId, $pageId );
-		$wpp->fetchPage( $wikipage );
+		$wpp = new self( $id, $wikiplace_id, $article_id );
 		
 		return $wpp;
 			
+	}
+	
+	
+	public static function delete( $article_id ) {
+		
+		if (  ! is_int($article_id)  ||  ( $article_id < 1 )  ) {
+			throw new MWException( 'Cannot delete wikiplace page, invalid wikipage identifier.' );
+		}
+		
+		$dbw = wfGetDB(DB_MASTER);
+		
+		$dbw->begin();
+		
+        $success = $dbw->delete('wp_page', array( 'wppa_page_id' => $article_id ), __METHOD__ );
+
+		$dbw->commit();
+		
+		return $success ;
+			
+	}
+	
+	/**
+	 *
+	 * @param int $wikiplace_id 
+	 */
+	public function setWikiplaceId( $wikiplace_id ) {
+	
+		if ( !is_int($wikiplace_id) || ($wikiplace_id<0) )  {
+			throw new MWException('Invalid Wikiplace identifier.');
+		}
+
+		$this->wppa_wpw_id =intval( $wikiplace_id );
+		$this->wikiplace = null;
+				
+		$dbw = wfGetDB(DB_MASTER);
+		$dbw->begin();
+
+		$success = $dbw->update(
+			'wp_page',
+			array ('wppa_wpw_id' => $this->wppa_wpw_id),
+			array( 'wppa_id' => $this->wppa_id) );
+
+		$dbw->commit();
+
+		if ( !$success ) {	
+			throw new MWException('Error while updating Wikiplace page to database.');
+		}		
+		
+	}
+	
+	
+	/**
+	 * Test if the given user identifier is the owner of the page
+	 * @param $article_id The Mediawiki article identifier (primary key in page table), NOT the WpPage
+	 * table primary key. Can be $title->getArticleID().
+	 * @param int $user_id
+	 * @return boolean true = user is owner, false = not
+	 */
+	public static function isOwner($article_id, $user_id) {
+
+		$owner = self::findOwnerUserIdByArticleId($article_id);
+
+		if (  ( $user_id == 0 )  ||  ( $owner == 0 )  ) {
+			return false;
+		}
+
+		return ( $owner == $user_id );
+
 	}
 	
 	/**
