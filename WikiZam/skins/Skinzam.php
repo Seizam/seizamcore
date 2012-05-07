@@ -15,7 +15,6 @@ if (!defined('MEDIAWIKI')) {
     die(-1);
 }
 
-
 /**
  * SkinTemplate class for Vector skin
  * @ingroup Skins
@@ -58,8 +57,6 @@ class SkinSkinzam extends SkinTemplate {
     function getNamespace() {
         return $this->getRelevantTitle()->getNamespace();
     }
-    
-    
 
 }
 
@@ -115,7 +112,7 @@ class SkinzamTemplate extends BaseTemplate {
         $this->data['namespace_urls'] = $nav['namespaces'];
         $this->data['view_urls'] = $nav['views'];
         $this->data['action_urls'] = $nav['actions'];
-        
+
 
         // Output HTML Page
         $this->html('headelement');
@@ -168,7 +165,21 @@ class SkinzamTemplate extends BaseTemplate {
         ?>
         <!-- header -->
         <div id="header" class="block_full">
-            <?php $this->renderNav(); ?>
+            <div id="nav">
+                <?php if ($this->data['wp_navigation']['content']): ?>
+                    <ul class="nav_artist">
+                        <li><?php echo $this->data['wp_navigation']['content']; ?></li>
+                    </ul>
+                <?php endif; ?>
+                <ul class="nav_actions">
+                    <li>
+                        <a href="#"><?php echo wfMessage('actions')->text() ?></a>
+                        <ul>
+                            <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
             <!-- firstHeading -->
             <div class="block block_half block_flat">
                 <div class="inside">
@@ -182,7 +193,7 @@ class SkinzamTemplate extends BaseTemplate {
         <div id="bodyContent" class="block block_full block_flat " role="main"<?php $this->html('specialpageattributes') ?>> <!--<div id="main" role="main">-->
             <!-- inside -->
             <div class="inside">
-                <?php $this->renderInsideContent();?>
+                <?php $this->renderInsideContent(); ?>
             </div>
             <!-- /inside -->
         </div>
@@ -218,7 +229,16 @@ class SkinzamTemplate extends BaseTemplate {
             <h3 class="title"><?php $this->html('title') ?></h3>
             <!-- inside -->
             <div class="inside">
-                <?php $this->renderNav(); ?>
+                <div id="nav">
+                    <ul class="nav_actions">
+                        <li>
+                            <a href="#"><?php echo wfMessage('actions')->text() ?></a>
+                            <ul>
+                                <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
                 <?php $this->renderInsideContent(); ?>
             </div>
             <!-- /inside -->
@@ -398,24 +418,6 @@ class SkinzamTemplate extends BaseTemplate {
     }
 
     /**
-     * Render #nav (.nav_artist + .nav_actions)
-     */
-    private function renderNav() {
-        ?>
-        <div id="nav">
-            <ul class="nav_actions">
-                <li>
-                    <a href="#"><?php echo wfMessage('actions')->text() ?></a>
-                    <ul>
-                        <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-        <?php
-    }
-
-    /**
      * Render #horizontalActions (#nav_actions)
      */
     private function renderHorizontalActions() {
@@ -435,6 +437,7 @@ class SkinzamTemplate extends BaseTemplate {
         ?>
         <!-- tagline (invisible)-->
         <div id="siteSub"><?php wfMessage('tagline')->text() ?></div>
+
         <!-- /tagline -->
         <?php if ($this->data['subtitle']): ?>
             <!-- subtitle -->

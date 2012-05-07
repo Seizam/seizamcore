@@ -11,7 +11,8 @@ if (!defined('MEDIAWIKI')) {
 }
 
 
-define('BACKGROUNDKEY', 'background'); // Background configuration is at seizam.com/WpName/BACKGROUNDKEY
+define('WPBACKGROUNDKEY', 'background'); // Background configuration is at seizam.com/WpName/WPBACKGROUNDKEY
+define('WPNAVIGATIONKEY', 'navigation'); // Navigation configuration is at seizam.com/WpName/WPNAVIGATIONKEY
 
 $wgExtensionCredits['other'][] = array(
    'path' => __FILE__,
