@@ -457,5 +457,35 @@ class WikiplacesHooks {
 		return false; // stop hook processing, because we have the answer
 		
 	}
+    
+    /**
+     * skinTemplateOutputPageBeforeExec hook
+     * 
+     * Cooks the skin template Seizam-Style!
+     * 
+     * @param SkinSkinzam $skin
+     * @param SkinzamTemplate $tpl
+     */
+    public static function skinTemplateOutputPageBeforeExec(&$skin, &$tpl) {
+        $background = array();
+        $background['url'] = false;
+        
+        $ns = $skin->getNamespace();
+        if (!WpPage::isInWikiplaceNamespaces($ns))
+            return true;
+        $wikiplaceText = WpWikiplace::extractWikiplaceRoot($skin->getRelevantTitle()->getDBkey(), $ns);
+        $backgroundText = $wikiplaceText . '/' . BACKGROUNDKEY;
+        $backgroundTitle = Title::newFromText($backgroundText, 0);
+        $backgroundPage = WikiPage::factory($backgroundTitle);
+        $backgroundPageContent = $backgroundPage->getText();
+        if (!$backgroundPageContent)
+            return true;
+        $pattern = '/^https?\:\/\/[\w\-%\.\/\?\&]*\.(jpe?g|png|gif)$/i';
+        if (preg_match($pattern, $backgroundPageContent)) {
+            $background['url'] = $backgroundPageContent;
+            $tpl->set('wp_background', $background);
+        }
+        return true;
+    }
 	
 }

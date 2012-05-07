@@ -15,7 +15,6 @@ if (!defined('MEDIAWIKI')) {
     die(-1);
 }
 
-define('BACKGROUNDKEY', 'background');
 
 /**
  * SkinTemplate class for Vector skin
@@ -59,39 +58,8 @@ class SkinSkinzam extends SkinTemplate {
     function getNamespace() {
         return $this->getRelevantTitle()->getNamespace();
     }
-
-    /**
-	 * This will be called by OutputPage::headElement when it is creating the
-	 * <body> tag, skins can override it if they have a need to add in any
-	 * body attributes or classes of their own.
-	 * @param OutputPage $out 
-	 * @param Array $bodyAttrs
-	 */
-    function addToBodyAttributes($out, &$bodyAttrs) {
-        $url = $this->getWikiplaceBackgroundUrl();
-        if ($url)
-            $bodyAttrs['style'] = 'background-image: url(' . $url . ');';
-    }
-
-    function getWikiplaceBackgroundUrl() {
-        $backgroundPageContent = 'http://localhost/WikiZam/img_auth.php/d/d7/WPONE.bg_artiste.jpg';
-        return $backgroundPageContent;
-        if (!WpPage::isInWikiplaceNamespaces($this->getNamespace()))
-            return false;
-        
-
-        $wikiplaceText = WpWikiplace::extractWikiplaceRoot($this->getRelevantTitle()->getDBkey(), $this->getNamespace());
-        $backgroundText = $wikiplaceText . '/' . BACKGROUNDKEY;
-        $backgroundTitle = Title::newFromText($backgroundText);
-        $backgroundPage = WikiPage::factory($backgroundTitle);
-        $backgroundPageContent = $backgroundPage->getText();
-        $pattern = '/^https?\:\/\/[\w\-%\.\/\?\&]*\.(jpe?g|png|gif)$/i';
-        if (preg_match($pattern, $backgroundPageContent)) {
-            $this->template->set('background_url',$backgroundPageContent);
-            return htmlspecialchars($backgroundPageContent);
-        } else
-            return false;
-    }
+    
+    
 
 }
 
@@ -147,6 +115,7 @@ class SkinzamTemplate extends BaseTemplate {
         $this->data['namespace_urls'] = $nav['namespaces'];
         $this->data['view_urls'] = $nav['views'];
         $this->data['action_urls'] = $nav['actions'];
+        
 
         // Output HTML Page
         $this->html('headelement');
@@ -213,7 +182,7 @@ class SkinzamTemplate extends BaseTemplate {
         <div id="bodyContent" class="block block_full block_flat " role="main"<?php $this->html('specialpageattributes') ?>> <!--<div id="main" role="main">-->
             <!-- inside -->
             <div class="inside">
-                <?php $this->renderInsideContent(); ?>
+                <?php $this->renderInsideContent();?>
             </div>
             <!-- /inside -->
         </div>
@@ -339,7 +308,7 @@ class SkinzamTemplate extends BaseTemplate {
                 <div class="content">
                     <?php if (isset($this->data['sz_pretty_username'])): ?>
                         <span id="prettyUserName">
-                            <?php echo $this->data['sz_pretty_username'] ?>
+                            <?php $this->text('sz_pretty_username') ?>
                         </span>
                     <? endif; ?>
                     <!-- logo -->
@@ -523,13 +492,14 @@ class SkinzamTemplate extends BaseTemplate {
         <!-- fixalpha -->
         <script type="<?php $this->text('jsmimetype') ?>"> if ( window.isMSIE55 ) fixalpha(); </script>
         <!-- /fixalpha -->
-        
         <!-- background -->
-        <script>
-            $.backstretch(<?php $this->text('background_url')?>);
-        </script>
+        <?php if ($this->data['wp_background']['url']): ?>
+            <script>
+                $.backstretch("<?php echo $this->data['wp_background']['url']; ?>");
+            </script>
+        <?php endif; ?>
         <!-- /background -->
-        
+
         <?php
         $this->printTrail();
     }

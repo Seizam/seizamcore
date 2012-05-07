@@ -10,6 +10,9 @@ if (!defined('MEDIAWIKI')) {
     die(-1);
 }
 
+
+define('BACKGROUNDKEY', 'background'); // Background configuration is at seizam.com/WpName/BACKGROUNDKEY
+
 $wgExtensionCredits['other'][] = array(
    'path' => __FILE__,
    'name' => 'Wikiplace',
@@ -63,6 +66,7 @@ $wgHooks['ArticleInsertComplete'][] = 'WikiplacesHooks::onArticleInsertComplete'
 $wgHooks['TitleMoveComplete'][] = 'WikiplacesHooks::onTitleMoveComplete';
 $wgHooks['ArticleDeleteComplete'][] = 'WikiplacesHooks::onArticleDeleteComplete';
 $wgHooks['ArticleUndelete'][] = 'WikiplacesHooks::onArticleUndelete';
+$wgHooks['SkinTemplateOutputPageBeforeExec'][] = 'WikiplacesHooks::skinTemplateOutputPageBeforeExec'; //Amend template for WP related front-end element (eg. background)
 
 $wgHooks['userCan'][] = 'WikiplacesHooks::userCan';
 $wgHooks['TransactionUpdated'][] = 'WikiplacesHooks::onTransactionUpdated';
