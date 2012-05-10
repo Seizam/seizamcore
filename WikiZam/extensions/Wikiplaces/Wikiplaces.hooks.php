@@ -545,7 +545,7 @@ class WikiplacesHooks {
 
             // Wikiplace Background
             $backgroundText = $wikiplaceText . '/' . WPBACKGROUNDKEY;
-            $backgroundTitle = Title::newFromText($backgroundText, 0);
+            $backgroundTitle = Title::newFromText($backgroundText, NS_WIKIPLACE);
             $backgroundPage = WikiPage::factory($backgroundTitle);
             $backgroundPageContent = $backgroundPage->getText();
             if ($backgroundPageContent) {
@@ -557,7 +557,7 @@ class WikiplacesHooks {
 
             // Wikiplace Navigation Menu
             $navigationText = $wikiplaceText . '/' . WPNAVIGATIONKEY;
-            $navigationTitle = Title::newFromText($navigationText, 0);
+            $navigationTitle = Title::newFromText($navigationText, NS_WIKIPLACE);
             $navigationPage = WikiPage::factory($navigationTitle);
             $navigationPageContent = $navigationPage->getText();
             if ($navigationPageContent) {

@@ -18,7 +18,7 @@ class WpPagesTablePager extends SkinzamTablePager {
     protected $selectJoinConditions = array(
         'homepage' => array('INNER JOIN', 'wpw_home_page_id = homepage.page_id'),
         'wp_page' => array('INNER JOIN', 'wpw_id = wppa_wpw_id'),
-        'subpage' => array('INNER JOIN', 'wppa_page_id = subpage.page_id AND subpage.page_namespace !=1 AND subpage.page_namespace !=7'));
+        'subpage' => array('INNER JOIN', 'wppa_page_id = subpage.page_id AND subpage.page_namespace !=1 AND subpage.page_namespace !=7 AND subpage.page_namespace !=71'));
     protected $selectFields = array('subpage.page_title AS subpage_title', 'subpage.page_namespace AS subpage_namespace', 'subpage.page_touched AS subpage_touched', 'subpage.page_counter AS subpage_counter');
     protected $selectOptions = array('ORDER BY' => 'subpage_title');
     protected $defaultSort = 'subpage_namespace';
@@ -119,6 +119,10 @@ class WpPagesTablePager extends SkinzamTablePager {
                     return wfMessage('wp-homepage')->text();
                 else
                     return wfMessage('wp-subpage')->text();
+            case NS_WIKIPLACE :
+                return wfMessage('wp-nswp')->text();
+            case NS_WIKIPLACE_TALK :
+                return wfMessage('wp-nswp-talk')->text();
             default :
                 return $wgLang->getNsText($value);
         }
