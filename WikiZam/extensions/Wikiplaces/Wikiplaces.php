@@ -70,9 +70,16 @@ $wgHooks['userCan'][] = 'WikiplacesHooks::userCan';
 $wgHooks['TransactionUpdated'][] = 'WikiplacesHooks::onTransactionUpdated';
 $wgHooks['IsOwner'][] = 'WikiplacesHooks::isOwner';
 
+// right for accessing wp admin page
 define('WP_ADMIN_RIGHT', 'wp-admin');
 $wgAvailableRights[] = WP_ADMIN_RIGHT; 
 $wgGroupPermissions['sysop'][WP_ADMIN_RIGHT] = true;
+
+// this extension blocks moves and deletes for non Wikiplace namespaces
+// users having this right can move and delete without this limitation (as MediaWiki default)
+define('WP_BYPASS_OTHERS_NS_RESTRICTIONS', 'wp-bypass-ns-restr');
+$wgAvailableRights[] = WP_BYPASS_OTHERS_NS_RESTRICTIONS; 
+$wgGroupPermissions['sysop'][WP_BYPASS_OTHERS_NS_RESTRICTIONS] = true;
 
 // define the group in which to add the user in when she makes her first subscription
 // (she will not be removed, even if she has no more active subscription)
