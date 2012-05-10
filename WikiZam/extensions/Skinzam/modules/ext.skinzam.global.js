@@ -1,6 +1,10 @@
 /* 
 	@Author: Alsacréations
-	@Date : Oct. 2011
+	@Date: Oct. 2011
+
+    @Autor: Clément Dietschy
+    @Author: Seizam Sàrl.
+    @Date: May 2012
 */
 
     

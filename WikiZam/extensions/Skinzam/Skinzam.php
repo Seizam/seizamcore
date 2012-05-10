@@ -58,13 +58,6 @@ $wgHooks['ParserClearState'][] = 'SkinzamHooks::parserClearState';
 $wgHooks['SkinTemplateOutputPageBeforeExec'][] = 'SkinzamHooks::skinTemplateOutputPageBeforeExec';
 
 
-
-/* $wgResourceModules['skins.skinzam'] = array(
-  'styles' => array( 'skinzam/screen.css' => array( 'media' => 'screen' ) ),
-  'remoteBasePath' => $GLOBALS['wgStylePath'],
-  'localBasePath' => $GLOBALS['wgStyleDirectory'],
-  'dependancies' => 'skinzam.global'); */
-
 // JS Resources Declaration
 $skinzamResourceTemplate = array(
     'localBasePath' => $dir . 'modules',
@@ -75,13 +68,13 @@ $skinzamResourceTemplate = array(
 $wgResourceModules += array(
     'ext.skinzam.global' => $skinzamResourceTemplate + array(
         'scripts' => 'ext.skinzam.global.js',
-        'position' => 'bottom'
         ),
     'jquery.scrollto' => array(
          'scripts' => 'extensions/Skinzam/modules/jquery/jquery.scrollto.js'
         ),
     'jquery.backstretch' => array(
          'scripts' => 'extensions/Skinzam/modules/jquery/jquery.backstretch.js',
+         'position' => 'top',
         ),
     'ext.skinzam.simpleSearch' => $skinzamResourceTemplate + array(
 		'scripts' => 'ext.skinzam.simpleSearch.js',

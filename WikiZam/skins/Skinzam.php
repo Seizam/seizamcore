@@ -15,8 +15,6 @@ if (!defined('MEDIAWIKI')) {
     die(-1);
 }
 
-define('BACKGROUNDKEY', 'background');
-
 /**
  * SkinTemplate class for Vector skin
  * @ingroup Skins
@@ -58,36 +56,6 @@ class SkinSkinzam extends SkinTemplate {
 
     function getNamespace() {
         return $this->getRelevantTitle()->getNamespace();
-    }
-
-    /**
-	 * This will be called by OutputPage::headElement when it is creating the
-	 * <body> tag, skins can override it if they have a need to add in any
-	 * body attributes or classes of their own.
-	 * @param OutputPage $out 
-	 * @param Array $bodyAttrs
-	 */
-    function addToBodyAttributes($out, &$bodyAttrs) {
-        $url = $this->getWikiplaceBackgroundUrl();
-        if ($url)
-            $bodyAttrs['style'] = 'background-image: url(' . $url . ');';
-    }
-
-    function getWikiplaceBackgroundUrl() {
-        //return 'http://localhost/WikiZam/img_auth.php/d/d7/WPONE.bg_artiste.jpg';
-        if (!WpPage::isInWikiplaceNamespaces($this->getNamespace()))
-            return false;
-
-        $wikiplaceText = WpWikiplace::extractWikiplaceRoot($this->getRelevantTitle()->getDBkey(), $this->getNamespace());
-        $backgroundText = $wikiplaceText . '/' . BACKGROUNDKEY;
-        $backgroundTitle = Title::newFromText($backgroundText);
-        $backgroundPage = WikiPage::factory($backgroundTitle);
-        $backgroundPageContent = $backgroundPage->getText();
-        $pattern = '/^https?\:\/\/[\w\-%\.\/\?\&]*\.(jpe?g|png|gif)$/i';
-        if (preg_match($pattern, $backgroundPageContent)) {
-            return htmlspecialchars($backgroundPageContent);
-        } else
-            return false;
     }
 
 }
@@ -145,6 +113,7 @@ class SkinzamTemplate extends BaseTemplate {
         $this->data['view_urls'] = $nav['views'];
         $this->data['action_urls'] = $nav['actions'];
 
+
         // Output HTML Page
         $this->html('headelement');
         $this->renderTop();
@@ -196,7 +165,21 @@ class SkinzamTemplate extends BaseTemplate {
         ?>
         <!-- header -->
         <div id="header" class="block_full">
-            <?php $this->renderNav(); ?>
+            <div id="nav">
+                <?php if ($this->data['wp_navigation']['content']): ?>
+                    <ul class="nav_artist">
+                        <li><?php echo $this->data['wp_navigation']['content']; ?></li>
+                    </ul>
+                <?php endif; ?>
+                <ul class="nav_actions">
+                    <li>
+                        <a href="#"><?php echo wfMessage('actions')->text() ?></a>
+                        <ul>
+                            <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
             <!-- firstHeading -->
             <div class="block block_half block_flat">
                 <div class="inside">
@@ -246,7 +229,16 @@ class SkinzamTemplate extends BaseTemplate {
             <h3 class="title"><?php $this->html('title') ?></h3>
             <!-- inside -->
             <div class="inside">
-                <?php $this->renderNav(); ?>
+                <div id="nav">
+                    <ul class="nav_actions">
+                        <li>
+                            <a href="#"><?php echo wfMessage('actions')->text() ?></a>
+                            <ul>
+                                <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
                 <?php $this->renderInsideContent(); ?>
             </div>
             <!-- /inside -->
@@ -336,7 +328,7 @@ class SkinzamTemplate extends BaseTemplate {
                 <div class="content">
                     <?php if (isset($this->data['sz_pretty_username'])): ?>
                         <span id="prettyUserName">
-                            <?php echo $this->data['sz_pretty_username'] ?>
+                            <?php $this->text('sz_pretty_username') ?>
                         </span>
                     <? endif; ?>
                     <!-- logo -->
@@ -426,24 +418,6 @@ class SkinzamTemplate extends BaseTemplate {
     }
 
     /**
-     * Render #nav (.nav_artist + .nav_actions)
-     */
-    private function renderNav() {
-        ?>
-        <div id="nav">
-            <ul class="nav_actions">
-                <li>
-                    <a href="#"><?php echo wfMessage('actions')->text() ?></a>
-                    <ul>
-                        <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-        <?php
-    }
-
-    /**
      * Render #horizontalActions (#nav_actions)
      */
     private function renderHorizontalActions() {
@@ -463,6 +437,7 @@ class SkinzamTemplate extends BaseTemplate {
         ?>
         <!-- tagline (invisible)-->
         <div id="siteSub"><?php wfMessage('tagline')->text() ?></div>
+
         <!-- /tagline -->
         <?php if ($this->data['subtitle']): ?>
             <!-- subtitle -->
@@ -520,13 +495,14 @@ class SkinzamTemplate extends BaseTemplate {
         <!-- fixalpha -->
         <script type="<?php $this->text('jsmimetype') ?>"> if ( window.isMSIE55 ) fixalpha(); </script>
         <!-- /fixalpha -->
-        
         <!-- background -->
-        <script>
-            $.backstretch("http://www.seizam.com/files/davidcanwin.png");
-        </script>
+        <?php if ($this->data['wp_background']['url']): ?>
+            <script>
+                $.backstretch("<?php echo $this->data['wp_background']['url']; ?>");
+            </script>
+        <?php endif; ?>
         <!-- /background -->
-        
+
         <?php
         $this->printTrail();
     }

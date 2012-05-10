@@ -1,7 +1,7 @@
 <?php
 
 if (!defined('MEDIAWIKI')) {
-	die(-1);
+    die(-1);
 }
 
 class WikiplacesHooks {
@@ -532,5 +532,49 @@ class WikiplacesHooks {
 		return false; // stop hook processing, because we have the answer
 		
 	}
+
+
+    /**
+     * skinTemplateOutputPageBeforeExec hook
+     * 
+     * Cooks the skin template Seizam-Style!
+     * 
+     * @param SkinSkinzam $skin
+     * @param SkinzamTemplate $tpl
+     */
+    public static function skinTemplateOutputPageBeforeExec(&$skin, &$tpl) {
+        $background = array();
+        $background['url'] = false;
+        $navigation['content'] = false;
+
+        $ns = $skin->getRelevantTitle()->getNamespace();
+        if (WpPage::isInWikiplaceNamespaces($ns)) {
+            $wikiplaceText = WpWikiplace::extractWikiplaceRoot($skin->getRelevantTitle()->getDBkey(), $ns);
+
+            // Wikiplace Background
+            $backgroundText = $wikiplaceText . '/' . WPBACKGROUNDKEY;
+            $backgroundTitle = Title::newFromText($backgroundText, 0);
+            $backgroundPage = WikiPage::factory($backgroundTitle);
+            $backgroundPageContent = $backgroundPage->getText();
+            if ($backgroundPageContent) {
+                $pattern = '/^https?\:\/\/[\w\-%\.\/\?\&]*\.(jpe?g|png|gif)$/i';
+                if (preg_match($pattern, $backgroundPageContent)) {
+                    $background['url'] = $backgroundPageContent;
+                }
+            }
+
+            // Wikiplace Navigation Menu
+            $navigationText = $wikiplaceText . '/' . WPNAVIGATIONKEY;
+            $navigationTitle = Title::newFromText($navigationText, 0);
+            $navigationPage = WikiPage::factory($navigationTitle);
+            $navigationPageContent = $navigationPage->getText();
+            if ($navigationPageContent) {
+                $navigation['content'] = $navigationPageContent;
+            }
+        }
+        $tpl->set('wp_background', $background);
+        $tpl->set('wp_navigation', $navigation);
+        return true;
+    }
 
 }
