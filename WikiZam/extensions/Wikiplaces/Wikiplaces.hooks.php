@@ -6,7 +6,7 @@ if (!defined('MEDIAWIKI')) {
 
 class WikiplacesHooks {
 
-	private static $userCanCache = array(); // ['title']['user']
+	private static $cacheUserCan = array(); // ['title']['user']
 
 	# Schema updates for update.php
 	public static function onLoadExtensionSchemaUpdates( DatabaseUpdater $updater ) {
