@@ -111,6 +111,9 @@ To continue using your services, please take out a new offer.',
     'wppatp-subpage_namespace' => 'Type',
     'wppatp-subpage_touched' => 'Modification Date',
     'wppatp-subpage_counter' => 'Total hits',
+    
+    'wp-nswp' => 'Setting',
+    'wp-nswp-talk' => 'Setting talk',
 
 	
 	// wp-transaction-plan-XXXX for each plan in database, with XXXX = wpp_name field value
