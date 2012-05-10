@@ -215,15 +215,8 @@ $wgUploadWizardConfig = array(
 					// (should be special:upload when possible)
 );
 
-
-
-
 # Seizam's Virtual Electronic Payment Terminal
 require_once( "$IP/extensions/ElectronicPayment/ElectronicPayment.php" );
-
-
-# SetPermissions
-//require_once( "$IP/extensions/SetPermissions/SetPermissions.php" );
 
 # Restrictions
 require_once( "$IP/extensions/Restrictions/Restrictions.php" );
@@ -237,13 +230,12 @@ unset($wgRestrictionTypes[array_search('move', $wgRestrictionTypes)]);
 // by default 'user' is allowed to edit, even if '*' is not.
 $wgGroupPermissions['*']['edit'] = true; 
 // disable move (but sysop can still move, because sysop group have seperates rights
-$wgGroupPermissions['user']['move']	= true;
-$wgGroupPermissions['user']['move-subpages'] = true;
-$wgGroupPermissions['user']['suppressredirect'] = true;
-$wgGroupPermissions['user']['deletedhistory'] = true;
-$wgGroupPermissions['user']['undelete'] = true;
-$wgGroupPermissions['user']['move-rootuserpages'] = false; // can move root userpages
 $wgGroupPermissions['artist'] = array();
+$wgGroupPermissions['artist']['move']	= true;
+$wgGroupPermissions['artist']['move-subpages'] = true;
+$wgGroupPermissions['artist']['suppressredirect'] = true;
+$wgGroupPermissions['artist']['deletedhistory'] = true;
+$wgGroupPermissions['artist']['undelete'] = true;
 
 $wgGroupPermissions['bureaucrat']['editprotectedns'] = true;
 $wgGroupPermissions['sysop']['editprotectedns'] = true;

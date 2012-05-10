@@ -518,22 +518,18 @@ WHERE wpw_report_updated < $outdated ;" ;
 		$hierarchy;
 		
 		switch ( $namespace ) {
-			case NS_MAIN:
-			case NS_TALK:
-				$hierarchy = explode( '/', $db_key );
-				break;
-			
 			case NS_FILE:
 			case NS_FILE_TALK:
 				$hierarchy = explode( '.', $db_key );
 				break;
 				
 			default:
-				throw new MWException("The namespace $namespace cannot store Wikiplaces.");
+				$hierarchy = explode( '/', $db_key );
+				break;
 		}
 		
-		if ( ! isset($hierarchy[0]) ) {
-			return null;
+		if (!isset($hierarchy[0]) || !WpPage::isInWikiplaceNamespaces($namespace) ) {
+            throw new MWException("Cannot extract WpRoot from key=$db_key and ns=$namespace.");
 		}
 
 		return $hierarchy[0];

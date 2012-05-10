@@ -359,17 +359,13 @@ class WpPage {
 	 * @return boolean
 	 */
 	public static function isInWikiplaceNamespaces($namespace) {
-		
 		if ( !is_int($namespace) ) {
 			throw new MWException( 'Invalid namespace argument.' );
 		}
+        
+        global $wgWikiplaceNamespaces;
 		
-		return in_array( $namespace, array(
-			NS_MAIN,
-			NS_TALK,
-			NS_FILE,
-			NS_FILE_TALK,
-		));
+		return in_array($namespace, $wgWikiplaceNamespaces);
 	}
 	
 

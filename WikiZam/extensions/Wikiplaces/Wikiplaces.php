@@ -11,9 +11,6 @@ if (!defined('MEDIAWIKI')) {
 }
 
 
-define('WPBACKGROUNDKEY', 'background'); // Background configuration is at seizam.com/WpName/WPBACKGROUNDKEY
-define('WPNAVIGATIONKEY', 'navigation'); // Navigation configuration is at seizam.com/WpName/WPNAVIGATIONKEY
-
 $wgExtensionCredits['other'][] = array(
    'path' => __FILE__,
    'name' => 'Wikiplace',
@@ -78,8 +75,35 @@ $wgAvailableRights[] = WP_ADMIN_RIGHT;
 $wgGroupPermissions['sysop'][WP_ADMIN_RIGHT] = true;
 
 // define the group in which to add the user in when she makes her first subscription
-// (whe will not be removed, even if she has no more active subscription)
+// (she will not be removed, even if she has no more active subscription)
 define('WP_SUBSCRIBERS_USER_GROUP', 'artist');
 
 // all applicable actions except 'read' will be set to this level when creating a page/file in wikiplace namespaces
 define('WP_DEFAULT_RESTRICTION_LEVEL', 'owner');
+
+
+
+# Extra namespace for Wikiplace configuration (bg, nav...) settings
+define("NS_WIKIPLACE", 70);
+define("NS_WIKIPLACE_TALK", 71);
+ 
+$wgExtraNamespaces[NS_WIKIPLACE] = "Wikiplace";
+$wgExtraNamespaces[NS_WIKIPLACE_TALK] = "Wikiplace_talk";   # underscore required
+
+/*
+ * @TODO create a generic right that covers all actions only an artist can perform
+$wgNamespaceProtection[NS_WIKIPLACE] = array( 'editwikiplace' );
+$wgNamespaceProtection[NS_WIKIPLACE_TALK] = array( 'editwikiplace' );
+*/
+
+$wgNamespacesWithSubpages[NS_WIKIPLACE] = true; 
+$wgNamespacesWithSubpages[NS_WIKIPLACE_TALK] = true;
+
+
+define('WPBACKGROUNDKEY', 'background'); // Background configuration is at seizam.com/WpName/WPBACKGROUNDKEY
+define('WPNAVIGATIONKEY', 'navigation'); // Navigation configuration is at seizam.com/WpName/WPNAVIGATIONKEY
+
+
+
+# Array of namespaces influenced by this extension
+$wgWikiplaceNamespaces = array(NS_MAIN, NS_TALK, NS_FILE, NS_FILE_TALK, NS_WIKIPLACE, NS_WIKIPLACE_TALK);
