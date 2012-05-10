@@ -70,20 +70,19 @@ $wgHooks['userCan'][] = 'WikiplacesHooks::userCan';
 $wgHooks['TransactionUpdated'][] = 'WikiplacesHooks::onTransactionUpdated';
 $wgHooks['IsOwner'][] = 'WikiplacesHooks::isOwner';
 
-// right for accessing wp admin page
+// right for accessing wp admin page, bypass move/delete limitations
 define('WP_ADMIN_RIGHT', 'wp-admin');
 $wgAvailableRights[] = WP_ADMIN_RIGHT; 
 $wgGroupPermissions['sysop'][WP_ADMIN_RIGHT] = true;
 
-// this extension blocks moves and deletes for non Wikiplace namespaces
-// users having this right can move and delete without this limitation (as MediaWiki default)
-define('WP_BYPASS_OTHERS_NS_RESTRICTIONS', 'wp-bypass-ns-restr');
-$wgAvailableRights[] = WP_BYPASS_OTHERS_NS_RESTRICTIONS; 
-$wgGroupPermissions['sysop'][WP_BYPASS_OTHERS_NS_RESTRICTIONS] = true;
-
 // define the group in which to add the user in when she makes her first subscription
 // (she will not be removed, even if she has no more active subscription)
 define('WP_SUBSCRIBERS_USER_GROUP', 'artist');
+
+$wgGroupPermissions[WP_SUBSCRIBERS_USER_GROUP]['move']	= true;
+$wgGroupPermissions[WP_SUBSCRIBERS_USER_GROUP]['move-subpages'] = true;
+$wgGroupPermissions[WP_SUBSCRIBERS_USER_GROUP]['suppressredirect'] = true;
+$wgGroupPermissions[WP_SUBSCRIBERS_USER_GROUP]['delete'] = true;
 
 // all applicable actions except 'read' will be set to this level when creating a page/file in wikiplace namespaces
 define('WP_DEFAULT_RESTRICTION_LEVEL', 'owner');

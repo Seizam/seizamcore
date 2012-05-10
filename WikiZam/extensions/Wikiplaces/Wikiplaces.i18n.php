@@ -41,7 +41,7 @@ To continue using your services, please take out a new offer.',
 
 	'wp-select-a-plan' => 'Please select an offer',
 	'wp-invalid-plan' => 'This plan is invalid.',
-	'wp-cannot-subscribe-plan' => 'You cannot subscribe to this plan. Please choose another one.',
+	'wp-cannot-select-plan' => 'You cannot select this plan. Please choose another one.',
 	
 	'wp-plan-desc-short' => '$1: $2 $3 for $4 months',
 	'wp-plan-subscribe-go' => 'Subscribe now!',
@@ -51,6 +51,10 @@ To continue using your services, please take out a new offer.',
 	'wp-subscribe-tmr-pe' => 'Your payment is pending. [[Special:ElectronicPayment|Please credit your Seizam account]]. Once paid, your plan will be activated and you will be able to use it.',
 	'wp-subscribe-tmr-other' => 'Please check [[Special:Transactions|your transactions]].',
 	
+	
+	'wp-do-not-renew' => 'do not renew',
+	'wp-plan-renew-go' => 'Set as my next plan',
+	'wp-renew-success' => 'Next plan selected.',
 	
 	
 	'wp-enter-new-wp-name' => 'Please enter your new Wikiplace name',

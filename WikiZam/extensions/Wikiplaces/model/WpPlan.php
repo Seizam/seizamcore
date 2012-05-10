@@ -137,12 +137,14 @@ class WpPlan {
 	}
 	
 
-
 	/**
-	 *
-	 * @return array array of WpPlans
+	 * Returns available offers, with at least theses quotas (by default: no minimum requirement)
+	 * @param int $nb_wikiplaces
+	 * @param int $nb_wikiplace_pages
+	 * @param int $diskspace in MB
+	 * @return array array of WpPlans 
 	 */
-	public static function getAvailableOffersNow() {
+	public static function getAvailableOffersNow( $nb_wikiplaces = 0, $nb_wikiplace_pages = 0, $diskspace = 0) {
 		
 		$dbr = wfGetDB(DB_SLAVE);
 		$now =  $dbr->addQuotes( wfTimestamp(TS_DB) );
@@ -150,6 +152,9 @@ class WpPlan {
 			"wpp_start_date <= $now",
 			"wpp_end_date > $now",
 			"wpp_invitation_only" => 0,
+			"wpp_nb_wikiplaces >= $nb_wikiplaces",
+			"wpp_nb_wikiplace_pages >= $nb_wikiplace_pages",
+			"wpp_diskspace >= $diskspace"
 		), LIST_AND );
 		
 		$result = $dbr->select( 'wp_plan', '*',	$conds, __METHOD__ );
@@ -163,5 +168,38 @@ class WpPlan {
 		return $offers;
 
 	}
+	
+	
+	/**
+	 * Checks that this plan is available for this user, and give sufficient quotas
+	 * <b>INVITATION SYSTEM TO BE IMPLEMENTED HERE</b>
+	 * Check that a user can subscribe to a specific plan.
+	 * Invitation system can take place here, if we use e-mail address as invitation identifier
+	 * @todo: implement invitation system here
+	 * @param int $plan_id wpp_id (a plan identifier)
+	 * @param User $user
+	 * @param int $nb_wikiplaces
+	 * @param int $nb_wikiplace_pages
+	 * @param int $diskspace in MB
+	 * @return boolean 
+	 */
+	public static function canBeSubscribed($plan_id, $user, $nb_wikiplaces = 0, $nb_wikiplace_pages = 0, $diskspace = 0) {
+		
+		$dbr = wfGetDB(DB_SLAVE);
+		$now =  $dbr->addQuotes( wfTimestamp(TS_DB) );
+		$conds = $dbr->makeList(array(
+			"wpp_id" => $plan_id,
+			"wpp_start_date <= $now",
+			"wpp_end_date > $now",
+			"wpp_nb_wikiplaces >= $nb_wikiplaces",
+			"wpp_nb_wikiplace_pages >= $nb_wikiplace_pages",
+			"wpp_diskspace >= $diskspace"	
+		), LIST_AND);
+		
+		$result = $dbr->selectRow( 'wp_plan', '*',	$conds, __METHOD__ );
+		return ( $result !== false );
+
+	}
+	
 	
 }

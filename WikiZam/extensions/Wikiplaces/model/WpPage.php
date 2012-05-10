@@ -137,7 +137,6 @@ class WpPage {
 	/**
 	 *
 	 * @param type $conds
-	 * array( 'page_title' =>  $subpage_name , 'page_namespace' => WP_PAGE_NAMESPACE , 'wppa_wpw_id' => $wikiplace_id ),
 	 * @param type $multiple
 	 * @return type 
 	 */
@@ -537,21 +536,21 @@ class WpPage {
 	
 	
 	/**
-	 * Test if the given user identifier is the owner of the page
+	 * Test if the user is the owner of the page.
+	 * If the page is not found, user is owner if she has WP_ADMIN_RIGHT right
 	 * @param $article_id The Mediawiki article identifier (primary key in page table), NOT the WpPage
 	 * table primary key. Can be $title->getArticleID().
-	 * @param int $user_id
+	 * @param User $user
 	 * @return boolean true = user is owner, false = not
 	 */
-	public static function isOwner($article_id, $user_id) {
+	public static function isOwner($article_id, $user) {
 
 		$owner = self::findOwnerUserIdByArticleId($article_id);
 
-		if (  ( $user_id == 0 )  ||  ( $owner == 0 )  ) {
-			return false;
-		}
-
-		return ( $owner == $user_id );
+		return (  $user->isLoggedIn()  && (
+				( $owner==0  &&  $user->isAllowed(WP_ADMIN_RIGHT) )
+				||
+				( $owner==$user->getId() )  )  ) ;
 
 	}
 	
