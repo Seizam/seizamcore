@@ -234,8 +234,8 @@ $wgGroupPermissions['artist'] = array();
 $wgGroupPermissions['artist']['move']	= true;
 $wgGroupPermissions['artist']['move-subpages'] = true;
 $wgGroupPermissions['artist']['suppressredirect'] = true;
+$wgGroupPermissions['artist']['delete'] = true;
 $wgGroupPermissions['artist']['deletedhistory'] = true;
-$wgGroupPermissions['artist']['undelete'] = true;
 
 $wgGroupPermissions['bureaucrat']['editprotectedns'] = true;
 $wgGroupPermissions['sysop']['editprotectedns'] = true;
