@@ -175,8 +175,8 @@ class SpecialSubscriptions extends SpecialPage {
 			return wfMessage( 'wp-invalid-plan' )->text();
 		}
 		
-		if ( ! WpSubscription::canSubscribeTo($this->getUser()->getId(), $id) ) {
-			return wfMessage( 'wp-cannot-subscribe-plan' )->text();
+		if ( !WpPlan::canBeSubscribed($id, $this->getUser()) ) {
+			return wfMessage( 'wp-cannot-select-plan' )->text();
 		}
 			
         return true ;
@@ -220,10 +220,12 @@ class SpecialSubscriptions extends SpecialPage {
 
 	private function displayRenew($plan_name ) {
 		
-			// at this point, user is logged, so canSubscribe() never return message "wp-subscribe-loggedout"
-		$check = WpSubscription::canSubscribe( $this->getUser() );
-		if ($check !== true) {
-			$this->getOutput()->addHTML( wfMessage( $check )->text() );
+		// at this point, user is logged
+		$user_id = $this->getUser()->getId() ;
+		$sub = WpSubscription::getActiveByUserId( $user_id );
+		if ( $sub == null ) {
+			// "need an active subscription"
+			$this->getOutput()->addHTML( wfMessage( 'wp-no-active-sub' )->text() );
 			return;
 		}
 		
@@ -231,12 +233,17 @@ class SpecialSubscriptions extends SpecialPage {
 			'Plan' => array(
                 'type' => 'select',
                 'label-message' => 'wp-select-a-plan',
-				'validation-callback' => array( $this, 'validateSubscribePlanId' ),
-                'options' => array(),
+				'validation-callback' => array( $this, 'validateRenewPlanId' ),
+                'options' => array( wfMessage('wp-do-not-renew')->text() => '0'),
+				'default' => $sub->get('wps_renew_wpp_id'),
 			),
 		);
 		
-		$plans = WpPlan::getAvailableOffersNow();
+		$nb_wikiplaces = WpWikiplace::countWikiplacesOwnedByUser($user_id);
+		$nb_wikiplace_pages = WpPage::countPagesOwnedByUser($user_id);
+		$diskspace = WpPage::getDiskspaceUsageByUser($user_id);
+		
+		$plans = WpPlan::getAvailableOffersNow($nb_wikiplaces, $nb_wikiplace_pages, $diskspace);
 		foreach ($plans as $plan) {
 			$wpp_name = $plan->get('wpp_name');
 			$formDescriptor['Plan']['options'][ wfMessage( 
@@ -245,36 +252,58 @@ class SpecialSubscriptions extends SpecialPage {
 					$plan->get('wpp_price'),
 					$plan->get('wpp_currency'),
 					$plan->get('wpp_period_months') )->text() ] = $plan->get('wpp_id');
-			if ( $plan_name == $wpp_name) {
-				$formDescriptor['Plan']['default'] = $plan->get('wpp_id') ;
-			}
 		}
+		
 		$htmlForm = new HTMLFormS( $formDescriptor );
-		$htmlForm->setTitle( $this->getTitle( self::ACTION_NEW ) );
-		$htmlForm->setSubmitCallback( array( $this, 'processNew' ) );
-		$htmlForm->setSubmitText( wfMessage( 'wp-plan-subscribe-go' )->text() );
+		$htmlForm->setTitle( $this->getTitle( self::ACTION_RENEW ) );
+		$htmlForm->setSubmitCallback( array( $this, 'processRenew' ) );
+		$htmlForm->setSubmitText( wfMessage( 'wp-plan-renew-go' )->text() );
 	
 		// validate and process the form is data sent
 		if( $htmlForm->show() ) {
-			
-			$out = $this->getOutput();
-			
-			$out->addHTML( wfMessage( 
-					'wp-subscribe-success',
-					wfMessage('wp-plan-name-'.$this->just_subscribed->get('plan')->get('wpp_name'))->text() )->text() . '<br/>' );
-
-			switch ($this->just_subscribed->get('wps_tmr_status')) {
-				case "OK":
-					$out->addHTML(wfMessage('wp-subscribe-tmr-ok')->parse());
-					break;
-				case "PE":
-					$out->addHTML(wfMessage('wp-subscribe-tmr-pe')->parse());
-					break;
-				default:
-					$out->addHTML(wfMessage('wp-subscribe-tmr-other')->parse());
-			}
-			
+			$this->getOutput()->addHTML( wfMessage( 'wp-renew-success')->text() );
 		}
+		
+	}
+	
+	public function validateRenewPlanId($id, $allData) {
+		
+		if ( ! preg_match('/^[0-9]{1,10}$/',$id) ) {
+			return wfMessage( 'wp-invalid-plan' )->text();
+		}
+		
+		if ( $id == 0 ) {
+			return true; // "no next plan"
+		}
+		
+		$user_id = $this->getUser()->getId();
+		if ( !WpPlan::canBeSubscribed($id,
+				$this->getUser(), 
+				WpWikiplace::countWikiplacesOwnedByUser($user_id),
+				WpPage::countPagesOwnedByUser($user_id),
+				WpPage::getDiskspaceUsageByUser($user_id) ) ) {
+			return wfMessage( 'wp-cannot-select-plan' )->text();
+		}
+			
+        return true ;
+		
+	}
+	
+	public function processRenew( $formData ) {
+		
+		if ( !isset($formData['Plan']) ) { //check the key exists and value is not NULL
+			throw new MWException( 'Cannot set next plan, no data.' );
+		}
+		
+		$sub = WpSubscription::getActiveByUserId($this->getUser()->getId());
+		
+		if ( $sub == null ) {
+			throw new MWException( 'Cannot set next plan, no active subscription.' );
+		}
+		
+		$sub->set('wps_renew_wpp_id', $formData['Plan']);
+		
+		return true;
 		
 	}
 	

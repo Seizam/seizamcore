@@ -229,13 +229,6 @@ unset($wgRestrictionTypes[array_search('move', $wgRestrictionTypes)]);
 // everyone can edit, even anons, but, there can be per-page restrctions
 // by default 'user' is allowed to edit, even if '*' is not.
 $wgGroupPermissions['*']['edit'] = true; 
-// disable move (but sysop can still move, because sysop group have seperates rights
-$wgGroupPermissions['artist'] = array();
-$wgGroupPermissions['artist']['move']	= true;
-$wgGroupPermissions['artist']['move-subpages'] = true;
-$wgGroupPermissions['artist']['suppressredirect'] = true;
-$wgGroupPermissions['artist']['delete'] = true;
-$wgGroupPermissions['artist']['deletedhistory'] = true;
 
 $wgGroupPermissions['bureaucrat']['editprotectedns'] = true;
 $wgGroupPermissions['sysop']['editprotectedns'] = true;

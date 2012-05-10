@@ -67,8 +67,22 @@ class WikiplacesHooks {
 					' action=' . $action);
 			return false;
 		}
-
-		switch ($do) {
+		
+		
+		if (!$user->isLoggedIn()) {
+			wfDebugLog('wikiplaces', 'userCan: DENIED user is not logged in');
+			$result = false;
+			
+		} elseif ( $user->isAllowed(WP_ADMIN_RIGHT) ) {
+			wfDebugLog('wikiplaces', 'userCan: ALLOWED admin');
+			$result = true;
+			
+		} elseif ( ! WpPage::isInWikiplaceNamespaces($title->getNamespace()) ) {
+			wfDebugLog('wikiplaces', 'userCan: DENIED namespace forbidden');
+			$result = false;
+			
+		} else {
+			switch ($do) {
 			case 'create':
 				$result = self::userCanCreate($title, $user);
 				break;
@@ -78,14 +92,14 @@ class WikiplacesHooks {
 			case 'delete':
 				$result = self::userCanDelete($title, $user);
 				break;
-		}
-
-		self::$cacheUserCan[$article_id][$user_id][$do] = $result;
-
-		wfDebugLog('wikiplaces', 'userCan: ' . $do . ' ' . ($result ? 'ALLOWED' : 'DENIED') .
+			}
+			wfDebugLog('wikiplaces', 'userCan: ' . $do . ' ' . ($result ? 'ALLOWED' : 'DENIED') .
 				' title="' . $title->getPrefixedDBkey() . '"[' . $article_id . '] isKnown()=' . ($title->isKnown() ? 'known' : 'new') .
 				' user="' . $user->getName() . '"[' . $user_id . ']' .
 				' action=' . $action);
+		}
+
+		self::$cacheUserCan[$article_id][$user_id][$do] = $result;
 
 		return false; // stop hook processing, we have the answer
 
@@ -94,8 +108,6 @@ class WikiplacesHooks {
 	/**
 	 * Can the user create this new Title?
 	 * <ul>
-	 * <li>User has to be logged in</li>
-	 * <li>Title has to be in a Wikiplace namespace or user has to be allowed to WP_BYPASS_OTHERS_NS_RESTRICTIONS</li>
 	 * <li>If Title is a Wikiplace homepage
 	 * <ul>
 	 * <li>no . in title name</li>
@@ -112,16 +124,6 @@ class WikiplacesHooks {
 	 * @return boolean true=can, false=cannot 
 	 */
 	private static function userCanCreate(&$title, &$user) {
-
-		if (!$user->isLoggedIn()) {
-			wfDebugLog('wikiplaces', 'userCanCreate: DENY user is not logged in, page title: "' . $title->getFullText() . '"');
-			return false;
-		}
-
-		if (!WpPage::isInWikiplaceNamespaces($title->getNamespace()) && !$user->isAllowed(WP_BYPASS_OTHERS_NS_RESTRICTIONS)) {
-			wfDebugLog('wikiplaces', 'userCanCreate: DENY user cannot create in non wikiplace namespace, page title: "' . $title->getFullText() . '"');
-			return false;
-		}
 
 		$msg;
 		$user_id = $user->getId();
@@ -199,14 +201,9 @@ class WikiplacesHooks {
 	/**
 	 * For title in wikiplace namespace, checks if the current user can move it
 	 * <ul>
-	 * <li>User is logged in</li>
-	 * <li>if page is not in a wp namespace<ul>
-	 * <li>user has WP_BYPASS_OTHERS_NS_RESTRICTIONS right</li></ul></li>
-	 * <li>if page is in a wp namespace<ul>
 	 * <li>User has an active subscription</li>
 	 * <li>Title is not a Wikiplace homepage</li>
 	 * <li>User is owner of this title</li>
-	 * </ul></li>
 	 * </ul>
 	 * @param Title $title
 	 * @param User $user
@@ -214,24 +211,16 @@ class WikiplacesHooks {
 	 */
 	private static function userCanMove(&$title, &$user) {
 
-		return ( $user->isLoggedIn() && (
-				(!WpPage::isInWikiplaceNamespaces($title->getNamespace()) && $user->isAllowed(WP_BYPASS_OTHERS_NS_RESTRICTIONS) )
-				||
-				( ( WpSubscription::getActiveByUserId($user->getId()) != null ) &&
-				!WpPage::isHomepage($title) &&
-				WpPage::isOwner($title->getArticleID(), $user->getId()) ) ) );
+		return ( WpSubscription::getActiveByUserId($user->getId()) != null &&
+				! WpPage::isHomepage($title) &&
+				WpPage::isOwner($title->getArticleID(), $user) );
 	}
 
 	/**
 	 * For title in wikiplace namespace, checks if the current user can delete it
 	 * <ul>
-	 * <li>User is logged in</li>
-	 * <li>if page is not in a wp namespace<ul>
-	 * <li>user has WP_BYPASS_OTHERS_NS_RESTRICTIONS right</li></ul></li>
-	 * <li>if page is in a wp namespace<ul>
 	 * <li>Title is not a Wikiplace homepage</li>
 	 * <li>User is owner of this title</li>
-	 * </ul></li>
 	 * </ul>
 	 * @param Title $title
 	 * @param User $user
@@ -239,11 +228,8 @@ class WikiplacesHooks {
 	 */
 	private static function userCanDelete(&$title, &$user) {
 
-		return ( $user->isLoggedIn() && (
-				(!WpPage::isInWikiplaceNamespaces($title->getNamespace()) && $user->isAllowed(WP_BYPASS_OTHERS_NS_RESTRICTIONS) )
-				||
-				(!WpPage::isHomepage($title) &&
-				WpPage::isOwner($title->getArticleID(), $user->getId()) ) ) );
+		return ( ! WpPage::isHomepage($title) &&
+				WpPage::isOwner($title->getArticleID(), $user) );
 	}
 
 	/**
@@ -275,13 +261,13 @@ class WikiplacesHooks {
 		if (WpPage::isHomepage($title)) {
 
 			// create a wikiplace from this homepage				
-
+			wfDebugLog('wikiplaces', 'onArticleInsertComplete: creating and initializing wikiplace, article=[' . $article_id . ']"' . $title->getPrefixedDBkey() . '"');
 			$wikiplace = self::doCreateWikiplace($user->getId(), $article_id);
-			wfDebugLog('wikiplaces', 'onArticleInsertComplete: wikiplace created and initialized, article=[' . $article_id . ']"' . $title->getPrefixedDBkey() . '"');
+			
 		} else {
 
 			// this is a subpage of an existing existing wikiplace
-
+			wfDebugLog('wikiplaces', 'onArticleInsertComplete: searching container wikiplace, article=[' . $article_id . ']"' . $title->getPrefixedDBkey() . '"');
 			$wikiplace = WpWikiplace::getBySubpage($title->getDBkey(), $title->getNamespace());
 			if ($wikiplace === null) {
 				throw new MWException('Cannot identify the container wikiplace.');
@@ -289,13 +275,15 @@ class WikiplacesHooks {
 
 		}
 
+		wfDebugLog('wikiplaces', 'onArticleInsertComplete: creating page, article=[' . $article_id . ']"' . $title->getPrefixedDBkey() . '"');
+		
 		$new_wp_page = WpPage::create($article_id, $wikiplace->get('wpw_id'));
 
 		if ($new_wp_page === null) {
 			throw new MWException('Error while associating new page to its container wikiplace.');
 		}
 
-		wfDebugLog('wikiplaces', 'onArticleInsertComplete: new page associated to its wikiplace, article=[' . $article_id . ']"' . $title->getPrefixedDBkey() . '"');
+		
 
 		// restrict applicable actions to owner, except for read
 		$actions_to_rectrict = array_diff(
@@ -306,12 +294,14 @@ class WikiplacesHooks {
 			$restrictions[$action] = WP_DEFAULT_RESTRICTION_LEVEL;
 		}
 
+		wfDebugLog('wikiplaces', 'onArticleInsertComplete: setting default restrictions to new page, article=[' . $wikipage->getId() . ']"' . $title->getPrefixedDBkey() . '"');
 		$ok = false;
 		wfRunHooks('SetRestrictions', array($wikipage, $restrictions, &$ok));
+		
 		if (!$ok) {
-			wfDebugLog('wikiplaces', 'onArticleInsertComplete: ERROR while setting default restrictions to new page, article=[' . $wikipage->getId() . ']"' . $title->getPrefixedDBkey() . '"');
+			wfDebugLog('wikiplaces', 'onArticleInsertComplete: OK, but error while setting default restrictions to new page, article=[' . $wikipage->getId() . ']"' . $title->getPrefixedDBkey() . '"');
 		} else {
-			wfDebugLog('wikiplaces', 'onArticleInsertComplete: OK default restrictions set to new page, article=[' . $wikipage->getId() . ']"' . $title->getPrefixedDBkey() . '"');
+			wfDebugLog('wikiplaces', 'onArticleInsertComplete: OK, article=[' . $wikipage->getId() . ']"' . $title->getPrefixedDBkey() . '"');
 		}
 
 		return true;
@@ -460,6 +450,8 @@ class WikiplacesHooks {
 			return true;
 		}
 
+		wfDebugLog('wikiplaces', 'onArticleUndelete: trying to restore article=[' . $title->getArticleID() . ']"' . $title->getPrefixedDBkey() );
+		
 		if (WpPage::isHomepage($title)) {
 
 			// WARNING, this case shouldn't be allowed and we should arrive here, because where are not sure the user restoring
@@ -467,6 +459,7 @@ class WikiplacesHooks {
 			// so, who is this wikiplace owner ?
 			wfDebugLog('wikiplaces', 'onArticleUndelete: ERROR wikiplace homepage restored, unknown owner, article="' . $title->getPrefixedDBkey() . '"');
 			throw new MWException('Error: wikiplace homepage restored, but unknown owner.');
+			
 		} else {
 
 			// restoring a subpage
@@ -478,8 +471,9 @@ class WikiplacesHooks {
 			if (WpPage::create($title->getArticleID(), $wp->get('wpw_id')) == null) {
 				throw new MWException('Error while associating the restored subpage to its container wikiplace.');
 			}
-
-			wfDebugLog('wikiplaces', 'onArticleUndelete: article=[' . $title->getArticleID() . ']"' . $title->getPrefixedDBkey() . '" restored in wikiplace [' . $wp->get('wpw_id') . ']');
+			
+			wfDebugLog('wikiplaces', 'onArticleUndelete: article [' . $title->getArticleID() . '] restored in wikiplace [' . $wp->get('wpw_id') . ']');
+			
 		}
 
 		return true;
@@ -505,7 +499,9 @@ class WikiplacesHooks {
 
 	
 	/**
-	 *
+	 * If the page is in a Wikiplace namespace, search the owner and answer.
+	 * If the page is in a Wikiplace namespace but cannot be found, state only 
+	 * admins users are owner
 	 * @param Title $title
 	 * @param User $user
 	 * @param boolean
@@ -519,16 +515,12 @@ class WikiplacesHooks {
 		$article_id = $title->getArticleID();
 		$user_id = $user->getId();
 
-		$result = WpPage::isOwner($article_id, $user_id);
+		$result = WpPage::isOwner($article_id, $user);
 
 		wfDebugLog('wikiplaces', 'isOwner: ' . ($result ? 'YES' : 'NO')
 				. ', title=[' . $article_id . ']"' . $title->getPrefixedDBkey() .
 				'", user=[' . $user_id . ']"' . $user->getName() . '"');
 
-		/* 		if ( ! $result ) {
-		  wfDebugLog( 'wikiplaces',  wfGetPrettyBacktrace() );
-		  }
-		 */
 		return false; // stop hook processing, because we have the answer
 		
 	}

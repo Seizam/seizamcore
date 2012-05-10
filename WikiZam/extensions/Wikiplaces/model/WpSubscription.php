@@ -114,7 +114,9 @@ class WpSubscription {
 	
 	/**
 	 * 
-	 * @param string $attribut_name <ul><li>wps_renew_wpp_id</li>
+	 * @param string $attribut_name 
+	 * <ul>
+	 * <li>wps_renew_wpp_id</li>
 	 * <li>wps_tmr_id</li>
 	 * <li>wps_wpp_id</li>
 	 * <li>wps_active</li>
@@ -130,17 +132,17 @@ class WpSubscription {
 		$db_value = null;
 		switch ($attribut_name) {
 			case 'wps_renew_wpp_id':
-				if ( !is_int($value) || ($value<0) )  { throw new MWException('Value error (int >= 0 needed) for '.$attribut_name); }
+				if ( !is_numeric($value) || ($value<0) )  { throw new MWException('Value error (int >= 0 needed) for '.$attribut_name); }
 				$db_value = intval($value);
 				$this->next_plan = null;
 				break;
 			case 'wps_wpp_id':
-				if ( !is_int($value) || ($value<0) )  { throw new MWException('Value error (int >= 0 needed) for '.$attribut_name); }
+				if ( !is_numeric($value) || ($value<0) )  { throw new MWException('Value error (int >= 0 needed) for '.$attribut_name); }
 				$db_value = intval($value);
 				$this->plan = null;
 				break;
 			case 'wps_tmr_id':
-				if ( !is_int($value) || ($value<0) )  { throw new MWException('Value error (int >= 0 needed) for '.$attribut_name); }
+				if ( !is_numeric($value) || ($value<0) )  { throw new MWException('Value error (int >= 0 needed) for '.$attribut_name); }
 				$db_value = intval($value);
 				break;
 			case 'wps_active':
@@ -406,31 +408,11 @@ class WpSubscription {
 
 	}
 	
-	/**
-	 * <b>INVITATION SYSTEM TO BE IMPLEMENTED HERE</b>
-	 * Check that a user can subscribe to a specific plan.
-	 * Invitation system can take place here, if we use e-mail address as invitation identifier
-	 * @todo: add invitation system here
-	 * @param User $user
-	 * @param int $subscription_id
-	 * @return boolean 
-	 */
-	public static function canSubscribeTo($user, $plan_id) {
-		
-		$dbr = wfGetDB(DB_SLAVE);
-		$now =  $dbr->addQuotes( wfTimestamp(TS_DB) );
-		$conds = $dbr->makeList(array(
-			"wpp_id" => $plan_id,
-			"wpp_start_date <= $now",
-			"wpp_end_date > $now"), LIST_AND);
-		
-		$result = $dbr->selectRow( 'wp_plan', '*',	$conds, __METHOD__ );
-		return ( $result !== false );
 
-	}
 	
 	/**
 	 * Can the user take a subscription? (not renewal or a plan change, but a simple subscription)
+	 * Can be a first subscription, or a new subscription with an unactive ended one
 	 * @param User $user
 	 * @return boolean/string true = can subscribe , string = reason (i18n message key) why cannot subscribe:
 	 * <ul>
@@ -492,12 +474,11 @@ class WpSubscription {
 	 * <li>this function assumes that the current subscription <b>can</b> AND <b>need</b> to be renewed</li>
 	 * <li><b>only use it to renew the subscription when it ends normally</b> (this function doesn't re-credit
 	 * user account balance and it doesn't change the wikiplaces 'monthly tick')</li>
-	 * <li>it renews the subscription <b>but it doesn't archive it</b>, records should be already archived by 
-	 * calling archiveAllToRenew($now) just before</li>
+	 * <li>it archives the current subcription if renewal can be processed</b></li>
 	 * <li>this function alter the current db record (start_date, ...) but the primary key stay untouched</li>
 	 * <li>it creates a new TMR</li>
 	 * </ul>
-	 * @return boolean/string "true" if ok, a string message if an error occured
+	 * @return boolean/string true if ok, i18n message key string if an error occured
 	 * <ul>
 	 * <li>'wp-internal-error' if cannot find buyer user of the current subscription</li>
 	 * <li>'wp-no-next-plan' if no next plan specified</li>
@@ -506,28 +487,54 @@ class WpSubscription {
 	 */
 	public function renew() {
 		
+		// ensure we know the user
 		$user_id = $this->get('wps_buyer_user_id');
 		$user = User::newFromId($user_id);
-		if ( ! $user->loadFromId() ) { // ensure we know the user
+		if ( ! $user->loadFromId() ) { 
 			return 'wp-internal-error';
 		}
 		$this->fetchBuyer($user);
 		$user_email = $user->getEmail();
 		
+		
+		// ensure we know the next plan
 		$next_plan = $this->get('next_plan');
-		if ($next_plan === null) { // ensure we know the next plan
+		if ($next_plan == null) { 
+			$this->set('wps_renew_wpp_id', 0); //will not try anymore to renew
 			return 'wp-no-next-plan';
 		}
 		
+		
+		// ensure next plan as sufficient quotas
+		$nb_wp = WpWikiplace::countWikiplacesOwnedByUser($user_id);
+		$nb_pages = WpPage::countPagesOwnedByUser($user_id);
+		$diskspace = WpPage::getDiskspaceUsageByUser($user_id);
+		if ( ( $next_plan->get('wpp_nb_wikiplaces') < $nb_wp ) || 
+				( $next_plan->get('wpp_nb_wikiplace_pages') < $nb_pages ) ||
+				( $next_plan->get('wpp_diskspace') < $diskspace ) ) {
+			
+			/** @todo: implement what to do if quotas are not sufficient
+			$this->set('wps_renew_wpp_id', 0); //will not try anymore to renew
+			return 'wp-insufficient-next-plan-quotas';
+			 */
+			
+		}
+		
+		
+		// payment
 		$tmr = self::createTMR($user_id, $user_email, $next_plan);
 
 		if ( ($tmr['tmr_status']!='OK') && ($tmr['tmr_status']!='PE') ) { // not ( OK or PE ) so it cannot be renewed 			
 			
-			$this->set('wpp_renew_wpp_id', 0); //will not try anymore to renew			
+			$this->set('wps_renew_wpp_id', 0); //will not try anymore to renew			
 			return 'wp-payment-error';
 			
 		}
+		
 				
+		// everything is ok, let's renew!
+		$this->archive();
+		
 		$start =  self::calculateStartDateFromPreviousEnd( $this->wps_end_date );
 		$end = self::calculateEndDateFromStart( $start, $next_plan->get('wpp_period_months') );
 
@@ -538,21 +545,21 @@ class WpSubscription {
 		$this->set('wps_start_date', $start, false);
 		$this->set('wps_end_date', $end, false);
 		$this->set('wps_renew_wpp_id', $next_plan->get('wpp_renew_wpp_id')); // 3rd arg != false, so saving record now
-		if ($this->wps_renew_wpp_id != $next_plan->get('id')) {
+		if ($this->wps_renew_wpp_id != $next_plan->get('wpp_id')) {
 			$this->next_plan = null;
 		}
 		
-		return $tmr;
+		return true;
 				
 	}
 	
 	
 	/**
-	 * Copy all subscriptions outdated (having their end_date before $now)
-	 * @param string $now MySQL datetime (can be WpSubscription::getNow() )
-	 * @return int/boolean nb of archived subscriptions if ok, "false" if an error occured
+	 * Copy the subscriptions to the archive table
+	 * @param boolean $and_delete Do delete after archive?
+	 * @return boolean true if ok, false if an error occured
 	 */
-	public static function archiveAllOutdatedToRenew( $now ) {
+	public function archive($and_delete = false) {
 		
 		$dbw = wfGetDB(DB_MASTER);
 		$dbw->begin();
@@ -570,34 +577,26 @@ class WpSubscription {
 				'wpos_start_date' => 'wps_start_date',
 				'wpos_end_date' => 'wps_end_date'
 			),
-			array( self::getAllOutdatedToRenewDbConditions($dbw, $now) ),
+			array( 'wps_id' => $this->wps_id ),
 			__METHOD__ );
 
-		if ( !$success ) {	
+		$updated = $dbw->affectedRows();
+		
+		if ( !$success || ( $updated != 1) ) {	
 			return false;
 		}
 		
-		$updated = $dbw->affectedRows();
-
+		if ( $and_delete ) {
+	        $success = $dbw->delete('wp_subscription', array( 'wps_id' => $this->wps_id ), __METHOD__ );
+		}
+		
 		$dbw->commit();
 		
-		return $updated;
+		return $success ;
 		
 	}
 	
-	/**
-	 *
-	 * @param Database $db
-	 * @param string $now DB DATETIME timestamp (can be WpSubscription::getNow() )
-	 */
-	private static function getAllOutdatedToRenewDbConditions( $db, $now ) {
-		$now = $db->addQuotes($now);
-		return $db->makeList( array(
-			'wps_renew_wpp_id != 0',
-			'wps_active ' => 1,
-			"wps_end_date > $now"
-		), LIST_AND );
-	}
+	
 	
 	/**
 	 * @param string $now MySQL datetime string (can be WpSubscription::getNow() )
@@ -606,7 +605,12 @@ class WpSubscription {
 	public static function getAllOutdatedToRenew( $now ) {
 		
 		$dbr = wfGetDB(DB_MASTER) ;
-		$conds = self::getAllOutdatedToRenewDbConditions($dbr, $now);
+		$now = $dbr->addQuotes($now);
+		$conds = $dbr->makeList( array(
+			'wps_renew_wpp_id != 0',
+			'wps_active ' => 1,
+			"wps_end_date < $now"
+		), LIST_AND );
 		
 		$results = $dbr->select( 
 				array('wp_subscription', 'wp_plan'),
@@ -672,16 +676,12 @@ class WpSubscription {
 		
 		$user_id = $user->getId();
 		$db_master = $dbw = wfGetDB(DB_MASTER);
-		// is it a first subscription(not a plan change ?
-		
-/*		// if the user can make a first subscription, this is a first subscription (will be activated as soon as paid)
-		$canSubscribe = self::canSubscribe($user, $db_master);
-		if ( $canSubscribe !== true ) {			
-			return $canSubscribe;
-		}
-*/			
-		// this is a first subscriptioon
-			
+
+		// archive the current sub if necessary
+		// not that even if this sub is active, it will be archived
+		// so, be sure that you need to call this subscribe() !
+		$current_sub = WpSubscription::getLastSubscription($user_id);
+					
 		$tmr = self::createTMR($user_id, $user->getEmail(), $plan);
 
 		// already paid, or waiting a payment ?
@@ -689,6 +689,9 @@ class WpSubscription {
 
 			case 'OK': // already paid by user
 				$now =  self::getNow() ;
+				if ($current_sub != null) {
+					$current_sub->archive(true);
+				}
 				$sub = self::create(
 						$plan->get('wpp_id'), 
 						$user_id,
@@ -713,6 +716,9 @@ class WpSubscription {
 
 			case 'PE': // waiting payment
 				self::addSubscribersGroupToUser($user);
+				if ($current_sub != null) {
+					$current_sub->archive(true);
+				}
 				return self::create(
 						$plan->get('wpp_id'),
 						$user_id,
