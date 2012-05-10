@@ -253,7 +253,7 @@ a, a span {
 #content {
     width: 881px;
     margin: 0 auto 42px;
-    padding: 32px 0 32px; 
+    padding: 30px 0 30px; 
     border: 1px solid #D8D7D7;
     /* @embed */
     background-image: url(images/bg_transp.png);
@@ -286,7 +286,7 @@ a, a span {
 
 .block .inside {
     clear: left;
-    padding: 18px 18px 36px 18px;
+    padding: 18px;
     border: 1px solid #d8d7d7;
     /* @embed */
     background-image: url(images/sh_block_full_in.png);
@@ -381,6 +381,47 @@ a, a span {
     text-align: center
 }
 
+h1.firstHeading {
+    display: inline-block;
+    color: white;
+    max-width: 820px;
+    text-shadow: -1px 0 #dad9d9, 0 1px #dad9d9, 1px 0 #dad9d9, 0 -1px #dad9d9;
+    margin: 0px 32px -5px  32px;
+    font-size: 1.5em;
+    font-style: italic;
+    font-weight: normal;
+    word-wrap: break-word;
+}
+
+h1.firstHeading span {
+    margin: 0 4px 0 4px;
+}
+
+h1.firstHeading a {
+    color: white;
+}
+
+h1.firstHeading a span.wpp-sp,
+h1.firstHeading a span.wpp-hp {
+    text-shadow: -1px 0 #E22C2E, 0 1px #E22C2E, 1px 0 #E22C2E, 0 -1px #E22C2E;
+    font-size: 2em;
+    font-weight: bold;
+}
+
+h1.firstHeading a span.wpp-file {
+    text-shadow: -1px 0 #E22C2E, 0 1px #E22C2E, 1px 0 #E22C2E, 0 -1px #E22C2E;
+    font-weight: bold;
+}
+
+h1.firstHeading span.wpp-sp-hp {
+    text-shadow: -1px 0 #4d4e4f, 0 1px #4d4e4f, 1px 0 #4d4e4f, 0 -1px #4d4e4f;
+}
+
+h1.firstHeading a:hover span {
+    text-shadow: -1px 0 #E22C2E, 0 1px #E22C2E, 1px 0 #E22C2E, 0 -1px #E22C2E;
+    color: #E22C2E;
+}
+
 /* ----------------------------------------
    ==  NAVIGATION
    ---------------------------------------- */
@@ -412,16 +453,9 @@ a, a span {
 
 /* Navigation on content page */
 
-#nav ul.nav_artist {
-    display: inline-block;
-    margin: 0 0 8px 0;
-    border: 1px solid #D8D7D7;
-    background: white;
-}
-
 #nav ul.nav_actions {
     display: inline-block;
-    margin: 0 0 8px 16px;
+    margin: 0 0 16px 16px;
     padding: 0 9px 0 7px;
     border: 1px solid #D8D7D7;
     background: black;
@@ -450,7 +484,8 @@ a, a span {
     border-bottom:none;
 }
 
-#nav > ul > li {
+#nav > ul > li,
+#nav > div > ul > li{
     position:relative;
     display:inline-block;
     padding:4px 10px;
@@ -460,9 +495,14 @@ a, a span {
     color: black;
 }
 
-#nav .nav_artist {
-    margin-bottom: 33px;	/* total 57px with 24px of next blocks */
-    padding-right: 9px;
+#nav div.nav_artist {
+    display: inline-block;
+    margin: 0 0 8px 0;
+    padding: 0;
+}
+
+#nav div.nav_artist ul {
+    display: inline-block;
     text-transform: uppercase;
     border: 1px solid #D8D7D7;
     background: white;
@@ -503,6 +543,7 @@ a, a span {
 #nav_horizontal {
     background-color: #d8d7d7;
     font-family: Arial, Helvetica, Verdana, sans-serif;
+    margin-top: 16px;
 }
 
 #nav_horizontal  ul.nav_actions {
@@ -545,10 +586,6 @@ a, a span {
 /* ----------------------------------------
    ==  BODYCONTENT
    ---------------------------------------- */
-
-body.ns--1 #bodyContent .inside{
-    padding-bottom: 18px;
-}
 
 html.client-nojs #bodyContent>.inside {
     min-height: 300px;
@@ -854,12 +891,12 @@ html.client-nojs #bodyContent>.inside {
 /*
         IE fixes
 */
-.ie6 #header #nav_artist,
-.ie7 #header #nav_artist,
-.ie6 #header #nav_actions,
-.ie7 #header #nav_actions,
-.ie6 #header #nav > ul > li,
-.ie7 #header #nav > ul > li {
+.ie6 #header .nav_artist,
+.ie7 #header .nav_artist,
+.ie6 #header .nav_actions,
+.ie7 #header .nav_actions,
+.ie6 #header .nav > ul > li,
+.ie7 #header .nav > ul > li {
     display:inline;
     zoom: 1;
 }
@@ -899,6 +936,10 @@ div#content .editsection{
 }
 
 #contentSub{
+    display: none;
+}
+
+body.ns--1 #contentSub{
     display: block;
 }
 

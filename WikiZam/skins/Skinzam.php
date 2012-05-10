@@ -167,9 +167,9 @@ class SkinzamTemplate extends BaseTemplate {
         <div id="header" class="block_full">
             <div id="nav">
                 <?php if ($this->data['wp_navigation']['content']): ?>
-                    <ul class="nav_artist">
-                        <li><?php echo $this->data['wp_navigation']['content']; ?></li>
-                    </ul>
+                    <div class="nav_artist">
+                        <?php echo $this->data['wp_navigation']['content']; ?>
+                    </div>
                 <?php endif; ?>
                 <ul class="nav_actions">
                     <li>
@@ -180,16 +180,17 @@ class SkinzamTemplate extends BaseTemplate {
                     </li>
                 </ul>
             </div>
-            <!-- firstHeading -->
-            <div class="block block_half block_flat">
-                <div class="inside">
-                    <h1 id="firstHeading" class="firstHeading"><?php $this->html('title') ?></h1>
-                </div>
-            </div>
-            <!-- /firstHeading -->
         </div>
         <!-- /header -->
         <!-- bodyCcontent -->
+        
+            <!-- firstHeading -->
+            <?php if ($this->data['wp_headertitle']['content']): ?>
+            <?php echo $this->data['wp_headertitle']['content']; ?>
+                <?php else: ?>
+                    <h1 class="firstHeading"><?php $this->html('title') ?></h1>
+                <?php endif; ?>
+            <!-- /firstHeading -->
         <div id="bodyContent" class="block block_full block_flat " role="main"<?php $this->html('specialpageattributes') ?>> <!--<div id="main" role="main">-->
             <!-- inside -->
             <div class="inside">

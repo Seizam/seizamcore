@@ -57,15 +57,21 @@ class WpPagesTablePager extends SkinzamTablePager {
 
     function formatPageTitle($value) {
         $title = Title::makeTitle($this->mCurrentRow->subpage_namespace, $value);
+        $ns = $title->getNamespace();
+        $explosion = WpWikiplace::explodeWikipageKey($title->getDBkey(), $ns);
+        $excount = count($explosion);
         $text = '';
         // Page is in NS_MAIN
-        if ($title->getNamespace() == NS_MAIN) {
-            $explosion = explode('/', $title->getText());
-            $excount = count($explosion);
+        if ($ns == NS_MAIN || $ns == NS_WIKIPLACE) {
+            if ($ns == NS_WIKIPLACE) {
+                $text .= '<span class="wpp-ns">' . $title->getNsText() . ':</span>';
+            }
             // Homepage
             if ($excount == 1) {
-                $text .= '<span class="wpp-hp">' . $explosion[0] . '</span>';
-                // Subpage
+                if ($ns == NS_MAIN)
+                    $text .= '<span class="wpp-hp">' . $explosion[0] . '</span>';
+                else $text .= '<span class="wpp-sp">' . $explosion[0] . '</span>';
+            // Subpage
             } else {
                 // Language variant
                 if (strlen($explosion[$excount - 1]) == 2) {
@@ -74,35 +80,32 @@ class WpPagesTablePager extends SkinzamTablePager {
                 }
 
                 // Extracting wikiplace base
-                $text .= '<span class="wpp-sp-hp">' . $explosion[0] . '/</span>';
+                $text .= '<span class="wpp-sp-hp">' . $explosion[0] . '</span>';
                 array_shift($explosion);
 
                 // Reconstructing Page title
                 $text .= '<span class="wpp-sp">';
                 foreach ($explosion as $atom)
-                    $text .= $atom . '/';
-                $text = substr($text, 0, -1);
+                    $text .= '/'.$atom ;
                 $text .= '</span>';
 
                 // Appending Lang variant
                 if (isset($lang))
                     $text .= '<span class="wpp-sp-lg">/' . $lang . '</span>';
             }
-            // Page is NS_FILE
+        // Page is NS_FILE
         } else if ($title->getNamespace() == NS_FILE) {
             $text .= '<span class="wpp-ns">' . $title->getNsText() . ':</span>';
-            $explosion = explode('.', $title->getText());
             // @TODO: Extract file extension and lang variant for prettyfying
             // 
             // Extracting wikiplace base
-            $text .= '<span class="wpp-sp-hp">' . $explosion[0] . '.</span>';
+            $text .= '<span class="wpp-sp-hp">' . $explosion[0] . '</span>';
             array_shift($explosion);
 
             // Reconstructing Page title
             $text .= '<span class="wpp-sp">';
             foreach ($explosion as $atom)
-                $text .= $atom . '.';
-            $text = substr($text, 0, -1);
+                $text .= '.' . $atom ;
             $text .= '</span>';
         } else {
             $text .= '<span class="wpp-ns">' . $title->getNsText() . ':</span>';

@@ -515,6 +515,26 @@ WHERE wpw_report_updated < $outdated ;" ;
 	 */
 	public static function extractWikiplaceRoot($db_key, $namespace) {
 		
+		$hierarchy = self::explodeWikipageKey($db_key, $namespace);
+		
+		if (!isset($hierarchy[0]) || !WpPage::isInWikiplaceNamespaces($namespace) ) {
+            throw new MWException("Cannot extract WpRoot from key=$db_key and ns=$namespace.");
+		}
+
+		return $hierarchy[0];
+		
+	}
+    
+    /**
+	 * Parse the db_key depending on the namespace and return an array of all elements. Work with both homepages and subpages db_key.
+	 * Note that this function can return a Wikiplace name even if the page doesn't not already 
+	 * belongs to ( = newly created page ) or even if the Wikiplace doesn't already exists.
+	 * @param string $db_key should be $wikipage->getTitle()->getDBkey()
+	 * @param int $namespace should be $wikipage->getTitle()->getNamespace()
+	 * @return Array The array of all elements in the name
+	 */
+	public static function explodeWikipageKey($db_key, $namespace) {
+		
 		$hierarchy;
 		
 		switch ( $namespace ) {
@@ -529,11 +549,10 @@ WHERE wpw_report_updated < $outdated ;" ;
 		}
 		
 		if (!isset($hierarchy[0]) || !WpPage::isInWikiplaceNamespaces($namespace) ) {
-            throw new MWException("Cannot extract WpRoot from key=$db_key and ns=$namespace.");
+            throw new MWException("Cannot split WikipageKey from key=$db_key and ns=$namespace.");
 		}
 
-		return $hierarchy[0];
-		
+		return $hierarchy;
 	}
     
     /**
