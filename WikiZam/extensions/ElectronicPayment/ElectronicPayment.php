@@ -279,11 +279,11 @@ Class EPMessage {
         $this->epm = $dbr->selectRow('ep_message', '*', 'epm_id = ' . $this->epm['epm_id']);
     }
 
-    # Takes $time like 'YYYY-mm-dd:HH:ii:ss' and outputs 'dd/mm/YYYY:HH:ii:ss'.
+    # Takes $time like 'YYYY-mm-dd HH:ii:ss' and outputs 'dd/mm/YYYY:HH:ii:ss'.
 
     public function mySqlStringToBankTime($time) {
         $matches = array();
-        $pattern = "/^(?P<Y>[0-9]{4})-(?P<m>[0-9]{2})-(?P<d>[0-9]{2}):(?P<H>[0-9]{2}):(?P<i>[0-9]{2}):(?P<s>[0-9]{2})$/";
+        $pattern = "/^(?P<Y>[0-9]{4})-(?P<m>[0-9]{2})-(?P<d>[0-9]{2}) (?P<H>[0-9]{2}):(?P<i>[0-9]{2}):(?P<s>[0-9]{2})$/";
         if (preg_match($pattern, $time, $matches) == 1) {
             return $matches['d'] . '/' . $matches['m'] . '/' . $matches['Y'] . ':' . $matches['H'] . ':' . $matches['i'] . ':' . $matches['s'];
         } else
