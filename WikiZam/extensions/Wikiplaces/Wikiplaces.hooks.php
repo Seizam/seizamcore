@@ -73,9 +73,6 @@ class WikiplacesHooks {
 		} elseif ($user->isAllowed(WP_ADMIN_RIGHT)) {
 			wfDebugLog('wikiplaces', 'userCan: ALLOWED admin');
 			$result = true;
-		} elseif (!WpPage::isInWikiplaceNamespaces($title->getNamespace())) {
-			wfDebugLog('wikiplaces', 'userCan: DENIED namespace forbidden');
-			$result = false;
 		} else {
 			switch ($do) {
 				case 'create':
