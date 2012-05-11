@@ -455,7 +455,7 @@ h1.firstHeading a:hover span {
 
 #nav ul.nav_actions {
     display: inline-block;
-    margin: 0 0 16px 16px;
+    margin: 0 0 16px 12px;
     padding: 0 9px 0 7px;
     border: 1px solid #D8D7D7;
     background: black;
@@ -543,7 +543,7 @@ h1.firstHeading a:hover span {
 #nav_horizontal {
     background-color: #d8d7d7;
     font-family: Arial, Helvetica, Verdana, sans-serif;
-    margin-top: 16px;
+    margin-top: 17px;
 }
 
 #nav_horizontal  ul.nav_actions {
@@ -1757,10 +1757,17 @@ table.TablePager {
     border: none;
     border-bottom: 1px solid #dad9d9;
 }
+
+.TablePager th img {
+    margin-right: 6px;
+}
+
 .TablePager td {
     background-color: transparent;
     border: none;
     text-align: center;
+    word-wrap:break-word;
+    max-width: 300px;
     border-bottom: 1px solid #dad9d9;
 }
 

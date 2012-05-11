@@ -203,11 +203,11 @@ class WikiplacesHooks {
     private static function userCanMove(&$title, &$user) {
 
         return ( $user->isLoggedIn() && (
-                (!WpPage::isInWikiplaceNamespaces($title->getNamespace()) && $user->isAllowed(WP_BYPASS_OTHERS_NS_RESTRICTIONS) )
+                (!WpPage::isInWikiplaceNamespaces($title->getNamespace()) && $user->isAllowed(WP_ADMIN_RIGHT) )
                 ||
                 ( ( WpSubscription::getActiveByUserId($user->getId()) != null ) &&
                 !WpPage::isHomepage($title) &&
-                WpPage::isOwner($title->getArticleID(), $user->getId()) ) ) );
+                WpPage::isOwner($title->getArticleID(), $user) ) ) );
     }
 
     /**
@@ -215,7 +215,7 @@ class WikiplacesHooks {
      * <ul>
      * <li>User is logged in</li>
      * <li>if page is not in a wp namespace<ul>
-     * <li>user has WP_BYPASS_OTHERS_NS_RESTRICTIONS right</li></ul></li>
+     * <li>user has WP_ADMIN_RIGHT right</li></ul></li>
      * <li>if page is in a wp namespace<ul>
      * <li>Title is not a Wikiplace homepage</li>
      * <li>User is owner of this title</li>
@@ -228,10 +228,10 @@ class WikiplacesHooks {
     private static function userCanDelete(&$title, &$user) {
 
         return ( $user->isLoggedIn() && (
-                (!WpPage::isInWikiplaceNamespaces($title->getNamespace()) && $user->isAllowed(WP_BYPASS_OTHERS_NS_RESTRICTIONS) )
+                (!WpPage::isInWikiplaceNamespaces($title->getNamespace()) && $user->isAllowed(WP_ADMIN_RIGHT) )
                 ||
                 (!WpPage::isHomepage($title) &&
-                WpPage::isOwner($title->getArticleID(), $user->getId()) ) ) );
+                WpPage::isOwner($title->getArticleID(), $user) ) ) );
     }
 
     /**
@@ -499,7 +499,7 @@ class WikiplacesHooks {
         $article_id = $title->getArticleID();
         $user_id = $user->getId();
 
-        $result = WpPage::isOwner($article_id, $user_id);
+        $result = WpPage::isOwner($article_id, $user);
 
         wfDebugLog('wikiplaces', 'isOwner: ' . ($result ? 'YES' : 'NO')
                 . ', title=[' . $article_id . ']"' . $title->getPrefixedDBkey() .
