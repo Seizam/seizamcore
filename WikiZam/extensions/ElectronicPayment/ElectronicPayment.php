@@ -60,6 +60,9 @@ $wgDebugLogGroups['EPErrors'] = '/var/log/seizam/ep_errors.log'; #@TODO: pretty 
 #TPE kit
 require_once($dir . 'CMCIC_Tpe.inc.php');
 
+
+$wgTestEnv = true; #Activate test environment (accept test money)
+
 Class EPMessage {
 #Required Params
 
@@ -107,6 +110,7 @@ Class EPMessage {
     # Debug/Dev
     public $CtlHmac;
 
+    
     # Returns EPMessage object
 
     public static function create($type, $epm) {
@@ -423,6 +427,8 @@ Class EPOrder {
 
             case "payetest":
                 $this->epo['epo_status'] = 'TE'; # varchar(2) NOT NULL COMMENT 'Record status (OK, KO, PEnding)',
+                global $wgTestEnv;
+                if ($wgTestEnv) $this->epo['epo_status'] = 'OK';
                 $this->epo['epo_date_paid'] = $message->epm['epm_date_message'];
                 return $this->saveTransaction('ep-tm-test', $message);
 

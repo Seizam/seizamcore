@@ -281,7 +281,7 @@ class TMRecord {
             return false;
         }
 
-        // No reaction if status !=KO
+        // No reaction if status ===KO
         if ($this->getStatus() === 'KO') {
             return false;
         }
