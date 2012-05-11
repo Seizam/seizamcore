@@ -37,7 +37,7 @@ class WikiplacesHooks {
 	 */
 	public static function userCan($title, &$user, $action, &$result) {
 
-		if (($action == 'read')) {
+		if ( ($action == 'read') || !WpPage::isInWikiplaceNamespaces($title->getNamespace()) ) {
 			return true; // skip
 		}
 
@@ -70,9 +70,11 @@ class WikiplacesHooks {
 		if (!$user->isLoggedIn()) {
 			wfDebugLog('wikiplaces', 'userCan: DENIED user is not logged in');
 			$result = false;
+			
 		} elseif ($user->isAllowed(WP_ADMIN_RIGHT)) {
 			wfDebugLog('wikiplaces', 'userCan: ALLOWED admin');
 			$result = true;
+			
 		} else {
 			switch ($do) {
 				case 'create':
