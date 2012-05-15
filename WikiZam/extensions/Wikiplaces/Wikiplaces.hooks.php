@@ -471,7 +471,7 @@ class WikiplacesHooks {
 		return false; // the transaction update has been processed, so no other hook should take care of it 
 	}
     
-    /*
+    /**
      * Hook to correct the action menu that displays "delete" a bit too much.
      * A direct correction would be to change the logic directly in SkinTemplate::buildContentNavigationUrls.
      * The menu builder now uses if( $wgUser->isAllowed( 'delete' ) ) ...
@@ -488,6 +488,7 @@ class WikiplacesHooks {
             unset ($content_navigation['actions']['delete']);
         return true;
     }
+    
 
 	/**
 	 * If the page is in a Wikiplace namespace, search the owner and answer.

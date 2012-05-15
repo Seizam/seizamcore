@@ -54,8 +54,13 @@ $wgExtensionAliasesFiles['Skinzam'] = $dir . 'Skinzam.alias.php';
 $wgHooks['BeforePageDisplay'][] = 'SkinzamHooks::beforePageDisplay';
 // Remove TOC
 $wgHooks['ParserClearState'][] = 'SkinzamHooks::parserClearState';
-
+// Cook the skin Template
 $wgHooks['SkinTemplateOutputPageBeforeExec'][] = 'SkinzamHooks::skinTemplateOutputPageBeforeExec';
+// Cook the personal navigation (on top of special pages)
+$wgHooks['PersonalUrls'][] = 'SkinzamHooks::PersonalUrls';
+// Cook the toolbox
+$wgHooks['BaseTemplateToolbox'][] = 'SkinzamHooks::BaseTemplateToolbox'; 
+
 
 
 // JS Resources Declaration
@@ -117,6 +122,6 @@ $wgFooterIcons = $wgFooterIcons = array(
 );
 
 # Try something cool
-$wgPageShowWatchingUsers = true;
+// $wgPageShowWatchingUsers = true; (shows the number of watching users on a page)
 $wgMaxCredits = 1;
 

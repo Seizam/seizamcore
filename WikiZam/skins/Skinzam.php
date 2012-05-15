@@ -193,7 +193,7 @@ class SkinzamTemplate extends BaseTemplate {
     private function renderContentDefault() {
         ?>
         <!-- header -->
-        <div id="header" class="block_full">
+        <div id="header" class="block_full noprint">
             <div id="nav">
                 <?php if ($this->data['wp_navigation']['content']): ?>
                     <div class="nav_artist">
@@ -222,22 +222,6 @@ class SkinzamTemplate extends BaseTemplate {
         <div id="bodyContent" class="block block_full block_flat " role="main"<?php $this->html('specialpageattributes') ?>> <!--<div id="main" role="main">-->
             <!-- inside -->
             <div class="inside">
-                <!-- bodytext -->
-                <?php $this->html('bodytext') ?>
-                <!-- /bodytext -->
-            </div>
-            <!-- /inside -->
-        </div>
-        <!-- /bodyContent -->
-        <!-- contentOther -->
-        <div id="contentOther"class="block block_full block_flat">
-            <!-- inside -->
-            <div class="inside">
-                <?php if ($this->data['catlinks']): ?>
-                    <!-- catlinks -->
-                    <?php $this->html('catlinks'); ?>
-                    <!-- /catlinks -->
-                <?php endif; ?>
                 <?php if ($this->data['subtitle']): ?>
                     <!-- subtitle -->
                     <div id="contentSub"<?php $this->html('userlangattributes') ?>><?php $this->html('subtitle') ?></div>
@@ -248,24 +232,36 @@ class SkinzamTemplate extends BaseTemplate {
                     <div id="contentSub2"><?php $this->html('undelete') ?></div>
                     <!-- /undelete -->
                 <?php endif; ?>
+                <!-- bodytext -->
+                <?php $this->html('bodytext') ?>
+                <!-- /bodytext -->
             </div>
+            <!-- /inside -->
         </div>
-        <!-- contentOther -->
-        <!-- Horizontal actions -->
-        <div id="nav_horizontal" class="block block_full block_flat">
-            <ul class="nav_actions">
-                <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
-            </ul>
-        </div>
-        <!-- /Horizontal actions -->
+        <!-- /bodyContent -->
         <!-- contentFooter -->
-        <div id="contentFooter" class="block block_full block_flat ">
+        <div id="contentFooter" class="block block_full block_flat">
             <!-- inside -->
             <div class="inside">
                 <?php $this->renderContentFooter(); ?>
             </div>
         </div>
         <!-- /contentFooter -->
+        <!-- Horizontal actions -->
+        <div id="nav_horizontal" class="block block_full block_flat noprint">
+            <ul class="nav_actions">
+                <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
+            </ul>
+        </div>
+        <!-- /Horizontal actions -->
+        <!-- contentOther -->
+        <div id="contentOther"class="block block_full block_flat noprint">
+            <!-- inside -->
+            <div class="inside">
+                <?php $this->renderContentOther(); ?>
+            </div>
+        </div>
+        <!-- contentOther -->
         <?php
     }
 
@@ -275,7 +271,7 @@ class SkinzamTemplate extends BaseTemplate {
     private function renderContentNS4() {
         ?>
         <!-- header -->
-        <div id="header" class="block block_full homepage">
+        <div id="header" class="block block_full homepage noprint">
             <div class="hgroup inside">
                 <h1><a id="logo_project" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"></a></h1>
                 <h2><?php echo wfMessage('sz-tagline')->text() ?></h2>
@@ -287,7 +283,7 @@ class SkinzamTemplate extends BaseTemplate {
             <h3 class="title"><?php $this->html('title') ?></h3>
             <!-- inside -->
             <div class="inside">
-                <div id="nav">
+                <div id="nav" class="noprint">
                     <ul class="nav_actions">
                         <li>
                             <a href="#"><?php echo wfMessage('actions')->text() ?></a>
@@ -297,22 +293,6 @@ class SkinzamTemplate extends BaseTemplate {
                         </li>
                     </ul>
                 </div>
-                <!-- bodytext -->
-                <?php $this->html('bodytext') ?>
-                <!-- /bodytext -->
-            </div>
-            <!-- /inside -->
-        </div>
-        <!-- /bodyContent -->
-        <!-- contentOther -->
-        <div id="contentOther"class="block block_full block_flat">
-            <!-- inside -->
-            <div class="inside">
-                <?php if ($this->data['catlinks']): ?>
-                    <!-- catlinks -->
-                    <?php $this->html('catlinks'); ?>
-                    <!-- /catlinks -->
-                <?php endif; ?>
                 <?php if ($this->data['subtitle']): ?>
                     <!-- subtitle -->
                     <div id="contentSub"<?php $this->html('userlangattributes') ?>><?php $this->html('subtitle') ?></div>
@@ -323,18 +303,15 @@ class SkinzamTemplate extends BaseTemplate {
                     <div id="contentSub2"><?php $this->html('undelete') ?></div>
                     <!-- /undelete -->
                 <?php endif; ?>
+                <!-- bodytext -->
+                <?php $this->html('bodytext') ?>
+                <!-- /bodytext -->
             </div>
+            <!-- /inside -->
         </div>
-        <!-- contentOther -->
-        <!-- Horizontal actions -->
-        <div id="nav_horizontal" class="block block_full block_flat">
-            <ul class="nav_actions">
-                <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
-            </ul>
-        </div>
-        <!-- /Horizontal actions -->
+        <!-- /bodyContent -->
         <!-- contentFooter -->
-        <div id="contentFooter" class="block block_full">
+        <div id="contentFooter" class="block block_full block_flat ">
             <!-- inside -->
             <div class="inside">
                 <?php $this->renderContentFooter(); ?>
@@ -342,10 +319,24 @@ class SkinzamTemplate extends BaseTemplate {
             <!-- /inside -->
         </div>
         <!-- /contentFooter -->
+        <!-- Horizontal actions -->
+        <div id="nav_horizontal" class="block block_full block_flat noprint">
+            <ul class="nav_actions">
+                <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
+            </ul>
+        </div>
+        <!-- /Horizontal actions -->
+        <!-- contentOther -->
+        <div id="contentOther"class="block block_full noprint">
+            <!-- inside -->
+            <div class="inside">
+                <?php $this->renderContentOther(); ?>
+            </div>
+        </div>
+        <!-- contentOther -->
         <?php
     }
 
-    
     /**
      * Render the NS--1 (Special:) #content content
      */
@@ -382,6 +373,38 @@ class SkinzamTemplate extends BaseTemplate {
             <!-- /inside -->
         </div>
         <!-- /bodyContent -->
+        <?php
+    }
+
+    /**
+     * Render the ContentOther (Languages, Categories, Toolbox...)
+     */
+    private function renderContentOther() {
+        if ($this->data['language_urls']):
+            ?>
+            <!-- language_urls -->
+            <div class="portal" id="p-lang"<?php echo Linker::tooltip('p-lang') ?>>
+                <h5<?php $this->html('userlangattributes') ?>><?php echo wfMessage('otherlanguages')->text() . wfMsgExt('colon-separator', 'escapenoentities'); ?></h5>
+
+                <ul>
+                    <?php $this->renderNavigation(array('LANG')); ?>
+                </ul>
+            </div>
+            <!-- /language_urls -->
+        <?php endif; ?>
+        <?php if ($this->data['catlinks']): ?>
+            <!-- catlinks -->
+            <?php $this->html('catlinks'); ?>
+            <!-- /catlinks -->
+        <?php endif; ?>
+        <!-- toolbox -->
+        <div class="portal" id="p-tb"<?php echo Linker::tooltip('p-tb') ?>>
+            <h5<?php $this->html('userlangattributes') ?>><?php echo wfMessage('toolbox')->text() . wfMsgExt('colon-separator', 'escapenoentities'); ?></h5>
+            <ul>
+                <?php $this->renderNavigation(array('TOOLBOX')); ?>
+            </ul>
+        </div>
+        <!-- /toolbox -->
         <?php
     }
 
@@ -557,6 +580,16 @@ class SkinzamTemplate extends BaseTemplate {
                     break;
                 case 'SZ-FOOTER' :
                     foreach ($this->getSzAbsoluteFooterUrls() as $key => $item):
+                        echo $this->makeListItem($key, $item);
+                    endforeach;
+                    break;
+                case 'TOOLBOX' :
+                    foreach ($this->getToolbox() as $key => $item):
+                        echo $this->makeListItem($key, $item);
+                    endforeach;
+                    break;
+                case 'LANG' :
+                    foreach ($this->data['language_urls'] as $key => $item):
                         echo $this->makeListItem($key, $item);
                     endforeach;
                     break;

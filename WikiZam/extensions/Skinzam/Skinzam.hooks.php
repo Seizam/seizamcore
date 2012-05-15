@@ -144,4 +144,62 @@ class SkinzamHooks {
         return true;
     }
 
+    
+    /**
+     * Hook to cook the personal menu Seizam style.
+     * 
+     * @param Array $personal_urls
+     * @param Title $title
+     * @return Boolean True (=continue hook)
+     * 
+     */
+    public static function PersonalUrls(&$personal_urls, &$title) {
+        // Remove Preferences
+        if (isset($personal_urls['preferences']))
+            unset ($personal_urls['preferences']);
+        // Remove Contributions
+        if (isset($personal_urls['mycontris']))
+            unset ($personal_urls['mycontris']);
+        
+        if (isset($personal_urls['logout'])) {
+            // Add MySeizam
+            $href = Title::makeTitle(NS_SPECIAL, 'MySeizam')->getCanonicalURL();
+            $personal_urls_prepend['myseizam'] = array(
+                    'text' => wfMsg( 'sz-myseizam' ),
+                    'href' => $href,
+                    'active' => ( $title->getText() == 'MySeizam' )
+                );
+            // Add MyWikiPlaces
+            $href = Title::makeTitle(NS_SPECIAL, 'Wikiplaces')->getCanonicalURL();
+            $personal_urls_prepend['wikiplaces'] = array(
+                    'text' => wfMsg( 'wikiplaces' ),
+                    'href' => $href,
+                    'active' => ( $title->getText() == 'Wikiplaces' )
+                );
+            $personal_urls = array_merge($personal_urls_prepend, $personal_urls);
+        }
+        
+        return true;
+    }
+    
+    
+    /**
+     * Hook to cook the toolbox menu Seizam style.
+     * 
+     * @param BaseTemplate $BaseTemplate
+     * @param Array $toolbox
+     * @return Boolean True (=continue hook)
+     * 
+     */
+    public static function BaseTemplateToolbox( &$BaseTemplate, &$toolbox) {
+        // Remove upload
+        if (isset($toolbox['upload']))
+            unset ($toolbox['upload']);
+        // Remove specialpages
+        if (isset($toolbox['specialpages']))
+            unset ($toolbox['specialpages']);
+        
+        return true;
+    }
+    
 }

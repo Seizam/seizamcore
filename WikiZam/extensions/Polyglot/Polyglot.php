@@ -72,9 +72,9 @@ $wgExtensionFunctions[] = "wfPolyglotExtension";
 function wfPolyglotExtension() {
 	global $wgPolyglotLanguages;
 
-	if ( $wgPolyglotLanguages === null ) {
+	/*if ( $wgPolyglotLanguages === null ) {
 		$wgPolyglotLanguages = @$GLOBALS['wgLanguageSelectorLanguages'];
-	}
+	}*/
 	
 	if ( $wgPolyglotLanguages === null ) {
 		$wgPolyglotLanguages = array_keys( Language::getLanguageNames() );

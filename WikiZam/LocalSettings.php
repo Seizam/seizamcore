@@ -151,6 +151,12 @@ $wgDebugDumpSql  = true;
 $wgResourceLoaderDebug = false;
 # End Developement Settings
 
+# Polyglot (auto select page version regarding user language)
+require_once( "$IP/extensions/Polyglot/Polyglot.php" );
+# Supported languages
+$wgPolyglotLanguages = null;
+# Enable redirect on target page (eg. MainPage -> MainPage/fr -> Accueil)
+$wfPolyglotFollowRedirects = true;
 
 # Language Selector (auto select user language and drop down menu)
 require_once( "$IP/extensions/LanguageSelector/LanguageSelector.php" );
@@ -161,11 +167,6 @@ $wgLanguageSelectorDetectLanguage = LANGUAGE_SELECTOR_PREFER_CLIENT_LANG; #Autom
 # Where to put the language selection dropdown menu
 // $wgLanguageSelectorLocation = LANGUAGE_SELECTOR_IN_TOOLBOX;#In toolbow for Vector Skin, hard integrated for Skinzam
 $wgLanguageSelectorLocation = LANGUAGE_SELECTOR_MANUAL; #buggy in toolbox with Vector(yes, very strange), so only manual placing
-
-# Polyglot (auto select page version regarding user language)
-require_once( "$IP/extensions/Polyglot/Polyglot.php" );
-# Enable redirect on target page (eg. MainPage -> MainPage/fr -> Accueil)
-$wfPolyglotFollowRedirects = true;
 
 
 # Google Analytics

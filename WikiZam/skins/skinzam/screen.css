@@ -170,14 +170,6 @@ div#content .editsection{
     display: none;
 }
 
-#contentSub{
-    display: none;
-}
-
-body.ns--1 #contentSub{
-    display: block;
-}
-
 /* Search form */
 #p-search h5 {
     display: none;
@@ -697,14 +689,7 @@ div.error, .errorbox, .warningbox {
 
 /* transitions */
 
-input[type="submit"],
-.edit_col_1 .submit input,
-.block_join .submit input,
-.help,
-.edit_avatar .button,
-.block_join .subscription,
-.TablePager tr td,
-table.mw-enhanced-rc {
+* {
     -webkit-transition: background 0.75s;
     -moz-transition: background 0.75s;
     -ms-transition: background 0.75s;
@@ -712,7 +697,8 @@ table.mw-enhanced-rc {
     transition: background 0.75s;
 }
 
-#footer .more_infos .socials li a {
+#footer .more_infos .socials li a,
+#footer .more_infos #footer-icons li a{
     -webkit-transition: all 0.50s;
     -moz-transition: all 0.50s;
     -ms-transition: all 0.50s;
@@ -1037,7 +1023,7 @@ h1.firstHeading a:hover {
 
 #nav_horizontal  ul.nav_actions {
     margin: 0;
-    padding: 0;
+    padding: 0 0 2px 0;
     text-align: center;
 }
 
@@ -1072,6 +1058,11 @@ h1.firstHeading a:hover {
     color: #E22C2E;
 }
 
+#header.special #nav li.active a,
+#absoluteFooter .inside .content ul li.active a{
+    color: #e22c2e;
+}
+
 /* ----------------------------------------
    ==  BODYCONTENT
    ---------------------------------------- */
@@ -1089,34 +1080,58 @@ html.client-nojs #bodyContent>.inside {
    ---------------------------------------- */
 
 #contentOther .inside {
-    padding-bottom: 4px;
-    padding-top: 4px;
+    padding: 6px 0;
     font-size: 0.8em;
     text-align: center;
 }
 
 #contentOther #mw-normal-catlinks li {
     border: none;
-    padding: 4px;
 }
+
+#contentOther ul,
+#contentOther h5,
+#contentOther li,
+#contentOther .inside div {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+#contentOther .inside>div {
+    margin: 0 8px 0 8px;
+}
+
+
+#contentOther h5{
+    font-size: 1em;
+    font-weight: normal;
+}
+
+#contentOther ul li {
+    list-style: none;
+    padding: 0 4px;
+}
+
 
 /* ----------------------------------------
    ==  CONTENTFOOTER
    ---------------------------------------- */
 
 #contentFooter .inside {
-    padding-bottom: 4px;
-    padding-top: 4px;
+    padding-bottom: 6px;
+    padding-top: 6px;
     font-size: 0.8em;
     text-align: center;
 }
 
 #contentFooter ul,
-#contentFooter p {
+#contentFooter p,
+#contentFooter .inside div {
     display: inline-block;
-    margin: 7px 0 4px 0;
-    padding-left: 0;
-    vertical-align: top;
+    margin: 0;
+    padding: 0;
+    border: none;
 }
 
 #contentFooter li {
@@ -1360,6 +1375,13 @@ html.client-nojs #bodyContent>.inside {
     width:34px;
     height:34px;
 }
+
+
+#footer #footer-icons li,
+#footer #footer-icons li a {
+    position: relative;
+}
+
 #footer .socials li a {
     /* @NOembed That's already pretty well optimized, no need to overload css'*/
     background-image: url(images/icon_social.png);
@@ -1375,7 +1397,9 @@ html.client-nojs #bodyContent>.inside {
 #footer .socials li + li { margin: 0 0 0 18px; }
 
 #footer .socials li a:hover,
-#footer .socials li a:focus {
+#footer .socials li a:focus,
+#footer-icons li a:hover,
+#footer-icons li a:focus{
     bottom: 5px;
 }
 
@@ -1575,6 +1599,11 @@ body.ns--1 div#bodyContent>div.inside>ul>li {
     padding: 8px 16px;
     list-style-position: inside;
     border-bottom: 1px solid #dad9d9;
+}
+
+body.ns--1 div#bodyContent>div.inside>ul>li:hover {
+    background-color: #f2f2f2;
+    color: black;
 }
     
 body.mw-special-Contributions #bodyContent li:last-child,
@@ -1934,9 +1963,6 @@ table.TablePager {
     background-color: #f2f2f2;
     color: black;
 }
-.TablePager tbody tr:hover {
-    border: 1px solid #dad9d9;
-}
 
 /*
     Specific Table Pagers
@@ -2179,4 +2205,14 @@ div.usermessage {
     margin: 0 0 -3px 3px;
     font-weight: normal;
     color: #debdbf;
+}
+
+table.mw-allpages-table-chunk td {
+    padding: 4px 18px;
+    border-right: 1px solid #dad9d9;
+    word-wrap: break-word;
+}
+
+table.mw-allpages-table-chunk tr td:last-child {
+    border-right: none;
 }

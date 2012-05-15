@@ -140,5 +140,9 @@ $messages['qqq'] = array(
 /*  French
  */
 $messages['fr'] = array(
-
+	
+	'wikiplacesadmin' => 'Administration des Wikiplaces ',
+	'subscriptions' => 'Mes Abonnements',
+	'wikiplaces' => 'Mes Wikiplaces',
+	'offers' => 'Offres'
 );

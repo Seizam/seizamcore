@@ -24,13 +24,9 @@ $messages['en'] = array(
         'ms-upload' => '[[Special:Upload|File Upload]]',
         'ms-contributions' => '[[Special:Contributions/$1|My Contributions]]',
         'ms-preferences' => '[[Special:Preferences|My Preferences]]',
-        'ms-contact' => '[[Project:Contact|Contact us]]',
-        'ms-talk' => '[[User_talk:$1|My Talk]]',
-        'ms-userpage' => '[[User:$1|My Userpage]]',
         'ms-watchlist' => 'And this is My Watchlist. [[Special:Watchlist|More...]]',
         'ms-quickaccount' => 'About My Account:',
         'ms-morelinks' => 'What else?',
-        'ms-help' => '[[Help:Contents|Help]]',
         'ms-specialpages' => 'And [[Special:SpecialPages|much more...]]'
 );
 
