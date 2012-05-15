@@ -116,8 +116,24 @@ class SkinzamTemplate extends BaseTemplate {
 
         // Output HTML Page
         $this->html('headelement');
-        $this->renderTop();
         ?>
+        <div id="mw-js-message" style="display:none;"<?php $this->html('userlangattributes') ?>></div>
+        <!-- tagline -->
+        <div id="siteSub"><?php $this->msg('tagline') ?></div>
+        <!-- /tagline -->
+        <?php if ($this->data['showjumplinks']): ?>
+            <!-- jumpto -->
+            <div id="jump-to-nav">
+                <?php $this->msg('jumpto') ?> <a href="#mw-head"><?php $this->msg('jumptonavigation') ?></a>,
+                <a href="#p-search"><?php $this->msg('jumptosearch') ?></a>
+            </div>
+            <!-- /jumpto -->
+        <?php endif; ?>
+        <?php if ($this->data['newtalk']): ?>
+            <!-- newtalk -->
+            <div class="usermessage"><?php $this->html('newtalk') ?></div>
+            <!-- /newtalk -->
+        <?php endif; ?>
         <!-- content -->
         <div id="content">
             <a id="top"></a>
@@ -125,14 +141,28 @@ class SkinzamTemplate extends BaseTemplate {
             <!-- contentFooter -->
         </div>
         <!-- /content -->
-
         <!-- footer -->
         <?php $this->renderFooter(); ?>
         <!-- /footer -->
-
-
         <!-- bottomScripts -->
-        <?php $this->renderBottom() ?>
+        <?php if ($this->data['dataAfterContent']): ?>
+            <!-- dataAfterContent -->
+            <?php $this->html('dataAfterContent'); ?>
+            <!-- /dataAfterContent -->
+        <?php endif; ?>
+        <!-- fixalpha -->
+        <script type="<?php $this->text('jsmimetype') ?>"> if ( window.isMSIE55 ) fixalpha(); </script>
+        <!-- /fixalpha -->
+        <!-- background -->
+        <?php if ($this->data['wp_background']['url']): ?>
+            <script>
+                $.backstretch("<?php echo $this->data['wp_background']['url']; ?>");
+            </script>
+        <?php endif; ?>
+        <!-- /background -->
+        <!-- Trail -->
+        <?php $this->printTrail(); ?>
+        <!-- /Trail -->
         <!-- /bottomScripts -->
         </body>
         </html>
@@ -149,7 +179,7 @@ class SkinzamTemplate extends BaseTemplate {
             case NS_PROJECT :
                 $this->renderContentNS4();
                 break;
-            case -1 ://NS_SPECIAL
+            case NS_SPECIAL :
                 $this->renderContentNSSpecial();
                 break;
             default :
@@ -183,23 +213,52 @@ class SkinzamTemplate extends BaseTemplate {
         </div>
         <!-- /header -->
         <!-- bodyCcontent -->
-        
-            <!-- firstHeading -->
-            <?php if ($this->data['wp_headertitle']['content']): ?>
-            <?php echo $this->data['wp_headertitle']['content']; ?>
-                <?php else: ?>
-                    <h1 class="firstHeading"><?php $this->html('title') ?></h1>
-                <?php endif; ?>
-            <!-- /firstHeading -->
+        <!-- firstHeading -->
+        <?php if ($this->data['wp_headertitle']['content']): ?>
+            <h1 class="firstHeading"><?php echo $this->data['wp_headertitle']['content']; ?></h1>
+        <?php else: ?>
+            <h1 class="firstHeading notWikiPlace"><?php $this->html('title') ?></h1>
+        <?php endif; ?>
+        <!-- /firstHeading -->
         <div id="bodyContent" class="block block_full block_flat " role="main"<?php $this->html('specialpageattributes') ?>> <!--<div id="main" role="main">-->
             <!-- inside -->
             <div class="inside">
-                <?php $this->renderInsideContent(); ?>
+                <!-- bodytext -->
+                <?php $this->html('bodytext') ?>
+                <!-- /bodytext -->
             </div>
             <!-- /inside -->
         </div>
         <!-- /bodyContent -->
-        <?php $this->renderHorizontalActions() ?>
+        <!-- contentOther -->
+        <div id="contentOther"class="block block_full block_flat">
+            <!-- inside -->
+            <div class="inside">
+                <?php if ($this->data['catlinks']): ?>
+                    <!-- catlinks -->
+                    <?php $this->html('catlinks'); ?>
+                    <!-- /catlinks -->
+                <?php endif; ?>
+                <?php if ($this->data['subtitle']): ?>
+                    <!-- subtitle -->
+                    <div id="contentSub"<?php $this->html('userlangattributes') ?>><?php $this->html('subtitle') ?></div>
+                    <!-- /subtitle -->
+                <?php endif; ?>
+                <?php if ($this->data['undelete']): ?>
+                    <!-- undelete -->
+                    <div id="contentSub2"><?php $this->html('undelete') ?></div>
+                    <!-- /undelete -->
+                <?php endif; ?>
+            </div>
+        </div>
+        <!-- contentOther -->
+        <!-- Horizontal actions -->
+        <div id="nav_horizontal" class="block block_full block_flat">
+            <ul class="nav_actions">
+                <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
+            </ul>
+        </div>
+        <!-- /Horizontal actions -->
         <!-- contentFooter -->
         <div id="contentFooter" class="block block_full block_flat ">
             <!-- inside -->
@@ -221,7 +280,6 @@ class SkinzamTemplate extends BaseTemplate {
             <div class="hgroup inside">
                 <h1><a id="logo_project" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"></a></h1>
                 <h2><?php echo wfMessage('sz-tagline')->text() ?></h2>
-
             </div>
         </div>
         <!-- /header -->
@@ -240,12 +298,42 @@ class SkinzamTemplate extends BaseTemplate {
                         </li>
                     </ul>
                 </div>
-                <?php $this->renderInsideContent(); ?>
+                <!-- bodytext -->
+                <?php $this->html('bodytext') ?>
+                <!-- /bodytext -->
             </div>
             <!-- /inside -->
         </div>
         <!-- /bodyContent -->
-        <?php $this->renderHorizontalActions() ?>
+        <!-- contentOther -->
+        <div id="contentOther"class="block block_full block_flat">
+            <!-- inside -->
+            <div class="inside">
+                <?php if ($this->data['catlinks']): ?>
+                    <!-- catlinks -->
+                    <?php $this->html('catlinks'); ?>
+                    <!-- /catlinks -->
+                <?php endif; ?>
+                <?php if ($this->data['subtitle']): ?>
+                    <!-- subtitle -->
+                    <div id="contentSub"<?php $this->html('userlangattributes') ?>><?php $this->html('subtitle') ?></div>
+                    <!-- /subtitle -->
+                <?php endif; ?>
+                <?php if ($this->data['undelete']): ?>
+                    <!-- undelete -->
+                    <div id="contentSub2"><?php $this->html('undelete') ?></div>
+                    <!-- /undelete -->
+                <?php endif; ?>
+            </div>
+        </div>
+        <!-- contentOther -->
+        <!-- Horizontal actions -->
+        <div id="nav_horizontal" class="block block_full block_flat">
+            <ul class="nav_actions">
+                <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
+            </ul>
+        </div>
+        <!-- /Horizontal actions -->
         <!-- contentFooter -->
         <div id="contentFooter" class="block block_full">
             <!-- inside -->
@@ -282,7 +370,14 @@ class SkinzamTemplate extends BaseTemplate {
             <h3 class="title"><?php $this->html('title') ?></h3>
             <!-- inside -->
             <div class="inside">
-                <?php $this->renderInsideContent(); ?>
+                <?php if ($this->data['subtitle']): ?>
+                    <!-- subtitle -->
+                    <div id="contentSub"<?php $this->html('userlangattributes') ?>><?php $this->html('subtitle') ?></div>
+                    <!-- /subtitle -->
+                <?php endif; ?>
+                <!-- bodytext -->
+                <?php $this->html('bodytext') ?>
+                <!-- /bodytext -->
             </div>
             <!-- /inside -->
         </div>
@@ -294,18 +389,15 @@ class SkinzamTemplate extends BaseTemplate {
      * Render the Contentfooter (content related infos)
      */
     private function renderContentFooter() {
-        ?>
-
-        <?php foreach ($this->getFooterLinks() as $category => $links): ?>
+        foreach ($this->getFooterLinks() as $category => $links):
+            ?>
             <ul id="footer-<?php echo $category ?>">
                 <?php foreach ($links as $link): ?>
                     <li id="footer-<?php echo $category ?>-<?php echo $link ?>"><?php $this->html($link) ?></li>
                 <?php endforeach; ?>
             </ul>
-        <?php endforeach; ?>
-
-        <div style="clear:both"></div>
-        <?php
+            <?php
+        endforeach;
     }
 
     /**
@@ -358,6 +450,7 @@ class SkinzamTemplate extends BaseTemplate {
 
     /**
      * Render the "more..." footer panel content
+     * @TODO optimize with better caching (wfMessage()->parse() is heavy)
      */
     private function renderMore() {
         ?>
@@ -416,96 +509,6 @@ class SkinzamTemplate extends BaseTemplate {
             <?php endif; ?>
         </div>
         <?php
-    }
-
-    /**
-     * Render #horizontalActions (#nav_actions)
-     */
-    private function renderHorizontalActions() {
-        ?>
-        <div id="nav_horizontal" class="block block_full block_flat">
-            <ul class="nav_actions">
-                <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
-            </ul>
-        </div>
-        <?php
-    }
-
-    /**
-     * Render the real content of a page
-     */
-    private function renderInsideContent() {
-        ?>
-        <!-- tagline (invisible)-->
-        <div id="siteSub"><?php wfMessage('tagline')->text() ?></div>
-
-        <!-- /tagline -->
-        <?php if ($this->data['subtitle']): ?>
-            <!-- subtitle -->
-            <div id="contentSub"<?php $this->html('userlangattributes') ?>><?php $this->html('subtitle') ?></div>
-            <!-- /subtitle -->
-        <?php endif; ?>
-        <?php if ($this->data['undelete']): ?>
-            <!-- undelete -->
-            <div id="contentSub2"><?php $this->html('undelete') ?></div>
-            <!-- /undelete -->
-        <?php endif; ?>
-        <?php if ($this->data['newtalk']): ?>
-            <!-- newtalk -->
-            <div class="usermessage"><?php $this->html('newtalk') ?></div>
-            <!-- /newtalk -->
-        <?php endif; ?>
-        <?php if ($this->data['showjumplinks']): ?>
-            <!-- jumpto (invisible)-->
-            <div id="jump-to-nav">
-                <?php wfMessage('jumpto')->text() ?> <a href="#mw-head"><?php wfMessage('jumptonavigation')->text() ?></a>,
-                <a href="#p-search"><?php wfMessage('jumptosearch')->text() ?></a>
-            </div>
-            <!-- /jumpto -->
-        <?php endif; ?>
-        <!-- bodytext -->
-        <?php $this->html('bodytext') ?>
-        <!-- /bodytext -->
-        <?php if ($this->data['catlinks']): ?>
-            <!-- catlinks -->
-            <?php $this->html('catlinks'); ?>
-            <!-- /catlinks -->
-        <?php endif; ?>
-        <?php if ($this->data['dataAfterContent']): ?>
-            <!-- dataAfterContent -->
-            <?php $this->html('dataAfterContent'); ?>
-            <!-- /dataAfterContent -->
-            <?php
-        endif;
-    }
-
-    /**
-     * Render top of the page (between </head> and <div id="content">
-     */
-    private function renderTop() {
-        ?>
-        <div id="mw-js-message" style="display:none;"<?php $this->html('userlangattributes') ?>></div>
-        <?php
-    }
-
-    /**
-     * Render bottom of the page (scripts, debug...) (between </div id="content"> and </body>)
-     */
-    private function renderBottom() {
-        ?>
-        <!-- fixalpha -->
-        <script type="<?php $this->text('jsmimetype') ?>"> if ( window.isMSIE55 ) fixalpha(); </script>
-        <!-- /fixalpha -->
-        <!-- background -->
-        <?php if ($this->data['wp_background']['url']): ?>
-            <script>
-                $.backstretch("<?php echo $this->data['wp_background']['url']; ?>");
-            </script>
-        <?php endif; ?>
-        <!-- /background -->
-
-        <?php
-        $this->printTrail();
     }
 
     /**

@@ -112,6 +112,7 @@ class SpecialWikiplaces extends SpecialPage {
 		$formDescriptor = array(
 			'Name' => array(
 				'label-message' => 'wp-enter-new-wp-name',
+                'section' => 'create-wp',
 				'type' => 'text',
 				'validation-callback' => array($this, 'validateNewWikiplaceName'),
 			)

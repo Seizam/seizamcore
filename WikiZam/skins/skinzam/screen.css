@@ -73,11 +73,13 @@ a {
 }
 a:visited { color: #E22C2E; }
 a:focus { outline: thin dotted; }
-a:hover, a:active { outline:0; color:#7C2122;}
 
 a.stub, a.new {
     text-decoration: underline;
 }
+
+
+a:hover, a:active, a.stub:hover, a.new:hover { outline:0; color:#7C2122;}
 
 
 /* -----------------------------------------------------------------------------
@@ -185,10 +187,14 @@ a.important:focus {
     background: #f2f2f2;
     color: #666;
     font-size: 1em;
-    font-weight: bold;
 }
 
 .informations p, div#contentSub p, .errorbox p, .warningbox p, .successbox p {
+    margin: 0;
+    padding: 0;
+}
+
+.informations ul {
     margin: 0;
     padding: 0;
 }
@@ -382,16 +388,20 @@ a, a span {
 }
 
 h1.firstHeading {
-    display: inline-block;
     color: white;
     max-width: 820px;
     text-shadow: -1px 0 #dad9d9, 0 1px #dad9d9, 1px 0 #dad9d9, 0 -1px #dad9d9;
-    margin: 0px 32px -5px  32px;
+    margin: 0 32px -5px  32px;
     font-size: 1.5em;
     font-style: italic;
     font-weight: normal;
     word-wrap: break-word;
 }
+
+h1.notWikiPlace {
+    margin-top: 20px;
+}
+
 
 h1.firstHeading span {
     margin: 0 4px 0 4px;
@@ -402,14 +412,10 @@ h1.firstHeading a {
 }
 
 h1.firstHeading a span.wpp-sp,
-h1.firstHeading a span.wpp-hp {
-    text-shadow: -1px 0 #E22C2E, 0 1px #E22C2E, 1px 0 #E22C2E, 0 -1px #E22C2E;
-    font-size: 2em;
-    font-weight: bold;
-}
-
+h1.firstHeading a span.wpp-hp,
 h1.firstHeading a span.wpp-file {
     text-shadow: -1px 0 #E22C2E, 0 1px #E22C2E, 1px 0 #E22C2E, 0 -1px #E22C2E;
+    font-size: 2em;
     font-weight: bold;
 }
 
@@ -543,7 +549,6 @@ h1.firstHeading a:hover span {
 #nav_horizontal {
     background-color: #d8d7d7;
     font-family: Arial, Helvetica, Verdana, sans-serif;
-    margin-top: 17px;
 }
 
 #nav_horizontal  ul.nav_actions {
@@ -589,6 +594,23 @@ h1.firstHeading a:hover span {
 
 html.client-nojs #bodyContent>.inside {
     min-height: 300px;
+}
+
+/* ----------------------------------------
+   ==  CONTENTOTHER
+   ---------------------------------------- */
+
+#contentOther .inside {
+    margin-top: 17px;
+    padding-bottom: 4px;
+    padding-top: 4px;
+    font-size: 0.8em;
+    text-align: center;
+}
+
+#contentOther #mw-normal-catlinks li {
+    border: none;
+    padding: 4px;
 }
 
 /* ----------------------------------------
@@ -919,10 +941,7 @@ html.client-nojs #bodyContent>.inside {
    -------------------------------------------------------------------------- */
 
 /* Sub-navigation */
-#siteSub {
-    display: none;
-}
-#jump-to-nav {
+#siteSub, #jump-to-nav {
     display: none;
 }
 
@@ -1322,6 +1341,11 @@ img.thumbborder {
     display: none;
 }
 
+h2.mw-specialpagesgroup {
+    font-size: 1.2em;
+    border-bottom: 1px solid #dad9d9;
+}
+
 
 
 /* -----------------------------------------------------------------------------
@@ -1486,12 +1510,13 @@ table.mw-enhanced-rc:hover {
 .edit_col_1 {
     float: left;
     width: 460px;
+    margin-bottom: 18px;
 }
 
 .edit_col_2 {
     float: right;
     width: 300px;
-    margin-top: 25px;
+    margin-top: 27px;
 }
 
 
@@ -1931,6 +1956,13 @@ body.mw-special-MySeizam div#ms-quickaccount>ul>li {
     margin: 40px 210px 0 0;
 }
 
+p.ms-wl-empty {
+    border : 1px solid #dad9d9;
+    border-left: none;
+    border-right: none;
+    padding: 15px;
+}
+
 .mw-special-MySeizam div#ms-quickwatchlist *
 {
     border-color: #babfda;
@@ -1940,6 +1972,11 @@ body.mw-special-MySeizam div#ms-quickaccount>ul>li {
 {
     color: #babfda;
 }
+
+
+/*
+* MoreLinks
+*/
 
 .mw-special-MySeizam div#ms-morelinks {
     float:right;
@@ -1961,7 +1998,7 @@ body.mw-special-MySeizam div#ms-quickaccount>ul>li {
 
 .ms-info-ws{
     margin: 0;
-    padding: 15px;
+    padding: 15px 15px 5px 15px;
     border: 1px solid #dad9d9;
     border-right:none;
     border-bottom: none;
@@ -1971,7 +2008,7 @@ body.mw-special-MySeizam div#ms-quickaccount>ul>li {
 
 .ms-info-wl{
     margin: 0;
-    padding: 15px;
+    padding: 15px 15px 5px 15px;
     border: 1px solid #dad9d9;
     border-left:none;
     border-bottom: none;
@@ -1981,4 +2018,28 @@ body.mw-special-MySeizam div#ms-quickaccount>ul>li {
 .ms-info-ml{
     text-align: center;
     font-weight: bold;
+}
+
+
+
+/* -----------------------------------------------------------------------------
+   ==  OTHER...
+   -------------------------------------------------------------------------- */
+
+/*
+    Message notification div
+*/
+
+div.usermessage {
+    position: fixed;
+    top: 0;
+    left: 0;
+    max-width: 150px;
+    padding: 12px;
+    border: 1px solid black;
+    border-top: none;
+    border-left: none;
+    background: #dad9d9;
+    font-size: 1em;
+    z-index: 200;
 }

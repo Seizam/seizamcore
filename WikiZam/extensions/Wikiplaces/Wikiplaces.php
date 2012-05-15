@@ -70,6 +70,8 @@ $wgHooks['userCan'][] = 'WikiplacesHooks::userCan';
 $wgHooks['TransactionUpdated'][] = 'WikiplacesHooks::onTransactionUpdated';
 $wgHooks['IsOwner'][] = 'WikiplacesHooks::isOwner';
 
+$wgHooks['SkinTemplateNavigation'][] = 'WikiplacesHooks::SkinTemplateNavigation'; // Remove delete from action menu if necessary
+
 // right for accessing wp admin page, bypass move/delete limitations
 define('WP_ADMIN_RIGHT', 'wp-admin');
 $wgAvailableRights[] = WP_ADMIN_RIGHT; 

@@ -471,6 +471,24 @@ class WikiplacesHooks {
 
 		return false; // the transaction update has been processed, so no other hook should take care of it 
 	}
+    
+    /*
+     * Hook to correct the action menu that displays "delete" a bit too much.
+     * A direct correction would be to change the logic directly in SkinTemplate::buildContentNavigationUrls.
+     * The menu builder now uses if( $wgUser->isAllowed( 'delete' ) ) ...
+     * A better builder would use if( $$title->quickUserCan( 'delete' ) ) ...
+     * 
+     * @param SkinTemplate $skinTemplate
+     * @param Array $content_navigation
+     * @return Boolean True (=continue hook)
+     * 
+     */
+    public static function SkinTemplateNavigation(&$skinTemplate, &$content_navigation) {
+        $title = $skinTemplate->getRelevantTitle();
+        if (isset($content_navigation['actions']['delete']) && !$title->quickUserCan( 'delete' ))
+            unset ($content_navigation['actions']['delete']);
+        return true;
+    }
 
 	/**
 	 * If the page is in a Wikiplace namespace, search the owner and answer.
@@ -514,7 +532,7 @@ class WikiplacesHooks {
 		$title = $skin->getRelevantTitle();
 		$ns = $title->getNamespace();
 		if (WpPage::isInWikiplaceNamespaces($ns)) {
-			$explosion = WpWikiplace::explodeWikipageKey($title->getDBkey(), $ns);
+			$explosion = WpWikiplace::explodeWikipageKey($title->getText(), $ns);
 			$wikiplaceKey = $explosion[0];
 
 			// Wikiplace Title
@@ -578,9 +596,9 @@ class WikiplacesHooks {
 
 			// We print the Homepage
 			if ($excount == 1) {
-				$text .= Linker::linkKnown(Title::newFromText($mother, $ns), '<span class="wpp-hp">' . $mother . '</span>');
+				$text .= Linker::linkKnown(Title::newFromText($mother, NS_MAIN), '<span class="wpp-hp">' . $mother . '</span>');
 			} else {
-				$text .= Linker::linkKnown(Title::newFromText($mother, $ns), '<span class="wpp-sp-hp">' . $mother . '</span>');
+				$text .= Linker::linkKnown(Title::newFromText($mother, NS_MAIN), '<span class="wpp-sp-hp">' . $mother . '</span>');
 			}
 
 			// We want to take care of the subpages now, we kick the homepage out.
@@ -618,7 +636,7 @@ class WikiplacesHooks {
 			$text .= Linker::linkKnown($title, '<span class="wpp-file">' . $temp . '</span>');
 		}
 
-		return '<h1 class="firstHeading">' . $text . '</h1>';
+		return $text;
 	}
 
 }
