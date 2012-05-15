@@ -81,7 +81,6 @@ class SkinzamTemplate extends BaseTemplate {
         global $wgRequest, $wgLang;
 
         $this->skin = $this->data['skin'];
-        $action = $wgRequest->getText('action');
 
         // Build additional attributes for navigation urls
         $nav = $this->data['content_navigation'];
@@ -346,6 +345,7 @@ class SkinzamTemplate extends BaseTemplate {
         <?php
     }
 
+    
     /**
      * Render the NS--1 (Special:) #content content
      */

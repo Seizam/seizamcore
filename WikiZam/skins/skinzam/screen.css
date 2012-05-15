@@ -153,790 +153,6 @@ table { border-collapse: collapse; border-spacing: 0; }
 
 
 /* -----------------------------------------------------------------------------
-   ==  Classes
-   -------------------------------------------------------------------------- */
-
-.left {
-    float: left;
-    margin: 4px 20px 12px 0;
-
-}
-
-.sread {
-    position:absolute;
-    left:-9999px;
-    text-indent: -9999px;
-}
-.clearfix {
-    margin:0;padding:0;
-    clear:both;
-}
-a.important {
-    color: #f0373a;
-}
-a.important:hover,
-a.important:focus {
-    color: #4d4e4f;
-}
-.informations, div#contentSub, .errorbox, .warningbox, .successbox {
-    float: none;
-    clear: both;
-    margin: 0 0 18px;
-    padding: 12px;
-    border: 1px solid #dad9d9;
-    background: #f2f2f2;
-    color: #666;
-    font-size: 1em;
-}
-
-.informations p, div#contentSub p, .errorbox p, .warningbox p, .successbox p {
-    margin: 0;
-    padding: 0;
-}
-
-.informations ul {
-    margin: 0;
-    padding: 0;
-}
-
-.informations ul>li {
-    margin: 0;
-    padding: 0;
-    border: none;
-    list-style: none;
-}
-
-div.success, .successbox {
-    border-color: #d0debd;
-    background: #edf3e6;
-    color: #6b8c40;
-}
-div.error, .errorbox, .warningbox {
-    border-color: #debdbf;
-    background: #f2e3e4;
-    color: #974349;
-}
-
-/* transitions */
-
-input[type="submit"],
-.edit_col_1 .submit input,
-.block_join .submit input,
-.help,
-.edit_avatar .button,
-.block_join .subscription,
-.TablePager tr td,
-table.mw-enhanced-rc {
-    -webkit-transition: background 0.75s;
-    -moz-transition: background 0.75s;
-    -ms-transition: background 0.75s;
-    -o-transition: background 0.75s;
-    transition: background 0.75s;
-}
-
-#footer .more_infos .socials li a {
-    -webkit-transition: all 0.50s;
-    -moz-transition: all 0.50s;
-    -ms-transition: all 0.50s;
-    -o-transition: all 0.50s;
-    transition: all 0.50s;
-}
-
-a, a span {
-    -webkit-transition: color 0.75s;
-    -moz-transition: color 0.75s;
-    -ms-transition: color 0.75s;
-    -o-transition: color 0.75s;
-    transition: color 0.75s;
-}
-
-
-
-/* -----------------------------------------------------------------------------
-   ==  Primary styles
-   -------------------------------------------------------------------------- */
-
-#content {
-    width: 881px;
-    margin: 0 auto 42px;
-    padding: 30px 0 30px; 
-    border: 1px solid #D8D7D7;
-    /* @embed */
-    background-image: url(images/bg_transp.png);
-    background-color: transparent;
-    background-position: 0 0;
-    background-repeat: repeat;
-}
-
-.ns-4 #content, .ns-5 #content,  .ns--1 #content {
-    border: none;
-    background: none;
-    margin: 0 auto 16px;
-}
-
-.block_full {
-    clear: both;
-    width: 820px;
-    margin: auto;
-}
-
-.block {
-    padding-bottom: 6px;
-    margin-bottom: 18px;
-    /* @embed */
-    background-image: url(images/sh_block_full.png);
-    background-color: transparent;
-    background-repeat: no-repeat;
-    background-position: bottom center;
-}
-
-.block .inside {
-    clear: left;
-    padding: 18px;
-    border: 1px solid #d8d7d7;
-    /* @embed */
-    background-image: url(images/sh_block_full_in.png);
-    background-color: #fcfcfc;
-    background-repeat: no-repeat;
-    background-position: bottom center;
-    overflow:hidden;
-}
-
-.block_medium {
-    float: left;
-    width: 558px;
-    /* @embed */
-    background-image: url(images/sh_block_medium.png);
-    background-color: transparent;
-    background-repeat: no-repeat;
-    background-position: center bottom;
-}
-
-.block_half {	/* no 3D effect for now, only intended to work with .block_flat */
-    float: left;
-    width: 400px;
-}
-.block_half + .block_half {	/* First half was floating on left, second one on right. Three half on a row isn't intended (would float on right and not on left second row) */
-    float: right;
-}
-
-.block h3.title {
-    width: 255px;
-    text-align: center;
-    margin: 0;
-    padding: 6px 5px;
-    font-size: 18px;
-    border: 1px solid #dedddd;
-    border-bottom: 0;
-    /* @embed */
-    background-image: url(images/bg_title.png);
-    background-color: #ececec;
-    background-repeat: repeat-x;
-    background-position: 0 0;
-    font-weight: normal;
-    font-style: italic;
-}
-
-
-/* block with no 3D effect on bottom */
-.block_flat .inside {
-    background: white;
-}
-
-.block_flat {
-    background: none;
-    margin-bottom: 0;
-    padding: 0;
-}
-
-/* ----------------------------------------
-   ==  HEADERS
-   ---------------------------------------- */
-
-#header.block {
-    /* @embed */
-    background-image: url(images/sh_block_header.png);
-    background-color: transparent;
-    background-repeat: no-repeat;
-    background-position: bottom center;
-}
-
-
-#header.block_full .inside {
-    padding: 16px 20px 12px;
-}
-
-#header.homepage .hgroup {
-    position:relative;
-}
-#header h1, #header h2 {
-    margin:0;
-}
-#header.homepage h2 {
-    position: absolute;
-    bottom: 22px;
-    right: 22px;
-    color: #4d4e4f;
-    font-size: 14px;
-    font-weight: normal;
-    text-align: right;
-    font-style: italic;
-}
-
-#header.special {
-    text-align: center
-}
-
-h1.firstHeading {
-    color: white;
-    max-width: 820px;
-    text-shadow: -1px 0 #dad9d9, 0 1px #dad9d9, 1px 0 #dad9d9, 0 -1px #dad9d9;
-    margin: 0 32px -5px  32px;
-    font-size: 1.5em;
-    font-style: italic;
-    font-weight: normal;
-    word-wrap: break-word;
-}
-
-h1.notWikiPlace {
-    margin-top: 20px;
-}
-
-
-h1.firstHeading span {
-    margin: 0 4px 0 4px;
-}
-
-h1.firstHeading a {
-    color: white;
-}
-
-h1.firstHeading a span.wpp-sp,
-h1.firstHeading a span.wpp-hp,
-h1.firstHeading a span.wpp-file {
-    text-shadow: -1px 0 #E22C2E, 0 1px #E22C2E, 1px 0 #E22C2E, 0 -1px #E22C2E;
-    font-size: 2em;
-    font-weight: bold;
-}
-
-h1.firstHeading span.wpp-sp-hp {
-    text-shadow: -1px 0 #4d4e4f, 0 1px #4d4e4f, 1px 0 #4d4e4f, 0 -1px #4d4e4f;
-}
-
-h1.firstHeading a:hover span {
-    text-shadow: -1px 0 #E22C2E, 0 1px #E22C2E, 1px 0 #E22C2E, 0 -1px #E22C2E;
-    color: #E22C2E;
-}
-
-/* ----------------------------------------
-   ==  NAVIGATION
-   ---------------------------------------- */
-
-#nav {
-    float:right;
-    text-align:right;
-    margin: 0;
-    font-family: Arial, Helvetica, Verdana, sans-serif;
-    z-index:0;
-}
-#nav li {
-    display: inline;
-}
-#nav li a {
-    display:inline-block;
-    margin: 0;
-    text-decoration:none;
-    text-transform: uppercase;
-    font-size: 10px;
-    font-weight: bold;
-    color: #232020;
-}
-
-#nav li a:hover,
-#nav li a:focus  {
-    color: #E22C2E;
-}
-
-/* Navigation on content page */
-
-#nav ul.nav_actions {
-    display: inline-block;
-    margin: 0 0 16px 12px;
-    padding: 0 9px 0 7px;
-    border: 1px solid #D8D7D7;
-    background: black;
-    z-index: 20;
-}
-
-.ie7 #nav .nav_actions {
-    position:relative;
-    top: -33px;
-}
-#nav .nav_actions ul {
-    position:absolute;
-    padding:8px;
-    right:-9px; top: 22px;
-    width:100px;
-    background:black;
-    text-align:left;
-    z-index: 20;
-}
-#nav .nav_actions ul li a {
-    display:block;
-    padding: 6px 0 6px 8px;
-    border-bottom:1px solid #4d4e4f;
-}
-#nav .nav_actions ul li:last-child a {
-    border-bottom:none;
-}
-
-#nav > ul > li,
-#nav > div > ul > li{
-    position:relative;
-    display:inline-block;
-    padding:4px 10px;
-}
-
-.nav_artist a {
-    color: black;
-}
-
-#nav div.nav_artist {
-    display: inline-block;
-    margin: 0 0 8px 0;
-    padding: 0;
-}
-
-#nav div.nav_artist ul {
-    display: inline-block;
-    text-transform: uppercase;
-    border: 1px solid #D8D7D7;
-    background: white;
-}
-
-#nav .nav_actions ul {
-    display: none;
-}
-
-#nav .nav_actions a {
-    color: #FFFFFF;
-}
-
-#nav .nav_actions .selected a {
-    color: grey;
-}
-
-#nav .nav_artist a:focus,
-#nav .nav_artist a:hover,
-#nav .nav_actions a:focus,
-#nav .nav_actions a:hover {
-    color: #E22C2E;
-}
-
-#nav .nav_actions { 
-    display: none;
-}
-
-/* navigation on special page */
-
-#header.special #nav {
-    float: none;
-    text-align: center;
-}
-
-/* horizontal actions */
-
-#nav_horizontal {
-    background-color: #d8d7d7;
-    font-family: Arial, Helvetica, Verdana, sans-serif;
-}
-
-#nav_horizontal  ul.nav_actions {
-    margin: 0;
-    padding: 0;
-    text-align: center;
-}
-
-#nav_horizontal  ul.nav_actions li {
-    display: inline;
-}
-
-#nav_horizontal  ul.nav_actions a {
-    text-decoration:none;
-    text-transform: uppercase;
-    
-    font-size: 10px;
-    font-weight: bold;
-    
-    border-right:1px solid #B8B7B7;
-    padding: 0 12px;
-    
-    color: #FFFFFF;
-}
-
-#nav_horizontal ul.nav_actions .selected a {
-    color:  #B8B7B7;
-}
-
-
-#nav_horizontal  ul.nav_actions li:last-child a {
-    border-right:none;
-}
-
-#nav_horizontal  ul.nav_actions a:focus,
-#nav_horizontal  ul.nav_actions a:hover {
-    color: #E22C2E;
-}
-
-/* ----------------------------------------
-   ==  BODYCONTENT
-   ---------------------------------------- */
-
-html.client-nojs #bodyContent>.inside {
-    min-height: 300px;
-}
-
-/* ----------------------------------------
-   ==  CONTENTOTHER
-   ---------------------------------------- */
-
-#contentOther .inside {
-    margin-top: 17px;
-    padding-bottom: 4px;
-    padding-top: 4px;
-    font-size: 0.8em;
-    text-align: center;
-}
-
-#contentOther #mw-normal-catlinks li {
-    border: none;
-    padding: 4px;
-}
-
-/* ----------------------------------------
-   ==  CONTENTFOOTER
-   ---------------------------------------- */
-
-#contentFooter .inside {
-    padding-bottom: 4px;
-    padding-top: 4px;
-    font-size: 0.8em;
-    text-align: center;
-}
-
-#contentFooter ul,
-#contentFooter p {
-    display: inline-block;
-    margin: 7px 0 4px 0;
-    padding-left: 0;
-    vertical-align: top;
-}
-
-#contentFooter li {
-    display: inline;
-}
-
-/* ----------------------------------------
-   ==  LOGOS
-   ---------------------------------------- */
-
-#logo_project {
-    display: inline-block;
-    width: 289px;
-    height: 97px;
-    /* @embed */
-    background-image: url(images/logo.png);
-    background-color: transparent;
-    background-repeat: no-repeat;
-    background-position: center center;
-}
-
-#logo_special {
-    display: inline-block;
-    width: 140px;
-    height: 48px;
-    /* @embed */
-    background-image: url(images/logo_mini_h.png);
-    background-color: transparent;
-    background-repeat: no-repeat;
-    background-position: center center;
-}
-
-
-/* -----------------------------------------------------------------------------
-   ==  FOOTERS (absolute + regular)
-   -------------------------------------------------------------------------- */
-
-
-
-/* Absolute */
-
-#absoluteFooter {
-    position:fixed;
-    bottom: 0;
-    left: 50%;
-    width: 940px;
-    margin: 0;
-    margin-left:-470px;
-    padding-top: 8px;
-    /* @embed */
-    background-image: url(images/sh_block_footer.png);
-    background-color: transparent;
-    background-repeat: no-repeat;
-    background-position: top center;
-    z-index:10;
-}
-
-#absoluteFooter .inside {
-    border: 1px solid #d8d7d7;
-    /* @embed */
-    background-image: url(images/bg_footer.png);
-    background-color: #fff;
-    background-repeat: repeat-x;
-    background-position: 0 0;
-}
-#absoluteFooter .content {
-    padding: 9px 20px;
-    position: relative;
-    overflow: hidden;
-    z-index: 15;
-}
-#absoluteFooter .content #logo_mini,
-#absoluteFooter .content ul {
-    float: left;
-}
-#absoluteFooter .content #logo_mini {
-    position:relative;
-    top:3px;
-    left:10px;
-    display: block;
-    width: 107px;
-    height: 35px;
-    /* @embed */
-    background-image: url(images/seizam_mini.png);
-    background-color: transparent;
-    background-repeat: no-repeat;
-    background-position: center center;
-}
-
-#absoluteFooter .content ul {
-    padding: 7px 0 0 75px;
-    margin:0;
-}
-#absoluteFooter .content ul {
-    padding-top: 10px;
-}
-#absoluteFooter .content li {
-    float: left;
-    list-style: none;
-}
-#absoluteFooter .content li + li {
-    margin-left: 50px
-}
-#absoluteFooter .content li a {
-    display:inline-block;
-    text-decoration:none;
-    color:#4d4e4f;
-    font-style:italic;
-    padding-left: 14px;
-    /* @embed */
-    background-image: url(images/dot_square.png);
-    background-color: transparent;
-    background-repeat: no-repeat;
-    background-position: left center;
-}
-
-#absoluteFooter li span.show_back,
-#absoluteFooter li.more {
-    display:none;
-}
-
-#absoluteFooter .content li.more a {
-    /* @embed */
-    background-image: url(images/dot_arrow.png);
-}
-#absoluteFooter .content li.current a {
-    /* @embed */
-    background-image: url(images/dot_arrow_up.png);
-}
-#absoluteFooter .content li.inactive a {
-    /* @embed */
-    color: #dad9d9;
-}
-
-#absoluteFooter .content #search {
-    width: 172px;
-    padding: 6px 15px 6px 35px;
-    border: 1px solid #e2e1e1;
-    font-size: 12px;
-    background: #fff;
-    -webkit-appearance:  textfield;
-}
-#absoluteFooter .content .valid_search {
-    position:absolute;
-    top: 6px;
-    left: 6px;
-}
-
-#absoluteFooter span#prettyUserName {
-    display: block;
-    z-index: -10;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    position: absolute;
-    right: 0;
-    top: 0;
-    height: 53px;
-    line-height:45px;
-    max-width: 450px;
-
-    font-family: Verdana, Arial, Helvetica, sans-serif;
-    font-size: 80px;
-    font-weight: bold;
-    font-style: italic;
-    text-align: left;
-
-    color: #C6C6C6;
-    opacity: 0.3;
-
-}
-
-/* Regular */
-
-#footer {
-    width: 940px;
-    margin: auto;
-}
-
-#footer .inside {
-    border: 1px solid #d8d7d7;
-    padding: 9px 20px 70px 20px;
-    background-color: #fff;
-}
-
-#footer .inside .content {
-    clear:both;
-    float:none;
-    padding:0px 10px;
-    overflow: hidden;
-}
-
-#footer .section {
-    float:left;
-    width: 200px;
-}
-
-#footer .section + .section {
-    margin-left: 25px;
-}
-#footer .section p {
-    font-style: italic;
-    font-size: 1.2em;
-}
-#footer ul {
-    float: none;
-    padding-top: 5px;
-    padding-left: 0;
-}
-#footer li {
-    float: none;
-    list-style:none;
-    font-size: 0.75em;
-    font-family: Arial, Helvetica, Verdana, sans-serif;
-}
-#footer li + li {
-    margin: 7px 0 0 0;
-}
-#footer li a {
-    font-style: normal;
-    font-weight:bold;
-    padding-left:0;
-    background:none;
-    color: #4d4e4f;
-}
-
-#footer span.selectLang {
-    display: block;
-    padding: 15px 0 0 0;
-    float: none;
-}
-#footer span.selectLang form select {
-    width: 192px;
-    padding: 4px 2px 4px 8px
-}
-#footer .socials li,
-#footer .socials li a {
-    float: left;
-    position: relative;
-    bottom: 0;
-    width:34px;
-    height:34px;
-}
-#footer .socials li a {
-    /* @NOembed That's already pretty well optimized, no need to overload css'*/
-    background-image: url(images/icon_social.png);
-    background-color: transparent;
-    background-repeat: no-repeat;
-    background-position: 0 0;
-    text-indent: -9999px;
-}
-#footer .socials .linkedin a { background-position: -34px 0; }
-#footer .socials .tumblr a { background-position: -68px 0; }
-#footer .socials .fcbk a { background-position: -102px 0; }
-
-#footer .socials li + li { margin: 0 0 0 18px; }
-
-#footer .socials li a:hover,
-#footer .socials li a:focus {
-    bottom: 5px;
-}
-
-#footer #footer-icons {
-    margin-top: 50px;
-}
-
-#footer #footer-icons li{
-    float: right;
-    padding: 0 10px 0 10px;
-}
-
-/* Common */
-
-#footer li a:hover,
-#footer li a:focus,
-#absoluteFooter li a:hover,
-#absoluteFooter li a:focus {
-    color: #e22c2e;
-}
-
-/*
-        IE fixes
-*/
-.ie6 #header .nav_artist,
-.ie7 #header .nav_artist,
-.ie6 #header .nav_actions,
-.ie7 #header .nav_actions,
-.ie6 #header .nav > ul > li,
-.ie7 #header .nav > ul > li {
-    display:inline;
-    zoom: 1;
-}
-.ie7 #self_general ul, 
-.ie6 #self_general ul {
-    float: left;
-}
-.ie7 #self_general p,
-.ie6 #self_general p {
-    float: right;
-}
-
-.ie7 #self_general li {
-    display:block;
-    float:left;
-}
-
-/* -----------------------------------------------------------------------------
    ==  From MediaWiki's Vector CSS
    -------------------------------------------------------------------------- */
 
@@ -1411,6 +627,913 @@ textarea { overflow: auto; vertical-align: top; }
 input:valid, textarea:valid {  }
 input:invalid, textarea:invalid { background-color: #f2e3e4; }
 
+
+/* -----------------------------------------------------------------------------
+   ==  Classes
+   -------------------------------------------------------------------------- */
+
+.left {
+    float: left;
+    margin: 4px 20px 12px 0;
+
+}
+
+.sread {
+    position:absolute;
+    left:-9999px;
+    text-indent: -9999px;
+}
+.clearfix {
+    margin:0;padding:0;
+    clear:both;
+}
+a.important {
+    color: #f0373a;
+}
+a.important:hover,
+a.important:focus {
+    color: #4d4e4f;
+}
+.informations, div#contentSub, .errorbox, .warningbox, .successbox, div.error, div.success {
+    float: none;
+    clear: both;
+    margin: 0 0 18px;
+    padding: 12px;
+    border: 1px solid #dad9d9;
+    background: #f2f2f2;
+    color: #666;
+    font-size: 1em;
+}
+
+.informations p, div#contentSub p, .errorbox p, .warningbox p, .successbox p {
+    margin: 0;
+    padding: 0;
+}
+
+.informations ul,
+ul.warning {
+    margin: 0;
+    padding: 0;
+}
+
+.informations ul>li,
+ul.warning>li{
+    margin: 0;
+    padding: 0;
+    border: none;
+    list-style: none;
+}
+
+div.success, .successbox {
+    border-color: #d0debd;
+    background: #edf3e6;
+    color: #6b8c40;
+}
+div.error, .errorbox, .warningbox {
+    border-color: #debdbf;
+    background: #f2e3e4;
+    color: #974349;
+}
+
+/* transitions */
+
+input[type="submit"],
+.edit_col_1 .submit input,
+.block_join .submit input,
+.help,
+.edit_avatar .button,
+.block_join .subscription,
+.TablePager tr td,
+table.mw-enhanced-rc {
+    -webkit-transition: background 0.75s;
+    -moz-transition: background 0.75s;
+    -ms-transition: background 0.75s;
+    -o-transition: background 0.75s;
+    transition: background 0.75s;
+}
+
+#footer .more_infos .socials li a {
+    -webkit-transition: all 0.50s;
+    -moz-transition: all 0.50s;
+    -ms-transition: all 0.50s;
+    -o-transition: all 0.50s;
+    transition: all 0.50s;
+}
+
+a, a span {
+    -webkit-transition: color 0.75s;
+    -moz-transition: color 0.75s;
+    -ms-transition: color 0.75s;
+    -o-transition: color 0.75s;
+    transition: color 0.75s;
+}
+
+
+
+/* -----------------------------------------------------------------------------
+   ==  Primary styles
+   -------------------------------------------------------------------------- */
+
+#content {
+    width: 881px;
+    margin: 0 auto 42px;
+    padding: 30px 0 30px; 
+    border: 1px solid #D8D7D7;
+    /* @embed */
+    background-image: url(images/bg_transp.png);
+    background-color: transparent;
+    background-position: 0 0;
+    background-repeat: repeat;
+}
+
+.ns-4 #content, .ns-5 #content,  .ns--1 #content {
+    border: none;
+    background: none;
+    margin: 0 auto 16px;
+}
+
+.block_full {
+    clear: both;
+    width: 820px;
+    margin: auto;
+}
+
+.block {
+    margin-bottom: 18px;
+    padding-bottom: 6px;
+    /* @embed */
+    background-image: url(images/sh_block_full.png);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: bottom center;
+}
+
+.block .inside {
+    clear: left;
+    padding: 18px;
+    border: 1px solid #d8d7d7;
+    /* @embed */
+    background-image: url(images/sh_block_full_in.png);
+    background-color: #fcfcfc;
+    background-repeat: no-repeat;
+    background-position: bottom center;
+    overflow:hidden;
+}
+
+.block_medium {
+    float: left;
+    width: 558px;
+    /* @embed */
+    background-image: url(images/sh_block_medium.png);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+}
+
+.block_half {	/* no 3D effect for now, only intended to work with .block_flat */
+    float: left;
+    width: 400px;
+}
+.block_half + .block_half {	/* First half was floating on left, second one on right. Three half on a row isn't intended (would float on right and not on left second row) */
+    float: right;
+}
+
+.block h3.title {
+    width: 255px;
+    text-align: center;
+    margin: 0;
+    padding: 6px 5px;
+    font-size: 18px;
+    border: 1px solid #dedddd;
+    border-bottom: 0;
+    /* @embed */
+    background-image: url(images/bg_title.png);
+    background-color: #ececec;
+    background-repeat: repeat-x;
+    background-position: 0 0;
+    font-weight: normal;
+    font-style: italic;
+}
+
+
+/* block with no 3D effect on bottom */
+.block_flat .inside {
+    background: white;
+}
+
+.block_flat {
+    background: none;
+    margin-bottom: 0;
+    padding: 0;
+}
+
+/* ----------------------------------------
+   ==  HEADERS
+   ---------------------------------------- */
+
+#header.block {
+    /* @embed */
+    background-image: url(images/sh_block_header.png);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: bottom center;
+}
+
+
+#header.block_full .inside {
+    padding: 16px 20px 12px;
+}
+
+#header.homepage .hgroup {
+    position:relative;
+}
+#header h1, #header h2 {
+    margin:0;
+}
+#header.homepage h2 {
+    position: absolute;
+    bottom: 22px;
+    right: 22px;
+    color: #4d4e4f;
+    font-size: 14px;
+    font-weight: normal;
+    text-align: right;
+    font-style: italic;
+}
+
+#header.special {
+    text-align: center
+}
+
+h1.firstHeading {
+    color: white;
+    z-index: 19;
+    max-width: 820px;
+    text-shadow: -1px 0 #dad9d9, 0 1px #dad9d9, 1px 0 #dad9d9, 0 -1px #dad9d9;
+    margin: 0 32px -5px  32px;
+    font-size: 1.5em;
+    font-style: italic;
+    font-weight: normal;
+    word-wrap: break-word;
+}
+
+h1.notWikiPlace {
+    margin-top: 20px;
+}
+
+
+h1.firstHeading span {
+    margin: 0 4px 0 4px;
+}
+
+h1.firstHeading a {
+    color: white;
+}
+
+h1.firstHeading a span.wpp-sp,
+h1.firstHeading a span.wpp-hp,
+h1.firstHeading a span.wpp-file {
+    text-shadow: -1px 0 #E22C2E, 0 1px #E22C2E, 1px 0 #E22C2E, 0 -1px #E22C2E;
+    font-size: 2em;
+    font-weight: bold;
+    margin-left: 8px;
+}
+
+h1.firstHeading a span.wpp-file-ext {
+}
+
+h1.firstHeading span.wpp-sp-hp {
+    text-shadow: -1px 0 #4d4e4f, 0 1px #4d4e4f, 1px 0 #4d4e4f, 0 -1px #4d4e4f;
+}
+
+h1.firstHeading a:hover span,
+h1.firstHeading a:hover {
+    text-shadow: -1px 0 #E22C2E, 0 1px #E22C2E, 1px 0 #E22C2E, 0 -1px #E22C2E;
+    color: #E22C2E;
+}
+
+/* ----------------------------------------
+   ==  NAVIGATION
+   ---------------------------------------- */
+
+#nav {
+    float:right;
+    text-align:right;
+    margin: 0;
+    font-family: Arial, Helvetica, Verdana, sans-serif;
+    z-index:0;
+}
+#nav li {
+    display: inline;
+}
+#nav li a {
+    display:inline-block;
+    margin: 0;
+    text-decoration:none;
+    text-transform: uppercase;
+    font-size: 10px;
+    font-weight: bold;
+    color: #232020;
+}
+
+#nav li a:hover,
+#nav li a:focus  {
+    color: #E22C2E;
+}
+
+/* Navigation on content page */
+
+#nav ul.nav_actions {
+    display: inline-block;
+    margin: 0 0 16px 12px;
+    padding: 0 9px 0 7px;
+    border: 1px solid #D8D7D7;
+    background: black;
+    z-index: 20;
+}
+
+.ie7 #nav .nav_actions {
+    position:relative;
+    top: -33px;
+}
+#nav .nav_actions ul {
+    position:absolute;
+    padding:8px;
+    right:-9px; top: 22px;
+    width:100px;
+    background:black;
+    text-align:left;
+    z-index: 20;
+}
+#nav .nav_actions ul li a {
+    display:block;
+    padding: 6px 0 6px 8px;
+    border-bottom:1px solid #4d4e4f;
+}
+#nav .nav_actions ul li:last-child a {
+    border-bottom:none;
+}
+
+#nav > ul > li,
+#nav > div > ul > li{
+    position:relative;
+    display:inline-block;
+    padding:4px 10px;
+}
+
+.nav_artist a {
+    color: black;
+}
+
+#nav div.nav_artist {
+    display: inline-block;
+    margin: 0 0 8px 0;
+    padding: 0;
+}
+
+#nav div.nav_artist ul {
+    display: inline-block;
+    text-transform: uppercase;
+    border: 1px solid #D8D7D7;
+    background: white;
+}
+
+#nav .nav_actions ul {
+    display: none;
+}
+
+#nav .nav_actions a {
+    color: #FFFFFF;
+}
+
+#nav .nav_actions .selected a {
+    color: grey;
+}
+
+#nav .nav_artist a:focus,
+#nav .nav_artist a:hover,
+#nav .nav_actions a:focus,
+#nav .nav_actions a:hover {
+    color: #E22C2E;
+}
+
+#nav .nav_actions { 
+    display: none;
+}
+
+/* navigation on special page */
+
+#header.special #nav {
+    float: none;
+    text-align: center;
+}
+
+/* horizontal actions */
+
+#nav_horizontal {
+    background-color: #d8d7d7;
+    font-family: Arial, Helvetica, Verdana, sans-serif;
+}
+
+#nav_horizontal  ul.nav_actions {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+#nav_horizontal  ul.nav_actions li {
+    display: inline;
+}
+
+#nav_horizontal  ul.nav_actions a {
+    text-decoration:none;
+    text-transform: uppercase;
+    
+    font-size: 10px;
+    font-weight: bold;
+    
+    border-right:1px solid #B8B7B7;
+    padding: 0 12px;
+    
+    color: #FFFFFF;
+}
+
+#nav_horizontal ul.nav_actions .selected a {
+    color:  #B8B7B7;
+}
+
+
+#nav_horizontal  ul.nav_actions li:last-child a {
+    border-right:none;
+}
+
+#nav_horizontal  ul.nav_actions a:focus,
+#nav_horizontal  ul.nav_actions a:hover {
+    color: #E22C2E;
+}
+
+/* ----------------------------------------
+   ==  BODYCONTENT
+   ---------------------------------------- */
+
+#bodyContent {
+    margin-bottom: 18px;
+}
+
+html.client-nojs #bodyContent>.inside {
+    min-height: 300px;
+}
+
+/* ----------------------------------------
+   ==  CONTENTOTHER
+   ---------------------------------------- */
+
+#contentOther .inside {
+    padding-bottom: 4px;
+    padding-top: 4px;
+    font-size: 0.8em;
+    text-align: center;
+}
+
+#contentOther #mw-normal-catlinks li {
+    border: none;
+    padding: 4px;
+}
+
+/* ----------------------------------------
+   ==  CONTENTFOOTER
+   ---------------------------------------- */
+
+#contentFooter .inside {
+    padding-bottom: 4px;
+    padding-top: 4px;
+    font-size: 0.8em;
+    text-align: center;
+}
+
+#contentFooter ul,
+#contentFooter p {
+    display: inline-block;
+    margin: 7px 0 4px 0;
+    padding-left: 0;
+    vertical-align: top;
+}
+
+#contentFooter li {
+    display: inline;
+}
+
+/* ----------------------------------------
+   ==  LOGOS
+   ---------------------------------------- */
+
+#logo_project {
+    display: inline-block;
+    width: 289px;
+    height: 97px;
+    /* @embed */
+    background-image: url(images/logo.png);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+#logo_special {
+    display: inline-block;
+    width: 140px;
+    height: 48px;
+    /* @embed */
+    background-image: url(images/logo_mini_h.png);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+
+/* -----------------------------------------------------------------------------
+   ==  FOOTERS (absolute + regular)
+   -------------------------------------------------------------------------- */
+
+
+
+/* Absolute */
+
+#absoluteFooter {
+    position:fixed;
+    bottom: 0;
+    left: 50%;
+    width: 940px;
+    margin: 0;
+    margin-left:-470px;
+    padding-top: 8px;
+    /* @embed */
+    background-image: url(images/sh_block_footer.png);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: top center;
+    z-index:10;
+}
+
+#absoluteFooter .inside {
+    border: 1px solid #d8d7d7;
+    /* @embed */
+    background-image: url(images/bg_footer.png);
+    background-color: #fff;
+    background-repeat: repeat-x;
+    background-position: 0 0;
+}
+#absoluteFooter .content {
+    padding: 9px 20px;
+    position: relative;
+    overflow: hidden;
+    z-index: 15;
+}
+#absoluteFooter .content #logo_mini,
+#absoluteFooter .content ul {
+    float: left;
+}
+#absoluteFooter .content #logo_mini {
+    position:relative;
+    top:3px;
+    left:10px;
+    display: block;
+    width: 107px;
+    height: 35px;
+    /* @embed */
+    background-image: url(images/seizam_mini.png);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+#absoluteFooter .content ul {
+    padding: 7px 0 0 75px;
+    margin:0;
+}
+#absoluteFooter .content ul {
+    padding-top: 10px;
+}
+#absoluteFooter .content li {
+    float: left;
+    list-style: none;
+}
+#absoluteFooter .content li + li {
+    margin-left: 50px
+}
+#absoluteFooter .content li a {
+    display:inline-block;
+    text-decoration:none;
+    color:#4d4e4f;
+    font-style:italic;
+    padding-left: 14px;
+    /* @embed */
+    background-image: url(images/dot_square.png);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: left center;
+}
+
+#absoluteFooter li span.show_back,
+#absoluteFooter li.more {
+    display:none;
+}
+
+#absoluteFooter .content li.more a {
+    /* @embed */
+    background-image: url(images/dot_arrow.png);
+}
+#absoluteFooter .content li.current a {
+    /* @embed */
+    background-image: url(images/dot_arrow_up.png);
+}
+#absoluteFooter .content li.inactive a {
+    /* @embed */
+    color: #dad9d9;
+}
+
+#absoluteFooter .content #search {
+    width: 172px;
+    padding: 6px 15px 6px 35px;
+    border: 1px solid #e2e1e1;
+    font-size: 12px;
+    background: #fff;
+    -webkit-appearance:  textfield;
+}
+#absoluteFooter .content .valid_search {
+    position:absolute;
+    top: 6px;
+    left: 6px;
+}
+
+#absoluteFooter span#prettyUserName {
+    display: block;
+    z-index: -10;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 53px;
+    line-height:45px;
+    max-width: 450px;
+
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 80px;
+    font-weight: bold;
+    font-style: italic;
+    text-align: left;
+
+    color: #C6C6C6;
+    opacity: 0.3;
+
+}
+
+/* Regular */
+
+#footer {
+    width: 940px;
+    margin: auto;
+}
+
+#footer .inside {
+    border: 1px solid #d8d7d7;
+    padding: 9px 20px 70px 20px;
+    background-color: #fff;
+}
+
+#footer .inside .content {
+    clear:both;
+    float:none;
+    padding:0px 10px;
+    overflow: hidden;
+}
+
+#footer .section {
+    float:left;
+    width: 200px;
+}
+
+#footer .section + .section {
+    margin-left: 25px;
+}
+#footer .section p {
+    font-style: italic;
+    font-size: 1.2em;
+}
+#footer ul {
+    float: none;
+    padding-top: 5px;
+    padding-left: 0;
+}
+#footer li {
+    float: none;
+    list-style:none;
+    font-size: 0.75em;
+    font-family: Arial, Helvetica, Verdana, sans-serif;
+}
+#footer li + li {
+    margin: 7px 0 0 0;
+}
+#footer li a {
+    font-style: normal;
+    font-weight:bold;
+    padding-left:0;
+    background:none;
+    color: #4d4e4f;
+}
+
+#footer span.selectLang {
+    display: block;
+    padding: 15px 0 0 0;
+    float: none;
+}
+#footer span.selectLang form select {
+    width: 192px;
+    padding: 4px 2px 4px 8px
+}
+#footer .socials li,
+#footer .socials li a {
+    float: left;
+    position: relative;
+    bottom: 0;
+    width:34px;
+    height:34px;
+}
+#footer .socials li a {
+    /* @NOembed That's already pretty well optimized, no need to overload css'*/
+    background-image: url(images/icon_social.png);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: 0 0;
+    text-indent: -9999px;
+}
+#footer .socials .linkedin a { background-position: -34px 0; }
+#footer .socials .tumblr a { background-position: -68px 0; }
+#footer .socials .fcbk a { background-position: -102px 0; }
+
+#footer .socials li + li { margin: 0 0 0 18px; }
+
+#footer .socials li a:hover,
+#footer .socials li a:focus {
+    bottom: 5px;
+}
+
+#footer #footer-icons {
+    margin-top: 50px;
+}
+
+#footer #footer-icons li{
+    float: right;
+    padding: 0 10px 0 10px;
+}
+
+/* Common */
+
+#footer li a:hover,
+#footer li a:focus,
+#absoluteFooter li a:hover,
+#absoluteFooter li a:focus {
+    color: #e22c2e;
+}
+
+/*
+        IE fixes
+*/
+.ie6 #header .nav_artist,
+.ie7 #header .nav_artist,
+.ie6 #header .nav_actions,
+.ie7 #header .nav_actions,
+.ie6 #header .nav > ul > li,
+.ie7 #header .nav > ul > li {
+    display:inline;
+    zoom: 1;
+}
+.ie7 #self_general ul, 
+.ie6 #self_general ul {
+    float: left;
+}
+.ie7 #self_general p,
+.ie6 #self_general p {
+    float: right;
+}
+
+.ie7 #self_general li {
+    display:block;
+    float:left;
+}
+
+/* -----------------------------------------------------------------------------
+   ==  NS_FILE
+   -------------------------------------------------------------------------- */
+
+/*
+* Erasing previous formatting from the block/inside system because we're applying block formating to bodytext's divs
+*/
+body.ns-6.action-view {
+    padding: 0;
+    margin: 0;
+    width: inherit;
+}
+
+body.ns-6.action-view #bodyContent > .inside {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+body.ns-6.action-view #bodyContent > .inside > br {
+    display: none;
+}
+
+ul#filetoc {
+    display: none;
+}
+
+div#file,
+div.fullMedia,
+div#mw-imagepage-content,
+div#mw-imagepage-section-filehistory,
+div#mw-imagepage-section-linkstoimage,
+body.ns-6.action-view #bodyContent > .inside > ul {
+    clear: both;
+    margin: 0 auto 18px;
+    border: 1px solid #d8d7d7;
+    background-color: white;
+}
+
+div#mw-imagepage-content,
+div#mw-imagepage-section-filehistory,
+div#mw-imagepage-section-linkstoimage,
+body.ns-6.action-view #bodyContent > .inside > ul {
+    padding: 18px;
+}
+
+div#file {
+    border-bottom: none;
+    padding: 10px 0 0;
+    margin-bottom: 0;
+    text-align: center;
+}
+
+div#file img {
+    border-bottom: 1px solid #d8d7d7;
+    padding-bottom: 10px;
+}
+
+div.fullMedia {
+    padding-bottom: 4px;
+    border-top: none;
+    text-align: center;
+    font-size: 85%;
+}
+
+div#mw-imagepage-section-filehistory {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 1em;
+}
+
+body.ns-6.action-view #bodyContent > .inside > ul {
+    border-top: none;
+    margin-top: 0;
+    padding-top: 0;
+    text-align: center;
+}
+
+body.ns-6.action-view #bodyContent > .inside > ul li {
+    display: inline-block;
+    list-style-type: none;
+    padding: 0 12px;
+    border-left: 1px solid #d8d7d7;
+}
+
+body.ns-6.action-view #bodyContent > .inside > ul li:first-child {
+    border-left: none;
+}
+
+
+
+div#mw-imagepage-section-linkstoimage {
+    margin-bottom: 0;
+}
+
+h2#filehistory,
+h2#filelinks{
+    color: white;
+    max-width: 820px;
+    text-shadow: -1px 0 #dad9d9, 0 1px #dad9d9, 1px 0 #dad9d9, 0 -1px #dad9d9;
+    margin: 0 0 0 6px;
+    font-style: italic;
+    font-weight: normal;
+    word-wrap: break-word;
+}
+
+
+
+
+
 /* -----------------------------------------------------------------------------
    ==  ListFiles (gallery)
    -------------------------------------------------------------------------- */
@@ -1756,7 +1879,7 @@ p.mw-htmlform-invalid-input span.error {
    -------------------------------------------------------------------------- */
 
 table {
-    margin: 8px auto 0;
+    margin: 0 auto 0;
     width: 100%;
 }
 
@@ -2026,9 +2149,7 @@ p.ms-wl-empty {
    ==  OTHER...
    -------------------------------------------------------------------------- */
 
-/*
-    Message notification div
-*/
+/* Message notification div */
 
 div.usermessage {
     position: fixed;
@@ -2042,4 +2163,20 @@ div.usermessage {
     background: #dad9d9;
     font-size: 1em;
     z-index: 200;
+}
+
+/* fixes for Special:Upload */
+
+.mw-special-Upload #bodyContent .inside h2 {
+    color: white;
+    margin: 0 0 -3px 3px;
+    font-weight: normal;
+    color: #debdbf;
+}
+
+.mw-special-Upload #bodyContent .inside h2 {
+    color: white;
+    margin: 0 0 -3px 3px;
+    font-weight: normal;
+    color: #debdbf;
 }

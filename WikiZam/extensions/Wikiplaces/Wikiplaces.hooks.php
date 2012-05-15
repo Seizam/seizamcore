@@ -618,7 +618,12 @@ class WikiplacesHooks {
 				$text .= '/<span class="wpp-sp-lg">' . $lang . '</span>';
 			// Page is NS_FILE or NS_FILE_TALK
 		} else {
-			// @TODO: Extract file extension and lang variant for prettyfying
+			// We take the extension off the explosion
+			if (strlen($explosion[$excount - 1]) <= 4) {
+				$ext = $explosion[$excount - 1];
+				array_pop($explosion);
+				$excount--;
+			}
 			// We print the Homepage
 			$text .= Linker::linkKnown(Title::newFromText($explosion[0], NS_MAIN), '<span class="wpp-sp-hp">' . $explosion[0] . '</span>');
 			$text .= '.';
@@ -631,8 +636,14 @@ class WikiplacesHooks {
 			foreach ($explosion as $atom)
 				$temp .= $atom . '.';
 			$temp = substr($temp, 0, -1);
+            
+            $temp = '<span class="wpp-file">' . $temp . '</span>';
+            
+            // Appending Ext
+			if (isset($ext))
+				$temp .= '.<span class="wpp-file-ext">' . $ext . '</span>';
 
-			$text .= Linker::linkKnown($title, '<span class="wpp-file">' . $temp . '</span>');
+			$text .= Linker::linkKnown($title, $temp);
 		}
 
 		return $text;
