@@ -37,8 +37,31 @@ class WikiplacesHooks {
 	 */
 	public static function userCan($title, &$user, $action, &$result) {
 
-		if (($action == 'read') || !WpPage::isInWikiplaceNamespaces($title->getNamespace())) {
+		$namespace = $title->getNamespace();
+
+		if (($action == 'read') || !WpPage::isInWikiplaceNamespaces($namespace)) {
 			return true; // skip
+		}
+
+		$db_key = $title->getDBkey();
+
+		if ( ($namespace == NS_FILE) || ($namespace == NS_FILE_TALK) ) {
+
+			if (WpPage::isPublicFile($db_key)) {
+
+				return true; // skip
+			} elseif (WpPage::isAdminFile($db_key)) {
+
+				if ($user->isAllowed(WP_ADMIN_RIGHT)) {
+
+					$result = true;
+					return true; // allowed, but other extensions can still change this
+				} else {
+
+					$result = false;
+					return false; // forbidden, that's it .
+				}
+			}
 		}
 
 		$article_id = $title->getArticleID();
@@ -51,24 +74,18 @@ class WikiplacesHooks {
 		} elseif (($action == 'move') || ($action == 'delete')) {
 			$do = $action;
 		} else {
-			wfDebugLog('wikiplaces', 'userCan: ' . $action . ' SKIP' .
-					' title="' . $title->getPrefixedDBkey() . '"[' . $article_id . '],' . ($title->isKnown() ? 'known' : 'new') .
-					' user="' . $user->getName() . '"[' . $user_id . ']');
+			wfDebugLog('wikiplaces', 'userCan: ' . $action . ' SKIP, isKnwon()=' . ($title->isKnown() ? 'true' : 'false'));
 			return true; // action not handled here, so continue hook processing to let MW find an answer
 		}
 
 		if (isset(self::$cacheUserCan[$article_id][$user_id][$do])) {
 			$result = self::$cacheUserCan[$article_id][$user_id][$do];
-			wfDebugLog('wikiplaces', 'userCan: ' . $do . ' ' . ($result ? 'ALLOWED' : 'DENIED') . '(cache hit)' .
-					' article=[' . $article_id . ']' .
-					' user=[' . $user_id . ']' .
-					' action=' . $action);
 			return false;
 		}
 
 
 		if (!$user->isLoggedIn()) {
-			wfDebugLog('wikiplaces', 'userCan: DENIED user is not logged in');
+			wfDebugLog('wikiplaces', 'userCan: ' . $do . ' DENIED, user is not logged in');
 			$result = false;
 		} else {
 			switch ($do) {
@@ -141,45 +158,54 @@ class WikiplacesHooks {
 			}
 		} else {
 
-			// this is a subpage (can be regular article or talk or file)
-			$msg = 'new wikiplace item';
+			// this can be regular article or talk or file)
+			
 			$namespace = $title->getNamespace();
 
-			if ($namespace == NS_FILE) {
+			if ($namespace == NS_FILE || $namespace == NS_FILE_TALK) {
 
-				// the user is uploading a file
-				$msg .= ', new file';
+				// the user is uploading a file or creating a file talk
+				$msg = 'new file/file_talk';
 				$db_key = $title->getDBkey();
 
 				if (WpPage::isPublicFile($db_key)) {
-					$msg .= ', public file';
+					$msg .= ', in public space';
 					$result = true;
 				} elseif (WpPage::isAdminFile($db_key)) {
 
-					$msg .= ', admin file';
+					$msg .= ', in admin space';
 					if ($user->isAllowed(WP_ADMIN_RIGHT)) {
 						$result = true;
 					} else {
 						$msg .= ', user not admin';
 						$result = false;
 					}
-				} elseif ($user->isAllowed(WP_ADMIN_RIGHT)) {
-
-					$result = false;
-					$msg .= ', admin cannot upload file in wikiplaces';
+					
 				} else {
 
+					$msg .= ', attached to a wikiplace';
 					$wp = WpWikiplace::getBySubpage($db_key, $title->getNamespace());
 
 					if ($wp === null) {
-						$result = false; // no wikiplace can contain this subpage, so cannot create it
+						$result = false; // no wikiplace can contain this, so cannot create it
 						$msg .= ', cannot find existing container Wikiplace';
-					} elseif (!$wp->isOwner($user_id)) { // checks the user who creates the page is the owner of the wikiplace
+					} elseif ($user->isAllowed(WP_ADMIN_RIGHT)) {
+						// admin is working for someone else
+						$result = true;
+						$msg .= ', admin is working for someone else';
+					} elseif (!$wp->isOwner($user_id)) { // checks the current user is the owner of the wikiplace
 						$result = false;
-						$msg .= 'current user is not Wikiplace owner';
+						$msg .= ', current user is not Wikiplace owner';
 					} else {
 
-						if (($reason = WpSubscription::userCanUploadNewFile($user_id)) !== true) {
+						$reason;
+						if ($namespace == NS_FILE) {
+							$reason = WpSubscription::userCanUploadNewFile($user_id);
+						} else {
+							$reason = WpSubscription::userCanCreateNewPage($user_id);
+						}
+								
+						if ($reason !== true) {
 							$result = false; // no active subscription or page creation quota is exceeded
 							$msg .= ', ' . $reason;
 						} else {
@@ -187,10 +213,11 @@ class WikiplacesHooks {
 						}
 					}
 				}
+				
 			} else {
 
-				// the user is creating a new page (regular or talk, but not a file)
-				$msg .= ', new subpage';
+				// the user is creating a new page (regular or talk, but not a file or file_talk)
+				$msg = ', new subpage';
 
 				$wp = WpWikiplace::getBySubpage($title->getDBkey(), $title->getNamespace());
 
@@ -232,11 +259,10 @@ class WikiplacesHooks {
 	private static function userCanMove(&$title, &$user) {
 
 		// in userCan() calling this function, we already checked that user is loggedin
-		/** @todo: this admin bypass should be less permissive (currently, it can lead to inconsistent states) */
-		return ( $user->isAllowed(WP_ADMIN_RIGHT)
+		return (!WpPage::isHomepage($title)
+				&& ( $user->isAllowed(WP_ADMIN_RIGHT)
 				|| ( WpSubscription::getActiveByUserId($user->getId()) != null
-				&& !WpPage::isHomepage($title)
-				&& WpPage::isOwner($title->getArticleID(), $user) ) );
+				&& WpPage::isOwner($title->getArticleID(), $user) ) ) );
 	}
 
 	/**
@@ -252,10 +278,9 @@ class WikiplacesHooks {
 	private static function userCanDelete(&$title, &$user) {
 
 		// in userCan() calling this function, we already checked that user is loggedin
-		/** @todo: this admin bypass should be less permissive (currently, it can lead to inconsistent states) */
-		return ( $user->isAllowed(WP_ADMIN_RIGHT)
-				|| (!WpPage::isHomepage($title)
-				&& WpPage::isOwner($title->getArticleID(), $user) ) );
+		return (!WpPage::isHomepage($title)
+				&& ( $user->isAllowed(WP_ADMIN_RIGHT)
+				|| WpPage::isOwner($title->getArticleID(), $user) ) );
 	}
 
 	/**
@@ -299,8 +324,9 @@ class WikiplacesHooks {
 			$db_key = $title->getDBkey();
 			$namespace = $title->getNamespace();
 
-			if (($title->getNamespace() == NS_FILE) && ( WpPage::isPublicFile($db_key) || WpPage::isAdminFile($db_key) )) {
-				wfDebugLog('wikiplaces', 'onArticleInsertComplete: public or admin file "' . $title->getPrefixedDBkey() . '"');
+			if ( ( ($title->getNamespace() == NS_FILE) || ($title->getNamespace() == NS_FILE_TALK) )
+					&& ( WpPage::isPublicFile($db_key) || WpPage::isAdminFile($db_key) ) ) {
+				wfDebugLog('wikiplaces', 'onArticleInsertComplete: public or admin file/file_talk "' . $title->getPrefixedDBkey() . '"');
 				return true; // no wikiplace to attach to, so exit
 			}
 
@@ -609,7 +635,12 @@ class WikiplacesHooks {
 	 */
 	public static function isOwner($title, $user, &$result) {
 
-		if (!WpPage::isInWikiplaceNamespaces($title->getNamespace()) || !$title->isKnown()) {
+		$namespace = $title->getNamespace();
+		$db_key = $title->getDBkey();
+
+		if (!WpPage::isInWikiplaceNamespaces($namespace) || !$title->isKnown()
+				|| ( ($namespace == NS_FILE)
+				&& ( WpPage::isPublicFile($db_key) || WpPage::isAdminFile($db_key) ) )) {
 			return true; // skip
 		}
 

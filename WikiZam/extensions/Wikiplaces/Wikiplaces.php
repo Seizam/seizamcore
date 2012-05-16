@@ -74,6 +74,7 @@ define('WP_SUBSCRIBERS_USER_GROUP', 'artist');
 
 $wgGroupPermissions[WP_SUBSCRIBERS_USER_GROUP]['move']	= true;
 $wgGroupPermissions[WP_SUBSCRIBERS_USER_GROUP]['move-subpages'] = true;
+$wgGroupPermissions[WP_SUBSCRIBERS_USER_GROUP]['movefile'] = true;
 $wgGroupPermissions[WP_SUBSCRIBERS_USER_GROUP]['suppressredirect'] = true;
 $wgGroupPermissions[WP_SUBSCRIBERS_USER_GROUP]['delete'] = true;
 

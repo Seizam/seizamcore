@@ -502,6 +502,39 @@ WHERE wpw_report_updated < $outdated ;" ;
 
 	}
 	
+
+	/**
+	 *
+	 * @param int $user_id
+	 * @return array Array of string 
+	 */
+	public static function listAvailableFilePrefix($user_id) {
+		if ( ($user_id === null) || !is_int($user_id) ) {
+			throw new MWException( 'Cannot search Wikiplaces, invalid owner user identifier.' );
+		}	
+		
+		$dbr = wfGetDB(DB_SLAVE);
+		
+		$tables = array( 'wp_wikiplace', 'page' );
+		$vars = array( 'page_title'	);
+		$conds = array( 'wpw_owner_user_id' =>  $user_id );
+		$fname = __METHOD__;
+		$options = array();
+		$join_conds = array( 'page' => array('INNER JOIN', 'wpw_home_page_id = page_id')); /** @todo:maybe a left join? */
+		
+		
+		$results = $dbr->select($tables, $vars, $conds, $fname, $options, $join_conds);
+		$prefixes = array( WP_PUBLIC_FILE_PREFIX => WP_PUBLIC_FILE_PREFIX );
+		foreach ( $results as $row ) {
+			$t = Title::newFromDBkey($row->page_title);
+			if ( $t != null ) {
+				$prefixes[$row->page_title] = $t->getText() ;
+			}
+		}
+
+		return $prefixes;
+	}
+	
 	
 	
 	/**
