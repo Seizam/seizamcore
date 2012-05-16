@@ -348,23 +348,7 @@ function efRestrictionsIsOwner( $title, $user ) {
 	// process custom hook IsOwner, in order for other extensions to fetch 
 	// ownership using a different way 
 	$result = false;
-	if ( wfRunHooks( 'IsOwner', array( $title, $user, &$result ) ) ) {
-
-		/*
-		// no hook  or  no hook functions stopped processing, so we have use the default method:
-		// looking for the first revisonner
-		$id = $title->getArticleId();
-		$dbr = wfGetDB( DB_SLAVE ); // grab the slave for reading
-		$firstrevionnerid = $dbr->selectField( 'revision', 'rev_user',  array( 'rev_page' => $id ),
-			__METHOD__, array( 'ORDER BY' => 'rev_timestamp ASC'  ) );
-
-		$userid = $user->getID();
-		$result = ( $userid == $firstrevionnerid );
-		*/
-		
-		// hook has no answer
-		$result = false;
-	}
+	wfRunHooks( 'IsOwner', array( $title, $user, &$result ) );
 	
 	// store to cache
 	$wgRestrictionsIsOwnerCache[$user->getID()][$title->getArticleId()] = $result;

@@ -531,7 +531,7 @@ WHERE wpw_report_updated < $outdated ;" ;
 	 * belongs to ( = newly created page ) or even if the Wikiplace doesn't already exists.
 	 * @param string $db_key should be $wikipage->getTitle()->getDBkey()
 	 * @param int $namespace should be $wikipage->getTitle()->getNamespace()
-	 * @return Array The array of all elements in the name
+	 * @return Array The array of all elements in the name (array has at least 1 string at index 0)
 	 */
 	public static function explodeWikipageKey($db_key, $namespace) {
 		
@@ -702,5 +702,9 @@ WHERE wpw_report_updated < $outdated ;" ;
 		
 	}
 	
+    public static function isBlacklistedWikiplaceName($name) {
+        global $wgWikiplaceNameBlacklist;
+        return in_array( strtolower($name), $wgWikiplaceNameBlacklist );
+    }
 
 }

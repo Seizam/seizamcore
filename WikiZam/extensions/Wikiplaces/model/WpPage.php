@@ -366,7 +366,27 @@ class WpPage {
 		
 		return in_array($namespace, $wgWikiplaceNamespaces);
 	}
+    
+
+    /**
+     * Parse the file page name. Tell if the file is to be considered has public.
+     * @param string $db_key
+     * @return boolean 
+     */
+	public static function isPublicFile($db_key) {
+        $exploded = WpWikiplace::explodeWikipageKey($db_key, NS_FILE);
+        return ( $exploded[0] == WP_PUBLIC_FILE_PREFIX );
+	}
 	
+     /**
+     * Parse the file page name. Tell if the file is to be considered has an administrator's file.
+     * @param string $db_key
+     * @return boolean 
+     */
+	public static function isAdminFile($db_key) {
+        $exploded = WpWikiplace::explodeWikipageKey($db_key, NS_FILE);
+        return ( $exploded[0] == WP_ADMIN_FILE_PREFIX );
+	}
 
 
 	/**
@@ -487,6 +507,12 @@ class WpPage {
 	}
 	
 	
+    /**
+     * Delete the association of an article to a wikiplace.
+     * @param int $article_id page_id, usually $title->getArticle()->getId()
+     * @return boolean
+     * @throws MWException 
+     */
 	public static function delete( $article_id ) {
 		
 		if (  ! is_int($article_id)  ||  ( $article_id < 1 )  ) {
@@ -533,6 +559,38 @@ class WpPage {
 		}		
 		
 	}
+    
+    
+    /**
+	 *
+	 * @param int $pageId Article id
+	 */
+	public function setPageId( $pageId ) {
+	
+		if ( !is_int($pageId) || ($pageId<1) )  {
+			throw new MWException('Invalid article identifier.');
+		}
+
+		$this->wppa_page_id = intval( $pageId );
+        
+		$this->page_namespace = null;
+        $this->page_title = null;
+				
+		$dbw = wfGetDB(DB_MASTER);
+		$dbw->begin();
+
+		$success = $dbw->update(
+			'wp_page',
+			array ('wppa_page_id' => $this->wppa_page_id),
+			array( 'wppa_id' => $this->wppa_id) );
+
+		$dbw->commit();
+
+		if ( !$success ) {	
+			throw new MWException('Error while updating Wikiplace page article identifier to database.');
+		}		
+		
+	}
 	
 	
 	/**
@@ -544,13 +602,12 @@ class WpPage {
 	 * @return boolean true = user is owner, false = not
 	 */
 	public static function isOwner($article_id, $user) {
-
+        
 		$owner = self::findOwnerUserIdByArticleId($article_id);
 
-		return (  $user->isLoggedIn()  && (
-				( $owner==0  &&  $user->isAllowed(WP_ADMIN_RIGHT) )
+		return ( ( $owner==0  &&  $user->isAllowed(WP_ADMIN_RIGHT) )
 				||
-				( $owner==$user->getId() )  )  ) ;
+				( $owner==$user->getId() )  ) ;
 
 	}
 	
