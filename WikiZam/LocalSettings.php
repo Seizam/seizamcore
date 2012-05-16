@@ -161,12 +161,13 @@ $wfPolyglotFollowRedirects = true;
 # Language Selector (auto select user language and drop down menu)
 require_once( "$IP/extensions/LanguageSelector/LanguageSelector.php" );
 # Supported languages
-$wgLanguageSelectorLanguages = array('en','fr');
+$wgLanguageSelectorLanguages = null;
+# Displayed languages
+$wgLanguageSelectorLanguagesShorthand = array('en','fr');
 # Method of language selection
 $wgLanguageSelectorDetectLanguage = LANGUAGE_SELECTOR_PREFER_CLIENT_LANG; #Automatic selection regarding browser
 # Where to put the language selection dropdown menu
-// $wgLanguageSelectorLocation = LANGUAGE_SELECTOR_IN_TOOLBOX;#In toolbow for Vector Skin, hard integrated for Skinzam
-$wgLanguageSelectorLocation = LANGUAGE_SELECTOR_MANUAL; #buggy in toolbox with Vector(yes, very strange), so only manual placing
+$wgLanguageSelectorLocation = LANGUAGE_SELECTOR_MANUAL; #Hard integrated for Skinzam
 
 
 # Google Analytics

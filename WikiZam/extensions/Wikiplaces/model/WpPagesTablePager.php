@@ -111,7 +111,7 @@ class WpPagesTablePager extends SkinzamTablePager {
             $text .= '<span class="wpp-ns">' . $title->getNsText() . ':</span>';
             $text .= '<span class="wpp-sp">' . $title->getText() . '</span>';
         }
-        return Linker::linkKnown($title, $text);
+        return Linker::linkKnown($title, $text, array(), array('redirect'=>'no'));
     }
 
     function formatNamespace($value) {

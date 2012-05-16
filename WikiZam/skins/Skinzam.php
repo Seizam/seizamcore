@@ -434,19 +434,17 @@ class SkinzamTemplate extends BaseTemplate {
             <div class="inside">
                 <div class="content">
                         <?php if (isset($this->data['sz_pretty_username'])): ?>
-                        <span id="prettyUserName">
-                        <?php $this->text('sz_pretty_username') ?>
-                        </span>
-        <? endif; ?>
+                            <span id="prettyUserName"><?php $this->text('sz_pretty_username') ?></span>
+                        <? endif; ?>
                     <!-- logo -->
                     <a id="logo_mini" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>" <?php echo $this->skin->tooltipAndAccesskeyAttribs('p-logo') ?>></a>
                     <!-- /logo -->
                     <!-- search -->
-        <?php $this->renderNavigation(array('SEARCH')); ?>
+                    <?php $this->renderNavigation(array('SEARCH')); ?>
                     <!-- /search -->
                     <!-- quicklinks -->
                     <ul>
-        <?php $this->renderNavigation(array('SZ-FOOTER')); ?>
+                        <?php $this->renderNavigation(array('SZ-FOOTER')); ?>
                         <li class="more">
                             <a href="#">
                                 <span class="show_footer"><?php echo wfMessage('moredotdotdot')->text() ?></span>

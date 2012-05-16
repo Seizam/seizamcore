@@ -62,7 +62,7 @@ $wfPolyglotExcemptTalkPages = true;
 $wfPolyglotFollowRedirects = false;
 
 ///// hook it up /////////////////////////////////////////////////////
-$wgHooks['ArticleFromTitle'][] = 'wfPolyglotArticleFromTitle';
+$wgHooks['InitializeArticleMaybeRedirect'][] = 'wfPolyglotInitializeArticleMaybeRedirect';
 $wgHooks['LinkBegin'][] = 'wfPolyglotLinkBegin';
 $wgHooks['ParserAfterTidy'][] = 'wfPolyglotParserAfterTidy';
 $wgHooks['SkinTemplateOutputPageBeforeExec'][] = 'wfPolyglotSkinTemplateOutputPageBeforeExec';
@@ -71,68 +71,62 @@ $wgExtensionFunctions[] = "wfPolyglotExtension";
 
 function wfPolyglotExtension() {
 	global $wgPolyglotLanguages;
-
+    
+    # PATCH
 	/*if ( $wgPolyglotLanguages === null ) {
 		$wgPolyglotLanguages = @$GLOBALS['wgLanguageSelectorLanguages'];
 	}*/
+    # /PATCH
 	
 	if ( $wgPolyglotLanguages === null ) {
 		$wgPolyglotLanguages = array_keys( Language::getLanguageNames() );
 	}
 }
 
-function wfPolyglotArticleFromTitle( &$title, &$article ) {
+function wfPolyglotInitializeArticleMaybeRedirect( &$title, &$request, &$ignoreRedirect, &$target, &$article ) {
 	global $wfPolyglotExcemptNamespaces, $wfPolyglotExcemptTalkPages, $wfPolyglotFollowRedirects;
-	global $wgLang, $wgContLang, $wgRequest;
-
-	if ($wgRequest->getVal( 'redirect' ) == 'no') {
-		return true;
-	}
+	global $wgLang, $wgContLang;
 
 	$ns = $title->getNamespace();
 
-	if ( $ns < 0 
-		|| in_array($ns,  $wfPolyglotExcemptNamespaces) 
-		|| ($wfPolyglotExcemptTalkPages && MWNamespace::isTalk($ns)) ) {
+	if ( $ns < 0 || in_array( $ns, $wfPolyglotExcemptNamespaces )
+		|| ( $wfPolyglotExcemptTalkPages && MWNamespace::isTalk( $ns ) ) ) {
 		return true;
 	}
 
-	$n = $title->getDBkey();
-	$nofollow = false;
+	$dbkey = $title->getDBkey();
 	$force = false;
 
 	//TODO: when user-defined language links start working (see below),
 	//      we need to look at the langlinks table here.
-	if ( !$title->exists() && strlen( $n ) > 1 ) {
+	if ( !$title->exists() && strlen( $dbkey ) > 1 ) {
 		$escContLang = preg_quote( $wgContLang->getCode(),  '!' );
-		if ( preg_match( '!/$!', $n ) ) {
+		if ( preg_match( '!/$!', $dbkey ) ) {
 			$force = true;
 			$remove = 1;
-		} elseif ( preg_match( "!/{$escContLang}$!", $n ) ) {
+		} elseif ( preg_match( "!/{$escContLang}$!", $dbkey ) ) {
 			$force = true;
 			$remove = strlen( $wgContLang->getCode() ) + 1;
 		}
 	}
 
 	if ( $force ) {
-		$t = Title::makeTitle( $ns, substr( $n, 0, strlen( $n ) - $remove ) );
-		$nofollow = true;
+		$t = Title::makeTitle( $ns, substr( $dbkey, 0, strlen( $dbkey ) - $remove ) );
 	} else {
 		$lang = $wgLang->getCode();
-		$t = Title::makeTitle( $ns, $n . '/' . $lang );
+		$t = Title::makeTitle( $ns, $dbkey . '/' . $lang );
 	}
 
-	if (!$t->exists()) {
+	if ( !$t->exists() ) {
 		return true;
 	}
 
-	if ($wfPolyglotFollowRedirects && !$nofollow) {
-		$a = new Article($t);
-		$a->loadPageData();
+	if ( $wfPolyglotFollowRedirects && !$force ) {
+		$page = WikiPage::factory( $t );
 
-		if ($a->mIsRedirect) {
-			$rt = $a->followRedirect();
-			if ($rt && $rt->exists()) {
+		if ( $page->isRedirect() ) {
+			$rt = $page->getRedirectTarget();
+			if ( $rt && $rt->exists() ) {
 				//TODO: make "redirected from" show $source, not $title, if we followed a redirect internally.
 				//     there seems to be no clean way to do that, though.
 				//$source = $t;
@@ -141,31 +135,8 @@ function wfPolyglotArticleFromTitle( &$title, &$article ) {
 		}
 	}
 
-	if (!class_exists('PolyglotRedirect')) {
-		class PolyglotRedirect extends Article {
-			var $mTarget;
-		
-			function __construct( $source, $target ) {
-				Article::__construct($source);
-				$this->mTarget = $target;
-				$this->mIsRedirect = true;
-			}
-		
-			function followRedirect() {
-				return $this->mTarget;
-			}
+	$target = $t;
 
-			function loadPageData( $data = 'fromdb' ) {
-				Article::loadPageData( $data );
-				$this->mIsRedirect = true;
-			}
-		}
-	}
-	
-	//print $t->getFullText();
-
-	$article = new PolyglotRedirect( $title, $t ); //trigger redirect to lovcalized page
-	
 	return true;
 }
 
@@ -198,8 +169,12 @@ function wfPolyglotLinkBegin( $linker, $target, &$text, &$customAttribs, &$query
 	$t = Title::makeTitle( $ns, substr( $dbKey, 0, strlen( $dbKey ) - $remove ) );
 
 	if ( $t->exists() ) {
-		$options = array_diff( $options, array( 'broken' ) );
-		$options []= 'known';
+		foreach( $options as $key => $val ) {
+			if ( $val === 'broken' ) {
+				unset( $options[$key] );
+			}
+		}
+		$options[] = 'known';
 	}
 
 	return true;
