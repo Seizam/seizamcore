@@ -360,8 +360,7 @@ class SkinzamTemplate extends BaseTemplate {
      * Render the ContentOther (Languages, Categories, Toolbox...)
      */
     private function renderContentOther() {
-        if ($this->data['language_urls']):
-            ?>
+        if ($this->data['language_urls']):?>
             <!-- language_urls -->
             <div class="portal" id="p-lang"<?php echo Linker::tooltip('p-lang') ?>>
                 <h5<?php $this->html('userlangattributes') ?>><?php echo wfMessage('otherlanguages')->text() . wfMsgExt('colon-separator', 'escapenoentities'); ?></h5>

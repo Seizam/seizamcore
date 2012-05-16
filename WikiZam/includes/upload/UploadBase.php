@@ -141,9 +141,7 @@ abstract class UploadBase {
 		return false;
 	}
 
-	public function __construct() {
-	    wfDebugLog( 'upload', "UploadBase.php>__construct(): backtrace=\n" .wfGetPrettyBacktrace());
-	}
+	public function __construct() {}
 
 	/**
 	 * Returns the upload type. Should be overridden by child classes
@@ -749,14 +747,10 @@ abstract class UploadBase {
 	 */
 	public function stashFile( $key = null ) {
 		// was stashSessionFile
-	    
-		wfDebugLog( 'upload', '-UploadBase.php>stashFile(): enter' );
-	    
 		$stash = RepoGroup::singleton()->getLocalRepo()->getUploadStash();
 
 		$file = $stash->stashFile( $this->mTempPath, $this->getSourceType(), $key );
 		$this->mLocalFile = $file;
-		wfDebugLog( 'upload', '-UploadBase.php>stashFile(): return instance of ' .get_class( $file ) );
 		return $file;
 	}
 

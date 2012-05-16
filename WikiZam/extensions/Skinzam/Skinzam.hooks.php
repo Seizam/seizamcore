@@ -155,29 +155,41 @@ class SkinzamHooks {
      */
     public static function PersonalUrls(&$personal_urls, &$title) {
         // Remove Preferences
-        if (isset($personal_urls['preferences']))
-            unset ($personal_urls['preferences']);
+        /*if (isset($personal_urls['preferences']))
+            unset ($personal_urls['preferences']);*/
         // Remove Contributions
         if (isset($personal_urls['mycontris']))
             unset ($personal_urls['mycontris']);
         
+        $beginning = array();
+        if (isset ($personal_urls['userpage'])) {
+            $beginning['userpage'] = $personal_urls['userpage'];
+            unset ($personal_urls['userpage']);
+        }
+        if (isset ($personal_urls['mytalk'])) {
+            $beginning['mytalk'] = $personal_urls['mytalk'];
+            unset ($personal_urls['mytalk']);
+        }
+        
         if (isset($personal_urls['logout'])) {
             // Add MySeizam
             $href = Title::makeTitle(NS_SPECIAL, 'MySeizam')->getCanonicalURL();
-            $personal_urls_prepend['myseizam'] = array(
+            $middle['myseizam'] = array(
                     'text' => wfMsg( 'sz-myseizam' ),
                     'href' => $href,
                     'active' => ( $title->getText() == 'MySeizam' )
                 );
             // Add MyWikiPlaces
             $href = Title::makeTitle(NS_SPECIAL, 'Wikiplaces')->getCanonicalURL();
-            $personal_urls_prepend['wikiplaces'] = array(
+            $middle['wikiplaces'] = array(
                     'text' => wfMsg( 'wikiplaces' ),
                     'href' => $href,
                     'active' => ( $title->getText() == 'Wikiplaces' )
                 );
-            $personal_urls = array_merge($personal_urls_prepend, $personal_urls);
+            $personal_urls = array_merge($middle, $personal_urls);
         }
+        
+        $personal_urls = array_merge($beginning, $personal_urls);
         
         return true;
     }
@@ -198,6 +210,12 @@ class SkinzamHooks {
         // Remove specialpages
         if (isset($toolbox['specialpages']))
             unset ($toolbox['specialpages']);
+        
+        $href = Title::makeTitle(NS_SPECIAL, 'Random')->getCanonicalURL();
+        $toolbox['random'] = array(
+            'text' => wfMsg( 'randompage' ),
+            'href' => $href
+        );
         
         return true;
     }

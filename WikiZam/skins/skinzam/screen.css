@@ -882,10 +882,7 @@ h1.firstHeading a span.wpp-file {
     text-shadow: -1px 0 #E22C2E, 0 1px #E22C2E, 1px 0 #E22C2E, 0 -1px #E22C2E;
     font-size: 2em;
     font-weight: bold;
-    margin-left: 8px;
-}
-
-h1.firstHeading a span.wpp-file-ext {
+    margin-left: 6px;
 }
 
 h1.firstHeading span.wpp-sp-hp {
@@ -1472,7 +1469,8 @@ body.ns-6.action-view #bodyContent > .inside {
 body.ns-6.action-view #bodyContent > .inside > br,
 ul#filetoc,
 h2#filelinks,
-div#mw-imagepage-section-linkstoimage {
+div#mw-imagepage-nolinkstoimage,
+div#mw-imagepage-section-linkstoimage{
     display: none;
 }
 
@@ -1481,6 +1479,8 @@ div.fullMedia,
 div#mw-imagepage-content,
 div#mw-imagepage-section-filehistory,
 div#mw-imagepage-section-linkstoimage,
+div#mw-imagepage-nolinkstoimage,
+div.mw-imagepage-section-metadata,
 body.ns-6.action-view #bodyContent > .inside > ul {
     clear: both;
     margin: 0 auto 18px;
@@ -1491,6 +1491,8 @@ body.ns-6.action-view #bodyContent > .inside > ul {
 div#mw-imagepage-content,
 div#mw-imagepage-section-filehistory,
 div#mw-imagepage-section-linkstoimage,
+div#mw-imagepage-nolinkstoimage,
+div.mw-imagepage-section-metadata,
 body.ns-6.action-view #bodyContent > .inside > ul {
     padding: 18px;
 }
@@ -1523,7 +1525,6 @@ div#mw-imagepage-section-filehistory {
 body.ns-6.action-view #bodyContent > .inside > ul {
     border-top: none;
     margin-top: 0;
-    margin-bottom: 0;
     padding-top: 0;
     text-align: center;
 }
@@ -1539,12 +1540,13 @@ body.ns-6.action-view #bodyContent > .inside > ul li:first-child {
     border-left: none;
 }
 
-div#mw-imagepage-section-linkstoimage {
+body.ns-6.action-view #bodyContent {
     margin-bottom: 0;
 }
 
 h2#filehistory,
-h2#filelinks{
+h2#filelinks,
+h2#metadata{
     color: white;
     max-width: 820px;
     text-shadow: -1px 0 #dad9d9, 0 1px #dad9d9, 1px 0 #dad9d9, 0 -1px #dad9d9;
@@ -1552,6 +1554,10 @@ h2#filelinks{
     font-style: italic;
     font-weight: normal;
     word-wrap: break-word;
+}
+
+table.mw_metadata {
+    margin: 18px auto 0;
 }
 
 

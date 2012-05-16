@@ -21,7 +21,7 @@ return array(
 		'remoteBasePath' => $GLOBALS['wgStylePath'],
 		'localBasePath' => $GLOBALS['wgStyleDirectory'],
 	),
-/*	'skins.monobook' => array(
+	/*'skins.monobook' => array(
 		'styles' => array(
 			'monobook/main.css' => array( 'media' => 'screen' ),
 		),
@@ -61,8 +61,7 @@ return array(
 		'remoteBasePath' => $GLOBALS['wgStylePath'],
 		'localBasePath' => $GLOBALS['wgStyleDirectory'],
 	),*/
-
-	'skins.skinzam' => array(
+    'skins.skinzam' => array(
 		'styles' => array( 'skinzam/screen.css' => array( 'media' => 'screen' ) ),
 		'remoteBasePath' => $GLOBALS['wgStylePath'],
 		'localBasePath' => $GLOBALS['wgStyleDirectory'],

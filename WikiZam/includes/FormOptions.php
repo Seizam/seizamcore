@@ -1,7 +1,7 @@
 <?php
 /**
  * Helper class to keep track of options when mixing links and form elements.
- * @todo This badly needs some examples and tests :-)
+ * @todo This badly need some examples and tests :-)
  *
  * Copyright © 2008, Niklas Laxstiröm
  *

@@ -71,6 +71,7 @@ class SpecialAllmessages extends SpecialPage {
 		$this->langcode = $this->table->lang->getCode();
 
 		$out->addHTML( $this->table->buildForm() .
+			$this->table->getNavigationBar() .
 			$this->table->getBody() .
 			$this->table->getNavigationBar() );
 
