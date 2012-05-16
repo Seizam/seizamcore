@@ -536,7 +536,7 @@ class WikiplacesHooks {
 			$wikiplaceKey = $explosion[0];
 
 			// Wikiplace Title
-			$headerTitle['content'] = self::makeFirstHeading($explosion, $title, $ns);
+			$headerTitle['content'] = self::makeFirstHeading($explosion, $title);
 
 
 			// Wikiplace Background
@@ -567,15 +567,19 @@ class WikiplacesHooks {
 		return true;
 	}
 
-	/*
+	/**
 	 * Build pretty html FirstHeading from array of WikiPage Key elements
+     * 
+     * @param Array $explosion
+     * @param Title $title
 	 */
 
-	private static function makeFirstHeading($explosion, $title, $ns) {
+	private static function makeFirstHeading($explosion, $title) {
 
 
 		$excount = count($explosion);
 		$text = '';
+        $ns=$title->getNamespace();
 
 		// Pages not in main append namespace to title
 		if ($ns != NS_MAIN) {
@@ -611,7 +615,7 @@ class WikiplacesHooks {
 
 				$text .= '/';
 				// We print its link
-				$text .= Linker::linkKnown(Title::newFromText($mother, $ns), '<span class="wpp-sp">' . $atom . '</span>');
+				$text .= Linker::linkKnown(Title::newFromText($mother, NS_MAIN), '<span class="wpp-sp">' . $atom . '</span>');
 			}
 
 			// Appending Lang variant
@@ -644,7 +648,7 @@ class WikiplacesHooks {
 			if (isset($ext))
 				$temp .= '.<span class="wpp-file-ext">' . $ext . '</span>';
 
-			$text .= Linker::linkKnown($title, $temp);
+			$text .= Linker::linkKnown(Title::newFromText($title->getDBkey(), NS_FILE), $temp);
 		}
 
 		return $text;

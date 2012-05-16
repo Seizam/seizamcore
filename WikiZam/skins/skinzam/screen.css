@@ -952,6 +952,7 @@ h1.firstHeading a:hover {
     display:block;
     padding: 6px 0 6px 8px;
     border-bottom:1px solid #4d4e4f;
+    word-wrap: break-word;
 }
 #nav .nav_actions ul li:last-child a {
     border-bottom:none;

@@ -49,6 +49,12 @@ $wgLanguageSelectorDetectLanguage = LANGUAGE_SELECTOR_PREFER_CLIENT_LANG;
 $wgLanguageSelectorLanguages = null;
 
 /**
+* Languages to display in the language selector menu. Per default, this includes all languages MediaWiki knows
+* about by virtue of languages/Names.php. A shorter list may be more usable, though.
+*/
+$wgLanguageSelectorLanguagesShorthand = null;
+
+/**
 * Determine if language codes are shown in the selector, in addition to names;
 */
 $wgLanguageSelectorShowCode = false;
@@ -126,6 +132,15 @@ function wfGetLanguageSelectorLanguages(){
 		sort( $wgLanguageSelectorLanguages );
 	}
 	return $wgLanguageSelectorLanguages;
+}
+
+function wfGetLanguageSelectorLanguagesShorthand(){
+	global $wgLanguageSelectorLanguagesShorthand, $wgLanguageSelectorShowAll;
+	if ( $wgLanguageSelectorLanguagesShorthand === null ) {
+		$wgLanguageSelectorLanguagesShorthand = array_keys( Language::getLanguageNames( !$wgLanguageSelectorShowAll ) );
+		sort( $wgLanguageSelectorLanguagesShorthand );
+	}
+	return $wgLanguageSelectorLanguagesShorthand;
 }
 
 /**
@@ -388,7 +403,7 @@ function wfLanguageSelectorHTML( Title $title, $style = null, $class = null, $se
 		'style' => $selectorstyle
 	) );
 
-	foreach ( wfGetLanguageSelectorLanguages() as $ln ) {
+	foreach ( wfGetLanguageSelectorLanguagesShorthand() as $ln ) {
 		$name = $wgContLang->getLanguageName( $ln );
 		if ( $showCode ) $name = wfBCP47( $ln ) . ' - ' . $name;
 
