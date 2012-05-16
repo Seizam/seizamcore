@@ -173,16 +173,6 @@ $wgLanguageSelectorLocation = LANGUAGE_SELECTOR_MANUAL; #buggy in toolbox with V
 require_once( "$IP/extensions/googleAnalytics/googleAnalytics.php" );
 $wgGoogleAnalyticsAccount = "UA-25393782-2";
 
-
-# Account confirmation necessity for Beta version
-require_once("$IP/extensions/ConfirmAccount/ConfirmAccount.php");
-$wgMakeUserPageFromBio = false;      # Set the person's bio as their userpage?
-$wgUseRealNamesOnly = false;         # Make the username of the real name?
-$wgAccountRequestThrottle = 3;       # How many requests can an IP make at once?
-$wgAccountRequestMinWords = 0;       # Minimum biography specs
-$wgAccountRequestExtraInfo = false;  # Show confirmation info fields
-
-
 # Contact Page
 require_once( "$IP/extensions/ContactPage/ContactPage.php" );
 $wgContactUser='WikiSysop';

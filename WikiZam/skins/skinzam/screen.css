@@ -90,7 +90,7 @@ abbr[title] { border-bottom: 1px dotted; }
 b, strong { font-weight: bold; }
 blockquote { margin: 1em 40px; }
 dfn { font-style: italic; }
-hr { display: block; height: 1px; border: 0; border-top: 1px solid #ccc; margin: 1em 0; padding: 0; }
+hr { display: block; height: 1px; border: 0; border-top: 1px solid #dad9d9; margin: 1em 0; padding: 0; }
 ins { background: #ff9; color: #000; text-decoration: none; }
 mark { background: #ff0; color: #000; font-style: italic; font-weight: bold; }
 
@@ -1461,11 +1461,6 @@ html.client-nojs #bodyContent>.inside {
 /*
 * Erasing previous formatting from the block/inside system because we're applying block formating to bodytext's divs
 */
-body.ns-6.action-view {
-    padding: 0;
-    margin: 0;
-    width: inherit;
-}
 
 body.ns-6.action-view #bodyContent > .inside {
     background: none;
@@ -1474,11 +1469,10 @@ body.ns-6.action-view #bodyContent > .inside {
     margin: 0;
 }
 
-body.ns-6.action-view #bodyContent > .inside > br {
-    display: none;
-}
-
-ul#filetoc {
+body.ns-6.action-view #bodyContent > .inside > br,
+ul#filetoc,
+h2#filelinks,
+div#mw-imagepage-section-linkstoimage {
     display: none;
 }
 
@@ -1529,6 +1523,7 @@ div#mw-imagepage-section-filehistory {
 body.ns-6.action-view #bodyContent > .inside > ul {
     border-top: none;
     margin-top: 0;
+    margin-bottom: 0;
     padding-top: 0;
     text-align: center;
 }
@@ -1543,8 +1538,6 @@ body.ns-6.action-view #bodyContent > .inside > ul li {
 body.ns-6.action-view #bodyContent > .inside > ul li:first-child {
     border-left: none;
 }
-
-
 
 div#mw-imagepage-section-linkstoimage {
     margin-bottom: 0;
@@ -2237,6 +2230,16 @@ table.mw-allpages-table-chunk tr td:last-child {
 /* fixes for action=diff */
 table.diff {
     clear: both;
+}
+
+h2.diff-currentversion-title {
+    border-bottom: 1px solid #dad9d9;
+    padding-bottom: 16px;
+    margin-bottom: 32px;
+}
+
+h2.diff-currentversion-title:after {
+    content: " :";
 }
 
 
