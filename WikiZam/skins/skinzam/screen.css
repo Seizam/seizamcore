@@ -689,7 +689,7 @@ div.error, .errorbox, .warningbox {
 
 /* transitions */
 
-* {
+li, td, tr, table, span, div, input[type="submit"] {
     -webkit-transition: background 0.75s;
     -moz-transition: background 0.75s;
     -ms-transition: background 0.75s;
@@ -1119,8 +1119,7 @@ html.client-nojs #bodyContent>.inside {
    ---------------------------------------- */
 
 #contentFooter .inside {
-    padding-bottom: 6px;
-    padding-top: 6px;
+    padding: 6px 0;
     font-size: 0.8em;
     text-align: center;
 }
@@ -1132,6 +1131,14 @@ html.client-nojs #bodyContent>.inside {
     margin: 0;
     padding: 0;
     border: none;
+}
+
+#contentFooter .inside>div {
+    margin: 0 8px 0 8px;
+}
+
+#contentFooter div#mw-revision-nav {
+    margin-left: 16px;
 }
 
 #contentFooter li {
@@ -1601,7 +1608,8 @@ body.ns--1 div#bodyContent>div.inside>ul>li {
     border-bottom: 1px solid #dad9d9;
 }
 
-body.ns--1 div#bodyContent>div.inside>ul>li:hover {
+body.ns--1 div#bodyContent>div.inside>ul>li:hover,
+#ms-quickwatchlist li:hover{
     background-color: #f2f2f2;
     color: black;
 }
@@ -1641,7 +1649,7 @@ div#ms-quickwatchlist h4 {
 }
 
 table.mw-enhanced-rc {
-    padding: 8px 1px;
+    padding: 8px 0;
     margin: 0;
     border-bottom: 1px solid #dad9d9;
     display: block;
@@ -1650,7 +1658,6 @@ table.mw-enhanced-rc {
 table.mw-enhanced-rc:hover {
     padding: 8px 0;
     background: #f2f2f2;
-    border: 1px solid #dad9d9;
     border-top: none;
 }
 
@@ -2207,12 +2214,29 @@ div.usermessage {
     color: #debdbf;
 }
 
-table.mw-allpages-table-chunk td {
+/* fixes for Special:Allpages */
+
+table.mw-allpages-table-chunk a {
+    display: block;
     padding: 4px 18px;
+}
+
+table.mw-allpages-table-chunk td {
     border-right: 1px solid #dad9d9;
     word-wrap: break-word;
+}
+
+table.mw-allpages-table-chunk td:hover {
+    background-color: #f2f2f2;
 }
 
 table.mw-allpages-table-chunk tr td:last-child {
     border-right: none;
 }
+
+/* fixes for action=diff */
+table.diff {
+    clear: both;
+}
+
+

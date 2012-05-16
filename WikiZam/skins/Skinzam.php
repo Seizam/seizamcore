@@ -222,16 +222,6 @@ class SkinzamTemplate extends BaseTemplate {
         <div id="bodyContent" class="block block_full block_flat " role="main"<?php $this->html('specialpageattributes') ?>> <!--<div id="main" role="main">-->
             <!-- inside -->
             <div class="inside">
-                <?php if ($this->data['subtitle']): ?>
-                    <!-- subtitle -->
-                    <div id="contentSub"<?php $this->html('userlangattributes') ?>><?php $this->html('subtitle') ?></div>
-                    <!-- /subtitle -->
-                <?php endif; ?>
-                <?php if ($this->data['undelete']): ?>
-                    <!-- undelete -->
-                    <div id="contentSub2"><?php $this->html('undelete') ?></div>
-                    <!-- /undelete -->
-                <?php endif; ?>
                 <!-- bodytext -->
                 <?php $this->html('bodytext') ?>
                 <!-- /bodytext -->
@@ -293,16 +283,6 @@ class SkinzamTemplate extends BaseTemplate {
                         </li>
                     </ul>
                 </div>
-                <?php if ($this->data['subtitle']): ?>
-                    <!-- subtitle -->
-                    <div id="contentSub"<?php $this->html('userlangattributes') ?>><?php $this->html('subtitle') ?></div>
-                    <!-- /subtitle -->
-                <?php endif; ?>
-                <?php if ($this->data['undelete']): ?>
-                    <!-- undelete -->
-                    <div id="contentSub2"><?php $this->html('undelete') ?></div>
-                    <!-- /undelete -->
-                <?php endif; ?>
                 <!-- bodytext -->
                 <?php $this->html('bodytext') ?>
                 <!-- /bodytext -->
@@ -412,12 +392,24 @@ class SkinzamTemplate extends BaseTemplate {
      * Render the Contentfooter (content related infos)
      */
     private function renderContentFooter() {
+        if ($this->data['subtitle']):
+            ?>
+            <!-- subtitle -->
+            <div id="contentSub"<?php $this->html('userlangattributes') ?>><?php $this->html('subtitle') ?></div>
+            <!-- /subtitle -->
+        <?php endif; ?>
+        <?php if ($this->data['undelete']): ?>
+            <!-- undelete -->
+            <div id="contentSub2"><?php $this->html('undelete') ?></div>
+            <!-- /undelete -->
+        <?php
+        endif;
         foreach ($this->getFooterLinks() as $category => $links):
             ?>
             <ul id="footer-<?php echo $category ?>">
                 <?php foreach ($links as $link): ?>
                     <li id="footer-<?php echo $category ?>-<?php echo $link ?>"><?php $this->html($link) ?></li>
-                <?php endforeach; ?>
+            <?php endforeach; ?>
             </ul>
             <?php
         endforeach;
@@ -432,7 +424,7 @@ class SkinzamTemplate extends BaseTemplate {
         <div id="footer"  class="noprint">
             <div class="inside">
                 <div class="content">
-                    <?php $this->renderMore(); ?>
+        <?php $this->renderMore(); ?>
                 </div>
             </div>
         </div>
@@ -442,20 +434,20 @@ class SkinzamTemplate extends BaseTemplate {
         <div id="absoluteFooter"  class="noprint">
             <div class="inside">
                 <div class="content">
-                    <?php if (isset($this->data['sz_pretty_username'])): ?>
+                        <?php if (isset($this->data['sz_pretty_username'])): ?>
                         <span id="prettyUserName">
-                            <?php $this->text('sz_pretty_username') ?>
+                        <?php $this->text('sz_pretty_username') ?>
                         </span>
-                    <? endif; ?>
+        <? endif; ?>
                     <!-- logo -->
                     <a id="logo_mini" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>" <?php echo $this->skin->tooltipAndAccesskeyAttribs('p-logo') ?>></a>
                     <!-- /logo -->
                     <!-- search -->
-                    <?php $this->renderNavigation(array('SEARCH')); ?>
+        <?php $this->renderNavigation(array('SEARCH')); ?>
                     <!-- /search -->
                     <!-- quicklinks -->
                     <ul>
-                        <?php $this->renderNavigation(array('SZ-FOOTER')); ?>
+        <?php $this->renderNavigation(array('SZ-FOOTER')); ?>
                         <li class="more">
                             <a href="#">
                                 <span class="show_footer"><?php echo wfMessage('moredotdotdot')->text() ?></span>
@@ -509,7 +501,7 @@ class SkinzamTemplate extends BaseTemplate {
 
         <div class="section">
             <p class="sread"><?php echo wfMessage('sz-selectlang')->text() ?></p>
-            <?php echo wfLanguageSelectorHTML($this->skin->getTitle(), null, 'selectLang'); ?>
+        <?php echo wfLanguageSelectorHTML($this->skin->getTitle(), null, 'selectLang'); ?>
             <p class="sread"><?php echo wfMessage('sz-seizamonsocialnetworks')->text() ?></p>
             <ul class="socials">
                 <li class="tumblr"><a href="http://www.davidcanwin.com">Tumblr</a></li>
@@ -517,19 +509,19 @@ class SkinzamTemplate extends BaseTemplate {
                 <li class="fcbk"><a href="http://www.facebook.com/davidcanwin">Facebook</a></li>
                 <li class="linkedin"><a href="http://www.linkedin.com/company/seizam">LinkedIn</a></li>
             </ul>
-            <?php $footericons = $this->getFooterIcons("icononly");
-            if (count($footericons) > 0): ?>
+                <?php $footericons = $this->getFooterIcons("icononly");
+                if (count($footericons) > 0): ?>
                 <ul id="footer-icons">
-                    <?php foreach ($footericons as $blockName => $footerIcons): ?>
+                        <?php foreach ($footericons as $blockName => $footerIcons): ?>
                         <li id="footer-<?php echo htmlspecialchars($blockName); ?>ico">
                             <?php foreach ($footerIcons as $icon): ?>
                                 <?php echo $this->skin->makeFooterIcon($icon); ?>
 
-                            <?php endforeach; ?>
+                        <?php endforeach; ?>
                         </li>
-                    <?php endforeach; ?>
+                <?php endforeach; ?>
                 </ul>
-            <?php endif; ?>
+        <?php endif; ?>
         </div>
         <?php
     }
@@ -599,21 +591,21 @@ class SkinzamTemplate extends BaseTemplate {
                         <h5<?php $this->html('userlangattributes') ?>><label for="searchInput"><?php $this->msg('search') ?></label></h5>
                         <form action="<?php $this->text('wgScript') ?>" id="searchform">
                             <input type='hidden' name="title" value="<?php $this->text('searchtitle') ?>"/>
-                            <?php if ($wgVectorUseSimpleSearch && $wgUser->getOption('vector-simplesearch')): ?>
+                                <?php if ($wgVectorUseSimpleSearch && $wgUser->getOption('vector-simplesearch')): ?>
                                 <div id="simpleSearch">
                                     <?php if ($this->data['rtl']): ?>
                                         <?php echo $this->makeSearchButton('image', array('id' => 'searchButton', 'src' => $this->skin->getSkinStylePath('images/search-rtl.png'))); ?>
                                     <?php endif; ?>
                                     <?php echo $this->makeSearchInput(array('id' => 'searchInput', 'type' => 'text')); ?>
                                     <?php if (!$this->data['rtl']): ?>
-                                        <?php echo $this->makeSearchButton('image', array('id' => 'searchButton', 'src' => $this->skin->getSkinStylePath('images/search-ltr.png'))); ?>
-                                    <?php endif; ?>
+                                    <?php echo $this->makeSearchButton('image', array('id' => 'searchButton', 'src' => $this->skin->getSkinStylePath('images/search-ltr.png'))); ?>
+                                <?php endif; ?>
                                 </div>
                             <?php else: ?>
                                 <?php echo $this->makeSearchInput(array('id' => 'searchInput')); ?>
                                 <?php echo $this->makeSearchButton('go', array('id' => 'searchGoButton', 'class' => 'searchButton')); ?>
-                                <?php echo $this->makeSearchButton('fulltext', array('id' => 'mw-searchButton', 'class' => 'searchButton')); ?>
-                            <?php endif; ?>
+                        <?php echo $this->makeSearchButton('fulltext', array('id' => 'mw-searchButton', 'class' => 'searchButton')); ?>
+                    <?php endif; ?>
                         </form>
                     </div>
                     <?php
