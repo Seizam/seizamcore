@@ -161,7 +161,7 @@ $wfPolyglotFollowRedirects = true;
 # Language Selector (auto select user language and drop down menu)
 require_once( "$IP/extensions/LanguageSelector/LanguageSelector.php" );
 # Supported languages
-$wgLanguageSelectorLanguages = array('en','fr');
+$wgLanguageSelectorLanguages = null;
 # Method of language selection
 $wgLanguageSelectorDetectLanguage = LANGUAGE_SELECTOR_PREFER_CLIENT_LANG; #Automatic selection regarding browser
 # Where to put the language selection dropdown menu

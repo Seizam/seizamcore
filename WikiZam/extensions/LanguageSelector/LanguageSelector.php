@@ -403,4 +403,3 @@ function wfLanguageSelectorHTML( Title $title, $style = null, $class = null, $se
 
 	return $html;
 }
-

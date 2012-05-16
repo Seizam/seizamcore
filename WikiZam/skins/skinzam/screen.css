@@ -1142,6 +1142,10 @@ html.client-nojs #bodyContent>.inside {
     display: inline;
 }
 
+#contentFooter span {
+    margin: 0 8px;
+}
+
 /* ----------------------------------------
    ==  LOGOS
    ---------------------------------------- */
