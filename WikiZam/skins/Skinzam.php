@@ -91,14 +91,18 @@ class SkinzamTemplate extends BaseTemplate {
                     $link['class'] = rtrim('collapsible ' . $link['class'], ' ');
                 }
 
+                $class = '';
                 $xmlID = isset($link['id']) ? $link['id'] : 'ca-' . $xmlID;
-                $nav[$section][$key]['attributes'] =
-                        ' id="' . Sanitizer::escapeId($xmlID) . '"';
+                $class .= $xmlID;
+                /*$nav[$section][$key]['attributes'] =
+                        ' id="' . Sanitizer::escapeId($xmlID) . '"';*/
                 if ($link['class']) {
-                    $nav[$section][$key]['attributes'] .=
-                            ' class="' . htmlspecialchars($link['class']) . '"';
+                    $class .= ' '.htmlspecialchars($link['class']);
+                    /*$nav[$section][$key]['attributes'] .=
+                            ' class="' . htmlspecialchars($link['class']) . '"';*/
                     unset($nav[$section][$key]['class']);
                 }
+                $nav[$section][$key]['attributes'] = ' class="' . $class . '"';
                 if (isset($link['tooltiponly']) && $link['tooltiponly']) {
                     $nav[$section][$key]['key'] =
                             Linker::tooltip($xmlID);
@@ -245,7 +249,7 @@ class SkinzamTemplate extends BaseTemplate {
         </div>
         <!-- /Horizontal actions -->
         <!-- contentOther -->
-        <div id="contentOther"class="block block_full block_flat noprint">
+        <div id="contentOther" class="block block_full block_flat noprint">
             <!-- inside -->
             <div class="inside">
                 <?php $this->renderContentOther(); ?>
@@ -437,7 +441,7 @@ class SkinzamTemplate extends BaseTemplate {
                             <span id="prettyUserName"><?php $this->text('sz_pretty_username') ?></span>
                         <? endif; ?>
                     <!-- logo -->
-                    <a id="logo_mini" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>" <?php echo $this->skin->tooltipAndAccesskeyAttribs('p-logo') ?>></a>
+                    <a id="logo_mini" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"></a>
                     <!-- /logo -->
                     <!-- search -->
                     <?php $this->renderNavigation(array('SEARCH')); ?>

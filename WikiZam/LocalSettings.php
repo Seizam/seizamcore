@@ -163,7 +163,7 @@ require_once( "$IP/extensions/LanguageSelector/LanguageSelector.php" );
 # Supported languages
 $wgLanguageSelectorLanguages = null;
 # Displayed languages
-$wgLanguageSelectorLanguagesShorthand = array('en','fr');
+$wgLanguageSelectorLanguagesShorthand = null;
 # Method of language selection
 $wgLanguageSelectorDetectLanguage = LANGUAGE_SELECTOR_PREFER_CLIENT_LANG; #Automatic selection regarding browser
 # Where to put the language selection dropdown menu
