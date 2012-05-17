@@ -384,7 +384,7 @@ function wfLanguageSelectorHTML( Title $title, $style = null, $class = null, $se
 	$code = $wgLang->getCode();
 
 	$html = '';
-	$html .= Xml::openElement( 'span', array(
+	$html .= Xml::openElement( 'div', array(
 		'id' => 'languageselector-box-' . $id,
 		'class' => 'languageselector ' . $class,
 		'style' => $style
@@ -414,7 +414,7 @@ function wfLanguageSelectorHTML( Title $title, $style = null, $class = null, $se
 	$html .= Xml::submitButton( wfMsg( 'languageselector-setlang' ),
 		array( 'id' => 'languageselector-commit-' . $id, 'style' => $buttonstyle ) );
 	$html .= Xml::closeElement( 'form' );
-	$html .= Xml::closeElement( 'span' );
+	$html .= Xml::closeElement( 'div' );
 
 	return $html;
 }

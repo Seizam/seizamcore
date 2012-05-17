@@ -311,7 +311,7 @@ class SkinzamTemplate extends BaseTemplate {
         </div>
         <!-- /Horizontal actions -->
         <!-- contentOther -->
-        <div id="contentOther"class="block block_full noprint">
+        <div id="contentOther" class="block block_full noprint">
             <!-- inside -->
             <div class="inside">
                 <?php $this->renderContentOther(); ?>
