@@ -37,32 +37,31 @@ class WikiplacesHooks {
 	 */
 	public static function userCan($title, &$user, $action, &$result) {
 
-		$namespace = $title->getNamespace();
+		$namespace = $title->getNamespace();	
 
 		if (($action == 'read') || !WpPage::isInWikiplaceNamespaces($namespace)) {
 			return true; // skip
 		}
 
 		$db_key = $title->getDBkey();
+		
+		if (WpPage::isPublic($namespace, $db_key)) {
 
-		if ( ($namespace == NS_FILE) || ($namespace == NS_FILE_TALK) ) {
+			return true; // skip
+		} elseif (WpPage::isAdmin($namespace, $db_key)) {
 
-			if (WpPage::isPublicFile($db_key)) {
+			if ($user->isAllowed(WP_ADMIN_RIGHT)) {
 
-				return true; // skip
-			} elseif (WpPage::isAdminFile($db_key)) {
+				$result = true;
+				return true; // allowed, but other extensions can still change this
+			} else {
 
-				if ($user->isAllowed(WP_ADMIN_RIGHT)) {
-
-					$result = true;
-					return true; // allowed, but other extensions can still change this
-				} else {
-
-					$result = false;
-					return false; // forbidden, that's it .
-				}
+				$result = false;
+				return false; // forbidden, that's it .
 			}
 		}
+		
+		// now, we are sure that title isInWikiplace()
 
 		$article_id = $title->getArticleID();
 		$user_id = $user->getId();
@@ -168,10 +167,10 @@ class WikiplacesHooks {
 				$msg = 'new file/file_talk';
 				$db_key = $title->getDBkey();
 
-				if (WpPage::isPublicFile($db_key)) {
+				if (WpPage::isPublic($namespace, $db_key)) {
 					$msg .= ', in public space';
 					$result = true;
-				} elseif (WpPage::isAdminFile($db_key)) {
+				} elseif (WpPage::isAdmin($namespace, $db_key)) {
 
 					$msg .= ', in admin space';
 					if ($user->isAllowed(WP_ADMIN_RIGHT)) {
@@ -324,8 +323,7 @@ class WikiplacesHooks {
 			$db_key = $title->getDBkey();
 			$namespace = $title->getNamespace();
 
-			if ( ( ($title->getNamespace() == NS_FILE) || ($title->getNamespace() == NS_FILE_TALK) )
-					&& ( WpPage::isPublicFile($db_key) || WpPage::isAdminFile($db_key) ) ) {
+			if ( WpPage::isPublic($namespace, $db_key) || WpPage::isAdmin($namespace, $db_key) ) {
 				wfDebugLog('wikiplaces', 'onArticleInsertComplete: public or admin file/file_talk "' . $title->getPrefixedDBkey() . '"');
 				return true; // no wikiplace to attach to, so exit
 			}
@@ -415,10 +413,10 @@ class WikiplacesHooks {
 	 */
 	public static function onTitleMoveComplete(&$old_name_title, &$new_name_title, &$user, $renamed_page_id, $redirect_page_id) {
 
-		$old_in_wp_ns = WpPage::isInWikiplaceNamespaces($old_name_title->getNamespace());
-		$new_in_wp_ns = WpPage::isInWikiplaceNamespaces($new_name_title->getNamespace());
+		$old_in_wp = WpPage::isInWikiplace($old_name_title->getNamespace(), $old_name_title->getDBkey());
+		$new_in_wp = WpPage::isInWikiplace($new_name_title->getNamespace(), $new_name_title->getDBkey());
 
-		if (!$old_in_wp_ns && !$new_in_wp_ns) {
+		if (!$old_in_wp && !$new_in_wp) {
 			return true;
 		}
 
@@ -426,8 +424,8 @@ class WikiplacesHooks {
 				. '[' . $renamed_page_id . ']"' . $old_name_title->getPrefixedDBkey() . '"'
 				. ' renamed to "' . $new_name_title->getPrefixedDBkey() . '", redirect[' . $redirect_page_id . ']');
 
-		if (!$old_in_wp_ns) { // from  something not in wp
-			if (!$new_in_wp_ns) { // from  something not in wp  to  something not in wp
+		if (!$old_in_wp) { // from  something not in wp
+			if (!$new_in_wp) { // from  something not in wp  to  something not in wp
 				return true; // nothing to do
 			} elseif (WpPage::isHomepage($new_name_title)) { // from  something not in wp  to  a homepage
 				$dest_wp = self::doCreateWikiplace($user->getId(), $renamed_page_id);
@@ -457,12 +455,12 @@ class WikiplacesHooks {
 			wfDebugLog('wikiplaces', 'onTitleMoveComplete: ERROR cannot move homepage "' . $old_name_title->getPrefixedDBkey() . '"');
 			throw new MWException('Cannot move wikiplace homepage.');
 
-			if (!$new_in_wp_ns) { // from  a homepage  to  something not in wp
+			if (!$new_in_wp) { // from  a homepage  to  something not in wp
 			} elseif (WpPage::isHomepage($new_name_title)) { // from  a homepage  to  a homepage
 			} else { // from  a homepage  to  a subpage
 			}
 		} else { // from  a subpage
-			if (!$new_in_wp_ns) { // from  a subpage  to  something not in wp
+			if (!$new_in_wp) { // from  a subpage  to  something not in wp
 				// currently, this case is forbidden and should not occur, but actually it can be moved
 				wfDebugLog('wikiplaces', 'onTitleMoveComplete: WARNING moving a subpage out of wikiplace space "' . $new_name_title->getPrefixedDBkey() . '"');
 
@@ -638,9 +636,10 @@ class WikiplacesHooks {
 		$namespace = $title->getNamespace();
 		$db_key = $title->getDBkey();
 
-		if (!WpPage::isInWikiplaceNamespaces($namespace) || !$title->isKnown()
-				|| ( ($namespace == NS_FILE)
-				&& ( WpPage::isPublicFile($db_key) || WpPage::isAdminFile($db_key) ) )) {
+		if ( WpPage::isPublic($namespace, $db_key) 
+				|| !WpPage::isInWikiplaceNamespaces($namespace) 
+				|| !$title->isKnown()
+				||  WpPage::isAdmin($namespace, $db_key) ) {
 			return true; // skip
 		}
 

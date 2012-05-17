@@ -325,7 +325,9 @@ class WpPage {
 	}
 
 	/**
-	 * 
+	 * True means that: <b>isInWikiplace()</b> OR <b>isPublic()</b> OR <b>isAdmin()</b>
+	 * To really know if element should belong to a wikiplace,
+	 * call isInWikiplace($namespace, $db_key) instead.
 	 * @param int $namespace
 	 * @return boolean
 	 */
@@ -338,25 +340,48 @@ class WpPage {
 
 		return in_array($namespace, $wgWikiplaceNamespaces);
 	}
+	
+	
+	public static function isInWikiplace($namespace, $db_key) {
+		if (!is_int($namespace)) {
+			throw new MWException('Invalid namespace argument.');
+		}
 
-	/**
-	 * Parse the file page name. Tell if the file is to be considered has public.
-	 * @param string $db_key
-	 * @return boolean 
-	 */
-	public static function isPublicFile($db_key) {
-		$exploded = WpWikiplace::explodeWikipageKey($db_key, NS_FILE);
-		return ( $exploded[0] == WP_PUBLIC_FILE_PREFIX );
+		global $wgWikiplaceNamespaces;
+
+		if ( ! in_array($namespace, $wgWikiplaceNamespaces)) {
+			return false;
+		}
+		return ( !WpPage::isPublic($namespace, $db_key) && !WpPage::isAdmin($namespace, $db_key) ) ;
 	}
 
+
 	/**
-	 * Parse the file page name. Tell if the file is to be considered has an administrator's file.
+	 *
+	 * @param int $namespace
 	 * @param string $db_key
 	 * @return boolean 
 	 */
-	public static function isAdminFile($db_key) {
-		$exploded = WpWikiplace::explodeWikipageKey($db_key, NS_FILE);
-		return ( $exploded[0] == WP_ADMIN_FILE_PREFIX );
+	public static function isPublic($namespace, $db_key) {
+		if ( !($namespace==NS_FILE) && !($namespace==NS_FILE_TALK) ) {
+			return false;
+		}
+		$exploded = WpWikiplace::explodeWikipageKey($db_key, $namespace);
+		return ( $exploded[0] == WP_PUBLIC_FILE_PREFIX );
+	}
+	
+	/**
+	 *
+	 * @param int $namespace
+	 * @param string $db_key
+	 * @return boolean 
+	 */
+	public static function isAdmin($namespace, $db_key) {
+		if ( !($namespace==NS_FILE) && !($namespace==NS_FILE_TALK) ) {
+			return false;
+		}
+		$exploded = WpWikiplace::explodeWikipageKey($db_key, $namespace);
+		return ( $exploded[0] == WP_PUBLIC_FILE_PREFIX );
 	}
 
 	/**
