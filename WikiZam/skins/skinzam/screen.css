@@ -732,7 +732,7 @@ a, a span {
     background-repeat: repeat;
 }
 
-.ns-4 #content, .ns-5 #content,  .ns--1 #content {
+#content.noframe {
     border: none;
     background: none;
     margin: 0 auto 16px;

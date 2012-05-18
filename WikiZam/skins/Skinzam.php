@@ -94,12 +94,12 @@ class SkinzamTemplate extends BaseTemplate {
                 $class = '';
                 $xmlID = isset($link['id']) ? $link['id'] : 'ca-' . $xmlID;
                 $class .= $xmlID;
-                /*$nav[$section][$key]['attributes'] =
-                        ' id="' . Sanitizer::escapeId($xmlID) . '"';*/
+                /* $nav[$section][$key]['attributes'] =
+                  ' id="' . Sanitizer::escapeId($xmlID) . '"'; */
                 if ($link['class']) {
-                    $class .= ' '.htmlspecialchars($link['class']);
-                    /*$nav[$section][$key]['attributes'] .=
-                            ' class="' . htmlspecialchars($link['class']) . '"';*/
+                    $class .= ' ' . htmlspecialchars($link['class']);
+                    /* $nav[$section][$key]['attributes'] .=
+                      ' class="' . htmlspecialchars($link['class']) . '"'; */
                     unset($nav[$section][$key]['class']);
                 }
                 $nav[$section][$key]['attributes'] = ' class="' . $class . '"';
@@ -138,10 +138,8 @@ class SkinzamTemplate extends BaseTemplate {
             <!-- /newtalk -->
         <?php endif; ?>
         <!-- content -->
-        <div id="content">
-            <a id="top"></a>
-            <?php $this->renderContent() ?>
-            <!-- contentFooter -->
+        <?php $this->renderContent() ?>
+        <!-- contentFooter -->
         </div>
         <!-- /content -->
         <!-- footer -->
@@ -196,88 +194,17 @@ class SkinzamTemplate extends BaseTemplate {
      */
     private function renderContentDefault() {
         ?>
-        <!-- header -->
-        <div id="header" class="block_full noprint">
-            <div id="nav">
-                <?php if ($this->data['wp_navigation']['content']): ?>
-                    <div class="nav_artist">
-                        <?php echo $this->data['wp_navigation']['content']; ?>
-                    </div>
-                <?php endif; ?>
-                <ul class="nav_actions">
-                    <li>
-                        <a href="#"><?php echo wfMessage('actions')->text() ?></a>
-                        <ul>
-                            <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <!-- /header -->
-        <!-- bodyCcontent -->
-        <!-- firstHeading -->
-        <?php if ($this->data['wp_headertitle']['content']): ?>
-            <h1 class="firstHeading"><?php echo $this->data['wp_headertitle']['content']; ?></h1>
-        <?php else: ?>
-            <h1 class="firstHeading notWikiPlace"><?php $this->html('title') ?></h1>
-        <?php endif; ?>
-        <!-- /firstHeading -->
-        <div id="bodyContent" class="block block_full block_flat " role="main"<?php $this->html('specialpageattributes') ?>> <!--<div id="main" role="main">-->
-            <!-- inside -->
-            <div class="inside">
-                <!-- bodytext -->
-                <?php $this->html('bodytext') ?>
-                <!-- /bodytext -->
-            </div>
-            <!-- /inside -->
-        </div>
-        <!-- /bodyContent -->
-        <!-- contentFooter -->
-        <div id="contentFooter" class="block block_full block_flat">
-            <!-- inside -->
-            <div class="inside">
-                <?php $this->renderContentFooter(); ?>
-            </div>
-        </div>
-        <!-- /contentFooter -->
-        <!-- Horizontal actions -->
-        <div id="nav_horizontal" class="block block_full block_flat noprint">
-            <ul class="nav_actions">
-                <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
-            </ul>
-        </div>
-        <!-- /Horizontal actions -->
-        <!-- contentOther -->
-        <div id="contentOther" class="block block_full block_flat noprint">
-            <!-- inside -->
-            <div class="inside">
-                <?php $this->renderContentOther(); ?>
-            </div>
-        </div>
-        <!-- contentOther -->
-        <?php
-    }
-
-    /**
-     * Render the NS-4 (Project:) #content content
-     */
-    private function renderContentNS4() {
-        ?>
-        <!-- header -->
-        <div id="header" class="block block_full homepage noprint">
-            <div class="hgroup inside">
-                <h1><a id="logo_project" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"></a></h1>
-                <h2><?php echo wfMessage('sz-tagline')->text() ?></h2>
-            </div>
-        </div>
-        <!-- /header -->
-        <!-- bodyCcontent -->
-        <div id="bodyContent" class="block block_full" role="main"<?php $this->html('specialpageattributes') ?>> <!--<div id="main" role="main">-->
-            <h3 class="title"><?php $this->html('title') ?></h3>
-            <!-- inside -->
-            <div class="inside">
-                <div id="nav" class="noprint">
+        <!-- content -->
+        <div id="content">
+            <a id="top"></a>
+            <!-- header -->
+            <div id="header" class="block_full noprint">
+                <div id="nav">
+                    <?php if ($this->data['wp_navigation']['content']): ?>
+                        <div class="nav_artist">
+                            <?php echo $this->data['wp_navigation']['content']; ?>
+                        </div>
+                    <?php endif; ?>
                     <ul class="nav_actions">
                         <li>
                             <a href="#"><?php echo wfMessage('actions')->text() ?></a>
@@ -287,37 +214,118 @@ class SkinzamTemplate extends BaseTemplate {
                         </li>
                     </ul>
                 </div>
-                <!-- bodytext -->
-                <?php $this->html('bodytext') ?>
-                <!-- /bodytext -->
             </div>
-            <!-- /inside -->
-        </div>
-        <!-- /bodyContent -->
-        <!-- contentFooter -->
-        <div id="contentFooter" class="block block_full block_flat ">
-            <!-- inside -->
-            <div class="inside">
-                <?php $this->renderContentFooter(); ?>
+            <!-- /header -->
+            <!-- bodyCcontent -->
+            <!-- firstHeading -->
+            <?php if ($this->data['wp_headertitle']['content']): ?>
+                <h1 class="firstHeading"><?php echo $this->data['wp_headertitle']['content']; ?></h1>
+            <?php else: ?>
+                <h1 class="firstHeading notWikiPlace"><?php $this->html('title') ?></h1>
+            <?php endif; ?>
+            <!-- /firstHeading -->
+            <div id="bodyContent" class="block block_full block_flat " role="main"<?php $this->html('specialpageattributes') ?>> <!--<div id="main" role="main">-->
+                <!-- inside -->
+                <div class="inside">
+                    <!-- bodytext -->
+                    <?php $this->html('bodytext') ?>
+                    <!-- /bodytext -->
+                </div>
+                <!-- /inside -->
             </div>
-            <!-- /inside -->
-        </div>
-        <!-- /contentFooter -->
-        <!-- Horizontal actions -->
-        <div id="nav_horizontal" class="block block_full block_flat noprint">
-            <ul class="nav_actions">
-                <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
-            </ul>
-        </div>
-        <!-- /Horizontal actions -->
-        <!-- contentOther -->
-        <div id="contentOther" class="block block_full noprint">
-            <!-- inside -->
-            <div class="inside">
-                <?php $this->renderContentOther(); ?>
+            <!-- /bodyContent -->
+            <!-- contentFooter -->
+            <div id="contentFooter" class="block block_full block_flat">
+                <!-- inside -->
+                <div class="inside">
+                    <?php $this->renderContentFooter(); ?>
+                </div>
             </div>
+            <!-- /contentFooter -->
+            <!-- Horizontal actions -->
+            <div id="nav_horizontal" class="block block_full block_flat noprint">
+                <ul class="nav_actions">
+                    <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
+                </ul>
+            </div>
+            <!-- /Horizontal actions -->
+            <!-- contentOther -->
+            <div id="contentOther" class="block block_full block_flat noprint">
+                <!-- inside -->
+                <div class="inside">
+                    <?php $this->renderContentOther(); ?>
+                </div>
+            </div>
+            <!-- contentOther -->
         </div>
-        <!-- contentOther -->
+        <!-- /content -->
+        <?php
+    }
+
+    /**
+     * Render the NS-4 (Project:) #content content
+     */
+    private function renderContentNS4() {
+        ?>
+        <!-- content -->
+        <div id="content" class="noframe">
+            <a id="top"></a>
+            <!-- header -->
+            <div id="header" class="block block_full homepage noprint">
+                <div class="hgroup inside">
+                    <h1><a id="logo_project" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"></a></h1>
+                    <h2><?php echo wfMessage('sz-tagline')->text() ?></h2>
+                </div>
+            </div>
+            <!-- /header -->
+            <!-- bodyCcontent -->
+            <div id="bodyContent" class="block block_full" role="main"<?php $this->html('specialpageattributes') ?>> <!--<div id="main" role="main">-->
+                <h3 class="title"><?php $this->html('title') ?></h3>
+                <!-- inside -->
+                <div class="inside">
+                    <div id="nav" class="noprint">
+                        <ul class="nav_actions">
+                            <li>
+                                <a href="#"><?php echo wfMessage('actions')->text() ?></a>
+                                <ul>
+                                    <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- bodytext -->
+                    <?php $this->html('bodytext') ?>
+                    <!-- /bodytext -->
+                </div>
+                <!-- /inside -->
+            </div>
+            <!-- /bodyContent -->
+            <!-- contentFooter -->
+            <div id="contentFooter" class="block block_full block_flat ">
+                <!-- inside -->
+                <div class="inside">
+                    <?php $this->renderContentFooter(); ?>
+                </div>
+                <!-- /inside -->
+            </div>
+            <!-- /contentFooter -->
+            <!-- Horizontal actions -->
+            <div id="nav_horizontal" class="block block_full block_flat noprint">
+                <ul class="nav_actions">
+                    <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
+                </ul>
+            </div>
+            <!-- /Horizontal actions -->
+            <!-- contentOther -->
+            <div id="contentOther" class="block block_full noprint">
+                <!-- inside -->
+                <div class="inside">
+                    <?php $this->renderContentOther(); ?>
+                </div>
+            </div>
+            <!-- contentOther -->
+        </div>
+        <!-- /content -->
         <?php
     }
 
@@ -326,37 +334,41 @@ class SkinzamTemplate extends BaseTemplate {
      */
     private function renderContentNSSpecial() {
         ?>
-        <!-- header -->
+        <!-- content -->
+        <div id="content" class="noframe">
+            <a id="top"></a>
+            <!-- header -->
+            <div id="header" class="block block_full special">
+                <div class="inside">
+                    <h1><a id="logo_special" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"></a></h1>
 
-        <div id="header" class="block block_full special">
-            <div class="inside">
-                <h1><a id="logo_special" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"></a></h1>
-
-                <div id="nav">
-                    <ul>
-                        <?php $this->renderNavigation(array('PERSONAL')); ?>
-                    </ul>
+                    <div id="nav">
+                        <ul>
+                            <?php $this->renderNavigation(array('PERSONAL')); ?>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
-        <!-- /header -->
-        <!-- bodyCcontent -->
-        <div id="bodyContent"  class="block block_full" role="main"<?php $this->html('specialpageattributes') ?>> <!--<div id="main" role="main">-->
-            <h3 class="title"><?php $this->html('title') ?></h3>
-            <!-- inside -->
-            <div class="inside">
-                <?php if ($this->data['subtitle']): ?>
-                    <!-- subtitle -->
-                    <div id="contentSub"<?php $this->html('userlangattributes') ?>><?php $this->html('subtitle') ?></div>
-                    <!-- /subtitle -->
-                <?php endif; ?>
-                <!-- bodytext -->
-                <?php $this->html('bodytext') ?>
-                <!-- /bodytext -->
+            <!-- /header -->
+            <!-- bodyCcontent -->
+            <div id="bodyContent"  class="block block_full" role="main"<?php $this->html('specialpageattributes') ?>> <!--<div id="main" role="main">-->
+                <h3 class="title"><?php $this->html('title') ?></h3>
+                <!-- inside -->
+                <div class="inside">
+                    <?php if ($this->data['subtitle']): ?>
+                        <!-- subtitle -->
+                        <div id="contentSub"<?php $this->html('userlangattributes') ?>><?php $this->html('subtitle') ?></div>
+                        <!-- /subtitle -->
+                    <?php endif; ?>
+                    <!-- bodytext -->
+                    <?php $this->html('bodytext') ?>
+                    <!-- /bodytext -->
+                </div>
+                <!-- /inside -->
             </div>
-            <!-- /inside -->
+            <!-- /bodyContent -->
         </div>
-        <!-- /bodyContent -->
+        <!-- /content -->
         <?php
     }
 
@@ -364,7 +376,8 @@ class SkinzamTemplate extends BaseTemplate {
      * Render the ContentOther (Languages, Categories, Toolbox...)
      */
     private function renderContentOther() {
-        if ($this->data['language_urls']):?>
+        if ($this->data['language_urls']):
+            ?>
             <!-- language_urls -->
             <div class="portal" id="p-lang"<?php echo Linker::tooltip('p-lang') ?>>
                 <h5<?php $this->html('userlangattributes') ?>><?php echo wfMessage('otherlanguages')->text() . wfMsgExt('colon-separator', 'escapenoentities'); ?></h5>
@@ -405,14 +418,14 @@ class SkinzamTemplate extends BaseTemplate {
             <!-- undelete -->
             <div id="contentSub2"><?php $this->html('undelete') ?></div>
             <!-- /undelete -->
-        <?php
+            <?php
         endif;
         foreach ($this->getFooterLinks() as $category => $links):
             ?>
             <ul id="footer-<?php echo $category ?>">
                 <?php foreach ($links as $link): ?>
                     <li id="footer-<?php echo $category ?>-<?php echo $link ?>"><?php $this->html($link) ?></li>
-            <?php endforeach; ?>
+                <?php endforeach; ?>
             </ul>
             <?php
         endforeach;
@@ -427,7 +440,7 @@ class SkinzamTemplate extends BaseTemplate {
         <div id="footer"  class="noprint">
             <div class="inside">
                 <div class="content">
-        <?php $this->renderMore(); ?>
+                    <?php $this->renderMore(); ?>
                 </div>
             </div>
         </div>
@@ -437,9 +450,9 @@ class SkinzamTemplate extends BaseTemplate {
         <div id="absoluteFooter"  class="noprint">
             <div class="inside">
                 <div class="content">
-                        <?php if (isset($this->data['sz_pretty_username'])): ?>
-                            <span id="prettyUserName"><?php $this->text('sz_pretty_username') ?></span>
-                        <? endif; ?>
+                    <?php if (isset($this->data['sz_pretty_username'])): ?>
+                        <span id="prettyUserName"><?php $this->text('sz_pretty_username') ?></span>
+                    <? endif; ?>
                     <!-- logo -->
                     <a id="logo_mini" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"></a>
                     <!-- /logo -->
@@ -502,7 +515,7 @@ class SkinzamTemplate extends BaseTemplate {
 
         <div class="section">
             <p class="sread"><?php echo wfMessage('sz-selectlang')->text() ?></p>
-        <?php echo wfLanguageSelectorHTML($this->skin->getTitle(), null, 'selectLang'); ?>
+            <?php echo wfLanguageSelectorHTML($this->skin->getTitle(), null, 'selectLang'); ?>
             <p class="sread"><?php echo wfMessage('sz-seizamonsocialnetworks')->text() ?></p>
             <ul class="socials">
                 <li class="tumblr"><a href="http://www.davidcanwin.com">Tumblr</a></li>
@@ -510,19 +523,19 @@ class SkinzamTemplate extends BaseTemplate {
                 <li class="fcbk"><a href="http://www.facebook.com/davidcanwin">Facebook</a></li>
                 <li class="linkedin"><a href="http://www.linkedin.com/company/seizam">LinkedIn</a></li>
             </ul>
-                <?php $footericons = $this->getFooterIcons("icononly");
-                if (count($footericons) > 0): ?>
+            <?php $footericons = $this->getFooterIcons("icononly");
+            if (count($footericons) > 0): ?>
                 <ul id="footer-icons">
-                        <?php foreach ($footericons as $blockName => $footerIcons): ?>
+                    <?php foreach ($footericons as $blockName => $footerIcons): ?>
                         <li id="footer-<?php echo htmlspecialchars($blockName); ?>ico">
                             <?php foreach ($footerIcons as $icon): ?>
                                 <?php echo $this->skin->makeFooterIcon($icon); ?>
 
-                        <?php endforeach; ?>
+                            <?php endforeach; ?>
                         </li>
-                <?php endforeach; ?>
+                    <?php endforeach; ?>
                 </ul>
-        <?php endif; ?>
+            <?php endif; ?>
         </div>
         <?php
     }
@@ -592,21 +605,21 @@ class SkinzamTemplate extends BaseTemplate {
                         <h5<?php $this->html('userlangattributes') ?>><label for="searchInput"><?php $this->msg('search') ?></label></h5>
                         <form action="<?php $this->text('wgScript') ?>" id="searchform">
                             <input type='hidden' name="title" value="<?php $this->text('searchtitle') ?>"/>
-                                <?php if ($wgVectorUseSimpleSearch && $wgUser->getOption('vector-simplesearch')): ?>
+                            <?php if ($wgVectorUseSimpleSearch && $wgUser->getOption('vector-simplesearch')): ?>
                                 <div id="simpleSearch">
                                     <?php if ($this->data['rtl']): ?>
                                         <?php echo $this->makeSearchButton('image', array('id' => 'searchButton', 'src' => $this->skin->getSkinStylePath('images/search-rtl.png'))); ?>
                                     <?php endif; ?>
                                     <?php echo $this->makeSearchInput(array('id' => 'searchInput', 'type' => 'text')); ?>
                                     <?php if (!$this->data['rtl']): ?>
-                                    <?php echo $this->makeSearchButton('image', array('id' => 'searchButton', 'src' => $this->skin->getSkinStylePath('images/search-ltr.png'))); ?>
-                                <?php endif; ?>
+                                        <?php echo $this->makeSearchButton('image', array('id' => 'searchButton', 'src' => $this->skin->getSkinStylePath('images/search-ltr.png'))); ?>
+                                    <?php endif; ?>
                                 </div>
                             <?php else: ?>
                                 <?php echo $this->makeSearchInput(array('id' => 'searchInput')); ?>
                                 <?php echo $this->makeSearchButton('go', array('id' => 'searchGoButton', 'class' => 'searchButton')); ?>
-                        <?php echo $this->makeSearchButton('fulltext', array('id' => 'mw-searchButton', 'class' => 'searchButton')); ?>
-                    <?php endif; ?>
+                                <?php echo $this->makeSearchButton('fulltext', array('id' => 'mw-searchButton', 'class' => 'searchButton')); ?>
+                            <?php endif; ?>
                         </form>
                     </div>
                     <?php
