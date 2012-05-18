@@ -34,6 +34,7 @@ $wgAutoloadClasses['WpPagesTablePager'] = $_dir . 'model/WpPagesTablePager.php';
 $wgAutoloadClasses['WpPlan'] = $_dir . 'model/WpPlan.php';
 $wgAutoloadClasses['WpSubscription'] = $_dir . 'model/WpSubscription.php';
 $wgAutoloadClasses['WpSubscriptionsTablePager'] = $_dir . 'model/WpSubscriptionsTablePager.php';
+$wgAutoloadClasses['SpecialUploadPlace'] = $_dir . 'SpecialUploadPlace.php';
 
 # i18n
 $wgExtensionMessagesFiles['Wikiplaces'] = $_dir . 'Wikiplaces.i18n.php';
@@ -43,13 +44,16 @@ $wgExtensionAliasesFiles['Wikiplaces'] = $_dir . 'Wikiplaces.alias.php';
 
 # Add SpecialPages
 $wgSpecialPages['Wikiplaces'] = 'SpecialWikiplaces';
-$wgSpecialPageGroups['Wikiplaces'] = 'other';
+$wgSpecialPageGroups['Wikiplaces'] = 'wikiplace';
 $wgSpecialPages['Subscriptions'] = 'SpecialSubscriptions';
-$wgSpecialPageGroups['Subscriptions'] = 'other';
+$wgSpecialPageGroups['Subscriptions'] = 'wikiplace';
 $wgSpecialPages['WikiplacesAdmin'] = 'SpecialWikiplacesAdmin';
-$wgSpecialPageGroups['WikiplacesAdmin'] = 'other';
+$wgSpecialPageGroups['WikiplacesAdmin'] = 'wikiplace';
 $wgSpecialPages['Offers'] = 'SpecialOffers';
-$wgSpecialPageGroups['Offers'] = 'other';
+$wgSpecialPageGroups['Offers'] = 'wikiplace';
+$wgSpecialPages['UploadPlace'] = 'SpecialUploadPlace';
+$wgSpecialPageGroups['UploadPlace'] = 'wikiplace';
+
 
 # Attach our own functions to hooks
 $wgHooks['LoadExtensionSchemaUpdates'][] = 'WikiplacesHooks::onLoadExtensionSchemaUpdates'; // Schema updates for update.php

@@ -7,10 +7,13 @@ $messages = array();
  */
 $messages['en'] = array(
 	
+	'specialpages-group-wikiplace' => 'Wikiplaces',
+	
 	'wikiplacesadmin' => 'Wikiplaces administration',
 	'subscriptions' => 'My Subscriptions',
 	'wikiplaces' => 'My Wikiplaces',
 	'offers' => 'Offers',
+	'uploadplace' => 'Wikiplace file upload',
 	
 	'wp-sub-activation-email-subj' => 'Your subscription is now active',
 	'wp-sub-activation-email-body' => '$1,

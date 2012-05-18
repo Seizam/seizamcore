@@ -197,7 +197,7 @@ $wgImageMagickConvertCommand = "/usr/bin/convert";
 
 require_once( "$IP/extensions/UploadWizard/UploadWizard.php" );
 				// default upload url will point to uploadwizard
-$wgUploadNavigationUrl = '/Special:UploadWizard';
+// $wgUploadNavigationUrl = '/Special:UploadWizard';
 $wgUploadWizardConfig = array(
     'tutorialHelpdeskCoords' => false,	//false = no helpdesk button
     'skipTutorial' => true,		//true = no tutorial

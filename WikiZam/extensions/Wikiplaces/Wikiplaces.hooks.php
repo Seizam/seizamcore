@@ -39,63 +39,66 @@ class WikiplacesHooks {
 
 		$namespace = $title->getNamespace();	
 
+		// check that we are concerned
 		if (($action == 'read') || !WpPage::isInWikiplaceNamespaces($namespace)) {
 			return true; // skip
 		}
 
 		$db_key = $title->getDBkey();
 		
+		// dispatch for public and admin items
 		if (WpPage::isPublic($namespace, $db_key)) {
-
-			return true; // skip
+			return self::publicUserCan($title, $user, $action, $result);
 		} elseif (WpPage::isAdmin($namespace, $db_key)) {
-
-			if ($user->isAllowed(WP_ADMIN_RIGHT)) {
-
-				$result = true;
-				return true; // allowed, but other extensions can still change this
-			} else {
-
-				$result = false;
-				return false; // forbidden, that's it .
-			}
+			return self::adminUserCan($title, $user, $action, $result);
 		}
 		
 		// now, we are sure that title isInWikiplace()
-
 		$article_id = $title->getArticleID();
 		$user_id = $user->getId();
-
-		$do;
-
-		if (!$title->isKnown() && ( ($action == 'create') || ($action == 'edit') || ($action == 'upload') || ($action == 'createpage') || ($action == 'move-target') )) {
-			$do = 'create';
-		} elseif (($action == 'move') || ($action == 'delete')) {
-			$do = $action;
-		} else {
-			wfDebugLog('wikiplaces', 'userCan: ' . $action . ' SKIP, isKnwon()=' . ($title->isKnown() ? 'true' : 'false'));
+		$do = null;
+		
+		// evaluate which action we are doing 
+		switch ($action) {
+			case 'create':
+			case 'edit':
+			case 'upload':
+			case 'createpage':
+			case 'move-target':
+				if (!$title->isKnown()) {
+					$do = 'create';
+				}
+				break;
+			case 'move':
+			case 'delete':
+				$do = $action;
+				break;
+		}
+		
+		if ($do === null) {
 			return true; // action not handled here, so continue hook processing to let MW find an answer
 		}
 
+		// try to read the answer from cache
 		if (isset(self::$cacheUserCan[$article_id][$user_id][$do])) {
 			$result = self::$cacheUserCan[$article_id][$user_id][$do];
 			return false;
 		}
 
-
+		// ok, so let's judge if the user can do the action
 		if (!$user->isLoggedIn()) {
 			wfDebugLog('wikiplaces', 'userCan: ' . $do . ' DENIED, user is not logged in');
 			$result = false;
 		} else {
 			switch ($do) {
 				case 'create':
-					$result = self::userCanCreate($title, $user);
+					$result = self::wikiplaceUserCanCreate($title, $user);
 					break;
 				case 'move':
-					$result = self::userCanMove($title, $user);
+					$result = self::wikiplaceUserCanMove($title, $user);
 					break;
 				case 'delete':
-					$result = self::userCanDelete($title, $user);
+					$result = self::wikiplaceUserCanDelete($title, $user);
 					break;
 			}
 			wfDebugLog('wikiplaces', 'userCan: ' . $do . ' ' . ($result ? 'ALLOWED' : 'DENIED') .
@@ -104,11 +107,48 @@ class WikiplacesHooks {
 					' action=' . $action);
 		}
 
+		// store in cache
 		self::$cacheUserCan[$article_id][$user_id][$do] = $result;
 
 		return false; // stop hook processing, we have the answer
 	}
 
+	/**
+	 * @param Title $title the article (Article object) being saved
+	 * @param User $user the user (User object) saving the article
+	 * @param string $action the action
+	 * @param boolean $result 
+	 */
+	public static function publicUserCan($title, &$user, $action, &$result) {
+		
+		if ( ( $action=='move' || $action=='move-target' || $action=='delete' )
+			&& !($user->isAllowed(WP_ADMIN_RIGHT)) ) {
+			wfDebugLog('wikiplaces', 'publicUserCan: '.$action.' DENIED to "'.$title->getPrefixedText().'"'); 
+			$result = false;
+			return false; // forbidden, that's it .
+		}
+		return true; // skip
+	}
+	
+	/**
+	 * @param Title $title the article (Article object) being saved
+	 * @param User $user the user (User object) saving the article
+	 * @param string $action the action
+	 * @param boolean $result 
+	 */
+	public static function adminUserCan($title, &$user, $action, &$result) {
+		
+		if ( $action=='read' || $user->isAllowed(WP_ADMIN_RIGHT) ) {
+
+			$result = true;
+			return true; // allowed, but other extensions can still change this
+		}
+
+		wfDebugLog('wikiplaces', 'adminUserCan: '.$action.' DENIED for '.$user->getName().' to "'.$title->getPrefixedText().'"'); 
+		$result = false;
+		return false; // forbidden, that's it .
+	}
+	
 	/**
 	 * Can the user create this new Title?
 	 * <ul>
@@ -127,7 +167,7 @@ class WikiplacesHooks {
 	 * @param User $user
 	 * @return boolean true=can, false=cannot 
 	 */
-	private static function userCanCreate(&$title, &$user) {
+	private static function wikiplaceUserCanCreate(&$title, &$user) {
 
 		// in userCan() calling this function, we already checked that user is loggedin
 
@@ -255,7 +295,7 @@ class WikiplacesHooks {
 	 * @param User $user
 	 * @return boolean 
 	 */
-	private static function userCanMove(&$title, &$user) {
+	private static function wikiplaceUserCanMove(&$title, &$user) {
 
 		// in userCan() calling this function, we already checked that user is loggedin
 		return (!WpPage::isHomepage($title)
@@ -274,7 +314,7 @@ class WikiplacesHooks {
 	 * @param User $user
 	 * @return boolean 
 	 */
-	private static function userCanDelete(&$title, &$user) {
+	private static function wikiplaceUserCanDelete(&$title, &$user) {
 
 		// in userCan() calling this function, we already checked that user is loggedin
 		return (!WpPage::isHomepage($title)
@@ -298,8 +338,10 @@ class WikiplacesHooks {
 	public static function onArticleInsertComplete($wikipage, $user, $text, $summary, $isMinor, $isWatch, $section, $flags, $revision) {
 
 		$title = $wikipage->getTitle();
+		$namespace = $title->getNamespace();
+		$db_key = $title->getDBkey();
 
-		if (!WpPage::isInWikiplaceNamespaces($title->getNamespace())) {
+		if (!WpPage::isInWikiplace($namespace, $db_key)) {
 			return true; // skip
 		}
 
@@ -318,17 +360,7 @@ class WikiplacesHooks {
 			}
 		} else {
 
-			// this is a subpage 
-
-			$db_key = $title->getDBkey();
-			$namespace = $title->getNamespace();
-
-			if ( WpPage::isPublic($namespace, $db_key) || WpPage::isAdmin($namespace, $db_key) ) {
-				wfDebugLog('wikiplaces', 'onArticleInsertComplete: public or admin file/file_talk "' . $title->getPrefixedDBkey() . '"');
-				return true; // no wikiplace to attach to, so exit
-			}
-
-			// searching existing container wikiplace
+			// this is a subpage, searching existing container wikiplace
 			$wikiplace = WpWikiplace::getBySubpage($db_key, $namespace);
 			if ($wikiplace === null) {
 				wfDebugLog('wikiplaces', 'onArticleInsertComplete: cannot identify container wikiplace "' . $title->getPrefixedDBkey() . '"');
@@ -425,9 +457,7 @@ class WikiplacesHooks {
 				. ' renamed to "' . $new_name_title->getPrefixedDBkey() . '", redirect[' . $redirect_page_id . ']');
 
 		if (!$old_in_wp) { // from  something not in wp
-			if (!$new_in_wp) { // from  something not in wp  to  something not in wp
-				return true; // nothing to do
-			} elseif (WpPage::isHomepage($new_name_title)) { // from  something not in wp  to  a homepage
+			if (WpPage::isHomepage($new_name_title)) { // from  something not in wp  to  a homepage
 				$dest_wp = self::doCreateWikiplace($user->getId(), $renamed_page_id);
 				if ($dest_wp == null) {
 					wfDebugLog('wikiplaces', 'onTitleMoveComplete: cannot create wikiplace "' . $new_name_title->getPrefixedDBkey() . '"');
@@ -508,6 +538,7 @@ class WikiplacesHooks {
 					wfDebugLog('wikiplaces', 'onTitleMoveComplete: cannot find subpage to move [' . $renamed_page_id . ']');
 					throw new MWException('Cannot find subpage to move.');
 				}
+				$old_wp_id;
 				if ($redirect_page_id != 0) {
 					$old_wp_id = $renamed_wp_page->get('wppa_wpw_id');
 					if (WpPage::create($redirect_page_id, $old_wp_id) == null) {
@@ -516,7 +547,9 @@ class WikiplacesHooks {
 					}
 				}
 				$dest_wp_id = $dest_wp->get('wpw_id');
-				$renamed_wp_page->setWikiplaceId($dest_wp_id);
+				if ($old_wp_id != $dest_wp_id) {
+					$renamed_wp_page->setWikiplaceId($dest_wp_id);
+				}
 			}
 		}
 

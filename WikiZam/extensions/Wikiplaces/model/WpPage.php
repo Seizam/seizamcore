@@ -342,6 +342,12 @@ class WpPage {
 	}
 	
 	
+	/**
+	 *
+	 * @param int $namespace
+	 * @param string $db_key
+	 * @return boolean
+	 */
 	public static function isInWikiplace($namespace, $db_key) {
 		if (!is_int($namespace)) {
 			throw new MWException('Invalid namespace argument.');
@@ -381,7 +387,7 @@ class WpPage {
 			return false;
 		}
 		$exploded = WpWikiplace::explodeWikipageKey($db_key, $namespace);
-		return ( $exploded[0] == WP_PUBLIC_FILE_PREFIX );
+		return ( $exploded[0] == WP_ADMIN_FILE_PREFIX );
 	}
 
 	/**
