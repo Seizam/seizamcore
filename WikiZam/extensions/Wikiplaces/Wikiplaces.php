@@ -34,7 +34,7 @@ $wgAutoloadClasses['WpPagesTablePager'] = $_dir . 'model/WpPagesTablePager.php';
 $wgAutoloadClasses['WpPlan'] = $_dir . 'model/WpPlan.php';
 $wgAutoloadClasses['WpSubscription'] = $_dir . 'model/WpSubscription.php';
 $wgAutoloadClasses['WpSubscriptionsTablePager'] = $_dir . 'model/WpSubscriptionsTablePager.php';
-$wgAutoloadClasses['SpecialUploadPlace'] = $_dir . 'SpecialUploadPlace.php';
+$wgAutoloadClasses['WikiplaceUpload'] = $_dir . 'WikiplaceUpload.php';
 
 # i18n
 $wgExtensionMessagesFiles['Wikiplaces'] = $_dir . 'Wikiplaces.i18n.php';
@@ -51,8 +51,6 @@ $wgSpecialPages['WikiplacesAdmin'] = 'SpecialWikiplacesAdmin';
 $wgSpecialPageGroups['WikiplacesAdmin'] = 'wikiplace';
 $wgSpecialPages['Offers'] = 'SpecialOffers';
 $wgSpecialPageGroups['Offers'] = 'wikiplace';
-$wgSpecialPages['UploadPlace'] = 'SpecialUploadPlace';
-$wgSpecialPageGroups['UploadPlace'] = 'wikiplace';
 
 
 # Attach our own functions to hooks
@@ -66,6 +64,16 @@ $wgHooks['userCan'][] = 'WikiplacesHooks::userCan';
 $wgHooks['TransactionUpdated'][] = 'WikiplacesHooks::onTransactionUpdated';
 $wgHooks['IsOwner'][] = 'WikiplacesHooks::isOwner';
 $wgHooks['SkinTemplateNavigation'][] = 'WikiplacesHooks::SkinTemplateNavigation'; // Remove delete from action menu if necessary
+
+$wgHooks['UploadForm:initial'][] = 'WikiplaceUpload::onUploadForminitial';
+$wgHooks['UploadFormSourceDescriptors'][] = 'WikiplaceUpload::onUploadFormSourceDescriptors';
+$wgHooks['UploadFormInitDescriptor'][] = 'WikiplaceUpload::onUploadFormInitDescriptor';
+$wgHooks['UploadCreateFromRequest'][] = 'WikiplaceUpload::onUploadCreateFromRequest';
+$wgHooks['UploadForm:BeforeProcessing'][] = 'WikiplaceUpload::onUploadFormBeforeProcessing';
+$wgHooks['UploadVerifyFile'][] = 'WikiplaceUpload::onUploadVerifyFile';
+$wgHooks['UploadVerification'][] = 'WikiplaceUpload::onUploadVerification';
+$wgHooks['UploadComplete'][] = 'WikiplaceUpload::onUploadComplete';
+$wgHooks['SpecialUploadComplete'][] = 'WikiplaceUpload::onSpecialUploadComplete';
 
 // who can admin wikiplaces ? (accessing wp admin page, bypass move/delete limitations)
 define('WP_ADMIN_RIGHT', 'wp-admin');
