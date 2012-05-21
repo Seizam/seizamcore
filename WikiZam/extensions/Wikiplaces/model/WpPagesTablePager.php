@@ -148,7 +148,7 @@ class WpPagesTablePager extends SkinzamTablePager {
                 . Linker::linkKnown($title, wfMessage('wp-history')->text(), array(), array('action' => 'history'))
                 . '</li>';*/
         $html .= '<li>'
-                . Linker::linkKnown($title, wfMessage('wp-restrict')->text(), array(), array('action' => RESTRICTIONS_ACTION))
+                . Linker::linkKnown($title, wfMessage('wp-restrict')->text(), array(), array('action' => PROTECTOWN_ACTION))
                 . '</li>';
         $html .= '</ul>';
         return $html;

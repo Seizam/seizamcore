@@ -385,7 +385,7 @@ class WikiplacesHooks {
 		}
 
 		$ok = false;
-		wfRunHooks('SetRestrictions', array($wikipage, $restrictions, &$ok));
+		wfRunHooks('POSetProtection', array($wikipage, $restrictions, &$ok));
 
 		if (!$ok) {
 			wfDebugLog('wikiplaces', 'onArticleInsertComplete: OK, but error while setting default restrictions to new page, article=[' . $wikipage->getId() . ']"' . $title->getPrefixedDBkey() . '"');

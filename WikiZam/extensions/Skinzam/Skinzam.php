@@ -98,11 +98,11 @@ $wgResourceModules += array(
 
 
 # Special Skinzam (UI test class)
-/*$wgAutoloadClasses['SpecialSkinzam'] = $dir . 'SpecialSkinzam.php';
+$wgAutoloadClasses['SpecialSkinzam'] = $dir . 'SpecialSkinzam.php';
 
 $wgSpecialPages['Skinzam'] = 'SpecialSkinzam';
 
-$wgSpecialPageGroups['Skinzam'] = 'other';*/
+$wgSpecialPageGroups['Skinzam'] = 'other';
 
 # Some global settings
 # Tune Special:Preferences

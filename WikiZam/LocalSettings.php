@@ -210,12 +210,12 @@ $wgUploadWizardConfig = array(
 # Seizam's Virtual Electronic Payment Terminal
 require_once( "$IP/extensions/ElectronicPayment/ElectronicPayment.php" );
 
-# Restrictions
-require_once( "$IP/extensions/Restrictions/Restrictions.php" );
+# ProtectOwn
+require_once( "$IP/extensions/ProtectOwn/ProtectOwn.php" );
 
 // available restriction level/group via SetPermissions form
 // ($wgRestrictionLevels will be updated in order for theses level to be accessed via protect
-$wgRestrictionsGroups = array( '', 'user', 'artist', 'owner' );
+$wgProtectOwnGroups = array( '', 'user', 'artist', 'owner' );
 // remove the 'move' restriction
 unset($wgRestrictionTypes[array_search('move', $wgRestrictionTypes)]);
 // everyone can edit, even anons, but, there can be per-page restrctions

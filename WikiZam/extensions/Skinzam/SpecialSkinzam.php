@@ -47,21 +47,9 @@ class SpecialSkinzam extends SpecialPage {
      * Special page entry point
      */
     public function execute($par) {
-        $output = $this->getOutput();
-        $lang = $this->getLang();
+        $title=$this->getTitle();
         $this->setHeaders();
-        $value1=42;
-        $value2=7.78;
-        $value3=7.984;
-        $output->addHTML($value1.'<br>'.
-                $value2.'<br>'.
-                $value3.'<br>'.
-                number_format($value1, 2, '.', '').'<br>'.
-                number_format($value2, 2, '.', '').'<br>'.
-                number_format($value3, 2, '.', '').'<br>'.
-                round($value2,2).'<br>'.
-                round($value3,2).'<br>'
-                );
+        self::bigForm($title);
     }
 
     static function processInput($formData) {
@@ -208,6 +196,17 @@ class SpecialSkinzam extends SpecialPage {
                 'type' => 'hidden',
                 'default' => '<a href="#">Change password</a>'
             ),
+            'radio' => array(
+                'type' => 'radio',
+                'label' => 'who?',
+                'options' => array( # The options available within the checkboxes (displayed => value)
+                    'Option 0' => 0,
+                    'Option 1' => 1,
+                    'Option 2' => 3,
+                ),
+                'default' => 1,
+                'help' => 'test-help'
+            )
         );
 
         $htmlForm = new HTMLFormS($formDescriptor, 'sz-profil');

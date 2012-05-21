@@ -973,7 +973,7 @@ abstract class HTMLFormField {
         if (isset($this->mParams['help-message'])) {
             // If msg has parameters (to be parsed by i18n logic, help-message is an array.
             if (is_array($this->mParams['help-message']))
-                // Then first element is i18n id, the rest are parameters.
+            // Then first element is i18n id, the rest are parameters.
                 $msg = wfMessage(array_shift($this->mParams['help-message']), $this->mParams['help-message']);
             // otherwise, regular, parameter-less msg.
             else
@@ -986,10 +986,10 @@ abstract class HTMLFormField {
             # a message key and additional parameters. This makes it impossible to pass
             # an array of message key
             foreach ($this->mParams['help-messages'] as $name) {
-                if ($name)
+                if (is_array($name))
                     $msg = wfMessage(array_shift($name), $name);
                 else
-                    $msg = wfMessage($this->mParams['help-message']);
+                    $msg = wfMessage($name);
                 if ($msg->exists()) {
                     $helptext .= $msg->text(); // append message
                 }

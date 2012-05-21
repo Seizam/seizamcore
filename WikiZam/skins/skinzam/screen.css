@@ -368,20 +368,14 @@ div#simpleSearch button#searchButton > img {
  * Styles for the user login and create account forms
 */
 #userlogin, #userloginForm {
-    border: solid 1px #ccced1;
+    border: solid 1px #dad9d9;
     padding: 1.2em;
     margin: .5em;
-    float: left;
-}
-
-#userlogin {
-    min-width: 20em;
-    max-width: 90%;
-    width: 40em;
 }
 
 /* Structural Elements */
-#userloginForm h2 {
+#userlogin h2,
+#userloginForm h2{
     color: black;
     background: none;
     font-weight: normal;
@@ -1367,12 +1361,12 @@ html.client-nojs #bodyContent>.inside {
     color: #4d4e4f;
 }
 
-#footer span.selectLang {
+#footer div.selectLang {
     display: block;
     padding: 15px 0 0 0;
     float: none;
 }
-#footer span.selectLang form select {
+#footer div.selectLang form select {
     width: 192px;
     padding: 4px 2px 4px 8px
 }
