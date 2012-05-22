@@ -200,7 +200,6 @@ class SpecialWikiplaces extends SpecialPage {
 			$name = Title::newFromDBkey($name)->getText();
 		}
 		
-		$wikiplaces = WpWikiplace::getAllOwnedByUserId($this->getUser()->getId());
 		foreach ($wikiplaces as $wikiplace) {
 			$wpw_name = $wikiplace->get('name');
 			$formDescriptor['WpId']['options'][$wpw_name] = $wikiplace->get('wpw_id');
