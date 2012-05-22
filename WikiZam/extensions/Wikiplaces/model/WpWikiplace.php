@@ -43,8 +43,21 @@ class WpWikiplace {
 
 	}
 	
-		/**
-	 *
+	/**
+	 * <ul>
+	 * <li><b>wpw_id</b> int</li>
+	 * <li><b>wpw_owner_user_id</b> int</li>
+	 * <li><b>wpw_home_page_id</b> int</li>
+	 * <li><b>wpw_wps_id</b> int</li>
+	 * <li><b>wpw_monthly_page_hits</b> string, call updateUsage() if necessary</li>
+	 * <li><b>wpw_monthly_bandwidth</b> string, call updateUsage() if necessary</li>
+	 * <li><b>wpw_previous_total_page_hits</b> string</li>
+	 * <li><b>wpw_previous_total_bandwidth</b> string</li>
+	 * <li><b>wpw_report_updated</b> string</li>
+	 * <li><b>wpw_date_expires</b> string</li>
+	 * <li><b>name</b> string, the homepage title name <b>text form</b> (not db_key)</li>
+	 * <li><b>subscription</b> WpSubscription instance</li>
+	 * </ul>
 	 * @param type $attribut_name
 	 * @return type 
 	 */
@@ -494,9 +507,13 @@ WHERE wpw_report_updated < $outdated ;" ;
 	 */
 	public static function getAllOwnedByUserId($user_id) {
 		
-		if ( ($user_id === null) || !is_int($user_id) || ($user_id < 1) ) {
+		if ( ($user_id === null) || !is_int($user_id) ) {
 			throw new MWException( 'Cannot search Wikiplaces, invalid owner user identifier.' );
 		}	
+		
+		if ($user_id < 1) {
+			return array();
+		}
 		
 		return self::getFromDb( array( 'wpw_owner_user_id' =>  $user_id ), true);
 
