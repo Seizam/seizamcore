@@ -13,7 +13,7 @@ class SpecialWikiplaces extends SpecialPage {
 	
 	
 	public function __construct() {
-		parent::__construct( self::TITLE_NAME );
+		parent::__construct(self::TITLE_NAME, WP_ACCESS_RIGHT);
 	}
 
 	
@@ -28,13 +28,10 @@ class SpecialWikiplaces extends SpecialPage {
 		
 		$user = $this->getUser();
 		
-		if ( ! $user->isLoggedIn() ) {
-			$this->getOutput()->showErrorPage( self::TITLE_NAME, 'wp-nologintext', array( $this->getTitle()->getPrefixedDBkey() ) );
-			return;
-		}
-		
-		// This will throw exceptions if there's a problem
-		$this->userCanExecute( $this->getUser() );
+		if (!$this->userCanExecute($user)) {
+            $this->displayRestrictionError();
+            return;
+        }
 
 		/** @todo: replace this header with something nicer */
 		$this->getOutput()->setSubtitle(Html::rawElement('span', array(), $this->getLang()->pipeList(array(
@@ -69,19 +66,6 @@ class SpecialWikiplaces extends SpecialPage {
 				break;
 			
 		}
-	}
-	
-	public function userCanExecute( User $user ) {
-		if ( wfReadOnly() ) {
-			throw new ReadOnlyError();
-		}
-
-		if ( $user->isBlocked() ) {
-			$block = $user->mBlock;
-			throw new UserBlockedError( $block );
-		}
-
-		return true;
 	}
 	
 	
@@ -224,13 +208,13 @@ class SpecialWikiplaces extends SpecialPage {
 	public function validateUserWikiplaceID($id, $allData) {
 
 		if (!is_string($id) || !preg_match('/^[1-9]{1}[0-9]{0,9}$/', $id)) {
-			return wfMessage('wp-invalid-wp')->text();
+			return 'Error: Invalid Wikiplace ID';
 		}
 
 		$wikiplace = WpWikiplace::getById(intval($id));
 
 		if ( ($wikiplace === null) || ! ($wikiplace->isOwner($this->getUser()->getId())) ) {
-			return wfMessage('wp-invalid-wp')->text();
+			return 'Error: Invalid Wikiplace';
 		}
 
 		return true; // all ok

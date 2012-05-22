@@ -999,8 +999,8 @@ class WpSubscription {
 		$plan = $this->get('plan');
 
 		return $user->sendMail(
-				wfMessage( 'wp-sub-activation-email-subj' )->text(),
-				wfMessage( 'wp-sub-activation-email-body' , $user->getName() , $plan->get('wpp_name') , $this->get('wps_end_date') )->text())->isGood();
+				wfMessage( 'wpm-activation-subj' )->text(),
+				wfMessage( 'wpm-activation-body' , $user->getName() , $plan->get('wpp_name') , $this->get('wps_end_date') )->text())->isGood();
 		
 	}
 	
@@ -1016,8 +1016,8 @@ class WpSubscription {
 		$user = $this->get('buyer');
 
 		return $user->sendMail(
-				wfMessage( 'wp-sub-tmrko-email-subj' )->text(),
-				wfMessage( 'wp-sub-tmrko-email-body' , $user->getName() )->text())->isGood();
+				wfMessage( 'wpm-payfail-subj' )->text(),
+				wfMessage( 'wpm-payfail-body' , $user->getName() )->text())->isGood();
 		
 	}
 	

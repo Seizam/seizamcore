@@ -25,6 +25,10 @@ $wgExtensionCredits['specialpage'][] = array(
 	'descriptionmsg' => 'ms-myseizam-desc',
 );
 
+define('MS_ACCESS_RIGHT', 'msaccess');
+$wgAvailableRights[] = MS_ACCESS_RIGHT; 
+$wgGroupPermissions['user'][MS_ACCESS_RIGHT] = true;
+
 $dir = dirname(__FILE__) . '/';
 
 $wgExtensionMessagesFiles['MySeizam'] = $dir . 'MySeizam.i18n.php';

@@ -15,9 +15,19 @@ $wgExtensionCredits['other'][] = array(
    'name' => 'Wikiplace',
    'author' => array('Yann Missler', 'Seizam'), 
    'url' => 'http://www.seizam.com', 
-   'description' => 'Provide a personal place in MediaWiki.',
-   'version'  => 'alpha',
+   'descriptionmsg' => 'wp-desc',
+   'version'  => '0.1.0',
    );
+
+
+define('WP_ACCESS_RIGHT', 'wpaccess');
+$wgAvailableRights[] = WP_ACCESS_RIGHT; 
+$wgGroupPermissions['user'][WP_ACCESS_RIGHT] = true;
+
+// who can admin wikiplaces ? (accessing wp admin page, bypass move/delete limitations)
+define('WP_ADMIN_RIGHT', 'wpadmin');
+$wgAvailableRights[] = WP_ADMIN_RIGHT; 
+$wgGroupPermissions['sysop'][WP_ADMIN_RIGHT] = true;
 
 $_dir = dirname( __FILE__ ).'/';
 
@@ -37,7 +47,8 @@ $wgAutoloadClasses['WpSubscriptionsTablePager'] = $_dir . 'model/WpSubscriptions
 $wgAutoloadClasses['WikiplaceUpload'] = $_dir . 'WikiplaceUpload.php';
 
 # i18n
-$wgExtensionMessagesFiles['Wikiplaces'] = $_dir . 'Wikiplaces.i18n.php';
+$wgExtensionMessagesFiles['Wikiplaces'] = $_dir.'Wikiplaces.i18n.php';
+$wgExtensionMessagesFiles['Wikiplaces.mail'] = $_dir.'Wikiplaces.mail.i18n.php';
 
 # Name aliases
 $wgExtensionAliasesFiles['Wikiplaces'] = $_dir . 'Wikiplaces.alias.php';
@@ -75,10 +86,6 @@ $wgHooks['UploadVerification'][] = 'WikiplaceUpload::onUploadVerification';
 $wgHooks['UploadComplete'][] = 'WikiplaceUpload::onUploadComplete';
 $wgHooks['SpecialUploadComplete'][] = 'WikiplaceUpload::onSpecialUploadComplete';
 
-// who can admin wikiplaces ? (accessing wp admin page, bypass move/delete limitations)
-define('WP_ADMIN_RIGHT', 'wp-admin');
-$wgAvailableRights[] = WP_ADMIN_RIGHT; 
-$wgGroupPermissions['sysop'][WP_ADMIN_RIGHT] = true;
 
 // define the group in which to add the user in when she makes her first subscription
 // (she will not be removed, even if she has no more active subscription)

@@ -50,8 +50,14 @@ $wgExtensionAliasesFiles['Transactions'] = $dir . 'Transactions.alias.php';
 $wgAutoloadClasses['SpecialTransactions'] = $dir . 'SpecialTransactions.php';
 $wgSpecialPages['Transactions'] = 'SpecialTransactions';
 
-$wgSpecialPageGroups['Transactions'] = 'other';
+$wgSpecialPageGroups['Transactions'] = 'users';
 
 # Right for Transaction administration
-$wgAvailableRights[] = 'tmadmin';
-$wgGroupPermissions['sysop']['tmadmin'] = true;
+define('TM_ACCESS_RIGHT', 'tmaccess');
+$wgAvailableRights[] = TM_ACCESS_RIGHT;
+$wgGroupPermissions['user'][TM_ACCESS_RIGHT] = true;
+
+# Right for Transaction administration
+define('TM_ADMIN_RIGHT', 'tmadmin');
+$wgAvailableRights[] = TM_ADMIN_RIGHT;
+$wgGroupPermissions['sysop'][TM_ADMIN_RIGHT] = true;
