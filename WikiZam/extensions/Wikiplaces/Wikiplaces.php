@@ -76,15 +76,11 @@ $wgHooks['TransactionUpdated'][] = 'WikiplacesHooks::onTransactionUpdated';
 $wgHooks['IsOwner'][] = 'WikiplacesHooks::isOwner';
 $wgHooks['SkinTemplateNavigation'][] = 'WikiplacesHooks::SkinTemplateNavigation'; // Remove delete from action menu if necessary
 
-$wgHooks['UploadForm:initial'][] = 'WikiplaceUpload::onUploadForminitial';
-$wgHooks['UploadFormSourceDescriptors'][] = 'WikiplaceUpload::onUploadFormSourceDescriptors';
-$wgHooks['UploadFormInitDescriptor'][] = 'WikiplaceUpload::onUploadFormInitDescriptor';
-$wgHooks['UploadCreateFromRequest'][] = 'WikiplaceUpload::onUploadCreateFromRequest';
-$wgHooks['UploadForm:BeforeProcessing'][] = 'WikiplaceUpload::onUploadFormBeforeProcessing';
-$wgHooks['UploadVerifyFile'][] = 'WikiplaceUpload::onUploadVerifyFile';
-$wgHooks['UploadVerification'][] = 'WikiplaceUpload::onUploadVerification';
-$wgHooks['UploadComplete'][] = 'WikiplaceUpload::onUploadComplete';
-$wgHooks['SpecialUploadComplete'][] = 'WikiplaceUpload::onSpecialUploadComplete';
+// upload form and handler hooks
+$wgHooks['UploadCreateFromRequest'][] = 'WikiplaceUpload::installWikiplaceUploadHandler';
+$wgHooks['UploadForm:initial'][] = 'WikiplaceUpload::fetchRequestInformations';
+$wgHooks['UploadForm:BeforeProcessing'][] = 'WikiplaceUpload::fetchRequestInformations';
+$wgHooks['UploadFormInitDescriptor'][] = 'WikiplaceUpload::installWikiplaceUploadFrontend';
 
 
 // define the group in which to add the user in when she makes her first subscription

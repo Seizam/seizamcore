@@ -7,40 +7,13 @@ class WikiplaceUpload {
 	private static $FILE_PREFIXES_DEFAULT = null;
 //	private static $FORCE_LICENSE = null;
 	
-	
-
-	/*
-	public static function setup() {
-		$wgHooks['UploadForm:initial'][] = 'WikiplaceUpload::onUploadForminitial';
-		$wgHooks['UploadFormSourceDescriptors'][] = 'WikiplaceUpload::onUploadFormSourceDescriptors';
-		$wgHooks['UploadFormInitDescriptor'][] = 'WikiplaceUpload::onUploadFormInitDescriptor';
-		$wgHooks['UploadCreateFromRequest'][] = 'WikiplaceUpload::onUploadCreateFromRequest';
-		$wgHooks['UploadForm:BeforeProcessing'][] = 'WikiplaceUpload::onUploadFormBeforeProcessing';
-		$wgHooks['UploadVerifyFile'][] = 'WikiplaceUpload::onUploadVerifyFile';
-		$wgHooks['UploadVerification'][] = 'WikiplaceUpload::onUploadVerification';
-		$wgHooks['UploadComplete'][] = 'WikiplaceUpload::onUploadComplete';
-		$wgHooks['SpecialUploadComplete'][] = 'WikiplaceUpload::onSpecialUploadComplete';
-	}
-	*/
-	
-	// hooks call trace
-	
-	/*
-	2012-05-18 10:38:33  wikidb: upload 0 ::onUploadCreateFromRequest
-	2012-05-18 10:38:33  wikidb: upload 1 ::onUploadFormInitial
-	2012-05-18 10:38:33  wikidb: upload 2 ::onUploadFormSourceDescriptors
-	2012-05-18 10:38:33  wikidb: upload 3 ::onUploadFormInitDescriptor
-	 * 
-	2012-05-18 10:38:53  wikidb: upload 0 ::onUploadCreateFromRequest
-	2012-05-18 10:38:53  wikidb: upload 4 ::onUploadFormBeforeProcessing
-	2012-05-18 10:38:53  wikidb: upload 5 ::onUploadVerifyFile
-	2012-05-18 10:38:53  wikidb: upload 6 ::onUploadVerification
-	2012-05-18 10:38:54  wikidb: upload 7 ::onUploadComplete
-	2012-05-18 10:38:54  wikidb: upload 8 ::onSpecialUploadComplete
-	 */
+	// set to true if handler has been succesfully installed
+	// otherwise, it doesn't alter the original upload form in
+	// order to have upload correctly working
+	private static $WIKIPLACE_UPLOAD_INSTALLED = false; 
 
 	/**
-	 * Tell MediaWiki to use our file upload wrappers instead of default ones.
+	 * Tell MediaWiki to use our file upload handler (wrapper) instead of default ones.
 	 * When UploadBase::createFromRequest has been called.
 	 * Used to change the class name of the UploadBase sub-class. By default, MediaWiki
 	 * use "UploadFrom$type". 
@@ -48,102 +21,120 @@ class WikiplaceUpload {
 	 * @param string $type the requested upload type (File or Stash or Url)
 	 * @param string $className the class name of the Upload instance to be created
 	 */
-	public static function onUploadCreateFromRequest($type, &$className) {
-		wfDebugLog( 'wikiplaces-upload', 'upload 0 ::onUploadCreateFromRequest('.$type.')');
+	public static function installWikiplaceUploadHandler($type, &$className) {
+		
+		self::$WIKIPLACE_UPLOAD_INSTALLED = true;
+		
 		if ( $type == 'File' ) {
+			
 			$className = 'WpUploadFromFile';
+			
 		} elseif ( $type == 'Stash') {
+			
 			$className = 'WpUploadFromStash';	
+			
+		} elseif ( $type == 'Url') {
+			
+			$className = 'WpUploadFromUrl';	
+			
+		} else {
+			
+			wfDebugLog( 'wikiplaces-upload', 'installWikiplaceUploadHandler('.$type.'), WARNING, unrecognized upload type, standard upload form will be used');
+			self::$WIKIPLACE_UPLOAD_INSTALLED = false;
+			
 		}
+		
 		return false; // ensure that no other hooks can override this
+		
 	}
-	
+
 	/**
-	 * Store some informations about the user uploading (used by onUploadFormSourceDescriptors()
-	 *  to generate a correct prefix listbox)
-	 * Called just before the upload form is generated ( just before 
-	 * $this->showUploadForm( $this->getUploadForm() call )
+	 * Fetch informations about the user uploading, prepare prefixes list content, and
+	 * set the default item to select. It also updates the special page DestFileName 
+	 * attribute. Attached to hooks:
+	 * <ul>
+	 * <li>$wgHooks['UploadForm:initial']</li>
+	 * <li>$wgHooks['UploadForm:BeforeProcessing']</li>
+	 * </ul>
 	 * @param SpecialPage $specialUploadObj current SpecialUpload page object
 	 * @todo Maybe we can know wich user is uploading in onUploadFormSourceDescriptors()
 	 * using a nicer way ?
-	 */
-	public static function onUploadFormInitial($specialUploadObj) {
-		wfDebugLog( 'wikiplaces-upload', 'upload 1 ::onUploadFormInitial');
-		self::fetchRequestInformations($specialUploadObj);
-		return true;
-	}
-	
-	/**
-	 * Fetch informations about the user uploading, prepare prefixes list content, and
-	 * set the default item to select.
-	 * @param SpecialPage $specialUploadObj current SpecialUpload page object
-	 * @todo Use constant to define public file license to force to
 	 */
 	public static function fetchRequestInformations($specialUploadObj) {
 
 		$user = $specialUploadObj->getUser();
 		self::$USER_IS_WP_ADMIN = $user->isAllowed(WP_ADMIN_RIGHT);
 
-		if (self::$USER_IS_WP_ADMIN == true) {
-			return; // admin uses standard upload form, so no informations to fetch
+		if ( self::$USER_IS_WP_ADMIN || !self::$WIKIPLACE_UPLOAD_INSTALLED ) {
+			return true; // no informations to fetch and nothing to prepare
 		}
 		
-		// search an argument called "wikiplace"
-		$param = $specialUploadObj->getRequest()->getText('wikiplace', '');
+		$request =  $specialUploadObj->getRequest();
 		
-		// public ?
-		if ( ($param != null) && ($param === str_replace(' ', '_', WP_PUBLIC_FILE_PREFIX)) ) { // if wikiplace=public
+		// search an argument, as seen in SpecialPageFactory around line 408
+		$db_key = $specialUploadObj->getFullTitle()->getDBkey();
+		$bits = explode( '/', $db_key, 2 );
+		$param = null;
+		if ( isset( $bits[1] ) ) { 
+			$param = $bits[1];
+		}
+		
+		// is there a param wikiplace=public ?
+		if ( $param === str_replace(' ', '_', WP_PUBLIC_FILE_PREFIX) )  { 
+			
+			// if public, there is only one choice in the listbox
+			wfDebugLog( 'wikiplaces-upload', 'fetchRequestInformations: only public prefix will be visible');
 			self::$FILE_PREFIXES[$param] = WP_PUBLIC_FILE_PREFIX;
 			self::$FILE_PREFIXES_DEFAULT = $param;
-//			self::$FORCE_LICENSE = 'seizam-public-file-license';
-			return; // nothing else to do
+
+		} else {
+
+			// prepare prefixes list
+			$wikiplaces = WpWikiplace::getAllOwnedByUserId($user->getId());
+			foreach ($wikiplaces as $wikiplace) {
+				$wpw_name = $wikiplace->get('name');
+
+				// as $wikiplace->get('name') return the text form, we convert it as Title would does
+				// ( str_replace as seen in Title.php line 302 )
+				self::$FILE_PREFIXES[str_replace(' ', '_', $wpw_name)] = $wpw_name;
+			}
+
+			// do we have to set a default value ?
+			if (($param != null) && array_key_exists($param, self::$FILE_PREFIXES)) {
+				self::$FILE_PREFIXES_DEFAULT = $param;
+			}
+			
 		}
-
-		// prepare prefixes list
-		$wikiplaces = WpWikiplace::getAllOwnedByUserId($user->getId());
-		foreach ($wikiplaces as $wikiplace) {
-			$wpw_name = $wikiplace->get('name');
-
-			// as $wikiplace->get('name') return the text form, we convert it as Title would does
-			// ( str_replace as seen in Title.php line 302 )
-			self::$FILE_PREFIXES[str_replace(' ', '_', $wpw_name)] = $wpw_name;
-		}
-
-		// set a default value ?
-		if ( ($param != null) && array_key_exists($param, self::$FILE_PREFIXES) ) {
-			self::$FILE_PREFIXES_DEFAULT = $param;
-		}
-	}
-
-	/**
-	 * Occurs after the standard source inputs have been added to the descriptor.
-	 * @param array $descriptor The source section description of the UploadForm
-	 */
-	public static function onUploadFormSourceDescriptors( $descriptor ) {
-		wfDebugLog( 'wikiplaces-upload', 'upload 2 ::onUploadFormSourceDescriptors');
 		
-		return true;
+		// update special page DestFileName attribute
+		$name = self::getDestinationFileName($request);
+		if ($name != null) {	
+			$specialUploadObj->mDesiredDestName = $name;
+			wfDebugLog( 'wikiplaces-upload', 'fetchRequestInformations, mDesiredDestName set to "'.$name.'"');
+		}
+		
+		return true; // continue hook processing
 	}
 	
 	/**
-	 * Add a prefix listbox containing user's wikiplaces AND public ( or nothing if admin )
+	 * Add a prefix listbox containing prefixeslist if required
 	 * Occurs after the descriptor for the upload form as been assembled.
 	 * @param array $descriptor the HTMLForm descriptor 
 	 * @todo re-develop properly the "force license" system
 	 */
-	public static function onUploadFormInitDescriptor( $descriptor ) {
-		wfDebugLog( 'wikiplaces-upload', 'upload 3 ::onUploadFormInitDescriptor');
+	public static function installWikiplaceUploadFrontend( $descriptor ) {
 		
-		if ( self::$USER_IS_WP_ADMIN ) {
-			return; // admin uses standard upload form
+		if ( self::$USER_IS_WP_ADMIN || !self::$WIKIPLACE_UPLOAD_INSTALLED) {
+			wfDebugLog( 'wikiplaces-upload', 'installWikiplaceUploadFrontend, upload form will not be changed');
+			return true; 
 		}
 		
 		// build listbox
 		$listbox = array(
 			'type' => 'select',
 			'section' => 'description',
-			'id' => 'wpPrefix',
-			'label-message' => 'wp-select-file-prefix',
+			'id' => 'wpDestFilePrefix',
+			'label-message' => 'wp-destfile-prefix',
 			'validation-callback' => array(__CLASS__, 'validateFilePrefix'),
 			'options' => array(),
 		);
@@ -163,7 +154,7 @@ class WikiplaceUpload {
 			'type' => 'text',
 			'section' => 'description',
 			'id' => 'wpDestFile', // same ID as old field to keep JS operating on our new field
-			'label-message' => 'wp-destfilename-mainpart',
+			'label-message' => 'wp-destfile-mainpart',
 			'size' => 60,
 			'default' => '',
 			'nodata' => false,
@@ -180,12 +171,20 @@ class WikiplaceUpload {
 			
 		}
 */
-		// add our filename main part field
-		$descriptor = array_merge( array ( 'DestFileNameMainPart' => $fileNameMainPart), $descriptor );
-		
-		// add the list box at the beginning of the descriptor ( before $fileNameMainPart )
-		$descriptor = array_merge( array ( 'Prefix' => $listbox), $descriptor );
-		
+
+		// add the list box and filename main part field 
+		$counter = 1;
+		foreach ($descriptor as $key => $s) {
+			if ($key == 'DestFile') {
+				break;
+			}
+			$counter++;
+		}
+		$head = array_slice($descriptor, 0, $counter);
+		$tail = array_slice($descriptor, $counter);
+		$descriptor = array_merge( $head, array ( 
+			'DestFilePrefix' => $listbox,
+			'DestFileMainPart' => $fileNameMainPart ), $tail );
 
 		return true;
 	}
@@ -197,27 +196,45 @@ class WikiplaceUpload {
 	 * @return boolean 
 	 */
 	public static function validateFilePrefix($prefix, $allData) {
-		wfDebugLog( 'wikiplaces-upload', 'upload - ::validateFilePrefix('.$prefix.')');
 		return array_key_exists($prefix, self::$FILE_PREFIXES);
 	}
 
+	
 	/**
-	 * Fetch informations about user uploading.
-	 * Called just before the upload data, like wpUploadDescription, are processed, so extensions get a chance to manipulate them. 
-	 * @param SpecialPage $specialUploadObj current SpecialUpload page object
-	 * @todo if possible, onUploadFormInitial() and onUploadFormBeforeProcessing() has to be
-	 * refactored to be only one function (they both do the same thing)
+	 * Try to concat prefix + mainPart, or return the main part if prefix field not available
+	 * @param WebRequest $request
+	 * @return mixed string, or '' if both prefix and mainPart are not available from request object
 	 */
-	public static function onUploadFormBeforeProcessing($specialUploadObj) {
-		wfDebugLog( 'wikiplaces-upload', 'upload 4 ::onUploadFormBeforeProcessing');
-		self::fetchRequestInformations($specialUploadObj);
+	public static function getDestinationFileName($request) {
 
-		$name = self::getDestinationFileName($specialUploadObj->getRequest());
-		if ($name != null) {	
-			wfDebugLog( 'wikiplaces-upload', '$name='.$name);
-			$specialUploadObj->mDesiredDestName = $name;
-		}
+		// chooses one of WpDestFileNameMainPart, wpUploadFile, filename in that order.
+		$mainPart = $request->getText('wpDestFileMainPart', 
+				$request->getText('wpDestFile', 
+						$request->getText('wpUploadFile',
+								$request->getText('filename'))));
+
+		$prefix = $request->getText('wpDestFilePrefix');
 		
+		return ( $prefix ? $prefix.'.'.$mainPart : $mainPart );
+		
+	}
+	
+	
+	// not used hooks
+	
+/*	
+$wgHooks['UploadFormSourceDescriptors'][] = 'WikiplaceUpload::onUploadFormSourceDescriptors';
+$wgHooks['UploadVerifyFile'][] = 'WikiplaceUpload::onUploadVerifyFile';
+$wgHooks['UploadVerification'][] = 'WikiplaceUpload::onUploadVerification';
+$wgHooks['UploadComplete'][] = 'WikiplaceUpload::onUploadComplete';
+$wgHooks['SpecialUploadComplete'][] = 'WikiplaceUpload::onSpecialUploadComplete';
+*/
+	/**
+	 * Occurs after the standard source inputs have been added to the descriptor.
+	 * @param array $descriptor The source section description of the UploadForm
+	 */
+	public static function onUploadFormSourceDescriptors( $descriptor ) {
+		wfDebugLog( 'wikiplaces-upload', 'upload 2 ::onUploadFormSourceDescriptors');
 		return true;
 	}
 	
@@ -261,47 +278,34 @@ class WikiplaceUpload {
 		return true;
 	}
 	
+		// hooks call trace
 	
-	/**
-	 *
-	 * @param WebRequest $request
-	 * @return mixed string or null if the prefix can't be read from request 
+	/*
+	2012-05-18 10:38:33  wikidb: upload 0 ::onUploadCreateFromRequest
+	2012-05-18 10:38:33  wikidb: upload 1 ::onUploadFormInitial
+	2012-05-18 10:38:33  wikidb: upload 2 ::onUploadFormSourceDescriptors
+	2012-05-18 10:38:33  wikidb: upload 3 ::onUploadFormInitDescriptor
+	 * 
+	2012-05-18 10:38:53  wikidb: upload 0 ::onUploadCreateFromRequest
+	2012-05-18 10:38:53  wikidb: upload 4 ::onUploadFormBeforeProcessing
+	2012-05-18 10:38:53  wikidb: upload 5 ::onUploadVerifyFile
+	2012-05-18 10:38:53  wikidb: upload 6 ::onUploadVerification
+	2012-05-18 10:38:54  wikidb: upload 7 ::onUploadComplete
+	2012-05-18 10:38:54  wikidb: upload 8 ::onSpecialUploadComplete
 	 */
-	public static function getDestinationFileName($request) {
-		$prefix = $request->getText('wpPrefix');
-		if (!$prefix) {
-			wfDebugLog( 'wikiplaces-upload', 'no prefix');
-			return null;
-		}
-
-		// chooses one of WpDestFileNameMainPart, wpUploadFile, filename in that order.
-		$mainPart = $request->getText('wpDestFileNameMainPart', $request->getText('wpUploadFile', $request->getText('filename')));
-
-		return $prefix . '.' . $mainPart;
-	}
 
 }
 
 
 class WpUploadFromFile extends UploadFromFile {
 	
-	/**
-	 *
-	 * @param $request WebRequest
-	 * @return type 
-	 */
-	function initializeFromRequest( &$request ) {
-				
-		$name = WikiplaceUpload::getDestinationFileName($request);
-		if ($name == null) {
-			// if no prefix, uses default behaviour (can be if the user is admin)
-			return parent::initializeFromRequest($request);
+	function initializeFromRequest( &$request ) {				
+		$upload = $request->getUpload( 'wpUploadFile' );		
+		$desiredDestName = WikiplaceUpload::getDestinationFileName($request);
+		if( !$desiredDestName ) {
+			$desiredDestName = $upload->getName();
 		}
-
-		$request->setVal('wpDestFile', $name);
-
-		return parent::initializeFromRequest($request);
-		
+		return $this->initialize( $desiredDestName, $upload );
 	}
 	
 }
@@ -309,17 +313,24 @@ class WpUploadFromFile extends UploadFromFile {
 class WpUploadFromStash extends UploadFromStash {
 
 	public function initializeFromRequest(&$request) {
-
-		$name = WikiplaceUpload::getDestinationFileName($request);
-		if ($name == null) {
-			// if no prefix, uses default behaviour (can be if the user is admin)
-			return parent::initializeFromRequest($request);
-		}
-
-		$request->setVal('wpDestFile', $name);
-
-		return parent::initializeFromRequest($request);
-
+		$fileKey = $request->getText( 'wpFileKey', $request->getText( 'wpSessionKey' ) );
+		$desiredDestName = WikiplaceUpload::getDestinationFileName($request);
+		return $this->initialize( $fileKey, $desiredDestName );
 	}
 
+}
+
+class  WpUploadFromUrl extends UploadFromUrl {
+	
+	public function initializeFromRequest( &$request ) {
+		$desiredDestName = WikiplaceUpload::getDestinationFileName($request);
+		if ( !$desiredDestName )
+			$desiredDestName = $request->getText( 'wpUploadFileURL' );
+		return $this->initialize(
+			$desiredDestName,
+			trim( $request->getVal( 'wpUploadFileURL' ) ),
+			false
+		);
+	}
+	
 }
