@@ -3,14 +3,14 @@
 class WikiplaceUpload {
 
 	private static $USER_IS_WP_ADMIN = false;
-	private static $FILE_PREFIXES = array(); // db_key => text form
-	private static $FILE_PREFIXES_DEFAULT = null;
-//	private static $FORCE_LICENSE = null;
+	private static $FILE_PREFIXES = array(); // listbox value => listbox caption
+	private static $FILE_PREFIXES_DEFAULT = false;
+	private static $FILE_MAIN_PART_DEFAULT = '';
 	
 	// set to true if handler has been succesfully installed
 	// otherwise, it doesn't alter the original upload form in
 	// order to have upload correctly working
-	private static $WIKIPLACE_UPLOAD_INSTALLED = false; 
+	private static $DISPLAY_UPLOAD_MOD = false; 
 
 	/**
 	 * Tell MediaWiki to use our file upload handler (wrapper) instead of default ones.
@@ -23,7 +23,7 @@ class WikiplaceUpload {
 	 */
 	public static function installWikiplaceUploadHandler($type, &$className) {
 		
-		self::$WIKIPLACE_UPLOAD_INSTALLED = true;
+		self::$DISPLAY_UPLOAD_MOD = true;
 		
 		if ( $type == 'File' ) {
 			
@@ -40,7 +40,7 @@ class WikiplaceUpload {
 		} else {
 			
 			wfDebugLog( 'wikiplaces-upload', 'installWikiplaceUploadHandler('.$type.'), WARNING, unrecognized upload type, standard upload form will be used');
-			self::$WIKIPLACE_UPLOAD_INSTALLED = false;
+			self::$DISPLAY_UPLOAD_MOD = false;
 			
 		}
 		
@@ -59,17 +59,26 @@ class WikiplaceUpload {
 	 * @param SpecialPage $specialUploadObj current SpecialUpload page object
 	 * @todo Maybe we can know wich user is uploading in onUploadFormSourceDescriptors()
 	 * using a nicer way ?
+	 * @todo reload GET argument wpDestFile=Bob.paye_ton_schéma.png in our fields
 	 */
 	public static function fetchRequestInformations($specialUploadObj) {
 
 		$user = $specialUploadObj->getUser();
 		self::$USER_IS_WP_ADMIN = $user->isAllowed(WP_ADMIN_RIGHT);
 
-		if ( self::$USER_IS_WP_ADMIN || !self::$WIKIPLACE_UPLOAD_INSTALLED ) {
+		if ( self::$USER_IS_WP_ADMIN || !self::$DISPLAY_UPLOAD_MOD ) {
 			return true; // no informations to fetch and nothing to prepare
 		}
 		
 		$request =  $specialUploadObj->getRequest();
+		
+		// do the complete filename is psecified and not our mainpart? 
+		// (occurs when submitting on reuploading, wpDestFile in GET param)
+		if ($request->getText('wpDestFile') && !$request->getText('wpDestFileMainPart')) {
+			wfDebugLog( 'wikiplaces-upload', 'fetchRequestInformations: reuploading, so disabling mod');
+			self::$DISPLAY_UPLOAD_MOD = false;
+			return true; // no informations to fetch and nothing to prepare
+		}
 		
 		// search an argument, as seen in SpecialPageFactory around line 408
 		$db_key = $specialUploadObj->getFullTitle()->getDBkey();
@@ -79,8 +88,8 @@ class WikiplaceUpload {
 			$param = $bits[1];
 		}
 		
-		// is there a param wikiplace=public ?
-		if ( $param === str_replace(' ', '_', WP_PUBLIC_FILE_PREFIX) )  { 
+		// is there a param "Public" ?
+		if ( $param === WP_PUBLIC_FILE_PREFIX )  { 
 			
 			// if public, there is only one choice in the listbox
 			wfDebugLog( 'wikiplaces-upload', 'fetchRequestInformations: only public prefix will be visible');
@@ -94,14 +103,14 @@ class WikiplaceUpload {
 			foreach ($wikiplaces as $wikiplace) {
 				$wpw_name = $wikiplace->get('name');
 
-				// as $wikiplace->get('name') return the text form, we convert it as Title would does
-				// ( str_replace as seen in Title.php line 302 )
-				self::$FILE_PREFIXES[str_replace(' ', '_', $wpw_name)] = $wpw_name;
+				self::$FILE_PREFIXES[$wpw_name] = $wpw_name;
 			}
 
 			// do we have to set a default value ?
 			if (($param != null) && array_key_exists($param, self::$FILE_PREFIXES)) {
-				self::$FILE_PREFIXES_DEFAULT = $param;
+				if ( !self::$FILE_PREFIXES_DEFAULT ) {
+					self::$FILE_PREFIXES_DEFAULT = $param;
+				}
 			}
 			
 		}
@@ -112,6 +121,8 @@ class WikiplaceUpload {
 			$specialUploadObj->mDesiredDestName = $name;
 			wfDebugLog( 'wikiplaces-upload', 'fetchRequestInformations, mDesiredDestName set to "'.$name.'"');
 		}
+		
+		
 		
 		return true; // continue hook processing
 	}
@@ -124,7 +135,7 @@ class WikiplaceUpload {
 	 */
 	public static function installWikiplaceUploadFrontend( $descriptor ) {
 		
-		if ( self::$USER_IS_WP_ADMIN || !self::$WIKIPLACE_UPLOAD_INSTALLED) {
+		if ( self::$USER_IS_WP_ADMIN || !self::$DISPLAY_UPLOAD_MOD) {
 			wfDebugLog( 'wikiplaces-upload', 'installWikiplaceUploadFrontend, upload form will not be changed');
 			return true; 
 		}
@@ -134,14 +145,14 @@ class WikiplaceUpload {
 			'type' => 'select',
 			'section' => 'description',
 			'id' => 'wpDestFilePrefix',
-			'label-message' => 'wp-destfile-prefix',
+			'label-message' => 'wp-wikiplace',
 			'validation-callback' => array(__CLASS__, 'validateFilePrefix'),
 			'options' => array(),
 		);
 
 		// add prefixes in the listbox, with value in MediaWiki db_key format and caption in text format
-		foreach (self::$FILE_PREFIXES as $db_key => $text) {
-			$listbox['options'][$text] = $db_key;
+		foreach (self::$FILE_PREFIXES as $backend_value => $text) {
+			$listbox['options'][$text] = $backend_value;
 		}
 		
 		// set default value if needed
@@ -150,11 +161,11 @@ class WikiplaceUpload {
 		}
 
 		// build filename main part field
-		$fileNameMainPart = array(
+		$textbox = array(
 			'type' => 'text',
 			'section' => 'description',
 			'id' => 'wpDestFile', // same ID as old field to keep JS operating on our new field
-			'label-message' => 'wp-destfile-mainpart',
+			'label-message' => 'wp-name',
 			'size' => 60,
 			'default' => '',
 			'nodata' => false,
@@ -163,14 +174,6 @@ class WikiplaceUpload {
 		// hide original filename field
 		$descriptor['DestFile']['id'] = 'oldWpDestFile'; // change ID in order to move its JS magic to our field
 		$descriptor['DestFile']['type'] = 'hidden'; // hide it
-
-		// force license if needed
-/*		if ( self::$FORCE_LICENSE != null ) {
-			// hide original license field, because it's populated by ajax, so it can't been forced from here
-			$descriptor['License']['type'] = 'hidden'; // hide it
-			
-		}
-*/
 
 		// add the list box and filename main part field 
 		$counter = 1;
@@ -184,7 +187,7 @@ class WikiplaceUpload {
 		$tail = array_slice($descriptor, $counter);
 		$descriptor = array_merge( $head, array ( 
 			'DestFilePrefix' => $listbox,
-			'DestFileMainPart' => $fileNameMainPart ), $tail );
+			'DestFileMainPart' => $textbox ), $tail );
 
 		return true;
 	}
