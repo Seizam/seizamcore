@@ -15,18 +15,18 @@ class WpWikiplacesTablePager extends SkinzamTablePager {
         'wp_page' => array('LEFT JOIN', 'wpw_id = wppa_wpw_id'),
         'page' => array('INNER JOIN', 'wpw_home_page_id = page_id'));
     protected $selectFields = array(
-        'page_title',
+        'page_title AS wikiplace',
         'page_namespace',
-        'count(*)',
-        'wpw_monthly_page_hits',
-        'wpw_monthly_bandwidth',
+        'count(*) AS subpages',
+        'wpw_monthly_page_hits AS hits',
+        'wpw_monthly_bandwidth AS bandwidth',
         'wpw_report_updated',
         'wpw_date_expires');
     protected $selectOptions = array('GROUP BY' => 'wpw_id');
-    protected $defaultSort = 'page_title';
+    protected $defaultSort = 'wikiplace';
     public $mDefaultDirection = true; // true = DESC
     protected $tableClasses = array('WpWikiplace'); # Array
-    protected $messagesPrefix = 'wpwtp';
+    protected $messagesPrefix = 'wp-';
     protected $selectConds = array();
 
     /**
@@ -44,23 +44,23 @@ class WpWikiplacesTablePager extends SkinzamTablePager {
         global $wgLang;
         switch ($name) {
 
-            case 'page_title':
+            case 'wikiplace':
                 $title = Title::makeTitle($this->mCurrentRow->page_namespace, $value);
                 return Linker::linkKnown($title, $title->getPrefixedText(), array(), array('redirect'=>'no'));
-            case 'count(*)':
+            case 'subpages':
                 $html = '<b>'.$value.'</b> '.  wfMessage('wp-items');
                 $html .= '<ul>';
                 $html .= '<li>'
-						. SpecialWikiplaces::getLinkConsultWikiplace( $this->mCurrentRow->page_title )
+						. SpecialWikiplaces::getLinkConsultWikiplace( $this->mCurrentRow->wikiplace )
                         . '</li>';
                 $html .= '<li>'
-                        . SpecialWikiplaces::getLinkCreateSubpage( $this->mCurrentRow->page_title )
+                        . SpecialWikiplaces::getLinkCreateSubpage( $this->mCurrentRow->wikiplace )
                         . '</li>';
                 $html .= '</ul>';
                 return $html;
-            case 'wpw_monthly_page_hits':
+            case 'hits':
                 return wgformatNumber($value).' hits';
-            case 'wpw_monthly_bandwidth':
+            case 'bandwidth':
                 if (intval($value) < 1)
                     return '< ' . wgformatSizeMB(1);
                 else

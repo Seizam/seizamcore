@@ -222,14 +222,19 @@ class SpecialElectronicPayment extends SpecialPage {
     private function constructDefault() {
         $user = $this->getUser();
         $output = $this->getOutput();
-
-        $min = -TMRecord::getTrueBalanceFromDB($user->getId());
-        # Set Minimum payment value (regarding banking fees)
-        $min = max($min, 5);
-        # Building the pending transaction table and sum
+        
+        $balance = 0;
         if ($user->isLoggedIn()) {
+            $balance = TMRecord::getTrueBalanceFromDB($user->getId());
+        }
+        
+        # Set Minimum payment value (regarding banking fees)
+        $min = max(-$balance, 5);
+        
+        # Building the pending transaction table and sum
+        if ($balance<0) {
             $table = new TransactionsTablePager();
-            $table->setSelectFields(array('tmr_desc','tmr_date_created','tmr_amount','tmr_currency'));
+            $table->setSelectFields(array('tmr_desc AS description','tmr_date_created AS date_created','tmr_amount AS amount','tmr_currency AS currency'));
             $table->setSelectConds(array('tmr_user_id' => $user->getId(), 'tmr_status' => 'PE', 'tmr_amount < 0', 'tmr_currency'=> 'EUR'));
             $table->setFieldSortable(false);
             $tableHtml = $table->getBody();

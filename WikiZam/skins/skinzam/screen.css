@@ -370,7 +370,6 @@ div#simpleSearch button#searchButton > img {
 #userlogin, #userloginForm {
     border: solid 1px #dad9d9;
     padding: 1.2em;
-    margin: .5em;
 }
 
 /* Structural Elements */
@@ -1982,16 +1981,25 @@ table.TablePager {
 
 /* TMRecord */
 
-.TMRecord td.tmr_amount {
+.TMRecord td.amount {
     font-weight: bold;
 }
 
-.TMRecord tr.KO td, .TMRecord tr.KO td.tmr_amount {
+.TMRecord tr.KO td, .TMRecord tr.KO td.amount {
     color: #dad9d9;
 }
 
-.TMRecord tr.PE td, .TMRecord tr.PE td.tmr_amount {
+.TMRecord tr.PE td, .TMRecord tr.PE td.amount {
     color: #888888;
+}
+
+.TMRecord td.amount {
+    text-align: right;
+}
+
+.TMRecord td.amount span.currency {
+    font-weight: lighter;
+    color: #babfda;
 }
 
 /* WpWikiplace */
@@ -2013,9 +2021,14 @@ table.WpWikiplace td ul li {
     text-align: left;
 }
 
+table.WpWikiplace td.count {
+    word-wrap: normal;
+    display: block;
+}
+
 /* WpPage */
 
-table.WpPage td.subpage_title {
+table.WpPage td.name {
     text-align: left;
     max-width: 200px;
 }
@@ -2061,6 +2074,27 @@ table.WpPage a:hover span {
     color:#7c2122;
 }
 
+/* WpSubscription */
+table.WpSubscription {
+    color: #ccced1;
+}
+
+table.WpSubscription tr.active td {
+    color: black;
+}
+
+table.WpSubscription tr.active td.status {
+    font-weight: bold;
+}
+
+
+table.WpSubscription tr.pending td {
+    color: #6b8c40;
+}
+
+table.WpSubscription tr.canceled td {
+    color: #974349;
+}
 
 
 

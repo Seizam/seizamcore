@@ -19,12 +19,15 @@ class WpPagesTablePager extends SkinzamTablePager {
         'homepage' => array('INNER JOIN', 'wpw_home_page_id = homepage.page_id'),
         'wp_page' => array('INNER JOIN', 'wpw_id = wppa_wpw_id'),
         'subpage' => array('INNER JOIN', 'wppa_page_id = subpage.page_id AND subpage.page_namespace !=1 AND subpage.page_namespace !=7 AND subpage.page_namespace !=71'));
-    protected $selectFields = array('subpage.page_title AS subpage_title', 'subpage.page_namespace AS subpage_namespace', 'subpage.page_touched AS subpage_touched', 'subpage.page_counter AS subpage_counter');
-    protected $selectOptions = array('ORDER BY' => 'subpage_title');
-    protected $defaultSort = 'subpage_namespace';
+    protected $selectFields = array('subpage.page_title AS name',
+        'subpage.page_namespace AS namespace',
+        'subpage.page_touched AS date_modified',
+        'subpage.page_counter AS hits');
+    protected $selectOptions = array('ORDER BY' => 'subpage');
+    protected $defaultSort = 'namespace';
     public $mDefaultDirection = false; // true = DESC
     protected $tableClasses = array('WpPage'); # Array
-    protected $messagesPrefix = 'wppatp';
+    protected $messagesPrefix = 'wp-';
     protected $wpName = '';
 
     /**
@@ -40,13 +43,13 @@ class WpPagesTablePager extends SkinzamTablePager {
     function formatValue($name, $value) {
         global $wgLang;
         switch ($name) {
-            case 'subpage_title':
+            case 'name':
                 return $this->formatPageTitle($value);
-            case 'subpage_namespace':
+            case 'namespace':
                 return $this->formatNamespace($value);
-            case 'subpage_touched':
+            case 'date_modified':
                 return $wgLang->date($value, true);
-            case 'subpage_counter':
+            case 'counter':
                 return wgformatNumber($value) . ' hits';
             case 'actions' :
                 return $this->formatActions();
@@ -56,7 +59,7 @@ class WpPagesTablePager extends SkinzamTablePager {
     }
 
     function formatPageTitle($value) {
-        $title = Title::makeTitle($this->mCurrentRow->subpage_namespace, $value);
+        $title = Title::makeTitle($this->mCurrentRow->namespace, $value);
         $ns = $title->getNamespace();
         $explosion = WpWikiplace::explodeWikipageKey($title->getDBkey(), $ns);
         $excount = count($explosion);
@@ -70,8 +73,9 @@ class WpPagesTablePager extends SkinzamTablePager {
             if ($excount == 1) {
                 if ($ns == NS_MAIN)
                     $text .= '<span class="wpp-hp">' . $explosion[0] . '</span>';
-                else $text .= '<span class="wpp-sp">' . $explosion[0] . '</span>';
-            // Subpage
+                else
+                    $text .= '<span class="wpp-sp">' . $explosion[0] . '</span>';
+                // Subpage
             } else {
                 // Language variant
                 if (strlen($explosion[$excount - 1]) == 2) {
@@ -86,14 +90,14 @@ class WpPagesTablePager extends SkinzamTablePager {
                 // Reconstructing Page title
                 $text .= '<span class="wpp-sp">';
                 foreach ($explosion as $atom)
-                    $text .= '/'.$atom ;
+                    $text .= '/' . $atom;
                 $text .= '</span>';
 
                 // Appending Lang variant
                 if (isset($lang))
                     $text .= '<span class="wpp-sp-lg">/' . $lang . '</span>';
             }
-        // Page is NS_FILE
+            // Page is NS_FILE
         } else if ($title->getNamespace() == NS_FILE) {
             $text .= '<span class="wpp-ns">' . $title->getNsText() . ':</span>';
             // @TODO: Extract file extension and lang variant for prettyfying
@@ -105,20 +109,20 @@ class WpPagesTablePager extends SkinzamTablePager {
             // Reconstructing Page title
             $text .= '<span class="wpp-sp">';
             foreach ($explosion as $atom)
-                $text .= '.' . $atom ;
+                $text .= '.' . $atom;
             $text .= '</span>';
         } else {
             $text .= '<span class="wpp-ns">' . $title->getNsText() . ':</span>';
             $text .= '<span class="wpp-sp">' . $title->getText() . '</span>';
         }
-        return Linker::linkKnown($title, $text, array(), array('redirect'=>'no'));
+        return Linker::linkKnown($title, $text, array(), array('redirect' => 'no'));
     }
 
     function formatNamespace($value) {
         global $wgLang;
         switch ($value) {
             case NS_MAIN :
-                if (!preg_match("/\//", $this->mCurrentRow->subpage_title))
+                if (!preg_match("/\//", $this->mCurrentRow->name))
                     return wfMessage('wp-homepage')->text();
                 else
                     return wfMessage('wp-subpage')->text();
@@ -132,21 +136,21 @@ class WpPagesTablePager extends SkinzamTablePager {
     }
 
     function formatActions() {
-        $title = Title::makeTitle($this->mCurrentRow->subpage_namespace, $this->mCurrentRow->subpage_title);
+        $title = Title::makeTitle($this->mCurrentRow->namespace, $this->mCurrentRow->name);
 
         $html = '<ul>';
         $html .= '<li>'
-                . Linker::linkKnown($title, wfMessage('view')->text(), array(), array('redirect'=>'no'))
+                . Linker::linkKnown($title, wfMessage('view')->text(), array(), array('redirect' => 'no'))
                 . '</li>';
         $html .= '<li>'
-                . Linker::link($title->getTalkPage(), wfMessage('talk')->text(), array(), array('redirect'=>'no'))
+                . Linker::link($title->getTalkPage(), wfMessage('talk')->text(), array(), array('redirect' => 'no'))
                 . '</li>';
         $html .= '<li>'
                 . Linker::linkKnown($title, wfMessage('edit')->text(), array(), array('action' => 'edit'))
                 . '</li>';
-        /*$html .= '<li>'
-                . Linker::linkKnown($title, wfMessage('history_short')->text(), array(), array('action' => 'history'))
-                . '</li>';*/
+        /* $html .= '<li>'
+          . Linker::linkKnown($title, wfMessage('history_short')->text(), array(), array('action' => 'history'))
+          . '</li>'; */
         $html .= '<li>'
                 . Linker::linkKnown($title, wfMessage('protect')->text(), array(), array('action' => PROTECTOWN_ACTION))
                 . '</li>';
@@ -160,8 +164,17 @@ class WpPagesTablePager extends SkinzamTablePager {
 
     function getFieldNames() {
         $fieldNames = parent::getFieldNames();
+        
         unset($fieldNames['homepage_title']);
+        
         $fieldNames['actions'] = '';
+        
+        if (isset($fieldNames['date_modified']))
+            $fieldNames['date_modified'] = wfMessage ('date_modified');
+        
+        if (isset($fieldNames['namespace']))
+            $fieldNames['namespace'] = wfMessage ('type');
+        
         return $fieldNames;
     }
 
@@ -175,7 +188,7 @@ class WpPagesTablePager extends SkinzamTablePager {
         $this->even = !$this->even;
 
         $html = "<tr class=\"$class\"><td colspan=\"$colums\">";
-		$html .= SpecialWikiplaces::getLinkCreateSubpage( $this->wpName);
+        $html .= SpecialWikiplaces::getLinkCreateSubpage($this->wpName);
         $html .= "</td></tr>";
         $html .= "</tbody></table>\n";
         return $html;

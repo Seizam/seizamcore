@@ -14,22 +14,20 @@ class WpSubscriptionsTablePager extends SkinzamTablePager {
     protected $selectTables = array ( 'wp_subscription', 'wp_plan');
 	
 	protected $selectJoinConditions = array( 'wp_plan' => array('INNER JOIN','wps_wpp_id = wpp_id') );
-    protected $selectFields = array(
-		'wps_active',
-		'wps_start_date',			// when the sub starts
-		'wps_end_date',
-		'wpp_name',					// subscribed plan name
-		'wps_tmr_status',
-		'wpp_nb_wikiplaces',
-		'wpp_nb_wikiplace_pages',
-		'wpp_diskspace',
-		'wpp_monthly_page_hits',
-		'wpp_monthly_bandwidth',	
+    protected $selectFields = array(	
+		'wps_active AS active',
+		'wpp_name AS plan_name',
+		'wps_start_date AS start_date',			// when the sub starts
+		'wps_end_date AS end_date',				// subscribed plan name
+		'wpp_nb_wikiplaces AS nb_wikiplaces',
+		'wpp_nb_wikiplace_pages AS nb_wikiplace_pages',
+		'wpp_diskspace AS diskspace',
+		'wps_tmr_status AS status',
 		);
-    protected $defaultSort = 'wps_start_date';
+    protected $defaultSort = 'start_date';
     public $mDefaultDirection = true; // true = DESC
     protected $tableClasses = array('WpSubscription'); # Array
-    protected $messagesPrefix = 'wpstp';
+    protected $messagesPrefix = 'wp-';
 	
 
     /**
@@ -46,25 +44,37 @@ class WpSubscriptionsTablePager extends SkinzamTablePager {
         global $wgLang;
         switch ($name) {
 			
-			case 'wps_start_date':
-			case 'wps_end_date':
+			case 'start_date':
+			case 'end_date':
 				return ($value === null) ? '-' : $wgLang->timeanddate($value, true);
-			case 'wpp_name':
-				return  wfMessage('wp-plan-name-' . $value)->text();
-			case 'wps_active':
-				return wfMessage( ($value==0) ? 'wp-sub-unactive' : 'wp-sub-active' )->text() ;
-			case 'wps_tmr_status':
-				return wfMessage( 'wp-sub-tmrstatus-'.$value )->text() ;
-			case 'wpp_nb_wikiplaces':
-			case 'wpp_nb_wikiplace_pages':
-			case 'wpp_monthly_page_hits':
-				return $value;	
-			case 'wpp_monthly_bandwidth':
-			case 'wpp_diskspace':
-				return "$value Mb";
+			case 'plan_name':
+				return  wfMessage('wp-' . $value)->text();
+			case 'status':
+				return wfMessage("status-$value")->text() ;
+			case 'nb_wikiplaces':
+			case 'nb_wikiplace_pages':
+			case 'monthly_hits':
+				return wgformatNumber($value);
+			case 'monthly_bandwidth':
+			case 'diskspace':
+				return wgformatSizeMB($value);
             default:
                 throw new MWException( 'Unknown data name "'.$name.'"');
         }
+    }
+    
+    
+
+    function getFieldNames() {
+        $fieldNames = parent::getFieldNames();
+        unset($fieldNames['active']);
+        if (isset($fieldNames['start_date']))
+            $fieldNames['start_date'] = wfMessage ('start_date')->text ();
+        if (isset($fieldNames['end_date']))
+            $fieldNames['end_date'] = wfMessage ('end_date')->text ();
+        if (isset($fieldNames['status']))
+            $fieldNames['status'] = wfMessage ('status')->text ();
+        return $fieldNames;
     }
 
 	
@@ -78,11 +88,13 @@ class WpSubscriptionsTablePager extends SkinzamTablePager {
         $attrs = parent::getRowAttrs($row);
         $classes = explode(' ', $attrs['class']);
 
-        if ($row->wps_active != '0')
+        if ($row->active == '1')
             $classes[] = 'active';
 		
-		if ( ($row->wps_tmr_status != 'OK') && ($row->wps_tmr_status != 'PE') )
-            $classes[] = 'warning';
+		if ( $row->status == 'PE' )
+            $classes[] = 'pending';
+        else if ($row->status == 'KO')
+            $classes[] = 'canceled';
 		
         return array('class' => implode(' ', $classes));
     }

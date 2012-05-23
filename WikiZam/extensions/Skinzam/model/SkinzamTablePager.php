@@ -20,7 +20,7 @@ class SkinzamTablePager extends TablePager {
     protected $defaultSort; # String (field)
     public $mDefaultDirection = true; # Boolean (true=decrescent)
     public $mDefaultLimit = 7;
-    protected $messagesPrefix = 'sz'; # String
+    protected $messagesPrefix = 'sz-'; # String
     # Do not redeclare
     protected $fieldNames = null;
     private $defaultTableClasses = array('TablePager');
@@ -235,7 +235,7 @@ class SkinzamTablePager extends TablePager {
             foreach ($this->selectFields as $field) {
                 preg_match('/([\w\*\(\)]*)$/', $field, $matches);
                 $field = $matches[0];
-                $fieldNames[$field] = wfMessage($this->messagesPrefix . '-' . $field)->text();
+                $fieldNames[$field] = wfMessage($this->messagesPrefix . $field)->text();
             }
         $this->fieldNames = $fieldNames;
     }
