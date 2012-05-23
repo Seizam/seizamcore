@@ -10,11 +10,11 @@ if (!defined('MEDIAWIKI')) {
 class TransactionsTablePager extends SkinzamTablePager {
     # Fields for default behavior
     protected $selectTables = 'tm_record'; # String
-    protected $selectFields = array('tmr_id', 'tmr_desc', 'tmr_date_created', 'tmr_date_modified', 'tmr_amount', 'tmr_currency', 'tmr_status');
-    protected $defaultSort = 'tmr_date_created';
+    protected $selectFields = array('tmr_id AS id', 'tmr_desc AS description', 'tmr_date_created AS date_created', 'tmr_date_modified AS date_modified', 'tmr_amount AS amount', 'tmr_currency AS currency', 'tmr_status AS status');
+    protected $defaultSort = 'date_created';
     public $mDefaultDirection = true;
     protected $tableClasses = array('TMRecord'); # Array
-    protected $messagesPrefix = 'tm';
+    protected $messagesPrefix = '';
 
     /**
      * Format a table cell. The return value should be HTML, but use an empty
@@ -29,20 +29,30 @@ class TransactionsTablePager extends SkinzamTablePager {
      function formatValue($name, $value) {
         global $wgLang;
         switch ($name) {
-            case 'tmr_type':
-                return wfMessage('tm-type-' . $value)->text();
-            case 'tmr_date_created':
-            case 'tmr_date_modified':
+            case 'type':
+                return wfMessage('tm-' . $value)->text();
+            case 'date_created':
+            case 'date_modified':
                 return $wgLang->timeanddate($value, true);
-            case 'tmr_desc':
+            case 'desc':
                 return wfMessage($value)->text();
-            case 'tmr_status':
-                return wfMessage('tm-status-' . $value)->text();
-            case 'tmr_amount':
-                return $value > 0 ? '+' . $value : $value;
+            case 'status':
+                return wfMessage('status-' . $value)->text();
+            case 'amount':
+                if ($this->mCurrentRow->currency == 'EUR')
+                    $cur = ' €';
+                else $cur = $this->row->currency;
+                $cur = Xml::element('span', array('class'=>'currency'), $cur);
+                return ($value > 0 ? '+' . $value : $value).$cur ;
             default:
                 return $value;
         }
+    }
+    
+    function getFieldNames() {
+        $fieldNames = parent::getFieldNames();
+        unset($fieldNames['currency']);
+        return $fieldNames;
     }
 
     /**
@@ -54,10 +64,10 @@ class TransactionsTablePager extends SkinzamTablePager {
     function getRowClasses($row) {
         $classes = array();
 
-        if (isset($row->tmr_status))
-            $classes[] = $row->tmr_status;
+        if (isset($row->status))
+            $classes[] = $row->status;
 
-        if ($row->tmr_amount > 0)
+        if ($row->amount > 0)
             $classes[] = 'positive';
 
         return $classes;

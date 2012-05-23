@@ -113,11 +113,12 @@ $wgDefaultSkin = "skinzam";
 $wgSkipSkins = array("chick", "cologneblue", "nostalgia", "simple", "standard", "monobook","myskin","modern");
 ## Usability extension for Vector (base of Skinzam)
 require_once( "$IP/extensions/Vector/Vector.php" );
-$wgVectorUseSimpleSearch = true;
 
 ## UI Elements extension for Seizam's skin
 require_once( "$IP/extensions/Skinzam/Skinzam.php" );
 
+$wgVectorUseSimpleSearch = true;
+$wgDefaultUserOptions['useeditwarning'] = 1;
 
 # Path to the GNU diff3 utility. Used for conflict resolution.
 $wgDiff3 = "/usr/bin/diff3";
