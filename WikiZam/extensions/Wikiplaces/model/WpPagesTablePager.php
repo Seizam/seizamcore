@@ -45,7 +45,7 @@ class WpPagesTablePager extends SkinzamTablePager {
             case 'subpage_namespace':
                 return $this->formatNamespace($value);
             case 'subpage_touched':
-                return $wgLang->timeanddate($value, true);
+                return $wgLang->date($value, true);
             case 'subpage_counter':
                 return wgformatNumber($value) . ' hits';
             case 'actions' :
@@ -136,19 +136,19 @@ class WpPagesTablePager extends SkinzamTablePager {
 
         $html = '<ul>';
         $html .= '<li>'
-                . Linker::linkKnown($title, wfMessage('wp-see')->text())
+                . Linker::linkKnown($title, wfMessage('view')->text(), array(), array('redirect'=>'no'))
                 . '</li>';
         $html .= '<li>'
-                . Linker::link($title->getTalkPage(), wfMessage('wp-talk')->text())
+                . Linker::link($title->getTalkPage(), wfMessage('talk')->text(), array(), array('redirect'=>'no'))
                 . '</li>';
         $html .= '<li>'
-                . Linker::linkKnown($title, wfMessage('wp-edit')->text(), array(), array('action' => 'edit'))
+                . Linker::linkKnown($title, wfMessage('edit')->text(), array(), array('action' => 'edit'))
                 . '</li>';
         /*$html .= '<li>'
-                . Linker::linkKnown($title, wfMessage('wp-history')->text(), array(), array('action' => 'history'))
+                . Linker::linkKnown($title, wfMessage('history_short')->text(), array(), array('action' => 'history'))
                 . '</li>';*/
         $html .= '<li>'
-                . Linker::linkKnown($title, wfMessage('wp-restrict')->text(), array(), array('action' => PROTECTOWN_ACTION))
+                . Linker::linkKnown($title, wfMessage('protect')->text(), array(), array('action' => PROTECTOWN_ACTION))
                 . '</li>';
         $html .= '</ul>';
         return $html;

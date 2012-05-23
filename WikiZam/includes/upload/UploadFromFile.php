@@ -15,7 +15,7 @@ class UploadFromFile extends UploadBase {
 	protected $mUpload = null;
 
 	/**
-	 * @param $request WebRequest
+	 * @param  WebRequest $request
 	 */
 	function initializeFromRequest( &$request ) {
 		$upload = $request->getUpload( 'wpUploadFile' );		

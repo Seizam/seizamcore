@@ -3,28 +3,19 @@
 
 $messages = array();
 
-/*  English
+/*  
+ * English
  */
 $messages['en'] = array(
 	
 	'specialpages-group-wikiplace' => 'Wikiplaces',
+    'wp-desc' => 'Enables artists to create WikiPlaces, places of Art & Freedom within Mediawiki.',
 	
-	'wikiplacesadmin' => 'Wikiplaces administration',
+	'wikiplacesadmin' => 'Wikiplaces Administration',
 	'subscriptions' => 'My Subscriptions',
 	'wikiplaces' => 'My Wikiplaces',
-	'offers' => 'Offers',
-	'uploadplace' => 'Wikiplace file upload',
+	'offers' => 'Our Offers',
 	
-	'wp-sub-activation-email-subj' => 'Your subscription is now active',
-	'wp-sub-activation-email-body' => '$1,
-		
-Your subscription to the offer "$2" is now active.
-It will ends at $3.',
-	'wp-sub-tmrko-email-subj' => 'Payment error',
-	'wp-sub-tmrko-email-body' => '$1,
-		
-We inform you that your payment was rejected. Accordingly, your subscription is not active.
-To continue using your services, please take out a new offer.',
 	
 	'wp-no-active-sub' => 'You need an active subscription to perform this action.',
 	'wp-wikiplace-quota-exceeded' => 'Your wikiplace creation quota is exceeded. You need to upgrade your plan to perform this action.',
@@ -32,8 +23,6 @@ To continue using your services, please take out a new offer.',
 	
 	'wp-internal-error' => 'An error occured. Please try again.',
 	
-	'wp-nologintext' => 'You need to be <span class="plainlinks">[{{fullurl:{{#Special:UserLogin}}|returnto=$1}} logged in]</span> to continue.',
-
 	'wp-subscribe-new' => 'Take a subscription',
 	'wp-subscribe-change' => 'Change plan',
 	'wp-subscribe-renew' => 'Choose renewal plan',
@@ -43,8 +32,6 @@ To continue using your services, please take out a new offer.',
 	'wp-subscribe-email' => 'Before taking a subscription, you need to validate your e-mail address. Please follow the instructions in the e-mail you have received when creating your account, to ensure that you can be contacted.',
 
 	'wp-select-a-plan' => 'Please select an offer',
-	'wp-invalid-plan' => 'This plan is invalid.',
-	'wp-cannot-select-plan' => 'You cannot select this plan. Please choose another one.',
 	
 	'wp-plan-desc-short' => '$1: $2 $3 for $4 months',
 	'wp-plan-subscribe-go' => 'Subscribe now!',
@@ -74,18 +61,11 @@ To continue using your services, please take out a new offer.',
 	
 	'wp-select-wp' => 'Please select a Wikiplace',
 	'wp-enter-new-sp-name' => 'Please enter your new subpage name',
-	'wp-invalid-wp' => 'This Wikiplace is invalid.',
 	'wp-create-sp-go' => 'Create!',
 	'wp-create-sp-success' => 'You successfully created your subpage $1.',
 	
 	
 	'wp-seeall' => 'see all',
-    'wp-see' => 'see',
-    'wp-create' => 'create',
-    'wp-edit' => 'edit',
-    'wp-restrict' => 'restrict',
-    'wp-talk' => 'talk',
-    'wp-history' => 'history',
     'wp-create-page' => 'Create a new Page',
     'wp-create-wp' => 'Create a new Wikiplace',
     'wp-items' => 'items',
@@ -93,6 +73,7 @@ To continue using your services, please take out a new offer.',
 	'wp-subpage' => 'Subpage',
 	
 	'wp-your-total-diskspace' => 'Total diskspace usage: $1',
+    
 	'wpwtp-page_title' => 'Wikiplace',
 	'wpwtp-count(*)' => 'Subpages',
 	'wpwtp-wpw_monthly_page_hits' => "Monthly hits",
@@ -102,7 +83,7 @@ To continue using your services, please take out a new offer.',
 	'wpstp-wps_start_date' => "Start",
 	'wpstp-wps_end_date' => "End",
 	'wpstp-wpp_name' => "Plan name",
-	'wpstp-wps_tmr_status' => "Paiement status",
+	'wpstp-wps_tmr_status' => "Payment status",
 	'wpstp-wpp_nb_wikiplaces' => "Wikiplaces",
 	'wpstp-wpp_nb_wikiplace_pages' => "Pages",
 	'wpstp-wpp_diskspace' => "Diskspace",
@@ -123,9 +104,6 @@ To continue using your services, please take out a new offer.',
     'wp-nswp-talk' => 'Setting talk',
 
 	
-	// wp-transaction-plan-XXXX for each plan in database, with XXXX = wpp_name field value
-
-	
 	/** @todo: remove the next lines after tests complete */
 	'wp-plan-name-test-normal' => "Test plan",
 	'wp-plan-name-test-plus' => "Test plan +",
@@ -134,18 +112,20 @@ To continue using your services, please take out a new offer.',
 	
 );
 
-/*  Message documentation
+/*  
+ * Message documentation
  */
 $messages['qqq'] = array(
 
 );
 
-/*  French
+/*  
+ * French
  */
 $messages['fr'] = array(
+    'wp-desc' => 'Permets aux artistes de créer des Wikiplaces, endroits d\'art et de liberté au sein de Mediawiki.',
 	
-	'wikiplacesadmin' => 'Administration des Wikiplaces ',
 	'subscriptions' => 'Mes Abonnements',
 	'wikiplaces' => 'Mes Wikiplaces',
-	'offers' => 'Offres'
+	'offers' => 'Nos Offres'
 );

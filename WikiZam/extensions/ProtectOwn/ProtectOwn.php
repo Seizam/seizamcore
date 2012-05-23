@@ -223,6 +223,7 @@ function poBeforeParserFetchTemplateAndtitle( $parser, Title $title, &$skip, &$i
  */
 function poUserCan( $title, &$user, $action, &$result ) {
 	
+    
 	if ( ($title->getNamespace()==NS_SPECIAL) || ( ! $title->isKnown()) ) {
 		return true; // skip
 	}
@@ -487,7 +488,7 @@ function poMakeContentAction( $skin, &$cactions ) {
             $action = $wgRequest->getText( 'action' );
             $cactions['actions'][PROTECTOWN_ACTION] = array(		
 			'class' => $action == PROTECTOWN_ACTION ? 'selected' : false,
-			'text' => wfMsg( 'vector-action-protect' ),
+			'text' => wfMsg( 'protect' ),
 			'href' => $title->getLocalUrl( 'action='.PROTECTOWN_ACTION ),
 		);
 	}
@@ -513,23 +514,6 @@ function poForm( $action, $article ) {
 	
 	global $wgOut, $wgUser, $wgRequest, $wgProtectOwnDoProtect;
     
-	$title = $article->getTitle();
-
-    $permErrors = $title->getUserPermissionsErrors(PROTECTOWN_ACTION,$wgUser);
-    
-    $readonly = wfReadOnly() || $permErrors != array();
-    
-    $wgOut->setRobotPolicy( 'noindex,nofollow' );
-    
-    if( $readonly ) {
-			if( wfReadOnly() ) {
-				$wgOut->readOnlyPage();
-			} elseif( $permErrors ) {
-				$wgOut->showPermissionsErrorPage( $permErrors );
-			}
-		}
-    
-    
 	// is the user allowed to use ProtectOwn
 	if ( !$wgUser->isAllowed(PROTECTOWN_ACTION) ) {
 		$wgOut->permissionRequired(PROTECTOWN_ACTION);
@@ -538,16 +522,19 @@ function poForm( $action, $article ) {
 	
 	# user is allowed to use ProtectOwn
 	
+	$title = $article->getTitle();
 	
 	// is the user the owner?
 	if ( !poIsOwner( $title , $wgUser ) ) {
 		// user is not the owner of the page
 		$wgOut->setPageTitle( wfMsg( 'errorpagetitle' ) );
-		$wgOut->addWikiMsg( 'po-notowner' );
+		$wgOut->addHTML( wfMessage('po-notowner')->parse().'<br/>'.wfMessage('sz-report')->parse() );
 		return false; //stop processing	
 	} 
 	
 	# user is the owner
+	
+	// start displaying page
     $wgOut->setPageTitle( wfMsg( 'protect-title', $title->getPrefixedText() ) );
 	
 	// as defined in Title.php, around lines 1550 (mw1.18.1), 
@@ -566,6 +553,11 @@ function poForm( $action, $article ) {
 	$wgUser->mRights = null;			// clear current user rights
 	$wgUser->getRights();				// force rights reloading
 	$wgProtectOwnDoProtect = false;
+	
+	# check that the user can protect (check also write right)
+	
+	$readonly = $title->getUserPermissionsErrors('protect',$wgUser);
+	$readonly = ( $readonly != array() );
 	
 	# remove temporary assigned protect right by reloading rights with $wgProtectOwnDoProtect = false
 	
@@ -654,8 +646,10 @@ function poForm( $action, $article ) {
 			$current_level = ($current_level=='' ? 'everyone' : $current_level);
 			
 			// is the checkbox $action/$current_level checked ?
-			if ( $wgRequest->getCheck( "check-$action-$current_level" ) ) {
+			if ( $wgRequest->getText("radio-$action") == $current_level /*$wgRequest->getCheck( "check-$action-$current_level" )*/ ) {
 				
+                
+                
 				// convert from FRONT-END to BACK-END
 				$current_level = ( $current_level=='everyone' ? '' : $current_level);
 				
@@ -689,7 +683,7 @@ function poForm( $action, $article ) {
 	if ( poUpdateRestrictions($article, $new_restrictions) ) {
 		$wgOut->addHTML(Xml::element( 'div', array('class'=>'informations success'), wfMessage('po-success')->text() ) );
 	} else {
-		$wgOut->addHTML(Xml::element( 'div', array('class'=>'informations error'), wfMessage('po-failure')->text() ) );
+		$wgOut->addHTML(Xml::element( 'div', array('class'=>'informations error'), wfMessage('po-failure')->text().'<br/>'.wfMessage('sz-report')->parse() ) );
 	}
 	
 	// re-display the ProtectOwn form with the current restrictions (reloaded above)
@@ -767,14 +761,14 @@ function poMakeForm( $title, $readonly = false ) {
 						'method' => 'post',
                         'class' => 'visualClear',
 						'action' => '#') );
-		$form  = Html::rawElement( 'div', array('class'=>'form_header informations'), htmlspecialchars( wfMsg( 'po-locked' ) ) );	
+		$form  = Html::rawElement( 'div', array('class'=>'form_header informations'), wfMsg( 'po-locked' ).'<br/>'.wfMessage('sz-report')->parse() );	
 	}
     
     $form .= Xml::openElement( 'div', array('class'=>'edit_col_1'));
     
     $form .= Xml::openElement( 'fieldset' );
     
-	$form .= Xml::element( 'legend', null, wfMsg( "po-setprotection") ) ;
+	$form .= Xml::element( 'legend', null, wfMsg( "po-legend") ) ;
     
     $form .= Xml::openElement( 'div', array('class'=>'content_block') );
 	
@@ -845,15 +839,17 @@ function poMakeForm( $title, $readonly = false ) {
 		
             $form .= Xml::openElement( 'span', array('class'=>'mw-htmlform-monoselect-item') );
             
-            $form .= Xml::checkLabel(wfMessage("po-$current_level")->text(), "check-$action-$current_level", "check-$action-$current_level", $checked);
+            /*$form .= Xml::checkLabel(wfMessage("po-$current_level")->text(), "check-$action-$current_level", "check-$action-$current_level", $checked);*/
 			
+            $form .= Xml::radioLabel(wfMessage("po-$current_level")->text(), "radio-$action", $current_level, "radio-$action-$current_level", $checked);
+            
             $form .= Xml::closeElement('span'); //mw-htmlform-monoselect-item
             
 		}
         
         $form .= Xml::closeElement('span'); //input_like
         
-        $form .= Xml::element('span', array('class'=>'sread help htmlform-tip'), wfMessage("po-help-$action")); //input_like
+        $form .= Xml::element('span', array('class'=>'sread help htmlform-tip'), wfMessage("po-help-$action")->parse()); //input_like
         
         $form .= Xml::closeElement('p'); //mw-htmlform-field-HTMLRadioField
 		
@@ -868,7 +864,7 @@ function poMakeForm( $title, $readonly = false ) {
 	if (!$readonly) {
         $form .= Xml::openElement( 'p', array('class'=>'submit') );
         
-		$form .= Xml::submitButton( wfMessage( 'po-confirm' ), array('class'=>'mw-htmlform-submit') );
+		$form .= Xml::submitButton( wfMessage( 'po-submit' ), array('class'=>'mw-htmlform-submit') );
         
         $form .= Xml::closeElement( 'p' );
 	}
@@ -878,7 +874,7 @@ function poMakeForm( $title, $readonly = false ) {
     $form .= Xml::openElement('div', array('class'=>'edit_col_2'));
     $form .= Xml::openElement('div', array('class'=>'content_block', 'id'=>'help_zone'));
     $form .= Xml::element('h4', null, wfMessage('sz-htmlform-helpzonetitle')->text());
-    $form .= Xml::element('p', null, wfMessage('sz-htmlform-helpzonedefault')->text());
+    $form .= Xml::element('p', null, wfMessage('sz-htmlform-helpzonedefault')->parse());
     $form .= Xml::closeElement('div');
     $form .= Xml::closeElement('div');
     

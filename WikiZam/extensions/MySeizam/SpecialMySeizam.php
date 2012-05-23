@@ -40,7 +40,7 @@ class SpecialMySeizam extends SpecialPage {
      * @param $request WebRequest : data posted.
      */
     public function __construct($request = null) {
-        parent::__construct('MySeizam');
+        parent::__construct('MySeizam', MS_ACCESS_RIGHT);
     }
 
     /**
@@ -50,14 +50,6 @@ class SpecialMySeizam extends SpecialPage {
         $this->setHeaders();
         $user = $this->getUser();
         $output = $this->getOutput();
-
-        if ($user->isAnon()) {
-            $link = Linker::linkKnown(
-                            SpecialPage::getTitleFor('Userlogin'), wfMessage('wp-nlogin-link-text')->text(), array(), array('returnto' => $this->getTitle()->getPrefixedText())
-            );
-            $output->addHTML('<p>' . wfMessage('wp-nlogin-text')->rawParams($link)->parse() . '</p>');
-            return;
-        }
 
         if (!$this->userCanExecute($user)) {
             $this->displayRestrictionError();

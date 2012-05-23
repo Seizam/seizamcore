@@ -40,7 +40,7 @@ class SpecialTransactions extends SpecialPage {
      * @param $request WebRequest : data posted.
      */
     public function __construct($request = null) {
-        parent::__construct('Transactions', 'user');
+        parent::__construct('Transactions', TM_ACCESS_RIGHT);
     }
 
     /**
@@ -52,9 +52,8 @@ class SpecialTransactions extends SpecialPage {
 
         $this->setHeaders();
 
-        if (!$user->isLoggedIn()) {
-            $output->addWikiText(wfMessage('tm-desc')->text());
-            $output->addWikiText(wfMessage('resetpass-no-info')->text());
+        if (!$this->userCanExecute($user)) {
+            $this->displayRestrictionError();
             return;
         }
         

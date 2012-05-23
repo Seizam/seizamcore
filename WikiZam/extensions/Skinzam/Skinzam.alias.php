@@ -10,10 +10,10 @@ $specialPageAliases = array();
 
 /** English (English) */
 $specialPageAliases['en'] = array(
-	'Skinzam' => array( 'Skinzam' ),
+	'Skinzam' => array('Skinzam'),
 );
 
 /** French (Français) */
 $specialPageAliases['fr'] = array(
-	'Skinzam' => array( 'Skinzam' ),
+	'Skinzam' => array('Skinzam'),
 );

@@ -1105,6 +1105,14 @@ html.client-nojs #bodyContent>.inside {
     padding: 0 4px;
 }
 
+a.feedlink {
+    margin-left: 8px;
+}
+
+a.feedlink:first-child {
+    margin-left: 0;
+}
+
 
 /* ----------------------------------------
    ==  CONTENTFOOTER
@@ -1948,8 +1956,7 @@ table.TablePager {
     background-color: transparent;
     border: none;
     text-align: center;
-    word-wrap:break-word;
-    max-width: 300px;
+    word-wrap: break-word;
     border-bottom: 1px solid #dad9d9;
 }
 
@@ -2010,6 +2017,7 @@ table.WpWikiplace td ul li {
 
 table.WpPage td.subpage_title {
     text-align: left;
+    max-width: 200px;
 }
 
 table.WpPage td ul {

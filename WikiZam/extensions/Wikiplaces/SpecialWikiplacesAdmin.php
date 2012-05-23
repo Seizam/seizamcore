@@ -7,32 +7,8 @@ class SpecialWikiplacesAdmin extends SpecialPage {
 	const ACTION_10EUR = '10eur';
 	const ACTION_CLEAR = 'clear';
 	
-	public function __construct() {
-		parent::__construct( self::TITLE_NAME );
-	}
-	
-	/**
-	 * Checks if the given user can perform this action. 
-	 *
-	 * @param $user User: the user to check, or null to use the context user
-	 * @return Bool true
-	 * @throws ErrorPageError
-	 */
-	public function userCanExecute( User $user ) {
-		if ( wfReadOnly() ) {
-			throw new ReadOnlyError();
-		}
-
-		if ( !$user->isAllowed( WP_ADMIN_RIGHT ) ) {
-			throw new PermissionsError( WP_ADMIN_RIGHT );
-		}
-
-		if ( $user->isBlocked() ) {
-			$block = $user->mBlock;
-			throw new UserBlockedError( $block );
-		}
-
-		return true;
+	public function __construct($request = null) {
+		parent::__construct(self::TITLE_NAME,WP_ADMIN_RIGHT);
 	}
 	
 	public function execute( $par ) {
@@ -41,13 +17,10 @@ class SpecialWikiplacesAdmin extends SpecialPage {
 		
 		$user = $this->getUser();
 		
-		if ( ! $user->isLoggedIn() ) {
-			$this->getOutput()->showErrorPage( self::TITLE_NAME, 'wp-nologintext', array( $this->getTitle()->getPrefixedDBkey() ) );
-			return;
-		}
-		
-		// This will throw exceptions if there's a problem
-		$this->userCanExecute( $this->getUser() );
+		if (!$this->userCanExecute($user)) {
+            $this->displayRestrictionError();
+            return;
+        }
 			
 		/** @todo: replace this header with something nicer */
 		$this->getOutput()->setSubtitle(Html::rawElement('span', array(), $this->getLang()->pipeList(array(
