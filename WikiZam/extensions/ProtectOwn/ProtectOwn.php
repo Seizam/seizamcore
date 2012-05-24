@@ -678,12 +678,18 @@ function poForm( $action, $article ) {
 	// so casacing won't make sens, and can be very problematic
 	// don't change this unless you know serioulsy what you are doing !!!
 
-	
+    // display the header.
+	if (!$readonly) {
+		$wgOut->addHTML(Html::rawElement( 'div', array('class'=>'form_header informations'), wfMessage( 'protect-text', wfEscapeWikiText( $title->getPrefixedText() ) )->parse()));
+    } else {
+        $wgOut->addHTML(Html::rawElement( 'div', array('class'=>'form_header informations'), wfMsg( 'po-locked' )));
+    }
+    
 	// display error/succes message
 	if ( poUpdateRestrictions($article, $new_restrictions) ) {
-		$wgOut->addHTML(Xml::element( 'div', array('class'=>'informations success'), wfMessage('po-success')->text() ) );
+		$wgOut->addHTML(Html::rawElement( 'div', array('class'=>'informations success'), wfMessage('po-success')->text() ) );
 	} else {
-		$wgOut->addHTML(Xml::element( 'div', array('class'=>'informations error'), wfMessage('po-failure')->text() ) );
+		$wgOut->addHTML(Html::rawElement( 'div', array('class'=>'informations error'), wfMessage('po-failure')->text() ) );
 	}
 	
 	// re-display the ProtectOwn form with the current restrictions (reloaded above)
@@ -755,13 +761,11 @@ function poMakeForm( $title, $readonly = false ) {
 						'method' => 'post',
                         'class' => 'visualClear',
 						'action' => $title->getLocalUrl( 'action='.PROTECTOWN_ACTION ) ) );
-		$form  .= Html::rawElement( 'div', array('class'=>'form_header informations'), wfMessage( 'protect-text', wfEscapeWikiText( $title->getPrefixedText() ) )->parse());
 	} else {
         $form = Html::openElement('form', array( 
 						'method' => 'post',
                         'class' => 'visualClear',
-						'action' => '#') );
-		$form  = Html::rawElement( 'div', array('class'=>'form_header informations'), wfMsg( 'po-locked' ));	
+						'action' => '#') );	
 	}
     
     $form .= Xml::openElement( 'div', array('class'=>'edit_col_1'));
@@ -849,7 +853,7 @@ function poMakeForm( $title, $readonly = false ) {
         
         $form .= Xml::closeElement('span'); //input_like
         
-        $form .= Xml::element('span', array('class'=>'sread help htmlform-tip'), wfMessage("po-help-$action")->parse()); //input_like
+        $form .= HTML::rawElement('span', array('class'=>'sread help htmlform-tip'), wfMessage("po-help-$action")->parse()); //input_like
         
         $form .= Xml::closeElement('p'); //mw-htmlform-field-HTMLRadioField
 		
@@ -874,7 +878,7 @@ function poMakeForm( $title, $readonly = false ) {
     $form .= Xml::openElement('div', array('class'=>'edit_col_2'));
     $form .= Xml::openElement('div', array('class'=>'content_block', 'id'=>'help_zone'));
     $form .= Xml::element('h4', null, wfMessage('sz-htmlform-helpzonetitle')->text());
-    $form .= Xml::element('p', null, wfMessage('sz-htmlform-helpzonedefault')->parse());
+    $form .= HTML::rawElement('p', null, wfMessage('sz-htmlform-helpzonedefault')->parse());
     $form .= Xml::closeElement('div');
     $form .= Xml::closeElement('div');
     

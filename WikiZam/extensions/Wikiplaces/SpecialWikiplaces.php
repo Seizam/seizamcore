@@ -24,8 +24,17 @@ class SpecialWikiplaces extends SpecialPage {
         $this->setHeaders(); // sets robotPolicy = "noindex,nofollow" + set page title
 
         $user = $this->getUser();
+        
+        $output = $this->getOutput();
 
+        // Check rights
         if (!$this->userCanExecute($user)) {
+            // If anon, redirect to login
+            if ($user->isAnon()) {
+                $output->redirect($this->getTitleFor('UserLogin')->getLocalURL(array('returnto'=>$this->getFullTitle())), '401');
+                return;
+            }
+            // Else display an error page.
             $this->displayRestrictionError();
             return;
         }
@@ -81,18 +90,20 @@ class SpecialWikiplaces extends SpecialPage {
 
         $formDescriptor = array(
             'Name' => array(
-                'label-message' => 'wp-enter-new-wp-name',
-                'section' => 'create-wp',
                 'type' => 'text',
+                'label-message' => 'wp-name-field',
+                'section' => 'create-section',
+                'help-message' => 'wp-create-name-help',
                 'validation-callback' => array($this, 'validateNewWikiplaceName'),
             )
         );
         $htmlForm = new HTMLFormS($formDescriptor);
+        $htmlForm->addHeaderText(wfMessage('wp-create-header')->parse());
+        $htmlForm->setMessagePrefix('wp');
         $htmlForm->setTitle($this->getTitle(self::ACTION_CREATE_WIKIPLACE));
         $htmlForm->setSubmitCallback(array($this, 'processCreateWikiplace'));
-        $htmlForm->setSubmitText(wfMessage('wp-create-wp-go')->text());
+        $htmlForm->setSubmitText(wfMessage('wp-create')->text());
         if ($htmlForm->show()) {
-
             $this->getOutput()->addHTML(wfMessage(
                             'wp-create-wp-success', Linker::linkKnown($this->title_just_created))->text());
         }

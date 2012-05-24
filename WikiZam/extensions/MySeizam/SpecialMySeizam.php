@@ -51,7 +51,14 @@ class SpecialMySeizam extends SpecialPage {
         $user = $this->getUser();
         $output = $this->getOutput();
 
+        // Check rights
         if (!$this->userCanExecute($user)) {
+            // If anon, redirect to login
+            if ($user->isAnon()) {
+                $output->redirect($this->getTitleFor('UserLogin')->getLocalURL(array('returnto'=>$this->getFullTitle())), '401');
+                return;
+            }
+            // Else display an error page.
             $this->displayRestrictionError();
             return;
         }

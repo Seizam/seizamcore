@@ -17,8 +17,17 @@ class SpecialSubscriptions extends SpecialPage {
         $this->setHeaders(); // sets robotPolicy = "noindex,nofollow" + set page title
 
         $user = $this->getUser();
+        
+        $output = $this->getOutput();
 
+        // Check rights
         if (!$this->userCanExecute($user)) {
+            // If anon, redirect to login
+            if ($user->isAnon()) {
+                $output->redirect($this->getTitleFor('UserLogin')->getLocalURL(array('returnto'=>$this->getFullTitle())), '401');
+                return;
+            }
+            // Else display an error page.
             $this->displayRestrictionError();
             return;
         }
@@ -170,15 +179,23 @@ class SpecialSubscriptions extends SpecialPage {
             $this->getOutput()->showErrorPage('sorry','wp-no-active-sub');
             return;
         }
-
         $formDescriptor = array(
             'Plan' => array(
                 'type' => 'select',
-                'label-message' => 'wp-select-a-plan',
+                'section' => 'sub-renew-section',
+                'label-message' => 'wp-planfield',
+                'help-message' => 'wp-planfield-help',
                 'validation-callback' => array($this, 'validateRenewPlanId'),
                 'options' => array(wfMessage('wp-do-not-renew')->text() => '0'),
                 'default' => $sub->get('wps_renew_wpp_id'),
             ),
+            'Check' => array(
+                'type' => 'check',
+                'section' => 'sub-renew-section',
+                'label-message' => 'wp-checkfield',
+                'validation-callback' => array($this, 'validateSubscribeCheck'),
+                'required' => 'true'
+            )
         );
 
         $nb_wikiplaces = WpWikiplace::countWikiplacesOwnedByUser($user_id);
@@ -193,6 +210,8 @@ class SpecialSubscriptions extends SpecialPage {
         }
 
         $htmlForm = new HTMLFormS($formDescriptor);
+        $htmlForm->setMessagePrefix('wp');
+        $htmlForm->addHeaderText(wfMessage('wp-sub-renew-header')->parse());
         $htmlForm->setTitle($this->getTitle(self::ACTION_RENEW));
         $htmlForm->setSubmitCallback(array($this, 'processRenew'));
         $htmlForm->setSubmitText(wfMessage('wp-plan-renew-go')->text());

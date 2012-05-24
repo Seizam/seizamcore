@@ -369,7 +369,9 @@ div#simpleSearch button#searchButton > img {
 */
 #userlogin, #userloginForm {
     border: solid 1px #dad9d9;
-    padding: 1.2em;
+    padding: 18px;
+    margin: 0;
+    background: #f2f2f2;
 }
 
 /* Structural Elements */
@@ -385,6 +387,12 @@ div#simpleSearch button#searchButton > img {
     border-bottom: 1px solid #dad9d9;
     width: auto;
 }
+
+#userlogin table td,
+#userloginForm table td {
+    padding: 6px;
+}
+
  
 fieldset.nested {
     margin: 0 0 4px 0;
@@ -1681,7 +1689,7 @@ table.mw-enhanced-rc:hover {
 .content_block {
     padding: 18px 18px 0 18px;
     margin: 0;
-    background: #f3f3f3;
+    background: #f2f2f2;
     border: 1px solid #dad9d9;
     overflow: hidden;
 }
@@ -1873,12 +1881,12 @@ div.form_header table {
 }
 
 
-body.ns-special .edit_col_2 #help_zone h4 {
+.edit_col_2 #help_zone h4 {
     margin: 0;
     border: 0;
 }
 
-body.ns-special .edit_col_2 #help_zone p {
+.edit_col_2 #help_zone p {
     margin-top: 0.5em;
     margin-bottom: 18px;
     font-style: italic;
@@ -2289,4 +2297,10 @@ h2.diff-currentversion-title {
 
 h2.diff-currentversion-title:after {
     content: " :";
+}
+
+div.prefsectiontip p {
+    font-size: x-small;
+    color: #686a6b;
+    margin: 3px 0 0 0;
 }
