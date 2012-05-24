@@ -99,6 +99,7 @@ $messages['en'] = array(
     
     /* Errors */
 	'wp-internal-error' => 'Sorry, an internal error occured. {{int:sz-report}}',
+    'wp-invalid-request' => 'Sorry, we cannot understand what you try to do OR you are not allowed to do it. {{int:sz-report}}'
 	
 );
 

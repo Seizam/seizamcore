@@ -1467,7 +1467,8 @@ body.ns-6.action-view #bodyContent > .inside > br,
 ul#filetoc,
 h2#filelinks,
 div#mw-imagepage-nolinkstoimage,
-div#mw-imagepage-section-linkstoimage{
+div#mw-imagepage-section-linkstoimage
+div#mw-imagepage-section-duplicates {
     display: none;
 }
 
