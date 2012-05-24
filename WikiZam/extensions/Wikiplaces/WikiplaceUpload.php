@@ -6,6 +6,7 @@ class WikiplaceUpload {
 	private static $FILE_PREFIXES = array(); // listbox value => listbox caption
 	private static $FILE_PREFIXES_DEFAULT = false;
 	private static $FILE_MAIN_PART_DEFAULT = '';
+	private static $WPDESTFILE_READONLY = false;
 	
 	// set to true if handler has been succesfully installed
 	// otherwise, it doesn't alter the original upload form in
@@ -57,9 +58,9 @@ class WikiplaceUpload {
 	 * <li>$wgHooks['UploadForm:BeforeProcessing']</li>
 	 * </ul>
 	 * @param SpecialPage $specialUploadObj current SpecialUpload page object
-	 * @todo Maybe we can know wich user is uploading in onUploadFormSourceDescriptors()
-	 * using a nicer way ?
-	 * @todo reload GET argument wpDestFile=Bob.paye_ton_schéma.png in our fields
+	 * @todo if the user cannot upload a new file, maybe this function should
+	 * however return true, as seen in SpecialUpload page code comments (but if
+	 * true returned, the form is displayed with our error message on top)
 	 */
 	public static function fetchRequestInformations($specialUploadObj) {
 
@@ -67,39 +68,61 @@ class WikiplaceUpload {
 		self::$USER_IS_WP_ADMIN = $user->isAllowed(WP_ADMIN_RIGHT);
 
 		if ( self::$USER_IS_WP_ADMIN || !self::$DISPLAY_UPLOAD_MOD ) {
-			return true; // no informations to fetch and nothing to prepare
+			return true; // no informations to fetch and nothing to prepare, using standard form
 		}
 		
+		$full_title = $specialUploadObj->getFullTitle();
 		$request =  $specialUploadObj->getRequest();
 		
-		// do the complete filename is psecified and not our mainpart? 
-		// (occurs when submitting on reuploading, wpDestFile in GET param)
+		// is the user re uploading a new version of an existing file or followed a "upload a file with this name" link ?
 		if ($request->getText('wpDestFile') && !$request->getText('wpDestFileMainPart')) {
+			
+			// ensure that user can or not, but we don't need explanation if it can't be uploaded
+			if ( ! WikiplacesHooks::wikiplaceUserCanCreate(Title::makeTitle(NS_FILE, $request->getText('wpDestFile')), $user) ) {
+				$specialUploadObj->getOutput()->showErrorPage('sorry', wfMessage('wp-invalid-request'));
+				return false; // break SpecialUpload page init/processing
+			}
+		
+			// she is reuploading or has followed a "upload a file with this name" link
 			wfDebugLog( 'wikiplaces-upload', 'fetchRequestInformations: reuploading, so disabling mod');
+			self::$WPDESTFILE_READONLY = true; // ensure that the filename field is readonly when create link followed
 			self::$DISPLAY_UPLOAD_MOD = false;
 			return true; // no informations to fetch and nothing to prepare
 		}
 		
-		// search an argument, as seen in SpecialPageFactory around line 408
-		$db_key = $specialUploadObj->getFullTitle()->getDBkey();
+		// ( if we arrive here, we are uploading a new file )
+		
+		// can the user upload a new file ?
+		if (( $reason = WpSubscription::userCanUploadNewFile($user->getId())) !== true) {
+            $specialUploadObj->getOutput()->showErrorPage('sorry', wfMessage($reason));  // no active subscription or quotas exceeded 
+            return false; // break SpecialUpload page init/processing
+        }
+		// check if the user has at least one wikiplace
+        $wikiplaces = WpWikiplace::getAllOwnedByUserId($user->getId());
+        if (count($wikiplaces) == 0) {
+            $specialUploadObj->getOutput()->showErrorPage('sorry', wfMessage('wp-create-wp-first'));
+            return false; // break SpecialUpload page init/processing
+        }
+		
+		// is there a wikiplace specified in the url ?
+		// search a GET parameter, as seen in SpecialPageFactory around line 408
+		$db_key = $full_title->getDBkey();
 		$bits = explode( '/', $db_key, 2 );
 		$param = null;
 		if ( isset( $bits[1] ) ) { 
 			$param = $bits[1];
 		}
 		
-		// is there a param "Public" ?
-		if ( $param === WP_PUBLIC_FILE_PREFIX )  { 
+		if ( $param === WP_PUBLIC_FILE_PREFIX )  {
 			
-			// if public, there is only one choice in the listbox
+			// there is a "Public" param, there will be only one choice in the listbox
 			wfDebugLog( 'wikiplaces-upload', 'fetchRequestInformations: only public prefix will be visible');
 			self::$FILE_PREFIXES[$param] = WP_PUBLIC_FILE_PREFIX;
 			self::$FILE_PREFIXES_DEFAULT = $param;
 
 		} else {
 
-			// prepare prefixes list
-			$wikiplaces = WpWikiplace::getAllOwnedByUserId($user->getId());
+			// multiple choice: prepare full prefixes list
 			foreach ($wikiplaces as $wikiplace) {
 				$wpw_name = $wikiplace->get('name');
 
@@ -122,8 +145,6 @@ class WikiplaceUpload {
 			wfDebugLog( 'wikiplaces-upload', 'fetchRequestInformations, mDesiredDestName set to "'.$name.'"');
 		}
 		
-		
-		
 		return true; // continue hook processing
 	}
 	
@@ -134,6 +155,11 @@ class WikiplaceUpload {
 	 * @todo re-develop properly the "force license" system
 	 */
 	public static function installWikiplaceUploadFrontend( $descriptor ) {
+		
+		// set original filename field as readonly if needed
+		if (self::$WPDESTFILE_READONLY) {
+			$descriptor['DestFile']['readonly'] = true;
+		}
 		
 		if ( self::$USER_IS_WP_ADMIN || !self::$DISPLAY_UPLOAD_MOD) {
 			wfDebugLog( 'wikiplaces-upload', 'installWikiplaceUploadFrontend, upload form will not be changed');
@@ -174,6 +200,7 @@ class WikiplaceUpload {
 		// hide original filename field
 		$descriptor['DestFile']['id'] = 'oldWpDestFile'; // change ID in order to move its JS magic to our field
 		$descriptor['DestFile']['type'] = 'hidden'; // hide it
+
 
 		// add the list box and filename main part field 
 		$counter = 1;
@@ -295,7 +322,14 @@ $wgHooks['SpecialUploadComplete'][] = 'WikiplaceUpload::onSpecialUploadComplete'
 	2012-05-18 10:38:53  wikidb: upload 6 ::onUploadVerification
 	2012-05-18 10:38:54  wikidb: upload 7 ::onUploadComplete
 	2012-05-18 10:38:54  wikidb: upload 8 ::onSpecialUploadComplete
-	 */
+
+	SpecialPageFactory.php line: 318 call: SpecialUpload->__construct()
+SpecialPageFactory.php line: 415 call: SpecialPageFactory::getPage("Upload")
+              Wiki.php line: 240 call: SpecialPageFactory::executePath(Object(Title), Object(RequestContext))
+
+SpecialPageFactory.php line: 458 call: SpecialUpload->execute(Null)
+              Wiki.php line: 240 call: SpecialPageFactory::executePath(Object(Title), Object(RequestContext))
+	  */
 
 }
 
