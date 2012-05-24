@@ -340,8 +340,7 @@ class WpPage {
 
 		return in_array($namespace, $wgWikiplaceNamespaces);
 	}
-	
-	
+
 	/**
 	 *
 	 * @param int $namespace
@@ -355,12 +354,11 @@ class WpPage {
 
 		global $wgWikiplaceNamespaces;
 
-		if ( ! in_array($namespace, $wgWikiplaceNamespaces)) {
+		if (!in_array($namespace, $wgWikiplaceNamespaces)) {
 			return false;
 		}
-		return ( !WpPage::isPublic($namespace, $db_key) && !WpPage::isAdmin($namespace, $db_key) ) ;
+		return (!WpPage::isPublic($namespace, $db_key) && !WpPage::isAdmin($namespace, $db_key) );
 	}
-
 
 	/**
 	 *
@@ -369,13 +367,13 @@ class WpPage {
 	 * @return boolean 
 	 */
 	public static function isPublic($namespace, $db_key) {
-		if ( !($namespace==NS_FILE) && !($namespace==NS_FILE_TALK) ) {
+		if (!($namespace == NS_FILE) && !($namespace == NS_FILE_TALK)) {
 			return false;
 		}
 		$exploded = WpWikiplace::explodeWikipageKey($db_key, $namespace);
 		return ( $exploded[0] == WP_PUBLIC_FILE_PREFIX );
 	}
-	
+
 	/**
 	 *
 	 * @param int $namespace
@@ -383,7 +381,7 @@ class WpPage {
 	 * @return boolean 
 	 */
 	public static function isAdmin($namespace, $db_key) {
-		if ( !($namespace==NS_FILE) && !($namespace==NS_FILE_TALK) ) {
+		if (!($namespace == NS_FILE) && !($namespace == NS_FILE_TALK)) {
 			return false;
 		}
 		$exploded = WpWikiplace::explodeWikipageKey($db_key, $namespace);
@@ -403,12 +401,7 @@ class WpPage {
 
 		$dbr = wfGetDB(DB_SLAVE);
 		$result = $dbr->selectRow(
-				'wp_wikiplace', array(
-			'count(*) as total'
-				), array('wpw_owner_user_id' => $user_id), __METHOD__, array(), array(
-			'wp_page' => array('INNER JOIN', 'wpw_id = wppa_wpw_id'),
-			'page' => array('INNER JOIN', 'wppa_page_id = page_id'),
-				));
+				array('wp_wikiplace', 'wp_page'), array('count(*) as total'), array('wpw_owner_user_id' => $user_id), __METHOD__, array(), array('wp_page' => array('INNER JOIN', 'wpw_id = wppa_wpw_id')));
 
 		if ($result === null) {
 			return 0;
