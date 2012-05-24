@@ -167,7 +167,7 @@ class WikiplacesHooks {
 	 * @param User $user
 	 * @return boolean true=can, false=cannot 
 	 */
-	private static function wikiplaceUserCanCreate(&$title, &$user) {
+	public static function wikiplaceUserCanCreate(&$title, &$user) {
 
 		// in userCan() calling this function, we already checked that user is loggedin
 

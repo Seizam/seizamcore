@@ -195,6 +195,7 @@ $wgImgAuthPublicTest = false;	//false = bypass full public wiki
 $wgUseImageMagick = true;	//true = use imagemagick library instead of
 				// internal PHP image conversion system
 $wgImageMagickConvertCommand = "/usr/bin/convert"; 
+$wgFileExtensions = array('png','gif','jpg','jpeg', 'pdf');
 
 require_once( "$IP/extensions/UploadWizard/UploadWizard.php" );
 				// default upload url will point to uploadwizard
