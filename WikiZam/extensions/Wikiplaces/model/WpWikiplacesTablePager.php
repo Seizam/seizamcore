@@ -92,7 +92,7 @@ class WpWikiplacesTablePager extends SkinzamTablePager {
         $html = "<tr class=\"$class\"><td colspan=\"$colums\">";
         $html .= SpecialWikiplaces::getLinkCreateWikiplace();
         $html .= "</td></tr>";
-        $html .= "</tbody></table>\n";
+        $html .= parent::getEndBody();
 		return $html;
 	}
 }

@@ -528,7 +528,7 @@ function poForm( $action, $article ) {
 	if ( !poIsOwner( $title , $wgUser ) ) {
 		// user is not the owner of the page
 		$wgOut->setPageTitle( wfMsg( 'errorpagetitle' ) );
-		$wgOut->addHTML( wfMessage('po-notowner')->parse().'<br/>'.wfMessage('sz-report')->parse() );
+		$wgOut->addHTML( wfMessage('po-notowner')->parse());
 		return false; //stop processing	
 	} 
 	
@@ -683,7 +683,7 @@ function poForm( $action, $article ) {
 	if ( poUpdateRestrictions($article, $new_restrictions) ) {
 		$wgOut->addHTML(Xml::element( 'div', array('class'=>'informations success'), wfMessage('po-success')->text() ) );
 	} else {
-		$wgOut->addHTML(Xml::element( 'div', array('class'=>'informations error'), wfMessage('po-failure')->text().'<br/>'.wfMessage('sz-report')->parse() ) );
+		$wgOut->addHTML(Xml::element( 'div', array('class'=>'informations error'), wfMessage('po-failure')->text() ) );
 	}
 	
 	// re-display the ProtectOwn form with the current restrictions (reloaded above)
@@ -761,7 +761,7 @@ function poMakeForm( $title, $readonly = false ) {
 						'method' => 'post',
                         'class' => 'visualClear',
 						'action' => '#') );
-		$form  = Html::rawElement( 'div', array('class'=>'form_header informations'), wfMsg( 'po-locked' ).'<br/>'.wfMessage('sz-report')->parse() );	
+		$form  = Html::rawElement( 'div', array('class'=>'form_header informations'), wfMsg( 'po-locked' ));	
 	}
     
     $form .= Xml::openElement( 'div', array('class'=>'edit_col_1'));

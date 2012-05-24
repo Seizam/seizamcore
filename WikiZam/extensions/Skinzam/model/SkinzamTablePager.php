@@ -19,7 +19,7 @@ class SkinzamTablePager extends TablePager {
     protected $tableClasses = array(); # Array
     protected $defaultSort; # String (field)
     public $mDefaultDirection = true; # Boolean (true=decrescent)
-    public $mDefaultLimit = 7;
+    public $mDefaultLimit = 5;
     protected $messagesPrefix = 'sz-'; # String
     # Do not redeclare
     protected $fieldNames = null;
@@ -289,6 +289,26 @@ class SkinzamTablePager extends TablePager {
      * @return string 
      */
     public function getFooter() {
+        return $this->footer;
+    }
+    
+    /**
+     *
+     * @param String $html
+     * @return String 
+     */
+    public function makeHeader($html) {
+        $this->setHeader($html);
+        return $this->header;
+    }
+    
+    /**
+     *
+     * @param String $html
+     * @return String 
+     */
+    public function makeFooter($html) {
+        $this->setFooter($html);
         return $this->footer;
     }
 

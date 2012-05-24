@@ -20,6 +20,7 @@ $messages['en'] = array(
     
     /* Generic keywords */
 	'wp-wikiplace' => 'Wikiplace',
+	'wp-wikiplaces' => 'Wikiplaces',
     'wp-homepage' => 'Homepage',
     'wp-items' => 'items',
 	'wp-subpage' => 'Subpage',
@@ -33,13 +34,14 @@ $messages['en'] = array(
 	'wp-diskspace' => "Diskspace",
     'wp-nswp' => 'Setting',
     'wp-nswp-talk' => 'Setting talk',
+    'wp-max_wikiplaces' => '{{int:wp-wikiplaces}}',
+    'wp-max_pages' => '{{int:wp-subpages}}',
     
     /* Actions */
     'wp-seeall' => 'see all',
-	'wp-subscribe-new' => 'Take a subscription',
-	'wp-subscribe-change' => 'Change plan',
-	'wp-subscribe-renew' => 'Choose renewal plan',
-	'wp-subscribe-list' => 'Subscription history',
+	'wp-subscribe' => 'Subscribe',
+	'wp-subscribe-change' => 'Change subscription',
+	'wp-subscribe-renew' => 'Renew',
     
     /* Form: Wikiplace */
     'wp-enter-new-wp-name' => 'Please enter your new Wikiplace name',
@@ -58,10 +60,24 @@ $messages['en'] = array(
     'wp-name-already-exists' => 'This name already exists. Please retry with a different name.',
     'wp-create-wp-first' => 'You need to create a Wikiplace first.',
     
+    /* TablePager: Subscription */
+    'wp-subscriptionslist-header' => 'Here is a list of all your subscriptions through time:',
+    'wp-subscriptionslist-noactive-header' => 'You do not have any active subscription. [[Special:Subscriptions/new|Click here to subscribe again!]]
+
+{{int:wp-subscriptionslist-header}}',
+    'wp-subscriptionslist-footer' => 'Would you like to setup your [[Special:Subscriptions/renew|subscription renewal]] plan? Or perhaps [[Special:Subscriptions/change|change your plan]] right now?',
+    
     /* Form: Subscription */
-    'wp-select-a-plan' => 'Please select an offer',
+    'wp-sub-new-header' => 'Please fill the form below to subscribe to Seizam.',
+    'wp-sub-new-section' => 'Subscribe',
+    'wp-planfield' => 'Plan:',
+    'wp-planfield-help' => 'Select the Plan you wish to subscribe to from this dropdown list of available Plans offered by Seizam. More details [[Special:Offers|here]].',
+    
+    'wp-checkfield' => 'I read, understood and agree with both the General Terms and Conditions of Use ([[Project:GTCU|GTCU]]) and the Artist Specific Terms and Conditions of Use ([[Project:ASTCU|ASTCU]]) of Seizam.',
+    'wp-checkfield-unchecked' => 'You need to agree with our Terms and Conditions to subscribe. Please check the box above.',
+    
     'wp-plan-desc-short' => '$1: $2 $3 for $4 months',
-	'wp-plan-subscribe-go' => 'Subscribe now!',
+	'wp-plan-subscribe-go' => 'Subscribe!',
 	'wp-do-not-renew' => 'do not renew',
 	'wp-plan-renew-go' => 'Set as my next plan',
     
@@ -74,13 +90,15 @@ $messages['en'] = array(
 	
     /* Warning: Subscription */
 	'wp-no-active-sub' => 'You need an active subscription to perform this action. [[Special:Subscriptions/new|Click here to subscribe!]]',
-	'wp-wikiplace-quota-exceeded' => 'Your wikiplace creation quota is exceeded. You need to upgrade your plan to perform this action.',
-	'wp-page-quota-exceeded' => 'Your page creation quota is exceeded. You need to upgrade your plan to perform this action.',
-	'wp-subscribe-already' => 'You already subscribed to a plan.',
-	'wp-subscribe-email' => 'Before taking a subscription, you need to validate your e-mail address. Please follow the instructions in the e-mail you have received when creating your account, to ensure that you can be contacted.',
+	'wp-wikiplace-quota-exceeded' => 'Your wikiplace creation quota is exceeded. You need to upgrade your plan to perform this action. [[Special:Subscriptions/change|Click here to change plan!]]',
+	'wp-page-quota-exceeded' => 'Your page creation quota is exceeded. You need to upgrade your plan to perform this action. [[Special:Subscriptions/change|Click here to change plan!]]',
+	'wp-diskspace-quota-exceeded' => 'Your file upload quota is exceeded. You need to upgrade your plan to perform this action. [[Special:Subscriptions/change|Click here to change plan!]]',
+    'wp-subscribe-already' => 'You already have an active subscription. [[Special:Subscriptions/change|Click here to change your subscription]], or [[Special:MySeizam|here to return to MySeizam]].',
+	'wp-subscribe-email' => 'Before taking a subscription, you need to validate your e-mail address. [[Special:Preferences#mw-htmlform-email|Click here to setup and validate your e-mail address!]]',
+    'wp-subscribe-change' => 'You can select another plan to start from the end of your current subscription through [[Special:Subscriptions/renew|the subscription renewal page]]. Please [[Project:Contact|contact us]] if you need to switch to another plan right now. {{int:sz-asap}}',
     
     /* Errors */
-	'wp-error' => 'An error occured. Please try again.',
+	'wp-internal-error' => 'Sorry, an internal error occured. {{int:sz-report}}',
 	
 );
 

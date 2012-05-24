@@ -18,6 +18,7 @@ $messages['en'] = array(
     'tagline' => 'From Seizam.com - For Art & Freedom',
     'sz-myseizam' => 'My Seizam',
     
+    'sz-back' => 'back',
     'sz-legalcontent' => 'Legal Content',
     'sz-gtcu' => '[[Project:GTCU|General Terms and Conditions of Use]]',
     'sz-astcu' => '[[Project:STCUA|Artist Specific Terms and Conditions of Use]]',
@@ -44,6 +45,7 @@ $messages['en'] = array(
     'sz-htmlform-helpzonetitle' => 'Need Help?',
     'sz-htmlform-helpzonedefault' => 'This frame will display text to help you fill this form. Just fly over the "\'\'\'?\'\'\'" beside any field to obtain help or details! Visit [[Help:Contents|The Help Pages]] for more help.',
     'sz-report' => 'Please feel free to [[Project:Contact|Contact us]] to report and get this issue solved.',
+    'sz-asap' => 'Our team will make it happen as fast as possible!',
     
     'sorry' => 'Sorry!'
     
@@ -66,6 +68,7 @@ $messages['fr'] = array(
     'tagline' => 'Depuis Seizam.com - Art & Liberté',
     'sz-myseizam' => 'Mon Seizam',
     
+    'sz-back' => 'retour',
     'sz-legalcontent' => 'Contenu légal',
     'sz-gtcu' => '[[Project:CGU|Conditions Générales d\'Utilisation]]',
     'sz-astcu' => '[[Project:CPUA|Conditions Particulières d\'Utilisation pour les Artistes]]',
@@ -92,6 +95,7 @@ $messages['fr'] = array(
     'sz-htmlform-helpzonetitle' => 'Besoin d\'aide ?',
     'sz-htmlform-helpzonedefault' => 'Ce cadre affichera un texte d\'aide pour le remplissage de ce formulaire. Il vous suffit de passer sur le "\'\'\'?\'\'\'" à côté d\'un champ pour obtenir de l\'aide ou des précisions ! Visitez [[Help:Contents/fr|Les Pages d\'Aide]] pour plus d\'aide.',
     'sz-report' => 'N\'hésitez pas à [[Project:Contact/fr|nous contacter]] pour signaler et résoudre ce problème.',
+    'sz-asap' => 'Notre équipe s\'en occupera le plus rapidement possible!',
     
     'sorry' => 'Désolé!'
 );

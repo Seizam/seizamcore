@@ -452,7 +452,9 @@ EOT
 			}
 		} else {
 			# Image does not exist
-			if ( $wgEnableUploads && $wgUser->isAllowed( 'upload' ) ) {
+            # PATCH FOR SEIZAM
+			if ( $wgEnableUploads && $this->getTitle()->userCan( 'upload' ) ) {
+            # /PATCH FOR SEIZAM
 				// Only show an upload link if the user can upload
 				$uploadTitle = SpecialPage::getTitleFor( 'Upload' );
 				$nofile = array(

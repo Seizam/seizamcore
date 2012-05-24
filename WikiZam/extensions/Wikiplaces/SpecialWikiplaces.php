@@ -67,13 +67,15 @@ class SpecialWikiplaces extends SpecialPage {
 
         $tp = new WpWikiplacesTablePager();
         $tp->setSelectConds(array('wpw_owner_user_id' => $user_id));
+        $tp->setHeader(wfMessage('wp-list-header')->parse());
+        $tp->setFooter(wfMessage('wp-list-footer')->parse());
         $output->addHTML($tp->getWholeHtml());
     }
 
     private function displayCreateWikiplace() {
 
         if (( $reason = WpSubscription::userCanCreateWikiplace($this->getUser()->getId())) !== true) {
-            $this->getOutput()->showErrorPage('sorry', wfMessage($reason)); // no active subscription or quotas exceeded 
+            $this->getOutput()->showErrorPage('sorry', $reason); // no active subscription or quotas exceeded 
             return;
         }
 
@@ -122,7 +124,7 @@ class SpecialWikiplaces extends SpecialPage {
 
         $homepage = WpWikiplace::initiateCreation($formData['Name']);
         if (!( $homepage instanceof Title )) {
-            return wfMessage('wp-error')->parse(); // error while creating
+            return wfMessage('wp-internal-error')->parse(); // error while creating
         }
 
         $this->title_just_created = $homepage;
@@ -133,13 +135,13 @@ class SpecialWikiplaces extends SpecialPage {
     public function displayCreateSubpage($name) {
 
         if (( $reason = WpSubscription::userCanCreateNewPage($this->getUser()->getId())) !== true) {
-            $this->getOutput()->showErrorPage('sorry', wfMessage($reason));  // no active subscription or quotas exceeded 
+            $this->getOutput()->showErrorPage('sorry', $reason);  // no active subscription or quotas exceeded 
             return;
         }
 
         $wikiplaces = WpWikiplace::getAllOwnedByUserId($this->getUser()->getId());
         if (count($wikiplaces) == 0) {
-            $this->getOutput()->showErrorPage('sorry', wfMessage('wp-create-wp-first'));
+            $this->getOutput()->showErrorPage('sorry', 'wp-create-wp-first');
             return;
         }
 
@@ -226,7 +228,7 @@ class SpecialWikiplaces extends SpecialPage {
         $subpage = WpPage::createSubpage($wikiplace, $formData['SpName']);
 
         if (!( $subpage instanceof Title )) {
-            return wfMessage('wp-error')->parse();
+            return wfMessage('wp-internal-error')->parse();
         }
 
         $this->title_just_created = $subpage;
@@ -247,10 +249,6 @@ class SpecialWikiplaces extends SpecialPage {
     public static function getLinkToMyWikiplaces($i18n_key = 'wikiplaces') {
         return Linker::linkKnown(
                         SpecialPage::getTitleFor(self::TITLE_NAME), wfMessage($i18n_key)->text());
-    }
-
-    public static function getLinkListMyWikiplaces($i18n_key = 'wp-list-all-my-wp') {
-        return Linker::linkKnown(self::getTitleFor(self::TITLE_NAME), wfMessage($i18n_key)->text());
     }
 
     /**

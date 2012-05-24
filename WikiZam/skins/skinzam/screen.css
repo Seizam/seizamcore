@@ -810,15 +810,6 @@ a, a span {
    ==  HEADERS
    ---------------------------------------- */
 
-#header.block {
-    /* @embed */
-    background-image: url(images/sh_block_header.png);
-    background-color: transparent;
-    background-repeat: no-repeat;
-    background-position: bottom center;
-}
-
-
 #header.block_full .inside {
     padding: 16px 20px 12px;
 }
@@ -1487,6 +1478,7 @@ div#mw-imagepage-section-filehistory,
 div#mw-imagepage-section-linkstoimage,
 div#mw-imagepage-nolinkstoimage,
 div.mw-imagepage-section-metadata,
+div#mw-imagepage-nofile,
 body.ns-6.action-view #bodyContent > .inside > ul {
     clear: both;
     margin: 0 auto 18px;
@@ -1499,6 +1491,7 @@ div#mw-imagepage-section-filehistory,
 div#mw-imagepage-section-linkstoimage,
 div#mw-imagepage-nolinkstoimage,
 div.mw-imagepage-section-metadata,
+div#mw-imagepage-nofile,
 body.ns-6.action-view #bodyContent > .inside > ul {
     padding: 18px;
 }
@@ -1824,9 +1817,10 @@ table.mw-enhanced-rc:hover {
 
 .edit_col_1 .content_block p > label.checkfield {
     display: inline;
-    width: auto;
-    padding: 0 30px 0 5px;
-    margin-right:0;
+}
+
+.edit_col_1 .content_block p.mw-htmlform-field-HTMLCheckField {
+    text-align: justify;
 }
 
 .edit_col_1 input[type="submit"] {
@@ -1849,7 +1843,7 @@ div.form_header, div.table_header, div#contentSub {
 }
 
 div.form_footer, div.table_footer {
-    margin-bottom : 0;
+    margin : 36px 0 0;
     background-color: transparent;
     border-bottom: none;
 }
@@ -1900,7 +1894,7 @@ body.ns-special .edit_col_2 #help_zone p {
 .edit_col_1 .content_block .mw-htmlform-invalid-input select,
 .edit_col_1 .content_block .mw-htmlform-invalid-input textarea,
 .edit_col_1 .content_block .mw-htmlform-invalid-input .input_like {
-    border: 2px solid #f0373a;
+    border: 2px solid  #974349;
 
 }
 
@@ -1910,7 +1904,14 @@ p.mw-htmlform-invalid-input span.error {
     text-align: justify;
     font-size: 1em;
     margin-left: 192px;
-    color: #f0373a;
+    color: #974349;
+    padding-left: 8px;
+    border-left: 1px solid #debdbf;
+}
+
+p.mw-htmlform-invalid-input.mw-htmlform-field-HTMLCheckField span.error {
+    width: auto;
+    margin-left: 0;
 }
 
 
@@ -2288,5 +2289,3 @@ h2.diff-currentversion-title {
 h2.diff-currentversion-title:after {
     content: " :";
 }
-
-

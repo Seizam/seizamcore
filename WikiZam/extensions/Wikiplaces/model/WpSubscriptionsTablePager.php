@@ -19,8 +19,8 @@ class WpSubscriptionsTablePager extends SkinzamTablePager {
 		'wpp_name AS plan_name',
 		'wps_start_date AS start_date',			// when the sub starts
 		'wps_end_date AS end_date',				// subscribed plan name
-		'wpp_nb_wikiplaces AS nb_wikiplaces',
-		'wpp_nb_wikiplace_pages AS nb_wikiplace_pages',
+		'wpp_nb_wikiplaces AS max_wikiplaces',
+		'wpp_nb_wikiplace_pages AS max_pages',
 		'wpp_diskspace AS diskspace',
 		'wps_tmr_status AS status',
 		);
@@ -46,14 +46,13 @@ class WpSubscriptionsTablePager extends SkinzamTablePager {
 			
 			case 'start_date':
 			case 'end_date':
-				return ($value === null) ? '-' : $wgLang->timeanddate($value, true);
+				return ($value === null) ? '-' : $wgLang->date($value, true);
 			case 'plan_name':
 				return  wfMessage('wp-' . $value)->text();
 			case 'status':
 				return wfMessage("status-$value")->text() ;
-			case 'nb_wikiplaces':
-			case 'nb_wikiplace_pages':
-			case 'monthly_hits':
+			case 'max_wikiplaces':
+			case 'max_pages':
 				return wgformatNumber($value);
 			case 'monthly_bandwidth':
 			case 'diskspace':

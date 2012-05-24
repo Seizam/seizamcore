@@ -387,7 +387,7 @@ class HTMLFormS {
                 . '<div class="edit_col_2">'
                 . '<div id="help_zone" class="content_block">'
                 . '<h4>' . wfMessage('sz-htmlform-helpzonetitle')->text() . '</h4>'
-                . '<p>' . wfMessage('sz-htmlform-helpzonedefault')->text() . '</p>'
+                . '<p>' . wfMessage('sz-htmlform-helpzonedefault')->parse() . '</p>'
                 . '</div>'
                 . '</div>';
 
@@ -979,7 +979,7 @@ abstract class HTMLFormField {
             else
                 $msg = wfMessage($this->mParams['help-message']);
             if ($msg->exists()) {
-                $helptext = $msg->text();
+                $helptext = $msg->parse();
             }
         } elseif (isset($this->mParams['help-messages'])) {
             # help-message can be passed a message key (string) or an array containing
@@ -991,7 +991,7 @@ abstract class HTMLFormField {
                 else
                     $msg = wfMessage($name);
                 if ($msg->exists()) {
-                    $helptext .= $msg->text(); // append message
+                    $helptext .= $msg->parse(); // append message
                 }
             }
         } elseif (isset($this->mParams['help'])) {
