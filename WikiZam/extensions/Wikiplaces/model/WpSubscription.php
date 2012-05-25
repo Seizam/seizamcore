@@ -499,7 +499,7 @@ class WpSubscription {
 		$user_id = $this->get('wps_buyer_user_id');
 		$user = User::newFromId($user_id);
 		if ( ! $user->loadFromId() ) { 
-			return 'wp-internal-error';
+			return 'sz-internal-error';
 		}
 		$this->fetchBuyer($user);
 		$user_email = $user->getEmail();

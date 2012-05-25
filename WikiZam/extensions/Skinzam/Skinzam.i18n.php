@@ -47,7 +47,12 @@ $messages['en'] = array(
     'sz-report' => 'Please feel free to [[Project:Contact|Contact us]] to report and get this issue solved.',
     'sz-asap' => 'Our team will make it happen as fast as possible!',
     
-    'sorry' => 'Sorry!'
+    /* Errors */
+    'sorry' => 'Sorry!',
+	'sz-internal-error' => 'Sorry, an internal error occured. {{int:sz-report}}',
+    'sz-invalid-request' => 'Sorry, we do not understand what you want to do OR you are not allowed to do it. {{int:sz-report}}',
+	
+    
     
 );
 
