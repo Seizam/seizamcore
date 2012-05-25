@@ -977,21 +977,28 @@ function poSearchUpdate( $id, $namespace, $title_text, &$text ) {
 	return true;
 }
 	
-// check that the page is not read protected
-// it may be better to check if the "user can read" the page instead... because 
-// maybe she can read even if it read restricted (= read restricted to user)
+
+/**
+ * check that the page is not read protected
+ * it may be better to check if the "user can read" the page instead... because 
+ * maybe she can read even if it read restricted (= read restricted to user)
+ * @global Output $wgOut
+ * @param User $user
+ * @param Article $article
+ * @return boolean 
+ */
 function poWatchArticle( &$user, &$article ) {
 	
 	$title = $article->getTitle();
-	global $wgOut;
 	
-	if ($title->isProtected('read')) {
+	if ( ! $title->userCan('read') ) {
 		
 		wfDebugLog( 'restrictions', 'WatchArticle: FORBIDDEN'
 				.' the title "'.$title->getPrefixedDBkey().'"['.$title->getArticleId().']' 
 				.' has a read restriction, so no one can watch it');
+
+		throw new ErrorPageError('sorry', 'sz-invalid-request'); // no active subscription or quotas exceeded 
 		
-		$wgOut->addWikiText( wfMsg( 'badaccess' ) );
 		return false;
 		
 	}
