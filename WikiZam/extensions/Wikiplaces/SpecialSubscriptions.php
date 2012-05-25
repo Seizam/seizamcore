@@ -154,7 +154,7 @@ class SpecialSubscriptions extends SpecialPage {
 
         $subscription = WpSubscription::subscribe($this->getUser(), $plan);
         if ($subscription == null) {
-            return wfMessage('wp-internal-error')->text();
+            return wfMessage('sz-internal-error')->text();
         }
 
         $this->just_subscribed = $subscription;

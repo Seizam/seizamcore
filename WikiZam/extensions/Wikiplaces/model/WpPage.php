@@ -218,7 +218,7 @@ class WpPage {
 	 * <ul>
 	 * <li><b>wp-bad-title</b> MediaWiki is unable to create this homepage. Title may contain bad characters.</li>
 	 * <li><b<wp-title-already-exists</b> This homepage already exists</li>
-	 * <li><b>wp-internal-error</b> if Mediawiki returned an error while creating the article:
+	 * <li><b>sz-internal-error</b> if Mediawiki returned an error while creating the article:
 	 * <ul>
 	 * <li>The ArticleSave hook aborted the edit but didn't set the fatal flag of $status</li>
 	 * <li>In update mode, but the article didn't exist</li>
@@ -252,7 +252,7 @@ class WpPage {
 		$status = $article->doEdit($text, '', EDIT_NEW);
 
 		if (!$status->isgood()) {
-			return 'wp-internal-error';
+			return 'sz-internal-error';
 		}
 
 		return $title;
@@ -266,7 +266,7 @@ class WpPage {
 	 * <ul>
 	 * <li><b>wp-bad-title</b> MediaWiki is unable to create this page. Title may contain bad characters.</li>
 	 * <li><b<wp-title-already-exists</b> This page already exists</li>
-	 * <li><b>wp-internal-error</b> if Mediawiki returned an error while creating the article:
+	 * <li><b>sz-internal-error</b> if Mediawiki returned an error while creating the article:
 	 * <ul>
 	 * <li>The ArticleSave hook aborted the edit but didn't set the fatal flag of $status</li>
 	 * <li>In update mode, but the article didn't exist</li>
@@ -304,7 +304,7 @@ class WpPage {
 		$status = $article->doEdit($text, '', EDIT_NEW);
 
 		if (!$status->isgood()) {
-			return 'wp-internal-error';
+			return 'sz-internal-error';
 		}
 
 		return $title;

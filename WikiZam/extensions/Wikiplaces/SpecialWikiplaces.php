@@ -84,7 +84,7 @@ class SpecialWikiplaces extends SpecialPage {
     private function displayCreateWikiplace() {
 
         if (( $reason = WpSubscription::userCanCreateWikiplace($this->getUser()->getId())) !== true) {
-            $this->getOutput()->showErrorPage('sorry', $reason); // no active subscription or quotas exceeded 
+            $this->getOutput()->showErrorPage('sorry', $reason); // no active subscription or quotas exceeded
             return;
         }
 
@@ -135,7 +135,7 @@ class SpecialWikiplaces extends SpecialPage {
 
         $homepage = WpWikiplace::initiateCreation($formData['Name']);
         if (!( $homepage instanceof Title )) {
-            return wfMessage('wp-internal-error')->parse(); // error while creating
+            return wfMessage('sz-internal-error')->parse(); // error while creating
         }
 
         $this->title_just_created = $homepage;
@@ -239,7 +239,7 @@ class SpecialWikiplaces extends SpecialPage {
         $subpage = WpPage::createSubpage($wikiplace, $formData['SpName']);
 
         if (!( $subpage instanceof Title )) {
-            return wfMessage('wp-internal-error')->parse();
+            return wfMessage('sz-internal-error')->parse();
         }
 
         $this->title_just_created = $subpage;
