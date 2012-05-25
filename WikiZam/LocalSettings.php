@@ -195,11 +195,14 @@ $wgImgAuthPublicTest = false;	//false = bypass full public wiki
 $wgUseImageMagick = true;	//true = use imagemagick library instead of
 				// internal PHP image conversion system
 $wgImageMagickConvertCommand = "/usr/bin/convert"; 
-$wgFileExtensions = array('png','gif','jpg','jpeg', 'pdf');
+$wgFileExtensions = array('png','gif','jpg','jpeg', 'pdf', 'zip');
+/** @todo forbid all archives type, except zip (use blacklist or others upload wg vars) */
 
+/** 
+ * doesn't work properly yet
+ * @todo rewrite UploadWizard to handle wikiplaces properly
 require_once( "$IP/extensions/UploadWizard/UploadWizard.php" );
-				// default upload url will point to uploadwizard
-// $wgUploadNavigationUrl = '/Special:UploadWizard';
+$wgUploadNavigationUrl = '/Special:UploadWizard'; // default upload url will point to uploadwizard
 $wgUploadWizardConfig = array(
     'tutorialHelpdeskCoords' => false,	//false = no helpdesk button
     'skipTutorial' => true,		//true = no tutorial
@@ -207,7 +210,8 @@ $wgUploadWizardConfig = array(
     'translateHelp' => '',		//'' = no link to translate
     'altUploadForm' => '',		//'' = no alternate form 
 					// (should be special:upload when possible)
-);
+); 
+ */
 
 # Seizam's Virtual Electronic Payment Terminal
 require_once( "$IP/extensions/ElectronicPayment/ElectronicPayment.php" );

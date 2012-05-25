@@ -504,7 +504,9 @@ class WpSubscription {
 			return 'wp-no-next-plan';
 		}
 		
-		
+		/**
+		 *@todo: implement what to do if quotas are not sufficient
+			
 		// ensure next plan as sufficient quotas
 		$nb_wp = WpWikiplace::countWikiplacesOwnedByUser($user_id);
 		$nb_pages = WpPage::countPagesOwnedByUser($user_id);
@@ -513,13 +515,12 @@ class WpSubscription {
 				( $next_plan->get('wpp_nb_wikiplace_pages') < $nb_pages ) ||
 				( $next_plan->get('wpp_diskspace') < $diskspace ) ) {
 			
-			/** @todo: implement what to do if quotas are not sufficient
 			$this->set('wps_renew_wpp_id', 0); //will not try anymore to renew
-			return 'wp-insufficient-next-plan-quotas';
-			 */
-			
-		}
+			return 'wp-insufficient-next-plan-quotas'; 
 		
+		}
+
+		 */
 		
 		// payment
 		$tmr = self::createTMR($user_id, $user_email, $next_plan);

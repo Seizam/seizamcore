@@ -116,7 +116,8 @@ $wgAvailableRights[] = PROTECTOWN_BYPASS;
 $wgGroupPermissions['sysop'][PROTECTOWN_BYPASS] = true;
 
 // add the read rights to restricted actions list
-$wgRestrictionTypes[] = "read";
+$wgRestrictionTypes = array_merge( array("read"), $wgRestrictionTypes );
+
 
 // disable automatic summary, because api.php can always see comments, even if the page is read restricted
 // so, only protection log and user's comment are visible via history
@@ -828,6 +829,10 @@ function poMakeForm( $title, $readonly = false ) {
 				continue; // end foreach iteration
 			}
 			
+			if ( $current_level=='' && $action=='upload' ) {
+				continue;
+			}
+			
 			$checked = ( ($current_level=='' && $title_action_restrictions===array()) ?
 					// everyone is checked if there is currently no restrictions
 					true	
@@ -974,6 +979,7 @@ function poSearchUpdate( $id, $namespace, $title_text, &$text ) {
 function poWatchArticle( &$user, &$article ) {
 	
 	$title = $article->getTitle();
+	global $wgOut;
 	
 	if ($title->isProtected('read')) {
 		
