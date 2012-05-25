@@ -835,12 +835,12 @@ abstract class HTMLFormField {
      * @return Mixed Bool true on success, or String error to display.
      */
     function validate($value, $alldata) {
-        if (isset($this->mValidationCallback)) {
-            return call_user_func($this->mValidationCallback, $value, $alldata);
-        }
-
         if (isset($this->mParams['required']) && $value === '') {
             return wfMessage('htmlform-required')->parse();
+        }
+        
+        if (isset($this->mValidationCallback)) {
+            return call_user_func($this->mValidationCallback, $value, $alldata);
         }
 
         return true;
@@ -1358,18 +1358,13 @@ class HTMLCheckField extends HTMLFormField {
 class HTMLSelectField extends HTMLFormField {
 
     function validate($value, $alldata) {
-        $p = parent::validate($value, $alldata);
-
-        if ($p !== true) {
-            return $p;
-        }
-
         $validOptions = HTMLFormField::flattenOptions($this->mParams['options']);
 
-        if (in_array($value, $validOptions))
-            return true;
-        else
-            return wfMessage('htmlform-select-badoption')->parse();
+        if (!in_array($value, $validOptions))
+                return wfMessage('htmlform-select-badoption')->parse();
+            
+        return parent::validate($value, $alldata);
+            
     }
 
     function getInputHTML($value) {
