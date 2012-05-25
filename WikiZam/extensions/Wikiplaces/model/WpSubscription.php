@@ -113,6 +113,14 @@ class WpSubscription {
 	}
 	
 	/**
+	 * The next plan to renew to, of null if "do not renew"
+	 * @return int The field wpp_id of the next plan  
+	 */
+	public function getRenewalPlanId() {
+		return intval($this->wps_renew_wpp_id);
+	}
+
+	/**
 	 * 
 	 * @param string $attribut_name 
 	 * <ul>
@@ -195,7 +203,7 @@ class WpSubscription {
 			
 			$this->plan = WpPlan::constructFromDatabaseRow($databaseRow);
 			
-			if ($this->plan->get('wpp_id') != $this->get('wps_wpp_id')) {
+			if ($this->plan->getId() != $this->get('wps_wpp_id')) {
 				throw new MWException('The given plan is not the subscribed one.');
 			}
 			
@@ -496,17 +504,18 @@ class WpSubscription {
 		$this->fetchBuyer($user);
 		$user_email = $user->getEmail();
 		
+		// ensures we know the next plan or performs a recursive search 
 		
-		// ensure we know the next plan
-		$next_plan = $this->get('next_plan');
+		$next_plan = WpPlan::getById( $this->getRenewalPlanId() );
+
 		if ($next_plan == null) { 
-			$this->set('wps_renew_wpp_id', 0); //will not try anymore to renew
+			$this->set('wps_renew_wpp_id', 0); // will not try anymore to renew
 			return 'wp-no-next-plan';
 		}
+
 		
-		/**
-		 *@todo: implement what to do if quotas are not sufficient
-			
+		/** @todo: we (developpers) decided to renew even if quotas are not sufficient, but this behaviour can be change here 	
+		/*
 		// ensure next plan as sufficient quotas
 		$nb_wp = WpWikiplace::countWikiplacesOwnedByUser($user_id);
 		$nb_pages = WpPage::countPagesOwnedByUser($user_id);
@@ -517,38 +526,29 @@ class WpSubscription {
 			
 			$this->set('wps_renew_wpp_id', 0); //will not try anymore to renew
 			return 'wp-insufficient-next-plan-quotas'; 
-		
 		}
-
 		 */
 		
 		// payment
 		$tmr = self::createTMR($user_id, $user_email, $next_plan);
-
 		if ( ($tmr['tmr_status']!='OK') && ($tmr['tmr_status']!='PE') ) { // not ( OK or PE ) so it cannot be renewed 			
-			
-			$this->set('wps_renew_wpp_id', 0); //will not try anymore to renew			
+			$this->set('wps_renew_wpp_id', 0); // will not try anymore to renew			
 			return 'wp-payment-error';
-			
 		}
 		
-				
 		// everything is ok, let's renew!
 		$this->archive();
 		
 		$start =  self::calculateStartDateFromPreviousEnd( $this->wps_end_date );
 		$end = self::calculateEndDateFromStart( $start, $next_plan->get('wpp_period_months') );
 
-		$this->set('wps_wpp_id', $next_plan->get('wpp_id'), false);
+		$this->set('wps_wpp_id', $next_plan->getId(), false);
 		$this->plan = $next_plan;
 		$this->set('wps_tmr_id', $tmr['tmr_id'], false);
 		$this->set('wps_tmr_status', $tmr['tmr_status'], false);
 		$this->set('wps_start_date', $start, false);
 		$this->set('wps_end_date', $end, false);
-		$this->set('wps_renew_wpp_id', $next_plan->get('wpp_renew_wpp_id')); // 3rd arg != false, so saving record now
-		if ($this->wps_renew_wpp_id != $next_plan->get('wpp_id')) {
-			$this->next_plan = null;
-		}
+		$this->set('wps_renew_wpp_id', $next_plan->getRenewalPlanId()); // 3rd arg != false, so saving record now
 		
 		return true;
 				
@@ -694,14 +694,14 @@ class WpSubscription {
 					$current_sub->archive(true);
 				}
 				$sub = self::create(
-						$plan->get('wpp_id'), 
+						$plan->getId(), 
 						$user_id,
 						$tmr['tmr_id'],
 						'OK', // paid
 						$now, // start
 						self::calculateEndDateFromStart($now, $plan->get('wpp_period_months')), // end
 						true, // active
-						$plan->get('wpp_renew_wpp_id'),
+						$plan->getRenewalPlanId(),
 						$db_master
 				);
 				if ( $sub == null ) {
@@ -721,14 +721,14 @@ class WpSubscription {
 					$current_sub->archive(true);
 				}
 				return self::create(
-						$plan->get('wpp_id'),
+						$plan->getId(),
 						$user_id,
 						$tmr['tmr_id'],
 						'PE', // not paid
 						null, // will start when paid
 						null, // unknown for now
 						false, // not active
-						$plan->get('wpp_renew_wpp_id'),
+						$plan->getRenewalPlanId(),
 						$db_master
 				);
 

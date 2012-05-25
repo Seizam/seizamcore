@@ -49,7 +49,7 @@ class WpPlan {
 		$this->wpp_diskspace = $diskspace;
 		$this->wpp_monthly_page_hits = $monthlyPageHits;
 		$this->wpp_monthly_bandwidth = $monthlyBandwidth;
-		$this->wpp_renew_wpp_id = $renewPlanId;
+		$this->wpp_renew_wpp_id = intval($renewPlanId);
 		$this->wpp_invitation_only = $invitationOnly;
 		
 	}
@@ -58,6 +58,8 @@ class WpPlan {
 	 *
 	 * @param type $attribut_name
 	 * @return type 
+	 * @todo remove this!!! use usual getters instead
+	 * @deprecated 
 	 */
 	public function get($attribut_name) {
 		switch ($attribut_name) {
@@ -85,6 +87,70 @@ class WpPlan {
 		}
 		throw new MWException('Unknown attribut');
 	}
+	
+	/**
+	 * Returns the wpp_id field value.
+	 * @return int 
+	 */
+	public function getId() {
+		return intval($this->wpp_id);
+	} 
+	
+	/**
+	 * Returns the renewal suggested plan ID (and if the current plan is renewable,
+	 * returns the current plan ID)
+	 * @return int 
+	 */
+	public function getRenewalPlanId() {
+		
+		if ( $this->isRenewable() ) {
+			return $this->wpp_id;
+		}
+
+		$checked = array ();  // avoid infinite loop
+		$next_plan_id = $this->wpp_renew_wpp_id;
+		$next_plan = null;
+		
+		wfDebugLog( 'wikiplaces' , 'npi='.$next_plan_id);
+		
+		while ( $next_plan_id != null && !in_array( $next_plan_id, $checked) ) {
+			$checked[] = $next_plan_id;
+			
+			wfDebugLog( 'wikiplaces' , 'in loop with '.$next_plan_id);
+			
+			$next_plan = WpPlan::getById($next_plan_id);
+			if ( $next_plan == null ) {
+				$this->wpp_renew_wpp_id = WP_FALLBACK_PLAN_ID;
+				$next_plan_id = null; // it's over
+			}
+			
+			if ( $next_plan->isRenewable() ) {
+				$this->wpp_renew_wpp_id = $next_plan_id;
+				$next_plan_id = null; // it's over, we can renew to this plan
+				
+			} else {
+				$next_plan_id = $next_plan->wpp_renew_wpp_id; // continue search
+			}
+		}
+
+		return $this->wpp_renew_wpp_id;
+		
+	}
+	
+
+	
+	/**
+	 * Returns true if this plan is renewable. If it is not, the renewal
+	 * suggested plan ID can be known using <b>getRenewalSuggestedPlanId()</b>
+	 * @return boolean 
+	 */
+	public function isRenewable() {
+		
+		return ( $this->wpp_renew_wpp_id == 0 );
+		
+	}
+	
+
 	
 	/**
 	 * Get the WpPlan instance from a SQL row
@@ -115,8 +181,8 @@ class WpPlan {
 	
 	/**
 	 * Restore from DB, using id
-	 * @param int $id 
-	 * @return WpPlan if found, or null if not
+	 * @param int $id wpp_id field value
+	 * @return WpPlan The WpPlan if found, or null if not
 	 */
 	public static function getById($id) {
 				
@@ -143,6 +209,7 @@ class WpPlan {
 	 * @param int $nb_wikiplace_pages
 	 * @param int $diskspace in MB
 	 * @return array array of WpPlans 
+	 * @todo also add plan available using an invitation
 	 */
 	public static function getAvailableOffersNow( $nb_wikiplaces = 0, $nb_wikiplace_pages = 0, $diskspace = 0) {
 		

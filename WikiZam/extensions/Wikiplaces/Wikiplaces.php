@@ -82,6 +82,8 @@ $wgHooks['UploadForm:initial'][] = 'WikiplaceUpload::fetchRequestInformations';
 $wgHooks['UploadForm:BeforeProcessing'][] = 'WikiplaceUpload::fetchRequestInformations';
 $wgHooks['UploadFormInitDescriptor'][] = 'WikiplaceUpload::installWikiplaceUploadFrontend';
 
+// define the default renewal plan
+define('WP_FALLBACK_PLAN_ID', 1);
 
 // define the group in which to add the user in when she makes her first subscription
 // (she will not be removed, even if she has no more active subscription)
