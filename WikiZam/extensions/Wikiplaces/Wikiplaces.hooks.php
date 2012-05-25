@@ -375,22 +375,27 @@ class WikiplacesHooks {
 			throw new MWException('Error while associating new page to its container wikiplace.');
 		}
 
-		// restrict applicable actions to owner, except for read
-		$actions_to_rectrict = array_diff(
-				$title->getRestrictionTypes(), // array( 'read', 'edit', ... )
-				array('read'));
-		$restrictions = array();
-		foreach ($actions_to_rectrict as $action) {
-			$restrictions[$action] = WP_DEFAULT_RESTRICTION_LEVEL;
-		}
+		if (in_array($namespace, array(NS_MAIN, NS_FILE, NS_WIKIPLACE))) {
+			
+			// restrict applicable actions to owner, except for read
+			
+			$actions_to_rectrict = array_diff(
+					$title->getRestrictionTypes(), // array( 'read', 'edit', ... )
+					array('read'));
+			$restrictions = array();
+			foreach ($actions_to_rectrict as $action) {
+				$restrictions[$action] = WP_DEFAULT_RESTRICTION_LEVEL;
+			}
 
-		$ok = false;
-		wfRunHooks('POSetProtection', array($wikipage, $restrictions, &$ok));
+			$ok = false;
+			wfRunHooks('POSetProtection', array($wikipage, $restrictions, &$ok));
 
-		if (!$ok) {
-			wfDebugLog('wikiplaces', 'onArticleInsertComplete: OK, but error while setting default restrictions to new page, article=[' . $wikipage->getId() . ']"' . $title->getPrefixedDBkey() . '"');
-		} else {
-			wfDebugLog('wikiplaces', 'onArticleInsertComplete: OK, article=[' . $wikipage->getId() . ']"' . $title->getPrefixedDBkey() . '"');
+			if (!$ok) {
+				wfDebugLog('wikiplaces', 'onArticleInsertComplete: OK, but error while setting default restrictions to new page, article=[' . $wikipage->getId() . ']"' . $title->getPrefixedDBkey() . '"');
+			} else {
+				wfDebugLog('wikiplaces', 'onArticleInsertComplete: OK, article=[' . $wikipage->getId() . ']"' . $title->getPrefixedDBkey() . '"');
+			}
+			
 		}
 
 		return true;
