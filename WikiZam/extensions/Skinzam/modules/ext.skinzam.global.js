@@ -72,6 +72,7 @@
     }
         
     // help dans le formulaire
+    
     if ( $('#help_zone').length == 1 ) {
 		
         var init_pos = $('#help_zone').offset();

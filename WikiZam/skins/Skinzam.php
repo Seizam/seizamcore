@@ -556,7 +556,6 @@ class SkinzamTemplate extends BaseTemplate {
         }
         // Render elements
         foreach ($elements as $name => $element) {
-            echo "\n<!-- {$name} -->\n";
             switch ($element) {
                 case 'NAMESPACES':
                     foreach ($this->data['namespace_urls'] as $link):
@@ -625,7 +624,6 @@ class SkinzamTemplate extends BaseTemplate {
                     <?php
                     break;
             }
-            echo "\n<!-- /{$name} -->\n";
         }
     }
 

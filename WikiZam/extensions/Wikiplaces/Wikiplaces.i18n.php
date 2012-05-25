@@ -42,10 +42,13 @@ $messages['en'] = array(
 	'wp-subscribe' => 'Subscribe',
 	'wp-subscribe-change' => 'Change subscription',
 	'wp-subscribe-renew' => 'Renew',
+    'wp-create' => 'Create!',
     
     /* Form: Wikiplace */
-    'wp-enter-new-wp-name' => 'Please enter your new Wikiplace name',
-    'wp-create-wp-go' => 'Create!',
+    'wp-create-header' => 'Please fill the form below to create a new Wikiplace.',
+    'wp-create-section' => 'Create a Wikiplace',
+    'wp-name-field' => 'Name:',
+    'wp-create-name-help' => 'Type here the Name of your Wikiplace. It will be available at <u>www.seizam.com/<b>Name</b></u> and every Subpage you will create will be at <u>www.seizam.com/<b>Name</b>/Subpage</u>. <b>Advice:</b> Make it short, easy to remember and easy to type!',
     'wp-select-wp' => 'Please select a Wikiplace',
     'wp-enter-new-sp-name' => 'Please enter your new subpage name',
     'wp-create-sp-go' => 'Create!',
@@ -76,9 +79,12 @@ $messages['en'] = array(
     'wp-checkfield' => 'I read, understood and agree with both the General Terms and Conditions of Use ([[Project:GTCU|GTCU]]) and the Artist Specific Terms and Conditions of Use ([[Project:ASTCU|ASTCU]]) of Seizam.',
     'wp-checkfield-unchecked' => 'You need to agree with our Terms and Conditions to subscribe. Please check the box above.',
     
-    'wp-plan-desc-short' => '$1: $2 $3 for $4 months',
+    'wp-plan-desc-short' => '$1: $2 $3 for $4 months.',
 	'wp-plan-subscribe-go' => 'Subscribe!',
-	'wp-do-not-renew' => 'do not renew',
+    
+    'wp-sub-renew-header' => 'Please fill the form below to setup your renewal plan.',
+    'wp-sub-renew-section' => 'Renew my subscription',
+	'wp-do-not-renew' => 'Do not renew.',
 	'wp-plan-renew-go' => 'Set as my next plan',
     
     /* Disclaimer: Subscription */
@@ -99,7 +105,7 @@ $messages['en'] = array(
     
     /* Errors */
 	'wp-internal-error' => 'Sorry, an internal error occured. {{int:sz-report}}',
-    'wp-invalid-request' => 'Sorry, we cannot understand what you try to do OR you are not allowed to do it. {{int:sz-report}}'
+    'wp-invalid-request' => 'Sorry, we do not understand what you want to do OR you are not allowed to do it. {{int:sz-report}}'
 	
 );
 
