@@ -1,4 +1,5 @@
 <?php
+
 # Config file for Seizam Media Wiki 1.18
 #
 # See includes/DefaultSettings.php for all configurable settings
@@ -7,10 +8,9 @@
 #
 # Further documentation for configuration settings may be found at:
 # http://www.mediawiki.org/wiki/Manual:Configuration_settings
-
 # Protect against web entry
-if ( !defined( 'MEDIAWIKI' ) ) {
-	exit;
+if (!defined('MEDIAWIKI')) {
+    exit;
 }
 
 # Include of ServerSetting.php where Server Side settings are stored
@@ -19,7 +19,7 @@ require_once("$IP/ServerSettings.php");
 ## Uncomment this to disable output compression
 # $wgDisableOutputCompression = true;
 
-$wgSitename      = "Seizam";
+$wgSitename = "Seizam";
 $wgMetaNamespace = "Project";
 
 ## The URL base path to the directory containing the wiki;
@@ -29,26 +29,24 @@ $wgMetaNamespace = "Project";
 ## Moved to ServerSettings.php
 #$wgScriptPath       = "/WikiZam";
 #$wgScriptExtension  = ".php";
-
 ## The relative URL path to the skins directory
-$wgStylePath        = "$wgScriptPath/skins";
+$wgStylePath = "$wgScriptPath/skins";
 
 ## The relative URL path to the logo.  Make sure you change this from the default,
 ## or else you'll overwrite your logo when you upgrade!
 # $wgLogo             = "$wgStylePath/common/images/seizam.png";
-$wgLogo             = "$wgStylePath/skinzam/images/logo_mini_h.png";
+$wgLogo = "$wgStylePath/skinzam/images/logo_mini_h.png";
 
 ## UPO means: this is also a user preference option
 
-$wgEnableEmail      = true;
-$wgEnableUserEmail  = true; # UPO
-
+$wgEnableEmail = true;
+$wgEnableUserEmail = true; # UPO
 ## Moved to ServerSettings.php
 #$wgEmergencyContact = "apache@localhost";
 #$wgPasswordSender   = "apache@localhost";
 
-$wgEnotifUserTalk      = true; # UPO
-$wgEnotifWatchlist     = true; # UPO
+$wgEnotifUserTalk = true; # UPO
+$wgEnotifWatchlist = true; # UPO
 $wgEmailAuthentication = true;
 
 /**
@@ -64,22 +62,20 @@ $wgPasswordSenderName = 'Seizam Mail';
 #$wgDBname           = "wikizam";
 #$wgDBuser           = "root";
 #$wgDBpassword       = "root";
-
 # MySQL specific settings
 #$wgDBprefix         = "";
-
 # MySQL table options to use during installation or update
-$wgDBTableOptions   = "ENGINE=InnoDB, DEFAULT CHARSET=binary";
+$wgDBTableOptions = "ENGINE=InnoDB, DEFAULT CHARSET=binary";
 
 # Experimental charset support for MySQL 4.1/5.0.
 $wgDBmysql5 = false;
 
 ## Shared memory settings
-$wgMainCacheType    = CACHE_NONE;
+$wgMainCacheType = CACHE_NONE;
 $wgMemCachedServers = array();
 
 # InstantCommons allows wiki to use images from http://commons.wikimedia.org
-$wgUseInstantCommons  = false;
+$wgUseInstantCommons = false;
 
 ## If you use ImageMagick (or any other shell command) on a
 ## Linux server, this will need to be set to the name of an
@@ -88,29 +84,26 @@ $wgShellLocale = "en_US.UTF-8";
 
 ## If you have the appropriate support software installed
 ## you can enable inline LaTeX equations:
-$wgUseTeX           = false;
+$wgUseTeX = false;
 
 ## Set $wgCacheDirectory to a writable directory on the web server
 ## to make your wiki go slightly faster. The directory should not
 ## be publically accessible from the web.
 #$wgCacheDirectory = "$IP/cache";
-
 # Site language code, should be one of ./languages/Language(.*).php
 $wgLanguageCode = "en";
 
 ## Moved to ServerSettings.php
 #$wgSecretKey = "a99b97286c3e606e27464d7df07c64faabffa80f3f0d73a71e5470b29be82e2c";
-
 ## Site upgrade key. Must be set to a string (default provided) to turn on the
 ## web installer while LocalSettings.php is in place
 ## Moved to ServerSettings.php
 # $wgUpgradeKey = "1abd89e1c9307b07";
-
 ## Default skin: you can change the default skin. Use the internal symbolic
 ## names, ie 'standard', 'nostalgia', 'cologneblue', 'monobook', 'vector':
 $wgDefaultSkin = "skinzam";
 # To remove various skins from the User Preferences choices
-$wgSkipSkins = array("chick", "cologneblue", "nostalgia", "simple", "standard", "monobook","myskin","modern");
+$wgSkipSkins = array("chick", "cologneblue", "nostalgia", "simple", "standard", "monobook", "myskin", "modern");
 ## Usability extension for Vector (base of Skinzam)
 require_once( "$IP/extensions/Vector/Vector.php" );
 
@@ -137,21 +130,19 @@ $wgResourceLoaderMaxQueryLength = 1024;
 
 # End of automatically generated settings.
 # Add more configuration options below.
-
 # Development Settings (toggling debug msg on)
 # Php error displayed
-error_reporting( E_ALL | E_STRICT);
-ini_set( 'display_errors', 1 );
+error_reporting(E_ALL | E_STRICT);
+ini_set('display_errors', 1);
 # Stack trace displayed
 $wgShowExceptionDetails = true;
 # SQL error displayed
 $wgShowSQLErrors = true;
-$wgDebugDumpSql  = true;
+$wgDebugDumpSql = true;
 # For Production, remember to log into file instead
 # ResourceLoader Debug mode
 $wgResourceLoaderDebug = false;
 # End Developement Settings
-
 # Polyglot (auto select page version regarding user language)
 require_once( "$IP/extensions/Polyglot/Polyglot.php" );
 # Supported languages
@@ -164,22 +155,20 @@ require_once( "$IP/extensions/LanguageSelector/LanguageSelector.php" );
 # Supported languages
 $wgLanguageSelectorLanguages = null;
 # Displayed languages
-$wgLanguageSelectorLanguagesShorthand = array('en','fr');
+$wgLanguageSelectorLanguagesShorthand = array('en', 'fr');
 # Method of language selection
 $wgLanguageSelectorDetectLanguage = LANGUAGE_SELECTOR_PREFER_CLIENT_LANG; #Automatic selection regarding browser
 # Where to put the language selection dropdown menu
 $wgLanguageSelectorLocation = LANGUAGE_SELECTOR_MANUAL; #Hard integrated for Skinzam
-
-
 # Google Analytics
 require_once( "$IP/extensions/googleAnalytics/googleAnalytics.php" );
 $wgGoogleAnalyticsAccount = "UA-25393782-2";
 
 # Contact Page
 require_once( "$IP/extensions/ContactPage/ContactPage.php" );
-$wgContactUser='WikiSysop';
-$wgUserEmailUseReplyTo=true;
-$wgContactRequireAll=true;
+$wgContactUser = 'WikiSysop';
+$wgUserEmailUseReplyTo = true;
+$wgContactRequireAll = true;
 
 
 
@@ -221,12 +210,12 @@ require_once( "$IP/extensions/ProtectOwn/ProtectOwn.php" );
 
 // available restriction level/group via SetPermissions form
 // ($wgRestrictionLevels will be updated in order for theses level to be accessed via protect
-$wgProtectOwnGroups = array( '', 'user', 'artist', 'owner' );
+$wgProtectOwnGroups = array('', 'user', 'artist', 'owner');
 // remove the 'move' restriction
 unset($wgRestrictionTypes[array_search('move', $wgRestrictionTypes)]);
 // everyone can edit, even anons, but, there can be per-page restrctions
 // by default 'user' is allowed to edit, even if '*' is not.
-$wgGroupPermissions['*']['edit'] = true; 
+$wgGroupPermissions['*']['edit'] = true;
 
 $wgGroupPermissions['bureaucrat']['editprotectedns'] = true;
 $wgGroupPermissions['sysop']['editprotectedns'] = true;
@@ -246,7 +235,21 @@ $wgDefaultUserOptions['usebetatoolbar-cgd'] = 1;
 $wgDefaultUserOptions['wikieditor-preview'] = 1;
 
 # Enable subpages in the main namespace
-$wgNamespacesWithSubpages[NS_MAIN] = true;
+$wgNamespacesWithSubpages = array(
+    NS_MAIN => true,
+    NS_TALK => true,
+    NS_USER => true,
+    NS_USER_TALK => true,
+    NS_PROJECT => true,
+    NS_PROJECT_TALK => true,
+    NS_FILE_TALK => true,
+    NS_MEDIAWIKI => true,
+    NS_MEDIAWIKI_TALK => true,
+    NS_TEMPLATE_TALK => true,
+    NS_HELP => true,
+    NS_HELP_TALK => true,
+    NS_CATEGORY_TALK => true
+);
 
 # Transaction Manager
 require_once( "$IP/extensions/Transactions/Transactions.php" );
@@ -258,4 +261,4 @@ require_once( "$IP/extensions/Wikiplaces/Wikiplaces.php" );
 require_once( "$IP/extensions/MySeizam/MySeizam.php" );
 
 // FEEDS
-$wgAdvertisedFeedTypes = array( 'rss', 'atom' );
+$wgAdvertisedFeedTypes = array('rss', 'atom');
