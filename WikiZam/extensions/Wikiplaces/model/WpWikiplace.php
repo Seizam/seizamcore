@@ -13,13 +13,8 @@ class WpWikiplace {
 			$wpw_report_updated,
 			$wpw_date_expires;
 	
-	private $subscription;
-	
 	private $name;
-	
-	private $attributes_to_update;
-	
-	
+	private $attributes_to_update;	
 	
 	private function __construct( $id, $ownerUserId, $homePageId,
 			$subscriptionId,
@@ -27,11 +22,11 @@ class WpWikiplace {
 			$previousTotalBandwidth, $monthlyBandwidth,
 			$reportUpdated, $dateExpires) {
 
-		$this->wpw_id = $id;
-		$this->wpw_owner_user_id = $ownerUserId;
-		$this->wpw_home_page_id = $homePageId;
+		$this->wpw_id = intval($id);
+		$this->wpw_owner_user_id = intval($ownerUserId);
+		$this->wpw_home_page_id = intval($homePageId);
 		
-		$this->wpw_wps_id = $subscriptionId;
+		$this->wpw_wps_id = intval($subscriptionId);
 		$this->wpw_previous_total_page_hits = $previousTotalPageHits;
 		$this->wpw_monthly_page_hits = $monthlyPageHits;
 		$this->wpw_previous_total_bandwidth = $previousTotalBandwidth;
@@ -43,60 +38,28 @@ class WpWikiplace {
 
 	}
 	
+	
 	/**
-	 * <ul>
-	 * <li><b>wpw_id</b> int</li>
-	 * <li><b>wpw_owner_user_id</b> int</li>
-	 * <li><b>wpw_home_page_id</b> int</li>
-	 * <li><b>wpw_wps_id</b> int</li>
-	 * <li><b>wpw_monthly_page_hits</b> string, call updateUsage() if necessary</li>
-	 * <li><b>wpw_monthly_bandwidth</b> string, call updateUsage() if necessary</li>
-	 * <li><b>wpw_previous_total_page_hits</b> string</li>
-	 * <li><b>wpw_previous_total_bandwidth</b> string</li>
-	 * <li><b>wpw_report_updated</b> string</li>
-	 * <li><b>wpw_date_expires</b> string</li>
-	 * <li><b>name</b> string, the homepage title name <b>text form</b> (not db_key)</li>
-	 * <li><b>subscription</b> WpSubscription instance</li>
-	 * </ul>
-	 * @param type $attribut_name
+	 * Returns the identifier
+	 * @return int 
+	 */
+	public function getId() {
+		return $this->wpw_id;
+	}
+	
+	/**
+	 * Returns the wikiplace name, in db_key form
 	 * @return type 
 	 */
-	public function get($attribut_name) {
-		switch ($attribut_name) {
-			case 'wpw_id':
-			case 'wpw_owner_user_id':
-			case 'wpw_home_page_id':
-			case 'wpw_wps_id':
-				return intval($this->$attribut_name);
-				break;
-			case 'wpw_monthly_page_hits':
-			case 'wpw_monthly_bandwidth':
-				// update if report is more than 5 min age
-				if ($this->wpw_report_updated < WpSubscription::getNow(0, -5, 0)) { 
-					$this->updateUsage();
-				}
-			case 'wpw_previous_total_page_hits':
-			case 'wpw_previous_total_bandwidth':
-			case 'wpw_report_updated':
-			case 'wpw_date_expires':
-				return $this->$attribut_name;
-				break;
-			case 'name':
-				if ($this->name === null) {
-					$this->fetchName();
-				}
-				return $this->name;
-			case 'subscription':
-				if ($this->subscription === null) {
-					$this->fetchSubscription();
-				}
-				return $this->subscription;
-
+	public function getName() {
+		if ($this->name === null) {
+			$this->loadName();
 		}
-		throw new MWException('Unknown attribut '.$attribut_name);
+		return $this->name;
 	}
 	
 	
+
 	/**
 	 * For now, updates only the page hits. In futur release, it will also update the bandwith usage.
 	 */
@@ -123,7 +86,7 @@ class WpWikiplace {
 		
 		/** @todo compute bandwidth usage */ 
 
-		$now = WpSubscription::getNow();
+		$now = WpSubscription::now();
 		
 		wfDebugLog( 'wikiplaces', "WpWikiplace->updateUsage for wp[$this->wpw_id] from $this->wpw_report_updated($this->wpw_monthly_page_hits) to $now($hits)");
 
@@ -145,135 +108,7 @@ class WpWikiplace {
 		$this->wpw_report_updated = $now;
 	}
 	
-	
-
-	/**
-	 * Its execution can take more more more than 30 seconds, so should be called by 
-	 * a cron, except if $wpw_owner_user_id is given. 
-	 * For the moment, it only updates the page hits.
-	 * In futur release, in will also update the bandwidth usage.
-	 * @todo updates also the bandwith usage
-	 * @param int $wpw_owner_user_id Can only update usages of a specific user (default: null = all)
-	 * @param int $lifespan_minutes Lifespan above wich to consider a usage outdated (default: 60 minutes)
-	 * @return int/string int:Nb of updates if OK, string: the error message
-	 */
-	public static function updateOutdatedUsages( $wpw_owner_user_id = null, $lifespan_minutes = 60 ) {
-		
-		/** @todo update bandwidth usage */ 
-		
-		$dbw = wfGetDB(DB_MASTER);
-		
-		$dbw->begin();
-		
-		$now = $dbw->addQuotes(WpSubscription::getNow());
-		$outdated = $dbw->addQuotes(WpSubscription::getNow(0,-$lifespan_minutes,0));
-		
-		$sql = "
-CREATE TEMPORARY TABLE wp_tmp_page_hits (
-SELECT wppa_wpw_id AS wikiplace_id, SUM(page.page_counter) AS page_hits
-FROM wp_wikiplace
-  INNER JOIN wp_page
-  ON ".( ($wpw_owner_user_id!=null) ? " wpw_owner_user_id = $wpw_owner_user_id AND " : '')
-."wpw_report_updated < $outdated AND wpw_id = wppa_wpw_id
-    INNER JOIN page
-    ON wppa_page_id = page_id
-GROUP BY wppa_wpw_id ) ;";
-		
-		$result = $dbw->query($sql, __METHOD__);
-		
-		if ($result !== true) {
-			return 'error while computing new usages value';
-		}
-		
-		$to_update = $dbw->affectedRows();
-
-		$sql = "
-UPDATE wp_wikiplace
-SET wpw_monthly_page_hits = ( (
-  SELECT page_hits
-  FROM wp_tmp_page_hits
-  WHERE wikiplace_id = wpw_id ) - wpw_previous_total_page_hits ) ,
-wpw_report_updated = $now
-WHERE wpw_report_updated < $outdated ;" ;
-				
-		$result = $dbw->query($sql, __METHOD__);
-		
-		if ($result !== true) {
-			return 'error while updating outdated wikiplace usages';
-		}
-		
-		$updated = $dbw->affectedRows();
-		
-		$dbw->commit();
-		
-		if ($to_update != $updated) {
-			return "usages updated, but $to_update updates expected and $updated really updated";
-		}
-		
-		return $updated;
-		
-	}
-
-	
-	/**
-	 * Reset all usages when outdated
-	 * @return int/string int:Nb of Wikiplace usages reset if OK, string: the message if an error occured
-	 */
-	public static function archiveAndResetExpiredUsages() {
-		
-			$dbw = wfGetDB(DB_MASTER);
-			$dbw->begin();
-			
-			$now =  $dbw->addQuotes( WpSubscription::getNow() );
-
-			// archiving current usages
-
-			// 3rd arg : must be an associative array of the form
-			// array( 'dest1' => 'source1', ...). Source items may be literals
-			// rather than field names, but strings should be quoted with
-			// DatabaseBase::addQuotes()
-			$success = $dbw->insertSelect( 'wp_old_usage', 'wp_wikiplace',
-				array(
-					'wpou_wpw_id' => 'wpw_id',
-					'wpou_end_date' => $now,
-					'wpou_monthly_page_hits' => 'wpw_monthly_page_hits',
-					'wpou_monthly_bandwidth' => 'wpw_monthly_bandwidth',
-				),
-				array( 'wpw_date_expires < '.$now ),
-				__METHOD__,
-				array( 'IGNORE' )
-			);
-			
-			if ( !$success ) {	
-				return 'error while renewing archiving outdated usages.';
-			}
-			
-			// renewing all active outdated records
-			$success = $dbw->update(
-					'wp_wikiplace',
-					array(
-						'wpw_date_expires = DATE_ADD(wpw_date_expires,INTERVAL 1 MONTH)',
-						'wpw_monthly_page_hits' => 0,
-						'wpw_monthly_bandwidth' => 0,
-						'wpw_previous_total_page_hits' => '( wpw_monthly_page_hits + wpw_previous_total_page_hits)',
-						'wpw_previous_total_bandwidth' => '( wpw_monthly_bandwidth + wpw_previous_total_bandwidth)',
-					),
-					array( 'wpw_date_expires < '.$now ) );
-				
-			if ( !$success ) {	
-				return 'error while resetting outdated usages';
-			}
-			
-			$updated = $dbw->affectedRows();
-			
-			$dbw->commit();
-			
-			return $updated;
-		
-	}
-	
-	
-	/**
+		/**
 	 * Force archiving current usage, then reset, even if 'expires_date' is not outdated.
 	 * It uses $now as end date in archives table. <b>Doesn't update 'wpw_expires_date'</b>
 	 * @param string $now DATETIME Sql timestamp. If null, WpSubscription::getNow() is used.
@@ -285,7 +120,7 @@ WHERE wpw_report_updated < $outdated ;" ;
 		$dbw->begin();
 
 		if ( $now == null) {
-			$now =  WpSubscription::getNow();
+			$now =  WpSubscription::now();
 		} 
 		$now =  $dbw->addQuotes( $now );
 
@@ -328,28 +163,7 @@ WHERE wpw_report_updated < $outdated ;" ;
 		return true;
 		
 	}
-	
-	
-	private function fetchSubscription($databaseRow = null) {
-		
-		if ($databaseRow !== null) {
-			if ($databaseRow->wps_id != $this->wpu_wps_id) {
-				throw new MWException('The given subscription does not match with the current usage.');
-			}
-			$this->subscription = WpSubscription::constructFromDatabaseRow($databaseRow);
-			
-		} else {
-			$this->subscription = WpSubscription::getById($this->wpu_wps_id);
-		}
-		
-		if ($this->subscription === null) {
-			throw new MWException('Unknown subscription.');
-		} 
 
-	}
-	
-	
-	
 	public function isOwner($user_id) {
 		return ( $this->wpw_owner_user_id == $user_id );
 	}
@@ -358,7 +172,7 @@ WHERE wpw_report_updated < $outdated ;" ;
 	 * Fetch the Wikiplace name, using given data is available or read from DB if none given
 	 * @param StdClass/WikiPage/Title $data
 	 */
-	private function fetchName($data = null) {
+	private function loadName($data = null) {
 		
 		if ($data === null) {
 			$dbr = wfGetDB(DB_SLAVE);
@@ -432,7 +246,7 @@ WHERE wpw_report_updated < $outdated ;" ;
 			throw new MWException( 'Cannot search Wikiplace, invalid identifier.' );
 		}
 		
-		return self::getFromDb( array( 'wpw_id' =>  $id ) );
+		return self::search( array( 'wpw_id' =>  $id ) );
 
 	}
 	
@@ -444,7 +258,7 @@ WHERE wpw_report_updated < $outdated ;" ;
 	 * @param boolean $multiple Return an array of Wikiplace or a single Wikiplace object
 	 * @return WpWikiplace 
 	 */
-	private static function getFromDb($conds, $multiple = false) {
+	private static function search($conds, $multiple = false) {
 		
 		$dbr = wfGetDB(DB_SLAVE);
 		//todo
@@ -462,7 +276,7 @@ WHERE wpw_report_updated < $outdated ;" ;
 			$wikiplaces = array();
 			foreach ( $results as $row ) {
 				$wp = self::constructFromDatabaseRow($row);
-				$wp->fetchName($row);
+				$wp->loadName($row);
 				$wikiplaces[] = $wp;
 			}
 
@@ -477,7 +291,7 @@ WHERE wpw_report_updated < $outdated ;" ;
 				return null;
 			}
 			$wp = self::constructFromDatabaseRow($result);
-			$wp->fetchName($result);
+			$wp->loadName($result);
 			return $wp;
 		}
 		
@@ -488,13 +302,13 @@ WHERE wpw_report_updated < $outdated ;" ;
 	 * @param String $name
 	 * @return WpWikiplace 
 	 */
-	public static function getByName($name) {
+	public static function newFromName($name) {
 				
 		if ( ($name === null) || !is_string($name) ) {
 			throw new MWException( 'Cannot search Wikiplace, invalid name.' );
 		}
 		
-		return self::getFromDb( array('page_title' => $name) );
+		return self::search( array('page_title' => $name) );
 
 	}
 	
@@ -505,7 +319,7 @@ WHERE wpw_report_updated < $outdated ;" ;
 	 * @param int $user_id
 	 * @return array of WpWikiplaces ("array()" if no wikiplaces)
 	 */
-	public static function getAllOwnedByUserId($user_id) {
+	public static function factoryAllOwnedByUserId($user_id) {
 		
 		if ( ($user_id === null) || !is_int($user_id) ) {
 			throw new MWException( 'Cannot search Wikiplaces, invalid owner user identifier.' );
@@ -515,11 +329,274 @@ WHERE wpw_report_updated < $outdated ;" ;
 			return array();
 		}
 		
-		return self::getFromDb( array( 'wpw_owner_user_id' =>  $user_id ), true);
+		return self::search( array( 'wpw_owner_user_id' =>  $user_id ), true);
 
 	}
 	
+	
+	/**
+	 * Trigger homepage creation, which will than trigger Wikiplace creation using hook.
+	 * @param string $name
+	 * @return Title/string The created homepage Title if creation OK, a string message if an error occured
+	 */
+	public static function initiateCreation($name) {
+		
+		// the creation of the homapage will trigger the page creation hook, 
+		// wich will call WpWikiplace::create() wich will process the real creation of the wikiplace
+		return WpPage::createHomepage($name);
+		
+	}
+	
+	/**
+	 * Create a wikiplace from homepage, owned by this user
+	 * @param int $homepage_id The Article id of the homepage
+	 * @param WpSubscription $subscription
+	 * @return WpWikiplace The created Wikiplace, or null if a db error occured
+	 */
+	public static function create($homepage_id, $subscription) {
+		
+		if (  ! is_int($homepage_id)  ||  ! ($subscription instanceof WpSubscription)  ) {
+			throw new MWException( 'Cannot create Wikiplace, invalid argument.' );
+		}
+		
+		$user_id = $subscription->getBuyerUserId();
+		$wps_id = $subscription->getId();
+		$wpw_report_updated = WpSubscription::now();
+		$wpw_date_expires = self::calculateNextDateExpiresFromSubscription($subscription);
+		
+		$dbw = wfGetDB(DB_MASTER);
+		$dbw->begin();
+        $id = $dbw->nextSequenceValue('wpw_id');
+			
+        $success = $dbw->insert('wp_wikiplace', array(
+			'wpw_id' => $id,
+			'wpw_owner_user_id' => $user_id,
+			'wpw_home_page_id' => $homepage_id,
+			
+			'wpw_wps_id' => $wps_id,
+			'wpw_previous_total_page_hits' => 0,
+			'wpw_monthly_page_hits' => 0,
+			'wpw_previous_total_bandwidth' => 0,
+			'wpw_monthly_bandwidth' => 0,
+			'wpw_report_updated' => $wpw_report_updated,
+			'wpw_date_expires' => $wpw_date_expires
+		));
 
+		// Setting id from auto incremented id in DB
+		$id = $dbw->insertId();
+		
+		$dbw->commit();
+		
+		if ( !$success ) {	
+			return null;
+		}
+		
+		$wp = new self( 
+				$id,
+				$user_id,
+				$homepage_id,
+				$wps_id,
+				0,
+				0,
+				0,
+				0,
+				$wpw_report_updated,
+				$wpw_date_expires);
+
+		return $wp;
+			
+	}
+	
+		/**
+	 * Its execution can take more more more than 30 seconds, so should be called by 
+	 * a cron, except if $wpw_owner_user_id is given. 
+	 * For the moment, it only updates the page hits.
+	 * In futur release, in will also update the bandwidth usage.
+	 * @todo updates also the bandwith usage
+	 * @param int $wpw_owner_user_id Can only update usages of a specific user (default: null = all)
+	 * @param int $lifespan_minutes Lifespan above wich to consider a usage outdated (default: 60 minutes)
+	 * @return int/string int:Nb of updates if OK, string: the error message
+	 */
+	public static function updateOutdatedUsages( $wpw_owner_user_id = null, $lifespan_minutes = 60 ) {
+		
+		/** @todo update bandwidth usage */ 
+		
+		$dbw = wfGetDB(DB_MASTER);
+		
+		$dbw->begin();
+		
+		$now = $dbw->addQuotes(WpSubscription::now());
+		$outdated = $dbw->addQuotes(WpSubscription::now(0,-$lifespan_minutes,0));
+		
+		$sql = "
+CREATE TEMPORARY TABLE wp_tmp_page_hits (
+SELECT wppa_wpw_id AS wikiplace_id, SUM(page.page_counter) AS page_hits
+FROM wp_wikiplace
+  INNER JOIN wp_page
+  ON ".( ($wpw_owner_user_id!=null) ? " wpw_owner_user_id = $wpw_owner_user_id AND " : '')
+."wpw_report_updated < $outdated AND wpw_id = wppa_wpw_id
+    INNER JOIN page
+    ON wppa_page_id = page_id
+GROUP BY wppa_wpw_id ) ;";
+		
+		$result = $dbw->query($sql, __METHOD__);
+		
+		if ($result !== true) {
+			return 'error while computing new usages value';
+		}
+		
+		$to_update = $dbw->affectedRows();
+
+		$sql = "
+UPDATE wp_wikiplace
+SET wpw_monthly_page_hits = ( (
+  SELECT page_hits
+  FROM wp_tmp_page_hits
+  WHERE wikiplace_id = wpw_id ) - wpw_previous_total_page_hits ) ,
+wpw_report_updated = $now
+WHERE wpw_report_updated < $outdated ;" ;
+				
+		$result = $dbw->query($sql, __METHOD__);
+		
+		if ($result !== true) {
+			return 'error while updating outdated wikiplace usages';
+		}
+		
+		$updated = $dbw->affectedRows();
+		
+		$dbw->commit();
+		
+		if ($to_update != $updated) {
+			return "usages updated, but $to_update updates expected and $updated really updated";
+		}
+		
+		return $updated;
+		
+	}
+
+	
+	/**
+	 * Reset all usages when outdated
+	 * @return int/string int:Nb of Wikiplace usages reset if OK, string: the message if an error occured
+	 */
+	public static function archiveAndResetExpiredUsages() {
+		
+			$dbw = wfGetDB(DB_MASTER);
+			$dbw->begin();
+			
+			$now =  $dbw->addQuotes( WpSubscription::now() );
+
+			// archiving current usages
+
+			// 3rd arg : must be an associative array of the form
+			// array( 'dest1' => 'source1', ...). Source items may be literals
+			// rather than field names, but strings should be quoted with
+			// DatabaseBase::addQuotes()
+			$success = $dbw->insertSelect( 'wp_old_usage', 'wp_wikiplace',
+				array(
+					'wpou_wpw_id' => 'wpw_id',
+					'wpou_end_date' => $now,
+					'wpou_monthly_page_hits' => 'wpw_monthly_page_hits',
+					'wpou_monthly_bandwidth' => 'wpw_monthly_bandwidth',
+				),
+				array( 'wpw_date_expires < '.$now ),
+				__METHOD__,
+				array( 'IGNORE' )
+			);
+			
+			if ( !$success ) {	
+				return 'error while renewing archiving outdated usages.';
+			}
+			
+			// renewing all active outdated records
+			$success = $dbw->update(
+					'wp_wikiplace',
+					array(
+						'wpw_date_expires = DATE_ADD(wpw_date_expires,INTERVAL 1 MONTH)',
+						'wpw_monthly_page_hits' => 0,
+						'wpw_monthly_bandwidth' => 0,
+						'wpw_previous_total_page_hits' => '( wpw_monthly_page_hits + wpw_previous_total_page_hits)',
+						'wpw_previous_total_bandwidth' => '( wpw_monthly_bandwidth + wpw_previous_total_bandwidth)',
+					),
+					array( 'wpw_date_expires < '.$now ) );
+				
+			if ( !$success ) {	
+				return 'error while resetting outdated usages';
+			}
+			
+			$updated = $dbw->affectedRows();
+			
+			$dbw->commit();
+			
+			return $updated;
+		
+	}
+	
+		/**
+	 *
+	 * @param WpSubscription $subscription
+	 * @return string MySQL DATETIME string format 
+	 */
+	public static function calculateNextDateExpiresFromSubscription($subscription) {
+		
+		// contains the needed day/hour/minute/second
+		$end = date_create_from_format( 'Y-m-d H:i:s', $subscription->getEnd(), new DateTimeZone( 'GMT' ) );
+		
+		$now = new DateTime( 'now', new DateTimeZone( 'GMT' ) );
+		
+		$expire = date_create_from_format( 'Y-m-d H:i:s', 
+				$now->format( 'Y-m-' ) . $end->format( 'd H:i:s' ) ,
+				new DateTimeZone( 'GMT' ) );
+		
+		if ( $expire < $now ) {
+			$expire->modify('+1 month');
+		}
+		
+		return $expire->format( 'Y-m-d H:i:s' );
+		
+	}
+	
+	/**
+	 * Check if this Wikiplace name in db_key form is blacklisted
+	 * @global array $wgWikiplaceNameBlacklist
+	 * @param string $name
+	 * @return boolean 
+	 */
+	public static function isBlacklistedWikiplaceName($name) {
+        global $wgWikiplaceNameBlacklist;
+        return in_array( strtolower($name), $wgWikiplaceNameBlacklist );
+    }
+	
+	/**
+	 * Parse the db_key depending on the namespace and return an array of all elements. Work with both homepages and subpages db_key.
+	 * Note that this function can return a Wikiplace name even if the page doesn't not already 
+	 * belongs to ( = newly created page ) or even if the Wikiplace doesn't already exists.
+	 * @param string $db_key should be $wikipage->getTitle()->getDBkey()
+	 * @param int $namespace should be $wikipage->getTitle()->getNamespace()
+	 * @return Array The array of all elements in the name (array has at least 1 string at index 0)
+	 */
+	public static function explodeWikipageKey($db_key, $namespace) {
+		
+		$hierarchy;
+		
+		switch ( $namespace ) {
+			case NS_FILE:
+			case NS_FILE_TALK:
+				$hierarchy = explode( '.', $db_key );
+				break;
+				
+			default:
+				$hierarchy = explode( '/', $db_key );
+				break;
+		}
+		
+		if (!isset($hierarchy[0]) || !WpPage::isInWikiplaceNamespaces($namespace) ) {
+            throw new MWException("Cannot split WikipageKey from key=$db_key and ns=$namespace.");
+		}
+
+		return $hierarchy;
+	}
+	
 	/**
 	 *
 	 * @param int $user_id
@@ -574,128 +651,6 @@ WHERE wpw_report_updated < $outdated ;" ;
 		return $hierarchy[0];
 		
 	}
-    
-    /**
-	 * Parse the db_key depending on the namespace and return an array of all elements. Work with both homepages and subpages db_key.
-	 * Note that this function can return a Wikiplace name even if the page doesn't not already 
-	 * belongs to ( = newly created page ) or even if the Wikiplace doesn't already exists.
-	 * @param string $db_key should be $wikipage->getTitle()->getDBkey()
-	 * @param int $namespace should be $wikipage->getTitle()->getNamespace()
-	 * @return Array The array of all elements in the name (array has at least 1 string at index 0)
-	 */
-	public static function explodeWikipageKey($db_key, $namespace) {
-		
-		$hierarchy;
-		
-		switch ( $namespace ) {
-			case NS_FILE:
-			case NS_FILE_TALK:
-				$hierarchy = explode( '.', $db_key );
-				break;
-				
-			default:
-				$hierarchy = explode( '/', $db_key );
-				break;
-		}
-		
-		if (!isset($hierarchy[0]) || !WpPage::isInWikiplaceNamespaces($namespace) ) {
-            throw new MWException("Cannot split WikipageKey from key=$db_key and ns=$namespace.");
-		}
-
-		return $hierarchy;
-	}
-    
-    /**
-	 * Parse the db_key depending on the namespace, extract the name of the wikiplace
-	 * that the page should belong, and return the Wikiplace with that name. 
-	 * Note that this function can return a Wikiplace even if the page doesn't not already 
-	 * belongs to ( = newly created page ), but the Wikiplace already exists.
-	 * @param string $db_key should be $wikipage->getTitle()->getDBkey()
-	 * @param int $namespace should be $wikipage->getTitle()->getNamespace()
-	 * @return WpWikiplace The Wikiplace or null the page doesn't belong to an exsiting Wikiplace
-	 */
-	public static function getBySubpage($db_key, $namespace) {
-		$name = self::extractWikiplaceRoot($db_key, $namespace);
-		if ($name == null) {
-			return null;
-		}
-		return self::getByName($name);
-		
-	}
-
-	
-	/**
-	 * Trigger homepage creation, which will than trigger Wikiplace creation using hook.
-	 * @param string $name
-	 * @return Title/string The created homepage Title if creation OK, a string message if an error occured
-	 */
-	public static function initiateCreation($name) {
-		
-		// the creation of the homapage will trigger the page creation hook, 
-		// wich will call WpWikiplace::create() wich will process the real creation of the wikiplace
-		return WpPage::createHomepage($name);
-		
-	}
-	
-	/**
-	 * Create a wikiplace from homepage, owned by this user
-	 * @param int $homepage_id The Article id of the homepage
-	 * @param WpSubscription $subscription
-	 * @return WpWikiplace The created Wikiplace, or null if a db error occured
-	 */
-	public static function create($homepage_id, $subscription) {
-		
-		if (  ! is_int($homepage_id)  ||  ! ($subscription instanceof WpSubscription)  ) {
-			throw new MWException( 'Cannot create Wikiplace, invalid argument.' );
-		}
-		
-		$user_id = $subscription->get('wps_buyer_user_id');
-		$wps_id = $subscription->get('wps_id');
-		$wpw_report_updated = WpSubscription::getNow();
-		$wpw_date_expires = self::calculateNextDateExpiresFromSubscription($subscription);
-		
-		$dbw = wfGetDB(DB_MASTER);
-		$dbw->begin();
-        $id = $dbw->nextSequenceValue('wpw_id');
-			
-        $success = $dbw->insert('wp_wikiplace', array(
-			'wpw_id' => $id,
-			'wpw_owner_user_id' => $user_id,
-			'wpw_home_page_id' => $homepage_id,
-			
-			'wpw_wps_id' => $wps_id,
-			'wpw_previous_total_page_hits' => 0,
-			'wpw_monthly_page_hits' => 0,
-			'wpw_previous_total_bandwidth' => 0,
-			'wpw_monthly_bandwidth' => 0,
-			'wpw_report_updated' => $wpw_report_updated,
-			'wpw_date_expires' => $wpw_date_expires
-		));
-
-		// Setting id from auto incremented id in DB
-		$id = $dbw->insertId();
-		
-		$dbw->commit();
-		
-		if ( !$success ) {	
-			return null;
-		}
-		
-		$wp = new self( 
-				$id,
-				$user_id,
-				$homepage_id,
-				$wps_id,
-				0,
-				0,
-				0,
-				0,
-				$wpw_report_updated,
-				$wpw_date_expires);
-
-		return $wp;
-			
-	}
 	
 	/**
 	 *
@@ -727,34 +682,24 @@ WHERE wpw_report_updated < $outdated ;" ;
 		
 	}
 	
-	
-	/**
-	 *
-	 * @param WpSubscription $subscription
-	 * @return string MySQL DATETIME string format 
+	    
+    /**
+	 * Parse the db_key depending on the namespace, extract the name of the wikiplace
+	 * that the page should belong, and return the Wikiplace with that name. 
+	 * Note that this function can return a Wikiplace even if the page doesn't not already 
+	 * belongs to ( = newly created page ), but the Wikiplace already exists.
+	 * @param string $db_key should be $wikipage->getTitle()->getDBkey()
+	 * @param int $namespace should be $wikipage->getTitle()->getNamespace()
+	 * @return WpWikiplace The Wikiplace or null the page doesn't belong to an exsiting Wikiplace
 	 */
-	public static function calculateNextDateExpiresFromSubscription($subscription) {
-		
-		// contains the needed day/hour/minute/second
-		$end = date_create_from_format( 'Y-m-d H:i:s', $subscription->get('wps_end_date'), new DateTimeZone( 'GMT' ) );
-		
-		$now = new DateTime( 'now', new DateTimeZone( 'GMT' ) );
-		
-		$expire = date_create_from_format( 'Y-m-d H:i:s', 
-				$now->format( 'Y-m-' ) . $end->format( 'd H:i:s' ) ,
-				new DateTimeZone( 'GMT' ) );
-		
-		if ( $expire < $now ) {
-			$expire->modify('+1 month');
+	public static function getBySubpage($db_key, $namespace) {
+		$name = self::extractWikiplaceRoot($db_key, $namespace);
+		if ($name == null) {
+			return null;
 		}
-		
-		return $expire->format( 'Y-m-d H:i:s' );
+		return self::newFromName($name);
 		
 	}
-	
-    public static function isBlacklistedWikiplaceName($name) {
-        global $wgWikiplaceNameBlacklist;
-        return in_array( strtolower($name), $wgWikiplaceNameBlacklist );
-    }
+
 
 }

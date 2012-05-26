@@ -300,7 +300,7 @@ class WikiplacesHooks {
 		// in userCan() calling this function, we already checked that user is loggedin
 		return (!WpPage::isHomepage($title)
 				&& ( $user->isAllowed(WP_ADMIN_RIGHT)
-				|| ( WpSubscription::getActiveByUserId($user->getId()) != null
+				|| ( WpSubscription::factoryActiveByUserId($user->getId()) != null
 				&& WpPage::isOwner($title->getArticleID(), $user) ) ) );
 	}
 
@@ -368,7 +368,7 @@ class WikiplacesHooks {
 			}
 		}
 
-		$new_wp_page = WpPage::create($article_id, $wikiplace->get('wpw_id'));
+		$new_wp_page = WpPage::create($article_id, $wikiplace->getId());
 
 		if ($new_wp_page === null) {
 			wfDebugLog('wikiplaces', 'onArticleInsertComplete: error while associating new page to its container wikiplace "' . $title->getPrefixedDBkey() . '"');
@@ -415,7 +415,7 @@ class WikiplacesHooks {
 	private static function doCreateWikiplace($user_id, $homepage_article_id) {
 
 		// creating a new wikiplace
-		$subscription = WpSubscription::getLastSubscription($user_id);
+		$subscription = WpSubscription::factoryLastUserSubscription($user_id);
 		if ($subscription == null) {
 			wfDebugLog('wikiplaces', 'doCreateWikiplace: cannot create wikiplace, user has no subscription, user=' . $user_id . ' article_id=' . $homepage_article_id);
 			return null;
@@ -427,7 +427,7 @@ class WikiplacesHooks {
 			return null;
 		}
 
-		if (!$wikiplace->forceArchiveAndResetUsage(WpSubscription::getNow())) {
+		if (!$wikiplace->forceArchiveAndResetUsage(WpSubscription::now())) {
 			wfDebugLog('wikiplaces', 'doCreateWikiplace: error while initialization of wikiplace usage, user=' . $user_id . ' article_id=' . $homepage_article_id);
 			return null;
 		}
@@ -468,7 +468,7 @@ class WikiplacesHooks {
 					wfDebugLog('wikiplaces', 'onTitleMoveComplete: cannot create wikiplace "' . $new_name_title->getPrefixedDBkey() . '"');
 					throw new MWException('Cannot create wikiplace.');
 				}
-				$new_wp_page = WpPage::create($renamed_page_id, $dest_wp->get('wpw_id'));
+				$new_wp_page = WpPage::create($renamed_page_id, $dest_wp->getId());
 				if ($new_wp_page == null) {
 					wfDebugLog('wikiplaces', 'onTitleMoveComplete: cannot create wikiplace homepage "' . $new_name_title->getPrefixedDBkey() . '"');
 					throw new MWException('Cannot create wikiplace homepage.');
@@ -479,7 +479,7 @@ class WikiplacesHooks {
 					wfDebugLog('wikiplaces', 'onTitleMoveComplete: cannot find container wikiplace for "' . $new_name_title->getPrefixedDBkey() . '"');
 					throw new MWException('Cannot find container wikiplace.');
 				}
-				$new_wp_page = WpPage::create($renamed_page_id, $dest_wp->get('wpw_id'));
+				$new_wp_page = WpPage::create($renamed_page_id, $dest_wp->getId());
 				if ($new_wp_page == null) {
 					wfDebugLog('wikiplaces', 'onTitleMoveComplete: cannot create wikiplace homepage "' . $new_name_title->getPrefixedDBkey() . '"');
 					throw new MWException('Cannot create wikiplace homepage.');
@@ -500,7 +500,7 @@ class WikiplacesHooks {
 				wfDebugLog('wikiplaces', 'onTitleMoveComplete: WARNING moving a subpage out of wikiplace space "' . $new_name_title->getPrefixedDBkey() . '"');
 
 				if ($redirect_page_id != 0) {
-					$renamed_wp_page = WpPage::getByArticleId($renamed_page_id);
+					$renamed_wp_page = WpPage::newFromArticleId($renamed_page_id);
 					if ($renamed_wp_page == null) {
 						wfDebugLog('wikiplaces', 'onTitleMoveComplete: cannot find subpage to move [' . $renamed_page_id . ']');
 						throw new MWException('Cannot find subpage to move.');
@@ -518,19 +518,19 @@ class WikiplacesHooks {
 					wfDebugLog('wikiplaces', 'onTitleMoveComplete: cannot create wikiplace "' . $new_name_title->getPrefixedDBkey() . '"');
 					throw new MWException('Cannot create wikiplace.');
 				}
-				$renamed_wp_page = WpPage::getByArticleId($renamed_page_id);
+				$renamed_wp_page = WpPage::newFromArticleId($renamed_page_id);
 				if ($renamed_wp_page == null) {
 					wfDebugLog('wikiplaces', 'onTitleMoveComplete: cannot find subpage to move [' . $renamed_page_id . ']');
 					throw new MWException('Cannot find subpage to move.');
 				}
 				if ($redirect_page_id != 0) {
-					$old_wp_id = $renamed_wp_page->get('wppa_wpw_id');
+					$old_wp_id = $renamed_wp_page->getWikiplaceId();
 					if (WpPage::create($redirect_page_id, $old_wp_id) == null) {
 						wfDebugLog('wikiplaces', 'onTitleMoveComplete: cannot create redirect subpage [' . $renamed_page_id . ']');
 						throw new MWException('Cannot create redirect subpage.');
 					}
 				}
-				$dest_wp_id = $dest_wp->get('wpw_id');
+				$dest_wp_id = $dest_wp->getId();
 				$renamed_wp_page->setWikiplaceId($dest_wp_id);
 			} else { // from  a subpage  to  a subpage
 				$dest_wp = WpWikiplace::getBySubpage($new_name_title->getDBkey(), $new_name_title->getNamespace());
@@ -538,20 +538,20 @@ class WikiplacesHooks {
 					wfDebugLog('wikiplaces', 'onTitleMoveComplete: cannot find destination wikiplace "' . $new_name_title->getPrefixedDBkey() . '"');
 					throw new MWException('Cannot find destination wikiplace.');
 				}
-				$renamed_wp_page = WpPage::getByArticleId($renamed_page_id);
+				$renamed_wp_page = WpPage::newFromArticleId($renamed_page_id);
 				if ($renamed_wp_page == null) {
 					wfDebugLog('wikiplaces', 'onTitleMoveComplete: cannot find subpage to move [' . $renamed_page_id . ']');
 					throw new MWException('Cannot find subpage to move.');
 				}
 				$old_wp_id;
 				if ($redirect_page_id != 0) {
-					$old_wp_id = $renamed_wp_page->get('wppa_wpw_id');
+					$old_wp_id = $renamed_wp_page->getWikiplaceId();
 					if (WpPage::create($redirect_page_id, $old_wp_id) == null) {
 						wfDebugLog('wikiplaces', 'onTitleMoveComplete: cannot create redirect subpage [' . $renamed_page_id . ']');
 						throw new MWException('Cannot create redirect subpage.');
 					}
 				}
-				$dest_wp_id = $dest_wp->get('wpw_id');
+				$dest_wp_id = $dest_wp->getId();
 				if ($old_wp_id != $dest_wp_id) {
 					$renamed_wp_page->setWikiplaceId($dest_wp_id);
 				}
@@ -616,11 +616,11 @@ class WikiplacesHooks {
 				throw new MWException('Error while searching container wikiplace.');
 			}
 
-			if (WpPage::create($title->getArticleID(), $wp->get('wpw_id')) == null) {
+			if (WpPage::create($title->getArticleID(), $wp-getId()) == null) {
 				throw new MWException('Error while associating the restored subpage to its container wikiplace.');
 			}
 
-			wfDebugLog('wikiplaces', 'onArticleUndelete: article [' . $title->getArticleID() . '] restored in wikiplace [' . $wp->get('wpw_id') . ']');
+			wfDebugLog('wikiplaces', 'onArticleUndelete: article [' . $title->getArticleID() . '] restored in wikiplace [' . $wp->getId() . ']');
 		}
 
 		return true;
@@ -633,7 +633,7 @@ class WikiplacesHooks {
 	 */
 	public static function onTransactionUpdated($tmr) {
 
-		$sub = WpSubscription::getByTransactionId($tmr['tmr_id']);
+		$sub = WpSubscription::newFromTransactionId($tmr['tmr_id']);
 		if ($sub === null) {
 			return true; // we are not concerned, so don't stop processing
 		}

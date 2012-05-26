@@ -5,101 +5,20 @@ class WpPage {
 	private $wppa_id, // int(10) unsigned NOT NULL AUTO_INCREMENT 
 			$wppa_wpw_id, // int(10) unsigned
 			$wppa_page_id;   // int(10) unsigned
-	private $page_namespace; // int(11)
-	private $page_title;
-	private $wikiplace;
 
 	private function __construct($id, $wikiplaceId, $pageId) {
 
-		$this->wppa_id = $id;
-		$this->wppa_wpw_id = $wikiplaceId;
-		$this->wppa_page_id = $pageId;
-	}
-
-	private function fetchWikiplace($databaseRow = null) {
-
-		if ($databaseRow !== null) {
-
-			$wikiplace = WpWikiplace::constructFromDatabaseRow($databaseRow);
-
-			if ($this->wikiplace->get('wpw_id') != $this->wppa_wpw_id) {
-				throw new MWException('The wikiplace given is not the one the page belongs to.');
-			} else {
-				$this->wikiplace = $wikiplace;
-			}
-		} else {
-
-			$this->wikiplace = WpWikiplace::getById($this->wppa_wpw_id);
-
-			if ($this->wikiplace === null) {
-				// there is a big problem... the page belongs to nothing!
-				throw new MWException('Unknown wikiplace.');
-			}
-		}
+		$this->wppa_id = intval($id);
+		$this->wppa_wpw_id = intval($wikiplaceId);
+		$this->wppa_page_id = intval($pageId);
 	}
 
 	/**
-	 * Fetch the page
-	 * @param StdClass/Title/WikiPage $data if null, this function will query the database
+	 * Returns the Wikiplace identifier this page belongs to
+	 * @return int 
 	 */
-	private function fetchPage($data = null) {
-
-		if ($data === null) {
-			$dbr = wfGetDB(DB_SLAVE);
-			$data = $dbr->selectRow(
-					'page', array('page_id', 'page_namespace', 'page_title'), array('page_id' => $this->wppa_page_id), __METHOD__);
-		}
-
-		if ($data instanceof WikiPage) {
-			$data = $data->getTitle();
-		}
-
-		if ($data instanceof Title) {
-
-			if ($data->getArticleID() != $this->wppa_page_id) {
-				throw new MWException('Cannot fetch page, the Title object does not match with the current page.');
-			}
-			$this->page_namespace = $data->getNamespace();
-			$this->page_title = $data->getText();
-		} elseif (isset($data->page_id) && isset($data->page_title) && isset($data->page_namespace)) {
-
-			if ($data->page_id != $this->wppa_page_id) {
-				throw new MWException('Cannot fetch page, the database row does not match with the current page.');
-			}
-			$this->page_namespace = $data->page_namespace;
-			$this->page_title = $data->page_title;
-		} else {
-
-			throw new MWException('Cannot fetch page.');
-		}
-	}
-
-	/**
-	 *
-	 * @param type $attribut_name
-	 * @return type 
-	 */
-	public function get($attribut_name) {
-		switch ($attribut_name) {
-			case 'wppa_id':
-			case 'wppa_wpw_id':
-			case 'wppa_page_id':
-				return intval($this->$attribut_name);
-				break;
-			case 'page_namespace':
-			case 'page_title':
-				if ($this->$attribut_name === null) {
-					$this->fetchPage();
-				}
-				return $this->$attribut_name;
-			case 'wikiplace':
-				if ($this->wikiplace === null) {
-					$this->fetchWikiplace();
-				}
-				return $this->wikiplace;
-				break;
-		}
-		throw new MWException('Unknown attribut ' . $attribut_name);
+	public function getWikiplaceId() {
+		return $this->wppa_wpw_id;
 	}
 
 	/**
@@ -126,7 +45,7 @@ class WpPage {
 	 * @param type $multiple
 	 * @return type 
 	 */
-	private static function getFromDb($conds, $multiple = false) {
+	private static function search($conds, $multiple = false) {
 
 		$dbr = wfGetDB(DB_SLAVE);
 
@@ -163,7 +82,7 @@ class WpPage {
 	 * @param int $id 
 	 * @return WpPage if found, or null if not
 	 */
-	public static function getByArticleId($id) {
+	public static function newFromArticleId($id) {
 
 		if (($id === null) || !is_int($id) || ($id < 1)) {
 			throw new MWException('Cannot search page, invalid article identifier.');
@@ -185,7 +104,7 @@ class WpPage {
 	 * @param int $id 
 	 * @return WpWikiplace if found, or null if not
 	 */
-	public static function getById($id) {
+	public static function newFromId($id) {
 
 		if (($id === null) || !is_int($id) || ($id < 1)) {
 			throw new MWException('Cannot search page, invalid identifier.');
@@ -202,13 +121,14 @@ class WpPage {
 		return self::constructFromDatabaseRow($result);
 	}
 
-	public static function getByName($name) {
+	
+	public static function newFromArticleDbKey($name) {
 
 		if (($name === null) || !is_string($name)) {
 			throw new MWException('Cannot search page, invalid name.');
 		}
 
-		return self::getFromDb(array('page_title' => $name));
+		return self::search(array('page_title' => $name));
 	}
 
 	/**
@@ -284,7 +204,7 @@ class WpPage {
 			throw new MWException('Cannot create Wikiplace page (wrong argument)');
 		}
 
-		$title = Title::newFromText($wikiplace->get('name') . '/' . $new_page_name);
+		$title = Title::newFromText($wikiplace->getName() . '/' . $new_page_name);
 
 		// $title can be Title, or null on an error.
 
@@ -415,7 +335,7 @@ class WpPage {
 	 * @param type $user_id
 	 * @return int The diskpace usage <b>in MB</b>
 	 */
-	public static function getDiskspaceUsageByUser($user_id) {
+	public static function countDiskspaceUsageByUser($user_id) {
 
 		if (($user_id === null) || !is_int($user_id) || ($user_id < 1)) {
 			throw new MWException('Invalid user identifier.');

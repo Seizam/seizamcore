@@ -70,7 +70,7 @@ class SpecialWikiplaces extends SpecialPage {
         $user_id = $this->getUser()->getId();
         $output = $this->getOutput();
 
-        $diskspace = WpPage::getDiskspaceUsageByUser($user_id);
+        $diskspace = WpPage::countDiskspaceUsageByUser($user_id);
         $output->addHTML(wfMessage(
                         'wp-your-total-diskspace', ($diskspace < 1) ? '< ' . wgformatSizeMB(1) : wgformatSizeMB($diskspace) )->text());
 
@@ -150,7 +150,7 @@ class SpecialWikiplaces extends SpecialPage {
             return;
         }
 
-        $wikiplaces = WpWikiplace::getAllOwnedByUserId($this->getUser()->getId());
+        $wikiplaces = WpWikiplace::factoryAllOwnedByUserId($this->getUser()->getId());
         if (count($wikiplaces) == 0) {
             $this->getOutput()->showErrorPage('sorry', 'wp-create-wp-first');
             return;
@@ -175,10 +175,10 @@ class SpecialWikiplaces extends SpecialPage {
         }
 
         foreach ($wikiplaces as $wikiplace) {
-            $wpw_name = $wikiplace->get('name');
-            $formDescriptor['WpId']['options'][$wpw_name] = $wikiplace->get('wpw_id');
+            $wpw_name = $wikiplace->getName();
+            $formDescriptor['WpId']['options'][$wpw_name] = $wikiplace->getId();
             if ($name == $wpw_name) {
-                $formDescriptor['WpId']['default'] = $wikiplace->get('wpw_id');
+                $formDescriptor['WpId']['default'] = $wikiplace->getId();
             }
         }
 
@@ -219,7 +219,7 @@ class SpecialWikiplaces extends SpecialPage {
             return false;
         }
 
-        $title = Title::newFromText($wikiplace->get('name') . '/' . $name);
+        $title = Title::newFromText($wikiplace->getName() . '/' . $name);
 
         if ($title->isKnown()) {
             return wfMessage('wp-name-already-exists')->text();

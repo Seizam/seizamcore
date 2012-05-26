@@ -85,6 +85,12 @@ $wgHooks['UploadFormInitDescriptor'][] = 'WikiplaceUpload::installWikiplaceUploa
 // define the default renewal plan
 define('WP_FALLBACK_PLAN_ID', 1);
 
+// Define the virtual plan id indicating "do not renew" in wps_renew_wpp_id field
+define('WPS_RENEW_WPP_ID__DO_NOT_RENEW', 0);
+
+// Tmr type used for subscriptions in tm
+define('WP_SUBSCRIPTION_TMR_TYPE','subscrip');
+
 // define the group in which to add the user in when she makes her first subscription
 // (she will not be removed, even if she has no more active subscription)
 define('WP_SUBSCRIBERS_USER_GROUP', 'artist');

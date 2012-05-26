@@ -10,10 +10,10 @@ class SpecialOffers extends SpecialPage {
 		
 		$this->setHeaders(); // sets robotPolicy = "noindex,nofollow" + set page title
 		
-		$offers = WpPlan::getAvailableOffersNow();
+		$offers = WpPlan::factoryAvailableForFirstSubscription();
 		$display = '';
 		foreach ($offers as $offer) {
-			$display .= "\n".Html::rawElement( 'li', array(), SpecialSubscriptions::getLinkNew($offer->get('wpp_name')) );
+			$display .= "\n".Html::rawElement( 'li', array(), SpecialSubscriptions::getLinkNew($offer->getName()) );
         }
         $this->getOutput()->addHTML( Html::rawElement('ul', array(), "$display\n") );
 		

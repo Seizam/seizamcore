@@ -98,7 +98,7 @@ class WikiplaceUpload {
             return false; // break SpecialUpload page init/processing
         }
 		// check if the user has at least one wikiplace
-        $wikiplaces = WpWikiplace::getAllOwnedByUserId($user->getId());
+        $wikiplaces = WpWikiplace::factoryAllOwnedByUserId($user->getId());
         if (count($wikiplaces) == 0) {
             $specialUploadObj->getOutput()->showErrorPage('sorry', wfMessage('wp-create-wp-first'));
             return false; // break SpecialUpload page init/processing
@@ -124,7 +124,7 @@ class WikiplaceUpload {
 
 			// multiple choice: prepare full prefixes list
 			foreach ($wikiplaces as $wikiplace) {
-				$wpw_name = $wikiplace->get('name');
+				$wpw_name = $wikiplace->getName();
 
 				self::$FILE_PREFIXES[$wpw_name] = $wpw_name;
 			}

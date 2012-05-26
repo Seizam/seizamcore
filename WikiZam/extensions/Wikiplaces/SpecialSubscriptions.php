@@ -80,13 +80,17 @@ class SpecialSubscriptions extends SpecialPage {
             )
         );
 
-        $plans = WpPlan::getAvailableOffersNow();
+        $plans = WpPlan::factoryAvailableForFirstSubscription();
         foreach ($plans as $plan) {
-            $wpp_name = $plan->get('wpp_name');
-            $formDescriptor['Plan']['options'][wfMessage(
-                            'wp-plan-desc-short', wfMessage('wp-plan-name-' . $wpp_name)->text(), $plan->get('wpp_price'), $plan->get('wpp_currency'), $plan->get('wpp_period_months'))->text()] = $plan->get('wpp_id');
+            $wpp_name = $plan->getName();
+			$price = $plan->getPrice();
+            $formDescriptor['Plan']['options'][wfMessage( 'wp-plan-desc-short',
+					wfMessage('wp-plan-name-' . $wpp_name)->text(),
+					$price['amount'],
+					$price['currency'],
+					$plan->getPeriod() )->text()] = $plan->getId();
             if ($plan_name == $wpp_name) {
-                $formDescriptor['Plan']['default'] = $plan->get('wpp_id');
+                $formDescriptor['Plan']['default'] = $plan->getId();
             }
         }
         $htmlForm = new HTMLFormS($formDescriptor);
@@ -100,11 +104,13 @@ class SpecialSubscriptions extends SpecialPage {
         if ($htmlForm->show()) {
 
             $out = $this->getOutput();
+			$plan_name = WpPlan::newFromId($this->just_subscribed->getPlanId())->getName();
+			
+            $out->addHTML(wfMessage('wp-subscribe-success', 
+					wfMessage('wp-plan-name-'.$plan_name)->text() 
+					)->text().'<br/>');
 
-            $out->addHTML(wfMessage(
-                            'wp-subscribe-success', wfMessage('wp-plan-name-' . $this->just_subscribed->get('plan')->get('wpp_name'))->text())->text() . '<br/>');
-
-            switch ($this->just_subscribed->get('wps_tmr_status')) {
+            switch ($this->just_subscribed->getTmrStatus()) {
                 case "OK":
                     $out->addHTML(wfMessage('wp-subscribe-tmr-ok')->parse());
                     break;
@@ -130,7 +136,12 @@ class SpecialSubscriptions extends SpecialPage {
             return 'Error: Invalid Plan ID';
         }
 
-        if (!WpPlan::canBeSubscribed($id, $this->getUser())) {
+		$plan = WpPlan::newFromId($id);
+		if ( $plan == null ) {
+			return 'Error: Invalid Plan ID';
+		}
+		
+        if (!$plan->canBeTakenAsFirst($this->getUser())) {
             return 'Error: Plan Forbidden';
         }
 
@@ -143,7 +154,7 @@ class SpecialSubscriptions extends SpecialPage {
             throw new MWException('Cannot process new subscription, no data.');
         }
 
-        $plan = WpPlan::getById($formData['Plan']);
+        $plan = WpPlan::newFromId($formData['Plan']);
 
         if ($plan === null) {
             throw new MWException('Cannot process new subscription, unknown plan.');
@@ -173,7 +184,7 @@ class SpecialSubscriptions extends SpecialPage {
 
         // at this point, user is logged
         $user_id = $this->getUser()->getId();
-        $sub = WpSubscription::getActiveByUserId($user_id);
+        $sub = WpSubscription::factoryActiveByUserId($user_id);
         if ($sub == null) {
             // "need an active subscription"
             $this->getOutput()->showErrorPage('sorry','wp-no-active-sub');
@@ -187,7 +198,7 @@ class SpecialSubscriptions extends SpecialPage {
                 'help-message' => 'wp-planfield-help',
                 'validation-callback' => array($this, 'validateRenewPlanId'),
                 'options' => array(wfMessage('wp-do-not-renew')->text() => '0'),
-                'default' => $sub->get('wps_renew_wpp_id'),
+                'default' => $sub->getRenewalPlanId(),
             ),
             'Check' => array(
                 'type' => 'check',
@@ -200,13 +211,18 @@ class SpecialSubscriptions extends SpecialPage {
 
         $nb_wikiplaces = WpWikiplace::countWikiplacesOwnedByUser($user_id);
         $nb_wikiplace_pages = WpPage::countPagesOwnedByUser($user_id);
-        $diskspace = WpPage::getDiskspaceUsageByUser($user_id);
+        $diskspace = WpPage::countDiskspaceUsageByUser($user_id);
+		$when = $sub->getEnd();
 
-        $plans = WpPlan::getAvailableOffersNow($nb_wikiplaces, $nb_wikiplace_pages, $diskspace);
+        $plans = WpPlan::factoryAvailableForRenewal($nb_wikiplaces, $nb_wikiplace_pages, $diskspace, $when);
         foreach ($plans as $plan) {
-            $wpp_name = $plan->get('wpp_name');
-            $formDescriptor['Plan']['options'][wfMessage(
-                            'wp-plan-desc-short', wfMessage('wp-plan-name-' . $wpp_name)->text(), $plan->get('wpp_price'), $plan->get('wpp_currency'), $plan->get('wpp_period_months'))->text()] = $plan->get('wpp_id');
+            $wpp_name = $plan->getName();
+			$price = $plan->getPrice();
+            $formDescriptor['Plan']['options'][wfMessage('wp-plan-desc-short',
+					wfMessage('wp-plan-name-' . $wpp_name)->text(),
+					$price['amount'],
+					$price['currency'],
+					$plan->getPeriod() )->text() ] = $plan->getId();
         }
 
         $htmlForm = new HTMLFormS($formDescriptor);
@@ -228,13 +244,28 @@ class SpecialSubscriptions extends SpecialPage {
             return 'Error: Invalid Renewal Plan ID';
         }
 
-        if ($id == 0) {
+        if ($id == WPS_RENEW_WPP_ID__DO_NOT_RENEW) {
             return true; // "no next plan"
         }
+		
+		$plan = WpPlan::newFromId($id);
+		if ( $plan == null ) {
+			return 'Error: Invalid Plan ID';
+		}
 
         $user_id = $this->getUser()->getId();
-        if (!WpPlan::canBeSubscribed($id, $this->getUser(), WpWikiplace::countWikiplacesOwnedByUser($user_id), WpPage::countPagesOwnedByUser($user_id), WpPage::getDiskspaceUsageByUser($user_id))) {
-            return 'Error: Renewal Plan Forbidden';
+		$curr_sub = WpSubscription::factoryActiveByUserId($user_id);
+		if ($curr_sub == null) {
+			return 'Error: No Active Subscription';
+		}
+		
+		if (!$plan->canBeTakenAsRenewal(
+				$this->getUser(),
+				WpWikiplace::countWikiplacesOwnedByUser($user_id),
+				WpPage::countPagesOwnedByUser($user_id),
+				WpPage::countDiskspaceUsageByUser($user_id),
+				$curr_sub->getEnd() ) ) {
+            return 'Error: Plan Forbidden';
         }
 
         return true;
@@ -246,7 +277,7 @@ class SpecialSubscriptions extends SpecialPage {
             throw new MWException('Cannot set next plan, no data.');
         }
 
-        $sub = WpSubscription::getActiveByUserId($this->getUser()->getId());
+        $sub = WpSubscription::factoryActiveByUserId($this->getUser()->getId());
 
         if ($sub == null) {
             throw new MWException('Cannot set next plan, no active subscription.');
@@ -274,7 +305,7 @@ class SpecialSubscriptions extends SpecialPage {
             $output->redirect($this->getTitle(self::ACTION_NEW)->getInternalURL(), '303');
         }
         
-        $active = WpSubscription::getActiveByUserId($user->getId());
+        $active = WpSubscription::factoryActiveByUserId($user->getId());
         
         // If the user has no active subs, we want to invite him to subscribe ASAP
         if ($active == null) {

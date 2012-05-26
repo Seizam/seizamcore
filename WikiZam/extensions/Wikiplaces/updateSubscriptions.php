@@ -11,33 +11,33 @@ class UpdateSubscriptions extends Maintenance {
 
 	public function execute() {
 		
-		$when = WpSubscription::getNow();
+		$when = WpSubscription::now();
 		$this->output("Considering 'now' = $when\n\n");
 		
 		
-		$this->output( "[".WpSubscription::getNow()." Renewing subscriptions...]\n" );	
-		$subs = WpSubscription::getAllOutdatedToRenew($when);
+		$this->output( "[".WpSubscription::now()." Renewing subscriptions...]\n" );	
+		$subs = WpSubscription::factoryAllOutdatedToRenew($when);
 		$this->output( count($subs)." subscriptions to process, progress:\nwps_id ; OK/KO ; wps_buyer_user_id ; wps_start_date ; wps_end_date ; wps_tmr_id ; wps_tmr_status\n\n" );
 		foreach ($subs as $sub) {
 			$result = $sub->renew();			
-			$this->output( $sub->get('wps_id').';'
+			$this->output( $sub->getId().';'
 					.( ($result===true) ? 'OK' : $result ).';'
-					.$sub->get('wps_buyer_user_id').';'
-					.$sub->get('wps_start_date').';'
-					.$sub->get('wps_end_date').';'
-					.$sub->get('wps_tmr_id').';'
-					.$sub->get('wps_tmr_status')."\n");
+					.$sub->getBuyerUserId().';'
+					.$sub->getStart().';'
+					.$sub->getEnd().';'
+					.$sub->getTmrId().';'
+					.$sub->getTmrStatus()."\n");
 		}
-		$this->output( "\n[".WpSubscription::getNow()." END]\n\n" );
+		$this->output( "\n[".WpSubscription::now()." END]\n\n" );
 		
 		
-		$this->output( "[".WpSubscription::getNow()." Deactivating all remaining outdated subscriptions...]\n" );
+		$this->output( "[".WpSubscription::now()." Deactivating all remaining outdated subscriptions...]\n" );
 		if ( ($nb=WpSubscription::deactivateAllOutdated($when)) === false ) {
 			$this->output( "a problem occured\n" );
 		} else {
 			$this->output( "OK, $nb subscriptions updated\n" );
 		}
-		$this->output( "[".WpSubscription::getNow()." END]\n" );
+		$this->output( "[".WpSubscription::now()." END]\n" );
 		
 	}
 }
