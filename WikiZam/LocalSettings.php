@@ -264,3 +264,43 @@ require_once( "$IP/extensions/MySeizam/MySeizam.php" );
 
 // FEEDS
 $wgAdvertisedFeedTypes = array('rss', 'atom');
+
+
+// ==================
+// Anti-spam features
+// ==================
+
+// =[ ConfirmEdit ]=
+
+require_once( "$IP/extensions/ConfirmEdit/ConfirmEdit.php" );
+// do not display captchas for groups:
+$wgGroupPermissions['*'            ]['skipcaptcha'] = false;
+$wgGroupPermissions['user'         ]['skipcaptcha'] = false;
+$wgGroupPermissions['autoconfirmed']['skipcaptcha'] = false;
+$wgGroupPermissions['artist'       ]['skipcaptcha'] = false;
+$wgGroupPermissions['bot'          ]['skipcaptcha'] = false; // registered bots
+$wgGroupPermissions['sysop'        ]['skipcaptcha'] = false;
+// To skip captchas for users that confirmed their email, you need to both set:
+//  $wgGroupPermissions['emailconfirmed']['skipcaptcha'] = true;
+//  $ceAllowConfirmedEmail = true;
+// Display captcha when theses actions are triggered:
+$wgCaptchaTriggers['edit']          = true; 
+$wgCaptchaTriggers['create']        = true; 
+$wgCaptchaTriggers['addurl']        = true; 
+$wgCaptchaTriggers['createaccount'] = true;
+$wgCaptchaTriggers['badlogin']      = true;
+// The triggers edit, create and addurl can be configured per namespace:
+// $wgCaptchaTriggersOnNamespace[NS_TALK]['addurl'] = false; // never display, redardless skipcaptcha right
+$wgCaptchaTriggersOnNamespace[NS_PROJECT]['edit'] = true; // always display, even user allowed to skipcaptcha
+
+
+// =[ VisualMathCaptcha ]=
+
+// require GD
+// require_once( "$IP/extensions/VisualMathCaptcha/VisualMathCaptcha.setup.php" );
+// // $wgVisualMathCaptchaItemMax = [int] max value (included) for each number in operation, default: 9
+// // $wgVisualMathCaptchaItemNum = [int] count of number in generated operator, default: 2
+// // $wgVisualMathCaptchaOperators = [array] operators allowed for generation, default: { '+', '-' }
+// $wgCaptchaClass = 'VisualMathConfirmCaptcha';
+
+
