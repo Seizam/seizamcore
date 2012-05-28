@@ -283,12 +283,12 @@ $wgCaptchaClass = 'FancyCaptcha';
 $wgCaptchaWhitelist = false; // Regex to whitelist URLs to known-good sites...
 $wgCaptchaWhitelistIP = false; // List of IP ranges to allow to skip the captcha; (bug 23982 may require the server IP)
 // load conf from ServerSettings vars
-global $seizamCaptchaStorageClass, $seizamCaptchaSecret, $seizamCaptchaDirectory, $seizamCaptchaDirectoryLevels, $seizamCaptchaRegexes;
-$wgCaptchaStorageClass = $seizamCaptchaStorageClass ; // 'CaptchaCacheStore'
-$wgCaptchaSecret = $seizamCaptchaSecret; // "a_secret_key"
-$wgCaptchaDirectory = $seizamCaptchaDirectory; // "$IP/extensions/ConfirmEdit/default_images"
-$wgCaptchaDirectoryLevels = $seizamCaptchaDirectoryLevels; // 1
-$wgCaptchaRegexes = $seizamCaptchaRegexes; // array()
+global $wmgCaptchaStorageClass, $wmgCaptchaSecret, $wmgCaptchaDirectory, $wmgCaptchaDirectoryLevels, $wmgCaptchaRegexes;
+$wgCaptchaStorageClass = $wmgCaptchaStorageClass ; // 'CaptchaCacheStore'
+$wgCaptchaSecret = $wmgCaptchaSecret; // "a_secret_key"
+$wgCaptchaDirectory = $wmgCaptchaDirectory; // "$IP/extensions/ConfirmEdit/default_images"
+$wgCaptchaDirectoryLevels = $wmgCaptchaDirectoryLevels; // 1
+$wgCaptchaRegexes = $wmgCaptchaRegexes; // array()
 
 // =[ SpamBlacklist ]=
 
