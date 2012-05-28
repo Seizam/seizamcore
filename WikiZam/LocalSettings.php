@@ -110,6 +110,8 @@ require_once( "$IP/extensions/Vector/Vector.php" );
 ## UI Elements extension for Seizam's skin
 require_once( "$IP/extensions/Skinzam/Skinzam.php" );
 
+$wgUseCombinedLoginLink = false;
+
 $wgVectorUseSimpleSearch = true;
 $wgDefaultUserOptions['useeditwarning'] = 1;
 

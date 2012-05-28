@@ -118,7 +118,10 @@ class SkinzamHooks {
             $szPrettyUserName = $skin->username;
             $tpl->set('sz_pretty_username', $szPrettyUserName);
         } else {
-            $AbsoluteFooterUrls['myseizam'] = $tpl->data['personal_urls']['login'];
+            $AbsoluteFooterUrls['login'] = $tpl->data['personal_urls']['login'];
+            global $wgUseCombinedLoginLink;
+            if (!$wgUseCombinedLoginLink)
+                $AbsoluteFooterUrls['createaccount'] = $tpl->data['personal_urls']['createaccount'];
         }
 
         $tpl->set('absolute_footer_urls', $AbsoluteFooterUrls);

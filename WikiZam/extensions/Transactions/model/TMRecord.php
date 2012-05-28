@@ -125,7 +125,7 @@ class TMRecord {
             throw new MWException('Cannot create TMRecord (invalid argument)');
         }
         
-        if ($tmr['tmr_amount'] < 0 && $tmr['tmr_status'] !== 'PE') {
+        if ($tmr['tmr_amount'] <= 0 && $tmr['tmr_status'] !== 'PE') {
             throw new MWException('Cannot create TMRecord (expense should be PEnding)'.print_r($tmr,true));
         }
 
@@ -292,7 +292,7 @@ class TMRecord {
         }
 
         // If we have money outgoing, it's PEnding and could be Validated
-        if ($this->tmr['tmr_amount'] < 0 && $this->getStatus() === 'PE') {
+        if ($this->tmr['tmr_amount'] <= 0 && $this->getStatus() === 'PE') {
             return $this->reactToExpense();
         }
     }
