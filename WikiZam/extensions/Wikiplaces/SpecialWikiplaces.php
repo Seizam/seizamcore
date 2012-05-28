@@ -3,12 +3,13 @@
 class SpecialWikiplaces extends SpecialPage {
     const TITLE_NAME = 'Wikiplaces';
 
-    const ACTION_CREATE_WIKIPLACE = 'create';
-    const ACTION_CREATE_SUBPAGE = 'create_page';
-    const ACTION_LIST_WIKIPLACES = 'list';
-    const ACTION_CONSULT_WIKIPLACE = 'consult';
+    const ACTION_CREATE_WIKIPLACE = 'Create';
+    const ACTION_CREATE_SUBPAGE = 'CreatePage';
+    const ACTION_LIST_WIKIPLACES = 'List';
+    const ACTION_CONSULT_WIKIPLACE = 'Consult';
 
-    private $title_just_created;
+    private $homepageString;
+    private $subpageString;
 
     public function __construct() {
         parent::__construct(self::TITLE_NAME, WP_ACCESS_RIGHT);
@@ -39,8 +40,21 @@ class SpecialWikiplaces extends SpecialPage {
             return;
         }
 
-        $name = $this->getRequest()->getText('name', null);
-        switch (strtolower($this->getRequest()->getText('action', $par))) {
+        if (isset($par) & $par != '') {
+            $explosion = explode(':', $par);
+            if (count($explosion) == 1) {
+                $action = $explosion[0];
+                $name = null;
+            } else if (count($explosion) == 2) {
+                $action = $explosion[0];
+                $name = $explosion[1];
+            }
+        } else {
+            $action = $this->getRequest()->getText('action',null);
+            $name = $this->getRequest()->getText('name', null);
+        }
+        
+        switch ($action) {
 
             case self::ACTION_CONSULT_WIKIPLACE:
                 if ($name != null) {
@@ -105,7 +119,7 @@ class SpecialWikiplaces extends SpecialPage {
         $htmlForm->setSubmitText(wfMessage('wp-create')->text());
         if ($htmlForm->show()) {
             $this->getOutput()->addHTML(wfMessage(
-                            'wp-create-wp-success', Linker::linkKnown($this->title_just_created))->text());
+                            'wp-create-wp-success', $this->homepageString)->parse());
         }
     }
 
@@ -138,7 +152,7 @@ class SpecialWikiplaces extends SpecialPage {
             return wfMessage('sz-internal-error')->parse(); // error while creating
         }
 
-        $this->title_just_created = $homepage;
+        $this->homepageString = $homepage;
 
         return true; // all ok :)
     }
@@ -159,13 +173,17 @@ class SpecialWikiplaces extends SpecialPage {
         $formDescriptor = array(
             'WpId' => array(
                 'type' => 'select',
-                'label-message' => 'wp-select-wp',
+                'label-message' => 'wp-wikiplace-field',
+                'section' => 'createpage-section',
+                'help-message' => 'wp-createpage-wikiplace-help',
                 'validation-callback' => array($this, 'validateUserWikiplaceID'),
                 'options' => array(),
             ),
             'SpName' => array(
                 'type' => 'text',
-                'label-message' => 'wp-enter-new-sp-name',
+                'label-message' => 'wp-name-field',
+                'section' => 'createpage-section',
+                'help-message' => 'wp-createpage-name-help',
                 'validation-callback' => array($this, 'validateNewSubpageName'),
             ),
         );
@@ -183,12 +201,14 @@ class SpecialWikiplaces extends SpecialPage {
         }
 
         $htmlForm = new HTMLFormS($formDescriptor);
+        $htmlForm->addHeaderText(wfMessage('wp-createpage-header')->parse());
+        $htmlForm->setMessagePrefix('wp');
         $htmlForm->setTitle($this->getTitle(self::ACTION_CREATE_SUBPAGE));
         $htmlForm->setSubmitCallback(array($this, 'processCreateSubpage'));
-        $htmlForm->setSubmitText(wfMessage('wp-create-sp-go')->text());
+        $htmlForm->setSubmitText(wfMessage('wp-create')->text());
         if ($htmlForm->show()) {
             $this->getOutput()->addHTML(wfMessage(
-                            'wp-create-sp-success', Linker::linkKnown($this->title_just_created))->text());
+                            'wp-create-sp-success', $this->homepageString, $this->subpageString)->parse());
         }
     }
 
@@ -242,7 +262,8 @@ class SpecialWikiplaces extends SpecialPage {
             return wfMessage('sz-internal-error')->parse();
         }
 
-        $this->title_just_created = $subpage;
+        $this->homepageString = $wikiplace->getName();
+        $this->subpageString = $formData['SpName'];
 
         return true; // all ok :)
     }
@@ -269,7 +290,7 @@ class SpecialWikiplaces extends SpecialPage {
      */
     public static function getLinkConsultWikiplace($homepage_title_name) {
         return Linker::linkKnown(
-                        self::getTitleFor(self::TITLE_NAME), wfMessage('show')->text(), array(), array('name' => $homepage_title_name, 'action' => SpecialWikiplaces::ACTION_CONSULT_WIKIPLACE));
+                        self::getTitleFor(self::TITLE_NAME,self::ACTION_CONSULT_WIKIPLACE.':'.$homepage_title_name), wfMessage('show')->text());
     }
 
     /**
@@ -283,12 +304,12 @@ class SpecialWikiplaces extends SpecialPage {
             $params['name'] = $homepage_title_name;
         }
         return Linker::linkKnown(
-                        self::getTitleFor(self::TITLE_NAME), wfMessage($i18n_key)->text(), array(), $params);
+                        self::getTitleFor(self::TITLE_NAME,self::ACTION_CREATE_SUBPAGE.':'.$homepage_title_name), wfMessage($i18n_key)->text());
     }
 
     public static function getLinkCreateWikiplace($i18n_key = 'create') {
         return Linker::linkKnown(
-                        self::getTitleFor(self::TITLE_NAME), wfMessage($i18n_key)->text(), array(), array('action' => self::ACTION_CREATE_WIKIPLACE));
+                        self::getTitleFor(self::TITLE_NAME,self::ACTION_CREATE_WIKIPLACE), wfMessage($i18n_key)->text());
     }
 
 }

@@ -31,18 +31,29 @@ class SpecialSubscriptions extends SpecialPage {
             $this->displayRestrictionError();
             return;
         }
-
-        // dispatch
-        $action = strtolower($this->getRequest()->getText('action', $par));
+        
+        if (isset($par) & $par != '') {
+            $explosion = explode(':', $par);
+            if (count($explosion) == 1) {
+                $action = $explosion[0];
+                $plan = null;
+            } else if (count($explosion) == 2) {
+                $action = $explosion[0];
+                $plan = $explosion[1];
+            }
+        } else {
+            $action = $this->getRequest()->getText('action',null);
+            $plan = $this->getRequest()->getText('plan', null);
+        }
         switch ($action) {
             case self::ACTION_NEW :
-                $this->displayNew($this->getRequest()->getText('plan', null));
+                $this->displayNew($plan);
                 break;
             case self::ACTION_CHANGE:
-                $this->displayChange($this->getRequest()->getText('plan', null));
+                $this->displayChange($plan);
                 break;
             case self::ACTION_RENEW:
-                $this->displayRenew($this->getRequest()->getText('plan', null));
+                $this->displayRenew($plan);
                 break;
             case self::ACTION_LIST:
             default:
@@ -54,7 +65,7 @@ class SpecialSubscriptions extends SpecialPage {
     /**
      * User wants to take a new subscription
      */
-    private function displayNew($plan_name) {
+    private function displayNew($plan_name = null) {
 
         $check = WpSubscription::canSubscribe($this->getUser());
         if ($check !== true) {
@@ -176,11 +187,11 @@ class SpecialSubscriptions extends SpecialPage {
     /**
      * @todo: implement this functionality
      */
-    private function displayChange() {
+    private function displayChange($plan_name = null) {
         $this->getOutput()->showErrorPage('sorry', 'wp-subscribe-change');
     }
 
-    private function displayRenew($plan_name) {
+    private function displayRenew($plan_name = null) {
 
         // at this point, user is logged
         $user_id = $this->getUser()->getId();
@@ -345,9 +356,7 @@ class SpecialSubscriptions extends SpecialPage {
                 $i18n_key = 'wp-plan-name-' . $wpp_name;
             }
             return Linker::linkKnown(
-                            self::getTitleFor(self::TITLE_NAME), wfMessage($i18n_key)->text(), array(), array(
-                        'action' => self::ACTION_NEW,
-                        'plan' => $wpp_name));
+                            self::getTitleFor(self::TITLE_NAME, self::ACTION_NEW.':'.$wpp_name ), wfMessage($i18n_key)->text());
         }
     }
 
