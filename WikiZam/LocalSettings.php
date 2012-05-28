@@ -173,19 +173,28 @@ $wgContactRequireAll = true;
 # ---------------
 #     UPLOADS
 # ---------------
-//
-## To enable image uploads, make sure the 'images' directory
-## is writable, then set this to true:
+
+# To enable image uploads, make sure the 'images' directory
+# is writable, then set this to true:
 $wgEnableUploads  = true;	//true = upload enabled
 $wgImgAuthPublicTest = false;	//false = bypass full public wiki
 $wgUseImageMagick = true;	//true = use imagemagick library instead of
 				// internal PHP image conversion system
 $wgImageMagickConvertCommand = "/usr/bin/convert"; 
-$wgFileExtensions = array('png','gif','jpg','jpeg', 'pdf', 'zip');
-/** @todo forbid all archives type, except zip (use blacklist or others upload wg vars) */
+$wgStrictFileExtensions = true; // default = true = everything not in $wgFileExtensions is forbidden
+// what's allowed, default = array( 'png', 'gif', 'jpg', 'jpeg' )
+$wgFileExtensions = array(
+	'png','gif','jpg','jpeg', 'xcf', 'svg', // pictures
+	'djvu', // image compression technology developed since 1996 at AT&T, used for scanned documents
+	'mid', 'ogg', 'ogv', 'mp3', // audio & video
+	'pdf',
+	'zip');
+// ensure this types will never be uploaded, regarless $wgStrictFileExtensions or not
+$wgFileBlacklist[] = 'txt';
+$wgFileBlacklist[] = 'mht';
 
 /** 
- * doesn't work properly yet
+ * UploadWizard, doesn't work properly yet
  * @todo rewrite UploadWizard to handle wikiplaces properly
 require_once( "$IP/extensions/UploadWizard/UploadWizard.php" );
 $wgUploadNavigationUrl = '/Special:UploadWizard'; // default upload url will point to uploadwizard
@@ -282,6 +291,7 @@ $wgCaptchaDirectoryLevels = $seizamCaptchaDirectoryLevels; // 1
 $wgCaptchaRegexes = $seizamCaptchaRegexes; // array()
 
 // =[ SpamBlacklist ]=
+
 require_once( "$IP/extensions/SpamBlacklist/SpamBlacklist.php" );
 $wgSpamBlacklistFiles = array(
    "http://meta.wikimedia.org/w/index.php?title=Spam_blacklist&action=raw&sb_ver=1",
@@ -316,7 +326,9 @@ $wgSpamBlacklistFiles = array(
 ini_set( 'pcre.backtrack_limit', '8M' ); // default is often 100ko
 
 // =[ AntiSpoof ]=
+
 require_once( "$IP/extensions/AntiSpoof/AntiSpoof.php" );
 
 // =[ SimpleAntiSpam ]=
+
 require_once("$IP/extensions/SimpleAntiSpam/SimpleAntiSpam.php");
