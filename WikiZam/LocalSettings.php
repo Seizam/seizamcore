@@ -317,3 +317,6 @@ ini_set( 'pcre.backtrack_limit', '8M' ); // default is often 100ko
 
 // =[ AntiSpoof ]=
 require_once( "$IP/extensions/AntiSpoof/AntiSpoof.php" );
+
+// =[ SimpleAntiSpam ]=
+require_once("$IP/extensions/SimpleAntiSpam/SimpleAntiSpam.php");
