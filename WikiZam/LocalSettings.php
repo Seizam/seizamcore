@@ -70,10 +70,6 @@ $wgDBTableOptions = "ENGINE=InnoDB, DEFAULT CHARSET=binary";
 # Experimental charset support for MySQL 4.1/5.0.
 $wgDBmysql5 = false;
 
-## Shared memory settings
-$wgMainCacheType = CACHE_NONE;
-$wgMemCachedServers = array();
-
 # InstantCommons allows wiki to use images from http://commons.wikimedia.org
 $wgUseInstantCommons = false;
 

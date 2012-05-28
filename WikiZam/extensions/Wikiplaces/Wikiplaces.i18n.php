@@ -47,19 +47,43 @@ $messages['en'] = array(
     'wp-create-section' => 'Create a Wikiplace',
     'wp-name-field' => 'Name:',
     'wp-create-name-help' => 'Type here the Name of your Wikiplace. It will be available at <u>www.seizam.com/<b>Name</b></u> and every Subpage you will create will be at <u>www.seizam.com/<b>Name</b>/Subpage</u>. <b>Advice:</b> Make it short, easy to remember and easy to type!',
-    'wp-select-wp' => 'Please select a Wikiplace',
-    'wp-enter-new-sp-name' => 'Please enter your new subpage name',
-    'wp-create-sp-go' => 'Create!',
+    
+    'wp-createpage-header' => 'Please fill the form below to create a new page within one of your wikiplaces.',
+    'wp-createpage-section' => 'Create a Page',
+    'wp-wikiplace-field' => 'Parent Wikiplace:',
+    'wp-createpage-wikiplace-help' => 'Select here the parent Wikiplace. Your Page will be available at <u>www.seizam.com/<b>Parent</b>/Name</u>.',
+    'wp-createpage-name-help' => 'Type here the Name of your Page. It will be available at <u>www.seizam.com/Parent/<b>Name</b></u>. <b>Advice:</b> Make it short, easy to remember and easy to type!',
+    
     /* Disclaimer: Wikiplace */
-    'wp-create-wp-success' => 'You successfully created your Wikiplace $1.',
-    'wp-create-sp-success' => 'You successfully created your subpage $1.',
+    'wp-create-wp-success' => '==Congratulation!==
+
+Your new Wikiplace <b>[[$1]]</b> has been successfully created! It is now available at [[$1|http://www.<b>seizam.com/$1</b>]]. You can administrate it from [[Special:Wikiplaces/Consult:$1|here]].
+
+===Tips & Tricks===
+* Type <b><nowiki>[[$1]]</nowiki></b> anywhere to make a link like: [[$1]]
+* Type <b><nowiki>[[$1|Click here to visit my homepage!]]</nowiki></b> to make a link like: [[$1|Click here to visit my homepage!]]
+* To create a subpage, click [[Special:Wikiplaces/CreatePage:$1|here]] or visit [[$1/SubpageName|www.seizam.com/<b>$1/SubpageName</b>]].
+* Do not forget to checkout the <b>actions menu</b> (top right of every page) to find settings  like <b>Protect</b> or <b>Watch</b>.
+
+Checkout [[Help:Wikiplaces]] for more details...',
+    'wp-create-sp-success' => '==Congratulation!==
+
+Your new Subpage <b>[[$1/$2|$2]]</b> has been successfully created in [[$1]]! It is now available at [[$1|http://www.<b>seizam.com/$1/$2</b>]].
+
+===Tips & Tricks===
+* Type <b><nowiki>[[$1/$2]]</nowiki></b> anywhere to make a link like: [[$1/$2]]
+* Type <b><nowiki>[[$1/$2|$2]]</nowiki></b> to make a link like: [[$1/$2|$2]]
+* Do not forget to checkout the <b>actions menu</b> (top right of every page) to find settings  like <b>Protect</b> or <b>Watch</b>.
+
+Checkout [[Help:Wikiplaces]] for more details...
+',
     'wp-your-total-diskspace' => 'Total diskspace usage: $1',
     /* Warning: Wikiplace */
     'wp-invalid-name' => 'This name is invalid.',
     'wp-name-already-exists' => 'This name already exists. Please retry with a different name.',
     'wp-create-wp-first' => 'You need to create a Wikiplace first.',
     /* TablePager: Subscription */
-    'wp-subscriptionslist-header' => 'Here is a list of all your subscriptions through time:',
+    'wp-subscriptionslist-header' => 'Here are your active subscriptions:',
     'wp-subscriptionslist-noactive-header' => 'You do not have any active subscription. [[Special:Subscriptions/new|Click here to subscribe again!]]
 
 {{int:wp-subscriptionslist-header}}',
