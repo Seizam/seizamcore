@@ -1018,7 +1018,7 @@ class WpSubscription {
 			return 'wp-no-active-sub';
 		}	
 
-		WpPlan::newFromId($sub->getPlanId());
+		$plan = WpPlan::newFromId($sub->getPlanId());
 		
 		$max_wikiplaces = $plan->getNbWikiplaces();
 		$user_wikiplaces_nb = WpWikiplace::countWikiplacesOwnedByUser($user_id);
