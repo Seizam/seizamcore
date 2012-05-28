@@ -415,7 +415,7 @@ class WikiplacesHooks {
 	private static function doCreateWikiplace($user_id, $homepage_article_id) {
 
 		// creating a new wikiplace
-		$subscription = WpSubscription::factoryLastUserSubscription($user_id);
+		$subscription = WpSubscription::newByUserId($user_id);
 		if ($subscription == null) {
 			wfDebugLog('wikiplaces', 'doCreateWikiplace: cannot create wikiplace, user has no subscription, user=' . $user_id . ' article_id=' . $homepage_article_id);
 			return null;

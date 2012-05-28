@@ -486,7 +486,7 @@ class WpSubscription {
 	 * @param int $user_id
 	 * @return WpSubscription The user active subscription or null if she has no active one 
 	 */
-	public static function factoryLastUserSubscription($user_id) {
+	public static function newByUserId($user_id) {
 			
 		if ( ($user_id === null) || !is_numeric($user_id) || ($user_id < 1) ) {
 			throw new MWException( 'Cannot search subscription, invalid user identifier.' );
@@ -677,7 +677,7 @@ class WpSubscription {
 		// archive the current sub if necessary
 		// not that even if this sub is active, it will be archived
 		// so, be sure that you need to call this subscribe() !
-		$current_sub = WpSubscription::factoryLastUserSubscription($user_id);
+		$current_sub = WpSubscription::newByUserId($user_id);
 					
 		$tmr = self::createTMR($user_id, $user->getEmail(), $plan);
 
