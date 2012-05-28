@@ -178,7 +178,6 @@ $wgContactRequireAll = true;
 ## is writable, then set this to true:
 $wgEnableUploads  = true;	//true = upload enabled
 $wgImgAuthPublicTest = false;	//false = bypass full public wiki
-				// ($wgGroupPermissions['*']['read'] = true;)) test
 $wgUseImageMagick = true;	//true = use imagemagick library instead of
 				// internal PHP image conversion system
 $wgImageMagickConvertCommand = "/usr/bin/convert"; 
@@ -213,8 +212,8 @@ $wgProtectOwnGroups = array('', 'user', 'artist', 'owner');
 unset($wgRestrictionTypes[array_search('move', $wgRestrictionTypes)]);
 // everyone can edit, even anons, but, there can be per-page restrctions
 // by default 'user' is allowed to edit, even if '*' is not.
-$wgGroupPermissions['*']['edit'] = true;
-
+$wgGroupPermissions['*']['read'] = true; // ProtectOwn override this if protection set on page
+$wgGroupPermissions['*']['edit'] = true; // ProtectOwn override this if protection set on page
 $wgGroupPermissions['bureaucrat']['editprotectedns'] = true;
 $wgGroupPermissions['sysop']['editprotectedns'] = true;
 
@@ -266,28 +265,21 @@ $wgAdvertisedFeedTypes = array('rss', 'atom');
 // Anti-spam features
 // ==================
 
-// =[ ConfirmEdit ]=
+// =[ ConfirmEdit with FancyCaptcha ]=
 
-require_once( "$IP/extensions/ConfirmEdit/ConfirmEdit.php" );
-// do not display captchas for groups:
-$wgGroupPermissions['*'            ]['skipcaptcha'] = false;
-$wgGroupPermissions['user'         ]['skipcaptcha'] = false;
-$wgGroupPermissions['autoconfirmed']['skipcaptcha'] = false;
-$wgGroupPermissions['artist'       ]['skipcaptcha'] = false;
-$wgGroupPermissions['bot'          ]['skipcaptcha'] = false; // registered bots
-$wgGroupPermissions['sysop'        ]['skipcaptcha'] = false;
-// To skip captchas for users that confirmed their email, you need to both set:
-//  $wgGroupPermissions['emailconfirmed']['skipcaptcha'] = true;
-//  $ceAllowConfirmedEmail = true;
-// Display captcha when theses actions are triggered:
-$wgCaptchaTriggers['edit']          = true; 
-$wgCaptchaTriggers['create']        = true; 
-$wgCaptchaTriggers['addurl']        = true; 
-$wgCaptchaTriggers['createaccount'] = true;
-$wgCaptchaTriggers['badlogin']      = true;
-// The triggers edit, create and addurl can be configured per namespace:
-// $wgCaptchaTriggersOnNamespace[NS_TALK]['addurl'] = false; // never display, redardless skipcaptcha right
-$wgCaptchaTriggersOnNamespace[NS_PROJECT]['edit'] = true; // always display, even user allowed to skipcaptcha
+require( "$IP/extensions/ConfirmEdit/ConfirmEdit.php" );
+require( "$IP/extensions/ConfirmEdit/FancyCaptcha.php" );
+$wgGroupPermissions['autoconfirmed']['skipcaptcha'] = true;
+$wgCaptchaClass = 'FancyCaptcha';
+$wgCaptchaWhitelist = false; // Regex to whitelist URLs to known-good sites...
+$wgCaptchaWhitelistIP = false; // List of IP ranges to allow to skip the captcha; (bug 23982 may require the server IP)
+// load conf from ServerSettings vars
+global $seizamCaptchaStorageClass, $seizamCaptchaSecret, $seizamCaptchaDirectory, $seizamCaptchaDirectoryLevels, $seizamCaptchaRegexes;
+$wgCaptchaStorageClass = $seizamCaptchaStorageClass ; // 'CaptchaCacheStore'
+$wgCaptchaSecret = $seizamCaptchaSecret; // "a_secret_key"
+$wgCaptchaDirectory = $seizamCaptchaDirectory; // "$IP/extensions/ConfirmEdit/default_images"
+$wgCaptchaDirectoryLevels = $seizamCaptchaDirectoryLevels; // 1
+$wgCaptchaRegexes = $seizamCaptchaRegexes; // array()
 
 
 // =[ VisualMathCaptcha ]=
