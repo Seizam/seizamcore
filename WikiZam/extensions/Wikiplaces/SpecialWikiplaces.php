@@ -84,14 +84,13 @@ class SpecialWikiplaces extends SpecialPage {
         $user_id = $this->getUser()->getId();
         $output = $this->getOutput();
 
-        $diskspace = WpPage::countDiskspaceUsageByUser($user_id);
-        $output->addHTML(wfMessage(
-                        'wp-your-total-diskspace', ($diskspace < 1) ? '< ' . wgformatSizeMB(1) : wgformatSizeMB($diskspace) )->text());
-
         $tp = new WpWikiplacesTablePager();
         $tp->setSelectConds(array('wpw_owner_user_id' => $user_id));
         $tp->setHeader(wfMessage('wp-list-header')->parse());
-        $tp->setFooter(wfMessage('wp-list-footer')->parse());
+        $diskspace = wgformatSizeMB(WpPage::countDiskspaceUsageByUser($user_id));
+        $pages = wgFormatNumber(WpPage::countPagesOwnedByUser($user_id));
+        $tp->setFooter(wfMessage('wp-list-footer', $diskspace, $pages)->parse());
+        /** @TODO Add Total Hits, Total Bandwidth & Report Updated, ie. Make pretty getters and factories in WpWikiplace that can take the result/row from the pager as argument */
         $output->addHTML($tp->getWholeHtml());
     }
 
@@ -269,12 +268,13 @@ class SpecialWikiplaces extends SpecialPage {
     }
 
     public function displayConsultWikiplace($wikiplace_name) {
-
         $tp = new WpPagesTablePager();
         $tp->setWPName($wikiplace_name);
         $tp->setSelectConds(array(
             'wpw_owner_user_id' => $this->getUser()->getID(),
             'homepage.page_title' => $wikiplace_name));
+        $tp->setHeader(wfMessage('wp-consult-header', $wikiplace_name)->parse());
+        $tp->setFooter(wfMessage('wp-consult-footer', $wikiplace_name)->parse());
         $this->getOutput()->addHTML($tp->getWholeHtml());
     }
 

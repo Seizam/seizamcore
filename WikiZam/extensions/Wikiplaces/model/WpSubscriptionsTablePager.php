@@ -15,16 +15,16 @@ class WpSubscriptionsTablePager extends SkinzamTablePager {
 	
 	protected $selectJoinConditions = array( 'wp_plan' => array('INNER JOIN','wps_wpp_id = wpp_id') );
     protected $selectFields = array(	
-		'wps_active AS active',
-		'wpp_name AS plan_name',
-		'wps_start_date AS start_date',			// when the sub starts
-		'wps_end_date AS end_date',				// subscribed plan name
-		'wpp_nb_wikiplaces AS max_wikiplaces',
-		'wpp_nb_wikiplace_pages AS max_pages',
-		'wpp_diskspace AS diskspace',
-		'wps_tmr_status AS status',
+		'wps_active',
+		'wpp_name',
+		'wps_start_date',			// when the sub starts
+		'wps_end_date',				// subscribed plan name
+		'wpp_nb_wikiplaces',
+		'wpp_nb_wikiplace_pages',
+		'wpp_diskspace',
+		'wps_tmr_status',
 		);
-    protected $defaultSort = 'start_date';
+    protected $defaultSort = 'wps_start_date';
     public $mDefaultDirection = true; // true = DESC
     protected $tableClasses = array('WpSubscription'); # Array
     protected $messagesPrefix = 'wp-';
@@ -44,21 +44,21 @@ class WpSubscriptionsTablePager extends SkinzamTablePager {
         global $wgLang;
         switch ($name) {
 			
-			case 'start_date':
-			case 'end_date':
+			case 'wps_start_date':
+			case 'wps_end_date':
 				return ($value === null) ? '-' : $wgLang->date($value, true);
-			case 'plan_name':
+			case 'wpp_name':
 				return  wfMessage('wp-' . $value)->text();
-			case 'status':
+			case 'wps_tmr_status':
 				return wfMessage("status-$value")->text() ;
-			case 'max_wikiplaces':
-			case 'max_pages':
-				return wgformatNumber($value);
-			case 'monthly_bandwidth':
-			case 'diskspace':
+			case 'wpp_nb_wikiplaces':
+			case 'wpp_nb_wikiplace_pages':
+				return wgFormatNumber($value);
+			case 'wpp_monthly_bandwidth':
+			case 'wpp_diskspace':
 				return wgformatSizeMB($value);
             default:
-                throw new MWException( 'Unknown data name "'.$name.'"');
+                return htmlspecialchars($value);
         }
     }
     
@@ -66,13 +66,29 @@ class WpSubscriptionsTablePager extends SkinzamTablePager {
 
     function getFieldNames() {
         $fieldNames = parent::getFieldNames();
-        unset($fieldNames['active']);
-        if (isset($fieldNames['start_date']))
-            $fieldNames['start_date'] = wfMessage ('start_date')->text ();
-        if (isset($fieldNames['end_date']))
-            $fieldNames['end_date'] = wfMessage ('end_date')->text ();
-        if (isset($fieldNames['status']))
-            $fieldNames['status'] = wfMessage ('status')->text ();
+        unset($fieldNames['wps_active']);
+        
+        if (isset($fieldNames['wpp_name']))
+            $fieldNames['wpp_name'] = wfMessage ('wp-name')->text ();
+        
+        if (isset($fieldNames['wps_start_date']))
+            $fieldNames['wps_start_date'] = wfMessage ('start_date')->text ();
+        
+        if (isset($fieldNames['wps_end_date']))
+            $fieldNames['wps_end_date'] = wfMessage ('end_date')->text ();
+        
+        if (isset($fieldNames['wpp_nb_wikiplaces']))
+            $fieldNames['wpp_nb_wikiplaces'] = wfMessage ('wp-max_wikiplaces')->text ();
+        
+        if (isset($fieldNames['wpp_nb_wikiplace_pages']))
+            $fieldNames['wpp_nb_wikiplace_pages'] = wfMessage ('wp-max_pages')->text ();
+        
+        if (isset($fieldNames['wpp_diskspace']))
+            $fieldNames['wpp_diskspace'] = wfMessage ('wp-diskspace')->text ();
+        
+        if (isset($fieldNames['wps_tmr_status']))
+            $fieldNames['wps_tmr_status'] = wfMessage ('status')->text ();
+        
         return $fieldNames;
     }
 
@@ -87,12 +103,12 @@ class WpSubscriptionsTablePager extends SkinzamTablePager {
         $attrs = parent::getRowAttrs($row);
         $classes = explode(' ', $attrs['class']);
 
-        if ($row->active == '1')
+        if ($row->wps_active == '1')
             $classes[] = 'active';
 		
-		if ( $row->status == 'PE' )
+		if ( $row->wps_tmr_status == 'PE' )
             $classes[] = 'pending';
-        else if ($row->status == 'KO')
+        else if ($row->wps_tmr_status == 'KO')
             $classes[] = 'canceled';
 		
         return array('class' => implode(' ', $classes));

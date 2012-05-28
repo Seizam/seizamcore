@@ -234,7 +234,7 @@ class SpecialElectronicPayment extends SpecialPage {
         # Building the pending transaction table and sum
         if ($balance<0) {
             $table = new TransactionsTablePager();
-            $table->setSelectFields(array('tmr_desc AS description','tmr_date_created AS date_created','tmr_amount AS amount','tmr_currency AS currency'));
+            $table->setSelectFields(array('tmr_desc','tmr_date_created','tmr_amount','tmr_currency'));
             $table->setSelectConds(array('tmr_user_id' => $user->getId(), 'tmr_status' => 'PE', 'tmr_amount < 0', 'tmr_currency'=> 'EUR'));
             $table->setFieldSortable(false);
             $tableHtml = $table->getBody();

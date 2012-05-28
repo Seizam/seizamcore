@@ -18,18 +18,16 @@ if (!defined('MEDIAWIKI')) {
 function wgformatSizeMB($size) {
     global $wgLang;
     // For small sizes no decimal places necessary
-    $round = 0;
     if ($size > 1024) {
         $size = $size / 1024;
         // For GB and bigger two decimal places are smarter
-        $round = 2;
-        $msg = 'size-gigabytes';
+        $size = round($size, 2);
+        return wfMessage('size-gigabytes', $wgLang->formatNum($size))->text();
+    } else if ($size < 1) {
+        return '< '.wfMessage('size-megabytes', $wgLang->formatNum(1))->text();
     } else {
-        $msg = 'size-megabytes';
+        return wfMessage('size-megabytes', $wgLang->formatNum($size))->text();
     }
-    $size = round($size, $round);
-    $text = $wgLang->getMessageFromDB($msg);
-    return str_replace('$1', $wgLang->formatNum($size), $text);
 }
 
 /**
@@ -38,7 +36,7 @@ function wgformatSizeMB($size) {
  * @param $size number
  * @return string Plain text (not HTML)
  */
-function wgformatNumber($number) {
+function wgFormatNumber($number) {
     global $wgLang;
     $unit = '';
     if ($number >= 10000) {
