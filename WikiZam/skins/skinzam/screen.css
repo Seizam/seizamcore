@@ -389,6 +389,30 @@ div#simpleSearch button#searchButton > img {
     padding: 6px;
 }
 
+/*
+* Captcha formatting
+*/
+div.captcha {
+   border: 1px solid #dad9d9;
+   padding: 16px;
+   overflow: hidden;
+   margin: 0 auto 16px;
+   line-height: 2em;
+}
+
+div.captcha p {
+   display: inline;
+   line-height: 2em;
+}
+
+div.captcha p img {
+   border: 1px solid #dad9d9;
+   float: right;
+   margin-top: 16px;
+}
+
+div.captcha p input {
+}
  
 fieldset.nested {
     margin: 0 0 4px 0;
