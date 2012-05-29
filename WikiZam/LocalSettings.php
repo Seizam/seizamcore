@@ -368,3 +368,6 @@ $wgTitleBlacklistSources = array(
 //   MediaWiki:Titleblacklist-forbidden-upload: for image uploads.
 //   MediaWiki:Titleblacklist-forbidden-new-account: for new accounts
 
+// =[ AntiBot ]= a simple framework for spambot checks and trigger payloads: copy the plugins you want into the active directory
+require_once( "$IP/extensions/AntiBot/AntiBot.php" );
+// activated AntiBot_GenericFormEncoding plugin
