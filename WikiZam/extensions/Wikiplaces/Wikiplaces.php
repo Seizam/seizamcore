@@ -74,6 +74,7 @@ $wgHooks['SkinTemplateOutputPageBeforeExec'][] = 'WikiplacesHooks::skinTemplateO
 $wgHooks['userCan'][] = 'WikiplacesHooks::userCan';
 $wgHooks['TransactionUpdated'][] = 'WikiplacesHooks::onTransactionUpdated';
 $wgHooks['IsOwner'][] = 'WikiplacesHooks::isOwner';
+$wgHooks['ImgAuthFullyStreamedFile'][] = 'WikiplacesHooks::onImgAuthFullyStreamedFile';
 $wgHooks['SkinTemplateNavigation'][] = 'WikiplacesHooks::SkinTemplateNavigation'; // Remove delete from action menu if necessary
 $wgHooks['EditPageCopyrightWarning'][] = 'WikiplacesHooks::EditPageCopyrightWarning'; // Cooks the edit page warning
 

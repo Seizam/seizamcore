@@ -106,6 +106,15 @@ if( !$title->userCanRead() )
 // Stream the requested file
 wfDebugLog( 'img_auth', "Streaming `".$filename."`." );
 wfStreamFile( $filename, array( 'Cache-Control: private', 'Vary: Cookie' ) );
+
+// This was added by Yann Missler for Seizam
+wfRunHooks( 'ImgAuthFullyStreamedFile', array( &$title, $filename ) ); /*
+$wikiplaces_img_auth_file_mod = dirname( __FILE__ ) .'/extensions/Wikiplaces/Wikiplaces.img_auth.php';
+if ( file_exists($wikiplaces_img_auth_file_mod) ) { // ensure to not break img_auth if wikiplaces not available
+	require_once ( $wikiplaces_img_auth_file_mod );
+	WikiplacesImgAuth::onImgAuthFullyStreamedFile($filename);
+}*/
+
 wfLogProfilingData();
 
 /**
