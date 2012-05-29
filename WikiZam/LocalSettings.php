@@ -371,3 +371,18 @@ $wgTitleBlacklistSources = array(
 // =[ AntiBot ]= a simple framework for spambot checks and trigger payloads: copy the plugins you want into the active directory
 require_once( "$IP/extensions/AntiBot/AntiBot.php" );
 // activated AntiBot_GenericFormEncoding plugin
+
+// =[ AbuseFilter ]= 
+// * requires Extension:AntiSpoof
+// * set specific controls on actions by users, such as edits, and create automated reactions for certain behaviors
+require_once( "$IP/extensions/AbuseFilter/AbuseFilter.php" );
+// autoconfirmed can view summaries, sysop can view/edit filters
+$wgGroupPermissions['autoconfirmed']['abusefilter-view'] = true;
+$wgGroupPermissions['autoconfirmed']['abusefilter-log'] = true;
+$wgGroupPermissions['sysop']['abusefilter-modify'] = true;
+$wgGroupPermissions['sysop']['abusefilter-log-detail'] = true;
+$wgGroupPermissions['sysop']['abusefilter-private'] = true;
+$wgGroupPermissions['sysop']['abusefilter-modify-restricted'] = true;
+$wgGroupPermissions['sysop']['abusefilter-revert'] = true;
+// Duration of blocks made by AbuseFilter
+$wgAbuseFilterBlockDuration = '2 hours';
