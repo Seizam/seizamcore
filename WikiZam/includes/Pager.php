@@ -207,8 +207,9 @@ abstract class IndexPager implements Pager {
 			if ( $numRows > $this->mLimit && $numRows > 1 ) {
 				$res->seek( $numRows - 1 );
 				$this->mPastTheEndRow = $res->fetchObject();
-				$indexField = $this->mIndexField;
-				$this->mPastTheEndIndex = $this->mPastTheEndRow->$indexField;
+                // PATCH
+				$this->mPastTheEndIndex = $this->mPastTheEndRow->$indexColumn;
+                // /PATCH
 				$res->seek( $numRows - 2 );
 				$row = $res->fetchRow();
 				$lastIndex = $row[$indexColumn];

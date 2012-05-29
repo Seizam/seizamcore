@@ -19,14 +19,21 @@ class SkinzamTablePager extends TablePager {
     protected $tableClasses = array(); # Array
     protected $defaultSort; # String (field)
     public $mDefaultDirection = true; # Boolean (true=decrescent)
-    public $mDefaultLimit = 5;
+    public $forceDefaultLimit = 10; # if > 0 use instead of $wgUser->getOption( 'rclimit' )
     protected $messagesPrefix = 'sz-'; # String
     # Do not redeclare
-    protected $fieldNames = null;
+    protected $fieldNames = null; # The main array fieldName => i18n
+    protected $fieldFullNames = null; # Fallback array fieldName => fieldFullName for offset
     private $defaultTableClasses = array('TablePager');
     protected $even = true;
     private $header = '';
     private $footer = '';
+
+    public function __construct() {
+        parent::__construct();
+        if ($this->forceDefaultLimit > 0)
+            list( $this->mLimit, /* $offset */ ) = $this->mRequest->getLimitOffset($this->forceDefaultLimit, '');
+    }
 
     /**
      * ABSTRACT! Can be redeclared, don't forget to call parent and merge results.
@@ -233,11 +240,22 @@ class SkinzamTablePager extends TablePager {
     function setFieldNames($fieldNames = null) {
         if (is_null($fieldNames))
             foreach ($this->selectFields as $field) {
-                preg_match('/([\w\*\(\)]*)$/', $field, $matches);
-                $field = $matches[0];
-                $fieldNames[$field] = wfMessage($this->messagesPrefix . $field)->text();
+                $alias = $this->getAliasFromString($field);
+                $fieldNames[$alias] = htmlspecialchars($alias);
+                $fieldFullNames[$alias] = $field;
             }
         $this->fieldNames = $fieldNames;
+        $this->fieldFullNames = $fieldFullNames;
+    }
+
+    /**
+     *
+     * @param String $fieldName
+     * @return String The field name without table prefix 
+     */
+    private function getAliasFromString($fieldName) {
+        $burst = explode('.', $fieldName);
+        return end($burst);
     }
 
     /**
@@ -246,8 +264,16 @@ class SkinzamTablePager extends TablePager {
      */
     function getFieldNames() {
         if (is_null($this->fieldNames))
-                $this->setFieldNames();
+            $this->setFieldNames();
         return $this->fieldNames;
+    }
+
+    /**
+     *
+     * @return String FullName of Sort String 
+     */
+    function getIndexField() {
+        return $this->fieldFullNames[$this->getAliasFromString($this->mSort)];
     }
 
     /**
@@ -291,7 +317,7 @@ class SkinzamTablePager extends TablePager {
     public function getFooter() {
         return $this->footer;
     }
-    
+
     /**
      *
      * @param String $html
@@ -301,7 +327,7 @@ class SkinzamTablePager extends TablePager {
         $this->setHeader($html);
         return $this->header;
     }
-    
+
     /**
      *
      * @param String $html

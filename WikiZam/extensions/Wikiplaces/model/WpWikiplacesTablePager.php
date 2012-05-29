@@ -15,16 +15,17 @@ class WpWikiplacesTablePager extends SkinzamTablePager {
         'wp_page' => array('LEFT JOIN', 'wpw_id = wppa_wpw_id'),
         'page' => array('INNER JOIN', 'wpw_home_page_id = page_id'));
     protected $selectFields = array(
-        'page_title AS wikiplace',
+        'page_title',
         'page_namespace',
-        'count(*) AS subpages',
-        'wpw_monthly_page_hits AS hits',
-        'wpw_monthly_bandwidth AS bandwidth',
+        'count(*) as count',
+        'wpw_monthly_page_hits',
+        'wpw_monthly_bandwidth',
         'wpw_report_updated',
         'wpw_date_expires');
-    protected $selectOptions = array('GROUP BY' => 'wpw_id');
-    protected $defaultSort = 'wikiplace';
-    public $mDefaultDirection = true; // true = DESC
+    protected $selectOptions = array('GROUP BY' => 'wp_wikiplace.wpw_id');
+    protected $defaultSort = 'page_title';
+    public $forceDefaultLimit = 10;
+    public $mDefaultDirection = false; // true = DESC
     protected $tableClasses = array('WpWikiplace'); # Array
     protected $messagesPrefix = 'wp-';
     protected $selectConds = array();
@@ -44,27 +45,24 @@ class WpWikiplacesTablePager extends SkinzamTablePager {
         global $wgLang;
         switch ($name) {
 
-            case 'wikiplace':
+            case 'page_title':
                 $title = Title::makeTitle($this->mCurrentRow->page_namespace, $value);
                 return Linker::linkKnown($title, $title->getPrefixedText(), array(), array('redirect'=>'no'));
-            case 'subpages':
+            case 'count':
                 $html = '<b>'.$value.'</b> '.  wfMessage('wp-items');
                 $html .= '<ul>';
                 $html .= '<li>'
-						. SpecialWikiplaces::getLinkConsultWikiplace( $this->mCurrentRow->wikiplace )
+						. SpecialWikiplaces::getLinkConsultWikiplace( $this->mCurrentRow->page_title )
                         . '</li>';
                 $html .= '<li>'
-                        . SpecialWikiplaces::getLinkCreateSubpage( $this->mCurrentRow->wikiplace )
+                        . SpecialWikiplaces::getLinkCreateSubpage( $this->mCurrentRow->page_title )
                         . '</li>';
                 $html .= '</ul>';
                 return $html;
-            case 'hits':
-                return wgformatNumber($value).' hits';
-            case 'bandwidth':
-                if (intval($value) < 1)
-                    return '< ' . wgformatSizeMB(1);
-                else
-                    return wgformatSizeMB($value);
+            case 'wpw_monthly_page_hits':
+                return wgFormatNumber($value).' hits';
+            case 'wpw_monthly_bandwidth':
+                return wgformatSizeMB($value);
             case 'wpw_report_updated':
             case 'wpw_date_expires':
                 return ($value === null) ? '-' : $wgLang->timeanddate($value, true);
@@ -78,6 +76,19 @@ class WpWikiplacesTablePager extends SkinzamTablePager {
         unset($fieldNames['page_namespace']);
         unset($fieldNames['wpw_report_updated']);
         unset($fieldNames['wpw_date_expires']);
+        unset($fieldNames['count(*) as count']);
+        
+        $fieldNames['count'] = wfMessage('wp-subpages')->text();
+        
+        if (isset ($fieldNames['page_title']))
+            $fieldNames['page_title'] = wfMessage('wp-name')->text();
+        
+        if (isset ($fieldNames['wpw_monthly_page_hits']))
+            $fieldNames['wpw_monthly_page_hits'] = wfMessage('wp-hits')->text();
+        
+        if (isset ($fieldNames['wpw_monthly_bandwidth']))
+            $fieldNames['wpw_monthly_bandwidth'] = wfMessage('wp-bandwidth')->text();
+                
         return $fieldNames;
     }
 
@@ -95,4 +106,14 @@ class WpWikiplacesTablePager extends SkinzamTablePager {
         $html .= parent::getEndBody();
 		return $html;
 	}
+    
+    /**
+     * Determine if $field should be sortable
+     * 
+     * @param string $field
+     * @return boolean 
+     *
+    function isFieldSortable($field) {
+        return $field == 'count' ? false : parent::isFieldSortable($field);
+    }*/
 }

@@ -19,13 +19,14 @@ class WpPagesTablePager extends SkinzamTablePager {
         'homepage' => array('INNER JOIN', 'wpw_home_page_id = homepage.page_id'),
         'wp_page' => array('INNER JOIN', 'wpw_id = wppa_wpw_id'),
         'subpage' => array('INNER JOIN', 'wppa_page_id = subpage.page_id AND subpage.page_namespace !=1 AND subpage.page_namespace !=7 AND subpage.page_namespace !=71'));
-    protected $selectFields = array('subpage.page_title AS name',
-        'subpage.page_namespace AS namespace',
-        'subpage.page_touched AS date_modified',
-        'subpage.page_counter AS hits');
-    protected $selectOptions = array('ORDER BY' => 'subpage');
-    protected $defaultSort = 'namespace';
-    public $mDefaultDirection = false; // true = DESC
+    protected $selectFields = array('subpage.page_title',
+        'subpage.page_namespace',
+        'subpage.page_touched',
+        'subpage.page_counter');
+    protected $selectOptions = array('ORDER BY' => 'subpage.page_title');
+    protected $defaultSort = 'page_touched';
+    public $mDefaultDirection = true; // true = DESC
+    public $forceDefaultLimit = 10;
     protected $tableClasses = array('WpPage'); # Array
     protected $messagesPrefix = 'wp-';
     protected $wpName = '';
@@ -43,14 +44,14 @@ class WpPagesTablePager extends SkinzamTablePager {
     function formatValue($name, $value) {
         global $wgLang;
         switch ($name) {
-            case 'name':
+            case 'page_title':
                 return $this->formatPageTitle($value);
-            case 'namespace':
+            case 'page_namespace':
                 return $this->formatNamespace($value);
-            case 'date_modified':
+            case 'page_touched':
                 return $wgLang->date($value, true);
-            case 'counter':
-                return wgformatNumber($value) . ' hits';
+            case 'page_counter':
+                return wgFormatNumber($value) . ' hits';
             case 'actions' :
                 return $this->formatActions();
             default:
@@ -59,7 +60,7 @@ class WpPagesTablePager extends SkinzamTablePager {
     }
 
     function formatPageTitle($value) {
-        $title = Title::makeTitle($this->mCurrentRow->namespace, $value);
+        $title = Title::makeTitle($this->mCurrentRow->page_namespace, $value);
         $ns = $title->getNamespace();
         $explosion = WpWikiplace::explodeWikipageKey($title->getDBkey(), $ns);
         $excount = count($explosion);
@@ -122,7 +123,7 @@ class WpPagesTablePager extends SkinzamTablePager {
         global $wgLang;
         switch ($value) {
             case NS_MAIN :
-                if (!preg_match("/\//", $this->mCurrentRow->name))
+                if (!preg_match("/\//", $this->mCurrentRow->page_title))
                     return wfMessage('wp-homepage')->text();
                 else
                     return wfMessage('wp-subpage')->text();
@@ -136,7 +137,7 @@ class WpPagesTablePager extends SkinzamTablePager {
     }
 
     function formatActions() {
-        $title = Title::makeTitle($this->mCurrentRow->namespace, $this->mCurrentRow->name);
+        $title = Title::makeTitle($this->mCurrentRow->page_namespace, $this->mCurrentRow->page_title);
 
         $html = '<ul>';
         $html .= '<li>'
@@ -169,11 +170,17 @@ class WpPagesTablePager extends SkinzamTablePager {
         
         $fieldNames['actions'] = '';
         
-        if (isset($fieldNames['date_modified']))
-            $fieldNames['date_modified'] = wfMessage ('date_modified');
+        if (isset($fieldNames['page_title']))
+            $fieldNames['page_title'] = wfMessage ('wp-name');
         
-        if (isset($fieldNames['namespace']))
-            $fieldNames['namespace'] = wfMessage ('type');
+        if (isset($fieldNames['page_touched']))
+            $fieldNames['page_touched'] = wfMessage ('date_modified');
+        
+        if (isset($fieldNames['page_namespace']))
+            $fieldNames['page_namespace'] = wfMessage ('type');
+        
+        if (isset($fieldNames['page_counter']))
+            $fieldNames['page_counter'] = wfMessage ('wp-hits');
         
         return $fieldNames;
     }

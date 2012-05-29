@@ -328,16 +328,15 @@ div#simpleSearch button#searchButton > img {
     width: 100%;
     margin: 0;
     margin-top: -2px;
+    padding-bottom: 16px;
     clear: both;
-    border: solid 1px #cccccc;
-    background-color: #f9f9f9;
-    /* @embed */
-    background-image: url(images/preferences-base.png);
+    border: solid 1px #dad9d9;
+    background-color: #f2f2f2;
 }
 #preferences fieldset.prefsection {
     border: none;
     padding: 0;
-    margin: 1em;
+    margin: 16px;
 }
 #preferences fieldset.prefsection fieldset {
     border: none;
@@ -358,10 +357,7 @@ div#simpleSearch button#searchButton > img {
     color: #686a6b;
 }
 #preferences div.mw-prefs-buttons {
-    padding: 1em;
-}
-#preferences div.mw-prefs-buttons input {
-    margin-right: 0.25em;
+    padding: 16px;
 }
 
 /* 
@@ -665,7 +661,7 @@ a.important:focus {
 
 .informations ul,
 ul.warning {
-    margin: 0;
+    margin: 0 0 0 16px;
     padding: 0;
 }
 
@@ -674,7 +670,6 @@ ul.warning>li{
     margin: 0;
     padding: 0;
     border: none;
-    list-style: none;
 }
 
 div.success, .successbox {
@@ -1832,16 +1827,20 @@ table.mw-enhanced-rc:hover {
     text-align: justify;
 }
 
-.edit_col_1 input[type="submit"] {
+input[type="submit"] {
+    float: right;
     background: #f0373a;
     border: 1px solid #393535;
     color: #FFFFFF;
     padding: 8px 8px;
+    margin: 0 0 0 16px;
     width: 184px;
     text-align: center;
 }
-.edit_col_1 input[type="submit"]:hover,
-.edit_col_1 input[type="submit"]:focus {
+
+
+input[type="submit"]:hover,
+input[type="submit"]:focus {
     background: #7C2122;
 
 }
@@ -2038,7 +2037,7 @@ table.WpWikiplace td.count {
 
 /* WpPage */
 
-table.WpPage td.name {
+table.WpPage td.page_title {
     text-align: left;
     max-width: 200px;
 }

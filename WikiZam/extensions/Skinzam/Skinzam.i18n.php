@@ -47,13 +47,13 @@ $messages['en'] = array(
     'sz-report' => 'Please feel free to [[Project:Contact|Contact us]] to report and get this issue solved.',
     'sz-asap' => 'Our team will make it happen as fast as possible!',
     
+    'tipsntricks' => 'Tips and Tricks',
+    
     /* Errors */
     'sorry' => 'Sorry!',
 	'sz-internal-error' => 'Sorry, an internal error occured. {{int:sz-report}}',
     'sz-invalid-request' => 'Sorry, we do not understand what you want to do OR you are not allowed to do it. {{int:sz-report}}',
 	
-    
-    
 );
 
 /** 
@@ -102,5 +102,11 @@ $messages['fr'] = array(
     'sz-report' => 'N\'hésitez pas à [[Project:Contact/fr|nous contacter]] pour signaler et résoudre ce problème.',
     'sz-asap' => 'Notre équipe s\'en occupera le plus rapidement possible!',
     
-    'sorry' => 'Désolé!'
+    'tipsntricks' => 'Trucs et astuces',
+    
+    /* Errors */
+    'sorry' => 'Désolé!',
+	'sz-internal-error' => 'Pardon, une erreur interne s\'est produite. {{int:sz-report}}',
+    'sz-invalid-request' => 'Pardon, nous ne comprenons pas votre requête OU vous n\'êtes pas autorisé à la réaliser. {{int:sz-report}}',
+	
 );
