@@ -332,3 +332,33 @@ require_once( "$IP/extensions/AntiSpoof/AntiSpoof.php" );
 // =[ SimpleAntiSpam ]=
 
 require_once("$IP/extensions/SimpleAntiSpam/SimpleAntiSpam.php");
+
+// =[ TitleBlacklist ]=
+
+require_once( "{$IP}/extensions/TitleBlacklist/TitleBlacklist.php" );
+// Uses a list from wikimedia.org and a local page (in ns MediaWiki)
+$wgTitleBlacklistSources = array(
+	array(// list of page titles which are blocked from creation/editing on Wikimedia wikis
+		'type' => TBLSRC_URL,
+		'src' => "http://meta.wikimedia.org/w/index.php?title=Title_blacklist&action=raw&tb_ver=1",
+	),
+	array(
+		'type' => TBLSRC_LOCALPAGE,
+		'src' => 'MediaWiki:Titleblacklist'
+	)
+);
+// Default bypass:
+//   $wgGroupPermissions['sysop']['tboverride'] = true;
+// Default caching params:
+//   $wgTitleBlacklistCaching = array(
+//	   'warningchance' => 100,
+//	   'expiry' => 900,
+//	   'warningexpiry' => 600,
+//   );
+// Warning messages can be customised via system messages:
+//   MediaWiki:Titleblacklist-forbidden-edit: for page creation and editing,
+//   MediaWiki:Titleblacklist-forbidden-move: for page moves,
+//   MediaWiki:Titleblacklist-forbidden-upload: for image uploads.
+//   MediaWiki:Titleblacklist-forbidden-new-account: for new accounts
+
+
