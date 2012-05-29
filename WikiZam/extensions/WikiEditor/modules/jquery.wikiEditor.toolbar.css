@@ -18,7 +18,7 @@
 	float: left;
 	width: 100%;
 	border-top: solid 1px #DDDDDD;
-	background-color: #E0EEf7;
+	background-color: #f2e3e4;
 }
 .wikiEditor-ui-toolbar {
 	/* @embed */
@@ -97,7 +97,7 @@
 	padding-right: 12px;
 	height: 26px;
 	cursor: pointer;
-	color: #0645ad;
+	color: #e22c2e;
 	/* @embed */
 	background-image: url(images/toolbar/arrow-ltr.png);
 	background-position: left center;
@@ -177,7 +177,7 @@
 	white-space: nowrap;
 }
 .wikiEditor-ui-toolbar .group .tool-select .options .option:hover {
-	background-color: #E0EEf7;
+	background-color: #f2e3e4;
 }
 .wikiEditor-ui-toolbar .group .tool-select .options .option[rel=heading-2] {
 	font-size: 150%;
@@ -206,7 +206,7 @@
 	padding: 4px;
 	padding-left: 6px;
 	cursor: pointer;
-	color: #0645ad;
+	color: #e22c2e;
 }
 .wikiEditor-ui-toolbar .booklet .index .current {
 	background-color: #FAFAFA;

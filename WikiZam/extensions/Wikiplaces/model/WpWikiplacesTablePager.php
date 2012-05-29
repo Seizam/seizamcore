@@ -60,7 +60,7 @@ class WpWikiplacesTablePager extends SkinzamTablePager {
                 $html .= '</ul>';
                 return $html;
             case 'wpw_monthly_page_hits':
-                return wgFormatNumber($value).' hits';
+                return wgFormatNumber($value).' '.  wfMessage('wp-hits')->text();
             case 'wpw_monthly_bandwidth':
                 return wgformatSizeMB($value);
             case 'wpw_report_updated':
@@ -84,7 +84,7 @@ class WpWikiplacesTablePager extends SkinzamTablePager {
             $fieldNames['page_title'] = wfMessage('wp-name')->text();
         
         if (isset ($fieldNames['wpw_monthly_page_hits']))
-            $fieldNames['wpw_monthly_page_hits'] = wfMessage('wp-hits')->text();
+            $fieldNames['wpw_monthly_page_hits'] = wfMessage('wp-Hits')->text();
         
         if (isset ($fieldNames['wpw_monthly_bandwidth']))
             $fieldNames['wpw_monthly_bandwidth'] = wfMessage('wp-bandwidth')->text();

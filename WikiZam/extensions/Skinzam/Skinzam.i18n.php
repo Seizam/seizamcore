@@ -73,6 +73,11 @@ $messages['fr'] = array(
     'tagline' => 'Depuis Seizam.com - Art & Liberté',
     'sz-myseizam' => 'Mon Seizam',
     
+    'mycontris' => 'Mes Contributions',
+    'mypreferences' => 'Mes Préférences',
+    'mywatchlist' => 'Ma Liste de Suivi',
+    'mytalk' => 'Ma Page de Discussion',
+    
     'sz-back' => 'retour',
     'sz-legalcontent' => 'Contenu légal',
     'sz-gtcu' => '[[Project:CGU|Conditions Générales d\'Utilisation]]',

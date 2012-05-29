@@ -1563,9 +1563,18 @@ table.mw_metadata {
     margin: 18px auto 0;
 }
 
+/* -----------------------------------------------------------------------------
+   ==  ACTION=EDIT
+   -------------------------------------------------------------------------- */
 
+div.editButtons {
+    margin-top: 16px;
+}
 
-
+body.action-edit div.mw-warning-with-logexcerpt,
+body.action-submit div.mw-warning-with-logexcerpt {
+    display: none;
+}
 
 /* -----------------------------------------------------------------------------
    ==  ListFiles (gallery)
@@ -1838,6 +1847,12 @@ input[type="submit"] {
     text-align: center;
 }
 
+div#languageselector-box-1 input[type="submit"] {
+    float: none;
+    margin: 0;
+    padding: 4px 8px;
+    width: auto;
+}
 
 input[type="submit"]:hover,
 input[type="submit"]:focus {
@@ -1982,6 +1997,10 @@ table.TablePager {
 .TablePager tr:hover td {
     background-color: #f2f2f2;
     color: black;
+}
+
+table.TablePager_nav {
+    border-bottom: 1px solid #dad9d9;
 }
 
 /*
@@ -2297,6 +2316,8 @@ h2.diff-currentversion-title {
 h2.diff-currentversion-title:after {
     content: " :";
 }
+
+/* Other */
 
 div.prefsectiontip p {
     font-size: x-small;
