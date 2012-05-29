@@ -106,6 +106,9 @@ require_once( "$IP/extensions/Vector/Vector.php" );
 ## UI Elements extension for Seizam's skin
 require_once( "$IP/extensions/Skinzam/Skinzam.php" );
 
+// Browser Blacklist for unicode non compliant browsers ('/^Lynx/' retrieve from wikimedia.org CommonSettings.php)
+$wgBrowserBlackList[] = '/^Lynx/';
+
 $wgUseCombinedLoginLink = false;
 
 $wgVectorUseSimpleSearch = true;
@@ -168,6 +171,10 @@ $wgContactUser = 'WikiSysop';
 $wgUserEmailUseReplyTo = true;
 $wgContactRequireAll = true;
 
+// =[ TitleKey ]= with this, if you type "mypage" in the search box, you will be redirected to "MyPaGe"
+require_once("$IP/extensions/TitleKey/TitleKey.php");
+// $wgEnableMWSuggest = true; // Enable AJAX autocomplete search suggestions (autosuggest) while typing in search boxes
+
 
 
 # ---------------
@@ -186,7 +193,7 @@ $wgStrictFileExtensions = true; // default = true = everything not in $wgFileExt
 $wgFileExtensions = array(
 	'png','gif','jpg','jpeg', 'xcf', 'svg', // pictures
 	'djvu', // image compression technology developed since 1996 at AT&T, used for scanned documents
-	'mid', 'ogg', 'ogv', 'mp3', // audio & video
+	'mid', 'ogg', 'ogv', 'mp3', 'avi', // audio & video
 	'pdf',
 	'zip');
 // ensure this types will never be uploaded, regarless $wgStrictFileExtensions or not
@@ -361,4 +368,6 @@ $wgTitleBlacklistSources = array(
 //   MediaWiki:Titleblacklist-forbidden-upload: for image uploads.
 //   MediaWiki:Titleblacklist-forbidden-new-account: for new accounts
 
-
+// =[ AntiBot ]= a simple framework for spambot checks and trigger payloads: copy the plugins you want into the active directory
+require_once( "$IP/extensions/AntiBot/AntiBot.php" );
+// activated AntiBot_GenericFormEncoding plugin
