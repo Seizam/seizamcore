@@ -75,6 +75,8 @@ $wgHooks['userCan'][] = 'WikiplacesHooks::userCan';
 $wgHooks['TransactionUpdated'][] = 'WikiplacesHooks::onTransactionUpdated';
 $wgHooks['IsOwner'][] = 'WikiplacesHooks::isOwner';
 $wgHooks['SkinTemplateNavigation'][] = 'WikiplacesHooks::SkinTemplateNavigation'; // Remove delete from action menu if necessary
+$wgHooks['EditPageCopyrightWarning'][] = 'WikiplacesHooks::EditPageCopyrightWarning'; // Cooks the edit page warning
+
 
 // upload form and handler hooks
 $wgHooks['UploadCreateFromRequest'][] = 'WikiplaceUpload::installWikiplaceUploadHandler';

@@ -829,5 +829,19 @@ class WikiplacesHooks {
 
 		return $text;
 	}
+    
+    /**
+     *
+     * @param Title $title
+     * @param String $copywarnMsg 
+     */
+    public static function EditPageCopyrightWarning($title, &$copywarnMsg) {
+        $ns = $title->getNamespace();
+        if (WpPage::isInWikiplaceNamespaces($ns)) {
+            $copywarnMsg = array( 'copyrightwarning3',
+				'[[' . wfMsgForContent( 'copyrightpage' ) . ']]' );
+        }
+        return true;
+    }
 
 }

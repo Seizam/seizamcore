@@ -78,10 +78,11 @@ class SpecialMySeizam extends SpecialPage {
         $html .= '<div class="ms-info-qa">' . wfMessage('ms-quickaccount')->parse() . '</div>';
         $html .= '<ul>';
         $html .= '<li>' . wfMessage('ms-accountbalance', $balance . 'EUR')->parse() . '</li>';
+        $html .= '<li>' . wfMessage('ms-electronicpayment')->parse() . '</li>';
         $html .= '<li>' . wfMessage('ms-subscriptions')->parse() . '</li>';
         $html .= '<li>' . wfMessage('ms-transactions')->parse() . '</li>';
-        $html .= '<li>' . wfMessage('ms-electronicpayment')->parse() . '</li>';
-        $html .= '<li>' . wfMessage('ms-privateprofile')->parse() . '</li>';
+        /** @todo Add private profile for adress, phone...
+        $html .= '<li>' . wfMessage('ms-privateprofile')->parse() . '</li>';*/
         $html .= '</ul>';
         $html .= '</div>';
         return $html;
@@ -90,6 +91,7 @@ class SpecialMySeizam extends SpecialPage {
     private function buildQuickWikiplaces() {
         $user = $this->getUser();
         $tp = new WpWikiplacesTablePager();
+        $tp->setLimit(3);
         $tp->setSelectConds(array('wpw_owner_user_id' => $user->getId()));
         $tp->setFieldSortable(array());
         $html = '<div id="ms-quickwikiplaces">';

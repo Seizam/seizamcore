@@ -26,7 +26,7 @@ class WpPagesTablePager extends SkinzamTablePager {
     protected $selectOptions = array('ORDER BY' => 'subpage.page_title');
     protected $defaultSort = 'page_touched';
     public $mDefaultDirection = true; // true = DESC
-    public $forceDefaultLimit = 10;
+    public $forceDefaultLimit = 20;
     protected $tableClasses = array('WpPage'); # Array
     protected $messagesPrefix = 'wp-';
     protected $wpName = '';
@@ -51,7 +51,7 @@ class WpPagesTablePager extends SkinzamTablePager {
             case 'page_touched':
                 return $wgLang->date($value, true);
             case 'page_counter':
-                return wgFormatNumber($value) . ' hits';
+                return wgFormatNumber($value) .' '.  wfMessage('wp-hits')->text();
             case 'actions' :
                 return $this->formatActions();
             default:
@@ -180,7 +180,7 @@ class WpPagesTablePager extends SkinzamTablePager {
             $fieldNames['page_namespace'] = wfMessage ('type');
         
         if (isset($fieldNames['page_counter']))
-            $fieldNames['page_counter'] = wfMessage ('wp-hits');
+            $fieldNames['page_counter'] = wfMessage ('wp-Hits');
         
         return $fieldNames;
     }
