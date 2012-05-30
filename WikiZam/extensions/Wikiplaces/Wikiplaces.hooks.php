@@ -616,7 +616,7 @@ class WikiplacesHooks {
 				throw new MWException('Error while searching container wikiplace.');
 			}
 
-			if (WpPage::create($title->getArticleID(), $wp-getId()) == null) {
+			if (WpPage::create($title->getArticleID(), $wp->getId()) == null) {
 				throw new MWException('Error while associating the restored subpage to its container wikiplace.');
 			}
 
