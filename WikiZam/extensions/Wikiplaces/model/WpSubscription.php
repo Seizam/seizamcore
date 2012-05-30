@@ -10,7 +10,8 @@ class WpSubscription {
 				$wps_start_date, // datetime
 				$wps_end_date, // datetime
 				$wps_active, // tinyint(3) unsigned
-				$wps_renew_wpp_id;// int(10) unsigned
+				$wps_renew_wpp_id, // int(10) unsigned
+				$wps_renewal_notified ; // tinyint(3) unsigned
 
 	private $attributes_to_update;
 		
@@ -33,7 +34,7 @@ class WpSubscription {
 			$id, $planId, $buyerUserId,
 			$transactionId, $transactionStatus,
 			$startDate, $endDate,
-			$active, $renewPlanId ) {
+			$active, $renewPlanId, $renewalNotified ) {
 		
 		$this->wps_id = intval($id);			
 		$this->wps_wpp_id = intval($planId);				
@@ -44,6 +45,7 @@ class WpSubscription {
 		$this->wps_end_date = $endDate;
 		$this->wps_active = $active !== '0';
 		$this->wps_renew_wpp_id = intval($renewPlanId);
+		$this->wps_renewal_notified = $renewalNotified !== '0';
 		
 		$this->attributes_to_update = array();
 
@@ -116,6 +118,35 @@ class WpSubscription {
 	}
 	
 	/**
+	 * Tells if the email to notify, the buyer there is a problem with planned renewal, was already sent 
+	 * @return boolean 
+	 */
+	public function isRenewalNotified() {
+		return $this->wps_renewal_notified;
+	}
+	
+
+	/**
+	 *Change the renewal plan and clear flag renewal_notified
+	 * @param int $plan_id 
+	 * @param boolean $flag_renewal_pb_reported Optional, set/clear flag renewal_notified. (default = clear)
+	 */
+	public function setRenewalPlan($plan_id, $flag_renewal_pb_reported = false) {
+		$this->set('wps_renew_wpp_id', $plan_id, false);
+		$this->set('wps_renewal_notified', $flag_renewal_pb_reported);
+	}
+	
+	/**
+	 *Change the renewal plan and clear flag renewal_notified
+	 * @param int $plan_id 
+	 * @param boolean $flag_renewal_pb_reported Optional, set/clear flag renewal_notified. (default = clear)
+	 */
+	public function setRenewalPlanNotified() {
+		$this->set('wps_renewal_notified', true);
+	}
+	
+	
+	/**
 	 * 
 	 * @param string $attribut_name 
 	 * <ul>
@@ -123,6 +154,7 @@ class WpSubscription {
 	 * <li>wps_tmr_id</li>
 	 * <li>wps_wpp_id</li>
 	 * <li>wps_active</li>
+	 * <li>wps_renewal_notified</li>
 	 * <li>wps_start_date</li>
 	 * <li>wps_end_date</li>
 	 * <li>wps_tmr_status</li>
@@ -148,6 +180,7 @@ class WpSubscription {
 				$db_value = intval($value);
 				break;
 			case 'wps_active':
+			case 'wps_renewal_notified';
 				if (!is_bool($value)) { throw new MWException('Value error (boolean needed) for '.$attribut_name); }
 				$db_value = ( $value ? 1 : 0 );
 				break;
@@ -185,22 +218,184 @@ class WpSubscription {
 
 	}
 	
-		/**
-	 * Send an email when the subscription is activated, when:
+	/**
+	 * Send an email when the first subscription is activated, when:
 	 * <ul>
-	 * <li>User makes a first subscription, and the subscription is activated (=only when tmr_status is OK)</li>
-	 * <li>System activates the "next plan" (=tmr_status can be OK or PE)</li>
+	 * <li>On the fly when user makes a first subscription, and she has enought to pay</li>
+	 * <li>Delayed, when user makes a first subscription, and credit her account after</li>
 	 * </ul>
 	 * @return boolean true=ok, false=error 
 	 */
-	public function sendActivationNotification( ) {
+	public function sendOnFirstActivation( ) {
 
 		$user = User::newFromId($this->wps_buyer_user_id);
 		$plan = WpPlan::newFromId($this->wps_wpp_id);
 
-		return $user->sendMail(
-				wfMessage( 'wpm-activation-subj' )->text(),
-				wfMessage( 'wpm-activation-body' , $user->getName() , $plan->getName() , $this->wps_end_date )->text())->isGood();
+		$back = false;
+		
+		$subject = wfMessage( 'wpm-activation-subj' )->text();
+		$body = wfMessage( 'wpm-activation-body' , $user->getName() , $plan->getName() , $this->wps_end_date )->text();
+		
+		try {
+			
+			$back = $user->sendMail( $subject, $body )->isGood();
+			
+		} catch (Exception $e) {
+			wfDebugLog('wikiplaces', 'sendOnFirstActivation(): ERROR SENDING EMAIL "'.$e->getMessage().'"'
+					.' user='.$user->getName().' plan='.$plan->getName() );
+		}
+		
+		return $back;
+		
+	}
+	
+	
+	/**
+	 * Send an email when a subscription renewal will occur soon and the renewal plan which should not pass.
+	 * reason can be: <ul>
+	 * <li>quotas</li>
+	 * <li>not-available</li>
+	 * </ul>
+	 * @param string $reason
+	 * @return boolean true=ok, false=error 
+	 */
+	public function sendOnRenewalSoonWarning( $reason ) {
+
+		$user = User::newFromId($this->wps_buyer_user_id);
+		$plan = WpPlan::newFromId($this->wps_wpp_id);
+		$next_plan = WpPlan::newFromId($this->wps_renew_wpp_id);
+		$next_plan_name = $next_plan != null ? $next_plan->getName() : 'no-plan';
+
+		$back = false;
+		
+		$subject = wfMessage( "wpm-renewal-warning-$reason-subj" )->text();
+		$body = wfMessage( "wpm-renewal-warning-$reason-body" , $user->getName() , $next_plan_name , $this->wps_end_date )->text();
+		
+		try {
+			
+			$back = $user->sendMail( $subject, $body )->isGood();
+			
+		} catch (Exception $e) {
+			wfDebugLog('wikiplaces', 'sendOnRenewalPlanWarning(): ERROR SENDING EMAIL "'.$e->getMessage().'"'
+					.' user='.$user->getName() );
+		}
+		
+		return $back;
+		
+	}
+	
+	
+	/**
+	 * Send an email when a subscription will end soon and has no renewal.
+	 * @return boolean true=ok, false=error 
+	 */
+	public function sendOnNoRenewalSoon( ) {
+
+		$user = User::newFromId($this->wps_buyer_user_id);
+		$plan = WpPlan::newFromId($this->wps_wpp_id);
+
+		$back = false;
+		
+		$subject = wfMessage( "wpm-no-renewal-soon-subj" )->text();
+		$body = wfMessage( "wpm-no-renewal-soon-subj" , $user->getName() , $this->wps_end_date )->text();
+		
+		try {
+			
+			$back = $user->sendMail( $subject, $body )->isGood();
+			
+		} catch (Exception $e) {
+			wfDebugLog('wikiplaces', 'sendOnNoRenewalSoon(): ERROR SENDING EMAIL "'.$e->getMessage().'"'
+					.' user='.$user->getName() );
+		}
+		
+		return $back;
+		
+	}
+	
+	/**
+	 * Send an email when a subscription renewal will occur soon and seems to be ok.
+	 * reason can be: <ul>
+	 * <li>quotas</li>
+	 * <li>not-available</li>
+	 * </ul>
+	 * @param string $reason
+	 * @return boolean true=ok, false=error 
+	 */
+	public function sendOnRenewalSoonOK( ) {
+
+		$user = User::newFromId($this->wps_buyer_user_id);
+		$plan = WpPlan::newFromId($this->wps_wpp_id);
+		$next_plan = WpPlan::newFromId($this->wps_renew_wpp_id);
+		$next_plan_name = $next_plan != null ? $next_plan->getName() : 'no-plan';
+
+		$back = false;
+		
+		$subject = wfMessage( "wpm-renewal-soon-ok-subj" )->text();
+		$body = wfMessage( "wpm-renewal-soon-ok-body" , $user->getName() , $next_plan_name , $this->wps_end_date )->text();
+		
+		try {
+			
+			$back = $user->sendMail( $subject, $body )->isGood();
+			
+		} catch (Exception $e) {
+			wfDebugLog('wikiplaces', 'sendOnRenewalSoonOK(): ERROR SENDING EMAIL "'.$e->getMessage().'"'
+					.' user='.$user->getName() );
+		}
+		
+		return $back;
+		
+	}
+	
+	/**
+	 * Send an email when a subscription has been renewed, but the transaction is PE
+	 * @return boolean true=ok, false=error 
+	 */
+	public function sendOnPlanRenewedPE( ) {
+
+		$user = User::newFromId($this->wps_buyer_user_id);
+		$plan = WpPlan::newFromId($this->wps_wpp_id);
+
+		$back = false;
+		
+		$subject = wfMessage( 'wpm-renewed-pe-subj' )->text();
+		$body = wfMessage( 'wpm-renewed-pe-body' , $user->getName() , $plan->getName() , $this->wps_end_date )->text();
+		
+		try {
+			
+			$back = $user->sendMail( $subject, $body )->isGood();
+			
+		} catch (Exception $e) {
+			wfDebugLog('wikiplaces', 'sendOnPlanRenewedPE(): ERROR SENDING EMAIL "'.$e->getMessage().'"'
+					.' user='.$user->getName().' plan='.$plan->getName() );
+		}
+		
+		return $back;
+		
+	}
+	
+	/** Send an email when a subscription has been renewed, and the transaction is OK
+	 * @return boolean true=ok, false=error 
+	 */
+	public function sendOnPlanRenewedOK( ) {
+
+		$user = User::newFromId($this->wps_buyer_user_id);
+		$plan = WpPlan::newFromId($this->wps_wpp_id);
+
+		$back = false;
+		
+		$subject = wfMessage( 'wpm-renewed-ok-subj' )->text();
+		$body = wfMessage( 'wpm-renewed-ok-body' , $user->getName() , $plan->getName() , $this->wps_end_date )->text();
+		
+		try {
+			
+			$back = $user->sendMail( $subject, $body )->isGood();
+			
+		} catch (Exception $e) {
+			wfDebugLog('wikiplaces', 'sendOnPlanRenewedOK(): ERROR SENDING EMAIL "'.$e->getMessage().'"'
+					.' user='.$user->getName().' plan='.$plan->getName() );
+		}
+		
+		return $back;
 		
 	}
 	
@@ -212,12 +407,23 @@ class WpSubscription {
 		
 		$user = User::newFromId($this->wps_buyer_user_id);
 
-		return $user->sendMail(
-				wfMessage( 'wpm-payfail-subj' )->text(),
-				wfMessage( 'wpm-payfail-body' , $user->getName() )->text())->isGood();
+		$back = false;
+		
+		$subject = wfMessage( 'wpm-payfail-subj' )->text();
+		$body = wfMessage( 'wpm-payfail-body' , $user->getName() )->text();
+		
+		try {
+			
+			$back = $user->sendMail( $subject, $body )->isGood();
+			
+		} catch (Exception $e) {
+			wfDebugLog('wikiplaces', 'sendTransactionErrorNotification(): ERROR SENDING EMAIL "'.$e->getMessage().'"'
+					.' user='.$user->getName() );
+		}
+		
+		return $back;
 		
 	}
-	
 		
 	
 	
@@ -227,9 +433,10 @@ class WpSubscription {
 	 * <li>this function assumes that the current subscription <b>can</b> AND <b>need</b> to be renewed</li>
 	 * <li><b>only use it to renew the subscription when it ends normally</b> (this function doesn't re-credit
 	 * user account balance and it doesn't change the wikiplaces 'monthly tick')</li>
-	 * <li>it archives the current subcription if renewal can be processed</b></li>
-	 * <li>this function alter the current db record (start_date, ...) but the primary key stay untouched</li>
-	 * <li>it creates a new TMR</li>
+	 * <li>it creates a transaction</li>
+	 * <li>if transaction is not OK and not PE, it breaks</li>
+	 * <li>it archives the current subcription</li>
+	 * <li>it alters the current db record (start_date, ...) but wps_id stays untouched</li>
 	 * </ul>
 	 * @return boolean/string true if ok, i18n message key string if an error occured
 	 * <ul>
@@ -271,13 +478,14 @@ class WpSubscription {
 		
 		$start =  self::calculateStartDateFromPreviousEnd( $this->wps_end_date );
 		$end = self::calculateEndDateFromStart( $start, $next_plan->getPeriod() );
-		$renewal_plan_id = $next_plan->renewalPlan()->getId($end);
+		$renewal_plan_id = $next_plan->getRenewalPlan($end)->getId($end);
 
 		$this->set('wps_wpp_id', $next_plan->getId(), false);
 		$this->set('wps_tmr_id', $tmr['tmr_id'], false);
 		$this->set('wps_tmr_status', $tmr['tmr_status'], false);
 		$this->set('wps_start_date', $start, false);
 		$this->set('wps_end_date', $end, false);
+		$this->set('wps_renewal_notified', false, false); // clear this flag
 		$this->set('wps_renew_wpp_id', $renewal_plan_id); // 3rd arg != false, so saving record now
 		
 		return true;
@@ -336,12 +544,6 @@ class WpSubscription {
 	 * @return void
 	 */
 	public function onTransactionUpdated( $tmr ) {
-		
-		wfDebugLog( 'wikiplaces', 'onTransactionUpdated:'
-		.' tmr_id='.$tmr['tmr_id']
-		.' wps_id='.$this->wps_id 
-		.' old_tmr_status='.$this->wps_tmr_status
-		.' new_tmr_status='.$tmr['tmr_status'] );
 				
 		switch ($this->wps_tmr_status) {
 			
@@ -358,22 +560,16 @@ class WpSubscription {
 							$plan = WpPlan::newFromId($this->wps_wpp_id);
 							$period = $plan->getPeriod();
 							$end = self::calculateEndDateFromStart($start, $period);
-							$renewal_plan_id = $plan->renewalPlan($end)->getId();
+							$renewal_plan_id = $plan->getRenewalPlan($end)->getId();
 							
 							$this->set('wps_start_date',	$start, false ); // 3rd param = false = do not update db now
 							$this->set('wps_end_date', $end, false ); 
 							$this->set('wps_active',	true, false ); 
 							$this->set('wps_renew_wpp_id', $renewal_plan_id, false);
 							$this->set('wps_tmr_status', 'OK'); // no 3rd p = update db now
-							try {
-								$this->sendActivationNotification();
-							} catch (Exception $e) {
-								wfDebugLog('wikiplaces', 'onTransactionUpdated: ERROR SENDING EMAIL "'.$e->getMessage().'"'
-										.' tmr_id=' . $tmr['tmr_id']
-										.' wps_id='.$this->wps_id 
-										.' old_tmr_status='.$this->wps_tmr_status
-										.' new_tmr_status='.$tmr['tmr_status'] );
-							}
+							
+							$this->sendOnFirstActivation();
+							
 						} else {
 							// if startDate not null, this is a renewal so it's already activated
 							$this->set('wps_tmr_status', 'OK'); // no 3rd p = update db now
@@ -386,15 +582,8 @@ class WpSubscription {
 						$this->set('wps_tmr_status', 'KO', false);
 						$this->set('wps_end_date', WpSubscription::now(), false ); 
 						$this->set('wps_active', false);  // in case of a renewal, it can be activated even if pending, so need to ensure that is false
-						try {
-							$this->sendTransactionErrorNotification();
-						} catch (Exception $e) {
-							wfDebugLog('wikiplaces', 'onTransactionUpdated: ERROR SENDING EMAIL "'.$e->getMessage().'"'
-									.' tmr_id=' . $tmr['tmr_id']
-									.' wps_id='.$this->wps_id 
-									.' old_tmr_status='.$this->wps_tmr_status
-									.' new_tmr_status='.$tmr['tmr_status'] );
-						}
+
+						$this->sendTransactionErrorNotification();
 						
 						return false; // this is our transaction, no more process to be done	
 						
@@ -407,7 +596,11 @@ class WpSubscription {
 		}
 		
 		// if we arrive here, this transaction is about a subscription, but we do not know what to do
-		throw new MWException('The transaction was updated, but its new status is not managed (old='.$this->tmr_status.'new='.$tmr['tmr_status'].').');	
+		wfDebugLog('wikiplaces', 'onTransactionUpdated: ERROR new status is not managed,'
+									.' tmr_id=' . $tmr['tmr_id']
+									.' wps_id='.$this->wps_id 
+									.' old_tmr_status='.$this->wps_tmr_status
+									.' new_tmr_status='.$tmr['tmr_status'] );
 		
 	}
 
@@ -428,11 +621,11 @@ class WpSubscription {
 		// wps_start_date and wps_end_date can be null, but nothing else
 		if ( !isset($row->wps_id) || !isset($row->wps_wpp_id) || !isset($row->wps_buyer_user_id) ||
 				!isset($row->wps_tmr_id) || !isset($row->wps_tmr_status) ||
-				!isset($row->wps_active) || !isset($row->wps_renew_wpp_id) ) {
+				!isset($row->wps_active) || !isset($row->wps_renew_wpp_id) || !isset($row->wps_renewal_notified) ) {
 			throw new MWException( 'Cannot construct the Subscription from the supplied row (missing field).' );
 		}
 			
-		return new self ( $row->wps_id, $row->wps_wpp_id, $row->wps_buyer_user_id, $row->wps_tmr_id, $row->wps_tmr_status, $row->wps_start_date, $row->wps_end_date, $row->wps_active, $row->wps_renew_wpp_id );
+		return new self ( $row->wps_id, $row->wps_wpp_id, $row->wps_buyer_user_id, $row->wps_tmr_id, $row->wps_tmr_status, $row->wps_start_date, $row->wps_end_date, $row->wps_active, $row->wps_renew_wpp_id, $row->wps_renewal_notified );
 		  
 	}
 	
@@ -509,33 +702,6 @@ class WpSubscription {
 		return self::constructFromDatabaseRow($result);
 	}
 	
-	
-	
-	/**
-	 * <b>WARNING:</b>This function is DB killer, and should only be used in test environment!
-	 * @param boolean $are_you_sure If you really want to get all, set to 'yes' 
-	 * @return array Array of WpSubscription 
-	 */
-	public static function factoryAll($are_you_sure = 'no') {
-		
-		wfDebugLog( 'wikiplaces', 'WpSubscription::getAll WARNING $are_you_sure='.$are_you_sure);
-		
-		if ( $are_you_sure != 'yes') {
-			return array();
-		}
-		
-		$dbr = wfGetDB(DB_SLAVE);
-		$results = $dbr->select( 'wp_subscription', '*', '1', __METHOD__ );
-		
-		$subs = array();
-		foreach ( $results as $row ) {
-			$subs[] = self::constructFromDatabaseRow($row);
-		}
-		
-		return $subs;
-
-	}
-	
 
 	
 	/**
@@ -594,20 +760,50 @@ class WpSubscription {
 
 	
 
-	
-	
 	/**
-	 * @param string $now MySQL datetime string (can be WpSubscription::getNow() )
+	 * get current actives, having a renewal plan selected, with end_date < $when
+	 * @param string $when MySQL datetime string (can be WpSubscription::getNow() )
 	 * @return Array Array of WpSubscription
 	 */
-	public static function factoryAllOutdatedToRenew( $now ) {
+	public static function factoryRenewalSoonToNotify( $when ) {
 		
 		$dbr = wfGetDB(DB_MASTER) ;
-		$now = $dbr->addQuotes($now);
+		$when = $dbr->addQuotes($when);
 		$conds = $dbr->makeList( array(
 			'wps_renew_wpp_id != 0',
 			'wps_active ' => 1,
-			"wps_end_date < $now"
+			'wps_renewal_notified' => 0,
+			"wps_end_date < $when"
+		), LIST_AND );
+		
+		$results = $dbr->select( 
+				array('wp_subscription', 'wp_plan'),
+				'*', $conds, __METHOD__, array(),
+				array( 'wp_plan' => array('LEFT JOIN','wps_renew_wpp_id = wpp_id') ) );
+		
+		$subs = array();
+		foreach ( $results as $row ) {
+			$sub = self::constructFromDatabaseRow($row);
+			$subs[] = $sub;
+		}
+		
+		return $subs;		
+	}
+	
+	
+	/**
+	 * get current actives, having a renewal plan selected, with end_date < $when
+	 * @param string $when MySQL datetime string (can be WpSubscription::getNow() )
+	 * @return Array Array of WpSubscription
+	 */
+	public static function factoryAllOutdatedToRenew( $when ) {
+		
+		$dbr = wfGetDB(DB_MASTER) ;
+		$when = $dbr->addQuotes($when);
+		$conds = $dbr->makeList( array(
+			'wps_renew_wpp_id != 0',
+			'wps_active ' => 1,
+			"wps_end_date < $when"
 		), LIST_AND );
 		
 		$results = $dbr->select( 
@@ -690,7 +886,7 @@ class WpSubscription {
 					$current_sub->archive(true);
 				}
 				$end = self::calculateEndDateFromStart($now, $plan->getPeriod());
-				$renewal_plan_id = $plan->renewalPlan($end)->getId();
+				$renewal_plan_id = $plan->getRenewalPlan($end)->getId();
 				$sub = self::create(
 						$plan->getId(), 
 						$user_id,
@@ -700,17 +896,14 @@ class WpSubscription {
 						$end, // end
 						true, // active
 						$renewal_plan_id,
+						false, // no email sent about renewal
 						$db_master
 				);
 				if ( $sub == null ) {
 					return null;
 				}
 				self::addSubscribersGroupToUser($user);
-				if ( ! $sub->sendActivationNotification() ) {
-					// error while sending notification
-					wfDebugLog( 'wikiplaces' , 'WpSubscription ERROR while sending activation notification to ['
-							.$user->getId().']'.$user->getRealName());
-				}
+				$sub->sendOnFirstActivation();
 				return $sub;
 
 			case 'PE': // waiting payment
@@ -727,13 +920,16 @@ class WpSubscription {
 						null, // unknown for now
 						false, // not active
 						WPS_RENEW_WPP_ID__DO_NOT_RENEW, // renewal, this value need to be updated as soon as we know the start date
+						false, // no email sent about renewal
 						$db_master
 				);
 
 		}
 
 		// if we arrive here, the payment status is unknown
-		throw new MWException( 'Error while subscribing, the transaction status is unknown.' );
+		wfDebugLog( 'wikiplaces' , 'WpSubscription::subscribe() ERROR the transaction status is not handled: "'.$tmr['tmr_status'].'" of tmr_id['.$tmr['tmr_id'].']');
+		
+		return null;
 
 	}
 	
@@ -798,7 +994,7 @@ class WpSubscription {
 	 * @return the created WpSubscription, or null if a db error occured
 	 */
 	private static function create( $planId, $buyerUserId, $transactionId, $transactionStatus, 
-			$startDate, $endDate, $active, $renewPlanId, $db_master = null ) {
+			$startDate, $endDate, $active, $renewPlanId, $renewalNotified, $db_master = null ) {
 		
 		if ( ($planId === null) || ($buyerUserId === null) || ($transactionId === null) ||
 				($transactionStatus === null) || ($active === null) || ($renewPlanId === null) ) {
@@ -808,7 +1004,8 @@ class WpSubscription {
 		if ( !is_numeric($planId) || !is_numeric($buyerUserId) || !is_numeric($transactionId) || !is_string($transactionStatus) || 
 				( ($startDate !== null) && !preg_match( '/^(\d{4})\-(\d\d)\-(\d\d) (\d\d):(\d\d):(\d\d)$/D', $startDate ) ) || 
 				( ($endDate !== null) && !preg_match( '/^(\d{4})\-(\d\d)\-(\d\d) (\d\d):(\d\d):(\d\d)$/D', $endDate ) ) || 
-				!is_bool($active) || !is_numeric($renewPlanId) ) {
+				!is_bool($active) || !is_bool($renewalNotified) ||
+				!is_numeric($renewPlanId) ) {
 			throw new MWException( 'Cannot create Subscription, invalid argument.' );
 		}
 						
@@ -828,6 +1025,7 @@ class WpSubscription {
 			'wps_end_date' => $endDate,
 			'wps_active' => $active ? 1 : 0,
 			'wps_renew_wpp_id' => $renewPlanId,
+			'wps_renewal_notified' => $renewalNotified ? 1 : 0
 		));
 
 		// Setting id from auto incremented id in DB
@@ -841,7 +1039,7 @@ class WpSubscription {
 				
 		return new self( $id, $planId, $buyerUserId,
 			$transactionId, $transactionStatus,
-			$startDate, $endDate, $active, $renewPlanId );
+			$startDate, $endDate, $active, $renewPlanId, $renewalPbEmailSent );
 		
 	}
 	
@@ -882,18 +1080,19 @@ class WpSubscription {
 	 * @param int $seconds + or - seconds shift
 	 * @param int $minutes + or - minutes shift
 	 * @param int $hours + or - hours shift
+	 * @param int $days + or - $days shift
 	 * @return string MySQL DATETIME string
 	 */
-	public static function now($seconds = 0, $minutes = 0, $hours = 0) {
+	public static function now($seconds = 0, $minutes = 0, $hours = 0, $days = 0) {
 		
-		if ( !is_int($seconds) || !is_int($minutes) || !is_int($hours) ) {
+		if ( !is_int($seconds) || !is_int($minutes) || !is_int($hours) || !is_int($days) ) {
 			throw new MWException("Cannot compute 'now with delay', invalid argument.");
 		}
 		
 		$start = new DateTime( 'now', new DateTimeZone( 'GMT' ) );
 		
-		if ( ($seconds != 0) || ($minutes != 0) || ($hours != 0) ) {
-			$start->modify( "$seconds second $minutes minute $hours hour" );
+		if ( ($seconds != 0) || ($minutes != 0) || ($hours != 0) || ($days != 0) ) {
+			$start->modify( "$seconds second $minutes minute $hours hour $days day" );
 		}
 		
 		return $start->format( 'Y-m-d H:i:s' );

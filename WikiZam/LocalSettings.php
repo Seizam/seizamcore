@@ -185,7 +185,7 @@ require_once("$IP/extensions/TitleKey/TitleKey.php");
 # is writable, then set this to true:
 $wgEnableUploads  = true;	//true = upload enabled
 $wgImgAuthPublicTest = false;	//false = bypass full public wiki
-$wgUseImageMagick = true;	//true = use imagemagick library instead of
+$wgUseImageMagick = true;	//true = use imagemagick library intsead of
 				// internal PHP image conversion system
 $wgImageMagickConvertCommand = "/usr/bin/convert"; 
 $wgStrictFileExtensions = true; // default = true = everything not in $wgFileExtensions is forbidden
@@ -193,7 +193,8 @@ $wgStrictFileExtensions = true; // default = true = everything not in $wgFileExt
 $wgFileExtensions = array(
 	'png','gif','jpg','jpeg', 'xcf', 'svg', // pictures
 	'djvu', // image compression technology developed since 1996 at AT&T, used for scanned documents
-	'mid', 'ogg', 'ogv', 'mp3', 'avi', 'webm', // audio & video
+	'mid', 'ogg', 'ogv', 'mp3', 'avi', // audio & video
+	'mp4', 'webm', // HTML5 compatible video formats
 	'pdf',
 	'zip');
 // ensure this types will never be uploaded, regarless $wgStrictFileExtensions or not
@@ -372,6 +373,17 @@ $wgTitleBlacklistSources = array(
 require_once( "$IP/extensions/AntiBot/AntiBot.php" );
 // activated AntiBot_GenericFormEncoding plugin
 
-// Widgets \o/
-require_once("$IP/extensions/Widgets/Widgets.php");
-$wgGroupPermissions['sysop']['editwidgets'] = true;
+// =[ AbuseFilter ]= 
+// * requires Extension:AntiSpoof
+// * set specific controls on actions by users, such as edits, and create automated reactions for certain behaviors
+require_once( "$IP/extensions/AbuseFilter/AbuseFilter.php" );
+// autoconfirmed can view summaries, sysop can view/edit filters
+$wgGroupPermissions['autoconfirmed']['abusefilter-view'] = true;
+$wgGroupPermissions['autoconfirmed']['abusefilter-log'] = true;
+$wgGroupPermissions['sysop']['abusefilter-modify'] = true;
+$wgGroupPermissions['sysop']['abusefilter-log-detail'] = true;
+$wgGroupPermissions['sysop']['abusefilter-private'] = true;
+$wgGroupPermissions['sysop']['abusefilter-modify-restricted'] = true;
+$wgGroupPermissions['sysop']['abusefilter-revert'] = true;
+// Duration of blocks made by AbuseFilter
+$wgAbuseFilterBlockDuration = '2 hours';

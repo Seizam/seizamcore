@@ -40,7 +40,7 @@ class WikiplaceUpload {
 			
 		} else {
 			
-			wfDebugLog( 'wikiplaces-upload', 'installWikiplaceUploadHandler('.$type.'), WARNING, unrecognized upload type, standard upload form will be used');
+			wfDebugLog( 'wikiplaces', 'installWikiplaceUploadHandler('.$type.'), WARNING, unrecognized upload type, standard upload form will be used');
 			self::$DISPLAY_UPLOAD_MOD = false;
 			
 		}
@@ -84,7 +84,7 @@ class WikiplaceUpload {
 			}
 		
 			// she is reuploading or has followed a "upload a file with this name" link
-			wfDebugLog( 'wikiplaces-upload', 'fetchRequestInformations: reuploading, so disabling mod');
+			wfDebugLog( 'wikiplaces-debug', 'fetchRequestInformations: reuploading, so disabling mod');
 			self::$WPDESTFILE_READONLY = true; // ensure that the filename field is readonly when create link followed
 			self::$DISPLAY_UPLOAD_MOD = false;
 			return true; // no informations to fetch and nothing to prepare
@@ -116,7 +116,7 @@ class WikiplaceUpload {
 		if ( $param === WP_PUBLIC_FILE_PREFIX )  {
 			
 			// there is a "Public" param, there will be only one choice in the listbox
-			wfDebugLog( 'wikiplaces-upload', 'fetchRequestInformations: only public prefix will be visible');
+			wfDebugLog( 'wikiplaces-debug', 'fetchRequestInformations: only public prefix will be visible');
 			self::$FILE_PREFIXES[$param] = WP_PUBLIC_FILE_PREFIX;
 			self::$FILE_PREFIXES_DEFAULT = $param;
 
@@ -142,7 +142,7 @@ class WikiplaceUpload {
 		$name = self::getDestinationFileName($request);
 		if ($name != null) {	
 			$specialUploadObj->mDesiredDestName = $name;
-			wfDebugLog( 'wikiplaces-upload', 'fetchRequestInformations, mDesiredDestName set to "'.$name.'"');
+			wfDebugLog( 'wikiplaces-debug', 'fetchRequestInformations, mDesiredDestName set to "'.$name.'"');
 		}
 		
 		return true; // continue hook processing
@@ -162,7 +162,7 @@ class WikiplaceUpload {
 		}
 		
 		if ( self::$USER_IS_WP_ADMIN || !self::$DISPLAY_UPLOAD_MOD) {
-			wfDebugLog( 'wikiplaces-upload', 'installWikiplaceUploadFrontend, upload form will not be changed');
+			wfDebugLog( 'wikiplaces-debug', 'installWikiplaceUploadFrontend, upload form will not be changed');
 			return true; 
 		}
 		
@@ -264,7 +264,7 @@ $wgHooks['SpecialUploadComplete'][] = 'WikiplaceUpload::onSpecialUploadComplete'
 	 * @param array $descriptor The source section description of the UploadForm
 	 */
 	public static function onUploadFormSourceDescriptors( $descriptor ) {
-		wfDebugLog( 'wikiplaces-upload', 'upload 2 ::onUploadFormSourceDescriptors');
+		wfDebugLog( 'wikiplaces-debug', 'upload 2 ::onUploadFormSourceDescriptors');
 		return true;
 	}
 	
@@ -275,7 +275,7 @@ $wgHooks['SpecialUploadComplete'][] = 'WikiplaceUpload::onSpecialUploadComplete'
 	 * @param mixed $error output: true if the file is valid. Otherwise, and indexed array representing the problem with the file, where the first element is the message key and the remaining elements are used as parameters to the message.
 	 */
 	public static function onUploadVerifyFile( $upload, $mime, &$error ) {
-		wfDebugLog( 'wikiplaces-upload', 'upload 5 ::onUploadVerifyFile');
+		wfDebugLog( 'wikiplaces-debug', 'upload 5 ::onUploadVerifyFile');
 		return true;
 	}
 	
@@ -286,7 +286,7 @@ $wgHooks['SpecialUploadComplete'][] = 'WikiplaceUpload::onSpecialUploadComplete'
 	 * @param string $error output: HTML error to show if upload canceled by returning false
 	 */
 	public static function onUploadVerification( $saveName, $tempName, &$error ) {
-		wfDebugLog( 'wikiplaces-upload', 'upload 6 ::onUploadVerification');
+		wfDebugLog( 'wikiplaces-debug', 'upload 6 ::onUploadVerification');
 		return true;
 	}
 
@@ -295,7 +295,7 @@ $wgHooks['SpecialUploadComplete'][] = 'WikiplaceUpload::onSpecialUploadComplete'
 	 * @param UploadForm $form UploadForm object
 	 */
 	public static function onUploadComplete( &$form ) {
-		wfDebugLog( 'wikiplaces-upload', 'upload 7 ::onUploadComplete');
+		wfDebugLog( 'wikiplaces-debug', 'upload 7 ::onUploadComplete');
 		return true;
 	}
 	
@@ -304,7 +304,7 @@ $wgHooks['SpecialUploadComplete'][] = 'WikiplaceUpload::onSpecialUploadComplete'
 	 * @param HTMLForm $form The UploadForm object 
 	 */
 	public static function onSpecialUploadComplete( $form ) {
-		wfDebugLog( 'wikiplaces-upload', 'upload 8 ::onSpecialUploadComplete');
+		wfDebugLog( 'wikiplaces-debug', 'upload 8 ::onSpecialUploadComplete');
 		return true;
 	}
 	

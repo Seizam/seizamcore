@@ -270,14 +270,16 @@ class SpecialSubscriptions extends SpecialPage {
 			return 'Error: No Active Subscription';
 		}
 		
-		if (!$plan->canBeTakenAsRenewal(
-				$this->getUser(),
+		if (!$plan->isAvailableForRenewal($curr_sub->getEnd())) {
+			return 'Error: Plan Not Available For Renewal';
+		}
+		
+		if (!$plan->hasSufficientQuotas(
 				WpWikiplace::countWikiplacesOwnedByUser($user_id),
 				WpPage::countPagesOwnedByUser($user_id),
-				WpPage::countDiskspaceUsageByUser($user_id),
-				$curr_sub->getEnd() ) ) {
-            return 'Error: Plan Forbidden';
-        }
+				WpPage::countDiskspaceUsageByUser($user_id) ) ){
+			return 'Error: Plan Quotas Unsufficients';
+		}
 
         return true;
     }
@@ -294,7 +296,7 @@ class SpecialSubscriptions extends SpecialPage {
             throw new MWException('Cannot set next plan, no active subscription.');
         }
 
-        $sub->set('wps_renew_wpp_id', $formData['Plan']);
+        $sub->setRenewalPlan(intval($formData['Plan']));
 
         return true;
     }

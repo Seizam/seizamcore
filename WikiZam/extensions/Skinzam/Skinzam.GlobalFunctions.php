@@ -31,6 +31,43 @@ function wgformatSizeMB($size) {
 }
 
 /**
+ * Format a size in bytes for output, using an appropriate
+ * unit (MB or GB) according to the magnitude in question
+ *
+ * @param mixed $size Size in kB to format, as string or int, <b<NO FLOAT</b>
+ * @return string Plain text (not HTML)
+ * @todo handle properly float $size, the problem is how to handle them with 32 bits system (substr?)
+ */
+function wgformatSizekB($size) {
+	
+	if ( PHP_INT_SIZE == 8 ) { // check if system is 32 or 64 bits
+		// 64 bits
+		if ($size > 1024) {
+			return wgformatSizeMB( $size/1024 , 2 );
+		}
+		
+	} elseif ( PHP_INT_SIZE == 4 ) {
+		// 32 bits
+		if ( strlen($size) > 3 ) { // not very precise, but work even with big big size
+			return wgformatSizeMB ( substr($size ,0,-3) );
+		}
+		
+	} else {
+		// ???
+		return wfMessage('size-kilobytes', $wgLang->formatNum($size))->text();
+	}
+	
+	// if we arrive here, we know that size is less than 1024 or 1000
+	global $wgLang;
+	if ($size < 1) {
+        return '< '.wfMessage('size-kilobytes', $wgLang->formatNum(1))->text();
+    } else {
+        return wfMessage('size-kilobytes', $wgLang->formatNum($size))->text();
+    }
+	
+}
+
+/**
  * Format a number with K, M, G
  *
  * @param $size number

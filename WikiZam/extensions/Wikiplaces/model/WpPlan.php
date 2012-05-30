@@ -120,28 +120,31 @@ class WpPlan {
 	 * @param string $when Optional, to ensure that the returned plan is available at this date  
 	 * @return WpPlan 
 	 */
-	public function renewalPlan($when = null) {
+	public function getRenewalPlan($when = null) {
 		
-		if ( $this->isRenewable($when) ) {
+		if ( $this->isAvailableForRenewal($when) ) {
 			return $this;
 		}
 
 		$checked = array ();  // avoid infinite loop
-		$next_plan_id = $this->wpp_renew_wpp_id;
+		$next_plan_id = $this->wpp_renew_wpp_id; // starts with the suggested plan
 		$next_plan = null;
 		
 		while ( $next_plan_id != null && !in_array( $next_plan_id, $checked) ) {
 			$checked[] = $next_plan_id;
 			
-			wfDebugLog( 'wikiplaces' , 'in loop with '.$next_plan_id);
-			
 			$next_plan = WpPlan::newFromId($next_plan_id);
 			if ( $next_plan == null ) {
-				$next_plan_id = null; // it's over
+				$next_plan_id = null; // problem
 			}
 			
-			if ( $next_plan->isRenewable($when) ) {
-				$this->wpp_renew_wpp_id = $next_plan_id;
+			if ( $next_plan->isAvailableForRenewal($when) ) {
+				wfDebugLog( 'wikiplaces-debug' , 'WpPlan['.$this->wpp_id.']->getRenewalPlan('.$when.') in base was ['.$this->wpp_renew_wpp_id.'], returned is ['.$next_plan_id.']');
+				
+				if ( $this->wpp_renew_wpp_id != $next_plan_id ) {
+					wfDebugLog( 'wikiplaces' , 'WpPlan['.$this->wpp_id.']->getRenewalPlan('.$when.') WARNING in base was ['.$this->wpp_renew_wpp_id.'], but was not renewable (not available at this date or db pb), so returned is ['.$next_plan_id.']');
+				}
+				
 				return $next_plan;
 				
 			} else {
@@ -149,29 +152,9 @@ class WpPlan {
 			}
 		}
 		
-		if ( $next_plan == null ) {
-			$this->wpp_renew_wpp_id = WP_FALLBACK_PLAN_ID;
-			$next_plan = WpPlan::newFromId(WP_FALLBACK_PLAN_ID);
-		}
-
-		return $next_plan;
-		
-	}
-	
-
-	
-	/**
-	 * Returns true if this plan is renewable. If it is not, the renewal
-	 * suggested plan ID can be known using <b>getRenewalSuggestedPlanId()</b>
-	 * @param string $when Optional, to ensure that the plan is available at this date 
-	 * @return boolean 
-	 */
-	public function isRenewable($when = null) {
-		
-		if ( ( $when != null ) && ( ($when < $this->wpp_start_date) || ($when > $this->wpp_end_date) ) ) {
-			return false;
-		}
-		return ( $this->wpp_renew_wpp_id == 0 );
+		// if we arrive here, there was a problem, so return fallback
+		wfDebugLog( 'wikiplaces' , 'WpPlan['.$this->wpp_id.']->getRenewalPlan('.$when.') WARNING in base was ['.$this->wpp_renew_wpp_id.'], but fallback returned ['.WP_FALLBACK_PLAN_ID.']');
+		return WpPlan::newFromId(WP_FALLBACK_PLAN_ID);
 		
 	}
 	
@@ -196,19 +179,30 @@ class WpPlan {
 
 	}
 	
+
 	/**
-	 * Checks that this plan can be taken as renewal by this user, and give sufficient quotas.
-	 * <b>INVITATION SYSTEM TO BE IMPLEMENTED HERE</b>
-	 * Invitation system can take place here, if we use e-mail address as invitation identifier
-	 * @todo: implement invitation system here
-	 * @param User $user Optional, will be used later for invations
+	 * Checks that this plan give sufficient quotas.
 	 * @param int $nb_wikiplaces Optional, to ensure quotas are respected, default = 0
 	 * @param int $nb_wikiplace_pages Optional, to ensure quotas are respected, default = 0
 	 * @param int $diskspace in MB Optional, to ensure quotas are respected, default = 0
-	 * @param string $when Optional, to ensure that the plan is available at this date, default = now
 	 * @return boolean 
 	 */
-	public function canBeTakenAsRenewal($user, $nb_wikiplaces = 0, $nb_wikiplace_pages = 0, $diskspace = 0, $when = null) {
+	public function hasSufficientQuotas($nb_wikiplaces = 0, $nb_wikiplace_pages = 0, $diskspace = 0) {
+		
+		return ( ( $this->wpp_nb_wikiplaces >= $nb_wikiplaces )
+				&& ( $this->wpp_nb_wikiplace_pages >= $nb_wikiplace_pages )
+				&& ( $this-> wpp_diskspace >= $diskspace ) );
+
+	}
+	
+	/**
+	 * Checks that this plan can be taken as renewal
+	 * <b>INVITATION SYSTEM TO BE IMPLEMENTED HERE</b>
+	 * @param string $when Optional, to ensure that the plan is available at this date, default = now
+	 * @return boolean 
+	 * @todo: implement invitation system here
+	 */
+	public function isAvailableForRenewal($when = null) {
 		
 		if ( $when == null ) {
 			$when = WpSubscription::now();
@@ -217,9 +211,6 @@ class WpPlan {
 		return ( $this->wpp_renew_wpp_id == 0 
 				&&( $this->wpp_start_date <= $when )
 				&& ( $this->wpp_end_date > $when )
-				&& ( $this->wpp_nb_wikiplaces >= $nb_wikiplaces )
-				&& ( $this->wpp_nb_wikiplace_pages >= $nb_wikiplace_pages )
-				&& ($this-> wpp_diskspace >= $diskspace ) 
 				&& ( !$this->wpp_invitation_only ) );
 
 	}
@@ -280,7 +271,7 @@ class WpPlan {
 
 	
 	
-		/**
+	/**
 	 * Returns available offers, with at least theses quotas (by default: no minimum requirement)
 	 * @param int $nb_wikiplaces
 	 * @param int $nb_wikiplace_pages
