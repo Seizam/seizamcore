@@ -700,48 +700,27 @@ class WikiplacesHooks {
 	 * @return boolean Always returns true
 	 */
 	public static function onImgAuthFullyStreamedFile( &$title , $filename ) {
-		$stat = stat($filename);
-		if (!$stat) {
-			return; // should not occur, but just in case, avoid a PHP error
+		$namespace = $title->getNamespace();
+		$db_key = $title->getDBkey();
+		
+		// skip if the file looks not attached to a wikiplace
+		if ( ! WpPage::isInWikiplace($namespace, $db_key) ) {
+			return true; // nothing to do
 		}
 		
+		// get file infos
+		$stat = stat($filename);
+		if (!$stat) { 
+			return true; // should not occur, but just in case, avoid a PHP error
+		}
+		
+		// prepare update infos
+		$root = WpWikiplace::extractWikiplaceRoot($db_key, $namespace);
 		$size = $stat['size']; // in bytes
 		
-		// convert in kb, and exit if file < 1 kB
-/*		
-		if ( PHP_INT_SIZE == 8 ) {
-			// 64 bits
-			if ( $size < 1024 ) {
-				return true; // less than 1 kB, skip
-			}
-			$size = $size / 1024; // in kb
-		} else {
-			// 32 bits
-			wfDebugLog('wikiplaces', "onImgAuthFullyStreamedFile: WARNING running with 32bits system, poor bandwidth usage precision");
-			if ( strlen($size) < 4 ) { // not very precise, but work even with big big size
-				return true; // less than 1 kB, skip
-			}
-			$size = substr($size , 0, -3); // divide by 1000
-		}
-*/		
-		// let's update the wikiplace bandwidth counter
+		WpWikiplace::updateBandwidthUsage($root, $size);
 		
-		$dbw = wfGetDB(DB_MASTER);
-		$wp_root = $dbw->addQuotes( WpWikiplace::extractWikiplaceRoot($title->getDBkey(), $title->getNamespace()) );
-		
-		$dbw->begin();
-		
-		$sql = "UPDATE wp_wikiplace INNER JOIN page ON ( wpw_home_page_id = page_id AND page_title = $wp_root ) SET wpw_monthly_bandwidth = ( wpw_monthly_bandwidth + ( $size >> 10 ) ) ; " ;
-		
-		$result = $dbw->query($sql, __METHOD__);
-		if ($result !== true) {
-			wfDebugLog('wikiplaces', "onImgAuthFullyStreamedFile: ERROR while updating bandwidth usage");
-		}
-		
-		$dbw->commit();
-		
-		wfDebugLog('wikiplaces', "onImgAuthFullyStreamedFile: '{$title->getPrefixedDBkey()}', Wikiplace '{$wp_root}', size {$size} kB");
-		return true; //always
+		return true; 
 	}
 	
 	/**

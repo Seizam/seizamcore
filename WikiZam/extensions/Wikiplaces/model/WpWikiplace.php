@@ -473,6 +473,42 @@ WHERE wpw_report_updated < $outdated ;" ;
 		return $updated;
 		
 	}
+	
+	
+	/**
+	 * Increase the Wikiplace bandiwth counter by adding $size bytes to it
+	 * @param string $wikiplace_name The Wikiplace name in db_key form
+	 * @param int $size The size in bytes (it should be string instead of int when PHP is 32 bits)
+	 * @return boolean True if the matching wikiplace has been updated, false if an error occured
+	 */
+	public static function updateBandwidthUsage($wikiplace_name, $size) {
+		
+		$dbw = wfGetDB(DB_MASTER);
+		
+		$wikiplace_name = $dbw->addQuotes( $wikiplace_name );
+		
+		$dbw->begin();
+		
+		$sql = "UPDATE wp_wikiplace INNER JOIN page ON ( wpw_home_page_id = page_id AND page_title = $wikiplace_name ) SET wpw_monthly_bandwidth = ( wpw_monthly_bandwidth + ( $size >> 10 ) ) ; " ;
+		
+		$result = $dbw->query($sql, __METHOD__);
+		if ($result !== true) {
+			wfDebugLog('wikiplaces', "updateBandwidthUsage: update request ERROR, wp=$wikiplace_name, size=$size bytes");
+			return false;
+		}
+		
+		$updated = $dbw->affectedRows();
+		
+		$dbw->commit();
+		
+		if ($updated != 1) {
+			wfDebugLog('wikiplaces', "updateBandwidthUsage: ERROR $updated row(s) updated, wp=$wikiplace_name, size=$size bytes");
+			return false;
+		}
+		
+		wfDebugLog('wikiplaces', "updateBandwidthUsage: OK, wp=$wikiplace_name, size=$size bytes");
+		return true; //always
+	}
 
 	
 	/**
