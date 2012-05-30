@@ -120,7 +120,7 @@ class WpPlan {
 	 * @param string $when Optional, to ensure that the returned plan is available at this date  
 	 * @return WpPlan 
 	 */
-	public function renewalPlan($when = null) {
+	public function getRenewalPlan($when = null) {
 		
 		if ( $this->isRenewable($when) ) {
 			return $this;
@@ -155,23 +155,6 @@ class WpPlan {
 		}
 
 		return $next_plan;
-		
-	}
-	
-
-	
-	/**
-	 * Returns true if this plan is renewable. If it is not, the renewal
-	 * suggested plan ID can be known using <b>getRenewalSuggestedPlanId()</b>
-	 * @param string $when Optional, to ensure that the plan is available at this date 
-	 * @return boolean 
-	 */
-	public function isRenewable($when = null) {
-		
-		if ( ( $when != null ) && ( ($when < $this->wpp_start_date) || ($when > $this->wpp_end_date) ) ) {
-			return false;
-		}
-		return ( $this->wpp_renew_wpp_id == 0 );
 		
 	}
 	
@@ -219,9 +202,25 @@ class WpPlan {
 				&& ( $this->wpp_end_date > $when )
 				&& ( $this->wpp_nb_wikiplaces >= $nb_wikiplaces )
 				&& ( $this->wpp_nb_wikiplace_pages >= $nb_wikiplace_pages )
-				&& ($this-> wpp_diskspace >= $diskspace ) 
+				&& ( $this-> wpp_diskspace >= $diskspace ) 
 				&& ( !$this->wpp_invitation_only ) );
 
+	}
+	
+	
+		/**
+	 * Returns true if this plan is renewable. If it is not, the renewal
+	 * suggested plan ID can be known using <b>getRenewalSuggestedPlanId()</b>
+	 * @param string $when Optional, to ensure that the plan is available at this date 
+	 * @return boolean 
+	 */
+	public function isRenewable($when = null) {
+		
+		if ( ( $when != null ) && ( ($when < $this->wpp_start_date) || ($when > $this->wpp_end_date) ) ) {
+			return false;
+		}
+		return ( $this->wpp_renew_wpp_id == 0 );
+		
 	}
 	
 	
@@ -280,7 +279,7 @@ class WpPlan {
 
 	
 	
-		/**
+	/**
 	 * Returns available offers, with at least theses quotas (by default: no minimum requirement)
 	 * @param int $nb_wikiplaces
 	 * @param int $nb_wikiplace_pages

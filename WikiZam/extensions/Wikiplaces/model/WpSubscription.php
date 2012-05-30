@@ -227,9 +227,10 @@ class WpSubscription {
 	 * <li>this function assumes that the current subscription <b>can</b> AND <b>need</b> to be renewed</li>
 	 * <li><b>only use it to renew the subscription when it ends normally</b> (this function doesn't re-credit
 	 * user account balance and it doesn't change the wikiplaces 'monthly tick')</li>
-	 * <li>it archives the current subcription if renewal can be processed</b></li>
-	 * <li>this function alter the current db record (start_date, ...) but the primary key stay untouched</li>
-	 * <li>it creates a new TMR</li>
+	 * <li>it creates a transaction</li>
+	 * <li>if transaction is not OK and not PE, it breaks</li>
+	 * <li>it archives the current subcription</li>
+	 * <li>it alters the current db record (start_date, ...) but wps_id stays untouched</li>
 	 * </ul>
 	 * @return boolean/string true if ok, i18n message key string if an error occured
 	 * <ul>
@@ -271,7 +272,7 @@ class WpSubscription {
 		
 		$start =  self::calculateStartDateFromPreviousEnd( $this->wps_end_date );
 		$end = self::calculateEndDateFromStart( $start, $next_plan->getPeriod() );
-		$renewal_plan_id = $next_plan->renewalPlan()->getId($end);
+		$renewal_plan_id = $next_plan->getRenewalPlan($end)->getId($end);
 
 		$this->set('wps_wpp_id', $next_plan->getId(), false);
 		$this->set('wps_tmr_id', $tmr['tmr_id'], false);
@@ -358,7 +359,7 @@ class WpSubscription {
 							$plan = WpPlan::newFromId($this->wps_wpp_id);
 							$period = $plan->getPeriod();
 							$end = self::calculateEndDateFromStart($start, $period);
-							$renewal_plan_id = $plan->renewalPlan($end)->getId();
+							$renewal_plan_id = $plan->getRenewalPlan($end)->getId();
 							
 							$this->set('wps_start_date',	$start, false ); // 3rd param = false = do not update db now
 							$this->set('wps_end_date', $end, false ); 
@@ -690,7 +691,7 @@ class WpSubscription {
 					$current_sub->archive(true);
 				}
 				$end = self::calculateEndDateFromStart($now, $plan->getPeriod());
-				$renewal_plan_id = $plan->renewalPlan($end)->getId();
+				$renewal_plan_id = $plan->getRenewalPlan($end)->getId();
 				$sub = self::create(
 						$plan->getId(), 
 						$user_id,
