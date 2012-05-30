@@ -185,7 +185,7 @@ require_once("$IP/extensions/TitleKey/TitleKey.php");
 # is writable, then set this to true:
 $wgEnableUploads  = true;	//true = upload enabled
 $wgImgAuthPublicTest = false;	//false = bypass full public wiki
-$wgUseImageMagick = true;	//true = use imagemagick library instead of
+$wgUseImageMagick = true;	//true = use imagemagick library intsead of
 				// internal PHP image conversion system
 $wgImageMagickConvertCommand = "/usr/bin/convert"; 
 $wgStrictFileExtensions = true; // default = true = everything not in $wgFileExtensions is forbidden
@@ -194,6 +194,7 @@ $wgFileExtensions = array(
 	'png','gif','jpg','jpeg', 'xcf', 'svg', // pictures
 	'djvu', // image compression technology developed since 1996 at AT&T, used for scanned documents
 	'mid', 'ogg', 'ogv', 'mp3', 'avi', // audio & video
+	'mp4', 'webm', // HTML5 compatible video formats
 	'pdf',
 	'zip');
 // ensure this types will never be uploaded, regarless $wgStrictFileExtensions or not

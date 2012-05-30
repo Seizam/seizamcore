@@ -88,7 +88,7 @@ class WpWikiplace {
 
 		$now = WpSubscription::now();
 		
-		wfDebugLog( 'wikiplaces', "WpWikiplace->updateUsage for wp[$this->wpw_id] from $this->wpw_report_updated($this->wpw_monthly_page_hits) to $now($hits)");
+		wfDebugLog( 'wikiplaces-debug', "WpWikiplace[$this->wpw_id]->updateUsage(): updating from $this->wpw_report_updated($this->wpw_monthly_page_hits) to $now($hits)");
 
 		$success = $dbw->update(
 				'wp_wikiplace',
@@ -502,11 +502,11 @@ WHERE wpw_report_updated < $outdated ;" ;
 		$dbw->commit();
 		
 		if ($updated != 1) {
-			wfDebugLog('wikiplaces', "updateBandwidthUsage: ERROR $updated row(s) updated, wp=$wikiplace_name, size=$size bytes");
+			wfDebugLog('wikiplaces', "updateBandwidthUsage(): ERROR $updated row(s) updated, wp=$wikiplace_name, size=$size bytes");
 			return false;
 		}
 		
-		wfDebugLog('wikiplaces', "updateBandwidthUsage: OK, wp=$wikiplace_name, size=$size bytes");
+		wfDebugLog('wikiplaces-debug', "updateBandwidthUsage: OK, wp=$wikiplace_name, size=$size bytes");
 		return true; //always
 	}
 
