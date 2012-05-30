@@ -132,10 +132,8 @@ img {
 svg:not(:root) { overflow: hidden; }
 
 video {
-    border: 1px solid #D8D7D7;
+    max-width: 100%
 }
-
-
 
 /* -----------------------------------------------------------------------------
    ==  Figures
@@ -645,10 +643,19 @@ input:invalid, textarea:invalid { background-color: #f2e3e4; }
    ==  Classes
    -------------------------------------------------------------------------- */
 
-.left {
-    float: left;
-    margin: 4px 20px 12px 0;
 
+.right {
+    float:right;
+    clear:right;
+    margin-left: 16px;
+    margin-bottom: 16px;
+}
+
+.left {
+    float:left;
+    clear:left;
+    margin-right: 16px;
+    margin-bottom: 16px;
 }
 
 .sread {
@@ -684,7 +691,8 @@ a.important:focus {
 }
 
 .informations ul,
-ul.warning {
+ul.warning,
+div.error ul {
     margin: 0 0 0 16px;
     padding: 0;
 }
@@ -776,7 +784,7 @@ a, a span {
 
 .block .inside {
     clear: left;
-    padding: 18px;
+    padding: 0 18px 18px;
     border: 1px solid #d8d7d7;
     /* @embed */
     background-image: url(images/sh_block_full_in.png);
@@ -784,6 +792,10 @@ a, a span {
     background-repeat: no-repeat;
     background-position: bottom center;
     overflow:hidden;
+}
+
+div.mw-content-ltr {
+    text-align: justify;
 }
 
 .block_medium {
@@ -969,6 +981,10 @@ h1.firstHeading a:hover {
     border-bottom:none;
 }
 
+div#bodyContent div.inside #nav {
+    margin-top: 18px;
+}
+
 #nav > ul > li,
 #nav > div > ul > li{
     position:relative;
@@ -1083,7 +1099,6 @@ h1.firstHeading a:hover {
 html.client-nojs #bodyContent>.inside {
     min-height: 300px;
 }
-
 /* ----------------------------------------
    ==  CONTENTOTHER
    ---------------------------------------- */
@@ -1499,35 +1514,17 @@ div#mw-imagepage-section-duplicates {
     display: none;
 }
 
-div#file,
-div.fullMedia,
-div#mw-imagepage-content,
-div#mw-imagepage-section-filehistory,
-div#mw-imagepage-section-linkstoimage,
-div#mw-imagepage-nolinkstoimage,
-div.mw-imagepage-section-metadata,
-div#mw-imagepage-nofile,
+body.ns-6.action-view #bodyContent > .inside > div,
 body.ns-6.action-view #bodyContent > .inside > ul {
     clear: both;
     margin: 0 auto 18px;
     border: 1px solid #d8d7d7;
     background-color: white;
-}
-
-div#mw-imagepage-content,
-div#mw-imagepage-section-filehistory,
-div#mw-imagepage-section-linkstoimage,
-div#mw-imagepage-nolinkstoimage,
-div.mw-imagepage-section-metadata,
-div#mw-imagepage-nofile,
-body.ns-6.action-view #bodyContent > .inside > ul {
     padding: 18px;
 }
 
-div#file {
-    border-bottom: none;
-    padding: 10px 0 0;
-    margin-bottom: 0;
+body.ns-6.action-view #bodyContent > .inside > div#file {
+    padding: 10px;
     text-align: center;
 }
 
@@ -1536,19 +1533,23 @@ div#file img {
     padding-bottom: 10px;
 }
 
-div.fullMedia {
-    padding-bottom: 4px;
-    border-top: none;
-    text-align: center;
-    font-size: 85%;
+
+body.ns-6.action-view #bodyContent > .inside > div.fullMedia a.internal {
+    font-size: 1.4em;
+    font-weight: bold;
 }
 
-div#mw-imagepage-section-filehistory {
+body.ns-6.action-view #bodyContent > .inside > div.fullMedia span.fileInfo {
+    margin-left: 18px;
+}
+
+body.ns-6.action-view #bodyContent > .inside > div#mw-imagepage-section-filehistory {
     border-bottom: none;
     margin-bottom: 0;
     padding-bottom: 1em;
 }
 
+/* Could use div#mw-imagepage-section-filehistory~ul here but breaks Netbeans (so probably breaks browsers) */
 body.ns-6.action-view #bodyContent > .inside > ul {
     border-top: none;
     margin-top: 0;
@@ -1556,14 +1557,14 @@ body.ns-6.action-view #bodyContent > .inside > ul {
     text-align: center;
 }
 
-body.ns-6.action-view #bodyContent > .inside > ul li {
+body.ns-6.action-view #bodyContent > .inside > ul > li {
     display: inline-block;
     list-style-type: none;
     padding: 0 12px;
     border-left: 1px solid #d8d7d7;
 }
 
-body.ns-6.action-view #bodyContent > .inside > ul li:first-child {
+body.ns-6.action-view #bodyContent > .inside > ul > li:first-child {
     border-left: none;
 }
 
@@ -1585,6 +1586,12 @@ h2#metadata{
 
 table.mw_metadata {
     margin: 18px auto 0;
+}
+
+body.ns-6.action-view #bodyContent > .inside > div.mediaWarning {
+    border-color: #debdbf;
+    background: #f2e3e4;
+    color: #974349;
 }
 
 /* -----------------------------------------------------------------------------
@@ -1867,7 +1874,7 @@ input[type="submit"] {
     color: #FFFFFF;
     padding: 8px 8px;
     margin: 0 0 0 16px;
-    width: 184px;
+    min-width: 184px;
     text-align: center;
 }
 

@@ -283,6 +283,7 @@ class SkinzamTemplate extends BaseTemplate {
                 <h3 class="title"><?php $this->html('title') ?></h3>
                 <!-- inside -->
                 <div class="inside">
+                <?php /*
                     <div id="nav" class="noprint">
                         <ul class="nav_actions">
                             <li>
@@ -293,6 +294,7 @@ class SkinzamTemplate extends BaseTemplate {
                             </li>
                         </ul>
                     </div>
+                 */ ?>
                     <!-- bodytext -->
                     <?php $this->html('bodytext') ?>
                     <!-- /bodytext -->

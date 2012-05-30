@@ -193,7 +193,7 @@ $wgStrictFileExtensions = true; // default = true = everything not in $wgFileExt
 $wgFileExtensions = array(
 	'png','gif','jpg','jpeg', 'xcf', 'svg', // pictures
 	'djvu', // image compression technology developed since 1996 at AT&T, used for scanned documents
-	'mid', 'ogg', 'ogv', 'mp3', 'avi', // audio & video
+	'mid', 'ogg', 'ogv', 'mp3', 'avi', 'webm', // audio & video
 	'pdf',
 	'zip');
 // ensure this types will never be uploaded, regarless $wgStrictFileExtensions or not
@@ -245,7 +245,7 @@ $wgInvalidateCacheOnLocalSettingsChange = true;
 require_once( "$IP/extensions/WikiEditor/WikiEditor.php" );
 $wgDefaultUserOptions['usebetatoolbar'] = 1;
 $wgDefaultUserOptions['usebetatoolbar-cgd'] = 1;
-$wgDefaultUserOptions['wikieditor-preview'] = 1;
+$wgDefaultUserOptions['wikieditor-preview'] = 0;
 
 # Enable subpages in the main namespace
 $wgNamespacesWithSubpages = array(
@@ -371,3 +371,7 @@ $wgTitleBlacklistSources = array(
 // =[ AntiBot ]= a simple framework for spambot checks and trigger payloads: copy the plugins you want into the active directory
 require_once( "$IP/extensions/AntiBot/AntiBot.php" );
 // activated AntiBot_GenericFormEncoding plugin
+
+// Widgets \o/
+require_once("$IP/extensions/Widgets/Widgets.php");
+$wgGroupPermissions['sysop']['editwidgets'] = true;

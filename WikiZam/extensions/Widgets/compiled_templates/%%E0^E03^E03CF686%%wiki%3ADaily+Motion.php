@@ -1,0 +1,11 @@
+<?php /* Smarty version 2.6.18-dev, created on 2012-05-29 19:55:25
+         compiled from wiki:Daily+Motion */ ?>
+<?php require_once(SMARTY_CORE_DIR . 'core.load_plugins.php');
+smarty_core_load_plugins(array('plugins' => array(array('modifier', 'default', 'wiki:Daily Motion', 1, false),array('modifier', 'escape', 'wiki:Daily Motion', 1, false),)), $this); ?>
+<object width="<?php echo ((is_array($_tmp=((is_array($_tmp=@$this->_tpl_vars['width'])) ? $this->_run_mod_handler('default', true, $_tmp, 420) : smarty_modifier_default($_tmp, 420)))) ? $this->_run_mod_handler('escape', true, $_tmp, 'html') : smarty_modifier_escape($_tmp, 'html')); ?>
+" height="<?php echo ((is_array($_tmp=((is_array($_tmp=@$this->_tpl_vars['height'])) ? $this->_run_mod_handler('default', true, $_tmp, 336) : smarty_modifier_default($_tmp, 336)))) ? $this->_run_mod_handler('escape', true, $_tmp, 'html') : smarty_modifier_escape($_tmp, 'html')); ?>
+"><param name="movie" value="http://www.dailymotion.com/swf/<?php echo ((is_array($_tmp=$this->_tpl_vars['id'])) ? $this->_run_mod_handler('escape', true, $_tmp, 'urlpathinfo') : smarty_modifier_escape($_tmp, 'urlpathinfo')); ?>
+&v3=1&colors=background:DDDDDD;glow:FFFFFF;foreground:333333;special:FFC300;&related=0"></param><param name="allowFullScreen" value="true"></param><param name="allowScriptAccess" value="always"></param><embed src="http://www.dailymotion.com/swf/<?php echo ((is_array($_tmp=$this->_tpl_vars['id'])) ? $this->_run_mod_handler('escape', true, $_tmp, 'urlpathinfo') : smarty_modifier_escape($_tmp, 'urlpathinfo')); ?>
+&v3=1&colors=background:DDDDDD;glow:FFFFFF;foreground:333333;special:FFC300;&related=0" type="application/x-shockwave-flash" width="<?php echo ((is_array($_tmp=((is_array($_tmp=@$this->_tpl_vars['width'])) ? $this->_run_mod_handler('default', true, $_tmp, 420) : smarty_modifier_default($_tmp, 420)))) ? $this->_run_mod_handler('escape', true, $_tmp, 'html') : smarty_modifier_escape($_tmp, 'html')); ?>
+" height="<?php echo ((is_array($_tmp=((is_array($_tmp=@$this->_tpl_vars['height'])) ? $this->_run_mod_handler('default', true, $_tmp, 336) : smarty_modifier_default($_tmp, 336)))) ? $this->_run_mod_handler('escape', true, $_tmp, 'html') : smarty_modifier_escape($_tmp, 'html')); ?>
+" allowFullScreen="true" allowScriptAccess="always"></embed></object>
