@@ -21,7 +21,7 @@ $wgExtensionCredits['other'][] = array(
 
 $_dir = dirname( __FILE__ ).'/';
 $wgAutoloadClasses['PreventDuplicateHooks'] = $_dir . 'PreventDuplicate.hooks.php';
-$wgExtensionMessagesFiles['PreventDuplicate'] = $_dir.'PreventDuplicate.i18n.php';
+$wgExtensionMessagesFiles['PreventDuplicate'] = $_dir.'PreventDuplicate.i18n.php'; /** @todo user TestCanonicalRedirect instead */
 
 $wgExtensionFunctions[] = 'setupPreventDuplicate';
 
@@ -31,6 +31,7 @@ function setupPreventDuplicate() {
 		
 		global $wgHooks;
 		$wgHooks['getUserPermissionsErrors'][] = 'PreventDuplicateHooks::blockCreateDuplicate';
+		$wgHooks['InitializeArticleMaybeRedirect'][] = 'PreventDuplicateHooks::redirectToDuplicateTitle';
 		
 	} else {
 		

@@ -52,4 +52,27 @@ class PreventDuplicateHooks {
 		
 	}
 	
+	/**
+	 * This hook is called by Wiki.php when someone want to read an Article
+	 * If the title doesn't already exists, search for a duplicate title, and redirect to it
+	 * @param Title $title Title object ($wgTitle)
+	 * @param WebRequest $request
+	 * @param boolean $ignoreRedirect boolean to skip redirect check
+	 * @param mixed $target Title/string of redirect target
+	 * @param Article $article Created from $title
+	 * @return boolean 
+	 */
+	public static function redirectToDuplicateTitle( &$title, &$request, &$ignoreRedirect, &$target, &$article ) {
+		
+		if ( ( ! $title->exists()) && ( $duplicate = TitleKey::exactMatchTitle($title) ) ) {
+			
+			wfDebugLog('preventduplicate', "{$title->getPrefixedDBkey()} asked, it doesn't exist but there is a duplicate title {$duplicate->getPrefixedDBkey()} already existing -> redirecting to it");
+			
+			$target = $duplicate->getPartialURL();
+			
+		}
+		
+		return true;
+	}
+	
 }
