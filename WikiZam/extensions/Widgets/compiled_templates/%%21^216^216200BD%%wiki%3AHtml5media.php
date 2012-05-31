@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.18-dev, created on 2012-05-30 18:07:42
+<?php /* Smarty version 2.6.18-dev, created on 2012-05-31 18:50:33
          compiled from wiki:Html5media */ ?>
 <?php require_once(SMARTY_CORE_DIR . 'core.load_plugins.php');
 smarty_core_load_plugins(array('plugins' => array(array('modifier', 'validate', 'wiki:Html5media', 1, false),array('modifier', 'default', 'wiki:Html5media', 1, false),array('modifier', 'escape', 'wiki:Html5media', 1, false),)), $this); ?>

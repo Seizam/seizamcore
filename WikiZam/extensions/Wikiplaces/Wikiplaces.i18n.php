@@ -176,7 +176,7 @@ $messages['fr'] = array(
     'wp-subscribe' => 'Abonnement',
     'wp-subscribe-change' => 'Changer d\'Abonnement',
     'wp-subscribe-renew' => 'Renouveler',
-    'wp-create' => 'Créer!',
+    'wp-create' => 'Créer !',
     /* Tips */
     'wp-url-tip' => 'Votre Wikiplace est disponnible depuis [[$1|http://www.<b>seizam.com/$1</b>]].',
     'wp-suburl-tip' => 'Votre page est disponnible depuis [[$1|http://www.<b>seizam.com/$1/$2</b>]].',

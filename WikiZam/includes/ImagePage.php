@@ -429,21 +429,18 @@ class ImagePage extends Article {
 				if ( isset( $msgbig ) ) {
 					$linktext = wfEscapeWikiText( $msgbig );
 				}
-				$medialink = "[[Media:$filename|$linktext]]";
+                
+                $url = $this->displayImg->getFullUrl();
+				$medialink = Html::rawElement('a', array('href'=>$url,'class'=>'medialink'), $linktext);
+                $mediafield = Xml::inputLabel(wfMessage('fileurl')->text(), 'fileurl', 'fileurl', null, $url);
+                $mediafield = Html::rawElement('div', array('class'=>'mediafield'), $mediafield);
 
 				if ( !$this->displayImg->isSafeFile() ) {
-					$warning = wfMsgNoTrans( 'mediawarning' );
-					$wgOut->addWikiText( <<<EOT
-<div class="fullMedia"><span class="dangerousLink">{$medialink}</span>$dirmark <span class="fileInfo">$longDesc</span></div>
-<div class="mediaWarning">$warning</div>
-EOT
-						);
+					$warning = wfMessage( 'mediawarning' )->parse();
+					$wgOut->addHtml('<div class="fullMedia"><span class="dangerousLink">'.$medialink.'</span><span class="fileInfo">'.$longDesc.'</span>'.$mediafield.'</div>
+                        <div class="mediaWarning">'.$warning.'</div>');
 				} else {
-					$wgOut->addWikiText( <<<EOT
-<div class="fullMedia">{$medialink}{$dirmark} <span class="fileInfo">$longDesc</span>
-</div>
-EOT
-					);
+					$wgOut->addHtml('<div class="fullMedia">'.$medialink.'<span class="fileInfo">'.$longDesc.'</span>'.$mediafield.'</div>');
 				}
 			}
 

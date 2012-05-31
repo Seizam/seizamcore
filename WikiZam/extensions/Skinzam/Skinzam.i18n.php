@@ -49,6 +49,8 @@ $messages['en'] = array(
     
     'tipsntricks' => 'Tips and Tricks',
     
+    'fileurl' => 'File\'s address:',
+    
     /* Errors */
     'sorry' => 'Sorry!',
 	'sz-internal-error' => 'Sorry, an internal error occured. {{int:sz-report}}',
@@ -108,6 +110,8 @@ $messages['fr'] = array(
     'sz-asap' => 'Notre équipe s\'en occupera le plus rapidement possible!',
     
     'tipsntricks' => 'Trucs et astuces',
+    
+    'fileurl' => 'Adresse du fichier :',
     
     /* Errors */
     'sorry' => 'Désolé!',
