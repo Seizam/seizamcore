@@ -193,7 +193,7 @@ class SpecialSubscriptions extends SpecialPage {
 
     private function displayRenew($plan_name = null) {
 
-        // at this point, user is logged
+        // at this point, user is logged in
         $user_id = $this->getUser()->getId();
         $sub = WpSubscription::factoryActiveByUserId($user_id);
         if ($sub == null) {
@@ -201,6 +201,8 @@ class SpecialSubscriptions extends SpecialPage {
             $this->getOutput()->showErrorPage('sorry','wp-no-active-sub');
             return;
         }
+		$renewal_plan_id = $sub->getRenewalPlanId();
+		
         $formDescriptor = array(
             'Plan' => array(
                 'type' => 'select',
@@ -208,8 +210,8 @@ class SpecialSubscriptions extends SpecialPage {
                 'label-message' => 'wp-planfield',
                 'help-message' => 'wp-planfield-help',
                 'validation-callback' => array($this, 'validateRenewPlanId'),
-                'options' => array(wfMessage('wp-do-not-renew')->text() => '0'),
-                'default' => $sub->getRenewalPlanId(),
+                'options' => array(),
+                'default' => $renewal_plan_id,
             ),
             'Check' => array(
                 'type' => 'check',
@@ -235,6 +237,9 @@ class SpecialSubscriptions extends SpecialPage {
 					$price['currency'],
 					$plan->getPeriod() )->text() ] = $plan->getId();
         }
+		
+		// add "do not renew" at the end;
+		$formDescriptor['Plan']['options'][wfMessage('wp-do-not-renew')->text()] = '0';
 
         $htmlForm = new HTMLFormS($formDescriptor);
         $htmlForm->setMessagePrefix('wp');

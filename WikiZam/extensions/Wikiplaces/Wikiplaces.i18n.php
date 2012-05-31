@@ -129,6 +129,13 @@ You are also promising us that you wrote this yourself, or copied it from a publ
     'wp-subscribe-already' => 'You already have an active subscription. [[Special:Subscriptions/change|Click here to change your subscription]], or [[Special:MySeizam|here to return to {{int:myseizam}}]].',
     'wp-subscribe-email' => 'Before taking a subscription, you need to validate your e-mail address. [[Special:Preferences#mw-htmlform-email|Click here to setup and validate your e-mail address!]]',
     'wp-subscribe-change' => 'You can select another plan to start from the end of your current subscription through [[Special:Subscriptions/renew|the subscription renewal page]]. Please [[Project:Contact|contact us]] if you need to switch to another plan right now. {{int:sz-asap}}',
+	
+	
+	/** @todo check and translate below messages */
+	'wp-insufficient-quota' => 'insufficient quota',
+	'wp-plan-not-available-renewal' => 'plan not available for renewal',
+	'wp-payment-error' => 'error while payment',
+	
 );
 
 /*

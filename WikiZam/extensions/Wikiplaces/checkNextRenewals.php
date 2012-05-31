@@ -20,16 +20,22 @@ class CheckNextRenewals extends Maintenance {
 		$when = WpSubscription::now(0, 0, 0, $deadline);
 		
 		$this->output( "[".WpSubscription::now().": Searching subscriptions to renew before $when which has not been notified ...]\n" );	
-		$subs = WpSubscription::factoryRenewalSoonToNotify($when);
+		$subs = WpSubscription::factoryActiveEndSoonToNotify($when);
 		
-		$this->output( "[".WpSubscription::now().": ".count($subs)." subscriptions to check ...]\n" );
+		$this->output( "[".WpSubscription::now().": ".count($subs)." subscription(s) to check...]\n" );
 		
 		foreach ($subs as $sub) {
 			
 			$next_plan_id = $sub->getRenewalPlanId();
 			$msg = "wps_id[{$sub->getId()}], ";
 			
-			if ( $next_plan_id != WPS_RENEW_WPP_ID__DO_NOT_RENEW ) {
+			if ( $next_plan_id == WPS_RENEW_WPP_ID__DO_NOT_RENEW ) {
+				
+				$msg .= 'do not renew';
+				$sub->sendOnNoRenewalSoon();
+				$sub->setRenewalPlanNotified();
+				
+			} else {
 				
 				$msg .= "renew_wpp_id[$next_plan_id]: ";
 				
@@ -57,7 +63,7 @@ class CheckNextRenewals extends Maintenance {
 							
 					$msg .= "doesn't exist, changed to = $new_next_plan_id";
 					
-					$sub->sendOnRenewalSoonWarning('not-available');
+					$sub->sendOnRenewalSoonWarning('wp-plan-not-available-renewal');
 					
 				} elseif ( ! $next_plan->hasSufficientQuotas( // ensure the next plan has sufficent quotas
 						WpWikiplace::countWikiplacesOwnedByUser($user_id),
@@ -75,7 +81,7 @@ class CheckNextRenewals extends Maintenance {
 							
 					$msg .= "unsufficient quotas, changed to = $new_next_plan_id";
 					
-					$sub->sendOnRenewalSoonWarning('quotas');
+					$sub->sendOnRenewalSoonWarning('wp-insufficient-quota');
 					
 				} elseif ( ! $next_plan->isAvailableForRenewal($renewal_date) ) { // ensure the next plan will still be available
 					
@@ -89,7 +95,7 @@ class CheckNextRenewals extends Maintenance {
 							
 					$msg .= "will not be available, changed to = $new_next_plan_id";
 					
-					$sub->sendOnRenewalSoonWarning('not-available');
+					$sub->sendOnRenewalSoonWarning('wp-plan-not-available-renewal');
 					
 				} else {
 					
@@ -100,18 +106,12 @@ class CheckNextRenewals extends Maintenance {
 					
 				}
 				
-			} else {
-				
-				$msg .= 'do not renew';
-				$sub->sendOnNoRenewalSoon();
-				$sub->setRenewalPlanNotified();
-				
 			}
 			
 			$this->output( "$msg\n" );
 			
 		}
-		$this->output( "[".WpSubscription::now().": END]\n\n" );
+		$this->output( "[".WpSubscription::now().": END]\n" );
 	
 	}
 }
