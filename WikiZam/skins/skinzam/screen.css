@@ -784,7 +784,7 @@ a, a span {
 
 .block .inside {
     clear: left;
-    padding: 0 18px 18px;
+    padding: 18px;
     border: 1px solid #d8d7d7;
     /* @embed */
     background-image: url(images/sh_block_full_in.png);
@@ -1534,13 +1534,24 @@ div#file img {
 }
 
 
-body.ns-6.action-view #bodyContent > .inside > div.fullMedia a.internal {
+body.ns-6.action-view #bodyContent > .inside > div.fullMedia a.medialink {
     font-size: 1.4em;
     font-weight: bold;
 }
 
 body.ns-6.action-view #bodyContent > .inside > div.fullMedia span.fileInfo {
     margin-left: 18px;
+}
+
+body.ns-6.action-view #bodyContent > .inside > div.fullMedia div.mediafield {
+    display: block;
+    text-align: right;
+    margin-top: 1em;
+}
+
+body.ns-6.action-view #bodyContent > .inside > div.fullMedia div.mediafield > input {
+    width: 80%;
+    text-align: center;
 }
 
 body.ns-6.action-view #bodyContent > .inside > div#mw-imagepage-section-filehistory {
@@ -1711,7 +1722,6 @@ table.mw-enhanced-rc:hover {
 .edit_col_1 {
     float: left;
     width: 460px;
-    margin-bottom: 18px;
 }
 
 .edit_col_2 {
@@ -1949,7 +1959,6 @@ div.form_header table {
 .edit_col_1 .content_block .mw-htmlform-invalid-input textarea,
 .edit_col_1 .content_block .mw-htmlform-invalid-input .input_like {
     border: 2px solid  #974349;
-
 }
 
 p.mw-htmlform-invalid-input span.error {
@@ -1959,8 +1968,9 @@ p.mw-htmlform-invalid-input span.error {
     font-size: 1em;
     margin-left: 192px;
     color: #974349;
-    padding-left: 8px;
+    padding: 4px 0 8px 8px;
     border-left: 1px solid #debdbf;
+    border-bottom: 1px solid #debdbf;
 }
 
 p.mw-htmlform-invalid-input.mw-htmlform-field-HTMLCheckField span.error {

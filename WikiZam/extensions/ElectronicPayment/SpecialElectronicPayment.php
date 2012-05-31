@@ -49,6 +49,19 @@ class SpecialElectronicPayment extends SpecialPage {
     public function execute($par) {
         $request = $this->getRequest();
         $output = $this->getOutput();
+        $user = $this->getUser();
+        
+        // Check rights
+        if (!$this->userCanExecute($user)) {
+            // If anon, redirect to login
+            if ($user->isAnon()) {
+                $output->redirect($this->getTitleFor('UserLogin')->getLocalURL(array('returnto'=>$this->getFullTitle())), '401');
+                return;
+            }
+            // Else display an error page.
+            $this->displayRestrictionError();
+            return;
+        }
         
         if (isset($par) & $par != '') {
             $action = $par;
@@ -57,19 +70,14 @@ class SpecialElectronicPayment extends SpecialPage {
         }
 
         switch ($action) {
-            # Sysop can read an order from table (providing id)
-            case 'read' :
-                $this->setHeaders();
-                $this->constructAndDisplayRead();
-                break;
             # Coming back to Seizam (payment failed/cancelled)
             case 'fail' :
                 $this->setHeaders();
-                $output->addWikiText(wfMessage('ep-fail')->text());
+                $this->constructDefault('fail');
                 break;
             # Coming back to Seizam (payment succeeded)
             case 'success' :
-                $this->setHeaders();
+                $output->redirect($this->getTitleFor('Transactions')->getLocalURL(array('msg'=>'ep-success', 'msgtype'=>success)));
                 $output->addWikiText(wfMessage('ep-success')->text());
                 break;
             # Validation Interface (not for humans)
@@ -200,7 +208,7 @@ class SpecialElectronicPayment extends SpecialPage {
                     <div class="edit_col_2">
                         <div id="help_zone" class="content_block">
                             <h4>' . wfMessage('sz-htmlform-helpzonetitle')->text() . '</h4>
-                            <p>' . wfMessage('sz-htmlform-helpzonedefault')->text() . '</p>
+                            <p>' . wfMessage('sz-htmlform-helpzonedefault')->parse() . '</p>
                         </div>
                     </div>
                     <div class="form_footer informations">' . wfMessage('ep-attempt-formfooter')->parse() . '</div>
@@ -208,18 +216,9 @@ class SpecialElectronicPayment extends SpecialPage {
         $output->addHTML($html);
     }
 
-    # Instanciate and print Order id=?
-
-    private function constructAndDisplayRead() {
-        global $wgOut;
-        $epm['epm_id'] = $wgRequest->getText('id');
-        $message = EPMessage::create('read', $epm);
-        $wgOut->addHTML('<pre>' . print_r($message->epm, true) . '</pre>');
-    }
-
     # Form to input order (amount, email)
 
-    private function constructDefault() {
+    private function constructDefault($errorKey = null) {
         $user = $this->getUser();
         $output = $this->getOutput();
         
@@ -282,6 +281,9 @@ class SpecialElectronicPayment extends SpecialPage {
         } else {
             $htmlForm->addHeaderText(wfMessage('ep-default-formheader'));
         }
+        
+        if (isset ($errorKey))
+            $output->addHTML($htmlForm->getErrors(wfMessage("ep-$errorKey")));
 
         $htmlForm->show();
     }

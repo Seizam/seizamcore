@@ -660,17 +660,18 @@ function poForm($action, $article) {
     // so casacing won't make sens, and can be very problematic
     // don't change this unless you know serioulsy what you are doing !!!
     // display the header.
-    if (!$readonly) {
-        $wgOut->addHTML(Html::rawElement('div', array('class' => 'form_header informations'), wfMessage('protect-text', wfEscapeWikiText($title->getPrefixedText()))->parse()));
-    } else {
-        $wgOut->addHTML(Html::rawElement('div', array('class' => 'form_header informations'), wfMsg('po-locked')));
-    }
-
+    
     // display error/succes message
     if (poUpdateRestrictions($article, $new_restrictions)) {
         $wgOut->addHTML(Html::rawElement('div', array('class' => 'informations success'), wfMessage('po-success')->text()));
     } else {
         $wgOut->addHTML(Html::rawElement('div', array('class' => 'informations error'), wfMessage('po-failure')->text()));
+    }
+    
+    if (!$readonly) {
+        $wgOut->addHTML(Html::rawElement('div', array('class' => 'form_header informations'), wfMessage('protect-text', wfEscapeWikiText($title->getPrefixedText()))->parse()));
+    } else {
+        $wgOut->addHTML(Html::rawElement('div', array('class' => 'form_header informations'), wfMsg('po-locked')));
     }
 
     // re-display the ProtectOwn form with the current restrictions (reloaded above)

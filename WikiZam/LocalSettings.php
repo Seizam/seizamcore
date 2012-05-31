@@ -176,7 +176,8 @@ $wgContactRequireAll = true;
 
 // =[ TitleKey ]= with this, if you type "mypage" in the search box, you will be redirected to "MyPaGe"
 require_once("$IP/extensions/TitleKey/TitleKey.php");
-// $wgEnableMWSuggest = true; // Enable AJAX autocomplete search suggestions (autosuggest) while typing in search boxes
+//$wgEnableMWSuggest = true; // Enable AJAX autocomplete search suggestions (autosuggest) while typing in search boxes
+// Breaks on the absolute footer
 
 
 
@@ -397,3 +398,7 @@ $wgGroupPermissions['sysop']['editwidgets'] = true;
 
 // Prevents creating article with the same titles, but different cases.
 require_once("$IP/extensions/PreventDuplicate/PreventDuplicate.php");
+
+// Poem
+require_once("$IP/extensions/Poem/Poem.php");
+

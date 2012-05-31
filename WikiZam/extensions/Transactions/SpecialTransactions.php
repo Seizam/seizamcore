@@ -49,6 +49,7 @@ class SpecialTransactions extends SpecialPage {
     public function execute($par) {
         $output = $this->getOutput();
         $user = $this->getUser();
+        $request = $this->getRequest();
 
         $this->setHeaders();
 
@@ -62,6 +63,19 @@ class SpecialTransactions extends SpecialPage {
             // Else display an error page.
             $this->displayRestrictionError();
             return;
+        }
+        
+        if (isset($par) & $par != '') {
+            $action = $par;
+        } else {
+            $action = $request->getText('action');
+        }
+        
+        if ($request->getText('msgtype') == 'success') {
+            $msg = wfMessage($request->getText('msg'));
+            if ($msg->exists()) {
+                $output->addHTML(Html::rawElement('div', array('class'=>'informations success'), $msg->parse()));
+            }
         }
         
         $table = new TransactionsTablePager();

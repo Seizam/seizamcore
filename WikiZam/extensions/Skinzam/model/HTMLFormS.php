@@ -374,12 +374,12 @@ class HTMLFormS {
         $this->getOutput()->addModules('mediawiki.htmlform');
 
         $html = '';
+        $html .= $this->getErrors($submitResult);
 
         if (isset($this->mHeader) && $this->mHeader != '')
             $html .= '<div class="form_header informations">' . $this->mHeader . '</div>';
 
-        $html .= $this->getErrors($submitResult)
-                . '<div class="edit_col_1">'
+        $html .= '<div class="edit_col_1">'
                 . $this->getBody()
                 . $this->getHiddenFields()
                 . $this->getButtons()
