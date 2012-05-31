@@ -61,6 +61,14 @@ class WpSubscription {
 	}
 	
 	/**
+	 *
+	 * @return boolean 
+	 */
+	public function isActive() {
+		return $this->wps_active;
+	}
+	
+	/**
 	 * Returns this subscription's plan identifier
 	 * @return int 
 	 */
@@ -218,253 +226,45 @@ class WpSubscription {
 
 	}
 	
-	/**
-	 * Send an email when the first subscription is activated, when:
-	 * <ul>
-	 * <li>On the fly when user makes a first subscription, and she has enought to pay</li>
-	 * <li>Delayed, when user makes a first subscription, and credit her account after</li>
-	 * </ul>
-	 * @return boolean true=ok, false=error 
-	 */
-	public function sendOnFirstActivation( ) {
-
-		$user = User::newFromId($this->wps_buyer_user_id);
-		$plan = WpPlan::newFromId($this->wps_wpp_id);
-
-		$back = false;
-		
-		$subject = wfMessage( 'wpm-activation-subj' )->text();
-		$body = wfMessage( 'wpm-activation-body' , $user->getName() , $plan->getName() , $this->wps_end_date )->text();
-		
-		try {
-			
-			$back = $user->sendMail( $subject, $body )->isGood();
-			
-		} catch (Exception $e) {
-			wfDebugLog('wikiplaces', 'sendOnFirstActivation(): ERROR SENDING EMAIL "'.$e->getMessage().'"'
-					.' user='.$user->getName().' plan='.$plan->getName() );
-		}
-		
-		return $back;
-		
-	}
-	
-	
-	/**
-	 * Send an email when a subscription renewal will occur soon and the renewal plan which should not pass.
-	 * reason can be: <ul>
-	 * <li>quotas</li>
-	 * <li>not-available</li>
-	 * </ul>
-	 * @param string $reason
-	 * @return boolean true=ok, false=error 
-	 */
-	public function sendOnRenewalSoonWarning( $reason ) {
-
-		$user = User::newFromId($this->wps_buyer_user_id);
-		$plan = WpPlan::newFromId($this->wps_wpp_id);
-		$next_plan = WpPlan::newFromId($this->wps_renew_wpp_id);
-		$next_plan_name = $next_plan != null ? $next_plan->getName() : 'no-plan';
-
-		$back = false;
-		
-		$subject = wfMessage( "wpm-renewal-warning-$reason-subj" )->text();
-		$body = wfMessage( "wpm-renewal-warning-$reason-body" , $user->getName() , $next_plan_name , $this->wps_end_date )->text();
-		
-		try {
-			
-			$back = $user->sendMail( $subject, $body )->isGood();
-			
-		} catch (Exception $e) {
-			wfDebugLog('wikiplaces', 'sendOnRenewalPlanWarning(): ERROR SENDING EMAIL "'.$e->getMessage().'"'
-					.' user='.$user->getName() );
-		}
-		
-		return $back;
-		
-	}
-	
-	
-	/**
-	 * Send an email when a subscription will end soon and has no renewal.
-	 * @return boolean true=ok, false=error 
-	 */
-	public function sendOnNoRenewalSoon( ) {
-
-		$user = User::newFromId($this->wps_buyer_user_id);
-		$plan = WpPlan::newFromId($this->wps_wpp_id);
-
-		$back = false;
-		
-		$subject = wfMessage( "wpm-no-renewal-soon-subj" )->text();
-		$body = wfMessage( "wpm-no-renewal-soon-subj" , $user->getName() , $this->wps_end_date )->text();
-		
-		try {
-			
-			$back = $user->sendMail( $subject, $body )->isGood();
-			
-		} catch (Exception $e) {
-			wfDebugLog('wikiplaces', 'sendOnNoRenewalSoon(): ERROR SENDING EMAIL "'.$e->getMessage().'"'
-					.' user='.$user->getName() );
-		}
-		
-		return $back;
-		
-	}
-	
-	/**
-	 * Send an email when a subscription renewal will occur soon and seems to be ok.
-	 * reason can be: <ul>
-	 * <li>quotas</li>
-	 * <li>not-available</li>
-	 * </ul>
-	 * @param string $reason
-	 * @return boolean true=ok, false=error 
-	 */
-	public function sendOnRenewalSoonOK( ) {
-
-		$user = User::newFromId($this->wps_buyer_user_id);
-		$plan = WpPlan::newFromId($this->wps_wpp_id);
-		$next_plan = WpPlan::newFromId($this->wps_renew_wpp_id);
-		$next_plan_name = $next_plan != null ? $next_plan->getName() : 'no-plan';
-
-		$back = false;
-		
-		$subject = wfMessage( "wpm-renewal-soon-ok-subj" )->text();
-		$body = wfMessage( "wpm-renewal-soon-ok-body" , $user->getName() , $next_plan_name , $this->wps_end_date )->text();
-		
-		try {
-			
-			$back = $user->sendMail( $subject, $body )->isGood();
-			
-		} catch (Exception $e) {
-			wfDebugLog('wikiplaces', 'sendOnRenewalSoonOK(): ERROR SENDING EMAIL "'.$e->getMessage().'"'
-					.' user='.$user->getName() );
-		}
-		
-		return $back;
-		
-	}
-	
-	/**
-	 * Send an email when a subscription has been renewed, but the transaction is PE
-	 * @return boolean true=ok, false=error 
-	 */
-	public function sendOnPlanRenewedPE( ) {
-
-		$user = User::newFromId($this->wps_buyer_user_id);
-		$plan = WpPlan::newFromId($this->wps_wpp_id);
-
-		$back = false;
-		
-		$subject = wfMessage( 'wpm-renewed-pe-subj' )->text();
-		$body = wfMessage( 'wpm-renewed-pe-body' , $user->getName() , $plan->getName() , $this->wps_end_date )->text();
-		
-		try {
-			
-			$back = $user->sendMail( $subject, $body )->isGood();
-			
-		} catch (Exception $e) {
-			wfDebugLog('wikiplaces', 'sendOnPlanRenewedPE(): ERROR SENDING EMAIL "'.$e->getMessage().'"'
-					.' user='.$user->getName().' plan='.$plan->getName() );
-		}
-		
-		return $back;
-		
-	}
-	
-	/** Send an email when a subscription has been renewed, and the transaction is OK
-	 * @return boolean true=ok, false=error 
-	 */
-	public function sendOnPlanRenewedOK( ) {
-
-		$user = User::newFromId($this->wps_buyer_user_id);
-		$plan = WpPlan::newFromId($this->wps_wpp_id);
-
-		$back = false;
-		
-		$subject = wfMessage( 'wpm-renewed-ok-subj' )->text();
-		$body = wfMessage( 'wpm-renewed-ok-body' , $user->getName() , $plan->getName() , $this->wps_end_date )->text();
-		
-		try {
-			
-			$back = $user->sendMail( $subject, $body )->isGood();
-			
-		} catch (Exception $e) {
-			wfDebugLog('wikiplaces', 'sendOnPlanRenewedOK(): ERROR SENDING EMAIL "'.$e->getMessage().'"'
-					.' user='.$user->getName().' plan='.$plan->getName() );
-		}
-		
-		return $back;
-		
-	}
-	
-	/**
-	 * Send an email when the subscription payment status is errored.
-	 * @return boolean true=ok, false=error 
-	 */
-	public function sendTransactionErrorNotification( ) {
-		
-		$user = User::newFromId($this->wps_buyer_user_id);
-
-		$back = false;
-		
-		$subject = wfMessage( 'wpm-payfail-subj' )->text();
-		$body = wfMessage( 'wpm-payfail-body' , $user->getName() )->text();
-		
-		try {
-			
-			$back = $user->sendMail( $subject, $body )->isGood();
-			
-		} catch (Exception $e) {
-			wfDebugLog('wikiplaces', 'sendTransactionErrorNotification(): ERROR SENDING EMAIL "'.$e->getMessage().'"'
-					.' user='.$user->getName() );
-		}
-		
-		return $back;
-		
-	}
-		
-	
 	
 	/**
 	 * Renew the subscription. This method should be called by a cron, for ONLY each getAllOutdatedToRenew()<br/>
-	 * WARNING: <ul>
-	 * <li>this function assumes that the current subscription <b>can</b> AND <b>need</b> to be renewed</li>
-	 * <li><b>only use it to renew the subscription when it ends normally</b> (this function doesn't re-credit
-	 * user account balance and it doesn't change the wikiplaces 'monthly tick')</li>
-	 * <li>it creates a transaction</li>
-	 * <li>if transaction is not OK and not PE, it breaks</li>
-	 * <li>it archives the current subcription</li>
-	 * <li>it alters the current db record (start_date, ...) but wps_id stays untouched</li>
-	 * </ul>
-	 * @return boolean/string true if ok, i18n message key string if an error occured
+	 * WARNING: this function assumes that the current subscription <b>can</b> AND <b>need</b> to be renewed<br/>
+	 * <b>only use it to renew the subscription when it ends normally</b> (this function doesn't re-credit
+	 * user account balance and it doesn't change the wikiplaces 'monthly tick')<br/>
+	 * It does:
 	 * <ul>
-	 * <li>'wp-internal-error' if cannot find buyer user of the current subscription</li>
-	 * <li>'wp-no-next-plan' if no next plan specified</li>
-	 * <li>'wp-payment-error' if new tmr_status is neither OK or PE</li>
+	 * <li>load user and renewal plan (breaks if not found)<li>
+	 * <li>create a transaction</li>
+	 * <li>break if transaction is neither OK nor PE</li>
+	 * <li>archive the current subcription</li>
+	 * <li>update the current db record (start_date, ...) but wps_id stays untouched</li>
+	 * </ul>
+	 * Please note that if an error occured, the subscription wps_renew_wpp_id is set to DO_NOT_RENEW.
+	 * @return boolean/string True if ok, i18n message key string if an error occured:
+	 * <ul>
+	 * <li>'sz-internal-error' cannot find buyer user account (bad ID) or cannot find renewal plan (bad ID)</li>
+	 * <li>'wp-payment-error' tmr_status of new transaction is neither OK nor PE</li>
 	 * </ul>
 	 */
 	public function renew() {
 		
-		// ensure we know the user
+		// load user
 		$user_id = $this->wps_buyer_user_id;
 		$user = User::newFromId($user_id);
-		if ( ! $user->loadFromId() ) { 
+		
+		// load renewal plan
+		$next_plan = WpPlan::newFromId( $this->wps_renew_wpp_id );
+		
+		// ensure we know the user and renewal plan
+		if ( ! $user->loadFromId() || ($next_plan == null) ) { 
+			$this->set('wps_renew_wpp_id', WPS_RENEW_WPP_ID__DO_NOT_RENEW);
 			return 'sz-internal-error';
 		}
+		
 		$user_email = $user->getEmail();
 		
-		// ensures we know the next plan
-		$next_plan = WpPlan::newFromId( $this->wps_renew_wpp_id );
-
-		if ($next_plan == null) { 
-			$this->set('wps_renew_wpp_id', WPS_RENEW_WPP_ID__DO_NOT_RENEW); 
-			return 'wp-no-next-plan';
-		}
-		
-		// process even if the plan should not be taken ( = even if quotas are not sufficient,
-		// or the plan is not available, or not accesible as renewal plan )
+		// process even if the plan should not be taken ($this->wps_renew_wpp_id is supposed to be good)
 		
 		// payment
 		$tmr = self::createTMR($user_id, $user_email, $next_plan);
@@ -583,7 +383,7 @@ class WpSubscription {
 						$this->set('wps_end_date', WpSubscription::now(), false ); 
 						$this->set('wps_active', false);  // in case of a renewal, it can be activated even if pending, so need to ensure that is false
 
-						$this->sendTransactionErrorNotification();
+						$this->sendOnPaymentError();
 						
 						return false; // this is our transaction, no more process to be done	
 						
@@ -765,12 +565,12 @@ class WpSubscription {
 	 * @param string $when MySQL datetime string (can be WpSubscription::getNow() )
 	 * @return Array Array of WpSubscription
 	 */
-	public static function factoryRenewalSoonToNotify( $when ) {
+	public static function factoryActiveEndSoonToNotify( $when ) {
 		
 		$dbr = wfGetDB(DB_MASTER) ;
 		$when = $dbr->addQuotes($when);
 		$conds = $dbr->makeList( array(
-			'wps_renew_wpp_id != 0',
+			/* 'wps_renew_wpp_id != 0', */
 			'wps_active ' => 1,
 			'wps_renewal_notified' => 0,
 			"wps_end_date < $when"
@@ -1177,6 +977,8 @@ class WpSubscription {
 	 */
 	public static function userCanCreateNewPage($user_id) {
 		
+		global $wgLang;
+		
 		$sub = self::factoryActiveByUserId($user_id);
 
 		if ($sub === null) { 
@@ -1235,6 +1037,206 @@ class WpSubscription {
 
 		return true; // all ok
 
+	}
+	
+	/**
+	 *
+	 * @param User $user
+	 * @param Message $subject
+	 * @param Message $body 
+	 */
+	private static function timeAndDateUserLocalized( $user, $timeanddate ) {
+		
+		$language = Language::factory( $user->getOption( 'language' ) );
+		$time_correction = $user->getOption( 'timecorrection' );
+		$date_format = $user->getOption( 'date' );
+		return $language->timeanddate($timeanddate, true, $date_format, $time_correction);
+		
+	}
+
+	/**
+	 *
+	 * @param User $user
+	 * @param Message $subject
+	 * @param Message $body 
+	 */
+	private static function sendEmailToUserLocalized( $user, $subject, $body ) {
+		
+		$language = $user->getOption( 'language' );
+		
+		$subject = $subject->inLanguage( $language )->text();
+		$body = $body->inLanguage( $language )->parse();
+		
+		$ok = false;
+		
+		try {
+			
+			$ok = $user->sendMail( $subject, $body )->isGood();
+			
+		} catch (Exception $e) {
+			wfDebugLog('wikiplaces', 'sendEmailToUserLocalized(): ERROR SENDING EMAIL "'.$e->getMessage().'",'
+					.' subject="'.$subject.'" to user['.$user->getId().']"'.$user->getName().'"' );
+		}
+		
+		return $ok;
+		
+	}
+	
+	/**
+	 * Send an email when the first subscription is activated, when:
+	 * <ul>
+	 * <li>On the fly when user makes a first subscription, and she has enought to pay</li>
+	 * <li>Delayed, when user makes a first subscription, and credit her account after</li>
+	 * </ul>
+	 * @return boolean true=ok, false=error 
+	 */
+	public function sendOnFirstActivation( ) {
+
+		$user = User::newFromId($this->wps_buyer_user_id);
+		$plan = WpPlan::newFromId($this->wps_wpp_id);
+		
+		$subject = wfMessage( 'wpm-activation-subj' );
+		$body = wfMessage( 'wpm-activation-body',
+				$user->getName(),
+				$plan->getName(),
+				WpSubscription::timeAndDateUserLocalized($user, $this->wps_end_date) );
+		
+		return WpSubscription::sendEmailToUserLocalized($user, $subject, $body);
+		
+	}
+	
+	
+	/**
+	 * Send an email when a subscription will end soon and has no renewal.
+	 * @return boolean true=ok, false=error 
+	 */
+	public function sendOnNoRenewalSoon( ) {
+
+		$user = User::newFromId($this->wps_buyer_user_id);
+		
+		$subject = wfMessage( "wpm-renewal-soon-no-subj" );
+		$body = wfMessage( "wpm-renewal-soon-no-body",
+				$user->getName(),
+				WpSubscription::timeAndDateUserLocalized($user, $this->wps_end_date ) );
+		
+		return WpSubscription::sendEmailToUserLocalized($user, $subject, $body);
+		
+	}
+	
+	
+	/**
+	 * Send an email when a subscription renewal will occur soon and the renewal plan should not pass.
+	 * @param string $reason i18 message key, should be 'wp-insufficient-quota' or 'wp-plan-not-available-renewal'
+	 * @return boolean true=ok, false=error 
+	 */
+	public function sendOnRenewalSoonWarning( $reason ) {
+		
+		$user = User::newFromId($this->wps_buyer_user_id);
+		$next_plan = WpPlan::newFromId($this->wps_renew_wpp_id);
+		$next_plan_name = $next_plan != null ? $next_plan->getName() : '?'; // fallback, but should never occur
+		
+		$subject = wfMessage( "wpm-renewal-soon-warning-subj" );
+		$body = wfMessage( "wpm-renewal-soon-warning-body", 
+				$user->getName(),
+				WpSubscription::timeAndDateUserLocalized($user, $this->wps_end_date),
+				$next_plan_name ,
+				$reason );
+		
+		return WpSubscription::sendEmailToUserLocalized($user, $subject, $body);
+	
+	}
+	
+	
+	/**
+	 * Send an email when a subscription renewal will occur soon and seems to be ok.
+	 * @return boolean true=ok, false=error 
+	 */
+	public function sendOnRenewalSoonOK( ) {
+
+		$user = User::newFromId($this->wps_buyer_user_id);
+		$next_plan = WpPlan::newFromId($this->wps_renew_wpp_id);
+		$next_plan_name = $next_plan != null ? $next_plan->getName() : '?'; // fallback, but should never occur
+		
+		$subject = wfMessage( "wpm-renewal-soon-ok-subj" );
+		$body = wfMessage( "wpm-renewal-soon-ok-body" ,
+				$user->getName(),
+				WpSubscription::timeAndDateUserLocalized($user, $this->wps_end_date),
+				$next_plan_name );
+		
+		return WpSubscription::sendEmailToUserLocalized($user, $subject, $body);
+		
+	}
+	
+	
+
+	/**
+	 * Send an email when a subscription has not been renewed because of an error
+	 * @param string $reason i18 message key
+	 * @return boolean true=ok, false=error 
+	 */
+	public function sendOnPlanRenewalError( $reason ) {
+
+		$user = User::newFromId($this->wps_buyer_user_id);
+
+		$subject = wfMessage( 'wpm-renewal-error-subj' );
+		$body = wfMessage( 'wpm-renewal-error-body',
+				$user->getName(),
+				$reason );
+		
+		return WpSubscription::sendEmailToUserLocalized($user, $subject, $body);
+		
+	}	
+	
+	/**
+	 * Send an email when a subscription has been renewed, but the transaction is PE
+	 * @return boolean true=ok, false=error 
+	 */
+	public function sendOnPlanRenewalPE( ) {
+
+		$user = User::newFromId($this->wps_buyer_user_id);
+		$plan = WpPlan::newFromId($this->wps_wpp_id);
+		
+		$subject = wfMessage( 'wpm-renewal-pe-subj' );
+		$body = wfMessage( 'wpm-renewal-pe-body',
+				$user->getName(),
+				WpSubscription::timeAndDateUserLocalized($user, $this->wps_end_date),
+				$plan->getName() );
+		
+		return WpSubscription::sendEmailToUserLocalized($user, $subject, $body);
+		
+	}
+	
+	/** Send an email when a subscription has been renewed, and the transaction is OK
+	 * @return boolean true=ok, false=error 
+	 */
+	public function sendOnPlanRenewalOK( ) {
+
+		$user = User::newFromId($this->wps_buyer_user_id);
+		$plan = WpPlan::newFromId($this->wps_wpp_id);
+		
+		$subject = wfMessage( 'wpm-renewal-ok-subj' );
+		$body = wfMessage( 'wpm-renewal-ok-body',
+				$user->getName(),
+				WpSubscription::timeAndDateUserLocalized($user, $this->wps_end_date),
+				$plan->getName() );
+		
+		return WpSubscription::sendEmailToUserLocalized($user, $subject, $body);
+		
+	}
+	
+	/**
+	 * Send an email when the subscription payment status is errored.
+	 * @return boolean true=ok, false=error 
+	 */
+	public function sendOnPaymentError( ) {
+		
+		$user = User::newFromId($this->wps_buyer_user_id);
+		
+		$subject = wfMessage( 'wpm-payfail-subj' );
+		$body = wfMessage( 'wpm-payfail-body' , $user->getName() );
+		
+		return WpSubscription::sendEmailToUserLocalized($user, $subject, $body);
+		
 	}
 
 }

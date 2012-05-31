@@ -54,6 +54,9 @@ $wgEmailAuthentication = true;
  */
 $wgPasswordSenderName = 'Seizam Mail';
 
+// password criteria
+$wgMinimalPasswordLength = 4;
+
 
 ## Database settings
 ## Moved to ServerSettings.php
