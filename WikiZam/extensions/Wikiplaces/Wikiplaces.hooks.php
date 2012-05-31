@@ -82,7 +82,7 @@ class WikiplacesHooks {
 		// try to read the answer from cache
 		if (isset(self::$cacheUserCan[$article_id][$user_id][$do])) {
 			$result = self::$cacheUserCan[$article_id][$user_id][$do];
-			return false;
+			return $result; // stop hook processing if result = disallow
 		}
 
 		// ok, so let's judge if the user can do the action
@@ -110,7 +110,7 @@ class WikiplacesHooks {
 		// store in cache
 		self::$cacheUserCan[$article_id][$user_id][$do] = $result;
 
-		return false; // stop hook processing, we have the answer
+		return $result; // stop hook processing if result = disallow
 	}
 
 	/**

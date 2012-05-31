@@ -134,6 +134,7 @@ class WpPage {
 	/**
 	 * Trigger MediaWiki article creation using template "Wikiplace homepage" as content
 	 * @param string $new_wikiplace_name The new 'wikiplace_name'
+	 * @param User $user The user creating the homepage
 	 * @return Title/string The created homepage if ok, string message if an error occured 
 	 * <ul>
 	 * <li><b>wp-bad-title</b> MediaWiki is unable to create this homepage. Title may contain bad characters.</li>
@@ -149,7 +150,7 @@ class WpPage {
 	 * </li>
 	 * </ul>
 	 */
-	public static function createHomepage($new_wikiplace_name) {
+	public static function createHomepage($new_wikiplace_name, $user) {
 
 		if (($new_wikiplace_name === null) || (!is_string($new_wikiplace_name))) {
 			throw new MWException('Cannot create homepage, invalid name.');
@@ -164,12 +165,20 @@ class WpPage {
 		if ($title->isKnown()) {
 			return 'wp-title-already-exists';
 		}
+		
+		// as seen in EditPage->getEditPermissionErrors() ( called by EditPage->edit() )
+		$permErrors = $title->getUserPermissionsErrors( 'edit', $user );
+		$permErrors = array_merge( $permErrors,
+				wfArrayDiff2( $title->getUserPermissionsErrors( 'create', $user ), $permErrors ) );
+		if ( $permErrors ) { // creation impossible
+			return $permErrors[0]; // strange, but only key 0 seems to be used by MW when reading errors
+		}
 
 		$text = '{{subst:Wikiplace homepage}}';
 
 		// now store the new page in mediawiki, this will trigger a hook that will really create the WpPage
 		$article = new Article($title);
-		$status = $article->doEdit($text, '', EDIT_NEW);
+		$status = $article->doEdit($text, '', EDIT_NEW, false, $user);
 
 		if (!$status->isgood()) {
 			return 'sz-internal-error';
@@ -182,6 +191,7 @@ class WpPage {
 	 * Trigger MediaWiki article creation of the wikiplace subpage. Use template "Wikiplace subpage" as content.
 	 * @param WpWikiplace $wikiplace
 	 * @param string $new_page_name
+	 * @param User $user The user who creates the subpage
 	 * @return Title/string the created Title, or string message if an error occured
 	 * <ul>
 	 * <li><b>wp-bad-title</b> MediaWiki is unable to create this page. Title may contain bad characters.</li>
@@ -197,7 +207,7 @@ class WpPage {
 	 * </li>
 	 * </ul>
 	 */
-	public static function createSubpage($wikiplace, $new_page_name) {
+	public static function createSubpage($wikiplace, $new_page_name, $user) {
 
 		if (($wikiplace === null) || !($wikiplace instanceof WpWikiplace) ||
 				( $new_page_name === null) || !is_string($new_page_name)) {
@@ -216,12 +226,20 @@ class WpPage {
 			return 'wp-title-already-exists';
 		}
 
+		// as seen in EditPage->getEditPermissionErrors() ( called by EditPage->edit() )
+		$permErrors = $title->getUserPermissionsErrors( 'edit', $user );
+		$permErrors = array_merge( $permErrors,
+				wfArrayDiff2( $title->getUserPermissionsErrors( 'create', $user ), $permErrors ) );
+		if ( $permErrors ) { // creation impossible 
+			return $permErrors[0]; // strange, but only key 0 seems to be used by MW when reading errors
+		}
+		
 		$text = '{{subst:Wikiplace subpage}}';
 
 		// now store the new page in mediawiki, this will trigger the WikiplaceHook, wich will 
 		// allow the page saving
 		$article = new Article($title);
-		$status = $article->doEdit($text, '', EDIT_NEW);
+		$status = $article->doEdit($text, '', EDIT_NEW, false, $user);
 
 		if (!$status->isgood()) {
 			return 'sz-internal-error';

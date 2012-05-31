@@ -394,3 +394,6 @@ $wgAbuseFilterBlockDuration = '2 hours';
 // Widgets \o/
 require_once("$IP/extensions/Widgets/Widgets.php");
 $wgGroupPermissions['sysop']['editwidgets'] = true;
+
+// Prevents creating article with the same titles, but different cases.
+require_once("$IP/extensions/PreventDuplicate/PreventDuplicate.php");

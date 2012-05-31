@@ -146,9 +146,9 @@ class SpecialWikiplaces extends SpecialPage {
             throw new MWException('Cannot create Wikiplace, no data.');
         }
 
-        $homepage = WpWikiplace::initiateCreation($formData['Name']);
+        $homepage = WpWikiplace::initiateCreation($formData['Name'], $this->getUser());
         if (!( $homepage instanceof Title )) {
-            return wfMessage('sz-internal-error')->parse(); // error while creating
+            return wfMessage($homepage)->parse(); // error while creating
         }
 
         $this->homepageString = $homepage;
@@ -255,7 +255,7 @@ class SpecialWikiplaces extends SpecialPage {
 
         $wikiplace = WpWikiplace::getById(intval($formData['WpId']));
 
-        $subpage = WpPage::createSubpage($wikiplace, $formData['SpName']);
+        $subpage = WpPage::createSubpage($wikiplace, $formData['SpName'], $this->getUser() );
 
         if (!( $subpage instanceof Title )) {
             return wfMessage('sz-internal-error')->parse();
