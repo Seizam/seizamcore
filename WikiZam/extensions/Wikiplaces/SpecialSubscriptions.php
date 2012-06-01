@@ -94,7 +94,10 @@ class SpecialSubscriptions extends SpecialPage {
 
         $check = WpSubscription::canSubscribe($this->getUser());
         if ($check !== true) {
-            $this->getOutput()->showErrorPage('sorry', $check);
+            $this->action = self::ACTION_LIST;
+            $this->msgKey = $check;
+            $this->msgType = 'error';
+            $this->display();
             return;
         }
 
@@ -125,7 +128,7 @@ class SpecialSubscriptions extends SpecialPage {
 					$price['amount'],
 					$price['currency'],
 					$plan->getPeriod() )->text()] = $plan->getId();
-            if ($this->plan == $wpp_name) {
+            if ($this->planName == $wpp_name) {
                 $formDescriptor['Plan']['default'] = $plan->getId();
             }
         }
@@ -136,26 +139,19 @@ class SpecialSubscriptions extends SpecialPage {
         $htmlForm->setSubmitCallback(array($this, 'processNew'));
         $htmlForm->setSubmitText(wfMessage('wp-plan-subscribe-go')->text());
 
-        // validate and process the form is data sent
+        // validate and process the form
         if ($htmlForm->show()) {
-
-            $out = $this->getOutput();
-			$plan_name = WpPlan::newFromId($this->just_subscribed->getPlanId())->getName();
-			
-            $out->addHTML(wfMessage('wp-subscribe-success', 
-					wfMessage('wpp-'.$plan_name)->text() 
-					)->text().'<br/>');
-
             switch ($this->just_subscribed->getTmrStatus()) {
-                case "OK":
-                    $out->addHTML(wfMessage('wp-subscribe-tmr-ok')->parse());
-                    break;
-                case "PE":
-                    $out->addHTML(wfMessage('wp-subscribe-tmr-pe')->parse());
-                    break;
+                case 'PE':
+                    $this->getOutput()->redirect($this->getTitleFor('ElectronicPayment')->getLocalURL());
+                    return;
                 default:
-                    $out->addHTML(wfMessage('wp-subscribe-tmr-other')->parse());
+                    $this->msgType = 'success';
+                    $this->msgKey = 'wp-new-success-ok';
+                    break;
             }
+            $this->action = self::ACTION_LIST;
+            $this->display();
         }
     }
     
@@ -213,7 +209,10 @@ class SpecialSubscriptions extends SpecialPage {
      * @todo: implement this functionality
      */
     private function displayChange() {
-        $this->getOutput()->showErrorPage('sorry', 'wp-subscribe-change');
+        $this->action = self::ACTION_LIST;
+        $this->msgType = 'error';
+        $this->msgKey = 'wp-subscribe-change';
+        $this->display();
     }
 
     private function displayRenew() {
@@ -223,7 +222,10 @@ class SpecialSubscriptions extends SpecialPage {
         $sub = WpSubscription::newActiveByUserId($user_id);
         if ($sub == null) {
             // "need an active subscription"
-            $this->getOutput()->showErrorPage('sorry','wp-no-active-sub');
+            $this->action = self::ACTION_LIST;
+            $this->msgType = 'error';
+            $this->msgKey = 'wp-no-active-sub';
+            $this->display();
             return;
         }
 		$renewal_plan_id = $sub->getRenewalPlanId();
@@ -338,31 +340,30 @@ class SpecialSubscriptions extends SpecialPage {
         $user = $this->getUser();
         $output = $this->getOutput();
         
+        /**
+         *  @Todo BAD, does 2 db query for same results! And use TP for just 1 line!
+         */
         $tp = new WpSubscriptionsTablePager();
         $tp->setSelectConds(array('wps_buyer_user_id' => $this->getUser()->getId()));
-        // We do not directly output the table because we still need to cook the layout using the request just done
-        $html = $tp->getBody().$tp->getNavigationBar();
-        
-        
-        $count = $tp->getNumRows();
-        
-        // If the table is empty, we redirect to Special:Subscription/new
-        if ($count < 1) {
-            $output->redirect($this->getTitle(self::ACTION_NEW)->getInternalURL(), '303');
-        }
         
         $subs = WpSubscription::newByUserId($user->getId());
         
-        // If the user has no subs, we want to invite him to subscribe ASAP
-        if ($subs == null || ( !$subs->isActive() && $subs->getTmrStatus() != 'PE') ) {
-            $html = $tp->makeHeader(wfMessage('wp-subscriptionslist-noactive-header')->parse()).$html;
-        } else if (!$subs->isActive()){
-            $html = $tp->makeHeader(wfMessage('wp-subscriptionslist-pending-header')->parse()).$html;
+        if (!isset($subs)) {
+            $this->action = self::ACTION_NEW;
+            $this->msgType = 'error';
+            $this->msgKey = 'wp-nosub';
+            $this->display();
+            return;
+        } elseif ($subs->getTmrStatus() == 'PE'){
+            $tp->setHeader(wfMessage('wp-subscriptionslist-pending-header')->parse());
+        } elseif (!$subs->isActive()) {
+            $tp->setHeader(wfMessage('wp-subscriptionslist-noactive-header')->parse());
         } else {
-            $html = $tp->makeHeader(wfMessage('wp-subscriptionslist-header')->parse()).$html;
-            $html .= $tp->makeFooter(wfMessage('wp-subscriptionslist-footer')->parse());
+            $tp->setHeader(wfMessage('wp-subscriptionslist-header')->parse());
+            $tp->setFooter(wfMessage('wp-subscriptionslist-footer')->parse());
         }
-        $this->getOutput()->addHTML($html);
+        
+        $output->addHTML($tp->getWholeHtml());
     }
 
     /**

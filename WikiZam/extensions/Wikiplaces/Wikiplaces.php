@@ -27,7 +27,7 @@ $wgGroupPermissions['user'][WP_ACCESS_RIGHT] = true;
 // who can admin wikiplaces ? (accessing wp admin page, bypass move/delete limitations)
 define('WP_ADMIN_RIGHT', 'wpadmin');
 $wgAvailableRights[] = WP_ADMIN_RIGHT; 
-$wgGroupPermissions['sysop'][WP_ADMIN_RIGHT] = true;
+$wgGroupPermissions['user'][WP_ADMIN_RIGHT] = true;
 
 $_dir = dirname( __FILE__ ).'/';
 

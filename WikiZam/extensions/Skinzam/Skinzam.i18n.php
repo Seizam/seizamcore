@@ -18,6 +18,8 @@ $messages['en'] = array(
     'tagline' => 'From Seizam.com - For Art & Freedom',
     'sz-myseizam' => 'My Seizam',
     
+    'cur-euro' => '€',
+    
     'sz-back' => 'back',
     'sz-legalcontent' => 'Legal Content',
     'sz-gtcu' => '[[Project:GTCU|General Terms and Conditions of Use]]',

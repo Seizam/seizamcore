@@ -73,7 +73,7 @@ class SpecialTransactions extends SpecialPage {
         
         $msgType = $request->getText('msgtype', null);
         if (isset($msgType)) {
-            $msg = wfMessage($request->getText('msg'));
+            $msg = wfMessage($request->getText('msgkey'));
             if ($msg->exists()) {
                 $output->addHTML(Html::rawElement('div', array('class'=>"informations $msgType"), $msg->parse()));
             }
@@ -82,7 +82,7 @@ class SpecialTransactions extends SpecialPage {
         $table = new TransactionsTablePager();
         $table->setSelectFields(array('tmr_id', 'tmr_desc', 'tmr_date_created', 'tmr_amount', 'tmr_currency', 'tmr_status'));
         $table->setSelectConds(array('tmr_user_id' => $user->getId(), 'tmr_currency' => 'EUR'));
-        $table->setHeader(wfMessage('tm-balance', TMRecord::getTrueBalanceFromDB($user->getId()))->parse() . ' ' . wfMessage('tm-table-desc')->parse());
+        $table->setHeader(wfMessage('tm-balance', TMRecord::getTrueBalanceFromDB($user->getId()), 'cur-euro')->parse() . ' ' . wfMessage('tm-table-desc')->parse());
         $output->addHtml($table->getWholeHtml());
     }
 

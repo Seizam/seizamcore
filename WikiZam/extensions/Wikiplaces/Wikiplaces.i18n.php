@@ -100,7 +100,6 @@ You are also promising us that you wrote this yourself, or copied it from a publ
     'wp-create-wp-first' => 'You need to create a Wikiplace first.',
     /* TablePager: Subscription */
     'wp-subscriptionslist-header' => 'Here are your active subscriptions.',
-    'wp-subscriptionslist-noactive-header' => 'You do not have any active subscription. [[Special:Subscriptions/new|Click here to subscribe again!]]',
     'wp-subscriptionslist-pending-header' => 'Your subscription is pending because it has not been paid for yet. [[Special:ElectronicPayment|Please click here to credit your account !]] Thanks !',
     'wp-subscriptionslist-footer' => 'Would you like to setup your [[Special:Subscriptions/renew|subscription renewal]] plan? Or perhaps [[Special:Subscriptions/change|change your plan]] right now?',
     /* Form: Subscription */
@@ -117,11 +116,9 @@ You are also promising us that you wrote this yourself, or copied it from a publ
     'wp-do-not-renew' => 'Do not renew',
     'wp-plan-renew-go' => 'Set as my next plan',
     /* Disclaimer: Subscription */
-    'wp-subscribe-success' => 'You successfully subscribed to our offer $1.',
-    'wp-subscribe-tmr-ok' => 'Your payment has been validated, so you can start using your plan.',
-    'wp-subscribe-tmr-pe' => 'Your payment is pending. [[Special:ElectronicPayment|Please credit your Seizam account]]. Once paid, your plan will be activated and you will be able to use it.',
-    'wp-subscribe-tmr-other' => 'Please check [[Special:Transactions|{{int:transactions}}]].',
+    'wp-new-success-ok' => 'Thank you! Your subscription has been recorded and everything is in order. What about checking [[Special:MySeizam|{{int:myseizam}}]] out now?',
     'wp-renew-success' => 'Your next plan has been selected. Thanks!',
+    'wp-sub-noactive' => 'You do not have any active subscription.',
     /* Warning: Subscription */
     'wp-no-active-sub' => 'You need an active subscription to perform this action. [[Special:Subscriptions/new|Click here to subscribe!]]',
     'wp-change-plan-required' => 'You need to upgrade your plan to perform this action. [[Special:Subscriptions/change|Click here to change plan!]]',
@@ -254,7 +251,7 @@ Vous nous promettez aussi que vous avez écrit ceci vous-même, ou que vous l’
     'wp-sub-new-section' => 'S\'abonner',
     'wp-planfield' => 'Offre :',
     'wp-planfield-help' => 'Sélectionnez l\'offre Seizam à laquelle vous souhaitez souscrire grâce à ce menu déroulant. Plus de détails [[Special:Offers|ici]].',
-    'wp-checkfield' => 'J\'ai lu, compris et j\'approuve les Conditions Générales d’Utilisation de Seizam ([[Project:CGU|CGU]]) <b>ET</b> les Conditions Particulières d’Utilisation de Seizam par les Artistes ([[Project:CPUA|CPUA]]).',
+    'wp-checkfield' => 'J\'ai lu, j\'ai compris et j\'approuve les Conditions Générales d’Utilisation de Seizam ([[Project:CGU|CGU]]) <b>ET</b> les Conditions Particulières d’Utilisation de Seizam par les Artistes ([[Project:CPUA|CPUA]]).',
     'wp-checkfield-unchecked' => 'Vous devez approuver nos conditions d\'utilisation pour vous abonner. Merci de cocher la case ci-dessus.',
     'wp-plan-desc-short' => '$1: $2 $3 pour $4 mois.',
     'wp-plan-subscribe-go' => 'S\'abonner !',
@@ -263,10 +260,7 @@ Vous nous promettez aussi que vous avez écrit ceci vous-même, ou que vous l’
     'wp-do-not-renew' => 'Ne pas renouveler',
     'wp-plan-renew-go' => 'Définir',
     /* Disclaimer: Subscription */
-    'wp-subscribe-success' => 'Vous vous êtes abonné à notre offre $1 avec succès.',
-    'wp-subscribe-tmr-ok' => 'Votre paiement a été validé, vous pouvez maintenant utiliser votre abonnement.',
-    'wp-subscribe-tmr-pe' => 'Votre paiement est en attente. [[Special:ElectronicPayment|Veuillez créditer votre compte]]. Une vos réglé, votre abonnement sera actif et vous pourrez l\'utiliser.',
-    'wp-subscribe-tmr-other' => 'Merci de visiter [[Special:Transactions|{{int:transactions}}]].',
+    'wp-new-success-ok' => 'Merci ! Votre abonnement a été enregistré et tout est en ordre. Voulez-vous accéder à [[Special:MySeizam|{{int:myseizam}}]] maintenant ?',
     'wp-renew-success' => 'Votre prochain abonnement a été sélectionné. Merci !',
     /* Warning: Subscription */
     'wp-no-active-sub' => 'Il vous faut un abonnement actif pour réaliser cette action. [[Special:Subscriptions/new|Cliquez ici pour vous abonner !]]',
@@ -274,7 +268,7 @@ Vous nous promettez aussi que vous avez écrit ceci vous-même, ou que vous l’
     'wp-wikiplace-quota-exceeded' => 'Votre quota de création de Wikiplaces est dépassé. {{int:wp-change-plan-required}}',
     'wp-page-quota-exceeded' => 'Votre quota de création de pages est dépassé. {{int:wp-change-plan-required}}',
     'wp-diskspace-quota-exceeded' => 'Votre quota d\'importation de fichiers est dépassé.  {{int:wp-change-plan-required}}',
-    'wp-subscribe-already' => 'Vous avez déjà un abonnement actif. [[Special:Subscriptions/change|Cliquez ici pour changer d\'abonnement]], ou [[Special:MySeizam|ici pour retourner à {{int:myseizam}}]].',
+    'wp-subscribe-already' => 'Vous avez déjà un abonnement actif ou en attente. [[Special:Subscriptions/change|Cliquez ici pour changer d\'abonnement]], ou [[Special:MySeizam|ici pour retourner à {{int:myseizam}}]].',
     'wp-subscribe-email' => 'Avant de vous abonner vous devez valider votre adresse de courriel. [[Special:Preferences#mw-htmlform-email|Cliquez ici pour parametrer et valider votre adresse de courriel !]]',
     'wp-subscribe-change' => 'Vous pouvez sélectionner un abonnement qui succédera à l\'actuel depuis [[Special:Subscriptions/renew|la page de renouvellement d\'abonnement]]. Merci de [[Project:Contact/fr|nous contacter]] si vous avez besoin de changer d\'abonnement immédiatement. {{int:sz-asap}}',
 

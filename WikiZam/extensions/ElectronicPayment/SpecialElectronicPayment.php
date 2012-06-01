@@ -77,8 +77,7 @@ class SpecialElectronicPayment extends SpecialPage {
                 break;
             # Coming back to Seizam (payment succeeded)
             case 'success' :
-                $output->redirect($this->getTitleFor('Transactions')->getLocalURL(array('msg'=>'ep-success', 'msgtype'=>success)));
-                $output->addWikiText(wfMessage('ep-success')->text());
+                $output->redirect($this->getTitleFor('Transactions')->getLocalURL(array('msg'=>'ep-success', 'msgtype'=>'success')));
                 break;
             # Validation Interface (not for humans)
             case 'EPTBack' :
@@ -231,8 +230,11 @@ class SpecialElectronicPayment extends SpecialPage {
         # Set Minimum payment value (regarding banking fees)
         $min = max(-$balance, 5);
         
+        $defaultAmount = '';
+        
         # Building the pending transaction table and sum
         if ($balance<0) {
+            $defaultAmount = $min;
             $table = new TransactionsTablePager();
             $table->setSelectFields(array('tmr_desc','tmr_date_created','tmr_amount','tmr_currency'));
             $table->setSelectConds(array('tmr_user_id' => $user->getId(), 'tmr_status' => 'PE', 'tmr_amount < 0', 'tmr_currency'=> 'EUR'));
@@ -251,7 +253,7 @@ class SpecialElectronicPayment extends SpecialPage {
                 'required' => 'true',
                 'help-message' => array('ep-help-amount', $min),
                 'min' => $min,
-                'default' => ($min == 5 ? '' : $min),
+                'default' => $defaultAmount,
                 'filter-callback' => array($this, 'filterAmount')
             ),
             'mail' => array(
@@ -276,8 +278,8 @@ class SpecialElectronicPayment extends SpecialPage {
         $htmlForm->setSubmitText(wfMsg('next'));
         $htmlForm->setTitle($this->getTitle());
         $htmlForm->setSubmitCallback(array($this, 'initAttempt'));
-        if ($min > 5) {
-            $htmlForm->addHeaderText(wfMessage('ep-default-formheader').' '.wfMessage('ep-default-formheader-pending',$min.'EUR').$tableHtml);
+        if ($balance < 0) {
+            $htmlForm->addHeaderText(wfMessage('ep-default-formheader').' '.wfMessage('ep-default-formheader-pending', $balance, 'cur-euro').$tableHtml);
             $htmlForm->addFooterText(wfMessage('ep-default-formfooter-pending'));
         } else {
             $htmlForm->addHeaderText(wfMessage('ep-default-formheader'));

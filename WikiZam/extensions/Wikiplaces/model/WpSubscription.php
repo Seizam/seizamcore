@@ -895,7 +895,7 @@ class WpSubscription {
 				
 		return new self( $id, $planId, $buyerUserId,
 			$transactionId, $transactionStatus,
-			$startDate, $endDate, $active, $renewPlanId, $renewalPbEmailSent );
+			$startDate, $endDate, $active, $renewPlanId, $renewalNotified );
 		
 	}
 	
