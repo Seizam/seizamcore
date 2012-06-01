@@ -63,28 +63,6 @@ $wgSpecialPageGroups['WikiplacesAdmin'] = 'wikiplace';
 $wgSpecialPages['Offers'] = 'SpecialOffers';
 $wgSpecialPageGroups['Offers'] = 'wikiplace';
 
-
-# Attach our own functions to hooks
-$wgHooks['LoadExtensionSchemaUpdates'][] = 'WikiplacesHooks::onLoadExtensionSchemaUpdates'; // Schema updates for update.php
-$wgHooks['ArticleInsertComplete'][] = 'WikiplacesHooks::onArticleInsertComplete';
-$wgHooks['TitleMoveComplete'][] = 'WikiplacesHooks::onTitleMoveComplete';
-$wgHooks['ArticleDeleteComplete'][] = 'WikiplacesHooks::onArticleDeleteComplete';
-$wgHooks['ArticleUndelete'][] = 'WikiplacesHooks::onArticleUndelete';
-$wgHooks['SkinTemplateOutputPageBeforeExec'][] = 'WikiplacesHooks::skinTemplateOutputPageBeforeExec'; //Amend template for WP related front-end element (eg. background)
-$wgHooks['userCan'][] = 'WikiplacesHooks::userCan';
-$wgHooks['TransactionUpdated'][] = 'WikiplacesHooks::onTransactionUpdated';
-$wgHooks['IsOwner'][] = 'WikiplacesHooks::isOwner';
-$wgHooks['ImgAuthFullyStreamedFile'][] = 'WikiplacesHooks::onImgAuthFullyStreamedFile';
-$wgHooks['SkinTemplateNavigation'][] = 'WikiplacesHooks::SkinTemplateNavigation'; // Remove delete from action menu if necessary
-$wgHooks['EditPageCopyrightWarning'][] = 'WikiplacesHooks::EditPageCopyrightWarning'; // Cooks the edit page warning
-
-
-// upload form and handler hooks
-$wgHooks['UploadCreateFromRequest'][] = 'WikiplaceUpload::installWikiplaceUploadHandler';
-$wgHooks['UploadForm:initial'][] = 'WikiplaceUpload::fetchRequestInformations';
-$wgHooks['UploadForm:BeforeProcessing'][] = 'WikiplaceUpload::fetchRequestInformations';
-$wgHooks['UploadFormInitDescriptor'][] = 'WikiplaceUpload::installWikiplaceUploadFrontend';
-
 // define the default renewal plan
 define('WP_FALLBACK_PLAN_ID', 1);
 
@@ -136,3 +114,28 @@ $wgWikiplaceNameBlacklist = array(
     'file',
     'project' );
     
+// deferred setup, to not break Hook execution ordering with PreventDuplicate extension
+$wgExtensionFunctions[] = 'setupWikiplaces';
+
+function setupWikiplaces() {
+	global $wgHooks;
+	# Attach our own functions to hooks
+	$wgHooks['LoadExtensionSchemaUpdates'][] = 'WikiplacesHooks::onLoadExtensionSchemaUpdates'; // Schema updates for update.php
+	$wgHooks['ArticleInsertComplete'][] = 'WikiplacesHooks::onArticleInsertComplete';
+	$wgHooks['TitleMoveComplete'][] = 'WikiplacesHooks::onTitleMoveComplete';
+	$wgHooks['ArticleDeleteComplete'][] = 'WikiplacesHooks::onArticleDeleteComplete';
+	$wgHooks['ArticleUndelete'][] = 'WikiplacesHooks::onArticleUndelete';
+	$wgHooks['SkinTemplateOutputPageBeforeExec'][] = 'WikiplacesHooks::skinTemplateOutputPageBeforeExec'; //Amend template for WP related front-end element (eg. background)
+	$wgHooks['getUserPermissionsErrors'][] = 'WikiplacesHooks::getUserPermissionsErrors'; //former usercan
+	$wgHooks['TransactionUpdated'][] = 'WikiplacesHooks::onTransactionUpdated';
+	$wgHooks['IsOwner'][] = 'WikiplacesHooks::isOwner';
+	$wgHooks['ImgAuthFullyStreamedFile'][] = 'WikiplacesHooks::onImgAuthFullyStreamedFile';
+	$wgHooks['SkinTemplateNavigation'][] = 'WikiplacesHooks::SkinTemplateNavigation'; // Remove delete from action menu if necessary
+	$wgHooks['EditPageCopyrightWarning'][] = 'WikiplacesHooks::EditPageCopyrightWarning'; // Cooks the edit page warning
+
+	// upload form and handler hooks
+	$wgHooks['UploadCreateFromRequest'][] = 'WikiplaceUpload::installWikiplaceUploadHandler';
+	$wgHooks['UploadForm:initial'][] = 'WikiplaceUpload::fetchRequestInformations';
+	$wgHooks['UploadForm:BeforeProcessing'][] = 'WikiplaceUpload::fetchRequestInformations';
+	$wgHooks['UploadFormInitDescriptor'][] = 'WikiplaceUpload::installWikiplaceUploadFrontend';
+}

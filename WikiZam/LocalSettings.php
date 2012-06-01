@@ -269,15 +269,6 @@ $wgNamespacesWithSubpages = array(
     NS_CATEGORY_TALK => true
 );
 
-# Transaction Manager
-require_once( "$IP/extensions/Transactions/Transactions.php" );
-
-# Wikiplaces
-require_once( "$IP/extensions/Wikiplaces/Wikiplaces.php" );
-
-# MySeizam (to be inclueded after the integrated extensions
-require_once( "$IP/extensions/MySeizam/MySeizam.php" );
-
 // FEEDS
 $wgAdvertisedFeedTypes = array('rss', 'atom');
 
@@ -399,6 +390,29 @@ $wgGroupPermissions['sysop']['editwidgets'] = true;
 // Prevents creating article with the same titles, but different cases.
 require_once("$IP/extensions/PreventDuplicate/PreventDuplicate.php");
 
+// Avoid forcing the first letter of links to capitals
+// Links appearing with a capital at the beginning of a sentence will not go to 
+// the same place as links in the middle of a sentence using a lowercase initial; 
+// typically the former has to become a piped link. 
+// After setting this to false, run cleanupCaps.php to fix the existing links 
+// that will be broken
+$wgCapitalLinks = false; 
+
 // Poem
 require_once("$IP/extensions/Poem/Poem.php");
+
+
+// ==================
+// Final Seizam setup
+// ==================
+
+# Transaction Manager
+require_once( "$IP/extensions/Transactions/Transactions.php" );
+
+# Wikiplaces
+// need to be installed after PreventDuplicate in order to display permission errors properly
+require_once( "$IP/extensions/Wikiplaces/Wikiplaces.php" ); 
+
+# MySeizam (to be inclueded after the integrated extensions
+require_once( "$IP/extensions/MySeizam/MySeizam.php" );
 

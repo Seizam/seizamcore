@@ -33,9 +33,9 @@ class WikiplacesHooks {
 	 * @param Title $title the article (Article object) being saved
 	 * @param User $user the user (User object) saving the article
 	 * @param string $action the action
-	 * @param boolean $result 
+	 * @param array $result User permissions error to add
 	 */
-	public static function userCan($title, &$user, $action, &$result) {
+	public static function getUserPermissionsErrors($title, &$user, $action, &$result) {
 
 		$namespace = $title->getNamespace();	
 
@@ -82,13 +82,13 @@ class WikiplacesHooks {
 		// try to read the answer from cache
 		if (isset(self::$cacheUserCan[$article_id][$user_id][$do])) {
 			$result = self::$cacheUserCan[$article_id][$user_id][$do];
-			return $result; // stop hook processing if result = disallow
+			return empty($result); // stop hook processing if an error in result
 		}
 
 		// ok, so let's judge if the user can do the action
 		if (!$user->isLoggedIn()) {
-			wfDebugLog('wikiplaces-debug', 'userCan: ' . $do . ' DENIED, user is not logged in');
-			$result = false;
+			wfDebugLog('wikiplaces-debug', 'getUserPermissionsErrors: ' . $do . ' DENIED, user is not logged in');
+			$result = array( 'notloggedin');
 		} else {
 			switch ($do) {
 				case 'create':
@@ -101,7 +101,7 @@ class WikiplacesHooks {
 					$result = self::wikiplaceUserCanDelete($title, $user);
 					break;
 			}
-			wfDebugLog('wikiplaces-debug', 'userCan: ' . $do . ' ' . ($result ? 'ALLOWED' : 'DENIED') .
+			wfDebugLog('wikiplaces-debug', 'getUserPermissionsErrors: ' . $do . ' ' . (empty($result) ? 'ALLOWED' : 'DENIED') .
 					' title="' . $title->getPrefixedDBkey() . '"[' . $article_id . '] isKnown()=' . ($title->isKnown() ? 'known' : 'new') .
 					' user="' . $user->getName() . '"[' . $user_id . ']' .
 					' action=' . $action);
@@ -110,21 +110,21 @@ class WikiplacesHooks {
 		// store in cache
 		self::$cacheUserCan[$article_id][$user_id][$do] = $result;
 
-		return $result; // stop hook processing if result = disallow
+		return empty($result); // stop hook processing if result = disallow
 	}
 
 	/**
 	 * @param Title $title the article (Article object) being saved
 	 * @param User $user the user (User object) saving the article
 	 * @param string $action the action
-	 * @param boolean $result 
+	 * @param array $result 
 	 */
 	public static function publicUserCan($title, &$user, $action, &$result) {
 		
 		if ( ( $action=='move' || $action=='move-target' || $action=='delete' )
 			&& !($user->isAllowed(WP_ADMIN_RIGHT)) ) {
 			wfDebugLog('wikiplaces-debug', 'publicUserCan: '.$action.' DENIED to "'.$title->getPrefixedText().'"'); 
-			$result = false;
+			$result = array('forbidden-admin-action');
 			return false; // forbidden, that's it .
 		}
 		return true; // skip
@@ -134,18 +134,16 @@ class WikiplacesHooks {
 	 * @param Title $title the article (Article object) being saved
 	 * @param User $user the user (User object) saving the article
 	 * @param string $action the action
-	 * @param boolean $result 
+	 * @param array $result 
 	 */
 	public static function adminUserCan($title, &$user, $action, &$result) {
 		
 		if ( $action=='read' || $user->isAllowed(WP_ADMIN_RIGHT) ) {
-
-			$result = true;
 			return true; // allowed, but other extensions can still change this
 		}
 
 		wfDebugLog('wikiplaces-debug', 'adminUserCan: '.$action.' DENIED for '.$user->getName().' to "'.$title->getPrefixedText().'"'); 
-		$result = false;
+		$result = array('forbidden-admin-action');;
 		return false; // forbidden, that's it .
 	}
 	
@@ -181,19 +179,19 @@ class WikiplacesHooks {
 
 			if ($user->isAllowed(WP_ADMIN_RIGHT)) {
 				/** @todo: in futur release, admin will be able to create a wikiplace for someone else */
-				$result = false;
+				$result = array('badarticleerror');
 				$msg .= ', admin cannot create wikiplace';
 			} elseif (($reason = WpSubscription::userCanCreateWikiplace($user_id)) !== true) {
-				$result = false;
+				$result = array('badarticleerror');
 				$msg .= ', ' . $reason;
 			} elseif (WpWikiplace::isBlacklistedWikiplaceName($title->getDBkey())) {
-				$result = false;
+				$result = array('badarticleerror');
 				$msg .= ', blacklisted name';
 			} elseif (preg_match('/[.]/', $title->getText())) {
-				$result = false;
+				$result = array('badarticleerror');
 				$msg .= ', bad character in page title';
 			} else {
-				$result = true;
+				$result = array();
 			}
 		} else {
 
@@ -209,15 +207,15 @@ class WikiplacesHooks {
 
 				if (WpPage::isPublic($namespace, $db_key)) {
 					$msg .= ', in public space';
-					$result = true;
+					$result = array();
 				} elseif (WpPage::isAdmin($namespace, $db_key)) {
 
 					$msg .= ', in admin space';
 					if ($user->isAllowed(WP_ADMIN_RIGHT)) {
-						$result = true;
+						$result = array();
 					} else {
 						$msg .= ', user not admin';
-						$result = false;
+						$result = array('badarticleerror');
 					}
 					
 				} else {
@@ -226,14 +224,14 @@ class WikiplacesHooks {
 					$wp = WpWikiplace::getBySubpage($db_key, $title->getNamespace());
 
 					if ($wp === null) {
-						$result = false; // no wikiplace can contain this, so cannot create it
+						$result = array('badarticleerror'); // no wikiplace can contain this, so cannot create it
 						$msg .= ', cannot find existing container Wikiplace';
 					} elseif ($user->isAllowed(WP_ADMIN_RIGHT)) {
 						// admin is working for someone else
-						$result = true;
+						$result = array();
 						$msg .= ', admin is working for someone else';
 					} elseif (!$wp->isOwner($user_id)) { // checks the current user is the owner of the wikiplace
-						$result = false;
+						$result = array('badarticleerror');
 						$msg .= ', current user is not Wikiplace owner';
 					} else {
 
@@ -245,10 +243,10 @@ class WikiplacesHooks {
 						}
 								
 						if ($reason !== true) {
-							$result = false; // no active subscription or page creation quota is exceeded
+							$result = array('badarticleerror'); // no active subscription or page creation quota is exceeded
 							$msg .= ', ' . $reason;
 						} else {
-							$result = true;
+							$result = array();
 						}
 					}
 				}
@@ -261,25 +259,25 @@ class WikiplacesHooks {
 				$wp = WpWikiplace::getBySubpage($title->getDBkey(), $title->getNamespace());
 
 				if ($wp === null) {
-					$result = false; // no wikiplace can contain this subpage, so cannot create it
+					$result = array('badarticleerror'); // no wikiplace can contain this subpage, so cannot create it
 					$msg .= ', cannot find existing container Wikiplace';
 				} elseif ($user->isAllowed(WP_ADMIN_RIGHT)) {
 					// admin is creating a subpage for someone else
-					$result = true;
+					$result = array();
 					$msg .= ', admin is creating a subpage for someone else';
 				} elseif (!$wp->isOwner($user_id)) { // checks the user who creates the page is the owner of the wikiplace
-					$result = false;
+					$result = array('badarticleerror');
 					$msg .= ', current user is not Wikiplace owner';
 				} elseif (($reason = WpSubscription::userCanCreateNewPage($user_id)) !== true) {
-					$result = false; // no active subscription or page creation quota is exceeded
+					$result = array('badarticleerror'); // no active subscription or page creation quota is exceeded
 					$msg .= ', ' . $reason;
 				} else {
-					$result = true;
+					$result = array();
 				}
 			}
 		}
 
-		wfDebugLog('wikiplaces-debug', 'userCanCreate: ' . ($result ? 'ALLOW' : 'DENY') . ' ' . $msg . ', page title: "' . $title->getFullText() . '"');
+		wfDebugLog('wikiplaces-debug', 'userCanCreate: ' . (empty($result) ? 'ALLOW' : 'DENY') . ' ' . $msg . ', page title: "' . $title->getFullText() . '"');
 
 		return $result;
 	}
@@ -293,15 +291,19 @@ class WikiplacesHooks {
 	 * </ul>
 	 * @param Title $title
 	 * @param User $user
-	 * @return boolean 
+	 * @return array 
 	 */
 	private static function wikiplaceUserCanMove(&$title, &$user) {
 
 		// in userCan() calling this function, we already checked that user is loggedin
-		return (!WpPage::isHomepage($title)
+		if (!WpPage::isHomepage($title)
 				&& ( $user->isAllowed(WP_ADMIN_RIGHT)
 				|| ( WpSubscription::newActiveByUserId($user->getId()) != null
-				&& WpPage::isOwner($title->getArticleID(), $user) ) ) );
+				&& WpPage::isOwner($title->getArticleID(), $user) ) ) ) {
+			return array();
+		}
+		
+		return array('badarticleerror');
 	}
 
 	/**
@@ -312,14 +314,18 @@ class WikiplacesHooks {
 	 * </ul>
 	 * @param Title $title
 	 * @param User $user
-	 * @return boolean 
+	 * @return array 
 	 */
 	private static function wikiplaceUserCanDelete(&$title, &$user) {
 
 		// in userCan() calling this function, we already checked that user is loggedin
-		return (!WpPage::isHomepage($title)
+		if (!WpPage::isHomepage($title)
 				&& ( $user->isAllowed(WP_ADMIN_RIGHT)
-				|| WpPage::isOwner($title->getArticleID(), $user) ) );
+				|| WpPage::isOwner($title->getArticleID(), $user) ) ) {
+			return array();
+		}
+		
+		return array('badarticleerror');
 	}
 
 	/**

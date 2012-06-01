@@ -43,7 +43,7 @@ class PreventDuplicateHooks {
 			
 			wfDebugLog('preventduplicate', "{$user->getName()} wants to create {$title->getPrefixedDBkey()} but duplicate title {$duplicate->getPrefixedDBkey()} already exists, so creation forbidden");
 			
-			$result = array ('pvdp-duplicate-exists');
+			$result = array ('pvdp-duplicate-exists', $duplicate->getPrefixedDBkey());
 			return false;
 			
 		}
@@ -53,26 +53,58 @@ class PreventDuplicateHooks {
 	}
 	
 	/**
-	 * This hook is called by Wiki.php when someone want to read an Article
-	 * If the title doesn't already exists, search for a duplicate title, and redirect to it
-	 * @param Title $title Title object ($wgTitle)
-	 * @param WebRequest $request
-	 * @param boolean $ignoreRedirect boolean to skip redirect check
-	 * @param mixed $target Title/string of redirect target
-	 * @param Article $article Created from $title
-	 * @return boolean 
+	 * TestCanonicalRedirect hook handler
+	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/TestCanonicalRedirect
+	 *
+	 * @param $request WebRequest
+	 * @param $title Title
+	 * @param $output OutputPage
+	 * @return bool
+	 * @throws HttpError
 	 */
-	public static function redirectToDuplicateTitle( &$title, &$request, &$ignoreRedirect, &$target, &$article ) {
+	public static function redirectToDuplicateTitle( $request, $title, $output ) {
 		
-		if ( ( ! $title->exists()) && ( $duplicate = TitleKey::exactMatchTitle($title) ) ) {
+		if ( ( $title->getNamespace() == NS_SPECIAL )
+				|| $title->exists()
+				|| ( $duplicate = TitleKey::exactMatchTitle($title) ) ) {
 			
-			wfDebugLog('preventduplicate', "{$title->getPrefixedDBkey()} asked, it doesn't exist but there is a duplicate title {$duplicate->getPrefixedDBkey()} already existing -> redirecting to it");
-			
-			$target = $duplicate->getPartialURL();
+			// skip
+			return true;
 			
 		}
+			
+		wfDebugLog('preventduplicate', "{$title->getPrefixedDBkey()} asked, it doesn't exist but there is a duplicate title {$duplicate->getPrefixedDBkey()} already existing -> redirecting to it");
+
+		$targetUrl = wfExpandUrl( $duplicate->getFullURL(), PROTO_CURRENT );
+		// Redirect to canonical url, make it a 301 to allow caching
+		if ( $targetUrl == $request->getFullRequestURL() ) {
+			$message = "Redirect loop detected!\n\n" .
+				"This means the wiki got confused about what page was " .
+				"requested; this sometimes happens when moving a wiki " .
+				"to a new server or changing the server configuration.\n\n";
+
+			if ( $wgUsePathInfo ) {
+				$message .= "The wiki is trying to interpret the page " .
+					"title from the URL path portion (PATH_INFO), which " .
+					"sometimes fails depending on the web server. Try " .
+					"setting \"\$wgUsePathInfo = false;\" in your " .
+					"LocalSettings.php, or check that \$wgArticlePath " .
+					"is correct.";
+			} else {
+				$message .= "Your web server was detected as possibly not " .
+					"supporting URL path components (PATH_INFO) correctly; " .
+					"check your LocalSettings.php for a customized " .
+					"\$wgArticlePath setting and/or toggle \$wgUsePathInfo " .
+					"to true.";
+			}
+			wfHttpError( 500, "Internal error", $message );
+		} else {
+			$output->setSquidMaxage( 1200 );
+			$output->redirect( $targetUrl, '301' );
+		}
+			
+		return false; // Prevent the redirect from occurring
 		
-		return true;
-	}
+}
 	
 }
