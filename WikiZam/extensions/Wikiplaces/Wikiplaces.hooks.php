@@ -300,7 +300,7 @@ class WikiplacesHooks {
 		// in userCan() calling this function, we already checked that user is loggedin
 		return (!WpPage::isHomepage($title)
 				&& ( $user->isAllowed(WP_ADMIN_RIGHT)
-				|| ( WpSubscription::factoryActiveByUserId($user->getId()) != null
+				|| ( WpSubscription::newActiveByUserId($user->getId()) != null
 				&& WpPage::isOwner($title->getArticleID(), $user) ) ) );
 	}
 
@@ -370,7 +370,7 @@ class WikiplacesHooks {
 			}
 		}
 
-		$new_wp_page = WpPage::create($article_id, $article_id);
+		$new_wp_page = WpPage::create($article_id, $wikiplace->getId());
 
 		if ($new_wp_page === null) {
 			wfDebugLog('wikiplaces', 'onArticleInsertComplete(): ERROR while associating new page to its container wikiplace "'.$pdb_key.'"  for user['.$user_id.']');

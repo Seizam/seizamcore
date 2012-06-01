@@ -7,6 +7,11 @@ class SpecialSubscriptions extends SpecialPage {
     const ACTION_CHANGE = 'change';
     const ACTION_RENEW = 'renew';
     const ACTION_LIST = 'list';
+    
+    private $action = self::ACTION_LIST;
+    private $planName = null;
+    private $msgType = null;
+    private $msgKey = null;
 
     public function __construct() {
         parent::__construct(self::TITLE_NAME, WP_ACCESS_RIGHT);
@@ -19,8 +24,10 @@ class SpecialSubscriptions extends SpecialPage {
         $user = $this->getUser();
         
         $output = $this->getOutput();
+        
+        $request = $this->getRequest();
 
-        // Check rights
+        // Check rights and block if necessary
         if (!$this->userCanExecute($user)) {
             // If anon, redirect to login
             if ($user->isAnon()) {
@@ -32,28 +39,46 @@ class SpecialSubscriptions extends SpecialPage {
             return;
         }
         
+        // Reading parameter from request
         if (isset($par) & $par != '') {
             $explosion = explode(':', $par);
             if (count($explosion) == 1) {
-                $action = $explosion[0];
-                $plan = null;
+                $this->action = $explosion[0];
+                $this->planName = null;
             } else if (count($explosion) == 2) {
-                $action = $explosion[0];
-                $plan = $explosion[1];
+                $this->action = $explosion[0];
+                $this->planName = $explosion[1];
             }
         } else {
-            $action = $this->getRequest()->getText('action',null);
-            $plan = $this->getRequest()->getText('plan', null);
+            $this->action = $request->getText('action',null);
+            $this->planName = $request->getText('plan', null);
         }
-        switch ($action) {
+        $this->msgType = $request->getText('msgtype', $this->msgType);
+        $this->msgKey = $request->getText('msgkey', $this->msgKey);
+        
+        $this->display();
+    }
+    
+    private function display() {
+        $output = $this->getOutput();
+        
+        // Top Infobox Messaging
+        if (isset($this->msgType)) {
+            $msg = wfMessage($this->msgKey);
+            if ($msg->exists()) {
+                $output->addHTML(Html::rawElement('div', array('class'=>"informations $this->msgType"), $msg->parse()));
+            }
+        }
+        
+        switch ($this->action) {
             case self::ACTION_NEW :
-                $this->displayNew($plan);
+                $this->displayNew();
                 break;
             case self::ACTION_CHANGE:
-                $this->displayChange($plan);
+                $this->displayChange();
                 break;
             case self::ACTION_RENEW:
-                $this->displayRenew($plan);
+                $this->displayRenew();
                 break;
             case self::ACTION_LIST:
             default:
@@ -65,7 +90,7 @@ class SpecialSubscriptions extends SpecialPage {
     /**
      * User wants to take a new subscription
      */
-    private function displayNew($plan_name = null) {
+    private function displayNew() {
 
         $check = WpSubscription::canSubscribe($this->getUser());
         if ($check !== true) {
@@ -96,11 +121,11 @@ class SpecialSubscriptions extends SpecialPage {
             $wpp_name = $plan->getName();
 			$price = $plan->getPrice();
             $formDescriptor['Plan']['options'][wfMessage( 'wp-plan-desc-short',
-					wfMessage('wp-plan-name-' . $wpp_name)->text(),
+					wfMessage('wpp-' . $wpp_name)->text(),
 					$price['amount'],
 					$price['currency'],
 					$plan->getPeriod() )->text()] = $plan->getId();
-            if ($plan_name == $wpp_name) {
+            if ($this->plan == $wpp_name) {
                 $formDescriptor['Plan']['default'] = $plan->getId();
             }
         }
@@ -118,7 +143,7 @@ class SpecialSubscriptions extends SpecialPage {
 			$plan_name = WpPlan::newFromId($this->just_subscribed->getPlanId())->getName();
 			
             $out->addHTML(wfMessage('wp-subscribe-success', 
-					wfMessage('wp-plan-name-'.$plan_name)->text() 
+					wfMessage('wpp-'.$plan_name)->text() 
 					)->text().'<br/>');
 
             switch ($this->just_subscribed->getTmrStatus()) {
@@ -187,15 +212,15 @@ class SpecialSubscriptions extends SpecialPage {
     /**
      * @todo: implement this functionality
      */
-    private function displayChange($plan_name = null) {
+    private function displayChange() {
         $this->getOutput()->showErrorPage('sorry', 'wp-subscribe-change');
     }
 
-    private function displayRenew($plan_name = null) {
+    private function displayRenew() {
 
         // at this point, user is logged in
         $user_id = $this->getUser()->getId();
-        $sub = WpSubscription::factoryActiveByUserId($user_id);
+        $sub = WpSubscription::newActiveByUserId($user_id);
         if ($sub == null) {
             // "need an active subscription"
             $this->getOutput()->showErrorPage('sorry','wp-no-active-sub');
@@ -232,7 +257,7 @@ class SpecialSubscriptions extends SpecialPage {
             $wpp_name = $plan->getName();
 			$price = $plan->getPrice();
             $formDescriptor['Plan']['options'][wfMessage('wp-plan-desc-short',
-					wfMessage('wp-plan-name-' . $wpp_name)->text(),
+					wfMessage('wpp-' . $wpp_name)->text(),
 					$price['amount'],
 					$price['currency'],
 					$plan->getPeriod() )->text() ] = $plan->getId();
@@ -250,7 +275,10 @@ class SpecialSubscriptions extends SpecialPage {
 
         // validate and process the form is data sent
         if ($htmlForm->show()) {
-            $this->getOutput()->addHTML(wfMessage('wp-renew-success')->text());
+            $this->action = self::ACTION_LIST;
+            $this->msgKey = 'wp-renew-success';
+            $this->msgType = 'success';
+            $this->display();
         }
     }
 
@@ -270,7 +298,7 @@ class SpecialSubscriptions extends SpecialPage {
 		}
 
         $user_id = $this->getUser()->getId();
-		$curr_sub = WpSubscription::factoryActiveByUserId($user_id);
+		$curr_sub = WpSubscription::newActiveByUserId($user_id);
 		if ($curr_sub == null) {
 			return 'Error: No Active Subscription';
 		}
@@ -295,13 +323,13 @@ class SpecialSubscriptions extends SpecialPage {
             throw new MWException('Cannot set next plan, no data.');
         }
 
-        $sub = WpSubscription::factoryActiveByUserId($this->getUser()->getId());
+        $sub = WpSubscription::newActiveByUserId($this->getUser()->getId());
 
         if ($sub == null) {
             throw new MWException('Cannot set next plan, no active subscription.');
         }
 
-        $sub->setRenewalPlan(intval($formData['Plan']));
+        $sub->setRenewalPlanId(intval($formData['Plan']));
 
         return true;
     }
@@ -323,11 +351,13 @@ class SpecialSubscriptions extends SpecialPage {
             $output->redirect($this->getTitle(self::ACTION_NEW)->getInternalURL(), '303');
         }
         
-        $active = WpSubscription::factoryActiveByUserId($user->getId());
+        $subs = WpSubscription::newByUserId($user->getId());
         
-        // If the user has no active subs, we want to invite him to subscribe ASAP
-        if ($active == null) {
+        // If the user has no subs, we want to invite him to subscribe ASAP
+        if ($subs == null || ( !$subs->isActive() && $subs->getTmrStatus() != 'PE') ) {
             $html = $tp->makeHeader(wfMessage('wp-subscriptionslist-noactive-header')->parse()).$html;
+        } else if (!$subs->isActive()){
+            $html = $tp->makeHeader(wfMessage('wp-subscriptionslist-pending-header')->parse()).$html;
         } else {
             $html = $tp->makeHeader(wfMessage('wp-subscriptionslist-header')->parse()).$html;
             $html .= $tp->makeFooter(wfMessage('wp-subscriptionslist-footer')->parse());
@@ -360,7 +390,7 @@ class SpecialSubscriptions extends SpecialPage {
                             self::getTitleFor(self::TITLE_NAME, self::ACTION_NEW), wfMessage($i18n_key)->text());
         } else {
             if ($i18n_key == null) {
-                $i18n_key = 'wp-plan-name-' . $wpp_name;
+                $i18n_key = 'wpp-' . $wpp_name;
             }
             return Linker::linkKnown(
                             self::getTitleFor(self::TITLE_NAME, self::ACTION_NEW.':'.$wpp_name ), wfMessage($i18n_key)->text());

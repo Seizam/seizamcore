@@ -59,7 +59,7 @@ class CheckNextRenewals extends Maintenance {
 					$new_next_plan_id = $new_next_plan->getId();
 					
 					// update and flag as problem reported, as we will send an email to user
-					$sub->setRenewalPlan($new_next_plan_id, true); 
+					$sub->setRenewalPlanId($new_next_plan_id, true); 
 							
 					$msg .= "doesn't exist, changed to = $new_next_plan_id";
 					
@@ -77,7 +77,7 @@ class CheckNextRenewals extends Maintenance {
 					$new_next_plan_id = $new_next_plan->getId();
 					
 					// update and flag as problem reported, as we will send an email to user
-					$sub->setRenewalPlan($new_next_plan_id, true); 
+					$sub->setRenewalPlanId($new_next_plan_id, true); 
 							
 					$msg .= "unsufficient quotas, changed to = $new_next_plan_id";
 					
@@ -91,7 +91,7 @@ class CheckNextRenewals extends Maintenance {
 					$new_next_plan_id = $new_next_plan->getId();
 					
 					// update and flag as problem reported, as we will send an email to user
-					$sub->setRenewalPlan($new_next_plan_id, true); 
+					$sub->setRenewalPlanId($new_next_plan_id, true); 
 							
 					$msg .= "will not be available, changed to = $new_next_plan_id";
 					

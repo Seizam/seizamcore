@@ -391,8 +391,10 @@ class HTMLFormS {
                 . '</div>'
                 . '</div>';
 
-        if (isset($this->mFooter) && $this->mFooter != '')
-            $html .= '<div class="form_footer informations">' . $this->mFooter . '</div>';
+        if (isset($this->mFooter) && $this->mFooter != '') {
+            $html .= '<div class="clearfix"></div>
+                <div class="form_footer informations">' . $this->mFooter . '</div>';
+        }
 
         $html = $this->wrapForm($html);
 

@@ -40,7 +40,7 @@ class SpecialElectronicPayment extends SpecialPage {
      * @param $request WebRequest : data posted.
      */
     public function __construct($request = null) {
-        parent::__construct('ElectronicPayment');
+        parent::__construct('ElectronicPayment',EP_ACCESS_RIGHT);
     }
 
     /**
@@ -211,6 +211,7 @@ class SpecialElectronicPayment extends SpecialPage {
                             <p>' . wfMessage('sz-htmlform-helpzonedefault')->parse() . '</p>
                         </div>
                     </div>
+                    <div class="clearfix"></div>
                     <div class="form_footer informations">' . wfMessage('ep-attempt-formfooter')->parse() . '</div>
                 </form>';
         $output->addHTML($html);

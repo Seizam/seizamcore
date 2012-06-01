@@ -22,7 +22,8 @@ class WpPagesTablePager extends SkinzamTablePager {
     protected $selectFields = array('subpage.page_title',
         'subpage.page_namespace',
         'subpage.page_touched',
-        'subpage.page_counter');
+        'subpage.page_counter',
+        'subpage.page_is_redirect');
     protected $selectOptions = array('ORDER BY' => 'subpage.page_title');
     protected $defaultSort = 'page_touched';
     public $mDefaultDirection = true; // true = DESC
@@ -51,7 +52,7 @@ class WpPagesTablePager extends SkinzamTablePager {
             case 'page_touched':
                 return $wgLang->date($value, true);
             case 'page_counter':
-                return wgFormatNumber($value) .' '.  wfMessage('wp-hits')->text();
+                return wgFormatNumber($value) . ' ' . wfMessage('wp-hits')->text();
             case 'actions' :
                 return $this->formatActions();
             default:
@@ -123,8 +124,10 @@ class WpPagesTablePager extends SkinzamTablePager {
         global $wgLang;
         switch ($value) {
             case NS_MAIN :
-                if (!preg_match("/\//", $this->mCurrentRow->page_title))
+                if (count(explode('/', $this->mCurrentRow->page_title)) == 1)
                     return wfMessage('wp-homepage')->text();
+                else if ($this->mCurrentRow->page_is_redirect == 1)
+                    return wfMessage('wp-redirect')->text();
                 else
                     return wfMessage('wp-subpage')->text();
             case NS_WIKIPLACE :
@@ -165,23 +168,23 @@ class WpPagesTablePager extends SkinzamTablePager {
 
     function getFieldNames() {
         $fieldNames = parent::getFieldNames();
-        
-        unset($fieldNames['homepage_title']);
-        
+
+        unset($fieldNames['page_is_redirect']);
+
         $fieldNames['actions'] = '';
-        
+
         if (isset($fieldNames['page_title']))
-            $fieldNames['page_title'] = wfMessage ('wp-name');
-        
+            $fieldNames['page_title'] = wfMessage('wp-name');
+
         if (isset($fieldNames['page_touched']))
-            $fieldNames['page_touched'] = wfMessage ('date_modified');
-        
+            $fieldNames['page_touched'] = wfMessage('date_modified');
+
         if (isset($fieldNames['page_namespace']))
-            $fieldNames['page_namespace'] = wfMessage ('type');
-        
+            $fieldNames['page_namespace'] = wfMessage('type');
+
         if (isset($fieldNames['page_counter']))
-            $fieldNames['page_counter'] = wfMessage ('wp-Hits');
-        
+            $fieldNames['page_counter'] = wfMessage('wp-Hits');
+
         return $fieldNames;
     }
 

@@ -25,6 +25,7 @@ $messages['en'] = array(
     'wp-items' => 'Items',
     'wp-subpage' => 'Subpage',
     'wp-subpages' => 'Subpages',
+    'wp-redirect' => 'Redirect',
     'wp-name' => 'Name',
     'wp-hits' => 'hits',
     'wp-Hits' => 'Hits',
@@ -100,6 +101,7 @@ You are also promising us that you wrote this yourself, or copied it from a publ
     /* TablePager: Subscription */
     'wp-subscriptionslist-header' => 'Here are your active subscriptions.',
     'wp-subscriptionslist-noactive-header' => 'You do not have any active subscription. [[Special:Subscriptions/new|Click here to subscribe again!]]',
+    'wp-subscriptionslist-pending-header' => 'Your subscription is pending because it has not been paid for yet. [[Special:ElectronicPayment|Please click here to credit your account !]] Thanks !',
     'wp-subscriptionslist-footer' => 'Would you like to setup your [[Special:Subscriptions/renew|subscription renewal]] plan? Or perhaps [[Special:Subscriptions/change|change your plan]] right now?',
     /* Form: Subscription */
     'wp-sub-new-header' => 'Please fill the form below to subscribe to Seizam.',
@@ -167,6 +169,7 @@ $messages['fr'] = array(
     'wp-items' => 'Objets',
     'wp-subpage' => 'Sous-page',
     'wp-subpages' => 'Sous-pages',
+    'wp-redirect' => 'Redirection',
     'wp-name' => 'Nom',
     'wp-hits' => 'visites',
     'wp-Hits' => 'Visites',
@@ -244,6 +247,7 @@ Vous nous promettez aussi que vous avez écrit ceci vous-même, ou que vous l’
     /* TablePager: Subscription */
     'wp-subscriptionslist-header' => 'Voici vos abonnements actifs.',
     'wp-subscriptionslist-noactive-header' => 'Vous n\'avez pas d\'abonnement actif. [[Special:Subscriptions/new|Cliquez ici pour vous abonner !]]',
+    'wp-subscriptionslist-pending-header' => 'Votre abonnement est en attente car il n\'a pas encore été payé. [[Special:ElectronicPayment|Cliquez ici pour créditer votre compte s\'il vous plait !]] Merci !',
     'wp-subscriptionslist-footer' => 'Désirez vous paramétrer le [[Special:Subscriptions/renew|renouvellement de votre abonnement]] ? Ou peut-être [[Special:Subscriptions/change|changer d\'abonnement]] immédiatement ?',
     /* Form: Subscription */
     'wp-sub-new-header' => 'Merci de remplir ce formulaire pour vous abonner à Seizam.',
@@ -260,10 +264,10 @@ Vous nous promettez aussi que vous avez écrit ceci vous-même, ou que vous l’
     'wp-plan-renew-go' => 'Définir',
     /* Disclaimer: Subscription */
     'wp-subscribe-success' => 'Vous vous êtes abonné à notre offre $1 avec succès.',
-    'wp-subscribe-tmr-ok' => 'Votre paiement à été validé, vous pouvez maintenant utiliser votre abonnement.',
+    'wp-subscribe-tmr-ok' => 'Votre paiement a été validé, vous pouvez maintenant utiliser votre abonnement.',
     'wp-subscribe-tmr-pe' => 'Votre paiement est en attente. [[Special:ElectronicPayment|Veuillez créditer votre compte]]. Une vos réglé, votre abonnement sera actif et vous pourrez l\'utiliser.',
     'wp-subscribe-tmr-other' => 'Merci de visiter [[Special:Transactions|{{int:transactions}}]].',
-    'wp-renew-success' => 'Votre prochain abonnement à été sélectionné. Merci !',
+    'wp-renew-success' => 'Votre prochain abonnement a été sélectionné. Merci !',
     /* Warning: Subscription */
     'wp-no-active-sub' => 'Il vous faut un abonnement actif pour réaliser cette action. [[Special:Subscriptions/new|Cliquez ici pour vous abonner !]]',
     'wp-change-plan-required' => 'Vous devez changer d\'abonnement pour réaliser cette action. [[Special:Subscriptions/change|Cliquez ici pour changer d\'abonnement !]]',

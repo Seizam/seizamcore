@@ -25,6 +25,9 @@ $wgExtensionCredits['specialpage'][] = array(
     'descriptionmsg' => 'electronicpayment-desc',
 );
 
+define('EP_ACCESS_RIGHT', 'epaccess');
+$wgAvailableRights[] = EP_ACCESS_RIGHT; 
+$wgGroupPermissions['user'][EP_ACCESS_RIGHT] = true;
 
 $dir = dirname(__FILE__) . '/';
 

@@ -14,6 +14,19 @@ class WpSubscription {
 				$wps_renewal_notified ; // tinyint(3) unsigned
 
 	private $attributes_to_update;
+    
+    /**
+     *
+     * @var WpPlan
+     */
+    private $plan;
+    
+    /**
+     *
+     * @var WpPlan
+     */
+    private $renewalPlan;
+    
 		
 	/**
 	 *
@@ -74,7 +87,30 @@ class WpSubscription {
 	 */
 	public function getPlanId() {
 		return $this->wps_wpp_id;
-	}
+    }
+    
+    /**
+     * @return WpPlan the subscription's plan (and set if necessary)
+     */
+    public function getPlan() {
+        if (!isset($this->plan))
+            $this->setPlan ();
+        return $this->plan;
+    }
+    
+    /**
+     * Set plan object from wps_wpp_id
+     */
+    private function setPlan() {
+        $this->plan = WpPlan::newFromId($this->getPlanId());
+    }
+    
+    /**
+     * Unset Plan object
+     */
+    private function unsetPlan() {
+        unset($this->plan);
+    }
 	
 	/**
 	 * Returns the buyer ID
@@ -124,6 +160,27 @@ class WpSubscription {
 	public function getRenewalPlanId() {
 		return $this->wps_renew_wpp_id;
 	}
+    
+    /**
+     * @return WpPlan The subscription's renewal plan and set if necessary
+     */
+    public function getRenewalPlan() {
+        if (!isset($this->renewalPlan))
+                $this->setRenewalPlan();
+                
+        return $this->renewalPlan;
+    }
+    
+    /**
+     * Set the renewal plan fro wps_renew_wpp_id
+     */
+    private function setRenewalPlan() {
+        $this->renewalPlan = WpPlan::newFromId($this->getRenewalPlanId());
+    }
+    
+    private function unsetRenewalPlan() {
+        unset($this->renewalPlan);
+    }
 	
 	/**
 	 * Tells if the email to notify, the buyer there is a problem with planned renewal, was already sent 
@@ -135,22 +192,23 @@ class WpSubscription {
 	
 
 	/**
-	 *Change the renewal plan and clear flag renewal_notified
+	 * Change the renewal plan and clear flag renewal_notified
 	 * @param int $plan_id 
 	 * @param boolean $flag_renewal_pb_reported Optional, set/clear flag renewal_notified. (default = clear)
 	 */
-	public function setRenewalPlan($plan_id, $flag_renewal_pb_reported = false) {
+	public function setRenewalPlanId($plan_id, $flag_renewal_pb_reported = false) {
 		$this->set('wps_renew_wpp_id', $plan_id, false);
-		$this->set('wps_renewal_notified', $flag_renewal_pb_reported);
+        $this->unsetRenewalPlan();
+		$this->setRenewalPlanNotified($flag_renewal_pb_reported);
 	}
 	
 	/**
-	 *Change the renewal plan and clear flag renewal_notified
+	 * Change the renewal plan and clear flag renewal_notified
 	 * @param int $plan_id 
 	 * @param boolean $flag_renewal_pb_reported Optional, set/clear flag renewal_notified. (default = clear)
 	 */
-	public function setRenewalPlanNotified() {
-		$this->set('wps_renewal_notified', true);
+	public function setRenewalPlanNotified($value = true) {
+		$this->set('wps_renewal_notified', $value);
 	}
 	
 	
@@ -177,11 +235,12 @@ class WpSubscription {
 			case 'wps_renew_wpp_id':
 				if ( !is_numeric($value) || ($value<0) )  { throw new MWException('Value error (int >= 0 needed) for '.$attribut_name); }
 				$db_value = intval($value);
-				$this->next_plan = null;
+                $this->unsetRenewalPlan();
 				break;
 			case 'wps_wpp_id':
 				if ( !is_numeric($value) || ($value<0) )  { throw new MWException('Value error (int >= 0 needed) for '.$attribut_name); }
 				$db_value = intval($value);
+                $this->unsetPlan();
 				break;
 			case 'wps_tmr_id':
 				if ( !is_numeric($value) || ($value<0) )  { throw new MWException('Value error (int >= 0 needed) for '.$attribut_name); }
@@ -250,11 +309,10 @@ class WpSubscription {
 	public function renew() {
 		
 		// load user
-		$user_id = $this->wps_buyer_user_id;
-		$user = User::newFromId($user_id);
+		$user = User::newFromId($this->wps_buyer_user_id);
 		
 		// load renewal plan
-		$next_plan = WpPlan::newFromId( $this->wps_renew_wpp_id );
+		$next_plan = $this->getRenewalPlan();
 		
 		// ensure we know the user and renewal plan
 		if ( ! $user->loadFromId() || ($next_plan == null) ) { 
@@ -357,14 +415,14 @@ class WpSubscription {
 						if ($this->wps_start_date == null) {
 							// first subscription
 							$start = self::now();
-							$plan = WpPlan::newFromId($this->wps_wpp_id);
+							$plan = $this->getPlan();
 							$period = $plan->getPeriod();
 							$end = self::calculateEndDateFromStart($start, $period);
 							$renewal_plan_id = $plan->getRenewalPlan($end)->getId();
 							
-							$this->set('wps_start_date',	$start, false ); // 3rd param = false = do not update db now
+							$this->set('wps_start_date', $start, false ); // 3rd param = false = do not update db now
 							$this->set('wps_end_date', $end, false ); 
-							$this->set('wps_active',	true, false ); 
+							$this->set('wps_active', true, false ); 
 							$this->set('wps_renew_wpp_id', $renewal_plan_id, false);
 							$this->set('wps_tmr_status', 'OK'); // no 3rd p = update db now
 							
@@ -477,7 +535,7 @@ class WpSubscription {
 	/**
 	 * Get the last subscription of a user, which can be unactive.
 	 * @param int $user_id
-	 * @return WpSubscription The user active subscription or null if she has no active one 
+	 * @return WpSubscription The user active subscription or null if she has none 
 	 */
 	public static function newByUserId($user_id) {
 			
@@ -487,13 +545,11 @@ class WpSubscription {
 
 		$dbr = wfGetDB(DB_SLAVE) ;
 
-		$now =  $dbr->addQuotes( self::now() );
 		$conds = $dbr->makeList( array(
 			"wps_buyer_user_id"	=> $user_id,  
 		), LIST_AND );
 
-		$result = $dbr->selectRow( 'wp_subscription', '*',	$conds, __METHOD__, 
-				array( 'ORDER BY' => ' wps_active DESC, wps_start_date DESC' )  );
+		$result = $dbr->selectRow( 'wp_subscription', '*',	$conds, __METHOD__ );
 
 		if ( $result === false ) {
 			return null;
@@ -769,7 +825,7 @@ class WpSubscription {
 			# Params related to Record
 			'tmr_amount'	=> - $price['amount'],
 			'tmr_currency'	=> $price['currency'], 
-			'tmr_desc'		=> 'wp-plan-name-'.$plan->getName(), 
+			'tmr_desc'		=> 'wpp-'.$plan->getName(), 
 			'tmr_status'	=> 'PE', // PEnding
 		);
 		
@@ -904,7 +960,7 @@ class WpSubscription {
 	 * @param int $user_id
 	 * @return WpSubscription The user active subscription or null if she has no active one 
 	 */
-	public static function factoryActiveByUserId($user_id) {
+	public static function newActiveByUserId($user_id) {
 			
 		if ( ($user_id === null) || !is_numeric($user_id) || ($user_id < 1) ) {
 			throw new MWException( 'Cannot search subscription, invalid user identifier.' );
@@ -940,13 +996,13 @@ class WpSubscription {
 	 */
 	public static function userCanUploadNewFile($user_id) {
 		
-		$sub = self::factoryActiveByUserId($user_id);
+		$sub = self::newActiveByUserId($user_id);
 
 		if ($sub === null) { 
 			return 'wp-no-active-sub';
 		}
 
-		$plan = WpPlan::newFromId($sub->getPlanId());
+		$plan = $sub->getPlan();
 		
 		$max_pages = $plan->getNbWikiplacePages();
 		$user_pages_nb = WpPage::countPagesOwnedByUser($user_id);
@@ -979,13 +1035,13 @@ class WpSubscription {
 		
 		global $wgLang;
 		
-		$sub = self::factoryActiveByUserId($user_id);
+		$sub = self::newActiveByUserId($user_id);
 
 		if ($sub === null) { 
 			return 'wp-no-active-sub';
 		}
 
-		$max_pages = WpPlan::newFromId($sub->getPlanId())->getNbWikiplacePages();
+		$max_pages = $sub->getPlan()->getNbWikiplacePages();
 		$user_pages_nb = WpPage::countPagesOwnedByUser($user_id);
 
 		if ($user_pages_nb >= $max_pages) { 
@@ -1014,12 +1070,12 @@ class WpSubscription {
 			throw new MWException('Cannot check if user can create a Wikiplace, invalid user identifier.');
 		}
 		
-		$sub = self::factoryActiveByUserId($user_id);
-		if ($sub === null) { 
+		$sub = self::newActiveByUserId($user_id);
+		if ($sub == null) { 
 			return 'wp-no-active-sub';
-		}	
+		}
 
-		$plan = WpPlan::newFromId($sub->getPlanId());
+		$plan = $sub->getPlan();
 		
 		$max_wikiplaces = $plan->getNbWikiplaces();
 		$user_wikiplaces_nb = WpWikiplace::countWikiplacesOwnedByUser($user_id);
@@ -1090,10 +1146,10 @@ class WpSubscription {
 	 * </ul>
 	 * @return boolean true=ok, false=error 
 	 */
-	public function sendOnFirstActivation( ) {
+	public function sendOnFirstActivation() {
 
 		$user = User::newFromId($this->wps_buyer_user_id);
-		$plan = WpPlan::newFromId($this->wps_wpp_id);
+		$plan = $this->getPlan();
 		
 		$subject = wfMessage( 'wpm-activation-subj' );
 		$body = wfMessage( 'wpm-activation-body',
@@ -1132,7 +1188,7 @@ class WpSubscription {
 	public function sendOnRenewalSoonWarning( $reason ) {
 		
 		$user = User::newFromId($this->wps_buyer_user_id);
-		$next_plan = WpPlan::newFromId($this->wps_renew_wpp_id);
+		$next_plan = $this->getRenewalPlan();
 		$next_plan_name = $next_plan != null ? $next_plan->getName() : '?'; // fallback, but should never occur
 		
 		$subject = wfMessage( "wpm-renewal-soon-warning-subj" );
@@ -1154,7 +1210,7 @@ class WpSubscription {
 	public function sendOnRenewalSoonOK( ) {
 
 		$user = User::newFromId($this->wps_buyer_user_id);
-		$next_plan = WpPlan::newFromId($this->wps_renew_wpp_id);
+		$next_plan = $this->getRenewalPlan();
 		$next_plan_name = $next_plan != null ? $next_plan->getName() : '?'; // fallback, but should never occur
 		
 		$subject = wfMessage( "wpm-renewal-soon-ok-subj" );
@@ -1194,7 +1250,7 @@ class WpSubscription {
 	public function sendOnPlanRenewalPE( ) {
 
 		$user = User::newFromId($this->wps_buyer_user_id);
-		$plan = WpPlan::newFromId($this->wps_wpp_id);
+		$plan = $this->getPlan();
 		
 		$subject = wfMessage( 'wpm-renewal-pe-subj' );
 		$body = wfMessage( 'wpm-renewal-pe-body',
@@ -1212,7 +1268,7 @@ class WpSubscription {
 	public function sendOnPlanRenewalOK( ) {
 
 		$user = User::newFromId($this->wps_buyer_user_id);
-		$plan = WpPlan::newFromId($this->wps_wpp_id);
+		$plan = $this->getPlan();
 		
 		$subject = wfMessage( 'wpm-renewal-ok-subj' );
 		$body = wfMessage( 'wpm-renewal-ok-body',

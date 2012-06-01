@@ -71,10 +71,11 @@ class SpecialTransactions extends SpecialPage {
             $action = $request->getText('action');
         }
         
-        if ($request->getText('msgtype') == 'success') {
+        $msgType = $request->getText('msgtype', null);
+        if (isset($msgType)) {
             $msg = wfMessage($request->getText('msg'));
             if ($msg->exists()) {
-                $output->addHTML(Html::rawElement('div', array('class'=>'informations success'), $msg->parse()));
+                $output->addHTML(Html::rawElement('div', array('class'=>"informations $msgType"), $msg->parse()));
             }
         }
         

@@ -61,7 +61,9 @@ body, button, input, select, textarea {
 ::-moz-selection { background: #ee383a; color: #fff; text-shadow: none; }
 ::selection { background: #ee383a; color: #fff; text-shadow: none; }
 
-
+h1:first-child, h2:first-child, h3:first-child, h4:first-child, h5:first-child, h6:first-child {
+    margin-top: 0;
+}
 
 
 /* -----------------------------------------------------------------------------
@@ -1907,7 +1909,8 @@ div.form_header, div.table_header, div#contentSub {
 }
 
 div.form_footer, div.table_footer {
-    margin : 36px 0 0;
+    clear: both;
+    margin: 36px 0 0 0;
     background-color: transparent;
     border-bottom: none;
 }
