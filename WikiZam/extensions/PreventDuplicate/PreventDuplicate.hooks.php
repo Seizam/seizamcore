@@ -12,7 +12,7 @@
  */
 class PreventDuplicateHooks {
 	//put your code here
-	
+
 	/**
 	 * @param Title $title the article (Article object) being saved
 	 * @param User $user the user (User object) saving the article
@@ -23,7 +23,7 @@ class PreventDuplicateHooks {
 	 * with parameters?)
 	 */
 	public static function blockCreateDuplicate($title, $user, $action, &$result) {
-				
+
 		switch ($action) {
 			case 'create':
 			case 'edit':
@@ -36,22 +36,27 @@ class PreventDuplicateHooks {
 			default:
 				return true;
 		}
-				
-		wfDebugLog('preventduplicate', wfGetPrettyBacktrace() ); // return true;
-				
-		if ( $duplicate = TitleKey::exactMatchTitle($title) ) {
-			
-			wfDebugLog('preventduplicate', "{$user->getName()} wants to create {$title->getPrefixedDBkey()} but duplicate title {$duplicate->getPrefixedDBkey()} already exists, so creation forbidden");
-			
-			$result = array ('pvdp-duplicate-exists', $duplicate->getPrefixedDBkey());
+
+		if ($duplicate = TitleKey::exactMatchTitle($title)) {
+
+			wfDebugLog('preventduplicate', "{$user->getName()} cannot $action {$title->getPrefixedDBkey()} (duplicate {$duplicate->getPrefixedDBkey()} exists)");
+
+			$result = array('pvdp-duplicate-exists', $duplicate->getPrefixedDBkey());
 			return false;
-			
 		}
-		
+
 		return true;
-		
 	}
-	
+
+
+	/**
+	 * NOTE: As of MediaWiki 1.18.0, $article is NULL 
+	 */
+	public static function onBeforeInitialize(&$title, $article, &$output, &$user, $request, $mediaWiki) {
+		wfDebugLog('preventduplicate', "onBeforeInitialize()");
+		return true;
+	}
+
 	/**
 	 * TestCanonicalRedirect hook handler
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/TestCanonicalRedirect
@@ -62,49 +67,56 @@ class PreventDuplicateHooks {
 	 * @return bool
 	 * @throws HttpError
 	 */
-	public static function redirectToDuplicateTitle( $request, $title, $output ) {
+	public static function redirectToDuplicateTitle($request, $title, $output) {
 		
-		if ( ( $title->getNamespace() == NS_SPECIAL )
+		// in wiki.php, test $title->getPrefixedDBKey() != $request->getVal( 'title' ) breaks, why ? 
+		// var_export(array(	$title->getPrefixedDBKey() , $request->getVal( 'title' ) ), true)
+		// array (
+		//  0 => 'laila',
+		//  1 => 'laila', this titledoesn't exists
+		// )
+
+		wfDebugLog('preventduplicate', wfGetPrettyBacktrace());
+
+		if (( $title->getNamespace() == NS_SPECIAL )
 				|| $title->exists()
-				|| ( $duplicate = TitleKey::exactMatchTitle($title) ) ) {
-			
+				|| !( $duplicate = TitleKey::exactMatchTitle($title) )) {
+
 			// skip
 			return true;
-			
 		}
-			
+
 		wfDebugLog('preventduplicate', "{$title->getPrefixedDBkey()} asked, it doesn't exist but there is a duplicate title {$duplicate->getPrefixedDBkey()} already existing -> redirecting to it");
 
-		$targetUrl = wfExpandUrl( $duplicate->getFullURL(), PROTO_CURRENT );
+		$targetUrl = wfExpandUrl($duplicate->getFullURL(), PROTO_CURRENT);
 		// Redirect to canonical url, make it a 301 to allow caching
-		if ( $targetUrl == $request->getFullRequestURL() ) {
+		if ($targetUrl == $request->getFullRequestURL()) {
 			$message = "Redirect loop detected!\n\n" .
-				"This means the wiki got confused about what page was " .
-				"requested; this sometimes happens when moving a wiki " .
-				"to a new server or changing the server configuration.\n\n";
+					"This means the wiki got confused about what page was " .
+					"requested; this sometimes happens when moving a wiki " .
+					"to a new server or changing the server configuration.\n\n";
 
-			if ( $wgUsePathInfo ) {
+			if ($wgUsePathInfo) {
 				$message .= "The wiki is trying to interpret the page " .
-					"title from the URL path portion (PATH_INFO), which " .
-					"sometimes fails depending on the web server. Try " .
-					"setting \"\$wgUsePathInfo = false;\" in your " .
-					"LocalSettings.php, or check that \$wgArticlePath " .
-					"is correct.";
+						"title from the URL path portion (PATH_INFO), which " .
+						"sometimes fails depending on the web server. Try " .
+						"setting \"\$wgUsePathInfo = false;\" in your " .
+						"LocalSettings.php, or check that \$wgArticlePath " .
+						"is correct.";
 			} else {
 				$message .= "Your web server was detected as possibly not " .
-					"supporting URL path components (PATH_INFO) correctly; " .
-					"check your LocalSettings.php for a customized " .
-					"\$wgArticlePath setting and/or toggle \$wgUsePathInfo " .
-					"to true.";
+						"supporting URL path components (PATH_INFO) correctly; " .
+						"check your LocalSettings.php for a customized " .
+						"\$wgArticlePath setting and/or toggle \$wgUsePathInfo " .
+						"to true.";
 			}
-			wfHttpError( 500, "Internal error", $message );
+			wfHttpError(500, "Internal error", $message);
 		} else {
-			$output->setSquidMaxage( 1200 );
-			$output->redirect( $targetUrl, '301' );
+			$output->setSquidMaxage(1200);
+			$output->redirect($targetUrl, '301');
 		}
-			
+
 		return false; // Prevent the redirect from occurring
-		
-}
-	
+	}
+
 }
