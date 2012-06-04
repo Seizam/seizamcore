@@ -27,7 +27,9 @@ $wgExtensionFunctions[] = 'setupPreventDuplicate';
 
 function setupPreventDuplicate() {
 	// check requirements before install
-	if ( class_exists('TitleKey') ) {
+	// TitleKey: we use its title database
+	// AntiSpoof: ensure there is no user with the same name but different case
+	if ( class_exists('TitleKey') && class_exists('AntiSpoof') ) {
 		
 		global $wgHooks;
 		$wgHooks['getUserPermissionsErrors'][] = 'PreventDuplicateHooks::blockCreateDuplicate';
@@ -35,7 +37,7 @@ function setupPreventDuplicate() {
 		
 	} else {
 		
-		wfDebugLog('preventduplicate', 'ERROR, TitleKey extension has to be installed in order to use PreventDuplicate extension');
+		wfDebugLog('preventduplicate', 'ERROR, TitleKey and AntiSpoof extensions required in order to use PreventDuplicate extension');
 		
 	}
 }
