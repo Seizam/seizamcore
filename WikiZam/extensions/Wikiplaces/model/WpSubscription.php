@@ -1042,12 +1042,26 @@ class WpSubscription {
      * @param Message $subject
      * @param Message $body 
      */
-    private static function timeAndDateUserLocalized($user, $timeanddate) {
+    private static function TimeAndDateUserLocalized($user, $timeanddate) {
 
         $language = Language::factory($user->getOption('language'));
         $time_correction = $user->getOption('timecorrection');
         $date_format = $user->getOption('date');
         return $language->timeanddate($timeanddate, true, $date_format, $time_correction);
+    }
+    
+    /**
+     *
+     * @param User $user
+     * @param Message $subject
+     * @param Message $body 
+     */
+    private static function dateUserLocalized($user, $timeanddate) {
+
+        $language = Language::factory($user->getOption('language'));
+        $time_correction = $user->getOption('timecorrection');
+        $date_format = $user->getOption('date');
+        return $language->date($timeanddate, true, $date_format, $time_correction);
     }
 
     /**
@@ -1092,7 +1106,7 @@ class WpSubscription {
         $plan = $this->getPlan();
 
         $subject = wfMessage('wpm-activation-subj');
-        $body = wfMessage('wpm-activation-body',  'wpp-'.$plan->getName(), self::timeAndDateUserLocalized($user, $this->wps_start_date), self::timeAndDateUserLocalized($user, $this->wps_end_date));
+        $body = wfMessage('wpm-activation-body',  'wpp-'.$plan->getName(), self::dateUserLocalized($user, $this->wps_start_date), self::dateUserLocalized($user, $this->wps_end_date));
 
         return self::sendEmailToUserLocalized($user, $subject, $body);
     }
@@ -1107,7 +1121,7 @@ class WpSubscription {
         $plan = $this->getPlan();
 
         $subject = wfMessage("wpm-renewal-soon-no-subj");
-        $body = wfMessage("wpm-renewal-soon-no-body",  'wpp-'.$plan->getName(), self::timeAndDateUserLocalized($user, $this->wps_start_date), self::timeAndDateUserLocalized($user, $this->wps_end_date));
+        $body = wfMessage("wpm-renewal-soon-no-body",  'wpp-'.$plan->getName(), self::dateUserLocalized($user, $this->wps_start_date), self::dateUserLocalized($user, $this->wps_end_date));
 
         return self::sendEmailToUserLocalized($user, $subject, $body);
     }
@@ -1124,7 +1138,7 @@ class WpSubscription {
         $next_plan = $this->getRenewalPlan();
 
         $subject = wfMessage("wpm-renewal-soon-warning-subj");
-        $body = wfMessage("wpm-renewal-soon-warning-body",  'wpp-'.$plan->getName(), self::timeAndDateUserLocalized($user, $this->wps_start_date), self::timeAndDateUserLocalized($user, $this->wps_end_date),  'wpp-'.$old_next_plan->getName(),  'wpp-'.$next_plan->getName(), $reason);
+        $body = wfMessage("wpm-renewal-soon-warning-body",  'wpp-'.$plan->getName(), self::dateUserLocalized($user, $this->wps_start_date), self::dateUserLocalized($user, $this->wps_end_date),  'wpp-'.$old_next_plan->getName(),  'wpp-'.$next_plan->getName(), $reason);
 
         return self::sendEmailToUserLocalized($user, $subject, $body);
     }
@@ -1140,7 +1154,7 @@ class WpSubscription {
         $next_plan = $this->getRenewalPlan();
 
         $subject = wfMessage("wpm-renewal-soon-valid-subj");
-        $body = wfMessage("wpm-renewal-soon-valid-body",  'wpp-'.$plan->getName(), self::timeAndDateUserLocalized($user, $this->wps_start_date), self::timeAndDateUserLocalized($user, $this->wps_end_date),  'wpp-'.$next_plan->getName());
+        $body = wfMessage("wpm-renewal-soon-valid-body",  'wpp-'.$plan->getName(), self::dateUserLocalized($user, $this->wps_start_date), self::dateUserLocalized($user, $this->wps_end_date),  'wpp-'.$next_plan->getName());
 
         return self::sendEmailToUserLocalized($user, $subject, $body);
     }
@@ -1155,7 +1169,7 @@ class WpSubscription {
         $plan = $this->getPlan();
 
         $subject = wfMessage('wpm-renewal-pe-subj');
-        $body = wfMessage('wpm-renewal-pe-body',  'wpp-'.$plan->getName(), self::timeAndDateUserLocalized($user, $this->wps_start_date), self::timeAndDateUserLocalized($user, $this->wps_end_date));
+        $body = wfMessage('wpm-renewal-pe-body',  'wpp-'.$plan->getName(), self::dateUserLocalized($user, $this->wps_start_date), self::dateUserLocalized($user, $this->wps_end_date));
 
         return self::sendEmailToUserLocalized($user, $subject, $body);
     }
@@ -1170,7 +1184,7 @@ class WpSubscription {
         $plan = $this->getPlan();
 
         $subject = wfMessage('wpm-renewal-ok-subj');
-        $body = wfMessage('wpm-renewal-ok-body',  'wpp-'.$plan->getName(), self::timeAndDateUserLocalized($user, $this->wps_start_date), self::timeAndDateUserLocalized($user, $this->wps_end_date));
+        $body = wfMessage('wpm-renewal-ok-body',  'wpp-'.$plan->getName(), self::dateUserLocalized($user, $this->wps_start_date), self::dateUserLocalized($user, $this->wps_end_date));
 
         return self::sendEmailToUserLocalized($user, $subject, $body);
     }

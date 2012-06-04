@@ -45,8 +45,8 @@ $messages['en'] = array(
     'wp-subscribe-renew' => 'Renew',
     'wp-create' => 'Create!',
     /* Tips */
-    'wp-url-tip' => 'Your Wikiplace is available at [[$1|http://www.<b>seizam.com/$1</b>]].',
-    'wp-suburl-tip' => 'Your Page is available at [[$1|http://www.<b>seizam.com/$1/$2</b>]].',
+    'wp-url-tip' => 'Your Wikiplace is available at <u>[[$1|http://www.<b>seizam.com/$1</b>]]</u>.',
+    'wp-suburl-tip' => 'Your Page is available at <u>[[$1|http://www.<b>seizam.com/$1/$2</b>]]</u>.',
     'wp-link-tip' => 'Type <b><nowiki>[[$1]]</nowiki></b> anywhere to make a link like: [[$1]].',
     'wp-linkalias-tip' => 'Type <b><nowiki>[[$1|$2]]</nowiki></b> to make a link like: [[$1|$2]].',
     'wp-sublink-tip' => 'Type <b><nowiki>[[$1/$2]]</nowiki></b> anywhere to make a link like: [[$1/$2]].',
@@ -182,8 +182,8 @@ $messages['fr'] = array(
     'wp-subscribe-renew' => 'Renouveler',
     'wp-create' => 'Créer !',
     /* Tips */
-    'wp-url-tip' => 'Votre Wikiplace est disponnible depuis [[$1|http://www.<b>seizam.com/$1</b>]].',
-    'wp-suburl-tip' => 'Votre page est disponnible depuis [[$1|http://www.<b>seizam.com/$1/$2</b>]].',
+    'wp-url-tip' => 'Votre Wikiplace est disponnible depuis <u>[[$1|http://www.<b>seizam.com/$1</b>]]</u>.',
+    'wp-suburl-tip' => 'Votre page est disponnible depuis <u>[[$1|http://www.<b>seizam.com/$1/$2</b>]]</u>.',
     'wp-link-tip' => 'Saisissez <b><nowiki>[[$1]]</nowiki></b> n\'importe où pour faire un lien du type : [[$1]].',
     'wp-linkalias-tip' => 'Saisissez <b><nowiki>[[$1|$2]]</nowiki></b> n\'importe où pour faire un lien du type : [[$1|$2]].',
     'wp-sublink-tip' => 'Saisissez <b><nowiki>[[$1/$2]]</nowiki></b> n\'importe où pour faire un lien du type : [[$1/$2]].',
