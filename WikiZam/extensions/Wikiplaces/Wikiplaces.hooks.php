@@ -444,7 +444,7 @@ class WikiplacesHooks {
 	}
 
 	/**
-	 * Occurs when moving a page:
+	 * Occurs when a page  has been moved. If there is a problem, it's too late to cancel it.
 	 * <ul>
 	 * <li>old page renamed</li>
 	 * <li>new page created, with old name, containing a redirect to the new one</li>
@@ -477,29 +477,31 @@ class WikiplacesHooks {
 				$dest_wp = self::doCreateWikiplace($user->getId(), $renamed_page_id);
 				if ($dest_wp == null) {
 					wfDebugLog('wikiplaces', 'onTitleMoveComplete() ERROR cannot create wikiplace "' . $new_pdb_key . '"');
-					throw new MWException('Cannot create wikiplace.');
+					// throw new MWException('Cannot create wikiplace.');
+					return true;
 				}
 				$new_wp_page = WpPage::create($renamed_page_id, $dest_wp->getId());
 				if ($new_wp_page == null) {
 					wfDebugLog('wikiplaces', 'onTitleMoveComplete() ERROR: cannot create wikiplace homepage "' . $new_pdb_key . '"');
-					throw new MWException('Cannot create wikiplace homepage.');
+					// throw new MWException('Cannot create wikiplace homepage.');
 				}
 			} else { // from  something not in wp  to  a subpage
 				$dest_wp = WpWikiplace::getBySubpage($new_name_title->getDBkey(), $new_name_title->getNamespace());
 				if ($dest_wp == null) {
 					wfDebugLog('wikiplaces', 'onTitleMoveComplete() ERROR: cannot find container wikiplace for "' . $new_pdb_key . '"');
-					throw new MWException('Cannot find container wikiplace.');
+					// throw new MWException('Cannot find container wikiplace.');
+					return true;
 				}
 				$new_wp_page = WpPage::create($renamed_page_id, $dest_wp->getId());
 				if ($new_wp_page == null) {
 					wfDebugLog('wikiplaces', 'onTitleMoveComplete() ERROR: cannot create wikiplace homepage "' . $new_pdb_key . '"');
-					throw new MWException('Cannot create wikiplace homepage.');
+					// throw new MWException('Cannot create wikiplace homepage.');
 				}
 			}
 		} elseif (WpPage::isHomepage($old_name_title)) { // from  a homepage
 			// currently, this case is forbidden and cannot occur because items become orphan... but, now, it's too late :(
 			wfDebugLog('wikiplaces', 'onTitleMoveComplete() ERROR: cannot move homepage "' . $old_pdb_key . '"');
-			throw new MWException('Cannot move wikiplace homepage.');
+			// throw new MWException('Cannot move wikiplace homepage.');
 
 			if (!$new_in_wp) { // from  a homepage  to  something not in wp
 			} elseif (WpPage::isHomepage($new_name_title)) { // from  a homepage  to  a homepage
@@ -514,31 +516,35 @@ class WikiplacesHooks {
 					$renamed_wp_page = WpPage::newFromArticleId($renamed_page_id);
 					if ($renamed_wp_page == null) {
 						wfDebugLog('wikiplaces', 'onTitleMoveComplete() ERROR: cannot find subpage to move [' . $renamed_page_id . ']');
-						throw new MWException('Cannot find subpage to move.');
+						// throw new MWException('Cannot find subpage to move.');
+						return true;
 					}
 					$renamed_wp_page->setPageId($redirect_page_id);
 				} else {
 					if (!WpPage::delete($renamed_page_id)) {
 						wfDebugLog('wikiplaces', 'onTitleMoveComplete() ERROR: while deleting the Wikiplace page [' . $renamed_page_id . ']');
-						throw new MWException('Error while deleting the Wikiplace page.');
+						// throw new MWException('Error while deleting the Wikiplace page.');
 					}
 				}
 			} elseif (WpPage::isHomepage($new_name_title)) { // from  a subpage  to  a homepage
 				$dest_wp = self::doCreateWikiplace($user->getId(), $renamed_page_id);
 				if ($dest_wp == null) {
 					wfDebugLog('wikiplaces', 'onTitleMoveComplete() ERROR: cannot create wikiplace "' . $new_pdb_key . '"');
-					throw new MWException('Cannot create wikiplace.');
+					// throw new MWException('Cannot create wikiplace.');
+					return true;
 				}
 				$renamed_wp_page = WpPage::newFromArticleId($renamed_page_id);
 				if ($renamed_wp_page == null) {
 					wfDebugLog('wikiplaces', 'onTitleMoveComplete() ERROR: cannot find subpage to move [' . $renamed_page_id . ']');
-					throw new MWException('Cannot find subpage to move.');
+					// throw new MWException('Cannot find subpage to move.');
+					return true;
 				}
 				if ($redirect_page_id != 0) {
 					$old_wp_id = $renamed_wp_page->getWikiplaceId();
 					if (WpPage::create($redirect_page_id, $old_wp_id) == null) {
 						wfDebugLog('wikiplaces', 'onTitleMoveComplete() ERROR: cannot create redirect subpage [' . $renamed_page_id . ']');
-						throw new MWException('Cannot create redirect subpage.');
+						// throw new MWException('Cannot create redirect subpage.');
+						return true;
 					}
 				}
 				$dest_wp_id = $dest_wp->getId();
@@ -547,19 +553,22 @@ class WikiplacesHooks {
 				$dest_wp = WpWikiplace::getBySubpage($new_name_title->getDBkey(), $new_name_title->getNamespace());
 				if ($dest_wp == null) {
 					wfDebugLog('wikiplaces', 'onTitleMoveComplete() ERROR: cannot find destination wikiplace "' . $new_pdb_key . '"');
-					throw new MWException('Cannot find destination wikiplace.');
+					// throw new MWException('Cannot find destination wikiplace.');
+					return true;
 				}
 				$renamed_wp_page = WpPage::newFromArticleId($renamed_page_id);
 				if ($renamed_wp_page == null) {
 					wfDebugLog('wikiplaces', 'onTitleMoveComplete() ERROR: cannot find subpage to move [' . $renamed_page_id . ']');
-					throw new MWException('Cannot find subpage to move.');
+					// throw new MWException('Cannot find subpage to move.');
+					return true;
 				}
 				$old_wp_id;
 				if ($redirect_page_id != 0) {
 					$old_wp_id = $renamed_wp_page->getWikiplaceId();
 					if (WpPage::create($redirect_page_id, $old_wp_id) == null) {
 						wfDebugLog('wikiplaces', 'onTitleMoveComplete() ERROR: cannot create redirect subpage [' . $renamed_page_id . ']');
-						throw new MWException('Cannot create redirect subpage.');
+						// throw new MWException('Cannot create redirect subpage.');
+						return true;
 					}
 				}
 				$dest_wp_id = $dest_wp->getId();
