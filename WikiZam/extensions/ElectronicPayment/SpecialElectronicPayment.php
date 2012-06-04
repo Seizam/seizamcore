@@ -40,7 +40,7 @@ class SpecialElectronicPayment extends SpecialPage {
      * @param $request WebRequest : data posted.
      */
     public function __construct($request = null) {
-        parent::__construct('ElectronicPayment',EP_ACCESS_RIGHT);
+        parent::__construct('ElectronicPayment', EP_ACCESS_RIGHT);
     }
 
     /**
@@ -48,26 +48,34 @@ class SpecialElectronicPayment extends SpecialPage {
      */
     public function execute($par) {
         $request = $this->getRequest();
+
+        if (isset($par) & $par != '') {
+            $action = $par;
+        } else {
+            $action = $request->getText('action');
+        }
+
+        if ($action == 'EPTBack') {
+            # Validation Interface (not for humans)
+            $this->displayEPTBack($this->constructEPTBack($request));
+            return;
+        }
+
         $output = $this->getOutput();
         $user = $this->getUser();
-        
+
         // Check rights
         if (!$this->userCanExecute($user)) {
             // If anon, redirect to login
             if ($user->isAnon()) {
-                $output->redirect($this->getTitleFor('UserLogin')->getLocalURL(array('returnto'=>$this->getFullTitle())), '401');
+                $output->redirect($this->getTitleFor('UserLogin')->getLocalURL(array('returnto' => $this->getFullTitle())), '401');
                 return;
             }
             // Else display an error page.
             $this->displayRestrictionError();
             return;
         }
-        
-        if (isset($par) & $par != '') {
-            $action = $par;
-        } else {
-            $action = $request->getText('action');
-        }
+
 
         switch ($action) {
             # Coming back to Seizam (payment failed/cancelled)
@@ -77,11 +85,7 @@ class SpecialElectronicPayment extends SpecialPage {
                 break;
             # Coming back to Seizam (payment succeeded)
             case 'success' :
-                $output->redirect($this->getTitleFor('Transactions')->getLocalURL(array('msg'=>'ep-success', 'msgtype'=>'success')));
-                break;
-            # Validation Interface (not for humans)
-            case 'EPTBack' :
-                $this->displayEPTBack($this->constructEPTBack($request));
+                $output->redirect($this->getTitleFor('Transactions')->getLocalURL(array('msgkey' => 'ep-success', 'msgtype' => 'success')));
                 break;
             # Welcome & Init Order
             default :
@@ -182,7 +186,7 @@ class SpecialElectronicPayment extends SpecialPage {
                                 </p>
                                 <p class="mw-htmlform-field-HTMLTextField ">
                                     <label for="mw-input-wpemail">' . wfMessage('youremail')->text() . '</label>
-                                    <input id="mw-input-wpemail" class="disabled" disabled="" value="' .  $epmessage->order->epo['epo_mail'] . '" size="27" name="wpemail">
+                                    <input id="mw-input-wpemail" class="disabled" disabled="" value="' . $epmessage->order->epo['epo_mail'] . '" size="27" name="wpemail">
                                     <span class="sread help htmlform-tip">' . wfMessage('ep-help-mail')->text() . '</span>
                                 </p>
                             </div>
@@ -221,23 +225,23 @@ class SpecialElectronicPayment extends SpecialPage {
     private function constructDefault($errorKey = null) {
         $user = $this->getUser();
         $output = $this->getOutput();
-        
+
         $balance = 0;
         if ($user->isLoggedIn()) {
             $balance = TMRecord::getTrueBalanceFromDB($user->getId());
         }
-        
+
         # Set Minimum payment value (regarding banking fees)
         $min = max(-$balance, 5);
-        
+
         $defaultAmount = '';
-        
+
         # Building the pending transaction table and sum
-        if ($balance<0) {
+        if ($balance < 0) {
             $defaultAmount = $min;
             $table = new TransactionsTablePager();
-            $table->setSelectFields(array('tmr_desc','tmr_date_created','tmr_amount','tmr_currency'));
-            $table->setSelectConds(array('tmr_user_id' => $user->getId(), 'tmr_status' => 'PE', 'tmr_amount < 0', 'tmr_currency'=> 'EUR'));
+            $table->setSelectFields(array('tmr_desc', 'tmr_date_created', 'tmr_amount', 'tmr_currency'));
+            $table->setSelectConds(array('tmr_user_id' => $user->getId(), 'tmr_status' => 'PE', 'tmr_amount < 0', 'tmr_currency' => 'EUR'));
             $table->setFieldSortable(false);
             $tableHtml = $table->getBody();
         }
@@ -279,13 +283,13 @@ class SpecialElectronicPayment extends SpecialPage {
         $htmlForm->setTitle($this->getTitle());
         $htmlForm->setSubmitCallback(array($this, 'initAttempt'));
         if ($balance < 0) {
-            $htmlForm->addHeaderText(wfMessage('ep-default-formheader').' '.wfMessage('ep-default-formheader-pending', -$balance, 'cur-euro').$tableHtml);
+            $htmlForm->addHeaderText(wfMessage('ep-default-formheader') . ' ' . wfMessage('ep-default-formheader-pending', -$balance, 'cur-euro') . $tableHtml);
             $htmlForm->addFooterText(wfMessage('ep-default-formfooter-pending'));
         } else {
             $htmlForm->addHeaderText(wfMessage('ep-default-formheader'));
         }
-        
-        if (isset ($errorKey))
+
+        if (isset($errorKey))
             $output->addHTML($htmlForm->getErrors(wfMessage("ep-$errorKey")));
 
         $htmlForm->show();
