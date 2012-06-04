@@ -21,7 +21,7 @@ to select your next plan.',
 ',
     'wp-mail-footer' => '
 Please, remember we are always available through
-{{canonicalurl:{{#project:Contact}}}}
+{{canonicalurl:{{Project:Contact}}}}
 for any questions, critics or advice...
 
 Regards,
@@ -170,7 +170,7 @@ pour sélectionner votre prochaine offre.',
 ',
     'wp-mail-footer' => '
 Rappelez-vous, nous sommes toujours à votre disposition sur
-{{canonicalurl:{{#project:Contact}}}}
+{{canonicalurl:{{Project:Contact}}}}
 pour toute question, critique ou conseil...
 
 Cordialement,

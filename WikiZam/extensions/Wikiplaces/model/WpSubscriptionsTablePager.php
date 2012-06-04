@@ -48,7 +48,7 @@ class WpSubscriptionsTablePager extends SkinzamTablePager {
 			case 'wps_end_date':
 				return ($value === null) ? '-' : $wgLang->date($value, true);
 			case 'wpp_name':
-				return  wfMessage('wp-' . $value)->text();
+				return  wfMessage('wpp-' . $value)->text();
 			case 'wps_tmr_status':
 				return wfMessage("status-$value")->text() ;
 			case 'wpp_nb_wikiplaces':
