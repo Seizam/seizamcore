@@ -47,7 +47,7 @@ PS: You CAN reply to this email!',
      * self::timeAndDateUserLocalized($user, $this->wps_end_date) ); 
      */
     'wpm-activation-subj' => 'Your subscription is now active.',
-    'wpm-activation-body' => 'Thank you very much! Your subscription to the plan "{{int:$1}}" is active since $2. It will end $3.
+    'wpm-activation-body' => 'Thank you very much! Your subscription to the plan « {{int:$1}} » is active since $2. It will end $3.
 
 What is next?
 
@@ -70,7 +70,7 @@ to manage your subscriptions.',
      * self::timeAndDateUserLocalized($user, $this->wps_end_date ) );
      */
     'wpm-renewal-soon-no-subj' => 'Your subscription is ending soon! {{int:action-required}}',
-    'wpm-renewal-soon-no-body' => 'Your current subscription to the plan "{{int:$1}}" which started $2 will end $3.
+    'wpm-renewal-soon-no-body' => 'Your current subscription to the plan « {{int:$1}} » which started $2 will end $3.
         
 You did not select any offer to follow the current one.
         
@@ -90,13 +90,13 @@ What to do?
      * $reason
      */
     'wpm-renewal-soon-warning-subj' => 'Your subscription will be renewed soon!',
-    'wpm-renewal-soon-warning-body' => 'Your current subscription to the plan "{{int:$1}}" which started $2 will end $3.
+    'wpm-renewal-soon-warning-body' => 'Your current subscription to the plan « {{int:$1}} » which started $2 will end $3.
 
-Sadly, your renewal plan previously selected ("{{int:$4}}") is not valid for the following reason:
+Sadly, your renewal plan previously selected « {{int:$4}} » is not valid for the following reason:
 {{int:$6}}
-We therefore replaced it with the equivalent plan : "{{int:$5}}".
+We therefore replaced it with the equivalent plan : « {{int:$5}} ».
 
-WARNING: Your subscription will be automatically renewed from $3 with this plan ("{{int:$5}}")!
+WARNING: Your subscription will be automatically renewed from $3 with this plan « {{int:$5}} »!
 
 What to do?
 
@@ -110,9 +110,9 @@ What to do?
      * $next_plan->getName());
      */
     'wpm-renewal-soon-valid-subj' => '{{int:wpm-renewal-soon-warning-subj}}',
-    'wpm-renewal-soon-valid-body' => 'Your current subscription to the plan "{{int:$1}}" which started $2 will end $3.
+    'wpm-renewal-soon-valid-body' => 'Your current subscription to the plan « {{int:$1}} » which started $2 will end $3.
 
-Your renewal plan ("{{int:$3}}") will be automatically activated from $3. Although, you could still change it.
+Your renewal plan « {{int:$3}} » will be automatically activated from $3. Although, you could still change it.
 
 What to do?
 
@@ -125,7 +125,7 @@ What to do?
      * self::timeAndDateUserLocalized($user, $this->wps_end_date)
      */
     'wpm-renewal-pe-subj' => '{{int:wpm-renewal-ok-subj}} {{int:action-required}}',
-    'wpm-renewal-pe-body' => 'Thank you very much! Your subscription to the plan "{{int:$1}}" is active since $2. It will end $3.
+    'wpm-renewal-pe-body' => 'Thank you very much! Your subscription to the plan « {{int:$1}} » is active since $2. It will end $3.
 
 WARNING: Your subscription has not been paid for yet!
 
@@ -168,7 +168,14 @@ pour sélectionner votre prochaine offre.',
     'wp-mail-header' => '$1,
 
 ',
-    'wp-mail-footer' => '             Votre système de notification de {{SITENAME}}
+    'wp-mail-footer' => '
+Rappelez-vous, nous sommes toujours à votre disposition sur
+{{canonicalurl:{{#project:Contact}}}}
+pour toute question, critique ou conseil...
+
+Cordialement,
+
+             Votre système de notification {{SITENAME}}
 
 --
 Pour accéder à tous les services offerts par {{SITENAME}}, visitez
@@ -189,11 +196,11 @@ PS: Vous POUVEZ répondre à ce courriel !',
      * self::timeAndDateUserLocalized($user, $this->wps_end_date) ); 
      */
     'wpm-activation-subj' => 'Votre abonnement est maintenant actif.',
-    'wpm-activation-body' => 'Merci beaucoup ! Votre abonnement à l\'offre "{{int:$1}}" est actif depuis le $2. Il finira le $3.
+    'wpm-activation-body' => 'Merci beaucoup ! Votre abonnement à l\'offre « {{int:$1}} » est actif depuis le $2. Il finira le $3.
 
 Que faire ?
 
-Voir
+Consultez
 {{canonicalurl:{{#special:Wikiplaces}}}}
 pour créer et configurer vos pages.
 
@@ -212,7 +219,7 @@ pour gérer vos abonnements.',
      * self::timeAndDateUserLocalized($user, $this->wps_end_date ) );
      */
     'wpm-renewal-soon-no-subj' => 'Votre abonnement se termine bientôt! {{int:action-required}}',
-    'wpm-renewal-soon-no-body' => 'Votre abonnement courant à l\'offre "{{int:$1}}" qui a débutté le $2 se finira le $3.
+    'wpm-renewal-soon-no-body' => 'Votre abonnement courant à l\'offre « {{int:$1}} » qui a débutté le $2 se finira le $3.
         
 Vous n\'avez pas sélectionné d\'offre pour succéder à l\'actuelle.
         
@@ -232,13 +239,13 @@ Que faire ?
      * $reason
      */
     'wpm-renewal-soon-warning-subj' => 'Votre abonnement va bientôt être renouvellé !',
-    'wpm-renewal-soon-warning-body' => 'Votre abonnement actuel à l\'offre "{{int:$1}}" qui a débutté le $2 se finira le $3.
+    'wpm-renewal-soon-warning-body' => 'Votre abonnement actuel à l\'offre « {{int:$1}} » qui a débutté le $2 se finira le $3.
 
-Malheureusement, l\'offre de renouvellement précédement sélectionnée ("{{int:$4}}") n\'est pas valide pour la raison suivante :
+Malheureusement, l\'offre de renouvellement précédement sélectionnée « {{int:$4}} » n\'est pas valide pour la raison suivante :
 {{int:$6}}
-Nous l\'avons donc remplacée par l\'offre équivalente : "{{int:$5}}".
+Nous l\'avons donc remplacée par l\'offre équivalente : « {{int:$5}} ».
 
-ATTENTION : Votre abonnement va être automatiquement renouvellé à partir du $3 avec cette offre ("{{int:$5}}") !
+ATTENTION : Votre abonnement va être automatiquement renouvellé à partir du $3 avec cette offre « {{int:$5}} » !
 
 Que faire ?
 
@@ -252,9 +259,9 @@ Que faire ?
      * $next_plan->getName());
      */
     'wpm-renewal-soon-valid-subj' => '{{int:wpm-renewal-soon-warning-subj}}',
-    'wpm-renewal-soon-valid-body' => 'Votre abonnement courant à l\'offre "{{int:$1}}" qui a débutté le $2 se finira le $3.
+    'wpm-renewal-soon-valid-body' => 'Votre abonnement courant à l\'offre « {{int:$1}} » qui a débutté le $2 se finira le $3.
 
-Votre offre de renouvellement ("{{int:$3}}") sera automatiquement activée à partir du $3. Cependant, vous pouvez toujours en changer.
+Votre offre de renouvellement « {{int:$3}} » sera automatiquement activée à partir du $3. Cependant, vous pouvez toujours en changer.
 
 Que faire ?
 
@@ -267,7 +274,7 @@ Que faire ?
      * self::timeAndDateUserLocalized($user, $this->wps_end_date)
      */
     'wpm-renewal-pe-subj' => '{{int:wpm-renewal-ok-subj}} {{int:action-required}}',
-    'wpm-renewal-pe-body' => 'Merci beaucoup ! Votre abonnement à l\'offre "{{int:$1}}" est actif depuis le $2. Il finira le $3.
+    'wpm-renewal-pe-body' => 'Merci beaucoup ! Votre abonnement à l\'offre « {{int:$1}} » est actif depuis le $2. Il finira le $3.
 
 ATTENTION: Votre abonnement n\'a pas encore été réglé !
 
