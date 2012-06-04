@@ -39,11 +39,27 @@ class WikiplacesHooks {
 
 		$namespace = $title->getNamespace();	
 
-		// check that we are concerned
-		if (($action == 'read') || !WpPage::isInWikiplaceNamespaces($namespace)) {
+		// fast checks first
+		if ($action == 'read') {
 			return true; // skip
 		}
 
+		// some actions have to be forbidden when not in wikiplaces
+		if ( !WpPage::isInWikiplaceNamespaces($namespace) ) {
+			global $wgWpSubscribersExtraRights;
+			if (in_array($action, $wgWpSubscribersExtraRights)) {
+				
+				wfDebugLog('wikiplaces-debug', "$action forbidden: susbcriber extra right for {$title->getPrefixedDBkey()} not in wikiplace, ns $namespace"); 
+				$result = false; // disallow
+				return false; // stop hook processing
+				
+			} else {
+				
+				return true; // skip
+				
+			}
+		}
+		
 		$db_key = $title->getDBkey();
 		
 		// dispatch for public and admin items
@@ -87,7 +103,7 @@ class WikiplacesHooks {
 
 		// ok, so let's judge if the user can do the action
 		if (!$user->isLoggedIn()) {
-			wfDebugLog('wikiplaces-debug', 'getUserPermissionsErrors: ' . $do . ' DENIED, user is not logged in');
+			wfDebugLog('wikiplaces-debug', "$do DENIED, user is not logged in");
 			$result = array( 'notloggedin');
 		} else {
 			switch ($do) {
@@ -101,10 +117,9 @@ class WikiplacesHooks {
 					$result = self::wikiplaceUserCanDelete($title, $user);
 					break;
 			}
-			wfDebugLog('wikiplaces-debug', 'getUserPermissionsErrors: ' . $do . ' ' . (empty($result) ? 'ALLOWED' : 'DENIED') .
-					' title="' . $title->getPrefixedDBkey() . '"[' . $article_id . '] isKnown()=' . ($title->isKnown() ? 'known' : 'new') .
-					' user="' . $user->getName() . '"[' . $user_id . ']' .
-					' action=' . $action);
+			wfDebugLog('wikiplaces-debug', "$do($action) ".(empty($result) ? 'ALLOWED' : 'DENIED') .
+					" on {$title->getPrefixedDBkey()}($article_id) ".($title->isKnown() ? '(title known)' : '(new title)').
+					" for user {$user->getName()}($user_id)");
 		}
 
 		// store in cache
@@ -121,9 +136,7 @@ class WikiplacesHooks {
 	 */
 	public static function publicUserCan($title, &$user, $action, &$result) {
 		
-		if ( ( $action=='move' || $action=='move-target' || $action=='delete' )
-			&& !($user->isAllowed(WP_ADMIN_RIGHT)) ) {
-			wfDebugLog('wikiplaces-debug', 'publicUserCan: '.$action.' DENIED to "'.$title->getPrefixedText().'"'); 
+		if ( ( $action=='move' || $action=='move-target' || $action=='delete' ) && !($user->isAllowed(WP_ADMIN_RIGHT)) ) {
 			$result = array('forbidden-admin-action');
 			return false; // forbidden, that's it .
 		}
@@ -142,7 +155,6 @@ class WikiplacesHooks {
 			return true; // allowed, but other extensions can still change this
 		}
 
-		wfDebugLog('wikiplaces-debug', 'adminUserCan: '.$action.' DENIED for '.$user->getName().' to "'.$title->getPrefixedText().'"'); 
 		$result = array('forbidden-admin-action');;
 		return false; // forbidden, that's it .
 	}
@@ -277,7 +289,7 @@ class WikiplacesHooks {
 			}
 		}
 
-		wfDebugLog('wikiplaces-debug', 'userCanCreate: ' . (empty($result) ? 'ALLOW' : 'DENY') . ' ' . $msg . ', page title: "' . $title->getFullText() . '"');
+		wfDebugLog('wikiplaces-debug', "user can".(empty($result) ? '' : 'not')." create {$title->getFullText()}: $msg");
 
 		return $result;
 	}
@@ -364,7 +376,8 @@ class WikiplacesHooks {
 			$wikiplace = self::doCreateWikiplace($user_id, $article_id);
 			if ($wikiplace === null) {
 				wfDebugLog('wikiplaces', 'onArticleInsertComplete(): ERROR while creating wikiplace "'.$pdb_key.'" for user['.$user_id.']');
-				throw new MWException('Error while creating wikiplace.');
+				// throw new MWException('Error while creating wikiplace.');
+				return true;
 			}
 		} else {
 
@@ -372,7 +385,8 @@ class WikiplacesHooks {
 			$wikiplace = WpWikiplace::getBySubpage($db_key, $namespace);
 			if ($wikiplace === null) {
 				wfDebugLog('wikiplaces', 'onArticleInsertComplete(): ERROR cannot identify container wikiplace "'.$pdb_key.'" for user['.$user_id.']');
-				throw new MWException('Cannot identify the container wikiplace.');
+				// throw new MWException('Cannot identify the container wikiplace.');
+				return true;
 			}
 		}
 
@@ -380,7 +394,8 @@ class WikiplacesHooks {
 
 		if ($new_wp_page === null) {
 			wfDebugLog('wikiplaces', 'onArticleInsertComplete(): ERROR while associating new page to its container wikiplace "'.$pdb_key.'"  for user['.$user_id.']');
-			throw new MWException('Error while associating new page to its container wikiplace.');
+			// throw new MWException('Error while associating new page to its container wikiplace.');
+			return true;
 		}
 
 		if (in_array($namespace, array(NS_MAIN, NS_FILE, NS_WIKIPLACE))) {
@@ -714,9 +729,7 @@ class WikiplacesHooks {
 
 		$result = WpPage::isOwner($article_id, $user);
 
-		wfDebugLog('wikiplaces-debug', 'WpHooks::isOwner() = ' . ($result ? 'YES' : 'NO') .
-				' , title=[' . $article_id . ']"' . $title->getPrefixedDBkey() .
-				'", user=[' . $user_id . ']"' . $user->getName() . '"');
+		wfDebugLog('wikiplaces-debug', "{$user->getName()}($user_id) is".(($result ? '' : ' not'))." owner of {$title->getPrefixedDBkey()}($article_id)");
 
 		return false; // stop hook processing, because we have the answer
 		

@@ -76,11 +76,18 @@ define('WP_SUBSCRIPTION_TMR_TYPE','subscrip');
 // (she will not be removed, even if she has no more active subscription)
 define('WP_SUBSCRIBERS_USER_GROUP', 'artist');
 
-$wgGroupPermissions[WP_SUBSCRIBERS_USER_GROUP]['move']	= true;
-$wgGroupPermissions[WP_SUBSCRIBERS_USER_GROUP]['move-subpages'] = true;
-$wgGroupPermissions[WP_SUBSCRIBERS_USER_GROUP]['movefile'] = true;
-$wgGroupPermissions[WP_SUBSCRIBERS_USER_GROUP]['suppressredirect'] = true;
-$wgGroupPermissions[WP_SUBSCRIBERS_USER_GROUP]['delete'] = true;
+// define rights which has to b available for subscribers in their Wikiplaces, BUT to be FORBIDDEN everywhere else
+// (if manually granting a right to the subscriber group instead of this array, the right will be available everywhere)
+$wgWpSubscribersExtraRights = array(
+	'move',
+	'move-subpages',
+	'movefile',
+	'suppressredirect',
+	'delete',
+);
+foreach ( $wgWpSubscribersExtraRights as $right ) {
+	$wgGroupPermissions[WP_SUBSCRIBERS_USER_GROUP][$right] = true;
+}
 
 define('WP_ARTIST_RIGHT', 'makeart');
 $wgAvailableRights[] = WP_ARTIST_RIGHT;
@@ -109,7 +116,7 @@ $wgWikiplaceNamespaces = array(NS_MAIN, NS_TALK, NS_FILE, NS_FILE_TALK, NS_WIKIP
 define('WP_PUBLIC_FILE_PREFIX', 'Public'); // case sensitive, public files (same behaviour as MW default)
 define('WP_ADMIN_FILE_PREFIX', 'Seizam'); // case sensitive, admin file, public read, only wp-admin can edit
 
-// blacklist not case sensitive when cheking, but all items as to be defined in lower case
+// blacklist not case sensitive when checking, but all items as to be defined in lower case
 $wgWikiplaceNameBlacklist = array(
     strtolower(WP_PUBLIC_FILE_PREFIX),
     strtolower(WP_ADMIN_FILE_PREFIX),

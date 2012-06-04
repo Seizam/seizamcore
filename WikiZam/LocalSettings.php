@@ -396,6 +396,7 @@ require_once("$IP/extensions/PreventDuplicate/PreventDuplicate.php");
 // typically the former has to become a piped link. 
 // After setting this to false, run cleanupCaps.php to fix the existing links 
 // that will be broken
+// This affect all namespaces, except: Special, MediaWiki, User
 $wgCapitalLinks = false; 
 
 // Poem
