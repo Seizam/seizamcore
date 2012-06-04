@@ -454,7 +454,7 @@ class SkinzamTemplate extends BaseTemplate {
                 <div class="content">
                     <?php if (isset($this->data['sz_pretty_username'])): ?>
                         <span id="prettyUserName"><?php $this->text('sz_pretty_username') ?></span>
-                    <? endif; ?>
+                    <?php endif; ?>
                     <!-- logo -->
                     <a id="logo_mini" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"></a>
                     <!-- /logo -->

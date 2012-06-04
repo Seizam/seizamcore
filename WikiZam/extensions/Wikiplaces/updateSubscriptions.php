@@ -40,7 +40,6 @@ class UpdateSubscriptions extends Maintenance {
 				
 				// there was a problem
 				$this->output( "wps_id[{$sub->getId()}], ERROR = $result\n" );
-				$sub->sendOnPlanRenewalError($result);
 				
 			}
 			

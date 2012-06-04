@@ -316,7 +316,7 @@ class WpSubscription {
 		
 		// ensure we know the user and renewal plan
 		if ( ! $user->loadFromId() || ($next_plan == null) ) { 
-			$this->set('wps_renew_wpp_id', WPS_RENEW_WPP_ID__DO_NOT_RENEW);
+			$this->set('wps_renew_wpp_id', WPP_ID_NORENEW);
 			return 'sz-internal-error';
 		}
 		
@@ -327,7 +327,7 @@ class WpSubscription {
 		// payment
 		$tmr = self::createTMR($user_id, $user_email, $next_plan);
 		if ( ($tmr['tmr_status']!='OK') && ($tmr['tmr_status']!='PE') ) { // not ( OK or PE ) so it cannot be renewed 			
-			$this->set('wps_renew_wpp_id', WPS_RENEW_WPP_ID__DO_NOT_RENEW); 
+			$this->set('wps_renew_wpp_id', WPP_ID_NORENEW); 
 			return 'wp-payment-error';
 		}
 		
@@ -426,7 +426,9 @@ class WpSubscription {
 							$this->set('wps_renew_wpp_id', $renewal_plan_id, false);
 							$this->set('wps_tmr_status', 'OK'); // no 3rd p = update db now
 							
-							$this->sendOnFirstActivation();
+                            $user = User::newFromId($this->getBuyerUserId());
+                            self::addSubscribersGroupToUser($user);
+                            $this->sendOnFirstActivation();
 							
 						} else {
 							// if startDate not null, this is a renewal so it's already activated
@@ -440,8 +442,6 @@ class WpSubscription {
 						$this->set('wps_tmr_status', 'KO', false);
 						$this->set('wps_end_date', WpSubscription::now(), false ); 
 						$this->set('wps_active', false);  // in case of a renewal, it can be activated even if pending, so need to ensure that is false
-
-						$this->sendOnPaymentError();
 						
 						return false; // this is our transaction, no more process to be done	
 						
@@ -763,7 +763,6 @@ class WpSubscription {
 				return $sub;
 
 			case 'PE': // waiting payment
-				self::addSubscribersGroupToUser($user);
 				if ($current_sub != null) {
 					$current_sub->archive(true);
 				}
@@ -775,7 +774,7 @@ class WpSubscription {
 						null, // will start when paid
 						null, // unknown for now
 						false, // not active
-						WPS_RENEW_WPP_ID__DO_NOT_RENEW, // renewal, this value need to be updated as soon as we know the start date
+						WPP_ID_NORENEW, // renewal, this value need to be updated as soon as we know the start date
 						false, // no email sent about renewal
 						$db_master
 				);
@@ -1207,7 +1206,7 @@ class WpSubscription {
 	 * Send an email when a subscription renewal will occur soon and seems to be ok.
 	 * @return boolean true=ok, false=error 
 	 */
-	public function sendOnRenewalSoonOK( ) {
+	public function sendOnRenewalSoonValid( ) {
 
 		$user = User::newFromId($this->wps_buyer_user_id);
 		$next_plan = $this->getRenewalPlan();
@@ -1218,26 +1217,6 @@ class WpSubscription {
 				$user->getName(),
 				WpSubscription::timeAndDateUserLocalized($user, $this->wps_end_date),
 				$next_plan_name );
-		
-		return WpSubscription::sendEmailToUserLocalized($user, $subject, $body);
-		
-	}
-	
-	
-
-	/**
-	 * Send an email when a subscription has not been renewed because of an error
-	 * @param string $reason i18 message key
-	 * @return boolean true=ok, false=error 
-	 */
-	public function sendOnPlanRenewalError( $reason ) {
-
-		$user = User::newFromId($this->wps_buyer_user_id);
-
-		$subject = wfMessage( 'wpm-renewal-error-subj' );
-		$body = wfMessage( 'wpm-renewal-error-body',
-				$user->getName(),
-				$reason );
 		
 		return WpSubscription::sendEmailToUserLocalized($user, $subject, $body);
 		
@@ -1262,7 +1241,8 @@ class WpSubscription {
 		
 	}
 	
-	/** Send an email when a subscription has been renewed, and the transaction is OK
+	/** 
+     * Send an email when a subscription has been renewed, and the transaction is OK
 	 * @return boolean true=ok, false=error 
 	 */
 	public function sendOnPlanRenewalOK( ) {
@@ -1275,21 +1255,6 @@ class WpSubscription {
 				$user->getName(),
 				WpSubscription::timeAndDateUserLocalized($user, $this->wps_end_date),
 				$plan->getName() );
-		
-		return WpSubscription::sendEmailToUserLocalized($user, $subject, $body);
-		
-	}
-	
-	/**
-	 * Send an email when the subscription payment status is errored.
-	 * @return boolean true=ok, false=error 
-	 */
-	public function sendOnPaymentError( ) {
-		
-		$user = User::newFromId($this->wps_buyer_user_id);
-		
-		$subject = wfMessage( 'wpm-payfail-subj' );
-		$body = wfMessage( 'wpm-payfail-body' , $user->getName() );
 		
 		return WpSubscription::sendEmailToUserLocalized($user, $subject, $body);
 		

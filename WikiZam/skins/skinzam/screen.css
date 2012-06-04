@@ -61,8 +61,12 @@ body, button, input, select, textarea {
 ::-moz-selection { background: #ee383a; color: #fff; text-shadow: none; }
 ::selection { background: #ee383a; color: #fff; text-shadow: none; }
 
-h1:first-child, h2:first-child, h3:first-child, h4:first-child, h5:first-child, h6:first-child {
+h1:first-child, h2:first-child, h3:first-child, h4:first-child, h5:first-child, h6:first-child, p:first-child {
     margin-top: 0;
+}
+
+h1:last-child, h2:last-child, h3:last-child, h4:last-child, h5:last-child, h6:last-child, p:last-child, fieldset:last-child {
+    margin-bottom: 0;
 }
 
 
@@ -678,7 +682,6 @@ a.important:focus {
 }
 .informations, div#contentSub, .errorbox, .warningbox, .successbox, div.error, div.success {
     float: none;
-    clear: both;
     margin: 0 0 18px;
     padding: 12px;
     border: 1px solid #dad9d9;
@@ -1116,9 +1119,15 @@ html.client-nojs #bodyContent>.inside {
 }
 
 #contentOther ul,
-#contentOther h5,
-#contentOther li,
 #contentOther .inside div {
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+
+
+#contentOther li,
+#contentOther h5 {
     display: inline-block;
     margin: 0;
     padding: 0;
@@ -2205,7 +2214,7 @@ body.mw-special-MySeizam div#ms-quickaccount>ul>li {
     border-top: 1px solid #debdbf;
 }
 
-.mw-special-MySeizam div#ms-quickwikiplaces {
+.mw-special-MySeizam div.topright {
     margin: 0 0 40px 260px;
 }
 
@@ -2219,7 +2228,7 @@ body.mw-special-MySeizam div#ms-quickaccount>ul>li {
     color: #d0debd;
 }
 
-.mw-special-MySeizam div#ms-quickwatchlist {
+.mw-special-MySeizam div.bottomleft {
     clear:left;
     margin: 40px 210px 0 0;
 }

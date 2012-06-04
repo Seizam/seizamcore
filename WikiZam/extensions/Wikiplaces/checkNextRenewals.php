@@ -29,7 +29,7 @@ class CheckNextRenewals extends Maintenance {
 			$next_plan_id = $sub->getRenewalPlanId();
 			$msg = "wps_id[{$sub->getId()}], ";
 			
-			if ( $next_plan_id == WPS_RENEW_WPP_ID__DO_NOT_RENEW ) {
+			if ( $next_plan_id == WPP_ID_NORENEW ) {
 				
 				$msg .= 'do not renew';
 				$sub->sendOnNoRenewalSoon();
@@ -42,13 +42,13 @@ class CheckNextRenewals extends Maintenance {
 				// a plan is defined has renewal, check if it's a good choice...
 				
 				$renewal_date = $sub->getEnd();
-				$next_plan = WpPlan::newFromId($next_plan_id);
+				$next_plan = $sub->getRenewalPlan();
 				$user_id = $sub->getBuyerUserId();
 				
 				if ( $next_plan == null ) { // should not occur, but ensure database is not corrupted, correct if needed
 					
 					// change to the current plan suggested renewal one
-					$curr_plan = WpPlan::newFromId( $sub->getPlanId() );
+					$curr_plan = $sub->getPlan();
 					$new_next_plan;
 					if ($curr_plan == null) { // should not occur, but ... just in case
 						$new_next_plan = WpPlan::newFromId(WP_FALLBACK_PLAN_ID);
@@ -71,7 +71,7 @@ class CheckNextRenewals extends Maintenance {
 						WpPage::countDiskspaceUsageByUser($user_id))) {
 					
 					// change to the current plan suggested renewal one
-					$curr_plan = WpPlan::newFromId( $sub->getPlanId() );
+					$curr_plan = $sub->getPlan();
 					$new_next_plan = $curr_plan->getRenewalPlan($renewal_date);
 					
 					$new_next_plan_id = $new_next_plan->getId();
@@ -101,7 +101,7 @@ class CheckNextRenewals extends Maintenance {
 					
 					// it seems to be ok :) 
 					$msg .= 'renewal will be ok';
-					$sub->sendOnRenewalSoonOK();
+					$sub->sendOnRenewalSoonValid();
 					$sub->setRenewalPlanNotified();
 					
 				}

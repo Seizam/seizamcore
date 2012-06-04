@@ -7,7 +7,7 @@ class SpecialSubscriptions extends SpecialPage {
     const ACTION_CHANGE = 'change';
     const ACTION_RENEW = 'renew';
     const ACTION_LIST = 'list';
-    
+
     private $action = self::ACTION_LIST;
     private $planName = null;
     private $msgType = null;
@@ -22,23 +22,23 @@ class SpecialSubscriptions extends SpecialPage {
         $this->setHeaders(); // sets robotPolicy = "noindex,nofollow" + set page title
 
         $user = $this->getUser();
-        
+
         $output = $this->getOutput();
-        
+
         $request = $this->getRequest();
 
         // Check rights and block if necessary
         if (!$this->userCanExecute($user)) {
             // If anon, redirect to login
             if ($user->isAnon()) {
-                $output->redirect($this->getTitleFor('UserLogin')->getLocalURL(array('returnto'=>$this->getFullTitle())), '401');
+                $output->redirect($this->getTitleFor('UserLogin')->getLocalURL(array('returnto' => $this->getFullTitle())), '401');
                 return;
             }
             // Else display an error page.
             $this->displayRestrictionError();
             return;
         }
-        
+
         // Reading parameter from request
         if (isset($par) & $par != '') {
             $explosion = explode(':', $par);
@@ -50,26 +50,26 @@ class SpecialSubscriptions extends SpecialPage {
                 $this->planName = $explosion[1];
             }
         } else {
-            $this->action = $request->getText('action',null);
+            $this->action = $request->getText('action', null);
             $this->planName = $request->getText('plan', null);
         }
         $this->msgType = $request->getText('msgtype', $this->msgType);
         $this->msgKey = $request->getText('msgkey', $this->msgKey);
-        
+
         $this->display();
     }
-    
+
     private function display() {
         $output = $this->getOutput();
-        
+
         // Top Infobox Messaging
-        if (isset($this->msgType)) {
+        if ($this->msgType != null) {
             $msg = wfMessage($this->msgKey);
-            if ($msg->exists()) {
-                $output->addHTML(Html::rawElement('div', array('class'=>"informations $this->msgType"), $msg->parse()));
+            if (true) {
+                $output->addHTML(Html::rawElement('div', array('class' => "informations $this->msgType"), $msg->parse()));
             }
         }
-        
+
         switch ($this->action) {
             case self::ACTION_NEW :
                 $this->displayNew();
@@ -122,12 +122,8 @@ class SpecialSubscriptions extends SpecialPage {
         $plans = WpPlan::factoryAvailableForFirstSubscription();
         foreach ($plans as $plan) {
             $wpp_name = $plan->getName();
-			$price = $plan->getPrice();
-            $formDescriptor['Plan']['options'][wfMessage( 'wp-plan-desc-short',
-					wfMessage('wpp-' . $wpp_name)->text(),
-					$price['amount'],
-					$price['currency'],
-					$plan->getPeriod() )->text()] = $plan->getId();
+            $price = $plan->getPrice();
+            $formDescriptor['Plan']['options'][wfMessage('wp-plan-desc-short', wfMessage('wpp-' . $wpp_name)->text(), $price['amount'], $price['currency'], $plan->getPeriod())->text()] = $plan->getId();
             if ($this->planName == $wpp_name) {
                 $formDescriptor['Plan']['default'] = $plan->getId();
             }
@@ -154,7 +150,7 @@ class SpecialSubscriptions extends SpecialPage {
             $this->display();
         }
     }
-    
+
     public function validateSubscribeCheck($check, $allData) {
         if (!$check)
             return wfMessage('wp-checkfield-unchecked')->text();
@@ -168,11 +164,11 @@ class SpecialSubscriptions extends SpecialPage {
             return 'Error: Invalid Plan ID';
         }
 
-		$plan = WpPlan::newFromId($id);
-		if ( $plan == null ) {
-			return 'Error: Invalid Plan ID';
-		}
-		
+        $plan = WpPlan::newFromId($id);
+        if ($plan == null) {
+            return 'Error: Invalid Plan ID';
+        }
+
         if (!$plan->canBeTakenAsFirst($this->getUser())) {
             return 'Error: Plan Forbidden';
         }
@@ -228,8 +224,8 @@ class SpecialSubscriptions extends SpecialPage {
             $this->display();
             return;
         }
-		$renewal_plan_id = $sub->getRenewalPlanId();
-		
+        $renewal_plan_id = $sub->getRenewalPlanId();
+
         $formDescriptor = array(
             'Plan' => array(
                 'type' => 'select',
@@ -252,21 +248,17 @@ class SpecialSubscriptions extends SpecialPage {
         $nb_wikiplaces = WpWikiplace::countWikiplacesOwnedByUser($user_id);
         $nb_wikiplace_pages = WpPage::countPagesOwnedByUser($user_id);
         $diskspace = WpPage::countDiskspaceUsageByUser($user_id);
-		$when = $sub->getEnd();
+        $when = $sub->getEnd();
 
         $plans = WpPlan::factoryAvailableForRenewal($nb_wikiplaces, $nb_wikiplace_pages, $diskspace, $when);
         foreach ($plans as $plan) {
             $wpp_name = $plan->getName();
-			$price = $plan->getPrice();
-            $formDescriptor['Plan']['options'][wfMessage('wp-plan-desc-short',
-					wfMessage('wpp-' . $wpp_name)->text(),
-					$price['amount'],
-					$price['currency'],
-					$plan->getPeriod() )->text() ] = $plan->getId();
+            $price = $plan->getPrice();
+            $formDescriptor['Plan']['options'][wfMessage('wp-plan-desc-short', wfMessage('wpp-' . $wpp_name)->text(), $price['amount'], $price['currency'], $plan->getPeriod())->text()] = $plan->getId();
         }
-		
-		// add "do not renew" at the end;
-		$formDescriptor['Plan']['options'][wfMessage('wp-do-not-renew')->text()] = '0';
+
+        // add "do not renew" at the end;
+        $formDescriptor['Plan']['options'][wfMessage('wp-do-not-renew')->text()] = '0';
 
         $htmlForm = new HTMLFormS($formDescriptor);
         $htmlForm->setMessagePrefix('wp');
@@ -290,31 +282,29 @@ class SpecialSubscriptions extends SpecialPage {
             return 'Error: Invalid Renewal Plan ID';
         }
 
-        if ($id == WPS_RENEW_WPP_ID__DO_NOT_RENEW) {
+        if ($id == WPP_ID_NORENEW) {
             return true; // "no next plan"
         }
-		
-		$plan = WpPlan::newFromId($id);
-		if ( $plan == null ) {
-			return 'Error: Invalid Plan ID';
-		}
+
+        $plan = WpPlan::newFromId($id);
+        if ($plan == null) {
+            return 'Error: Invalid Plan ID';
+        }
 
         $user_id = $this->getUser()->getId();
-		$curr_sub = WpSubscription::newActiveByUserId($user_id);
-		if ($curr_sub == null) {
-			return 'Error: No Active Subscription';
-		}
-		
-		if (!$plan->isAvailableForRenewal($curr_sub->getEnd())) {
-			return 'Error: Plan Not Available For Renewal';
-		}
-		
-		if (!$plan->hasSufficientQuotas(
-				WpWikiplace::countWikiplacesOwnedByUser($user_id),
-				WpPage::countPagesOwnedByUser($user_id),
-				WpPage::countDiskspaceUsageByUser($user_id) ) ){
-			return 'Error: Plan Quotas Unsufficients';
-		}
+        $curr_sub = WpSubscription::newActiveByUserId($user_id);
+        if ($curr_sub == null) {
+            return 'Error: No Active Subscription';
+        }
+
+        if (!$plan->isAvailableForRenewal($curr_sub->getEnd())) {
+            return 'Error: Plan Not Available For Renewal';
+        }
+
+        if (!$plan->hasSufficientQuotas(
+                        WpWikiplace::countWikiplacesOwnedByUser($user_id), WpPage::countPagesOwnedByUser($user_id), WpPage::countDiskspaceUsageByUser($user_id))) {
+            return 'Error: Plan Quotas Unsufficients';
+        }
 
         return true;
     }
@@ -339,22 +329,24 @@ class SpecialSubscriptions extends SpecialPage {
     private function displayList() {
         $user = $this->getUser();
         $output = $this->getOutput();
-        
+
         /**
-         *  @Todo BAD, does 2 db query for same results! And use TP for just 1 line!
+         *  @Todo BAD, does 2 db query for same results! And uses TP for just 1 line!
          */
         $tp = new WpSubscriptionsTablePager();
         $tp->setSelectConds(array('wps_buyer_user_id' => $this->getUser()->getId()));
-        
+
         $subs = WpSubscription::newByUserId($user->getId());
-        
+
         if (!isset($subs)) {
-            $this->action = self::ACTION_NEW;
-            $this->msgType = 'error';
-            $this->msgKey = 'wp-nosub';
-            $this->display();
-            return;
-        } elseif ($subs->getTmrStatus() == 'PE'){
+            if ($this->msgKey != null) {
+                $tp->setHeader(wfMessage('wp-subscriptionslist-noactive-header')->parse());
+            } else {
+                $this->action = self::ACTION_NEW;
+                $this->display();
+                return;
+            }
+        } elseif ($subs->getTmrStatus() == 'PE') {
             $tp->setHeader(wfMessage('wp-subscriptionslist-pending-header')->parse());
         } elseif (!$subs->isActive()) {
             $tp->setHeader(wfMessage('wp-subscriptionslist-noactive-header')->parse());
@@ -362,7 +354,7 @@ class SpecialSubscriptions extends SpecialPage {
             $tp->setHeader(wfMessage('wp-subscriptionslist-header')->parse());
             $tp->setFooter(wfMessage('wp-subscriptionslist-footer')->parse());
         }
-        
+
         $output->addHTML($tp->getWholeHtml());
     }
 
@@ -394,7 +386,7 @@ class SpecialSubscriptions extends SpecialPage {
                 $i18n_key = 'wpp-' . $wpp_name;
             }
             return Linker::linkKnown(
-                            self::getTitleFor(self::TITLE_NAME, self::ACTION_NEW.':'.$wpp_name ), wfMessage($i18n_key)->text());
+                            self::getTitleFor(self::TITLE_NAME, self::ACTION_NEW . ':' . $wpp_name), wfMessage($i18n_key)->text());
         }
     }
 

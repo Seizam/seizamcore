@@ -279,7 +279,7 @@ class SpecialElectronicPayment extends SpecialPage {
         $htmlForm->setTitle($this->getTitle());
         $htmlForm->setSubmitCallback(array($this, 'initAttempt'));
         if ($balance < 0) {
-            $htmlForm->addHeaderText(wfMessage('ep-default-formheader').' '.wfMessage('ep-default-formheader-pending', $balance, 'cur-euro').$tableHtml);
+            $htmlForm->addHeaderText(wfMessage('ep-default-formheader').' '.wfMessage('ep-default-formheader-pending', -$balance, 'cur-euro').$tableHtml);
             $htmlForm->addFooterText(wfMessage('ep-default-formfooter-pending'));
         } else {
             $htmlForm->addHeaderText(wfMessage('ep-default-formheader'));

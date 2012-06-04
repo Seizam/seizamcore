@@ -23,10 +23,11 @@ $messages['en'] = array(
         'ms-upload' => '[[Special:Upload|File Upload]]',
         'ms-contributions' => '[[Special:Contributions/$1|{{int:mycontris}}]]',
         'ms-preferences' => '[[Special:Preferences|{{int:mypreferences}}]]',
-        'ms-watchlist' => 'And this is {{int:mywatchlist}}. [[Special:Watchlist|More...]]',
+        'ms-watchlist' => 'This is {{int:mywatchlist}}. [[Special:Watchlist|More...]]',
         'ms-quickaccount' => 'About my account:',
         'ms-morelinks' => 'What else?',
-        'ms-specialpages' => 'And [[Special:SpecialPages|much more...]]'
+        'ms-specialpages' => 'And [[Special:SpecialPages|much more...]]',
+        'ms-nosub' => 'Wikiplaces are only available upon subscription. [[Special:Subscriptions/new|Click here to subscribe !]]'
 );
 
 /** Message documentation (Message documentation)
@@ -50,8 +51,9 @@ $messages['fr'] = array(
         'ms-upload' => '[[Special:Upload|Importer des fichiers]]',
         'ms-contributions' => '[[Special:Contributions/$1|{{int:mycontris}}]]',
         'ms-preferences' => '[[Special:Preferences|{{int:mypreferences}}]]',
-        'ms-watchlist' => 'Et voici {{int:mywatchlist}}. [[Special:Watchlist|Plus...]]',
+        'ms-watchlist' => 'Voilà {{int:mywatchlist}}. [[Special:Watchlist|Plus...]]',
         'ms-quickaccount' => 'À propos de mon compte :',
         'ms-morelinks' => 'Quoi d\'autre ?',
-        'ms-specialpages' => 'Et [[Special:SpecialPages|plus encore...]]'
+        'ms-specialpages' => 'Et [[Special:SpecialPages|plus encore...]]',
+        'ms-nosub' => 'Les wikiplaces ne sont disponible qu\'après abonnement. [[Special:Subscriptions/new|Cliquez ici pour vous abonner !]]'
 );

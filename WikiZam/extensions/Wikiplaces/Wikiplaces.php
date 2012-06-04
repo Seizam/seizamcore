@@ -67,7 +67,7 @@ $wgSpecialPageGroups['Offers'] = 'wikiplace';
 define('WP_FALLBACK_PLAN_ID', 1);
 
 // Define the virtual plan id indicating "do not renew" in wps_renew_wpp_id field
-define('WPS_RENEW_WPP_ID__DO_NOT_RENEW', 0);
+define('WPP_ID_NORENEW', 0);
 
 // Tmr type used for subscriptions in tm
 define('WP_SUBSCRIPTION_TMR_TYPE','subscrip');
@@ -81,6 +81,12 @@ $wgGroupPermissions[WP_SUBSCRIBERS_USER_GROUP]['move-subpages'] = true;
 $wgGroupPermissions[WP_SUBSCRIBERS_USER_GROUP]['movefile'] = true;
 $wgGroupPermissions[WP_SUBSCRIBERS_USER_GROUP]['suppressredirect'] = true;
 $wgGroupPermissions[WP_SUBSCRIBERS_USER_GROUP]['delete'] = true;
+
+define('WP_ARTIST_RIGHT', 'makeart');
+$wgAvailableRights[] = WP_ARTIST_RIGHT;
+$wgGroupPermissions[WP_SUBSCRIBERS_USER_GROUP][WP_ARTIST_RIGHT] = true;
+
+
 
 // all applicable actions except 'read' will be set to this level when creating a page/file in wikiplace namespaces
 define('WP_DEFAULT_RESTRICTION_LEVEL', 'owner');
