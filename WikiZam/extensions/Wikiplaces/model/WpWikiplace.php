@@ -338,7 +338,7 @@ class WpWikiplace {
 	 * Trigger homepage creation, which will than trigger Wikiplace creation using hook.
 	 * @param string $name
 	 * @param User $user The user who creates the wikiplace
-	 * @return Title/string The created homepage Title if creation OK, a string message if an error occured
+	 * @return Title/array The created homepage Title if creation OK, an array containing error message + arg if an error occured
 	 */
 	public static function initiateCreation($name, $user) {
 		

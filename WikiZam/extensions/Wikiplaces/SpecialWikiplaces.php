@@ -148,7 +148,8 @@ class SpecialWikiplaces extends SpecialPage {
 
         $homepage = WpWikiplace::initiateCreation($formData['Name'], $this->getUser());
         if (!( $homepage instanceof Title )) {
-            return wfMessage($homepage)->parse(); // error while creating
+			$key = array_shift($homepage);
+            return wfMessage($key, $homepage)->parse(); // error while creating
         }
 
         $this->homepageString = $homepage;
@@ -258,7 +259,8 @@ class SpecialWikiplaces extends SpecialPage {
         $subpage = WpPage::createSubpage($wikiplace, $formData['SpName'], $this->getUser() );
 
         if (!( $subpage instanceof Title )) {
-            return wfMessage('sz-internal-error')->parse();
+			$key = array_shift($subpage);
+            return wfMessage($key, $subpage)->parse();
         }
 
         $this->homepageString = $wikiplace->getName();
