@@ -135,7 +135,7 @@ class WpPage {
 	 * Trigger MediaWiki article creation using template "Wikiplace homepage" as content
 	 * @param string $new_wikiplace_name The new 'wikiplace_name'
 	 * @param User $user The user creating the homepage
-	 * @return Title/string The created homepage if ok, string message if an error occured 
+	 * @return Title/array The created homepage if ok, array containing error message + arg if error occured 
 	 * <ul>
 	 * <li><b>wp-bad-title</b> MediaWiki is unable to create this homepage. Title may contain bad characters.</li>
 	 * <li><b<wp-title-already-exists</b> This homepage already exists</li>
@@ -159,11 +159,11 @@ class WpPage {
 		$title = Title::newFromText($new_wikiplace_name);
 
 		if (!($title instanceof Title)) {
-			return 'wp-bad-title';
+			return array ( 'wp-bad-title' );
 		}
 
 		if ($title->isKnown()) {
-			return 'wp-title-already-exists';
+			return array ( 'wp-title-already-exists' );
 		}
 		
 		// as seen in EditPage->getEditPermissionErrors() ( called by EditPage->edit() )
@@ -171,6 +171,7 @@ class WpPage {
 		$permErrors = array_merge( $permErrors,
 				wfArrayDiff2( $title->getUserPermissionsErrors( 'create', $user ), $permErrors ) );
 		if ( $permErrors ) { // creation impossible
+			// var_export( $permErrors ) = array ( 0 => array ( 0 => 'pvdp-duplicate-exists', 1 => 'my_wikiplace_&_me', ), ) 
 			return $permErrors[0]; // strange, but only key 0 seems to be used by MW when reading errors
 		}
 
@@ -181,7 +182,7 @@ class WpPage {
 		$status = $article->doEdit($text, '', EDIT_NEW, false, $user);
 
 		if (!$status->isgood()) {
-			return 'sz-internal-error';
+			return array ( 'sz-internal-error' );
 		}
 
 		return $title;
@@ -192,7 +193,7 @@ class WpPage {
 	 * @param WpWikiplace $wikiplace
 	 * @param string $new_page_name
 	 * @param User $user The user who creates the subpage
-	 * @return Title/string the created Title, or string message if an error occured
+	 * @return Title/array the created Title, or an array containing i18n message key + args if an error occured
 	 * <ul>
 	 * <li><b>wp-bad-title</b> MediaWiki is unable to create this page. Title may contain bad characters.</li>
 	 * <li><b<wp-title-already-exists</b> This page already exists</li>
@@ -219,11 +220,11 @@ class WpPage {
 		// $title can be Title, or null on an error.
 
 		if (!($title instanceof Title)) {
-			return 'wp-bad-title';
+			return array('wp-bad-title');
 		}
 
 		if ($title->isKnown()) {
-			return 'wp-title-already-exists';
+			return array('wp-title-already-exists');
 		}
 
 		// as seen in EditPage->getEditPermissionErrors() ( called by EditPage->edit() )
@@ -242,7 +243,7 @@ class WpPage {
 		$status = $article->doEdit($text, '', EDIT_NEW, false, $user);
 
 		if (!$status->isgood()) {
-			return 'sz-internal-error';
+			return array('sz-internal-error');
 		}
 
 		return $title;
