@@ -108,8 +108,21 @@ class SpecialWikiplaces extends SpecialPage {
                 'section' => 'create-section',
                 'help-message' => 'wp-create-name-help',
                 'validation-callback' => array($this, 'validateNewWikiplaceName'),
-            )
+            ),
+			 'Template' => array(
+                'type' => 'select',
+                'label-message' => 'wp-template-field',
+                'section' => 'create-section',
+                'help-message' => 'wp-create-template-help',
+                'options' => array(),
+            ),
         );
+		
+		$templates = self::getWikiplaceTemplates();
+		foreach ( $templates as $template ) {
+			$formDescriptor['Template']['options'][$template->getText()] = $template->getDBkey();
+		}
+		
         $htmlForm = new HTMLFormS($formDescriptor);
         $htmlForm->addHeaderText(wfMessage('wp-create-header')->parse());
         $htmlForm->setMessagePrefix('wp');
@@ -146,7 +159,7 @@ class SpecialWikiplaces extends SpecialPage {
             throw new MWException('Cannot create Wikiplace, no data.');
         }
 
-        $homepage = WpWikiplace::initiateCreation($formData['Name'], $this->getUser());
+        $homepage = WpWikiplace::initiateCreation($formData['Name'], $this->getUser(), $formData['Template']);
         if (!( $homepage instanceof Title )) {
 			$key = array_shift($homepage);
             return wfMessage($key, $homepage)->parse(); // error while creating
@@ -316,62 +329,37 @@ class SpecialWikiplaces extends SpecialPage {
 	
 	/**
 	 *
-	 * @return type 
+	 * @return array Array of titles 
 	 * @todo to complete
 	 */
 	public static function getWikiplaceTemplates() {
 		// code found from SpecialDisambiguations.php
 		$dbr = wfGetDB( DB_SLAVE );
 		// Get the template list page for the current user language
-		$dMsgText = wfMessage( 'wikiplacestemplates' );
-		$linkBatch = new LinkBatch;
-
-		# If the text can be treated as a title, use it verbatim.
-		# Otherwise, pull the titles from the links table
-		$dp = Title::newFromText($dMsgText);
-		if( $dp ) {
-			if( $dp->getNamespace() != NS_TEMPLATE ) {
-				# @todo FIXME: We assume the wikiplacestemplates message is a template but
-				# the page can potentially be from another namespace :/
-			}
-			$linkBatch->addObj( $dp );
-		} else {
-				# Get all the templates linked from the Mediawiki:Wikiplacestemplates
-				$disPageObj = Title::makeTitleSafe( NS_MEDIAWIKI, 'wikiplacestemplates' );
-				$res = $dbr->select(
-					array('pagelinks', 'page'),
-					'pl_title',
-					array('page_id = pl_from',
-						'pl_namespace' => NS_TEMPLATE,
-						'page_namespace' => $disPageObj->getNamespace(),
-						'page_title' => $disPageObj->getDBkey()),
-					__METHOD__ );
-
-				foreach ( $res as $row ) {
-					$linkBatch->addObj( Title::makeTitle( NS_TEMPLATE, $row->pl_title ));
-				}
+		// $dMsgText = wfMessage( 'wikiplacestemplates' );
+		$dMsgText ='wikiplacestemplates';
+		
+		# Get all the templates linked from the Template:WikiplacesTemplates
+		$disPageObj = Title::makeTitleSafe( NS_TEMPLATE, $dMsgText );
+		if ( ! $disPageObj instanceof Title ) {
+			return array(); // no templates list
 		}
-		$set = $linkBatch->constructSet( 'tl', $dbr );
-		if( $set === false ) {
-			# We must always return a valid SQL query, but this way
-			# the DB will always quickly return an empty result
-			$set = 'FALSE';
-			wfDebug("Mediawiki:disambiguationspage message does not link to any templates!\n");
-		}
+		
+		$res = $dbr->select(
+			array('pagelinks'),
+			'pl_title',
+			array('pl_from' => $disPageObj->getArticleID(),
+				'pl_namespace' => NS_TEMPLATE,
+				),
+			__METHOD__ );
 
-		// @todo FIXME: What are pagelinks and p2 doing here?
-		return array (
-			'tables' => array( 'templatelinks', 'p1' => 'page', 'pagelinks', 'p2' => 'page' ),
-			'fields' => array( 'p1.page_namespace AS namespace',
-					'p1.page_title AS title',
-					'pl_from AS value' ),
-			'conds' => array( $set,
-					'p1.page_id = tl_from',
-					'pl_namespace = p1.page_namespace',
-					'pl_title = p1.page_title',
-					'p2.page_id = pl_from',
-					'p2.page_namespace' => MWNamespace::getContentNamespaces() )
-		);
+		$back = array();
+		
+		foreach ( $res as $row ) {
+			$back[] = Title::makeTitle( NS_TEMPLATE, $row->pl_title );
+		}
+		
+		return $back;
 	}
 
 }
