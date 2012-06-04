@@ -20,6 +20,7 @@ to select your next plan.',
 
 ',
     'wp-mail-footer' => '
+
 Please, remember we are always available through
 {{canonicalurl:{{Project:Contact}}}}
 for any questions, critics or advice...
@@ -169,8 +170,9 @@ pour sélectionner votre prochaine offre.',
 
 ',
     'wp-mail-footer' => '
+
 Rappelez-vous, nous sommes toujours à votre disposition sur
-{{canonicalurl:{{Project:Contact}}}}
+{{canonicalurl:{{MediaWiki:Contactpage}}}}
 pour toute question, critique ou conseil...
 
 Cordialement,

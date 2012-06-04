@@ -337,10 +337,10 @@ class SpecialWikiplaces extends SpecialPage {
 		$dbr = wfGetDB( DB_SLAVE );
 		// Get the template list page for the current user language
 		// $dMsgText = wfMessage( 'wikiplacestemplates' );
-		$dMsgText ='wikiplacestemplates';
+		$dMsgText ='Templates for Homepage';
 		
 		# Get all the templates linked from the Template:WikiplacesTemplates
-		$disPageObj = Title::makeTitleSafe( NS_TEMPLATE, $dMsgText );
+		$disPageObj = Title::makeTitleSafe( NS_MEDIAWIKI, $dMsgText );
 		if ( ! $disPageObj instanceof Title ) {
 			return array(); // no templates list
 		}
