@@ -1136,6 +1136,7 @@ class WpSubscription {
     public function sendOnRenewalSoonValid() {
 
         $user = User::newFromId($this->wps_buyer_user_id);
+        $plan = $this->getPlan();
         $next_plan = $this->getRenewalPlan();
 
         $subject = wfMessage("wpm-renewal-soon-valid-subj");
