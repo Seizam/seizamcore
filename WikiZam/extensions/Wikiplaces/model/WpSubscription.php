@@ -328,7 +328,7 @@ class WpSubscription {
 		$tmr = self::createTMR($user_id, $user_email, $next_plan);
 		if ( ($tmr['tmr_status']!='OK') && ($tmr['tmr_status']!='PE') ) { // not ( OK or PE ) so it cannot be renewed 			
 			$this->set('wps_renew_wpp_id', WPP_ID_NORENEW); 
-			return 'wp-payment-error';
+			return 'sz-internal-error';
 		}
 		
 		// everything is ok, let's renew!
@@ -1120,9 +1120,9 @@ class WpSubscription {
 		$language = $user->getOption( 'language' );
 		
 		$subject = $subject->inLanguage( $language )->text();
-		$body = $body->inLanguage( $language )->parse();
-		$body = wfMessage('wp-mail-header', $user->getName())->inLanguage( $language )->parse().$body;
-		$body .= wfMessage('wp-mail-footer')->inLanguage( $language )->parse();
+		$body = $body->inLanguage( $language )->text();
+		$body = wfMessage('wp-mail-header', $user->getName())->inLanguage( $language )->text().$body;
+		$body .= wfMessage('wp-mail-footer')->inLanguage( $language )->text();
 		
 		$ok = false;
 		
@@ -1170,7 +1170,6 @@ class WpSubscription {
 	public function sendOnNoRenewalSoon( ) {
 
 		$user = User::newFromId($this->wps_buyer_user_id);
-        
         $plan = $this->getPlan();
 		
 		$subject = wfMessage( "wpm-renewal-soon-no-subj" );
@@ -1189,17 +1188,19 @@ class WpSubscription {
 	 * @param string $reason i18 message key, should be 'wp-insufficient-quota' or 'wp-plan-not-available-renewal'
 	 * @return boolean true=ok, false=error 
 	 */
-	public function sendOnRenewalSoonWarning( $reason ) {
+	public function sendOnRenewalSoonWarning( $reason , $old_next_plan) {
 		
 		$user = User::newFromId($this->wps_buyer_user_id);
+        $plan = $this->getPlan();
 		$next_plan = $this->getRenewalPlan();
-		$next_plan_name = $next_plan != null ? $next_plan->getName() : '?'; // fallback, but should never occur
 		
 		$subject = wfMessage( "wpm-renewal-soon-warning-subj" );
-		$body = wfMessage( "wpm-renewal-soon-warning-body", 
-				$user->getName(),
+		$body = wfMessage( "wpm-renewal-soon-warning-body",
+                $plan->getName(),
+				self::timeAndDateUserLocalized($user, $this->wps_start_date ),
 				self::timeAndDateUserLocalized($user, $this->wps_end_date),
-				$next_plan_name ,
+                $old_next_plan->getName(),
+				$next_plan->getName(),
 				$reason );
 		
 		return self::sendEmailToUserLocalized($user, $subject, $body);
@@ -1215,13 +1216,13 @@ class WpSubscription {
 
 		$user = User::newFromId($this->wps_buyer_user_id);
 		$next_plan = $this->getRenewalPlan();
-		$next_plan_name = $next_plan != null ? $next_plan->getName() : '?'; // fallback, but should never occur
 		
-		$subject = wfMessage( "wpm-renewal-soon-ok-subj" );
-		$body = wfMessage( "wpm-renewal-soon-ok-body" ,
-				$user->getName(),
+		$subject = wfMessage( "wpm-renewal-soon-valid-subj" );
+		$body = wfMessage( "wpm-renewal-soon-valid-body" ,
+				$plan->getName(),
+				self::timeAndDateUserLocalized($user, $this->wps_start_date ),
 				self::timeAndDateUserLocalized($user, $this->wps_end_date),
-				$next_plan_name );
+				$next_plan->getName());
 		
 		return self::sendEmailToUserLocalized($user, $subject, $body);
 		
@@ -1238,9 +1239,9 @@ class WpSubscription {
 		
 		$subject = wfMessage( 'wpm-renewal-pe-subj' );
 		$body = wfMessage( 'wpm-renewal-pe-body',
-				$user->getName(),
-				self::timeAndDateUserLocalized($user, $this->wps_end_date),
-				$plan->getName() );
+                $plan->getName(),
+				self::timeAndDateUserLocalized($user, $this->wps_start_date ),
+				self::timeAndDateUserLocalized($user, $this->wps_end_date));
 		
 		return self::sendEmailToUserLocalized($user, $subject, $body);
 		
@@ -1257,9 +1258,9 @@ class WpSubscription {
 		
 		$subject = wfMessage( 'wpm-renewal-ok-subj' );
 		$body = wfMessage( 'wpm-renewal-ok-body',
-				$user->getName(),
-				self::timeAndDateUserLocalized($user, $this->wps_end_date),
-				$plan->getName() );
+				$plan->getName(),
+				self::timeAndDateUserLocalized($user, $this->wps_start_date ),
+				self::timeAndDateUserLocalized($user, $this->wps_end_date) );
 		
 		return self::sendEmailToUserLocalized($user, $subject, $body);
 		
