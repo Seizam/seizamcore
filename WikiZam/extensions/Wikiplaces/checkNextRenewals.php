@@ -63,7 +63,7 @@ class CheckNextRenewals extends Maintenance {
 							
 					$msg .= "doesn't exist, changed to = $new_next_plan_id";
 					
-					$sub->sendOnRenewalSoonWarning('wp-plan-not-available-renewal');
+					$sub->sendOnRenewalSoonWarning('wp-plan-not-available-renewal', $new_next_plan);
 					
 				} elseif ( ! $next_plan->hasSufficientQuotas( // ensure the next plan has sufficent quotas
 						WpWikiplace::countWikiplacesOwnedByUser($user_id),
@@ -81,7 +81,7 @@ class CheckNextRenewals extends Maintenance {
 							
 					$msg .= "unsufficient quotas, changed to = $new_next_plan_id";
 					
-					$sub->sendOnRenewalSoonWarning('wp-insufficient-quota');
+					$sub->sendOnRenewalSoonWarning('wp-insufficient-quota', $next_plan);
 					
 				} elseif ( ! $next_plan->isAvailableForRenewal($renewal_date) ) { // ensure the next plan will still be available
 					
@@ -95,7 +95,7 @@ class CheckNextRenewals extends Maintenance {
 							
 					$msg .= "will not be available, changed to = $new_next_plan_id";
 					
-					$sub->sendOnRenewalSoonWarning('wp-plan-not-available-renewal');
+					$sub->sendOnRenewalSoonWarning('wp-plan-not-available-renewal', $next_plan);
 					
 				} else {
 					
