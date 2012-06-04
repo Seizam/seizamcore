@@ -31,8 +31,7 @@ function setupPreventDuplicate() {
 		
 		global $wgHooks;
 		$wgHooks['getUserPermissionsErrors'][] = 'PreventDuplicateHooks::blockCreateDuplicate';
-		$wgHooks['TestCanonicalRedirect'][] = 'PreventDuplicateHooks::redirectToDuplicateTitle';
-		$wgHooks['BeforeInitialize'][] = 'PreventDuplicateHooks::onBeforeInitialize';
+		$wgHooks['BeforeInitialize'][] = 'PreventDuplicateHooks::redirectDuplicate';
 		
 	} else {
 		
