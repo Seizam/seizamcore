@@ -45,14 +45,14 @@ $messages['en'] = array(
     'wp-subscribe-renew' => 'Renew',
     'wp-create' => 'Create!',
     /* Tips */
-    'wp-url-tip' => 'Your Wikiplace is available at <u>[[$1|http://www.<b>seizam.com/$1</b>]]</u>.',
-    'wp-suburl-tip' => 'Your Page is available at <u>[[$1|http://www.<b>seizam.com/$1/$2</b>]]</u>.',
+    'wp-url-tip' => 'Your Wikiplace is available at [[$1|<u>http://www.<b>seizam.com/$1</b></u>]].',
+    'wp-suburl-tip' => 'Your Page is available at [[$1|<u>http://www.<b>seizam.com/$1/$2</b></u>]].',
     'wp-link-tip' => 'Type <b><nowiki>[[$1]]</nowiki></b> anywhere to make a link like: [[$1]].',
     'wp-linkalias-tip' => 'Type <b><nowiki>[[$1|$2]]</nowiki></b> to make a link like: [[$1|$2]].',
     'wp-sublink-tip' => 'Type <b><nowiki>[[$1/$2]]</nowiki></b> anywhere to make a link like: [[$1/$2]].',
     'wp-sublinkalias-tip' => 'Type <b><nowiki>[[$1/$2|$2]]</nowiki></b> to make a link like: [[$1/$2|$2]].',
     'wp-action-tip' => 'Do not forget to checkout the <b>actions menu</b> (top right of every page) to find settings  like <b>Protect</b> or <b>Watch</b>.',
-    'wp-subpage-tip' => 'To create a subpage, click [[Special:Wikiplaces/CreatePage:$1|here]] or visit [[$1/SubpageName|www.seizam.com/<b>$1/SubpageName</b>]].',
+    'wp-subpage-tip' => 'To create a subpage, click [[Special:Wikiplaces/CreatePage:$1|here]] or visit [[$1/SubpageName|<u>www.seizam.com/<b>$1/SubpageName</b></u>]].',
     /* TablePage: Wikiplace */
     'wp-list-header' => 'Here are your Wikiplaces.',
     'wp-list-footer' => '==={{int:statistics}}===
@@ -185,14 +185,14 @@ $messages['fr'] = array(
     'wp-subscribe-renew' => 'Renouveler',
     'wp-create' => 'Créer !',
     /* Tips */
-    'wp-url-tip' => 'Votre Wikiplace est disponnible depuis <u>[[$1|http://www.<b>seizam.com/$1</b>]]</u>.',
-    'wp-suburl-tip' => 'Votre page est disponnible depuis <u>[[$1|http://www.<b>seizam.com/$1/$2</b>]]</u>.',
+    'wp-url-tip' => 'Votre Wikiplace est disponnible depuis [[$1|<u>http://www.<b>seizam.com/$1</b></u>]].',
+    'wp-suburl-tip' => 'Votre page est disponnible depuis [[$1|<u>http://www.<b>seizam.com/$1/$2</b></u>]].',
     'wp-link-tip' => 'Saisissez <b><nowiki>[[$1]]</nowiki></b> n\'importe où pour faire un lien du type : [[$1]].',
     'wp-linkalias-tip' => 'Saisissez <b><nowiki>[[$1|$2]]</nowiki></b> n\'importe où pour faire un lien du type : [[$1|$2]].',
     'wp-sublink-tip' => 'Saisissez <b><nowiki>[[$1/$2]]</nowiki></b> n\'importe où pour faire un lien du type : [[$1/$2]].',
     'wp-sublinkalias-tip' => 'Saisissez <b><nowiki>[[$1/$2|$2]]</nowiki></b> n\'importe où pour faire un lien du type : [[$1/$2|$2]].',
     'wp-action-tip' => 'N\'oubliez pas de consulter le <b>menu actions</b> (en haut à droite de chaque page) où se trouvent des réglages comme <b>Protéger</b> ou <b>Suivre</b>.',
-    'wp-subpage-tip' => 'Pour créer une sous-page, cliquez [[Special:Wikiplaces/CreatePage:$1|ici]] ou visitez [[$1/NomSousPage|www.seizam.com/<b>$1/NomSousPage</b>]].',
+    'wp-subpage-tip' => 'Pour créer une sous-page, cliquez [[Special:Wikiplaces/CreatePage:$1|ici]] ou visitez [[$1/NomSousPage|<u>www.seizam.com/<b>$1/NomSousPage</b></u>]].',
     /* TablePage: Wikiplace */
     'wp-list-header' => 'Voici vos Wikiplaces.',
     'wp-list-footer' => '==={{int:statistics}}===

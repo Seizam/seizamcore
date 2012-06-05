@@ -165,8 +165,8 @@ $messages['fr'] = array(
 {{canonicalurl:{{#special:Subscriptions/renew}}}}
 pour sélectionner votre prochaine offre.',
     'action-required' => '(action requise)',
-    'sub-started-end' => 'Votre abonnement à l\'offre « {{int:$1}} » est actif depuis le $2. Il se finira le $3.',
-    'sub-active-end' => 'Votre abonnement à l\'offre « {{int:$1}} » qui a débutté le $2 se finira le $3.',
+    'sub-active-end' => 'Votre abonnement à l\'offre « {{int:$1}} » est actif depuis le $2. Il se finira le $3.',
+    'sub-started-end' => 'Votre abonnement à l\'offre « {{int:$1}} » qui a débutté le $2 se finira le $3.',
     /*
      * Header & Footer 
      */

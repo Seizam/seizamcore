@@ -49,7 +49,7 @@ class TransactionsTablePager extends SkinzamTablePager {
                     $cur = ' '.  wfMessage('cur-euro')->text();
                 else $cur = ' '.$this->mCurrentRow->tmr_currency;
                 $cur = Xml::element('span', array('class'=>'currency'), $cur);
-                return ($value > 0 ? '+' . $wgLang->formatNum($value) : formatNum($value)).$cur ;
+                return ($value > 0 ? '+' . $wgLang->formatNum($value) : $wgLang->formatNum($value)).$cur ;
             default:
                 return htmlspecialchars($value);
         }
