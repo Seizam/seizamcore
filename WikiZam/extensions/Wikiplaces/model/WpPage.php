@@ -135,7 +135,7 @@ class WpPage {
 	 * Trigger MediaWiki article creation using template "Wikiplace homepage" as content
 	 * @param string $new_wikiplace_name The new 'wikiplace_name'
 	 * @param User $user The user creating the homepage
-	 * @param string $template Template name
+	 * @param string $content The page content
 	 * @return Title/array The created homepage if ok, array containing error message + arg if error occured 
 	 * <ul>
 	 * <li><b>wp-bad-title</b> MediaWiki is unable to create this homepage. Title may contain bad characters.</li>
@@ -151,7 +151,7 @@ class WpPage {
 	 * </li>
 	 * </ul>
 	 */
-	public static function createHomepage($new_wikiplace_name, $user, $template) {
+	public static function createHomepage($new_wikiplace_name, $user, $content) {
 
 		if (($new_wikiplace_name === null) || (!is_string($new_wikiplace_name))) {
 			throw new MWException('Cannot create homepage, invalid name.');
@@ -176,11 +176,9 @@ class WpPage {
 			return $permErrors[0]; // strange, but only key 0 seems to be used by MW when reading errors
 		}
 
-		$text = '{{subst:'.$template.'}}';
-
 		// now store the new page in mediawiki, this will trigger a hook that will really create the WpPage
 		$article = new Article($title);
-		$status = $article->doEdit($text, '', EDIT_NEW, false, $user);
+		$status = $article->doEdit($content, '', EDIT_NEW, false, $user);
 
 		if (!$status->isgood()) {
 			return array ( 'sz-internal-error' );

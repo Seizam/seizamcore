@@ -110,19 +110,24 @@ class SpecialWikiplaces extends SpecialPage {
                 'validation-callback' => array($this, 'validateNewWikiplaceName'),
             ),
 			 'Template' => array(
-                'type' => 'select',
                 'label-message' => 'wp-template-field',
                 'section' => 'create-section',
                 'help-message' => 'wp-create-template-help',
-                'options' => array(),
+                'class' => 'WpHomepageTemplate',
+            ),
+			 'License' => array(
+                'label-message' => 'wp-license-field',
+                'section' => 'create-section',
+                'help-message' => 'wp-create-license-help',
+				'class' => 'Licenses',
             ),
         );
-		
+		/*
 		$templates = self::getWikiplaceTemplates();
 		foreach ( $templates as $template ) {
-			$formDescriptor['Template']['options'][$template->getText()] = $template->getDBkey();
+			$formDescriptor['Template']['options'][$template->getText()] = $template->getPrefixedDBkey();
 		}
-		
+		*/
         $htmlForm = new HTMLFormS($formDescriptor);
         $htmlForm->addHeaderText(wfMessage('wp-create-header')->parse());
         $htmlForm->setMessagePrefix('wp');
@@ -159,7 +164,15 @@ class SpecialWikiplaces extends SpecialPage {
             throw new MWException('Cannot create Wikiplace, no data.');
         }
 
-        $homepage = WpWikiplace::initiateCreation($formData['Name'], $this->getUser(), $formData['Template']);
+		$template = $formData['Template'];
+		$license = $formData['License'];
+		
+		$content = '{{subst:'.$template.'}}';
+		if ($license != '') {
+			$content .= "\n\n".'== {{int:license-header}} =='."\n".'{{'.$license.'}}';
+		}
+		
+        $homepage = WpWikiplace::initiateCreation($formData['Name'], $this->getUser(), $content);
         if (!( $homepage instanceof Title )) {
 			$key = array_shift($homepage);
             return wfMessage($key, $homepage)->parse(); // error while creating
@@ -199,7 +212,25 @@ class SpecialWikiplaces extends SpecialPage {
                 'help-message' => 'wp-createpage-name-help',
                 'validation-callback' => array($this, 'validateNewSubpageName'),
             ),
+			'Template' => array(
+                'type' => 'select',
+                'label-message' => 'wp-template-field',
+                'section' => 'createpage-section',
+                'help-message' => 'wp-createpage-template-help',
+                'options' => array(),
+            ),
+			 'License' => array(
+                'label-message' => 'wp-license-field',
+                'section' => 'createpage-section',
+                'help-message' => 'wp-createpage-license-help',
+				'class' => 'Licenses',
+            ),
         );
+		
+		$templates = self::getSubpageTemplates();
+		foreach ( $templates as $template ) {
+			$formDescriptor['Template']['options'][$template->getText()] = $template->getPrefixedDBkey();
+		}
 
         if ($name != null) {
             $name = Title::newFromDBkey($name)->getText();
@@ -327,39 +358,47 @@ class SpecialWikiplaces extends SpecialPage {
                         self::getTitleFor(self::TITLE_NAME,self::ACTION_CREATE_WIKIPLACE), wfMessage($i18n_key)->text());
     }
 	
+	/*
+	public static function getWikiplaceTemplates() {
+		return self::getTitleLinkedFromTitle( wfMessage( 'wp-templates-for-homepage' )->plain() );
+	}
+	
+	public static function getSubpageTemplates() {
+		return self::getTitleLinkedFromTitle( wfMessage( 'wp-templates-for-subpage') ->plain() );
+	}
+	 */
+	
 	/**
 	 *
 	 * @return array Array of titles 
-	 * @todo to complete
-	 */
-	public static function getWikiplaceTemplates() {
-		// code found from SpecialDisambiguations.php
-		$dbr = wfGetDB( DB_SLAVE );
-		// Get the template list page for the current user language
-		// $dMsgText = wfMessage( 'wikiplacestemplates' );
-		$dMsgText ='Templates for Homepage';
+	 *//*
+	private static function getTitleLinkedFromTitle( $title ) {
 		
-		# Get all the templates linked from the Template:WikiplacesTemplates
-		$disPageObj = Title::makeTitleSafe( NS_MEDIAWIKI, $dMsgText );
-		if ( ! $disPageObj instanceof Title ) {
+		// code found from SpecialDisambiguations.php
+		
+		$dbr = wfGetDB( DB_SLAVE );
+		
+		// Get the template list page for the current user language
+		$templates_list = Title::newFromText( $title );
+		
+		// Don't give fatal errors if the message is broken
+		if ( ! $templates_list instanceof Title ) {
 			return array(); // no templates list
 		}
 		
 		$res = $dbr->select(
 			array('pagelinks'),
-			'pl_title',
-			array('pl_from' => $disPageObj->getArticleID(),
-				'pl_namespace' => NS_TEMPLATE,
-				),
+			array('pl_title', 'pl_namespace'), 
+			array('pl_from' => $templates_list->getArticleID()),
 			__METHOD__ );
 
 		$back = array();
 		
 		foreach ( $res as $row ) {
-			$back[] = Title::makeTitle( NS_TEMPLATE, $row->pl_title );
+			$back[] = Title::makeTitle( $row->pl_namespace, $row->pl_title );
 		}
 		
 		return $back;
-	}
+	}*/
 
 }

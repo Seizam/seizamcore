@@ -1,51 +1,34 @@
 <?php
 /**
- * A License class for use on Special:Upload
- *
- * @ingroup SpecialPage
- *
- * @author Ævar Arnfjörð Bjarmason <avarab@gmail.com>
- * @copyright Copyright © 2005, Ævar Arnfjörð Bjarmason
- * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
+ * Select field containing a list of templates.
+ * Used by Wikiplaces helpers
  */
 
-class Licenses extends HTMLFormField {
-	/**
-	 * @var string
-	 */
-	protected $msg;
+abstract class HtmlTemplateField extends HTMLFormField {
 
 	/**
 	 * @var array
 	 */
-	protected $licenses = array();
+	protected $templates = array();
 
 	/**
 	 * @var string
 	 */
 	protected $html;
-	/**#@-*/
 
 	/**
 	 * Constructor
 	 *
-	 * @param $params array
+	 * @param $params array Need a 'templates' key giving the templates list to parse.
 	 */
 	public function __construct( $params ) {
 		parent::__construct( $params );
-
-		$this->msg = empty( $params['licenses'] ) ? wfMsg( 'licenses' ) : $params['licenses'];
 		$this->selected = null;
-
-		$this->makeLicenses();
 	}
 
-	/**
-	 * @private
-	 */
-	protected function makeLicenses() {
+	protected function makeTemplates($msg) {
 		$levels = array();
-		$lines = explode( "\n", $this->msg );
+		$lines = explode( "\n", $msg );
 
 		foreach ( $lines as $line ) {
 			if ( strpos( $line, '*' ) !== 0 ) {
@@ -54,8 +37,8 @@ class Licenses extends HTMLFormField {
 				list( $level, $line ) = $this->trimStars( $line );
 
 				if ( strpos( $line, '|' ) !== false ) {
-					$obj = new License( $line );
-					$this->stackItem( $this->licenses, $levels, $obj );
+					$obj = new HtmlTemplateItem( $line );
+					$this->stackItem( $this->templates, $levels, $obj );
 				} else {
 					if ( $level < count( $levels ) ) {
 						$levels = array_slice( $levels, 0, $level );
@@ -139,17 +122,6 @@ class Licenses extends HTMLFormField {
 		return $msg->exists() ? $msg->text() : $str;
 	}
 
-	/**#@-*/
-
-	/**
-	 *  Accessor for $this->licenses
-	 *
-	 * @return array
-	 */
-	public function getLicenses() {
-		return $this->licenses;
-	}
-
 	/**
 	 * Accessor for $this->html
 	 *
@@ -160,9 +132,9 @@ class Licenses extends HTMLFormField {
 	public function getInputHTML( $value ) {
 		$this->selected = $value;
 
-		$this->html = $this->outputOption( wfMsg( 'nolicense' ), '',
+		$this->html = $this->outputOption( wfMsg( 'notemplate' ), '',
 			(bool)$this->selected ? null : array( 'selected' => 'selected' ) );
-		$this->makeHtml( $this->getLicenses() );
+		$this->makeHtml( $this->templates );
 
 		$attribs = array(
 			'name' => $this->mName,
@@ -176,10 +148,7 @@ class Licenses extends HTMLFormField {
 	}
 }
 
-/**
- * A License class for use on Special:Upload (represents a single type of license).
- */
-class License {
+class HtmlTemplateItem {
 	/**
 	 * @var string
 	 */
@@ -193,12 +162,30 @@ class License {
 	/**
 	 * Constructor
 	 *
-	 * @param $str String: license name??
+	 * @param $str String: a line from the template list to parse
 	 */
-	function __construct( $str ) {
-		list( $text, $template ) = explode( '|', strrev( $str ), 2 );
+	function __construct( $line ) {
+		list( $text, $template ) = explode( '|', strrev( $line ), 2 );
 
 		$this->template = strrev( $template );
 		$this->text = strrev( $text );
 	}
+} 
+
+class WpHomepageTemplate extends HtmlTemplateField {
+	
+	public function __construct( $params ) {
+		parent::__construct($params); 
+		$this->makeTemplates( wfMsg( 'templates-for-homepage' ) );
+	}
+	
+}
+
+class WpSubpageTemplate extends HtmlTemplateField {
+	
+	public function __construct( $params ) {
+		parent::__construct($params);
+		$this->makeTemplates( wfMsg( 'templates-for-subpage' ) );
+	}
+	
 }
