@@ -13,6 +13,8 @@ $messages['en'] = array(
 {{canonicalurl:{{#special:Subscriptions/renew}}}}
 to select your next plan.',
     'action-required' => '(action required)',
+    'sub-started-end' => 'Your subscription to the plan « {{int:$1}} » which started on $2 will end on $3.',
+    'sub-active-end' => 'Your subscription to the plan « {{int:$1}} » is active since $2. It will end on $3.',
     /*
      * Header & Footer 
      */
@@ -22,7 +24,7 @@ to select your next plan.',
     'wp-mail-footer' => '
 
 Please, remember we are always available through
-{{canonicalurl:{{Project:Contact}}}}
+{{canonicalurl:{{MediaWiki:Contactlinks}}}}
 for any questions, critics or advice...
 
 Regards,
@@ -48,7 +50,7 @@ PS: You CAN reply to this email!',
      * self::timeAndDateUserLocalized($user, $this->wps_end_date) ); 
      */
     'wpm-activation-subj' => 'Your subscription is now active.',
-    'wpm-activation-body' => 'Thank you very much! Your subscription to the plan « {{int:$1}} » is active since $2. It will end $3.
+    'wpm-activation-body' => 'Thank you very much! {{int:sub-active-end|$1|$2|$3}}
 
 What is next?
 
@@ -71,7 +73,7 @@ to manage your subscriptions.',
      * self::timeAndDateUserLocalized($user, $this->wps_end_date ) );
      */
     'wpm-renewal-soon-no-subj' => 'Your subscription is ending soon! {{int:action-required}}',
-    'wpm-renewal-soon-no-body' => 'Your subscription to the plan « {{int:$1}} » which started $2 will end $3.
+    'wpm-renewal-soon-no-body' => '{{int:sub-started-end|$1|$2|$3}}
         
 You did not select any offer to follow the current one.
         
@@ -91,7 +93,7 @@ What to do?
      * $reason
      */
     'wpm-renewal-soon-warning-subj' => 'Your subscription will be renewed soon!',
-    'wpm-renewal-soon-warning-body' => 'Your subscription to the plan « {{int:$1}} » which started $2 will end $3.
+    'wpm-renewal-soon-warning-body' => '{{int:sub-started-end|$1|$2|$3}}
 
 Sadly, your renewal plan previously selected « {{int:$4}} » is not valid for the following reason:
 - {{int:$6}}
@@ -111,7 +113,7 @@ What to do?
      * $next_plan->getName());
      */
     'wpm-renewal-soon-valid-subj' => '{{int:wpm-renewal-soon-warning-subj}}',
-    'wpm-renewal-soon-valid-body' => 'Your subscription to the plan « {{int:$1}} » which started $2 will end $3.
+    'wpm-renewal-soon-valid-body' => '{{int:sub-started-end|$1|$2|$3}}
 
 Your renewal plan « {{int:$4}} » will be automatically activated from $3. Although, you could still change it.
 
@@ -126,7 +128,7 @@ What to do?
      * self::timeAndDateUserLocalized($user, $this->wps_end_date)
      */
     'wpm-renewal-pe-subj' => '{{int:wpm-renewal-ok-subj}} {{int:action-required}}',
-    'wpm-renewal-pe-body' => 'Thank you very much! Your subscription to the plan « {{int:$1}} » is active since $2. It will end $3.
+    'wpm-renewal-pe-body' => 'Thank you very much! {{int:sub-active-end|$1|$2|$3}}
 
 WARNING: Your subscription has not been paid for yet!
 
@@ -143,7 +145,7 @@ to credit your account.',
      * self::timeAndDateUserLocalized($user, $this->wps_end_date)
      */
     'wpm-renewal-ok-subj' => 'Your subscription has been renewed.',
-    'wpm-renewal-ok-body' => '{{int:wpm-activation-body}}',
+    'wpm-renewal-ok-body' => '{{int:wpm-activation-body|$1|$2|$3}}',
 );
 
 /*
@@ -163,6 +165,8 @@ $messages['fr'] = array(
 {{canonicalurl:{{#special:Subscriptions/renew}}}}
 pour sélectionner votre prochaine offre.',
     'action-required' => '(action requise)',
+    'sub-active-end' => 'Votre abonnement à l\'offre « {{int:$1}} » est actif depuis le $2. Il se finira le $3.',
+    'sub-started-end' => 'Votre abonnement à l\'offre « {{int:$1}} » qui a débutté le $2 se finira le $3.',
     /*
      * Header & Footer 
      */
@@ -172,7 +176,7 @@ pour sélectionner votre prochaine offre.',
     'wp-mail-footer' => '
 
 Rappelez-vous, nous sommes toujours à votre disposition sur
-{{canonicalurl:{{MediaWiki:Contactpage}}}}
+{{canonicalurl:{{MediaWiki:Contactlinks}}}}
 pour toute question, critique ou conseil...
 
 Cordialement,
@@ -198,7 +202,7 @@ PS: Vous POUVEZ répondre à ce courriel !',
      * self::timeAndDateUserLocalized($user, $this->wps_end_date) ); 
      */
     'wpm-activation-subj' => 'Votre abonnement est maintenant actif.',
-    'wpm-activation-body' => 'Merci beaucoup ! Votre abonnement à l\'offre « {{int:$1}} » est actif depuis le $2. Il finira le $3.
+    'wpm-activation-body' => 'Merci beaucoup ! {{int:sub-active-end|$1|$2|$3}}
 
 Que faire ?
 
@@ -221,7 +225,7 @@ pour gérer vos abonnements.',
      * self::timeAndDateUserLocalized($user, $this->wps_end_date ) );
      */
     'wpm-renewal-soon-no-subj' => 'Votre abonnement se termine bientôt ! {{int:action-required}}',
-    'wpm-renewal-soon-no-body' => 'Votre abonnement à l\'offre « {{int:$1}} » qui a débutté le $2 se finira le $3.
+    'wpm-renewal-soon-no-body' => '{{int:sub-started-end|$1|$2|$3}}
         
 Vous n\'avez pas sélectionné d\'offre pour succéder à l\'actuelle.
         
@@ -241,7 +245,7 @@ Que faire ?
      * $reason
      */
     'wpm-renewal-soon-warning-subj' => 'Votre abonnement va bientôt être renouvellé !',
-    'wpm-renewal-soon-warning-body' => 'Votre abonnement actuel à l\'offre « {{int:$1}} » qui a débutté le $2 se finira le $3.
+    'wpm-renewal-soon-warning-body' => '{{int:sub-started-end|$1|$2|$3}}
 
 Malheureusement, l\'offre de renouvellement précédement sélectionnée « {{int:$4}} » n\'est pas valide pour la raison suivante :
 - {{int:$6}}
@@ -261,7 +265,7 @@ Que faire ?
      * $next_plan->getName());
      */
     'wpm-renewal-soon-valid-subj' => '{{int:wpm-renewal-soon-warning-subj}}',
-    'wpm-renewal-soon-valid-body' => 'Votre abonnement à l\'offre « {{int:$1}} » qui a débutté le $2 se finira le $3.
+    'wpm-renewal-soon-valid-body' => '{{int:sub-started-end|$1|$2|$3}}
 
 Votre offre de renouvellement « {{int:$4}} » sera automatiquement activée à partir du $3. Cependant, vous pouvez toujours en changer.
 
@@ -276,7 +280,7 @@ Que faire ?
      * self::timeAndDateUserLocalized($user, $this->wps_end_date)
      */
     'wpm-renewal-pe-subj' => '{{int:wpm-renewal-ok-subj}} {{int:action-required}}',
-    'wpm-renewal-pe-body' => 'Merci beaucoup ! Votre abonnement à l\'offre « {{int:$1}} » est actif depuis le $2. Il finira le $3.
+    'wpm-renewal-pe-body' => 'Merci beaucoup ! {{int:sub-active-end|$1|$2|$3}}
 
 ATTENTION: Votre abonnement n\'a pas encore été réglé !
 
@@ -293,5 +297,5 @@ pour créditer votre compte.',
      * self::timeAndDateUserLocalized($user, $this->wps_end_date)
      */
     'wpm-renewal-ok-subj' => 'Votre abonnement a été renouvellé !',
-    'wpm-renewal-ok-body' => '{{int:wpm-activation-body}}',
+    'wpm-renewal-ok-body' => '{{int:wpm-activation-body|$1|$2|$3}}',
 );

@@ -19,6 +19,7 @@ $messages['en'] = array(
     'sz-myseizam' => 'My Seizam',
     
     'cur-euro' => '€',
+    'contactlinks' => 'Project:Contact',
     
     'sz-back' => 'back',
     'sz-legalcontent' => 'Legal Content',

@@ -124,7 +124,7 @@ class SpecialMySeizam extends SpecialPage {
 
         $html = '<div class="ms-info-qa">' . wfMessage('ms-quickaccount')->parse() . '</div>';
         $html .= '<ul>';
-        $html .= '<li>' . wfMessage('ms-accountbalance', $balance , 'cur-euro')->parse() . '</li>';
+        $html .= '<li>' . wfMessage('ms-accountbalance', $this->getLanguage()->formatNum($balance) , 'cur-euro')->parse() . '</li>';
         $html .= '<li>' . wfMessage('ms-electronicpayment')->parse() . '</li>';
         $html .= '<li>' . wfMessage('ms-subscriptions')->parse() . '</li>';
         $html .= '<li>' . wfMessage('ms-transactions')->parse() . '</li>';

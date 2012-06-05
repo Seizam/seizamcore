@@ -109,6 +109,8 @@ require_once( "$IP/extensions/Vector/Vector.php" );
 ## UI Elements extension for Seizam's skin
 require_once( "$IP/extensions/Skinzam/Skinzam.php" );
 
+$wgDefaultUserOptions['usenewrc'] = 1;
+
 // Browser Blacklist for unicode non compliant browsers ('/^Lynx/' retrieve from wikimedia.org CommonSettings.php)
 $wgBrowserBlackList[] = '/^Lynx/';
 
