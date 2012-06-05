@@ -40,7 +40,7 @@ class WikiplacesHooks {
 		$namespace = $title->getNamespace();	
 
 		// fast checks first
-		if ($action == 'read') {
+		if ( ($action == 'read') || $user->isAllowed(WP_ADMIN_RIGHT) ) {
 			return true; // skip
 		}
 
