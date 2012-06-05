@@ -414,9 +414,6 @@ div.captcha p img {
    float: right;
    margin-top: 16px;
 }
-
-div.captcha p input {
-}
  
 fieldset.nested {
     margin: 0 0 4px 0;
@@ -680,7 +677,9 @@ a.important:hover,
 a.important:focus {
     color: #4d4e4f;
 }
-.informations, div#contentSub, .errorbox, .warningbox, .successbox, div.error, div.success {
+.informations, div#contentSub, .errorbox, .warningbox, .successbox, div.error, div.success,
+div.mw-specialpage-summary,
+body.ns--1 div#bodyContent > div.inside > p:first-child {
     float: none;
     margin: 0 0 18px;
     padding: 12px;
@@ -688,6 +687,12 @@ a.important:focus {
     background: #f2f2f2;
     color: #666;
     font-size: 1em;
+}
+
+div.mw-specialpage-summary,
+body.ns--1 div#bodyContent >div.inside > p:first-child {
+    background-color: transparent;
+    border-top: none;
 }
 
 .informations p, div#contentSub p, .errorbox p, .warningbox p, .successbox p {
@@ -722,7 +727,7 @@ div.error, .errorbox, .warningbox {
 
 /* transitions */
 
-li, td, tr, table, span, div, input[type="submit"] {
+li, td, tr, table, span, div, input[type="submit"], a.subscription {
     -webkit-transition: background 0.75s;
     -moz-transition: background 0.75s;
     -ms-transition: background 0.75s;
@@ -810,7 +815,7 @@ div.mw-content-ltr {
     background-image: url(images/sh_block_medium.png);
     background-color: transparent;
     background-repeat: no-repeat;
-    background-position: center bottom;
+    background-position:  bottom center;
 }
 
 .block_half {	/* no 3D effect for now, only intended to work with .block_flat */
@@ -858,13 +863,13 @@ div.mw-content-ltr {
     padding: 16px 20px 12px;
 }
 
-#header.homepage .hgroup {
+#header.project .hgroup {
     position:relative;
 }
 #header h1, #header h2 {
     margin:0;
 }
-#header.homepage h2 {
+#header.project h2 {
     position: absolute;
     bottom: 22px;
     right: 22px;
@@ -2298,6 +2303,214 @@ p.ms-wl-empty {
 }
 
 
+/* -----------------------------------------------------------------------------
+   ==  SLIDESHOWS AND CAROUSELS
+   -------------------------------------------------------------------------- */
+
+.slideshow {
+	position: relative;
+	width: 518px;
+	height: 244px;
+	padding-top: 7px;
+}
+.slideshow li, .slideshow ul {
+	margin:0; padding:0;
+	list-style: none;
+}
+.slideshow a { color: #4D4E4F; }
+.slideshow h4 {
+	margin: 0;
+	padding: 0.2em 0;
+	padding-top: 0.7em;
+	font-size: 12px;
+	font-weight: bold;
+}
+.slideshow p {
+	margin: 0;
+	padding: 0.2em 0;
+	font-size: 12px;
+}
+.slideshow li {
+	position: absolute;
+	left: 10px;
+	background: #fff;
+}
+
+.slideshow .prev,
+.slideshow .next,
+#carrousel .prev,
+#carrousel .next {
+	position: absolute;
+	top: 80px;
+	width: 40px;
+	height: 39px;
+	background: url(images/arrows_slide.png) 0 0 no-repeat;
+	text-indent: -9999px;
+	z-index:5;
+}
+#carrousel .prev,
+#carrousel .next {
+	top: 51px;
+}
+.slideshow .prev,
+#carrousel .prev {
+	left: 0;
+}
+.slideshow .next,
+#carrousel .next {
+	right: 0;
+	background-position: -40px 0;
+}
+.slideshow .prev:focus,
+.slideshow .prev:hover,
+#carrousel .prev:focus,
+#carrousel .prev:hover {
+	background-position: 0px -39px;
+	outline:none;
+}
+.slideshow .next:focus,
+.slideshow .next:hover,
+#carrousel .next:focus,
+#carrousel .next:hover {
+	background-position: -40px -39px;
+	outline:none;
+}
+
+
+/* -----------------------------------------------------------------------------
+   ==  MAIN PAGE FORM
+   -------------------------------------------------------------------------- */
+
+.block_join {
+	float: right;
+	width: 239px;
+	background: none;
+	color:#fff;
+}
+.block_join h3.title {
+	width: 190px;
+	background: #da1b1e url(images/bg_title_red.png) 0 0 repeat-x;
+	color: #fff;
+	border-color:#da1b1e;
+	border-top-color: #e57273;
+	text-shadow: 1px 1px 0 #6f2e2f;
+}
+
+.block_join .inside,
+.block_join .subscription {
+	background: #464343 url(images/bg_join.png) 0 100% repeat-x;
+	border-color: #5e5b5b;
+}
+
+.block_join input {
+	width: 173px;
+	padding: 8px 12px;
+	background: #fff;
+	border: 0 none;
+	font-style: italic;
+	color: #4d4e4f;
+}
+.block_join .submit {
+	text-align: right;
+	background: url(images/arrow_white.png) 30% 50% no-repeat;
+}
+
+.block_join .submit input {
+    float: none;
+    display: inline;
+    min-width: inherit;
+	width: auto;
+	padding: 8px 34px;
+	background: #f0373a;
+	color: #fff;
+}
+.block_join .submit input:hover,
+.block_join .submit input:focus {
+	background: #7c2122;
+}
+
+.block_join .subscription {
+	display:block;
+	margin-top: 18px;
+	padding: 15px 25px 15px 20px;
+	color: #fff;
+	text-decoration: none;
+	background: #110e0e none;
+	-webkit-box-shadow: 0 20px 40px -20px #464343 inset;
+	-moz-box-shadow: 0 20px 40px -20px #464343 inset;
+	-ms-box-shadow: 0 20px 40px -20px #464343 inset;
+	-o-box-shadow: 0 20px 40px -20px #464343 inset;
+	box-shadow: 0 20px 40px -20px #464343 inset;
+}
+.block_join .subscription:hover,
+.block_join .subscription:focus {
+	background: #7C2122;
+}
+.block_join .subscription span {
+	display:block;
+	font-size: 18px;
+	text-align: right;
+	padding-bottom: 10px;
+	margin-left: 8px;
+	background: transparent url(images/check.png) 0 30% no-repeat;
+	font-style: italic;
+}
+.block_join .subscription small {
+	display:block;
+	font-size: 12px;
+	text-align:right;
+}
+.block_join form p {
+	margin: 4px 0;
+}
+.block_join form p + p {
+	margin-top: 23px;
+}
+.block_join form p + p.submit {
+	margin-top: 19px;
+}
+
+/* -----------------------------------------------------------------------------
+   ==  MAIN PAGE TRIPTIC
+   -------------------------------------------------------------------------- */
+
+.inside .third_parts {
+	float: left;
+	width: 243px;
+}
+.inside .third_parts h4 {
+	margin:0;
+	padding-bottom: 12px;
+	font-style: italic;
+	font-weight: bold;
+	font-size: 14px;
+}
+.inside .third_parts + .third_parts {
+	margin-left: 23px;
+}
+.inside .third_parts figure {
+	position: relative;
+}
+.inside .third_parts img {
+	border: 1px solid #d8d7d7;
+}
+.inside .third_parts .watermark {
+	position: absolute;
+	top:1px; left:1px;
+	width: 241px; height: 133px;
+	background: #000 url(../img/wm_plus.png) 90% 18% no-repeat;
+	
+}
+.third_parts a {
+	color: #4D4E4F;
+	font-size: 12px;
+	line-height: 1.5em;
+	text-align: justify;
+	text-decoration:none;
+}
+.third_parts a:focus {
+	outline: none;
+}
 
 /* -----------------------------------------------------------------------------
    ==  OTHER...
@@ -2377,3 +2590,5 @@ div.prefsectiontip p {
     color: #686a6b;
     margin: 3px 0 0 0;
 }
+
+

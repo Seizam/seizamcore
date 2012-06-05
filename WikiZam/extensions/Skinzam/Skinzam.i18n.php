@@ -17,6 +17,7 @@ $messages['en'] = array(
     'sz-skinzam-desc' => 'Holds UI elements for Seizam\'s skin.',
     'tagline' => 'From Seizam.com - For Art & Freedom',
     'sz-myseizam' => 'My Seizam',
+    'welcome' => 'Welcome',
     
     'cur-euro' => '€',
     'contactlinks' => 'Project:Contact',
@@ -54,11 +55,20 @@ $messages['en'] = array(
     
     'fileurl' => 'File\'s address:',
     
+    
     /* Errors */
     'sorry' => 'Sorry!',
 	'sz-internal-error' => 'Sorry, an internal error occured. {{int:sz-report}}',
     'sz-invalid-request' => 'Sorry, we do not understand what you want to do OR you are not allowed to do it. {{int:sz-report}}',
 	
+    
+    /* Mainpage */
+    'sz-ourfreedoms' => 'Our Freedoms',
+    'sz-joinus' => 'Join us',
+    'sz-triptic' => 'Discover Seizam',
+    'sz-enter' => 'Enter',
+    'sz-freedom1-body' => 'Community of free artists to build by yourself, but not alone... Community of free artists to build by yourself, but not alone... ',
+    
 );
 
 /** 
@@ -77,6 +87,7 @@ $messages['fr'] = array(
     'sz-seizam-desc' => 'Contient éléments IHM pour l\'interface Seizam.',
     'tagline' => 'Depuis Seizam.com - Art & Liberté',
     'sz-myseizam' => 'Mon Seizam',
+    'welcome' => 'Bienvenue',
     
     'mycontris' => 'Mes Contributions',
     'mypreferences' => 'Mes Préférences',
@@ -121,4 +132,9 @@ $messages['fr'] = array(
 	'sz-internal-error' => 'Pardon, une erreur interne s\'est produite. {{int:sz-report}}',
     'sz-invalid-request' => 'Pardon, nous ne comprenons pas votre requête OU vous n\'êtes pas autorisé à la réaliser. {{int:sz-report}}',
 	
+    /* Mainpage */
+    'sz-ourfreedoms' => 'Nos libertés',
+    'sz-joinus' => 'Nous rejoindre',
+    'sz-triptic' => 'Découvrez Seizam',
+    'sz-enter' => 'Entrez',
 );

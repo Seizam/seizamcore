@@ -54,10 +54,6 @@ class SkinSkinzam extends SkinTemplate {
         $out->addModuleStyles('skins.skinzam');
     }
 
-    function getNamespace() {
-        return $this->getRelevantTitle()->getNamespace();
-    }
-
 }
 
 /**
@@ -175,13 +171,19 @@ class SkinzamTemplate extends BaseTemplate {
      * Render the #content content
      */
     private function renderContent() {
-        switch ($this->skin->getNamespace()) {
+        $title = $this->getSkin()->getRelevantTitle();
+        $ns = $title->getNamespace();
+
+        switch ($ns) {
             case NS_PROJECT_TALK :
             case NS_PROJECT :
                 $this->renderContentNS4();
                 break;
             case NS_SPECIAL :
-                $this->renderContentNSSpecial();
+                if ($title->getDBkey() === SZ_MAIN_PAGE)
+                    $this->renderContentMainpage();
+                else
+                    $this->renderContentNSSpecial();
                 break;
             default :
                 $this->renderContentDefault();
@@ -271,7 +273,7 @@ class SkinzamTemplate extends BaseTemplate {
         <div id="content" class="noframe">
             <a id="top"></a>
             <!-- header -->
-            <div id="header" class="block block_full homepage noprint">
+            <div id="header" class="block block_full project noprint">
                 <div class="hgroup inside">
                     <h1><a id="logo_project" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"></a></h1>
                     <h2><?php echo wfMessage('sz-tagline')->text() ?></h2>
@@ -283,18 +285,18 @@ class SkinzamTemplate extends BaseTemplate {
                 <h3 class="title"><?php $this->html('title') ?></h3>
                 <!-- inside -->
                 <div class="inside">
-                <?php /*
-                    <div id="nav" class="noprint">
-                        <ul class="nav_actions">
-                            <li>
-                                <a href="#"><?php echo wfMessage('actions')->text() ?></a>
-                                <ul>
-                                    <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
-                 */ ?>
+                    <?php /*
+                      <div id="nav" class="noprint">
+                      <ul class="nav_actions">
+                      <li>
+                      <a href="#"><?php echo wfMessage('actions')->text() ?></a>
+                      <ul>
+                      <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
+                      </ul>
+                      </li>
+                      </ul>
+                      </div>
+                     */ ?>
                     <!-- bodytext -->
                     <?php $this->html('bodytext') ?>
                     <!-- /bodytext -->
@@ -340,7 +342,7 @@ class SkinzamTemplate extends BaseTemplate {
         <div id="content" class="noframe">
             <a id="top"></a>
             <!-- header -->
-            <div id="header" class="block block_full special">
+            <div id="header" class="block block_full special noprint">
                 <div class="inside">
                     <h1><a id="logo_special" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"></a></h1>
 
@@ -375,6 +377,34 @@ class SkinzamTemplate extends BaseTemplate {
     }
 
     /**
+     * Render the NS-4 (Project:) #content content
+     */
+    private function renderContentMainpage() {
+        ?>
+        <!-- content -->
+        <div id="content" class="noframe">
+            <a id="top"></a>
+            <!-- header -->
+            <div id="header" class="block block_full project">
+                <div class="hgroup inside">
+                    <h1><a id="logo_project" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"></a></h1>
+                    <h2><?php echo wfMessage('sz-tagline')->text() ?></h2>
+                </div>
+            </div>
+            <!-- /header -->
+            <!-- bodyCcontent -->
+            <div id="bodyContent" class="block block_full block_flat mainpage" role="main"<?php $this->html('specialpageattributes') ?>> <!--<div id="main" role="main">-->
+                <!-- bodytext -->
+                <?php $this->html('bodytext') ?>
+                <!-- /bodytext -->
+            </div>
+            <!-- /bodyContent -->
+        </div>
+        <!-- /content -->
+        <?php
+    }
+
+    /**
      * Render the ContentOther (Languages, Categories, Toolbox...)
      */
     private function renderContentOther() {
@@ -385,7 +415,7 @@ class SkinzamTemplate extends BaseTemplate {
                 <h5<?php $this->html('userlangattributes') ?>><?php echo wfMessage('otherlanguages')->text() . wfMsgExt('colon-separator', 'escapenoentities'); ?></h5>
 
                 <ul>
-                    <?php $this->renderNavigation(array('LANG')); ?>
+            <?php $this->renderNavigation(array('LANG')); ?>
                 </ul>
             </div>
             <!-- /language_urls -->
@@ -399,7 +429,7 @@ class SkinzamTemplate extends BaseTemplate {
         <div class="portal" id="p-tb"<?php echo Linker::tooltip('p-tb') ?>>
             <h5<?php $this->html('userlangattributes') ?>><?php echo wfMessage('toolbox')->text() . wfMsgExt('colon-separator', 'escapenoentities'); ?></h5>
             <ul>
-                <?php $this->renderNavigation(array('TOOLBOX')); ?>
+        <?php $this->renderNavigation(array('TOOLBOX')); ?>
             </ul>
         </div>
         <!-- /toolbox -->
@@ -425,24 +455,24 @@ class SkinzamTemplate extends BaseTemplate {
         foreach ($this->getFooterLinks() as $category => $links):
             ?>
             <ul id="footer-<?php echo $category ?>">
-                <?php foreach ($links as $link): ?>
+            <?php foreach ($links as $link): ?>
                     <li id="footer-<?php echo $category ?>-<?php echo $link ?>"><?php $this->html($link) ?></li>
                 <?php endforeach; ?>
             </ul>
-            <?php
-        endforeach;
-    }
+                <?php
+            endforeach;
+        }
 
-    /**
-     * Render the footer (main menu)
-     */
-    private function renderFooter() {
-        ?>
+        /**
+         * Render the footer (main menu)
+         */
+        private function renderFooter() {
+            ?>
         <!-- regular footer -->
         <div id="footer"  class="noprint">
             <div class="inside">
                 <div class="content">
-                    <?php $this->renderMore(); ?>
+        <?php $this->renderMore(); ?>
                 </div>
             </div>
         </div>
@@ -452,18 +482,18 @@ class SkinzamTemplate extends BaseTemplate {
         <div id="absoluteFooter"  class="noprint">
             <div class="inside">
                 <div class="content">
-                    <?php if (isset($this->data['sz_pretty_username'])): ?>
+        <?php if (isset($this->data['sz_pretty_username'])): ?>
                         <span id="prettyUserName"><?php $this->text('sz_pretty_username') ?></span>
                     <?php endif; ?>
                     <!-- logo -->
                     <a id="logo_mini" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']); ?>"></a>
                     <!-- /logo -->
                     <!-- search -->
-                    <?php $this->renderNavigation(array('SEARCH')); ?>
+        <?php $this->renderNavigation(array('SEARCH')); ?>
                     <!-- /search -->
                     <!-- quicklinks -->
                     <ul>
-                        <?php $this->renderNavigation(array('SZ-FOOTER')); ?>
+        <?php $this->renderNavigation(array('SZ-FOOTER')); ?>
                         <li class="more">
                             <a href="#">
                                 <span class="show_footer"><?php echo wfMessage('moredotdotdot')->text(); ?></span>
@@ -517,7 +547,7 @@ class SkinzamTemplate extends BaseTemplate {
 
         <div class="section">
             <p class="sread"><?php echo wfMessage('sz-selectlang')->text() ?></p>
-            <?php echo wfLanguageSelectorHTML($this->skin->getTitle(), null, 'selectLang'); ?>
+        <?php echo wfLanguageSelectorHTML($this->skin->getTitle(), null, 'selectLang'); ?>
             <p class="sread"><?php echo wfMessage('sz-seizamonsocialnetworks')->text() ?></p>
             <ul class="socials">
                 <li class="tumblr"><a href="http://www.davidcanwin.com">Tumblr</a></li>
@@ -525,43 +555,43 @@ class SkinzamTemplate extends BaseTemplate {
                 <li class="fcbk"><a href="http://www.facebook.com/davidcanwin">Facebook</a></li>
                 <li class="linkedin"><a href="http://www.linkedin.com/company/seizam">LinkedIn</a></li>
             </ul>
-            <?php $footericons = $this->getFooterIcons("icononly");
-            if (count($footericons) > 0): ?>
+        <?php $footericons = $this->getFooterIcons("icononly");
+        if (count($footericons) > 0): ?>
                 <ul id="footer-icons">
-                    <?php foreach ($footericons as $blockName => $footerIcons): ?>
+                <?php foreach ($footericons as $blockName => $footerIcons): ?>
                         <li id="footer-<?php echo htmlspecialchars($blockName); ?>ico">
-                            <?php foreach ($footerIcons as $icon): ?>
+                        <?php foreach ($footerIcons as $icon): ?>
                                 <?php echo $this->skin->makeFooterIcon($icon); ?>
 
                             <?php endforeach; ?>
                         </li>
-                    <?php endforeach; ?>
+                        <?php endforeach; ?>
                 </ul>
-            <?php endif; ?>
+                <?php endif; ?>
         </div>
-        <?php
-    }
-
-    /**
-     * Render one or more navigations elements by name, automatically reveresed
-     * when UI is in RTL mode
-     */
-    private function renderNavigation($elements) {
-
-        global $wgVectorUseSimpleSearch, $wgVectorShowVariantName, $wgUser;
-
-        // If only one element was given, wrap it in an array, allowing more
-        // flexible arguments
-        if (!is_array($elements)) {
-            $elements = array($elements);
-            // If there's a series of elements, reverse them when in RTL mode
+            <?php
         }
-        // Render elements
-        foreach ($elements as $name => $element) {
-            switch ($element) {
-                case 'NAMESPACES':
-                    foreach ($this->data['namespace_urls'] as $link):
-                        ?>
+
+        /**
+         * Render one or more navigations elements by name, automatically reveresed
+         * when UI is in RTL mode
+         */
+        private function renderNavigation($elements) {
+
+            global $wgVectorUseSimpleSearch, $wgVectorShowVariantName, $wgUser;
+
+            // If only one element was given, wrap it in an array, allowing more
+            // flexible arguments
+            if (!is_array($elements)) {
+                $elements = array($elements);
+                // If there's a series of elements, reverse them when in RTL mode
+            }
+            // Render elements
+            foreach ($elements as $name => $element) {
+                switch ($element) {
+                    case 'NAMESPACES':
+                        foreach ($this->data['namespace_urls'] as $link):
+                            ?>
                         <li <?php echo $link['attributes'] ?>><a href="<?php echo htmlspecialchars($link['href']) ?>" <?php echo $link['key'] ?>><?php echo htmlspecialchars($link['text']) ?></a></li>
                         <?php
                     endforeach;
@@ -606,9 +636,9 @@ class SkinzamTemplate extends BaseTemplate {
                         <h5<?php $this->html('userlangattributes') ?>><label for="searchInput"><?php $this->msg('search') ?></label></h5>
                         <form action="<?php $this->text('wgScript') ?>" id="searchform">
                             <input type='hidden' name="title" value="<?php $this->text('searchtitle') ?>"/>
-                            <?php if ($wgVectorUseSimpleSearch && $wgUser->getOption('vector-simplesearch')): ?>
+                    <?php if ($wgVectorUseSimpleSearch && $wgUser->getOption('vector-simplesearch')): ?>
                                 <div id="simpleSearch">
-                                    <?php if ($this->data['rtl']): ?>
+                                <?php if ($this->data['rtl']): ?>
                                         <?php echo $this->makeSearchButton('image', array('id' => 'searchButton', 'src' => $this->skin->getSkinStylePath('images/search-rtl.png'))); ?>
                                     <?php endif; ?>
                                     <?php echo $this->makeSearchInput(array('id' => 'searchInput', 'type' => 'text')); ?>
@@ -616,7 +646,7 @@ class SkinzamTemplate extends BaseTemplate {
                                         <?php echo $this->makeSearchButton('image', array('id' => 'searchButton', 'src' => $this->skin->getSkinStylePath('images/search-ltr.png'))); ?>
                                     <?php endif; ?>
                                 </div>
-                            <?php else: ?>
+                                <?php else: ?>
                                 <?php echo $this->makeSearchInput(array('id' => 'searchInput')); ?>
                                 <?php echo $this->makeSearchButton('go', array('id' => 'searchGoButton', 'class' => 'searchButton')); ?>
                                 <?php echo $this->makeSearchButton('fulltext', array('id' => 'mw-searchButton', 'class' => 'searchButton')); ?>
