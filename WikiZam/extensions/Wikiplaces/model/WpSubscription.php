@@ -316,11 +316,9 @@ class WpSubscription {
             return 'sz-internal-error';
         }
 
-        $user_email = $user->getEmail();
-
         // process even if the plan should not be taken ($this->wps_renew_wpp_id is supposed to be good)
         // payment
-        $tmr = self::createTMR($user_id, $user_email, $next_plan);
+        $tmr = self::createTMR($user->getId(), $user->getEmail(), $next_plan);
         if (($tmr['tmr_status'] != 'OK') && ($tmr['tmr_status'] != 'PE')) { // not ( OK or PE ) so it cannot be renewed 			
             $this->set('wps_renew_wpp_id', WPP_ID_NORENEW);
             return 'sz-internal-error';
