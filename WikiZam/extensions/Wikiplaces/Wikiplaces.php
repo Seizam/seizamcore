@@ -19,7 +19,7 @@ $wgExtensionCredits['other'][] = array(
    'version'  => '0.1.0',
    );
 
-
+// defines who can access to Wikiplaces related Special pages: Special:Wikiplaces and Special:Subscriptions
 define('WP_ACCESS_RIGHT', 'wpaccess');
 $wgAvailableRights[] = WP_ACCESS_RIGHT; 
 $wgGroupPermissions['user'][WP_ACCESS_RIGHT] = true;
@@ -45,6 +45,8 @@ $wgAutoloadClasses['WpPlan'] = $_dir . 'model/WpPlan.php';
 $wgAutoloadClasses['WpSubscription'] = $_dir . 'model/WpSubscription.php';
 $wgAutoloadClasses['WpSubscriptionsTablePager'] = $_dir . 'model/WpSubscriptionsTablePager.php';
 $wgAutoloadClasses['WikiplaceUpload'] = $_dir . 'WikiplaceUpload.php';
+$wgAutoloadClasses['WpHomepageTemplate'] = $_dir . 'model/HtmlTemplateField.php';
+$wgAutoloadClasses['WpSubpageTemplate'] = $_dir . 'model/HtmlTemplateField.php';
 
 # i18n
 $wgExtensionMessagesFiles['Wikiplaces'] = $_dir.'Wikiplaces.i18n.php';
@@ -89,6 +91,7 @@ foreach ( $wgWpSubscribersExtraRights as $right ) {
 	$wgGroupPermissions[WP_SUBSCRIBERS_USER_GROUP][$right] = true;
 }
 
+// define the "artist" right, which let easily identify subscribers from other users
 define('WP_ARTIST_RIGHT', 'makeart');
 $wgAvailableRights[] = WP_ARTIST_RIGHT;
 $wgGroupPermissions[WP_SUBSCRIBERS_USER_GROUP][WP_ARTIST_RIGHT] = true;
@@ -126,7 +129,7 @@ $wgWikiplaceNameBlacklist = array(
     'user',
     'file',
     'project' );
-    
+
 // deferred setup, to not break Hook execution ordering with PreventDuplicate extension
 $wgExtensionFunctions[] = 'setupWikiplaces';
 
