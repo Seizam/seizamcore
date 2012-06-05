@@ -145,7 +145,7 @@ to credit your account.',
      * self::timeAndDateUserLocalized($user, $this->wps_end_date)
      */
     'wpm-renewal-ok-subj' => 'Your subscription has been renewed.',
-    'wpm-renewal-ok-body' => '{{int:wpm-activation-body}}',
+    'wpm-renewal-ok-body' => '{{int:wpm-activation-body|$1|$2|$3}}',
 );
 
 /*
@@ -297,5 +297,5 @@ pour créditer votre compte.',
      * self::timeAndDateUserLocalized($user, $this->wps_end_date)
      */
     'wpm-renewal-ok-subj' => 'Votre abonnement a été renouvellé !',
-    'wpm-renewal-ok-body' => '{{int:wpm-activation-body}}',
+    'wpm-renewal-ok-body' => '{{int:wpm-activation-body|$1|$2|$3}}',
 );
