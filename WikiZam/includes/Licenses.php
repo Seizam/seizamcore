@@ -34,7 +34,7 @@ class Licenses extends HTMLFormField {
 	public function __construct( $params ) {
 		parent::__construct( $params );
 
-		$this->msg = empty( $params['licenses'] ) ? wfMsgForContent( 'licenses' ) : $params['licenses'];
+		$this->msg = empty( $params['licenses'] ) ? wfMsg( 'licenses' ) : $params['licenses'];
 		$this->selected = null;
 
 		$this->makeLicenses();
