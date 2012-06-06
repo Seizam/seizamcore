@@ -184,7 +184,37 @@ class WikiplacesHooks {
 
 		$msg;
 		$user_id = $user->getId();
+		
+		// ensure we are not creating a duplicate in wikiplace
+		if ( class_exists('TitleKey') && ($duplicate = TitleKey::exactMatchTitle($title)) ) {
+			wfDebugLog('wikiplaces-debug', "user cannot create {$title->getPrefixedDBkey()} duplicate {$duplicate->getPrefixedDBkey()} exists");
+			return array('wp-duplicate-exists', $duplicate->getPrefixedDBkey());
+		}
 
+		// ensure to keep "talk page" <-> "regular page" mirrored named
+		if ( $title->isTalkPage() ) {
+			
+			// ensure to not create a talk having a subject in different case ( ie: Talk:wp/page but wp/PAGE exists )
+			$subject = $title->getSubjectPage();
+			if ( ! $subject->isKnown() && ( $duplicate_subject = TitleKey::exactMatchTitle($subject) ) ) {
+				// the subject page doesn't exist, but there is a subject page with different case, abort
+				wfDebugLog('wikiplaces-debug', "user cannot create {$title->getPrefixedDBkey()} duplicate subject {$duplicate_subject->getPrefixedDBkey()} exists");
+				return array('wp-duplicate-subject', $duplicate_subject->getTalkPage()->getPrefixedDBkey());
+			} 
+				
+			
+		} else {
+			
+			// ensure to not create an article with an existing talk in different case
+			$talk = $title->getTalkPage();
+			if ( ! $talk->isKnown() && ( $duplicate_talk = TitleKey::exactMatchTitle($talk) ) ) {
+				// the talk page doesn't exist, but there is a talk page with different case, abort
+				wfDebugLog('wikiplaces-debug', "user cannot create {$title->getPrefixedDBkey()} duplicate talk {$duplicate_talk->getPrefixedDBkey()} exists");
+				return array('wp-duplicate-talk', $duplicate_talk->getSubjectPage()->getPrefixedDBkey());
+			}
+			
+		}
+		
 		if (WpPage::isHomepage($title)) {
 
 			// this is a new Wikiplace
@@ -206,6 +236,7 @@ class WikiplacesHooks {
 			} else {
 				$result = array();
 			}
+			
 		} else {
 
 			// this can be regular article or talk or file)

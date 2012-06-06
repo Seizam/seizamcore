@@ -102,6 +102,9 @@ You are also promising us that you wrote this yourself, or copied it from a publ
     'wp-invalid-name' => 'This name is invalid.',
     'wp-name-already-exists' => 'This name already exists. Please retry with a different name.',
     'wp-create-wp-first' => 'You need to create a Wikiplace first.',
+	'wp-duplicate-exists' => 'A page with the same name but different case ([[$1]]) already exists.',
+	'wp-duplicate-subject' => 'A subject page with the same name but different case ([[$1]]) exists. Your talk page has to be named [[$1]].',
+	'wp-duplicate-talk' => 'A talk page with the same name but different case ([[$1]]) exists. Your page has to be named [[$1]].',
     /* TablePager: Subscription */
     'wp-subscriptionslist-header' => 'Here are your active subscriptions.',
     'wp-subscriptionslist-noactive-header' => '{{int:wp-sub-noactive}} [[Special:Subscriptions/new|Click here to subscribe !]]',
@@ -244,6 +247,9 @@ Vous nous promettez aussi que vous avez écrit ceci vous-même, ou que vous l’
     'wp-invalid-name' => 'Ce nom est invalide.',
     'wp-name-already-exists' => 'Ce nom existe déjà. Merci d\'utiliser un autre nom.',
     'wp-create-wp-first' => 'Vous devez d\'abord créer un Wikiplace.',
+	'wp-duplicate-exists' => 'Une page ayant le même nom avec une casse différente ([[$1]]) existe déjà.',
+	'wp-duplicate-subject' => 'Une page sujet ayant le même nom mais avec une casse différente existe. Votre page de discussion devra se nommer [[$1]].',
+	'wp-duplicate-talk' => 'Une page de discussion ayant le même nom mais avec une casse différente existe. Votre page devra se nommer [[$1]].',
     /* TablePager: Subscription */
     'wp-subscriptionslist-header' => 'Voici vos abonnements actifs.',
     'wp-subscriptionslist-noactive-header' => '{{int:wp-sub-noactive}} [[Special:Subscriptions/new|Cliquez ici pour vous abonner !]]',
