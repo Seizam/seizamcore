@@ -194,6 +194,7 @@ $wgImgAuthPublicTest = false;	//false = bypass full public wiki
 $wgUseImageMagick = true;	//true = use imagemagick library intsead of
 				// internal PHP image conversion system
 $wgImageMagickConvertCommand = "/usr/bin/convert"; 
+$wgSVGConverters = array('ImageMagick' => '/usr/bin/convert -background none -thumbnail $widthx$height\! $input PNG:$output', );
 $wgStrictFileExtensions = true; // default = true = everything not in $wgFileExtensions is forbidden
 // what's allowed, default = array( 'png', 'gif', 'jpg', 'jpeg' )
 $wgFileExtensions = array(
@@ -401,9 +402,14 @@ require_once("$IP/extensions/PreventDuplicate/PreventDuplicate.php");
 // that will be broken
 // This affect all namespaces, except: Special, MediaWiki, User
 $wgCapitalLinks = false; 
+// $wgCapitalLinkOverrides[ NS_TEMPLATE ] = true;
 
 // Poem
 require_once("$IP/extensions/Poem/Poem.php");
+
+// LiquidThreads for nice talk page (current version is 2.0)
+require_once("$IP/extensions/LiquidThreads/LiquidThreads.php");
+
 
 
 // ==================

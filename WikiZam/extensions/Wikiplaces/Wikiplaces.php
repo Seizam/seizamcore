@@ -80,6 +80,7 @@ define('WP_SUBSCRIBERS_USER_GROUP', 'artist');
 
 // define rights which has to b available for subscribers in their Wikiplaces, BUT to be FORBIDDEN everywhere else
 // (if manually granting a right to the subscriber group instead of this array, the right will be available everywhere)
+// (WP-ADMIN can still perform them out of wikiplaces)
 $wgWpSubscribersExtraRights = array(
 	'move',
 	'move-subpages',
@@ -129,6 +130,11 @@ $wgWikiplaceNameBlacklist = array(
     'user',
     'file',
     'project' );
+
+// the i18n message (often a page in MediaWiki namespace) containing the tempaltes listing
+// (same syntax as MediaWiki:Licenses)
+define ('WP_TEMPLATES_FOR_HOMEPAGE', 'templates for Homepage'); // MediaWiki:Templates for Homepage
+define ('WP_TEMPLATES_FOR_SUBPAGE', 'templates for Subpage'); // MediaWiki:Templates for Subpage
 
 // deferred setup, to not break Hook execution ordering with PreventDuplicate extension
 $wgExtensionFunctions[] = 'setupWikiplaces';

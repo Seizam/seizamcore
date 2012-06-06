@@ -40,16 +40,16 @@ class WikiplacesHooks {
 		$namespace = $title->getNamespace();	
 
 		// fast checks first
-		if ( ($action == 'read') || $user->isAllowed(WP_ADMIN_RIGHT) ) {
+		if ( ($action == 'read') ) {
 			return true; // skip
 		}
 
 		// some actions have to be forbidden when not in wikiplaces
-		if ( !WpPage::isInWikiplaceNamespaces($namespace) ) {
+		if ( !$user->isAllowed(WP_ADMIN_RIGHT) && !WpPage::isInWikiplaceNamespaces($namespace) ) {
 			global $wgWpSubscribersExtraRights;
 			if (in_array($action, $wgWpSubscribersExtraRights)) {
 				
-				wfDebugLog('wikiplaces-debug', "$action forbidden: susbcriber extra right for {$title->getPrefixedDBkey()} not in wikiplace, ns $namespace"); 
+				wfDebugLog('wikiplaces-debug', "$action forbidden (require susbcriber extra right) for {$title->getPrefixedDBkey()}"); 
 				$result = false; // disallow
 				return false; // stop hook processing
 				
@@ -419,6 +419,8 @@ class WikiplacesHooks {
 				wfDebugLog('wikiplaces-debug', 'onArticleInsertComplete(): OK, article=['.$article_id.']"'.$pdb_key.'"  for user['.$user_id.']');
 			}
 			
+		} else {
+			wfDebugLog('wikiplaces-debug', 'onArticleInsertComplete(): OK, no default restrictions to set, article=['.$article_id.']"'.$pdb_key.'"  for user['.$user_id.']');
 		}
 
 		return true;

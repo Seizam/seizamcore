@@ -176,7 +176,7 @@ class WpHomepageTemplate extends HtmlTemplateField {
 	
 	public function __construct( $params ) {
 		parent::__construct($params); 
-		$this->makeTemplates( wfMsg( 'templates-for-homepage' ) );
+		$this->makeTemplates( wfMsg( WP_TEMPLATES_FOR_HOMEPAGE ) );
 	}
 	
 }
@@ -185,7 +185,7 @@ class WpSubpageTemplate extends HtmlTemplateField {
 	
 	public function __construct( $params ) {
 		parent::__construct($params);
-		$this->makeTemplates( wfMsg( 'templates-for-subpage' ) );
+		$this->makeTemplates( wfMsg( WP_TEMPLATES_FOR_SUBPAGE ) );
 	}
 	
 }
