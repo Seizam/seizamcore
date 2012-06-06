@@ -131,7 +131,7 @@ $wgWikiplaceNameBlacklist = array(
     'file',
     'project' );
 
-// the i18n message (often a page in MediaWiki namespace) containing the tempaltes listing
+// i18n message (often a page in MediaWiki namespace) containing templates listing
 // (same syntax as MediaWiki:Licenses)
 define ('WP_TEMPLATES_FOR_HOMEPAGE', 'templates for Homepage'); // MediaWiki:Templates for Homepage
 define ('WP_TEMPLATES_FOR_SUBPAGE', 'templates for Subpage'); // MediaWiki:Templates for Subpage
