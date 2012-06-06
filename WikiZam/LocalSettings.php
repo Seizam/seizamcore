@@ -407,6 +407,10 @@ $wgCapitalLinks = false;
 // Poem
 require_once("$IP/extensions/Poem/Poem.php");
 
+// LiquidThreads for nice talk page (current version is 2.0)
+// require_once("$IP/extensions/LiquidThreads/LiquidThreads.php");
+
+
 
 // ==================
 // Final Seizam setup
