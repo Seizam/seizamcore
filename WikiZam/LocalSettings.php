@@ -284,6 +284,7 @@ $wgAdvertisedFeedTypes = array('rss', 'atom');
 
 require( "$IP/extensions/ConfirmEdit/ConfirmEdit.php" );
 require( "$IP/extensions/ConfirmEdit/FancyCaptcha.php" );
+$wgCaptchaTriggers['createaccount'] = false;  // Special:Userlogin&type=signup
 $wgGroupPermissions['autoconfirmed']['skipcaptcha'] = true;
 $wgCaptchaClass = 'FancyCaptcha';
 $wgCaptchaWhitelist = false; // Regex to whitelist URLs to known-good sites...

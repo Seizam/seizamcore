@@ -74,6 +74,9 @@ $wgResourceModules += array(
     'ext.skinzam.global' => $skinzamResourceTemplate + array(
         'scripts' => 'ext.skinzam.global.js',
         ),
+    'ext.skinzam.mainpage' => $skinzamResourceTemplate + array(
+        'scripts' => 'ext.skinzam.mainpage.js',
+        ),
     'jquery.scrollto' => array(
          'scripts' => 'extensions/Skinzam/modules/jquery/jquery.scrollto.js'
         ),
@@ -103,6 +106,16 @@ $wgResourceModules += array(
 $wgSpecialPages['Skinzam'] = 'SpecialSkinzam';
 
 $wgSpecialPageGroups['Skinzam'] = 'other';*/
+
+# Special Welcome (Mainpage/Homepage
+define('SZ_MAIN_PAGE', 'Welcome');
+
+$wgAutoloadClasses['SpecialMainpage'] = $dir . 'SpecialMainpage.php';
+
+$wgSpecialPages[SZ_MAIN_PAGE] = 'SpecialMainpage';
+
+$wgSpecialPageGroups[SZ_MAIN_PAGE] = 'other';
+
 
 # Some global settings
 # Tune Special:Preferences
