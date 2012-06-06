@@ -80,6 +80,7 @@ define('WP_SUBSCRIBERS_USER_GROUP', 'artist');
 
 // define rights which has to b available for subscribers in their Wikiplaces, BUT to be FORBIDDEN everywhere else
 // (if manually granting a right to the subscriber group instead of this array, the right will be available everywhere)
+// (WP-ADMIN can still perform them out of wikiplaces)
 $wgWpSubscribersExtraRights = array(
 	'move',
 	'move-subpages',
