@@ -213,11 +213,10 @@ class SpecialWikiplaces extends SpecialPage {
                 'validation-callback' => array($this, 'validateNewSubpageName'),
             ),
 			'Template' => array(
-                'type' => 'select',
                 'label-message' => 'wp-template-field',
                 'section' => 'createpage-section',
                 'help-message' => 'wp-createpage-template-help',
-                'options' => array(),
+                'class' => 'WpSubpageTemplate',
             ),
 			 'License' => array(
                 'label-message' => 'wp-license-field',
@@ -226,11 +225,6 @@ class SpecialWikiplaces extends SpecialPage {
 				'class' => 'Licenses',
             ),
         );
-		
-		$templates = self::getSubpageTemplates();
-		foreach ( $templates as $template ) {
-			$formDescriptor['Template']['options'][$template->getText()] = $template->getPrefixedDBkey();
-		}
 
         if ($name != null) {
             $name = Title::newFromDBkey($name)->getText();
@@ -299,8 +293,16 @@ class SpecialWikiplaces extends SpecialPage {
         }
 
         $wikiplace = WpWikiplace::getById(intval($formData['WpId']));
+		
+		$template = $formData['Template'];
+		$license = $formData['License'];
+		
+		$content = '{{subst:'.$template.'}}';
+		if ($license != '') {
+			$content .= "\n\n".'== {{int:license-header}} =='."\n".'{{'.$license.'}}';
+		}
 
-        $subpage = WpPage::createSubpage($wikiplace, $formData['SpName'], $this->getUser() );
+        $subpage = WpPage::createSubpage($wikiplace, $formData['SpName'], $this->getUser(), $content );
 
         if (!( $subpage instanceof Title )) {
 			$key = array_shift($subpage);

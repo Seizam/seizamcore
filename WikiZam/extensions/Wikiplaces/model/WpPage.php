@@ -192,6 +192,7 @@ class WpPage {
 	 * @param WpWikiplace $wikiplace
 	 * @param string $new_page_name
 	 * @param User $user The user who creates the subpage
+	 * @param $content The page content
 	 * @return Title/array the created Title, or an array containing i18n message key + args if an error occured
 	 * <ul>
 	 * <li><b>wp-bad-title</b> MediaWiki is unable to create this page. Title may contain bad characters.</li>
@@ -207,7 +208,7 @@ class WpPage {
 	 * </li>
 	 * </ul>
 	 */
-	public static function createSubpage($wikiplace, $new_page_name, $user) {
+	public static function createSubpage($wikiplace, $new_page_name, $user, $content) {
 
 		if (($wikiplace === null) || !($wikiplace instanceof WpWikiplace) ||
 				( $new_page_name === null) || !is_string($new_page_name)) {
@@ -233,13 +234,11 @@ class WpPage {
 		if ( $permErrors ) { // creation impossible 
 			return $permErrors[0]; // strange, but only key 0 seems to be used by MW when reading errors
 		}
-		
-		$text = '{{subst:Wikiplace subpage}}';
 
 		// now store the new page in mediawiki, this will trigger the WikiplaceHook, wich will 
 		// allow the page saving
 		$article = new Article($title);
-		$status = $article->doEdit($text, '', EDIT_NEW, false, $user);
+		$status = $article->doEdit($content, '', EDIT_NEW, false, $user);
 
 		if (!$status->isgood()) {
 			return array('sz-internal-error');
