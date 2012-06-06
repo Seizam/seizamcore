@@ -529,6 +529,7 @@ class SkinzamTemplate extends BaseTemplate {
             <p><?php echo wfMessage('sz-generalinfo')->text() ?></p>
             <ul>
                 <li><?php echo wfMessage('sz-discoverseizam')->parse() ?></li>
+                <li><?php echo wfMessage('sz-browseseizam')->parse() ?></li>
                 <li><?php echo wfMessage('sz-joinseizam')->parse() ?></li>
                 <li><?php echo wfMessage('sz-help')->parse() ?></li>
                 <li><?php echo wfMessage('sz-faq')->parse() ?></li>

@@ -31,6 +31,7 @@ $messages['en'] = array(
     
     'sz-generalinfo' => 'General Information',
     'sz-discoverseizam' => '[[Project:Welcome|Discover Seizam]]',
+    'sz-browseseizam' => '[[Special:AllPages|Browse Seizam]]',
     'sz-joinseizam' => '[[Special:UserLogin|Join Seizam]]',
     'sz-help' => '[[Help:Contents|Help]]',
     'sz-faq' => '[[Help:FAQ|Frequently Asked Questions]]',
@@ -67,8 +68,11 @@ $messages['en'] = array(
     'sz-joinus' => 'Join us',
     'sz-triptic' => 'Discover Seizam',
     'sz-enter' => 'Enter',
-    'sz-freedom1-body' => 'Community of free artists to build by yourself, but not alone... Community of free artists to build by yourself, but not alone... ',
-    
+    'sz-theoffers' => 'Our Offers',
+    'sz-theoffers-catch' => 'From 5€ per month.',
+    'sz-myseizam-catch' => 'Everything you need is here.',
+    'sz-helpus' => 'Help us',
+    'sz-helpus-catch' => 'The community needs you.',
 );
 
 /** 
@@ -103,6 +107,7 @@ $messages['fr'] = array(
     
     'sz-generalinfo' => 'Informations générales',
     'sz-discoverseizam' => '[[Project:Bienvenue|Découvrez Seizam]]',
+    'sz-browseseizam' => '[[Special:AllPages|Parcourez Seizam]]',
     'sz-joinseizam' => '[[Special:UserLogin|Rejoignez Seizam]]',
     'sz-help' => '[[Help:Contents|Aide]]',
     'sz-faq' => '[[Help:FAQ|Questions fréquentes]]',
@@ -137,4 +142,9 @@ $messages['fr'] = array(
     'sz-joinus' => 'Nous rejoindre',
     'sz-triptic' => 'Découvrez Seizam',
     'sz-enter' => 'Entrez',
+    'sz-theoffers' => 'Nos offres',
+    'sz-theoffers-catch' => 'À partir de 5€ par mois.',
+    'sz-myseizam-catch' => 'Tout Seizam à portée de main.',
+    'sz-helpus' => 'Aidez-nous',
+    'sz-helpus-catch' => 'La communauté a besoin de vous.',
 );

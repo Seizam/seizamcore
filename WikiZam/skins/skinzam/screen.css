@@ -61,6 +61,7 @@ body, button, input, select, textarea {
 ::-moz-selection { background: #ee383a; color: #fff; text-shadow: none; }
 ::selection { background: #ee383a; color: #fff; text-shadow: none; }
 
+/*
 h1:first-child, h2:first-child, h3:first-child, h4:first-child, h5:first-child, h6:first-child, p:first-child {
     margin-top: 0;
 }
@@ -68,6 +69,7 @@ h1:first-child, h2:first-child, h3:first-child, h4:first-child, h5:first-child, 
 h1:last-child, h2:last-child, h3:last-child, h4:last-child, h5:last-child, h6:last-child, p:last-child, fieldset:last-child {
     margin-bottom: 0;
 }
+*/
 
 
 /* -----------------------------------------------------------------------------
@@ -727,16 +729,8 @@ div.error, .errorbox, .warningbox {
 
 /* transitions */
 
-li, td, tr, table, span, div, input[type="submit"], a.subscription {
-    -webkit-transition: background 0.75s;
-    -moz-transition: background 0.75s;
-    -ms-transition: background 0.75s;
-    -o-transition: background 0.75s;
-    transition: background 0.75s;
-}
-
-#footer .more_infos .socials li a,
-#footer .more_infos #footer-icons li a{
+.socials li a,
+#footer-icons li a {
     -webkit-transition: all 0.50s;
     -moz-transition: all 0.50s;
     -ms-transition: all 0.50s;
@@ -744,12 +738,20 @@ li, td, tr, table, span, div, input[type="submit"], a.subscription {
     transition: all 0.50s;
 }
 
-a, a span {
+a, a span, a small {
     -webkit-transition: color 0.75s;
     -moz-transition: color 0.75s;
     -ms-transition: color 0.75s;
     -o-transition: color 0.75s;
     transition: color 0.75s;
+}
+
+li, td, tr, table, span, div, input[type="submit"], .block_join > a {
+    -webkit-transition: background 0.75s;
+    -moz-transition: background 0.75s;
+    -ms-transition: background 0.75s;
+    -o-transition: background 0.75s;
+    transition: background 0.75s;
 }
 
 
@@ -898,6 +900,7 @@ h1.firstHeading {
 
 h1.notWikiPlace {
     margin-top: 20px;
+    text-shadow: -1px 0 #686a6b, 0 1px #686a6b, 1px 0 #686a6b, 0 -1px #686a6b;.
 }
 
 
@@ -2318,18 +2321,27 @@ p.ms-wl-empty {
 	list-style: none;
 }
 .slideshow a { color: #4D4E4F; }
+
 .slideshow h4 {
+    display: inline;
 	margin: 0;
-	padding: 0.2em 0;
-	padding-top: 0.7em;
+    padding: 0;
+	padding-right: 1em;
 	font-size: 12px;
 	font-weight: bold;
 }
+
 .slideshow p {
+    display: inline;
 	margin: 0;
-	padding: 0.2em 0;
+	padding: 0;
 	font-size: 12px;
 }
+
+.slideshow img {
+    margin-bottom: 6px;
+}
+
 .slideshow li {
 	position: absolute;
 	left: 10px;
@@ -2385,7 +2397,7 @@ p.ms-wl-empty {
 	float: right;
 	width: 239px;
 	background: none;
-	color:#fff;
+	color: #fff;
 }
 .block_join h3.title {
 	width: 190px;
@@ -2396,10 +2408,12 @@ p.ms-wl-empty {
 	text-shadow: 1px 1px 0 #6f2e2f;
 }
 
-.block_join .inside,
-.block_join .subscription {
+.block_join .inside {
 	background: #464343 url(images/bg_join.png) 0 100% repeat-x;
-	border-color: #5e5b5b;
+	border: 1px solid #5E5B5B;
+}
+.block_join > a {
+	border: 1px solid #dad9d9;
 }
 
 .block_join input {
@@ -2426,36 +2440,56 @@ p.ms-wl-empty {
 }
 .block_join .submit input:hover,
 .block_join .submit input:focus {
-	background: #7c2122;
+	background:  #7c2122;
 }
 
-.block_join .subscription {
+.block_join a {
 	display:block;
-	margin-top: 18px;
+	margin-top: 26px;
 	padding: 15px 25px 15px 20px;
-	color: #fff;
+	color: #4d4e4f;
 	text-decoration: none;
+	background: #fff none;
+	-webkit-box-shadow: 0 20px 40px -20px #dad9d9 inset;
+	-moz-box-shadow: 0 20px 40px -20px #dad9d9 inset;
+	-ms-box-shadow: 0 20px 40px -20px #dad9d9 inset;
+	-o-box-shadow: 0 20px 40px -20px #dad9d9 inset;
+	box-shadow: 0 20px 40px -20px #dad9d9 inset;
+}
+
+.block_join a:first-child {
+	margin-top: 35px;
+    color: white;
 	background: #110e0e none;
-	-webkit-box-shadow: 0 20px 40px -20px #464343 inset;
-	-moz-box-shadow: 0 20px 40px -20px #464343 inset;
-	-ms-box-shadow: 0 20px 40px -20px #464343 inset;
-	-o-box-shadow: 0 20px 40px -20px #464343 inset;
-	box-shadow: 0 20px 40px -20px #464343 inset;
 }
-.block_join .subscription:hover,
-.block_join .subscription:focus {
-	background: #7C2122;
+
+.block_join > a:hover,
+.block_join > a:focus {
+    color: white;
+	background:  #7c2122;
 }
-.block_join .subscription span {
+
+.block_join > a > span {
 	display:block;
 	font-size: 18px;
 	text-align: right;
 	padding-bottom: 10px;
 	margin-left: 8px;
-	background: transparent url(images/check.png) 0 30% no-repeat;
 	font-style: italic;
+    /* @embed */
+	background-image:  url(images/check_black.png);
+    background-color: transparent;
+    background-position: 0 30%;
+    background-repeat: no-repeat;
 }
-.block_join .subscription small {
+
+.block_join > a:first-child > span,
+.block_join > a:hover > span {
+    /* @embed */
+    background-image: url(images/check_white.png);
+}
+
+.block_join > a > small {
 	display:block;
 	font-size: 12px;
 	text-align:right;
@@ -2498,7 +2532,11 @@ p.ms-wl-empty {
 	position: absolute;
 	top:1px; left:1px;
 	width: 241px; height: 133px;
-	background: #000 url(../img/wm_plus.png) 90% 18% no-repeat;
+    /* @embed */
+	background-image: url(images/wm_plus.png);
+    background-color: #000;
+    background-position: 90% 18%;
+    background-repeat: no-repeat;
 	
 }
 .third_parts a {
@@ -2507,9 +2545,6 @@ p.ms-wl-empty {
 	line-height: 1.5em;
 	text-align: justify;
 	text-decoration:none;
-}
-.third_parts a:focus {
-	outline: none;
 }
 
 /* -----------------------------------------------------------------------------

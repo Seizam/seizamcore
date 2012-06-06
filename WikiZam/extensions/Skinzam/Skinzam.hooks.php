@@ -104,16 +104,16 @@ class SkinzamHooks {
         $AbsoluteFooterUrls = array();
 
         if ($skin->loggedin) {
-            $AbsoluteFooterUrls['allpages'] = array(
-                'text' => wfMessage('allpages'),
-                'href' => Skin::makeSpecialUrl('AllPages'),
-                'active' => ( $skin->thispage == 'Special:AllPages' )
-            );
             $AbsoluteFooterUrls['myseizam'] = array(
                 'text' => wfMessage('sz-myseizam'),
                 'href' => Skin::makeSpecialUrl('MySeizam'),
                 'class' => false,
                 'active' => ( $skin->thispage == 'Special:MySeizam' )
+            );
+            $AbsoluteFooterUrls['logout'] = array(
+                'text' => wfMessage('logout'),
+                'href' => Skin::makeSpecialUrl('UserLogout',array('returnto'=>$skin->getRelevantTitle())),
+                'active' => ( $skin->thispage == 'Special:AllPages' )
             );
             $szPrettyUserName = $skin->username;
             $tpl->set('sz_pretty_username', $szPrettyUserName);
@@ -188,6 +188,9 @@ class SkinzamHooks {
         }
 
         $personal_urls = array_merge($beginning, $personal_urls);
+        
+        if (isset($personal_urls['logout']))
+            unset($personal_urls['logout']);
 
         return true;
     }

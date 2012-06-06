@@ -56,7 +56,20 @@ class SpecialMainpage extends SpecialPage {
             'src' => 'http://localhost/WikiZam/skins/skinzam/images/demo/slide_full_4.jpg'
         )
     );
-    
+    private $blockjoin = array(
+        array(
+            'key' => 'theoffers',
+            'href' => '#',
+        ),
+        array(
+            'key' => 'myseizam',
+            'href' => '#',
+        ),
+        array(
+            'key' => 'helpus',
+            'href' => '#',
+        )
+    );
     private $triptic = array(
         array(
             'key' => 'video',
@@ -88,10 +101,16 @@ class SpecialMainpage extends SpecialPage {
      * Special page entry point
      */
     public function execute($par) {
-        $output = $this->getOutput();
         $this->setHeaders();
+        $output = $this->getOutput();
+        $user = $this->getUser();
+
         $output->addHTML($this->displaySlideshow());
-        $output->addHTML($this->displayForm());
+        if ($user->isLoggedIn())
+            $output->addHTML($this->displayOffers());
+        else
+            $output->addHTML($this->displayForm());
+
         $output->addHTML($this->displayTriptic());
     }
 
@@ -113,73 +132,79 @@ class SpecialMainpage extends SpecialPage {
         }
 
         $html .= Xml::closeElement('ul');
-        $html .= Xml::closeElement('div');
-        $html .= Xml::closeElement('div');
-        $html .= Xml::closeElement('div');
+        $html .= Xml::closeElement('div'); //Slideshow
+        $html .= Xml::closeElement('div'); //Inside
+        $html .= Xml::closeElement('div'); //block
 
         return $html;
     }
 
     private function displayForm() {
-		if ( session_id() == '' ) {
-			wfSetupSession();
-		}
-        
-        if ( !LoginForm::getCreateaccountToken() ) {
-				LoginForm::setCreateaccountToken();
-			}
-		$token = LoginForm::getCreateaccountToken();
-        
+        if (session_id() == '') {
+            wfSetupSession();
+        }
+
+        if (!LoginForm::getCreateaccountToken()) {
+            LoginForm::setCreateaccountToken();
+        }
+        $token = LoginForm::getCreateaccountToken();
+
         $html = Xml::openElement('div', array('class' => 'block block_join'));
         $html .= Xml::element('h3', array('class' => 'title'), wfMessage('sz-joinus')->text());
         $html .= Xml::openElement('div', array('class' => 'inside'));
         $html .= Xml::openElement('form', array(
-            'id'=>'userlogin2',
-            'action'=>'/WikiZam/index.php?title=Special:UserLogin&action=submitlogin&type=signup',
-            'method'=>'post',
-            'name'=>'userlogin2'
-        ));
-        
+                    'id' => 'userlogin2',
+                    'action' => '/WikiZam/index.php?title=Special:UserLogin&action=submitlogin&type=signup',
+                    'method' => 'post',
+                    'name' => 'userlogin2'
+                ));
+
         $html .= Xml::openElement('p');
-        $html .= Xml::element('label', array('for'=>'wpName2', 'class'=>'sread'),  wfMessage('yourname')->text());
-        $html .= Xml::element('input', array('id'=>'wpName2', 'name'=>'wpName', 'placeholder'=>wfMessage('yourname')->text()));
+        $html .= Xml::element('label', array('for' => 'wpName2', 'class' => 'sread'), wfMessage('yourname')->text());
+        $html .= Xml::element('input', array('id' => 'wpName2', 'name' => 'wpName', 'placeholder' => wfMessage('yourname')->text()));
         $html .= Xml::closeElement('p');
-        
+
         $html .= Xml::openElement('p');
-        $html .= Xml::element('label', array('for'=>'wpPassword2', 'class'=>'sread'),  wfMessage('yourpassword')->text());
-        $html .= Xml::element('input', array('id'=>'wpPassword2', 'type'=>'password', 'name'=>'wpPassword', 'placeholder'=>wfMessage('yourpassword')->text()));
+        $html .= Xml::element('label', array('for' => 'wpPassword2', 'class' => 'sread'), wfMessage('yourpassword')->text());
+        $html .= Xml::element('input', array('id' => 'wpPassword2', 'type' => 'password', 'name' => 'wpPassword', 'placeholder' => wfMessage('yourpassword')->text()));
         $html .= Xml::closeElement('p');
-        
+
         $html .= Xml::openElement('p');
-        $html .= Xml::element('label', array('for'=>'wpRetype', 'class'=>'sread'),  wfMessage('yourpasswordagain')->text());
-        $html .= Xml::element('input', array('id'=>'wpRetype', 'type'=>'password', 'name'=>'wpRetype', 'placeholder'=>wfMessage('yourpasswordagain')->text()));
+        $html .= Xml::element('label', array('for' => 'wpRetype', 'class' => 'sread'), wfMessage('yourpasswordagain')->text());
+        $html .= Xml::element('input', array('id' => 'wpRetype', 'type' => 'password', 'name' => 'wpRetype', 'placeholder' => wfMessage('yourpasswordagain')->text()));
         $html .= Xml::closeElement('p');
-        
+
         $html .= Xml::openElement('p');
-        $html .= Xml::element('label', array('for'=>'wpEmail', 'class'=>'sread'),  wfMessage('youremail')->text());
-        $html .= Xml::element('input', array('id'=>'wpEmail', 'name'=>'wpEmail', 'placeholder'=>wfMessage('youremail')->text()));
+        $html .= Xml::element('label', array('for' => 'wpEmail', 'class' => 'sread'), wfMessage('youremail')->text());
+        $html .= Xml::element('input', array('id' => 'wpEmail', 'name' => 'wpEmail', 'placeholder' => wfMessage('youremail')->text()));
         $html .= Xml::closeElement('p');
-        
-        $html .= Xml::openElement('p', array('class'=>'submit'));
-        $html .= Xml::element('label', array('for'=>'wpCreateaccount', 'class'=>'sread'),  wfMessage('createaccount')->text());
-        $html .= Xml::element('input', array('id'=>'wpCreateaccount', 'name'=>'wpCreateaccount', 'type'=>'submit', 'value' => wfMessage('sz-enter')->text()));
+
+        $html .= Xml::openElement('p', array('class' => 'submit'));
+        $html .= Xml::element('label', array('for' => 'wpCreateaccount', 'class' => 'sread'), wfMessage('createaccount')->text());
+        $html .= Xml::element('input', array('id' => 'wpCreateaccount', 'name' => 'wpCreateaccount', 'type' => 'submit', 'value' => wfMessage('sz-enter')->text()));
         $html .= Xml::closeElement('p');
-        
-        $html .= Xml::element('input', array('name'=>'wpCreateaccountToken', 'type'=>'hidden', 'value'=> $token));
-         
+
+        $html .= Xml::element('input', array('name' => 'wpCreateaccountToken', 'type' => 'hidden', 'value' => $token));
+
         $html .= Xml::closeElement('form');
-        $html .= Xml::closeElement('div');
-        $html .= Xml::closeElement('div');
-        
+        $html .= Xml::closeElement('div'); //Inside
+        $html .= Xml::closeElement('div'); //Block
+
         return $html;
     }
-    
+
     private function displayOffers() {
-        $html = Xml::openElement('a', array('href' => $href, 'class'=>'subscription'));
-        $html .= Xml::element('span', array(), wfMessage('sz-discoveroffers') );
-        $html .= Xml::element('small', array(), wfMessage('sz-discoveroffers-catch'));
-        $html .= Xml::closeElement('a');
-        
+        $html = Xml::openElement('div', array('class' => 'block block_join'));
+
+        foreach ($this->blockjoin as $box) {
+            $html .= Xml::openElement('a', array('href' => $box['href']));
+            $html .= Xml::element('span', array(), wfMessage('sz-' . $box['key']));
+            $html .= Xml::element('small', array(), wfMessage('sz-' . $box['key'] . '-catch'));
+            $html .= Xml::closeElement('a');
+        }
+
+        $html .= Xml::closeElement('div');
+
         return $html;
     }
 
@@ -187,26 +212,25 @@ class SpecialMainpage extends SpecialPage {
         $html = Xml::openElement('div', array('class' => 'block block_full'));
         $html .= Xml::element('h3', array('class' => 'title'), wfMessage('sz-triptic')->text());
         $html .= Xml::openElement('div', array('class' => 'inside'));
-        
+
         foreach ($this->triptic as $ptic) {
-        
-        $html .= Xml::openElement('div', array('class' => 'third_parts'));
-        $html .= Xml::element('h4', array(), wfMessage('sz-'.$ptic['key']));
-        $html .= Xml::openElement('a', array('href'=> $ptic['href']));
-        $html .= Xml::openElement('figure');
-        $html .= Xml::element('img', array('src'=>$ptic['src'], 'width'=>241, 'height'=>133));
-        $html .= Xml::element('figcaption',array(), wfMessage('sz-'.$ptic['key'].'-caption'));
-        $html .= Xml::closeElement('figure');
-        $html .= Xml::closeElement('a');
-        $html .= Xml::closeElement('div');
-        
+
+            $html .= Xml::openElement('div', array('class' => 'third_parts'));
+            $html .= Xml::element('h4', array(), wfMessage('sz-' . $ptic['key']));
+            $html .= Xml::openElement('a', array('href' => $ptic['href']));
+            $html .= Xml::openElement('figure');
+            $html .= Xml::element('img', array('src' => $ptic['src'], 'width' => 241, 'height' => 133));
+            $html .= Xml::element('figcaption', array(), wfMessage('sz-' . $ptic['key'] . '-caption'));
+            $html .= Xml::closeElement('figure');
+            $html .= Xml::closeElement('a');
+            $html .= Xml::closeElement('div');
         }
-        
-        $html .= Xml::element('div', array('class'=>'clearfix'));
-        
+
+        $html .= Xml::element('div', array('class' => 'clearfix'));
+
         $html .= Xml::closeElement('div');
         $html .= Xml::closeElement('div');
-        
+
         return $html;
     }
 
