@@ -192,12 +192,13 @@ class SpecialWikiplaces extends SpecialPage {
 			return wfMessage($key, $homepage)->parse(); // error while creating
 		}
 
-		$this->homepageString = $homepage->getDBkey();
+		$homepage_dbkey = $homepage->getDBkey();
+		$this->homepageString = $homepage_dbkey;
 		
 		if ( $formData['CreateTalk'] === true) {
 			// The wikiplace was created by a hook and is not accessible from here, so we need to get the wikiplace this way
 			
-			$talk_page = WpPage::createTalk($homepage, $user);
+			$talk_page = WpPage::createTalk($homepage, $user, wfMessage('wp-homepage-talk-default', $homepage_dbkey)->parse());
 
 			if (!( $talk_page instanceof Title )) {
 				// wikiplace was created, but, error on talk
@@ -346,7 +347,7 @@ class SpecialWikiplaces extends SpecialPage {
 		if ( $formData['CreateTalk'] === true) {
 			// The wikiplace was created by a hook and is not accessible from here, so we need to get the wikiplace this way
 			
-			$talk_page = WpPage::createTalk($subpage, $user);
+			$talk_page = WpPage::createTalk($subpage, $user, wfMessage('wp-subpage-talk-default', $subpage->getDBkey())->parse());
 
 			if (!( $talk_page instanceof Title )) {
 				// wikiplace was created, but, error on talk
