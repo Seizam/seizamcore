@@ -27,7 +27,6 @@ $messages['en'] = array(
         'ms-quickaccount' => 'About my account:',
         'ms-morelinks' => 'What else?',
         'ms-specialpages' => 'And [[Special:SpecialPages|much more...]]',
-        'ms-nosub' => 'Wikiplaces are only available upon subscription. [[Special:Subscriptions/new|Click here to subscribe !]]'
 );
 
 /** Message documentation (Message documentation)
@@ -55,5 +54,4 @@ $messages['fr'] = array(
         'ms-quickaccount' => 'À propos de mon compte :',
         'ms-morelinks' => 'Quoi d\'autre ?',
         'ms-specialpages' => 'Et [[Special:SpecialPages|plus encore...]]',
-        'ms-nosub' => 'Les wikiplaces ne sont disponibles qu\'après abonnement. [[Special:Subscriptions/new|Cliquez ici pour vous abonner !]]'
-);
+        );

@@ -7,6 +7,13 @@ class SpecialWikiplaces extends SpecialPage {
 	const ACTION_CREATE_SUBPAGE = 'CreatePage';
 	const ACTION_LIST_WIKIPLACES = 'List';
 	const ACTION_CONSULT_WIKIPLACE = 'Consult';
+    
+    
+
+    private $action = self::ACTION_LIST_WIKIPLACES;
+    private $name = null;
+    private $msgType = null;
+    private $msgKey = null;
 
 	private $homepageString;
 	private $subpageString;
@@ -25,6 +32,8 @@ class SpecialWikiplaces extends SpecialPage {
 		$this->setHeaders(); // sets robotPolicy = "noindex,nofollow" + set page title
 
 		$user = $this->getUser();
+        
+        $request = $this->getRequest();
 
 		$output = $this->getOutput();
 
@@ -43,29 +52,46 @@ class SpecialWikiplaces extends SpecialPage {
 		if (isset($par) & $par != '') {
 			$explosion = explode(':', $par);
 			if (count($explosion) == 1) {
-				$action = $explosion[0];
-				$name = null;
+				$this->action = $explosion[0];
+				$this->name = null;
 			} else if (count($explosion) == 2) {
-				$action = $explosion[0];
-				$name = $explosion[1];
+				$this->action = $explosion[0];
+				$this->name = $explosion[1];
 			}
 		} else {
-			$action = $this->getRequest()->getText('action', null);
-			$name = $this->getRequest()->getText('name', null);
+			$this->action = $this->getRequest()->getText('action', null);
+			$this->name = $this->getRequest()->getText('name', null);
 		}
+        $this->msgType = $request->getText('msgtype', $this->msgType);
+        $this->msgKey = $request->getText('msgkey', $this->msgKey);
+        
+        $this->display();
+		
+	}
+    
+    private function display() {
+        $output = $this->getOutput();
 
-		switch ($action) {
+        // Top Infobox Messaging
+        if ($this->msgType != null) {
+            $msg = wfMessage($this->msgKey);
+            if ($msg->exists()) {
+                $output->addHTML(Html::rawElement('div', array('class' => "informations $this->msgType"), $msg->parse()));
+            }
+        }
+
+        switch ($this->action) {
 
 			case self::ACTION_CONSULT_WIKIPLACE:
 				if ($name != null) {
-					$this->displayConsultWikiplace($name);
+					$this->displayConsultWikiplace();
 				} else {
 					$this->displayList();
 				}
 				break;
 
 			case self::ACTION_CREATE_SUBPAGE:
-				$this->displayCreateSubpage($name);
+				$this->displayCreateSubpage();
 				break;
 
 			case self::ACTION_CREATE_WIKIPLACE:
@@ -77,7 +103,7 @@ class SpecialWikiplaces extends SpecialPage {
 				$this->displayList();
 				break;
 		}
-	}
+    }
 
 	private function displayList() {
 
@@ -97,8 +123,12 @@ class SpecialWikiplaces extends SpecialPage {
 	private function displayCreateWikiplace() {
 
 		if (( $reason = WpSubscription::userCanCreateWikiplace($this->getUser()->getId())) !== true) {
-			$this->getOutput()->showErrorPage('sorry', $reason); // no active subscription or quotas exceeded
-			return;
+            $this->action = self::ACTION_LIST;
+            $this->msgKey = $reason;
+            $this->msgType = 'error';
+            $this->display();
+            return;
+            return;
 		}
 
 		$formDescriptor = array(
@@ -213,13 +243,20 @@ class SpecialWikiplaces extends SpecialPage {
 	public function displayCreateSubpage($name) {
 
 		if (( $reason = WpSubscription::userCanCreateNewPage($this->getUser()->getId())) !== true) {
-			$this->getOutput()->showErrorPage('sorry', $reason);  // no active subscription or quotas exceeded 
-			return;
+            $this->action = self::ACTION_LIST;
+            $this->msgKey = $reason;
+            $this->msgType = 'error';
+            $this->display();
+            return;
 		}
 
 		$wikiplaces = WpWikiplace::factoryAllOwnedByUserId($this->getUser()->getId());
 		if (count($wikiplaces) == 0) {
 			$this->getOutput()->showErrorPage('sorry', 'wp-create-wp-first');
+            $this->action = self::ACTION_LIST;
+            $this->msgKey = 'wp-create-wp-first';
+            $this->msgType = 'error';
+            $this->display();
 			return;
 		}
 

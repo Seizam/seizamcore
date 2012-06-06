@@ -814,7 +814,7 @@ class WikiplacesHooks {
 
 		$title = $skin->getRelevantTitle();
 		$ns = $title->getNamespace();
-		if (WpPage::isInWikiplaceNamespaces($ns)) {
+		if ($title->exists() && WpPage::isInWikiplaceNamespaces($ns)) {
 			$explosion = WpWikiplace::explodeWikipageKey($title->getText(), $ns);
 			$wikiplaceKey = $explosion[0];
 

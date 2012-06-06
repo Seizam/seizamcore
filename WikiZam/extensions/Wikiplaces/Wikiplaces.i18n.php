@@ -105,7 +105,9 @@ You are also promising us that you wrote this yourself, or copied it from a publ
 	'wp-duplicate-exists' => 'A page with the same name but different case ([[$1]]) already exists.',
 	'wp-duplicate-subject' => 'A subject page with the same name but different case ([[$1]]) exists. Your talk page has to be named [[$1]].',
 	'wp-duplicate-talk' => 'A talk page with the same name but different case ([[$1]]) exists. Your page has to be named [[$1]].',
-    /* TablePager: Subscription */
+
+    'wp-nosub' => 'Wikiplaces are only available upon subscription. [[Special:Subscriptions/new|Click here to subscribe !]]',
+/* TablePager: Subscription */
     'wp-subscriptionslist-header' => 'Here are your active subscriptions.',
     'wp-subscriptionslist-noactive-header' => '{{int:wp-sub-noactive}} [[Special:Subscriptions/new|Click here to subscribe !]]',
     'wp-subscriptionslist-pending-header' => 'Your subscription is pending because it has not been paid for yet. [[Special:ElectronicPayment|Please click here to credit your account.]]',
@@ -250,6 +252,7 @@ Vous nous promettez aussi que vous avez écrit ceci vous-même, ou que vous l’
 	'wp-duplicate-exists' => 'Une page ayant le même nom avec une casse différente ([[$1]]) existe déjà.',
 	'wp-duplicate-subject' => 'Une page sujet ayant le même nom mais avec une casse différente existe. Votre page de discussion devra se nommer [[$1]].',
 	'wp-duplicate-talk' => 'Une page de discussion ayant le même nom mais avec une casse différente existe. Votre page devra se nommer [[$1]].',
+    'wp-nosub' => 'Les wikiplaces ne sont disponibles qu\'après abonnement. [[Special:Subscriptions/new|Cliquez ici pour vous abonner !]]',
     /* TablePager: Subscription */
     'wp-subscriptionslist-header' => 'Voici vos abonnements actifs.',
     'wp-subscriptionslist-noactive-header' => '{{int:wp-sub-noactive}} [[Special:Subscriptions/new|Cliquez ici pour vous abonner !]]',
