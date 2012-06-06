@@ -45,9 +45,10 @@ class WikiplacesHooks {
 		}
 
 		// some actions have to be forbidden when not in wikiplaces
-		if ( !$user->isAllowed(WP_ADMIN_RIGHT) && !WpPage::isInWikiplaceNamespaces($namespace) ) {
+		if ( !WpPage::isInWikiplaceNamespaces($namespace) ) {
+			
 			global $wgWpSubscribersExtraRights;
-			if (in_array($action, $wgWpSubscribersExtraRights)) {
+			if ( !$user->isAllowed(WP_ADMIN_RIGHT) && in_array($action, $wgWpSubscribersExtraRights)) {
 				
 				wfDebugLog('wikiplaces-debug', "$action forbidden (require susbcriber extra right) for {$title->getPrefixedDBkey()}"); 
 				$result = false; // disallow
