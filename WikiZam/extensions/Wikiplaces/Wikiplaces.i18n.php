@@ -102,7 +102,8 @@ You are also promising us that you wrote this yourself, or copied it from a publ
     'wp-invalid-name' => 'This name is invalid.',
     'wp-name-already-exists' => 'This name already exists. Please retry with a different name.',
     'wp-create-wp-first' => 'You need to create a Wikiplace first.',
-    /* TablePager: Subscription */
+    'wp-nosub' => 'Wikiplaces are only available upon subscription. [[Special:Subscriptions/new|Click here to subscribe !]]',
+/* TablePager: Subscription */
     'wp-subscriptionslist-header' => 'Here are your active subscriptions.',
     'wp-subscriptionslist-noactive-header' => '{{int:wp-sub-noactive}} [[Special:Subscriptions/new|Click here to subscribe !]]',
     'wp-subscriptionslist-pending-header' => 'Your subscription is pending because it has not been paid for yet. [[Special:ElectronicPayment|Please click here to credit your account.]]',
@@ -244,6 +245,7 @@ Vous nous promettez aussi que vous avez écrit ceci vous-même, ou que vous l’
     'wp-invalid-name' => 'Ce nom est invalide.',
     'wp-name-already-exists' => 'Ce nom existe déjà. Merci d\'utiliser un autre nom.',
     'wp-create-wp-first' => 'Vous devez d\'abord créer un Wikiplace.',
+    'wp-nosub' => 'Les wikiplaces ne sont disponibles qu\'après abonnement. [[Special:Subscriptions/new|Cliquez ici pour vous abonner !]]',
     /* TablePager: Subscription */
     'wp-subscriptionslist-header' => 'Voici vos abonnements actifs.',
     'wp-subscriptionslist-noactive-header' => '{{int:wp-sub-noactive}} [[Special:Subscriptions/new|Cliquez ici pour vous abonner !]]',

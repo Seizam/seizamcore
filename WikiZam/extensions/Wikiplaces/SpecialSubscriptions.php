@@ -65,7 +65,7 @@ class SpecialSubscriptions extends SpecialPage {
         // Top Infobox Messaging
         if ($this->msgType != null) {
             $msg = wfMessage($this->msgKey);
-            if (true) {
+            if ($msg->exists()) {
                 $output->addHTML(Html::rawElement('div', array('class' => "informations $this->msgType"), $msg->parse()));
             }
         }

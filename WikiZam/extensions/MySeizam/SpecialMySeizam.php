@@ -111,7 +111,7 @@ class SpecialMySeizam extends SpecialPage {
         $output->addHTML('<div id="ms-morelinks" class="content_block">' . $this->buildMoreLinks() . '</div>');
         $output->addHTML('<div id="ms-quickwikiplaces" class="bottomleft">'
                 . '<div class="informations">'
-                . wfMessage('ms-nosub')->parse()
+                . wfMessage('wp-nosub')->parse()
                 . '</div>'
                 . $this->buildQuickWikiplaces()
                 . '</div>');
