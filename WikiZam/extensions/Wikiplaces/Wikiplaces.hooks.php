@@ -419,6 +419,8 @@ class WikiplacesHooks {
 				wfDebugLog('wikiplaces-debug', 'onArticleInsertComplete(): OK, article=['.$article_id.']"'.$pdb_key.'"  for user['.$user_id.']');
 			}
 			
+		} else {
+			wfDebugLog('wikiplaces-debug', 'onArticleInsertComplete(): OK, no default restrictions to set, article=['.$article_id.']"'.$pdb_key.'"  for user['.$user_id.']');
 		}
 
 		return true;

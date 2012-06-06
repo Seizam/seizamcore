@@ -151,7 +151,7 @@ class WpPage {
 	 * </li>
 	 * </ul>
 	 */
-	public static function createHomepage($new_wikiplace_name, $user, $content) {
+	public static function createHomepage($new_wikiplace_name, $user, $content = '-') {
 
 		if (($new_wikiplace_name === null) || (!is_string($new_wikiplace_name))) {
 			throw new MWException('Cannot create homepage, invalid name.');
@@ -208,7 +208,7 @@ class WpPage {
 	 * </li>
 	 * </ul>
 	 */
-	public static function createSubpage($wikiplace, $new_page_name, $user, $content) {
+	public static function createSubpage($wikiplace, $new_page_name, $user, $content = '-') {
 
 		if (($wikiplace === null) || !($wikiplace instanceof WpWikiplace) ||
 				( $new_page_name === null) || !is_string($new_page_name)) {
@@ -245,6 +245,53 @@ class WpPage {
 		}
 
 		return $title;
+	}
+	
+	
+	/**
+	 *
+	 * @param Title $related_title The title the talk is related to
+	 * @param User $user
+	 * @param string $content
+	 * @return Title
+	 */
+	public static function createTalk($related_title, $user, $content = '-') {
+
+		if (!($related_title instanceof Title) || !($user instanceof User) ) {
+			throw new MWException('Cannot create talk page (wrong argument)');
+		}
+
+		if ( ! $related_title->canTalk() ) {
+			return array('sz-internal-error');
+		}
+		
+		$talk = $related_title->getTalkPage();
+		if (!($talk instanceof Title)) {
+			return array('sz-internal-error');
+		}
+
+		if ($talk->isKnown()) {
+			return array('wp-title-already-exists');
+		}
+
+		// as seen in EditPage->getEditPermissionErrors() ( called by EditPage->edit() )
+		$permErrors = $talk->getUserPermissionsErrors( 'edit', $user );
+		$permErrors = array_merge( $permErrors,
+				wfArrayDiff2( $talk->getUserPermissionsErrors( 'create', $user ), $permErrors ) );
+		if ( $permErrors ) { // creation impossible 
+			return $permErrors[0]; // strange, but only key 0 seems to be used by MW when reading errors
+		}
+
+		// now store the new page in mediawiki, this will trigger the WikiplaceHook, wich will 
+		// allow the page saving
+		$article = new Article($talk);
+		$status = $article->doEdit($content, '', EDIT_NEW, false, $user);
+
+		if (!$status->isgood()) {
+			return array('sz-internal-error');
+		}
+
+		return $talk;
 	}
 
 	/**
