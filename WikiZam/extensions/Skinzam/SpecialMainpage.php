@@ -38,22 +38,22 @@ class SpecialMainpage extends SpecialPage {
         array(
             'key' => 'freedom1',
             'href' => '#',
-            'src' => 'http://localhost/WikiZam/skins/skinzam/images/demo/slide_full_1.jpg'
+            'src' => '../skins/skinzam/images/demo/slide_full_1.jpg'
         ),
         array(
             'key' => 'freedom2',
             'href' => '#',
-            'src' => 'http://localhost/WikiZam/skins/skinzam/images/demo/slide_full_2.jpg'
+            'src' => '../skins/skinzam/images/demo/slide_full_2.jpg'
         ),
         array(
             'key' => 'freedom3',
             'href' => '#',
-            'src' => 'http://localhost/WikiZam/skins/skinzam/images/demo/slide_full_3.jpg'
+            'src' => '../skins/skinzam/images/demo/slide_full_3.jpg'
         ),
         array(
             'key' => 'freedom4',
             'href' => '#',
-            'src' => 'http://localhost/WikiZam/skins/skinzam/images/demo/slide_full_4.jpg'
+            'src' => '../skins/skinzam/images/demo/slide_full_4.jpg'
         )
     );
     private $blockjoin = array(
@@ -74,17 +74,17 @@ class SpecialMainpage extends SpecialPage {
         array(
             'key' => 'video',
             'href' => '#',
-            'src' => 'http://localhost/WikiZam/skins/skinzam/images/demo/pres_video_1.jpg'
+            'src' => '../skins/skinzam/images/demo/pres_video_1.jpg'
         ),
         array(
             'key' => 'demo',
             'href' => '#',
-            'src' => 'http://localhost/WikiZam/skins/skinzam/images/demo/pres_video_2.jpg'
+            'src' => '../skins/skinzam/images/demo/pres_video_2.jpg'
         ),
         array(
             'key' => 'blog',
             'href' => '#',
-            'src' => 'http://localhost/WikiZam/skins/skinzam/images/demo/pres_video_3.jpg'
+            'src' => '../skins/skinzam/images/demo/pres_video_3.jpg'
         )
     );
 
