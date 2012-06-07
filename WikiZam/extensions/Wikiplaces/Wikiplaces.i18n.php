@@ -103,9 +103,10 @@ You are also promising us that you wrote this yourself, or copied it from a publ
     'wp-name-already-exists' => 'This name already exists. Please retry with a different name.',
     'wp-create-wp-first' => 'You need to create a Wikiplace first.',
 	'wp-duplicate-exists' => 'A page with the same name but different case ([[$1]]) already exists.',
-	'wp-duplicate-subject' => 'A subject page with the same name but different case ([[$1]]) exists. Your talk page has to be named [[$1]].',
-	'wp-duplicate-talk' => 'A talk page with the same name but different case ([[$1]]) exists. Your page has to be named [[$1]].',
-
+	'wp-duplicate-related' => 'A related page with the same name but different case ([[$1]]) exists. This page has to be named [[$2]].',
+	'wp-no-container-found' => 'This page should belong to a Wikiplace. Retry with a name starting by a Wikiplace name.',
+	'wp-not-owner' => 'You are not the owner of this Wikiplace.',
+	'wp-notloggedin' => 'You must be logged in to perform this action. Please [[Special:UserLogin/signup|create an account]] or [[Special:UserLogin|log in]].',
     'wp-nosub' => 'Wikiplaces are only available upon subscription. [[Special:Subscriptions/new|Click here to subscribe !]]',
 /* TablePager: Subscription */
     'wp-subscriptionslist-header' => 'Here are your active subscriptions.',
@@ -250,8 +251,10 @@ Vous nous promettez aussi que vous avez écrit ceci vous-même, ou que vous l’
     'wp-name-already-exists' => 'Ce nom existe déjà. Merci d\'utiliser un autre nom.',
     'wp-create-wp-first' => 'Vous devez d\'abord créer un Wikiplace.',
 	'wp-duplicate-exists' => 'Une page ayant le même nom avec une casse différente ([[$1]]) existe déjà.',
-	'wp-duplicate-subject' => 'Une page sujet ayant le même nom mais avec une casse différente existe. Votre page de discussion devra se nommer [[$1]].',
-	'wp-duplicate-talk' => 'Une page de discussion ayant le même nom mais avec une casse différente existe. Votre page devra se nommer [[$1]].',
+	'wp-duplicate-related' => 'Une page liée ayant le même nom mais avec une casse différente ([[$1]]) existe. Cette page devra se nommer [[$2]].',
+	'wp-no-container-found' => 'Cette page devrait appartenir à un Wikiplace. Rééssayez avec un nom commencant par celui d\'un Wikiplace.',
+	'wp-not-owner' => 'Vous n\'êtes pas le propriétaire de ce Wikiplace.',
+	'wp-notloggedin' => 'Cette action nécessite que vous soyez identifié. Vous pouvez [[Special:UserLogin/signup|créer un compte]] ou [[Special:UserLogin|vous connecter]].',
     'wp-nosub' => 'Les wikiplaces ne sont disponibles qu\'après abonnement. [[Special:Subscriptions/new|Cliquez ici pour vous abonner !]]',
     /* TablePager: Subscription */
     'wp-subscriptionslist-header' => 'Voici vos abonnements actifs.',
