@@ -46,10 +46,11 @@ body {
     padding: 24px 0 0 0;
     font-size: 13px;
     line-height: 1.231;
+    
 }
 
 body, button, input, select, textarea { 
-    font-family: Verdana, Arial, sans-serif, Georgia, Times, "Time New Roman", serif;
+    font-family: Georgia, Times, "Time New Roman", serif;
     color: #4d4e4f;
 }
 
