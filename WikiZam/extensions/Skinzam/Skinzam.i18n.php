@@ -12,6 +12,7 @@ $messages = array();
  * English
  */
 $messages['en'] = array(
+    'Mainpage' => 'Special:Welcome',
     'skinzam' => 'SkinZam',
     'sz-skinzam' => 'UI elements for Seizam',
     'sz-skinzam-desc' => 'Holds UI elements for Seizam\'s skin.',
