@@ -29,11 +29,6 @@ html {
     overflow-y: scroll;
     margin: 0;
     padding: 0;
-    /* @embed */
-    background-image: url(images/bg.jpg);
-    background-color: #e5e5e5;
-    background-repeat: no-repeat;
-    background-position: center top;
     -webkit-overflow-scrolling: touch;
     -webkit-tap-highlight-color: rgba(0,0,0,0);
     -webkit-text-size-adjust: 100%;
@@ -41,10 +36,12 @@ html {
 }
 
 body {
+    /* @embed */
+    background-image: url(images/bg.jpg);
+    background-color: #e5e5e5;
     background-repeat: no-repeat;
     background-position: top center;
     background-attachment: fixed;
-    background-color: transparent;
     margin: 0;
     padding: 24px 0 0 0;
     font-size: 13px;
@@ -61,7 +58,7 @@ body, button, input, select, textarea {
 ::-moz-selection { background: #ee383a; color: #fff; text-shadow: none; }
 ::selection { background: #ee383a; color: #fff; text-shadow: none; }
 
-/*
+
 h1:first-child, h2:first-child, h3:first-child, h4:first-child, h5:first-child, h6:first-child, p:first-child {
     margin-top: 0;
 }
@@ -69,7 +66,6 @@ h1:first-child, h2:first-child, h3:first-child, h4:first-child, h5:first-child, 
 h1:last-child, h2:last-child, h3:last-child, h4:last-child, h5:last-child, h6:last-child, p:last-child, fieldset:last-child {
     margin-bottom: 0;
 }
-*/
 
 
 /* -----------------------------------------------------------------------------
@@ -1509,6 +1505,18 @@ a.feedlink:first-child {
     float:left;
 }
 
+
+/* -----------------------------------------------------------------------------
+   ==  NS_HELP
+   -------------------------------------------------------------------------- */
+
+body.ns-12, body.ns-13 {
+    background-image: url(images/help.bg.jpg);
+    background-position: top right;
+}
+
+
+
 /* -----------------------------------------------------------------------------
    ==  NS_FILE
    -------------------------------------------------------------------------- */
@@ -2332,7 +2340,6 @@ p.ms-wl-empty {
 }
 
 .slideshow p {
-    display: inline;
 	margin: 0;
 	padding: 0;
 	font-size: 12px;
@@ -2624,6 +2631,13 @@ div.prefsectiontip p {
     font-size: x-small;
     color: #686a6b;
     margin: 3px 0 0 0;
+}
+
+div.mw-warning-with-logexcerpt {
+    border: 1px solid #dad9d9;
+    background-color: #f2f2f2;
+    padding: 8px;
+    margin-bottom: 16px;
 }
 
 

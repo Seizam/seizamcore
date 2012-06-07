@@ -152,9 +152,7 @@ class SkinzamTemplate extends BaseTemplate {
         <!-- /fixalpha -->
         <!-- background -->
         <?php if ($this->data['wp_background']['url']): ?>
-            <script>
-                $.backstretch("<?php echo $this->data['wp_background']['url']; ?>");
-            </script>
+            <script>$.backstretch("<?php echo $this->data['wp_background']['url']; ?>");</script>
         <?php endif; ?>
         <!-- /background -->
         <!-- Trail -->

@@ -12,7 +12,7 @@ $messages = array();
  * English
  */
 $messages['en'] = array(
-    'Mainpage' => 'Special:Welcome',
+    'main_page' => 'Special:Welcome',
     'skinzam' => 'SkinZam',
     'sz-skinzam' => 'UI elements for Seizam',
     'sz-skinzam-desc' => 'Holds UI elements for Seizam\'s skin.',
@@ -65,15 +65,61 @@ $messages['en'] = array(
 	
     
     /* Mainpage */
-    'sz-ourfreedoms' => 'Our Freedoms',
-    'sz-joinus' => 'Join us',
+    /* Slideshow */
+    'sz-mp-ourfreedoms' => 'Our Freedoms',
+    
+    'sz-slideshow0' => 'The liberty of creation',
+    'sz-slideshow0-href' => '{{canonicalurl:Project:Publishing}}',
+    'sz-slideshow0-src' => '{{STYLEPATH}}/skinzam/demo/slide_full_1.jpg',
+    'sz-slideshow0-body' => 'Publish your art online, whatever your disciplines are, whatever your vision is. Because Seizam is a [[Help:Wiki|wiki]], you have total control over the content AND layout of your pages.',
+    
+    'sz-slideshow1' => 'The absence of pollution',
+    'sz-slideshow1-href' => '{{canonicalurl:Project:Publishing}}',
+    'sz-slideshow1-src' => '{{STYLEPATH}}/skinzam/demo/slide_full_2.jpg',
+    'sz-slideshow1-body' => 'No advertisement, no forced social-networking, no spam. Seizam is a fee-based service made for artists, nothing will ever spoil your work here.',
+    
+    'sz-slideshow2' => 'The opportunity of collaboration',
+    'sz-slideshow2-href' => '{{canonicalurl:Project:Publishing}}',
+    'sz-slideshow2-src' => '{{STYLEPATH}}/skinzam/demo/slide_full_3.jpg',
+    'sz-slideshow2-body' => 'Open your latest project to the world? Or keep it totally secrete? On seizam, you decide how to share your work, who can see it and who could give you a hand.',
+    
+    /* Form */
+    'sz-mp-joinus' => 'Join us',
+    'sz-mp-enter' => 'Enter',
+    
+    'sz-mp-yourname' => 'Username',
+    'sz-mp-yourpassword' => 'Password',
+    'sz-mp-yourpasswordagain' => 'Retype password',
+    'sz-mp-youremail' => 'E-mail',
+    
+    'sz-blockjoin0' => 'Our Offers',
+    'sz-blockjoin0-href' => '{{canonicalurl:Project:Offers}}',
+    'sz-blockjoin0-catch' => 'From 5€ per month.',
+    'sz-blockjoin1' => '{{int:sz-myseizam}}',
+    'sz-blockjoin1-href' => '{{canonicalurl:Special:MySeizam}}',
+    'sz-blockjoin1-catch' => 'Everything you need is here.',
+    'sz-blockjoin2' => 'Help us',
+    'sz-blockjoin2-href' => '{{canonicalurl:Project:Contribute}}',
+    'sz-blockjoin2-catch' => 'The community needs you.',
+    
+    /* Triptic */
     'sz-triptic' => 'Discover Seizam',
-    'sz-enter' => 'Enter',
-    'sz-theoffers' => 'Our Offers',
-    'sz-theoffers-catch' => 'From 5€ per month.',
-    'sz-myseizam-catch' => 'Everything you need is here.',
-    'sz-helpus' => 'Help us',
-    'sz-helpus-catch' => 'The community needs you.',
+    
+    'sz-triptic0' => 'Visit',
+    'sz-triptic0-href' => '{{canonicalurl:Project:Tour}}',
+    'sz-triptic0-src' => '{{STYLEPATH}}/skinzam/content/visit.jpg',
+    'sz-triptic0-caption' => 'This quick guided tour will get you all the way through Seizam, from the philosophy to the technology, you won\'t miss anything.',
+    
+    'sz-triptic1' => 'Follow',
+    'sz-triptic1-href' => 'http://www.davidcanwin.com',
+    'sz-triptic1-src' => '{{STYLEPATH}}/skinzam/content/afraid.jpg',
+    'sz-triptic1-caption' => 'On <b>DavidCanWin.com</b>, our development blog, you\'ll find the latest news about Seizam but also inspiring content about Art & Freedom.',
+    
+    'sz-triptic2' => 'Learn',
+    'sz-triptic2-href' => '{{canonicalurl:Help:Content}}',
+    'sz-triptic2-src' => '{{STYLEPATH}}/skinzam/content/help.jpg',
+    'sz-triptic2-caption' => 'Frequently Asked Questions, tutorials, examples, documentation... Everything you need to learn how to build great wikiplaces is here.',
+
 );
 
 /** 
@@ -139,13 +185,13 @@ $messages['fr'] = array(
     'sz-invalid-request' => 'Pardon, nous ne comprenons pas votre requête OU vous n\'êtes pas autorisé à la réaliser. {{int:sz-report}}',
 	
     /* Mainpage */
-    'sz-ourfreedoms' => 'Nos libertés',
-    'sz-joinus' => 'Nous rejoindre',
-    'sz-triptic' => 'Découvrez Seizam',
-    'sz-enter' => 'Entrez',
-    'sz-theoffers' => 'Nos offres',
-    'sz-theoffers-catch' => 'À partir de 5€ par mois.',
-    'sz-myseizam-catch' => 'Tout Seizam à portée de main.',
-    'sz-helpus' => 'Aidez-nous',
-    'sz-helpus-catch' => 'La communauté a besoin de vous.',
+    'sz-mp-ourfreedoms' => 'Nos libertés',
+    'sz-mp-joinus' => 'Nous rejoindre',
+    'sz-mp-triptic' => 'Découvrez Seizam',
+    'sz-mp-enter' => 'Entrez',
+    'sz-mp-theoffers' => 'Nos offres',
+    'sz-mp-theoffers-catch' => 'À partir de 5€ par mois.',
+    'sz-mp-myseizam-catch' => 'Tout Seizam à portée de main.',
+    'sz-mp-helpus' => 'Aidez-nous',
+    'sz-mp-helpus-catch' => 'La communauté a besoin de vous.',
 );
