@@ -14,7 +14,7 @@
 	if ( $('.slideshow').length > 0 ) {
 		
 		var speedy = 500; // vitesse de transition
-		var duration = 6000; // délais entre chaque slide
+		var duration = 9000; // délais entre chaque slide
 		var auto_direction = 'next'; // sens de défilement auto
 		
 		var $slider = $('.slideshow');

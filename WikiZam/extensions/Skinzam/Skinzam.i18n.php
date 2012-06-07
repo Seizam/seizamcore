@@ -108,12 +108,12 @@ $messages['en'] = array(
     'sz-triptic0' => 'Visit',
     'sz-triptic0-href' => '{{canonicalurl:Project:Tour}}',
     'sz-triptic0-src' => '{{STYLEPATH}}/skinzam/content/visit.jpg',
-    'sz-triptic0-caption' => 'This quick guided tour will get you all the way through Seizam, from the philosophy to the technology, you won\'t miss anything.',
+    'sz-triptic0-caption' => 'This quick guided tour will get you all the way through Seizam, from the philosophy to the technology, you will not miss anything.',
     
     'sz-triptic1' => 'Follow',
     'sz-triptic1-href' => 'http://www.davidcanwin.com',
     'sz-triptic1-src' => '{{STYLEPATH}}/skinzam/content/afraid.jpg',
-    'sz-triptic1-caption' => 'On <b>DavidCanWin.com</b>, our development blog, you\'ll find the latest news about Seizam but also inspiring content about Art & Freedom.',
+    'sz-triptic1-caption' => 'On <b>DavidCanWin.com</b>, our development blog, you will find the latest news about Seizam but also inspiring content about Art & Freedom.',
     
     'sz-triptic2' => 'Learn',
     'sz-triptic2-href' => '{{canonicalurl:Help:Content}}',
