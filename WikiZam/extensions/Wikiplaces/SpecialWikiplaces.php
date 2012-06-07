@@ -83,7 +83,7 @@ class SpecialWikiplaces extends SpecialPage {
         switch ($this->action) {
 
 			case self::ACTION_CONSULT_WIKIPLACE:
-				if ($name != null) {
+				if ($this->name != null) {
 					$this->displayConsultWikiplace();
 				} else {
 					$this->displayList();
@@ -123,7 +123,7 @@ class SpecialWikiplaces extends SpecialPage {
 	private function displayCreateWikiplace() {
 
 		if (( $reason = WpSubscription::userCanCreateWikiplace($this->getUser()->getId())) !== true) {
-            $this->action = self::ACTION_LIST;
+            $this->action = self::ACTION_LIST_WIKIPLACES;
             $this->msgKey = $reason;
             $this->msgType = 'error';
             $this->display();
@@ -240,10 +240,10 @@ class SpecialWikiplaces extends SpecialPage {
 		return true; // say: all ok
 	}
 
-	public function displayCreateSubpage($name) {
+	public function displayCreateSubpage() {
 
 		if (( $reason = WpSubscription::userCanCreateNewPage($this->getUser()->getId())) !== true) {
-            $this->action = self::ACTION_LIST;
+            $this->action = self::ACTION_CONSULT_WIKIPLACE;
             $this->msgKey = $reason;
             $this->msgType = 'error';
             $this->display();
@@ -252,8 +252,7 @@ class SpecialWikiplaces extends SpecialPage {
 
 		$wikiplaces = WpWikiplace::factoryAllOwnedByUserId($this->getUser()->getId());
 		if (count($wikiplaces) == 0) {
-			$this->getOutput()->showErrorPage('sorry', 'wp-create-wp-first');
-            $this->action = self::ACTION_LIST;
+            $this->action = self::ACTION_LIST_WIKIPLACES;
             $this->msgKey = 'wp-create-wp-first';
             $this->msgType = 'error';
             $this->display();
@@ -298,8 +297,8 @@ class SpecialWikiplaces extends SpecialPage {
 			
 		);
 
-		if ($name != null) {
-			$name = Title::newFromDBkey($name)->getText();
+		if ($this->name != null) {
+			$name = Title::newFromDBkey($this->name)->getText();
 		}
 
 		foreach ($wikiplaces as $wikiplace) {
@@ -396,14 +395,14 @@ class SpecialWikiplaces extends SpecialPage {
 		return true; // all ok :)
 	}
 
-	public function displayConsultWikiplace($wikiplace_name) {
+	public function displayConsultWikiplace() {
 		$tp = new WpPagesTablePager();
-		$tp->setWPName($wikiplace_name);
+		$tp->setWPName($this->name);
 		$tp->setSelectConds(array(
 			'wpw_owner_user_id' => $this->getUser()->getID(),
-			'homepage.page_title' => $wikiplace_name));
-		$tp->setHeader(wfMessage('wp-consult-header', $wikiplace_name)->parse());
-		$tp->setFooter(wfMessage('wp-consult-footer', $wikiplace_name)->parse());
+			'homepage.page_title' => $this->name));
+		$tp->setHeader(wfMessage('wp-consult-header', $this->name)->parse());
+		$tp->setFooter(wfMessage('wp-consult-footer', $this->name)->parse());
 		$this->getOutput()->addHTML($tp->getWholeHtml());
 	}
 
