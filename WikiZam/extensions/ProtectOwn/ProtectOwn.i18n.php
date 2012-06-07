@@ -29,6 +29,7 @@ $messages['en'] = array(
     'po-user' => 'Registered Users',
     'po-artist' => 'Subscribed Artists',
     'po-owner' => 'Only Me',
+	'badaccess-groups' => '{{int:badaccess-group0}}',
 );
 
 /** French

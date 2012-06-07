@@ -44,9 +44,10 @@ class WikiplacesHooks {
 			return true; // skip
 		}
 
-		// some actions have to be forbidden when not in wikiplaces
+		// skip if the title is not in a wikiplace namespace
 		if ( !WpPage::isInWikiplaceNamespaces($namespace) ) {
 			
+			// some actions have to be forbidden when not in wikiplaces
 			global $wgWpSubscribersExtraRights;
 			if ( !$user->isAllowed(WP_ADMIN_RIGHT) && in_array($action, $wgWpSubscribersExtraRights)) {
 				
@@ -102,11 +103,13 @@ class WikiplacesHooks {
 			return empty($result); // stop hook processing if an error in result
 		}
 
-		// ok, so let's judge if the user can do the action
+		// only connected users can create/move/delete
 		if (!$user->isLoggedIn()) {
 			wfDebugLog('wikiplaces-debug', "$do DENIED, user is not logged in");
-			$result = array( 'notloggedin');
+			$result = array( 'wp-notloggedin'); // formers: 'notloggedin' and 'movenologin'
+			
 		} else {
+			// so, the title is in a wikiplace namespace, and the user is connected
 			switch ($do) {
 				case 'create':
 					$result = self::wikiplaceUserCanCreate($title, $user);
@@ -162,21 +165,9 @@ class WikiplacesHooks {
 	
 	/**
 	 * Can the user create this new Title?
-	 * <ul>
-	 * <li>If Title is a Wikiplace homepage
-	 * <ul>
-	 * <li>no . in title name</li>
-	 * <li>her subscription is sufficient (active, quotas, ...)</li>
-	 * </ul></li>
-	 * <li>If Title is a Wikiplace subpage<ul>
-	 * <li>container wikiplace already exists</li>
-	 * <li>user is owner of the container wikiplace</li>
-	 * <li>her subscription is sufficient (active, quotas, ...)</li>
-	 * </ul></li>
-	 * </ul>
-	 * @param Title $title A new Title, not already stored.
-	 * @param User $user
-	 * @return boolean true=can, false=cannot 
+	 * @param Title $title A new Title (=not known/not stored) in a Wikiplace namespace
+	 * @param User $user A logged in user
+	 * @return array Empty array = can, array containing i18n key + args = cannot 
 	 */
 	public static function wikiplaceUserCanCreate(&$title, &$user) {
 
@@ -184,7 +175,37 @@ class WikiplacesHooks {
 
 		$msg;
 		$user_id = $user->getId();
+		
+		// ensure we are not creating a duplicate in wikiplace
+		if ( class_exists('TitleKey') && ($duplicate = TitleKey::exactMatchTitle($title)) ) {
+			wfDebugLog('wikiplaces-debug', "user cannot create {$title->getPrefixedDBkey()} duplicate {$duplicate->getPrefixedDBkey()} exists");
+			return array('wp-duplicate-exists', $duplicate->getPrefixedDBkey());
+		}
 
+		// ensure to keep "talk page" <-> "regular page" mirrored named
+		if ( $title->isTalkPage() ) {
+			
+			// ensure to not create a talk having a subject in different case ( ie: Talk:wp/page but wp/PAGE exists )
+			$subject = $title->getSubjectPage();
+			if ( ! $subject->isKnown() && class_exists('TitleKey') &&( $duplicate_subject = TitleKey::exactMatchTitle($subject) ) ) {
+				// the subject page doesn't exist, but there is a subject page with different case, abort
+				wfDebugLog('wikiplaces-debug', "user cannot create {$title->getPrefixedDBkey()} duplicate subject {$duplicate_subject->getPrefixedDBkey()} exists");
+				return array('wp-duplicate-related', $duplicate_subject->getPrefixedDBkey(), $duplicate_subject->getTalkPage()->getPrefixedDBkey());
+			} 
+				
+			
+		} else {
+			
+			// ensure to not create an article with an existing talk in different case
+			$talk = $title->getTalkPage();
+			if ( ! $talk->isKnown() && class_exists('TitleKey') && ( $duplicate_talk = TitleKey::exactMatchTitle($talk) ) ) {
+				// the talk page doesn't exist, but there is a talk page with different case, abort
+				wfDebugLog('wikiplaces-debug', "user cannot create {$title->getPrefixedDBkey()} duplicate talk {$duplicate_talk->getPrefixedDBkey()} exists");
+				return array('wp-duplicate-related', $duplicate_talk->getPrefixedDBkey(), $duplicate_talk->getSubjectPage()->getPrefixedDBkey());
+			}
+			
+		}
+		
 		if (WpPage::isHomepage($title)) {
 
 			// this is a new Wikiplace
@@ -194,18 +215,23 @@ class WikiplacesHooks {
 				/** @todo: in futur release, admin will be able to create a wikiplace for someone else */
 				$result = array('badarticleerror');
 				$msg .= ', admin cannot create wikiplace';
+				
 			} elseif (($reason = WpSubscription::userCanCreateWikiplace($user_id)) !== true) {
-				$result = array('badarticleerror');
+				$result = array($reason);
 				$msg .= ', ' . $reason;
+				
 			} elseif (WpWikiplace::isBlacklistedWikiplaceName($title->getDBkey())) {
-				$result = array('badarticleerror');
+				$result = array('badtitletext');
 				$msg .= ', blacklisted name';
+				
 			} elseif (preg_match('/[.]/', $title->getText())) {
-				$result = array('badarticleerror');
+				$result = array('badtitletext');
 				$msg .= ', bad character in page title';
+				
 			} else {
 				$result = array();
 			}
+			
 		} else {
 
 			// this can be regular article or talk or file)
@@ -221,14 +247,17 @@ class WikiplacesHooks {
 				if (WpPage::isPublic($namespace, $db_key)) {
 					$msg .= ', in public space';
 					$result = array();
+					
 				} elseif (WpPage::isAdmin($namespace, $db_key)) {
 
 					$msg .= ', in admin space';
+					
 					if ($user->isAllowed(WP_ADMIN_RIGHT)) {
 						$result = array();
+						
 					} else {
 						$msg .= ', user not admin';
-						$result = array('badarticleerror');
+						$result = array('protectedpage');
 					}
 					
 				} else {
@@ -237,27 +266,32 @@ class WikiplacesHooks {
 					$wp = WpWikiplace::getBySubpage($db_key, $title->getNamespace());
 
 					if ($wp === null) {
-						$result = array('badarticleerror'); // no wikiplace can contain this, so cannot create it
+						$result = array('wp-no-container-found'); // no wikiplace can contain this, so cannot create it
 						$msg .= ', cannot find existing container Wikiplace';
+						
 					} elseif ($user->isAllowed(WP_ADMIN_RIGHT)) {
 						// admin is working for someone else
 						$result = array();
 						$msg .= ', admin is working for someone else';
+						
 					} elseif (!$wp->isOwner($user_id)) { // checks the current user is the owner of the wikiplace
-						$result = array('badarticleerror');
+						$result = array('wp-not-owner');
 						$msg .= ', current user is not Wikiplace owner';
+						
 					} else {
 
 						$reason;
 						if ($namespace == NS_FILE) {
 							$reason = WpSubscription::userCanUploadNewFile($user_id);
+							
 						} else {
 							$reason = WpSubscription::userCanCreateNewPage($user_id);
 						}
 								
 						if ($reason !== true) {
-							$result = array('badarticleerror'); // no active subscription or page creation quota is exceeded
+							$result = array($reason); // no active subscription or page creation quota is exceeded
 							$msg .= ', ' . $reason;
+							
 						} else {
 							$result = array();
 						}
@@ -272,18 +306,22 @@ class WikiplacesHooks {
 				$wp = WpWikiplace::getBySubpage($title->getDBkey(), $title->getNamespace());
 
 				if ($wp === null) {
-					$result = array('badarticleerror'); // no wikiplace can contain this subpage, so cannot create it
+					$result = array('wp-no-container-found'); // no wikiplace can contain this subpage, so cannot create it
 					$msg .= ', cannot find existing container Wikiplace';
+					
 				} elseif ($user->isAllowed(WP_ADMIN_RIGHT)) {
 					// admin is creating a subpage for someone else
 					$result = array();
 					$msg .= ', admin is creating a subpage for someone else';
+					
 				} elseif (!$wp->isOwner($user_id)) { // checks the user who creates the page is the owner of the wikiplace
-					$result = array('badarticleerror');
+					$result = array('wp-not-owner');
 					$msg .= ', current user is not Wikiplace owner';
+					
 				} elseif (($reason = WpSubscription::userCanCreateNewPage($user_id)) !== true) {
-					$result = array('badarticleerror'); // no active subscription or page creation quota is exceeded
+					$result = array($reason); // no active subscription or page creation quota is exceeded
 					$msg .= ', ' . $reason;
+					
 				} else {
 					$result = array();
 				}
@@ -297,48 +335,55 @@ class WikiplacesHooks {
 
 	/**
 	 * For title in wikiplace namespace, checks if the current user can move it
-	 * <ul>
-	 * <li>User has an active subscription</li>
-	 * <li>Title is not a Wikiplace homepage</li>
-	 * <li>User is owner of this title</li>
-	 * </ul>
-	 * @param Title $title
-	 * @param User $user
-	 * @return array 
+	 * @param Title $title Title in a wikiplace namespace
+	 * @param User $user Logged in user
+	 * @return array Empty array = can, array containing i18n key + args = cannot 
 	 */
 	private static function wikiplaceUserCanMove(&$title, &$user) {
 
-		// in userCan() calling this function, we already checked that user is loggedin
-		if (!WpPage::isHomepage($title)
-				&& ( $user->isAllowed(WP_ADMIN_RIGHT)
-				|| ( WpSubscription::newActiveByUserId($user->getId()) != null
-				&& WpPage::isOwner($title->getArticleID(), $user) ) ) ) {
-			return array();
+		$back = array();
+		
+		if (WpPage::isHomepage($title)) {
+			$back[] = 'badarticleerror';
+			
+		}elseif ( $user->isAllowed(WP_ADMIN_RIGHT) ) {
+			// ok
+			
+		}elseif ( WpSubscription::newActiveByUserId($user->getId()) == null ) {
+			$back[] = 'wp-no-active-sub';
+			
+		}elseif ( ! WpPage::isOwner($title->getArticleID(), $user) ) {
+			$back[] = 'wp-not-owner';
+			
 		}
 		
-		return array('badarticleerror');
+		return $back;
+
 	}
 
 	/**
 	 * For title in wikiplace namespace, checks if the current user can delete it
-	 * <ul>
-	 * <li>Title is not a Wikiplace homepage</li>
-	 * <li>User is owner of this title</li>
-	 * </ul>
-	 * @param Title $title
-	 * @param User $user
-	 * @return array 
+	 * @param Title $title Title in a wikiplace namespace
+	 * @param User $user Loggedin user
+	 * @return array Empty array = can, array containing i18n key + args = cannot 
 	 */
 	private static function wikiplaceUserCanDelete(&$title, &$user) {
-
-		// in userCan() calling this function, we already checked that user is loggedin
-		if (!WpPage::isHomepage($title)
-				&& ( $user->isAllowed(WP_ADMIN_RIGHT)
-				|| WpPage::isOwner($title->getArticleID(), $user) ) ) {
-			return array();
+		
+		$back = array();
+		
+		if (WpPage::isHomepage($title)) {
+			$back[] = 'badarticleerror';
+			
+		}elseif ( $user->isAllowed(WP_ADMIN_RIGHT) ) {
+			// ok
+			
+		}elseif ( ! WpPage::isOwner($title->getArticleID(), $user) ) {
+			$back[] = 'wp-not-owner';
+			
 		}
 		
-		return array('badarticleerror');
+		return $back;
+		
 	}
 
 	/**
@@ -486,39 +531,37 @@ class WikiplacesHooks {
 		$old_pdb_key = $old_name_title->getPrefixedDBkey();
 		$new_pdb_key = $new_name_title->getPrefixedDBkey();
 		
-		wfDebugLog('wikiplaces-debug', 'onTitleMoveComplete() '
-				. '[' . $renamed_page_id . ']"' . $old_pdb_key . '"'
-				. ' renamed to "' . $new_pdb_key . '", redirect[' . $redirect_page_id . ']');
+		wfDebugLog('wikiplaces-debug', "moved $old_pdb_key($renamed_page_id) to $new_pdb_key ".( ($redirect_page_id != 0) ? "with a redirect ($redirect_page_id)" : "without redirect") );
 
 		if (!$old_in_wp) { // from  something not in wp
 			if (WpPage::isHomepage($new_name_title)) { // from  something not in wp  to  a homepage
 				$dest_wp = self::doCreateWikiplace($user->getId(), $renamed_page_id);
 				if ($dest_wp == null) {
-					wfDebugLog('wikiplaces', 'onTitleMoveComplete() ERROR cannot create wikiplace "' . $new_pdb_key . '"');
+					wfDebugLog('wikiplaces', "onTitleMoveComplete() ERROR cannot create wikiplace '$new_pdb_key'");
 					// throw new MWException('Cannot create wikiplace.');
 					return true;
 				}
 				$new_wp_page = WpPage::create($renamed_page_id, $dest_wp->getId());
 				if ($new_wp_page == null) {
-					wfDebugLog('wikiplaces', 'onTitleMoveComplete() ERROR: cannot create wikiplace homepage "' . $new_pdb_key . '"');
+					wfDebugLog('wikiplaces', "onTitleMoveComplete() ERROR: cannot create wikiplace homepage '$new_pdb_key'");
 					// throw new MWException('Cannot create wikiplace homepage.');
 				}
 			} else { // from  something not in wp  to  a subpage
 				$dest_wp = WpWikiplace::getBySubpage($new_name_title->getDBkey(), $new_name_title->getNamespace());
 				if ($dest_wp == null) {
-					wfDebugLog('wikiplaces', 'onTitleMoveComplete() ERROR: cannot find container wikiplace for "' . $new_pdb_key . '"');
+					wfDebugLog('wikiplaces', "onTitleMoveComplete() ERROR: cannot find container wikiplace for '$new_pdb_key'");
 					// throw new MWException('Cannot find container wikiplace.');
 					return true;
 				}
 				$new_wp_page = WpPage::create($renamed_page_id, $dest_wp->getId());
 				if ($new_wp_page == null) {
-					wfDebugLog('wikiplaces', 'onTitleMoveComplete() ERROR: cannot create wikiplace homepage "' . $new_pdb_key . '"');
+					wfDebugLog('wikiplaces', "onTitleMoveComplete() ERROR: cannot create wikiplace homepage '$new_pdb_key'");
 					// throw new MWException('Cannot create wikiplace homepage.');
 				}
 			}
 		} elseif (WpPage::isHomepage($old_name_title)) { // from  a homepage
 			// currently, this case is forbidden and cannot occur because items become orphan... but, now, it's too late :(
-			wfDebugLog('wikiplaces', 'onTitleMoveComplete() ERROR: cannot move homepage "' . $old_pdb_key . '"');
+			wfDebugLog('wikiplaces', "onTitleMoveComplete() ERROR: cannot move homepage '$old_pdb_key'");
 			// throw new MWException('Cannot move wikiplace homepage.');
 
 			if (!$new_in_wp) { // from  a homepage  to  something not in wp
@@ -528,39 +571,39 @@ class WikiplacesHooks {
 		} else { // from  a subpage
 			if (!$new_in_wp) { // from  a subpage  to  something not in wp
 				// currently, this case is forbidden and should not occur, but actually it can be moved
-				wfDebugLog('wikiplaces', 'onTitleMoveComplete() WARNING moving a subpage out of wikiplace space "' . $new_pdb_key . '"');
+				wfDebugLog('wikiplaces', "onTitleMoveComplete() WARNING moving a subpage out of wikiplace space '$new_pdb_key'");
 
 				if ($redirect_page_id != 0) {
 					$renamed_wp_page = WpPage::newFromArticleId($renamed_page_id);
 					if ($renamed_wp_page == null) {
-						wfDebugLog('wikiplaces', 'onTitleMoveComplete() ERROR: cannot find subpage to move [' . $renamed_page_id . ']');
+						wfDebugLog('wikiplaces', "onTitleMoveComplete() ERROR: cannot find subpage to move ($renamed_page_id)");
 						// throw new MWException('Cannot find subpage to move.');
 						return true;
 					}
 					$renamed_wp_page->setPageId($redirect_page_id);
 				} else {
 					if (!WpPage::delete($renamed_page_id)) {
-						wfDebugLog('wikiplaces', 'onTitleMoveComplete() ERROR: while deleting the Wikiplace page [' . $renamed_page_id . ']');
+						wfDebugLog('wikiplaces', "onTitleMoveComplete() ERROR: while deleting the Wikiplace page ($renamed_page_id)");
 						// throw new MWException('Error while deleting the Wikiplace page.');
 					}
 				}
 			} elseif (WpPage::isHomepage($new_name_title)) { // from  a subpage  to  a homepage
 				$dest_wp = self::doCreateWikiplace($user->getId(), $renamed_page_id);
 				if ($dest_wp == null) {
-					wfDebugLog('wikiplaces', 'onTitleMoveComplete() ERROR: cannot create wikiplace "' . $new_pdb_key . '"');
+					wfDebugLog('wikiplaces', "onTitleMoveComplete() ERROR: cannot create wikiplace '$new_pdb_key'");
 					// throw new MWException('Cannot create wikiplace.');
 					return true;
 				}
 				$renamed_wp_page = WpPage::newFromArticleId($renamed_page_id);
 				if ($renamed_wp_page == null) {
-					wfDebugLog('wikiplaces', 'onTitleMoveComplete() ERROR: cannot find subpage to move [' . $renamed_page_id . ']');
+					wfDebugLog('wikiplaces', "onTitleMoveComplete() ERROR: cannot find subpage to move ($renamed_page_id)");
 					// throw new MWException('Cannot find subpage to move.');
 					return true;
 				}
 				if ($redirect_page_id != 0) {
 					$old_wp_id = $renamed_wp_page->getWikiplaceId();
 					if (WpPage::create($redirect_page_id, $old_wp_id) == null) {
-						wfDebugLog('wikiplaces', 'onTitleMoveComplete() ERROR: cannot create redirect subpage [' . $renamed_page_id . ']');
+						wfDebugLog('wikiplaces', "onTitleMoveComplete() ERROR: cannot create redirect subpage ($renamed_page_id)");
 						// throw new MWException('Cannot create redirect subpage.');
 						return true;
 					}
@@ -570,13 +613,13 @@ class WikiplacesHooks {
 			} else { // from  a subpage  to  a subpage
 				$dest_wp = WpWikiplace::getBySubpage($new_name_title->getDBkey(), $new_name_title->getNamespace());
 				if ($dest_wp == null) {
-					wfDebugLog('wikiplaces', 'onTitleMoveComplete() ERROR: cannot find destination wikiplace "' . $new_pdb_key . '"');
+					wfDebugLog('wikiplaces', "onTitleMoveComplete() ERROR: cannot find destination wikiplace '$new_pdb_key'");
 					// throw new MWException('Cannot find destination wikiplace.');
 					return true;
 				}
 				$renamed_wp_page = WpPage::newFromArticleId($renamed_page_id);
 				if ($renamed_wp_page == null) {
-					wfDebugLog('wikiplaces', 'onTitleMoveComplete() ERROR: cannot find subpage to move [' . $renamed_page_id . ']');
+					wfDebugLog('wikiplaces', "onTitleMoveComplete() ERROR: cannot find subpage to move '$renamed_page_id'");
 					// throw new MWException('Cannot find subpage to move.');
 					return true;
 				}
@@ -584,7 +627,7 @@ class WikiplacesHooks {
 				if ($redirect_page_id != 0) {
 					$old_wp_id = $renamed_wp_page->getWikiplaceId();
 					if (WpPage::create($redirect_page_id, $old_wp_id) == null) {
-						wfDebugLog('wikiplaces', 'onTitleMoveComplete() ERROR: cannot create redirect subpage [' . $renamed_page_id . ']');
+						wfDebugLog('wikiplaces', "onTitleMoveComplete() ERROR: cannot create redirect subpage ($renamed_page_id)");
 						// throw new MWException('Cannot create redirect subpage.');
 						return true;
 					}
@@ -732,7 +775,7 @@ class WikiplacesHooks {
 
 		$result = WpPage::isOwner($article_id, $user);
 
-		wfDebugLog('wikiplaces-debug', "{$user->getName()}($user_id) is".(($result ? '' : ' not'))." owner of {$title->getPrefixedDBkey()}($article_id)");
+		wfDebugLog('wikiplaces-debug', "{$user->getName()}($user_id) is".(($result ? '' : ' not'))." owner of {$title->getPrefixedDBkey()}($article_id)".  wfGetPrettyBacktrace());
 
 		return false; // stop hook processing, because we have the answer
 		

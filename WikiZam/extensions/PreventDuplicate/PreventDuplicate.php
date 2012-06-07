@@ -28,11 +28,10 @@ $wgExtensionFunctions[] = 'setupPreventDuplicate';
 function setupPreventDuplicate() {
 	// check requirements before install
 	// TitleKey: we use its title database
-	// AntiSpoof: ensure there is no user with the same name but different case
-	if ( class_exists('TitleKey') && class_exists('AntiSpoof') ) {
+	if ( class_exists('TitleKey') ) {
 		
 		global $wgHooks;
-		$wgHooks['getUserPermissionsErrors'][] = 'PreventDuplicateHooks::blockCreateDuplicate';
+		// $wgHooks['getUserPermissionsErrors'][] = 'PreventDuplicateHooks::blockCreateDuplicate';
 		$wgHooks['BeforeInitialize'][] = 'PreventDuplicateHooks::redirectDuplicate';
 		
 	} else {

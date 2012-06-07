@@ -14,6 +14,7 @@ class PreventDuplicateHooks {
 	 * returned as a single error message key (string), or an array of error message keys when 
 	 * multiple messages are needed (although it seems to take an array as one message key 
 	 * with parameters?)
+	 * @deprecated This hook is no more called, remove this code 
 	 */
 	public static function blockCreateDuplicate($title, $user, $action, &$result) {
 
