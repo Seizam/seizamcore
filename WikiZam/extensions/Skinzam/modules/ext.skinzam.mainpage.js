@@ -23,7 +23,7 @@
 		var auto_slide= false;
 		
 		// ajout des liens next et prev
-		$slider.prepend('<a href="#prev" class="prev">Liberté précédente</a> <a class="next" href="#next">Liberté suivante</a>');
+		$slider.prepend('<a href="#prev" class="prev"></a> <a class="next" href="#next"></a>');
 		
 		// initialisation
 		$('li', $slider).hide();

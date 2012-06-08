@@ -111,8 +111,30 @@ class WpPlan {
 	public function getDiskspace() {
 		return $this->wpp_diskspace;
 	}
-	
-	/**
+    
+    /**
+     * @return String
+     */
+    public function getCurrency() {
+        return $this->wpp_currency;
+    }
+    
+    /**
+     * @return int 
+     */
+    public function getMonthlyPageHits() {
+        return $this->wpp_monthly_page_hits;
+    }
+    
+    /**
+     *
+     * @return int 
+     */
+    public function getMonthlyBandwidth() {
+        return $this->wpp_monthly_bandwidth;
+    }
+
+        /**
 	 * Returns the renewal suggested plan. Please note that the returned plan
 	 * can be different of the renewal plan id stored in wpp_renew_wpp_id field.
 	 * This function ensure that the returned plan is renewable. In the worst 
@@ -219,7 +241,7 @@ class WpPlan {
 	/**
 	 * Get the WpPlan instance from a SQL row
 	 * @param ResultWrapper $row
-	 * @return self 
+	 * @return WpPlan 
 	 */
 	public static function constructFromDatabaseRow( $row ) {
 			
@@ -295,7 +317,8 @@ class WpPlan {
 		$result = $dbr->select( 'wp_plan', '*',	$conds, __METHOD__ );
 		$offers = array();
 		foreach ( $result as $row ) {
-			$offers[] = self::constructFromDatabaseRow($row);
+            $offer = self::constructFromDatabaseRow($row);
+			$offer->cleverAppendToArray(&$offers);
 		}
 		
 		$dbr->freeResult( $result );
@@ -303,6 +326,52 @@ class WpPlan {
 		return $offers;
 
 	}
+    
+    /**
+     * Adds the current plan to the array if no better plan exists (same quotas, same period but cheaper), kicks previous worth plan.
+     * 
+     * @param Array $array 
+     */
+    public function cleverAppendToArray(&$plans) {
+        
+        $i = 0;
+        while ($i < count($plans)) {
+            if ($this->isCheaper($plans[$i])) {
+                $plans[$i] = $this;
+                return;
+            }
+            $i++;
+        }
+        
+        $plans[] = $this;
+    }
+    
+    /**
+     *  Compare $this to another plan and return true if quotas and period are the same.
+     * 
+     * @param WpPlan $plan The Plan to compare with
+     * @return Boolean True if Quotas are the same
+     */
+    private function isCousin($plan) {
+        return $this->getPeriod() === $plan->getPeriod() &&
+                $this->getCurrency() === $plan->getCurrency() &&
+                $this->getDiskspace() === $plan->getDiskspace()
+                /* No real need to do these tests.
+                && $this->getMonthlyBandwidth() === $plan->getMonthlyBandwidth() &&
+                $this->getMonthlyPageHits() === $plan->getMonthlyPageHits() &&
+                $this->getNbWikiplacePages() === $plan->getNbWikiplacePages() &&
+                $this->getNbWikiplaces() === $plan->getNbWikiplaces()*/;
+    }
+    
+    /**
+     * Return true if $this is the same as another plan but cheaper.
+     *
+     * @param WpPlan $plan
+     * @return Boolean 
+     */
+    private function isCheaper($plan) {
+        return $this->isCousin($plan) && $this->getPrice() < $plan->getPrice();
+    }
 	
 	/**
 	 * Returns offers, that can be talen as renewal, and will be still accessible at $when, with at least theses quotas

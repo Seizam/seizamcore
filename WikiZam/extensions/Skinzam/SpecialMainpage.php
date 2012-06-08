@@ -166,7 +166,7 @@ class SpecialMainpage extends SpecialPage {
 
     private function displayTriptic() {
         $html = Xml::openElement('div', array('class' => 'block block_full'));
-        $html .= Xml::element('h3', array('class' => 'title'), wfMessage('sz-triptic')->text());
+        $html .= Xml::element('h3', array('class' => 'title'), wfMessage('sz-mp-triptic')->text());
         $html .= Xml::openElement('div', array('class' => 'inside'));
 
         $triptic = array('sz-triptic0','sz-triptic1','sz-triptic2');

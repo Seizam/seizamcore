@@ -35,13 +35,14 @@ $_dir = dirname( __FILE__ ).'/';
 $wgAutoloadClasses['WikiplacesHooks'] = $_dir . 'Wikiplaces.hooks.php';
 $wgAutoloadClasses['SpecialWikiplaces'] = $_dir . 'SpecialWikiplaces.php';
 $wgAutoloadClasses['SpecialSubscriptions'] = $_dir . 'SpecialSubscriptions.php';
-$wgAutoloadClasses['SpecialOffers'] = $_dir . 'SpecialOffers.php';
+$wgAutoloadClasses['SpecialPlans'] = $_dir . 'SpecialPlans.php';
 $wgAutoloadClasses['SpecialWikiplacesAdmin'] = $_dir . 'SpecialWikiplacesAdmin.php';
 $wgAutoloadClasses['WpWikiplace'] = $_dir . 'model/WpWikiplace.php';
 $wgAutoloadClasses['WpWikiplacesTablePager'] = $_dir . 'model/WpWikiplacesTablePager.php';
 $wgAutoloadClasses['WpPage'] = $_dir . 'model/WpPage.php';
 $wgAutoloadClasses['WpPagesTablePager'] = $_dir . 'model/WpPagesTablePager.php';
 $wgAutoloadClasses['WpPlan'] = $_dir . 'model/WpPlan.php';
+$wgAutoloadClasses['WpPlansTablePager'] = $_dir . 'model/WpPlansTablePager.php';
 $wgAutoloadClasses['WpSubscription'] = $_dir . 'model/WpSubscription.php';
 $wgAutoloadClasses['WpSubscriptionsTablePager'] = $_dir . 'model/WpSubscriptionsTablePager.php';
 $wgAutoloadClasses['WikiplaceUpload'] = $_dir . 'WikiplaceUpload.php';
@@ -62,8 +63,8 @@ $wgSpecialPages['Subscriptions'] = 'SpecialSubscriptions';
 $wgSpecialPageGroups['Subscriptions'] = 'wikiplace';
 $wgSpecialPages['WikiplacesAdmin'] = 'SpecialWikiplacesAdmin';
 $wgSpecialPageGroups['WikiplacesAdmin'] = 'wikiplace';
-$wgSpecialPages['Offers'] = 'SpecialOffers';
-$wgSpecialPageGroups['Offers'] = 'wikiplace';
+$wgSpecialPages['Plans'] = 'SpecialPlans';
+$wgSpecialPageGroups['Plans'] = 'wikiplace';
 
 // define the default renewal plan
 define('WP_FALLBACK_PLAN_ID', 1);

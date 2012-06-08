@@ -123,7 +123,7 @@ class SpecialSubscriptions extends SpecialPage {
         foreach ($plans as $plan) {
             $wpp_name = $plan->getName();
             $price = $plan->getPrice();
-            $formDescriptor['Plan']['options'][wfMessage('wp-plan-desc-short', wfMessage('wpp-' . $wpp_name)->text(), $price['amount'], $price['currency'], $plan->getPeriod())->text()] = $plan->getId();
+            $formDescriptor['Plan']['options'][wfMessage('wp-plan-desc-short', wfMessage('wpp-' . $wpp_name)->text(), $price['amount'])->text()] = $plan->getId();
             if ($this->planName == $wpp_name) {
                 $formDescriptor['Plan']['default'] = $plan->getId();
             }
@@ -254,7 +254,7 @@ class SpecialSubscriptions extends SpecialPage {
         foreach ($plans as $plan) {
             $wpp_name = $plan->getName();
             $price = $plan->getPrice();
-            $formDescriptor['Plan']['options'][wfMessage('wp-plan-desc-short', wfMessage('wpp-' . $wpp_name)->text(), $price['amount'], $price['currency'], $plan->getPeriod())->text()] = $plan->getId();
+            $formDescriptor['Plan']['options'][wfMessage('wp-plan-desc-short', wfMessage('wpp-' . $wpp_name)->text(), $price['amount'])->text()] = $plan->getId();
         }
 
         // add "do not renew" at the end;
@@ -371,7 +371,8 @@ class SpecialSubscriptions extends SpecialPage {
 
     /**
      * Generate link to subscribe to plan $wpp_name
-     * @param type $wpp_name
+     * @param String $wpp_name
+     * @param String $i18n_key
      * @return string HTML <a> link 
      */
     public static function getLinkNew($wpp_name = null, $i18n_key = null) {

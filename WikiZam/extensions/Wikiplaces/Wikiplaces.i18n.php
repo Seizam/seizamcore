@@ -13,7 +13,7 @@ $messages['en'] = array(
     'wikiplacesadmin' => 'Wikiplaces Administration',
     'subscriptions' => 'My Subscriptions',
     'wikiplaces' => 'My Wikiplaces',
-    'offers' => 'Our Offers',
+    'plans' => 'Our Plans',
     /* Group: Artists */
     'group-artist' => 'Artists',
     'group-artist-member' => 'artist',
@@ -38,6 +38,7 @@ $messages['en'] = array(
     'wp-nswp-talk' => 'Setting talk',
     'wp-max_wikiplaces' => '{{int:wp-wikiplaces}}',
     'wp-max_pages' => '{{int:wp-subpages}}',
+    'wp-duration' => 'Duration',
     /* Actions */
     'wp-seeall' => 'see all',
     'wp-subscribe' => 'Subscribe',
@@ -108,7 +109,7 @@ You are also promising us that you wrote this yourself, or copied it from a publ
 	'wp-not-owner' => 'You are not the owner of this Wikiplace.',
 	'wp-notloggedin' => 'You must be logged in to perform this action. Please [[Special:UserLogin/signup|create an account]] or [[Special:UserLogin|log in]].',
     'wp-nosub' => 'Wikiplaces are only available upon subscription. [[Special:Subscriptions/new|Click here to subscribe !]]',
-/* TablePager: Subscription */
+    /* TablePager: Subscription */
     'wp-subscriptionslist-header' => 'Here are your active subscriptions.',
     'wp-subscriptionslist-noactive-header' => '{{int:wp-sub-noactive}} [[Special:Subscriptions/new|Click here to subscribe !]]',
     'wp-subscriptionslist-pending-header' => 'Your subscription is pending because it has not been paid for yet. [[Special:ElectronicPayment|Please click here to credit your account.]]',
@@ -117,10 +118,10 @@ You are also promising us that you wrote this yourself, or copied it from a publ
     'wp-sub-new-header' => 'Please fill the form below to subscribe to Seizam.',
     'wp-sub-new-section' => 'Subscribe',
     'wp-planfield' => 'Plan:',
-    'wp-planfield-help' => 'Select the Seizam Plan you wish to subscribe to from this dropdown list. More details [[Special:Offers|here]].',
+    'wp-planfield-help' => 'Select the Seizam Plan you wish to subscribe to from this dropdown list. More details [[Special:Plans|here]].',
     'wp-checkfield' => 'I read, understood and agree with Seizam General Terms and Conditions of Use ([[Project:GTCU|GTCU]]) <b>AND</b> Seizam Artist Specific Terms and Conditions of Use ([[Project:ASTCU|ASTCU]]).',
     'wp-checkfield-unchecked' => 'You need to agree with our Terms and Conditions to subscribe. Please check the box above.',
-    'wp-plan-desc-short' => '$1: $2 $3 for $4 months.',
+    'wp-plan-desc-short' => '$1 for $2€',
     'wp-plan-subscribe-go' => 'Subscribe!',
     'wp-sub-renew-header' => 'Please fill the form below to setup your renewal plan.',
     'wp-sub-renew-section' => 'Renew my subscription',
@@ -141,6 +142,46 @@ You are also promising us that you wrote this yourself, or copied it from a publ
     'wp-subscribe-change' => 'You can select another plan to start from the end of your current subscription through [[Special:Subscriptions/renew|the subscription renewal page]]. Please [[Project:Contact|contact us]] if you need to switch to another plan right now. {{int:sz-asap}}',
 	'wp-insufficient-quota' => 'Insufficient quota (this plan is too small for your usage).',
 	'wp-plan-not-available-renewal' => 'Plan not available (we do not offer it anymore).',
+    /* TablePager: Plans */
+    'wp-planslist-header' => 'Here is the list of all the subscription plans offered by Seizam.',
+    'wp-hard-quotas' => 'Hard Quotas',
+    'wp-monthly-quotas' => 'Monthly Quotas',
+    'wp-period' => '{{PLURAL:$1|one month|$1 months}}',
+    /* Plans */
+    'wpp-basic' => 'Basic',
+    'wpp-pro' => 'Professional',
+    'wpp-test' => 'Discovery',
+    'wpp-launchoffer' => 'special launch offer',
+    'wpp-1' => '1 month',
+    'wpp-3' => '3 months',
+    'wpp-6' => '6 months',
+    'wpp-12' => '1 year',
+    
+    'wpp-basic1' => '{{int:wpp-basic}} ({{int:wpp-1}})',
+    'wpp-basic3' => '{{int:wpp-basic}} ({{int:wpp-3}})',
+    'wpp-basic6' => '{{int:wpp-basic}} ({{int:wpp-6}})',
+    'wpp-basic12' => '{{int:wpp-basic}} ({{int:wpp-12}})',
+    
+    'wpp-pro1' => '{{int:wpp-pro}} ({{int:wpp-1}})',
+    'wpp-pro3' => '{{int:wpp-pro}} ({{int:wpp-3}})',
+    'wpp-pro6' => '{{int:wpp-pro}} ({{int:wpp-6}})',
+    'wpp-pro12' => '{{int:wpp-pro}} ({{int:wpp-12}})',
+    
+    'wpp-basic1-launch' => '{{int:wpp-basic}} ({{int:wpp-1}}, {{int:wpp-launchoffer}}) ',
+    'wpp-basic3-launch' => '{{int:wpp-basic}} ({{int:wpp-3}}, {{int:wpp-launchoffer}})',
+    'wpp-basic6-launch' => '{{int:wpp-basic}} ({{int:wpp-6}}, {{int:wpp-launchoffer}})',
+    'wpp-basic12-launch' => '{{int:wpp-basic}} ({{int:wpp-12}}, {{int:wpp-launchoffer}})',
+    
+    'wpp-pro1-launch' => '{{int:wpp-pro}} ({{int:wpp-1}}, {{int:wpp-launchoffer}})',
+    'wpp-pro3-launch' => '{{int:wpp-pro}} ({{int:wpp-3}}, {{int:wpp-launchoffer}})',
+    'wpp-pro6-launch' => '{{int:wpp-pro}} ({{int:wpp-6}}, {{int:wpp-launchoffer}})',
+    'wpp-pro12-launch' => '{{int:wpp-pro}} ({{int:wpp-12}}, {{int:wpp-launchoffer}})',
+    
+    'wpp-test1-launch' => '{{int:wpp-test}} ({{int:wpp-1}}, {{int:wpp-launchoffer}})',
+    'wpp-test3-launch' => '{{int:wpp-test}} ({{int:wpp-3}}, {{int:wpp-launchoffer}})',
+    'wpp-test6-launch' => '{{int:wpp-test}} ({{int:wpp-6}}, {{int:wpp-launchoffer}})',
+    'wpp-test12-launch' => '{{int:wpp-test}} ({{int:wpp-12}}, {{int:wpp-launchoffer}})',
+    
 );
 
 /*
@@ -160,7 +201,7 @@ $messages['fr'] = array(
     'wikiplacesadmin' => 'Administration de Wikiplaces',
     'subscriptions' => 'Mes Abonnements',
     'wikiplaces' => 'Mes Wikiplaces',
-    'offers' => 'Nos Offres',
+    'plans' => 'Nos Offres',
     /* Group: Artists */
     'group-artist' => 'Artistes',
     'group-artist-member' => 'artiste',
@@ -184,6 +225,7 @@ $messages['fr'] = array(
     'wp-nswp' => 'Réglage',
     'wp-max_wikiplaces' => '{{int:wp-wikiplaces}}',
     'wp-max_pages' => '{{int:wp-subpages}}',
+    'wp-duration' => 'Durée',
     /* Actions */
     'wp-seeall' => 'voir tout',
     'wp-subscribe' => 'Abonnement',
@@ -265,10 +307,10 @@ Vous nous promettez aussi que vous avez écrit ceci vous-même, ou que vous l’
     'wp-sub-new-header' => 'Merci de remplir ce formulaire pour vous abonner à Seizam.',
     'wp-sub-new-section' => 'S\'abonner',
     'wp-planfield' => 'Offre :',
-    'wp-planfield-help' => 'Sélectionnez l\'offre Seizam à laquelle vous souhaitez souscrire grâce à ce menu déroulant. Plus de détails [[Special:Offers|ici]].',
+    'wp-planfield-help' => 'Sélectionnez l\'offre Seizam à laquelle vous souhaitez souscrire grâce à ce menu déroulant. Plus de détails [[Special:Plans|ici]].',
     'wp-checkfield' => 'J\'ai lu, j\'ai compris et j\'approuve les Conditions Générales d’Utilisation de Seizam ([[Project:CGU|CGU]]) <b>ET</b> les Conditions Particulières d’Utilisation de Seizam par les Artistes ([[Project:CPUA|CPUA]]).',
     'wp-checkfield-unchecked' => 'Vous devez approuver nos conditions d\'utilisation pour vous abonner. Merci de cocher la case ci-dessus.',
-    'wp-plan-desc-short' => '$1: $2 $3 pour $4 mois.',
+    'wp-plan-desc-short' => '$1 à $2€',
     'wp-plan-subscribe-go' => 'S\'abonner !',
     'wp-sub-renew-header' => 'Merci de remplir ce formulaire pour paramétrer le renouvellement de votre abonnement.',
     'wp-sub-renew-section' => 'Renouveler mon abonnement',
@@ -289,4 +331,18 @@ Vous nous promettez aussi que vous avez écrit ceci vous-même, ou que vous l’
     'wp-subscribe-change' => 'Vous pouvez sélectionner un abonnement qui succédera à l\'actuel depuis [[Special:Subscriptions/renew|la page de renouvellement d\'abonnement]]. Merci de [[Project:Contact/fr|nous contacter]] si vous avez besoin de changer d\'abonnement immédiatement. {{int:sz-asap}}',
     'wp-insufficient-quota' => 'Quota insuffisant (cette offre est trop petite pour votre usage).',
 	'wp-plan-not-available-renewal' => 'Offre indisponnible (cette offre n\'est plus disponnible).',
+    /* TablePager: Plans */
+    'wp-planslist-header' => 'Voici la liste de toutes les offres d\'abonnement proposées par Seizam.',
+    'wp-hard-quotas' => 'Quotas durs',
+    'wp-monthly-quotas' => 'Quotas mensuels',
+    'wp-period' => '$1 mois',
+    /* Plans */
+    'wpp-basic' => 'Basique',
+    'wpp-pro' => 'Professionel',
+    'wpp-test' => 'Découverte',
+    'wpp-launchoffer' => 'offre spéciale de lancement',
+    'wpp-1' => '1 mois',
+    'wpp-3' => '3 mois',
+    'wpp-6' => '6 mois',
+    'wpp-12' => '1 année',
 );

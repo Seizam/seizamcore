@@ -743,7 +743,7 @@ a, a span, a small {
     transition: color 0.75s;
 }
 
-li, td, tr, table, span, div, input[type="submit"], .block_join > a {
+li, td, tr, table, span, div, input[type="submit"], a {
     -webkit-transition: background 0.75s;
     -moz-transition: background 0.75s;
     -ms-transition: background 0.75s;
@@ -873,11 +873,29 @@ div.mw-content-ltr {
     bottom: 22px;
     right: 22px;
     color: #4d4e4f;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: normal;
     text-align: right;
     font-style: italic;
+    letter-spacing: 2px;
+    word-spacing: 6px;
 }
+
+#header.project h2 a {
+    color: #4d4e4f;
+    text-decoration: none;
+}
+
+#header.project h2 span.fade {
+    color: #ccced1;
+}
+
+#header.project h2 a:hover,
+#header.project h2 a:hover span.fade {
+    color: #7c2122;
+}
+
+
 
 #header.special {
     text-align: center
@@ -1372,14 +1390,11 @@ a.feedlink:first-child {
 
 #footer .inside {
     border: 1px solid #d8d7d7;
-    padding: 9px 20px 70px 20px;
+    padding: 28px 0 70px 36px;
     background-color: #fff;
 }
 
 #footer .inside .content {
-    clear:both;
-    float:none;
-    padding:0px 10px;
     overflow: hidden;
 }
 
@@ -1419,7 +1434,7 @@ a.feedlink:first-child {
 
 #footer div.selectLang {
     display: block;
-    padding: 15px 0 0 0;
+    padding: 0;
     float: none;
 }
 #footer div.selectLang form select {
@@ -2095,7 +2110,7 @@ table.TablePager_nav {
     text-align: right;
 }
 
-.TMRecord td.amount span.currency {
+span.currency {
     font-weight: lighter;
     color: #babfda;
 }
@@ -2192,6 +2207,33 @@ table.WpSubscription tr.pending td {
 
 table.WpSubscription tr.canceled td {
     color: #974349;
+}
+
+/* WpPlan */
+table.WpPlan td.hard_quotas,
+table.WpPlan td.monthly_quotas {
+    text-align: left;
+}
+
+table.WpPlan td ul {
+    display: inline-block;
+    border: none;
+    border-left: 1px solid #dad9d9;
+    margin: 0;
+    padding: 0;
+    vertical-align: middle;
+}
+
+table.WpPlan td ul li {
+    border: none;
+    padding: 0 0 0 8px;
+    margin: 0;
+    list-style: none;
+    text-align: left;
+}
+
+table.WpPlan td.wpp_name {
+    width: 150px;
 }
 
 
@@ -2347,6 +2389,7 @@ p.ms-wl-empty {
 }
 
 .slideshow img {
+	border: 1px solid #d8d7d7;
     margin-bottom: 6px;
 }
 
@@ -2364,36 +2407,40 @@ p.ms-wl-empty {
 	top: 80px;
 	width: 40px;
 	height: 39px;
-	background: url(images/arrows_slide.png) 0 0 no-repeat;
-	text-indent: -9999px;
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    border: 1px solid #dad9d9;
+    background-color: #e22c2e;
 	z-index:5;
 }
 #carrousel .prev,
 #carrousel .next {
 	top: 51px;
 }
+
 .slideshow .prev,
 #carrousel .prev {
+    /* @embed */
+	background-image: url(images/arrows_slide_left.png);
 	left: 0;
 }
 .slideshow .next,
 #carrousel .next {
+    /* @embed */
+	background-image: url(images/arrows_slide_right.png);
 	right: 0;
-	background-position: -40px 0;
 }
 .slideshow .prev:focus,
 .slideshow .prev:hover,
 #carrousel .prev:focus,
 #carrousel .prev:hover {
-	background-position: 0px -39px;
-	outline:none;
+    background-color: #7c2122;
 }
 .slideshow .next:focus,
 .slideshow .next:hover,
 #carrousel .next:focus,
 #carrousel .next:hover {
-	background-position: -40px -39px;
-	outline:none;
+    background-color: #7c2122;
 }
 
 
@@ -2409,7 +2456,11 @@ p.ms-wl-empty {
 }
 .block_join h3.title {
 	width: 190px;
-	background: #da1b1e url(images/bg_title_red.png) 0 0 repeat-x;
+    /* @embed */
+	background: url(images/bg_title_red.png);
+    background-color: #da1b1e;
+    background-position: 0 0;
+    background-repeat: repeat-x;
 	color: #fff;
 	border-color:#da1b1e;
 	border-top-color: #e57273;
@@ -2417,7 +2468,11 @@ p.ms-wl-empty {
 }
 
 .block_join .inside {
-	background: #464343 url(images/bg_join.png) 0 100% repeat-x;
+    /* @embed */
+	background-image: url(images/bg_join.png);
+    background-color: #464343;
+    background-position: 0 100%;
+    background-repeat: repeat-x;
 	border: 1px solid #5E5B5B;
 }
 .block_join > a {
@@ -2434,7 +2489,10 @@ p.ms-wl-empty {
 }
 .block_join .submit {
 	text-align: right;
-	background: url(images/arrow_white.png) 30% 50% no-repeat;
+    /* @embed */
+	background-image: url(images/arrow_white.png);
+    background-position: 30% 50%;
+    background-repeat: no-repeat;
 }
 
 .block_join .submit input {

@@ -18,7 +18,7 @@ if (!defined('MEDIAWIKI')) {
 function wgformatSizeMB($size) {
     global $wgLang;
     // For small sizes no decimal places necessary
-    if ($size > 1024) {
+    if ($size >= 1024) {
         $size = $size / 1024;
         // For GB and bigger two decimal places are smarter
         $size = round($size, 2);

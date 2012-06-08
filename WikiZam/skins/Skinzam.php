@@ -274,7 +274,7 @@ class SkinzamTemplate extends BaseTemplate {
             <div id="header" class="block block_full project noprint">
                 <div class="hgroup inside">
                     <h1><a id="logo_project" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"></a></h1>
-                    <h2><?php echo wfMessage('sz-tagline')->text() ?></h2>
+                    <h2><?php echo wfMessage('sz-tagline')->parse() ?></h2>
                 </div>
             </div>
             <!-- /header -->
@@ -386,7 +386,7 @@ class SkinzamTemplate extends BaseTemplate {
             <div id="header" class="block block_full project">
                 <div class="hgroup inside">
                     <h1><a id="logo_project" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"></a></h1>
-                    <h2><?php echo wfMessage('sz-tagline')->text() ?></h2>
+                    <h2><?php echo wfMessage('sz-tagline')->parse() ?></h2>
                 </div>
             </div>
             <!-- /header -->

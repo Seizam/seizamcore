@@ -51,7 +51,7 @@ class TMRecord {
     }
 
     public function getUserId() {
-        if (!isset($this->tmr['tmr_user_id']) || !is_int($this->tmr['tmr_user_id'])) {
+        if (!isset($this->tmr['tmr_user_id'])) {
             throw new MWException('No user ID related to Record ' . $this->id . '.');
         }
 
