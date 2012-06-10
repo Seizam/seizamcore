@@ -68,20 +68,20 @@ $messages['en'] = array(
     /* Slideshow */
     'sz-mp-ourfreedoms' => 'Our Freedoms',
     
-    'sz-slideshow0' => 'The liberty of creation',
+    'sz-slideshow0' => 'The liberty of creation: ',
     'sz-slideshow0-href' => '{{canonicalurl:Project:Creation}}',
     'sz-slideshow0-src' => '{{STYLEPATH}}/skinzam/content/backflip.jpg',
-    'sz-slideshow0-body' => 'Publish your art online, whatever your disciplines are, whatever your vision is. Because Seizam is a [[Help:Wiki|wiki]], you have total control over the content <b>and</b> layout of your pages.',
+    'sz-slideshow0-body' => 'Publish your art online, whatever your disciplines are, whatever your vision is.',
     
-    'sz-slideshow1' => 'The absence of pollution',
+    'sz-slideshow1' => 'The absence of pollution: ',
     'sz-slideshow1-href' => '{{canonicalurl:Project:Pollution}}',
     'sz-slideshow1-src' => '{{STYLEPATH}}/skinzam/content/neon.jpg',
-    'sz-slideshow1-body' => 'No ads, no spam. Seizam is a subscription-based service made for artists. Nothing here will ever spoil your work. Even our logo is at the bottom to put your art on the foreground.',
+    'sz-slideshow1-body' => 'No advertisement, no spam. Nothing here will ever spoil your work.',
     
-    'sz-slideshow2' => 'The openness of collaboration',
+    'sz-slideshow2' => 'The openness of collaboration: ',
     'sz-slideshow2-href' => '{{canonicalurl:Project:Collaboration}}',
     'sz-slideshow2-src' => '{{STYLEPATH}}/skinzam/content/slam.jpg',
-    'sz-slideshow2-body' => 'Open your latest project to the world? Or keep it totally secrete? On seizam, you decide how to share your work, who can see it and even who can participate.',
+    'sz-slideshow2-body' => 'You decide how to share your work, and even who can participate.',
     
     /* Form */
     'sz-mp-joinus' => 'Join us',
@@ -94,7 +94,7 @@ $messages['en'] = array(
     
     'sz-blockjoin0' => 'Our Offers',
     'sz-blockjoin0-href' => '{{canonicalurl:Project:Offers}}',
-    'sz-blockjoin0-catch' => 'From 5€ per month.',
+    'sz-blockjoin0-catch' => 'From <s>5.00€</s> <b>0.00€</b> per month.',
     'sz-blockjoin1' => '{{int:sz-myseizam}}',
     'sz-blockjoin1-href' => '{{canonicalurl:Special:MySeizam}}',
     'sz-blockjoin1-catch' => 'Everything you need is here.',
@@ -189,20 +189,20 @@ $messages['fr'] = array(
     /* Slideshow */
     'sz-mp-ourfreedoms' => 'Nos libertés',
     
-    'sz-slideshow0' => 'La place à la création',
+    'sz-slideshow0' => 'L\'espace pour la création : ',
     'sz-slideshow0-href' => '{{canonicalurl:Project:Creation/fr}}',
     'sz-slideshow0-src' => '{{STYLEPATH}}/skinzam/content/backflip.jpg',
-    'sz-slideshow0-body' => 'Publiez votre art en ligne, quelles que soient vos disciplines, quelle que soit votre vision. Parce que Seizam est un [[Help:Wiki/fr|wiki]], vous avez un contrôle total sur le contenu <b>et</b> l\'aspect de vos pages.',
+    'sz-slideshow0-body' => 'Publiez votre art en ligne, quelles que soient vos disciplines, quelle que soit votre vision.',
     
-    'sz-slideshow1' => 'L\'absence de pollution',
+    'sz-slideshow1' => 'L\'absence de pollution : ',
     'sz-slideshow1-href' => '{{canonicalurl:Project:Pollution/fr}}',
     'sz-slideshow1-src' => '{{STYLEPATH}}/skinzam/content/neon.jpg',
-    'sz-slideshow1-body' => 'Pas de pub, pas de spam. Seizam est un service par abonnement fait pour les artistes. Ici, rien ne gâchera votre travail. Même notre logo est en-bas pour mettre votre art au premier plan.',
+    'sz-slideshow1-body' => 'Pas de pub, pas de spam. Ici, votre travail ne sera jamais pollué.',
     
-    'sz-slideshow2' => 'L\'ouverture vers la collaboration',
+    'sz-slideshow2' => 'L\'ouverture vers la collaboration : ',
     'sz-slideshow2-href' => '{{canonicalurl:Project:Collaboration/fr}}',
     'sz-slideshow2-src' => '{{STYLEPATH}}/skinzam/content/slam.jpg',
-    'sz-slideshow2-body' => 'Ouvrez votre dernier projet au monde ? Ou gardez-le comlètement secret ? Sur Seizam, vous décidez comment partager votre travail, qui peut le voir et même qui peut y participer.',
+    'sz-slideshow2-body' => 'Vous décidez comment partager votre travail, mais aussi qui peut y participer.',
     
     /* Form */
     'sz-mp-joinus' => 'Nous rejoindre',
@@ -215,7 +215,7 @@ $messages['fr'] = array(
     
     'sz-blockjoin0' => 'Nos offres',
     'sz-blockjoin0-href' => '{{canonicalurl:Project:Offers}}',
-    'sz-blockjoin0-catch' => 'À partir de 5€ par mois.',
+    'sz-blockjoin0-catch' => 'À partir de <s>5,00€</s> <b>0,00€</b> par mois.',
     
     'sz-blockjoin1-catch' => 'Tout Seizam à portée de main.',
     
@@ -234,7 +234,7 @@ $messages['fr'] = array(
     'sz-triptic1' => 'Suivez',
     'sz-triptic1-href' => 'http://www.davidcanwin.com',
     'sz-triptic1-src' => '{{STYLEPATH}}/skinzam/content/bambi.jpg',
-    'sz-triptic1-caption' => 'Sur <b>DavidCanWin.com</b>, notre blog de développement, vous trouverez les dernières nouvelles de Seizam mais aussi divers resources à propos d\'art et de liberté.',
+    'sz-triptic1-caption' => '<b>DavidCanWin.com</b>, c\'est notre blog de developpement mais aussi un lieu d\'échange et de réflexion à propos d\'art et de liberté.',
     
     'sz-triptic2' => 'Apprenez',
     'sz-triptic2-href' => '{{canonicalurl:Help:Content}}',

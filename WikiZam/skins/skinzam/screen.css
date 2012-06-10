@@ -878,7 +878,7 @@ div.mw-content-ltr {
     text-align: right;
     font-style: italic;
     letter-spacing: 2px;
-    word-spacing: 6px;
+    word-spacing: 5px;
 }
 
 #header.project h2 a {
@@ -2373,24 +2373,30 @@ p.ms-wl-empty {
 }
 .slideshow a { color: #4D4E4F; }
 
+.slideshow div {
+	font-size: 14px;
+    letter-spacing: 1px;
+    word-spacing: 3px;
+    padding-right: 8px;
+    text-align: justify;
+}
+
 .slideshow h4 {
     display: inline;
 	margin: 0;
     padding: 0;
-	padding-right: 1em;
-	font-size: 12px;
 	font-weight: bold;
 }
 
 .slideshow p {
+    display: inline;
 	margin: 0;
 	padding: 0;
-	font-size: 12px;
 }
 
 .slideshow img {
 	border: 1px solid #d8d7d7;
-    margin-bottom: 6px;
+    margin-bottom: 10px;
 }
 
 .slideshow li {

@@ -35,6 +35,11 @@ class TransactionsTablePager extends SkinzamTablePager {
      function formatValue($name, $value) {
         global $wgLang;
         switch ($name) {
+            case 'tmr_id':
+                if ($this->mCurrentRow->tmr_amount < 0 && $this->mCurrentRow->tmr_status != 'KO')
+                    return SpecialTransactions::getLinkBill($value, $wgLang->formatNum($value));
+                else
+                    return $wgLang->formatNum($value);
             case 'tmr_type':
                 return wfMessage('tm-' . $value)->text();
             case 'tmr_date_created':
@@ -46,8 +51,8 @@ class TransactionsTablePager extends SkinzamTablePager {
                 return wfMessage('status-' . $value)->text();
             case 'tmr_amount':
                 if ($this->mCurrentRow->tmr_currency == 'EUR')
-                    $cur = ' '.  wfMessage('cur-euro')->text();
-                else $cur = ' '.$this->mCurrentRow->tmr_currency;
+                    $cur = wfMessage('cur-euro')->text();
+                else $cur = $this->mCurrentRow->tmr_currency;
                 $cur = Xml::element('span', array('class'=>'currency'), $cur);
                 return ($value > 0 ? '+' . $wgLang->formatNum($value) : $wgLang->formatNum($value)).$cur ;
             default:

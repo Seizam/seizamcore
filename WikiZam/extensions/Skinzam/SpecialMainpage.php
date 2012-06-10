@@ -75,8 +75,10 @@ class SpecialMainpage extends SpecialPage {
             $html .= Xml::openElement('li');
             $html .= Xml::openElement('a', array('href' => wfMessage($key.'-href')->text()));
             $html .= Xml::element('img', array('src' => wfMessage($key.'-src')->text(), 'width' => 497, 'height' => 188));
-            $html .= Xml::element('h4', array(), $h4);
+            $html .= Xml::openElement('div');
+            $html .= Html::rawElement('h4', array(), $h4);
             $html .= Html::rawElement('p', array(), wfMessage($key . '-body')->parse());
+            $html .= Xml::closeElement('div');
             $html .= Xml::closeElement('a');
             $html .= Xml::closeElement('li');
             $slide++;
@@ -155,7 +157,7 @@ class SpecialMainpage extends SpecialPage {
         foreach ($blockjoin as $box) {
             $html .= Xml::openElement('a', array('href' => wfMessage($box.'-href')->text()));
             $html .= Xml::element('span', array(), wfMessage($box)->text());
-            $html .= Xml::element('small', array(), wfMessage($box.'-catch')->parse());
+            $html .= Html::rawElement('small', array(), wfMessage($box.'-catch')->parse());
             $html .= Xml::closeElement('a');
         }
 

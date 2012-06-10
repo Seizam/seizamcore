@@ -29,7 +29,8 @@ $messages['en'] = array(
     'status-OK' => 'Valid',
     'status-KO' => 'Canceled',
     'tm-balance' => 'Your current account balance is \'\'\'$1 {{int:$2}}\'\'\'.',
-    'tm-table-desc' => 'Here is the list of all your transactions.'
+    'tm-table-desc' => 'Here is the list of all your transactions.',
+    'tm-bill' => 'Bill'
 );
 
 /** 
@@ -57,5 +58,6 @@ $messages['fr'] = array(
     'status-OK' => 'Valide',
     'status-KO' => 'Annulée',
     'tm-balance' => 'Le solde actuel de votre compte est de \'\'\'$1 {{int:$2}}\'\'\'.',
-    'tm-table-desc' => 'Voici la liste de toutes vos transactions.'
+    'tm-table-desc' => 'Voici la liste de toutes vos transactions.',
+    'tm-bill' => 'Facture'
 );
