@@ -62,7 +62,7 @@ $messages['en'] = array(
     'sorry' => 'Sorry!',
 	'sz-internal-error' => 'Sorry, an internal error occured. {{int:sz-report}}',
     'sz-invalid-request' => 'Sorry, we do not understand what you want to do OR you are not allowed to do it. {{int:sz-report}}',
-	
+	'sz-maintenance' => 'Sorry, this side of the website is closed for maintenance. Please try again later.',
     
     /* Mainpage */
     /* Slideshow */
@@ -198,7 +198,7 @@ $messages['fr'] = array(
     'sorry' => 'Désolé!',
 	'sz-internal-error' => 'Pardon, une erreur interne s\'est produite. {{int:sz-report}}',
     'sz-invalid-request' => 'Pardon, nous ne comprenons pas votre requête OU vous n\'êtes pas autorisé à la réaliser. {{int:sz-report}}',
-	
+	'sz-maintenance' => 'Pardon, cette partie du site est fermée pour maintenance. Merci de réessayer plus tard.',
     
     /* Mainpage */
     /* Slideshow */

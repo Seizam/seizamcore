@@ -40,13 +40,14 @@ class SpecialElectronicPayment extends SpecialPage {
      * @param $request WebRequest : data posted.
      */
     public function __construct($request = null) {
-        parent::__construct('ElectronicPayment', EP_ACCESS_RIGHT);
+        parent::__construct('ElectronicPayment', EP_ADMIN_RIGHT);
     }
 
     /**
      * Special page entry point
      */
     public function execute($par) {
+        $this->setHeaders();
         $request = $this->getRequest();
 
         if (isset($par) & $par != '') {
@@ -66,6 +67,11 @@ class SpecialElectronicPayment extends SpecialPage {
 
         // Check rights
         if (!$this->userCanExecute($user)) {
+            
+            // MAINTENANCE SCRUB
+            $output->addHTML(wfMessage('sz-maintenance'));
+            return;
+            
             // If anon, redirect to login
             if ($user->isAnon()) {
                 $output->redirect($this->getTitleFor('UserLogin')->getLocalURL(array('returnto' => $this->getFullTitle())), '401');
@@ -80,7 +86,6 @@ class SpecialElectronicPayment extends SpecialPage {
         switch ($action) {
             # Coming back to Seizam (payment failed/cancelled)
             case 'fail' :
-                $this->setHeaders();
                 $this->constructDefault('fail');
                 break;
             # Coming back to Seizam (payment succeeded)
@@ -89,7 +94,6 @@ class SpecialElectronicPayment extends SpecialPage {
                 break;
             # Welcome & Init Order
             default :
-                $this->setHeaders();
                 $this->constructDefault();
                 break;
         }

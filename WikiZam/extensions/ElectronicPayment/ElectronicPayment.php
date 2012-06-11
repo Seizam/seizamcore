@@ -29,6 +29,10 @@ define('EP_ACCESS_RIGHT', 'epaccess');
 $wgAvailableRights[] = EP_ACCESS_RIGHT; 
 $wgGroupPermissions['user'][EP_ACCESS_RIGHT] = true;
 
+define('EP_ADMIN_RIGHT', 'epadmin');
+$wgAvailableRights[] = EP_ADMIN_RIGHT; 
+$wgGroupPermissions['user'][EP_ADMIN_RIGHT] = true;
+
 $dir = dirname(__FILE__) . '/';
 
 #Load Hooks
