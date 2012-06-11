@@ -81,6 +81,7 @@ $messages['en'] = array(
     'wp-createpage-template-help' => 'Select here the model of page you wish to use',
     'wp-createpage-license-help' => '',
     'wp-createpage-createtalk-help' => '',
+	'notemplate' => 'None selected',
     
     /* Disclaimer: Wikiplace */
     'wp-create-wp-success' => '==Congratulation!==
@@ -268,6 +269,7 @@ $messages['fr'] = array(
     'wp-wikiplace-field' => 'Wikiplace parent:',
     'wp-createpage-wikiplace-help' => 'Sélectionnez ici le Wikiplace parent. Votre page sera disponnible depuis <u>www.seizam.com/<b>Parent</b>/Nom</u>.',
     'wp-createpage-name-help' => 'Saisissez ic le nom de votre page. Elle sera disponnible depuis <u>www.seizam.com/Parent/<b>Nom</b></u>. <b>Conseil :</b> Choisissez un nom court, facile à retenir et facile à saisir !',
+	'notemplate' => 'Aucun modèle sélectionné',
     /* Disclaimer: Wikiplace */
     'wp-create-wp-success' => '==Félicitation !==
 
