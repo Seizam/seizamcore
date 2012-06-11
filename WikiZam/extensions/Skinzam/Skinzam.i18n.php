@@ -116,7 +116,7 @@ $messages['en'] = array(
     'sz-triptic1-caption' => 'Art, freedom and sling-shooting. <b>DavidCanWin.com</b> is the development blog and thought process of Seizam.',
     
     'sz-triptic2' => 'Learn',
-    'sz-triptic2-href' => '{{canonicalurl:Help:Content}}',
+    'sz-triptic2-href' => '{{canonicalurl:Help:Contents}}',
     'sz-triptic2-src' => '{{STYLEPATH}}/skinzam/content/shelf.jpg',
     'sz-triptic2-caption' => 'Frequently Asked Questions, tutorials, examples, documentation... Everything you need to learn how to build great wikiplaces is here.',
 
@@ -242,7 +242,7 @@ $messages['fr'] = array(
     'sz-mp-triptic' => 'Découvrez Seizam',
     
     'sz-triptic0' => 'Visitez',
-    'sz-triptic0-href' => '{{canonicalurl:Project:Tour}}',
+    'sz-triptic0-href' => '{{canonicalurl:Project:Tour/fr}}',
     'sz-triptic0-src' => '{{STYLEPATH}}/skinzam/content/tiptoe.jpg',
     'sz-triptic0-caption' => 'Cette visite rapide vous guidera à travers tout Seizam. De la philosophie à la technologie, vous ne manquerez rien.',
     
@@ -252,7 +252,7 @@ $messages['fr'] = array(
     'sz-triptic1-caption' => '<b>DavidCanWin.com</b>, c\'est notre blog de developpement mais aussi un lieu d\'échange et de réflexion à propos d\'art et de liberté.',
     
     'sz-triptic2' => 'Apprenez',
-    'sz-triptic2-href' => '{{canonicalurl:Help:Content}}',
+    'sz-triptic2-href' => '{{canonicalurl:Help:Contents/fr}}',
     'sz-triptic2-src' => '{{STYLEPATH}}/skinzam/content/shelf.jpg',
     'sz-triptic2-caption' => 'Tutoriaux, exemples, Foire Aux Questions, documentation... Tout ce dont vous avez besoin pour construire vos Wikiplaces se trouve là.',
 
