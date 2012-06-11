@@ -76,11 +76,6 @@ $wgDBmysql5 = false;
 # InstantCommons allows wiki to use images from http://commons.wikimedia.org
 $wgUseInstantCommons = false;
 
-## If you use ImageMagick (or any other shell command) on a
-## Linux server, this will need to be set to the name of an
-## available UTF-8 locale
-$wgShellLocale = "en_US.UTF-8";
-
 ## If you have the appropriate support software installed
 ## you can enable inline LaTeX equations:
 $wgUseTeX = false;
@@ -105,6 +100,15 @@ $wgDefaultSkin = "skinzam";
 $wgSkipSkins = array("chick", "cologneblue", "nostalgia", "simple", "standard", "monobook", "myskin", "modern");
 ## Usability extension for Vector (base of Skinzam)
 require_once( "$IP/extensions/Vector/Vector.php" );
+
+## For attaching licensing metadata to pages, and displaying an
+## appropriate copyright notice / icon. GNU Free Documentation
+## License and Creative Commons licenses are supported so far.
+$wgRightsPage = ""; # Set to the title of a wiki page that describes your license/copyright
+$wgRightsUrl  = "";
+$wgRightsText = "";
+$wgRightsIcon = "";
+# $wgRightsCode = ""; # Not yet used
 
 ## UI Elements extension for Seizam's skin
 require_once( "$IP/extensions/Skinzam/Skinzam.php" );
@@ -136,18 +140,7 @@ $wgResourceLoaderMaxQueryLength = 1024;
 
 # End of automatically generated settings.
 # Add more configuration options below.
-# Development Settings (toggling debug msg on)
-# Php error displayed
-error_reporting(E_ALL | E_STRICT);
-ini_set('display_errors', 1);
-# Stack trace displayed
-$wgShowExceptionDetails = true;
-# SQL error displayed
-$wgShowSQLErrors = true;
-$wgDebugDumpSql = true;
-# For Production, remember to log into file instead
-# ResourceLoader Debug mode
-$wgResourceLoaderDebug = false;
+
 # End Developement Settings
 # Polyglot (auto select page version regarding user language)
 require_once( "$IP/extensions/Polyglot/Polyglot.php" );
