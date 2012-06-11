@@ -155,9 +155,9 @@ class WpPagesTablePager extends SkinzamTablePager {
         /* $html .= '<li>'
           . Linker::linkKnown($title, wfMessage('history_short')->text(), array(), array('action' => 'history'))
           . '</li>'; */
-        $html .= '<li>'
+        /* $html .= '<li>'
                 . Linker::linkKnown($title, wfMessage('protect')->text(), array(), array('action' => PROTECTOWN_ACTION))
-                . '</li>';
+                . '</li>';*/
         $html .= '</ul>';
         return $html;
     }

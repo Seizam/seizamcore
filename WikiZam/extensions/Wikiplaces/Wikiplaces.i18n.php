@@ -78,6 +78,10 @@ $messages['en'] = array(
     'wp-wikiplace-field' => 'Parent Wikiplace:',
     'wp-createpage-wikiplace-help' => 'Select here the parent Wikiplace. Your Page will be available at <u>www.seizam.com/<b>Parent</b>/Name</u>.',
     'wp-createpage-name-help' => 'Type here the Name of your Page. It will be available at <u>www.seizam.com/Parent/<b>Name</b></u>. <b>Advice:</b> Make it short, easy to remember and easy to type!',
+    'wp-createpage-template-help' => 'Select here the model of page you wish to use',
+    'wp-createpage-license-help' => '',
+    'wp-createpage-createtalk-help' => '',
+    
     /* Disclaimer: Wikiplace */
     'wp-create-wp-success' => '==Congratulation!==
 
