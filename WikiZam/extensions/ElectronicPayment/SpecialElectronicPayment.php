@@ -172,16 +172,17 @@ class SpecialElectronicPayment extends SpecialPage {
 
     private function displayAttempt(EPMessage $epmessage) {
         $output = $this->getOutput();
+        $lang = $this->getLanguage();
         # The form that is gonna send the user to the bank payment interface
         $html = '<form  class="visualClear" action="' . $epmessage->oTpe->sUrlPaiement . '" method="post" id="PaymentRequest">
-                    <div class="form_header informations">' . wfMessage('ep-attempt-formheader', $epmessage->order->epo['epo_amount'] . $epmessage->order->epo['epo_currency'])->parse() . '</div>
+                    <div class="form_header informations">' . wfMessage('ep-attempt-formheader', $lang->formatNum($epmessage->order->epo['epo_amount']) )->parse() . '</div>
                     <div class="edit_col_1">
                         <fieldset>
                             <legend>' . wfMessage('ep-section2')->text() . '</legend>
                             <div id="mw-htmlform-you" class="content_block">
                                 <p class="mw-htmlform-field-HTMLFloatField ">
                                     <label for="mw-input-wpamount">' . wfMessage('ep-cd-amountlabel')->text() . '</label>
-                                    <input id="mw-input-wpamount" class="disabled" disabled="" value="' . $epmessage->order->epo['epo_amount'] . '" size="27" name="wpamount">
+                                    <input id="mw-input-wpamount" class="disabled" disabled="" value="' . $lang->formatNum($epmessage->order->epo['epo_amount']) . '" size="27" name="wpamount">
                                     <span class="sread help htmlform-tip">' . wfMessage('ep-help-amount')->text() . '</span>
                                 </p>
                                 <p class="mw-htmlform-field-HTMLTextField ">

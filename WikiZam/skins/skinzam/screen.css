@@ -1908,7 +1908,7 @@ table.mw-enhanced-rc:hover {
     margin-bottom: 5px;
 }
 
-.edit_col_1 .content_block p > input {
+.edit_col_1 .content_block input[type="checkbox"] {
     width: auto;
 }
 

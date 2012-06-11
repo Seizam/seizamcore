@@ -39,6 +39,7 @@ $messages['en'] = array(
     'wp-max_wikiplaces' => '{{int:wp-wikiplaces}}',
     'wp-max_pages' => '{{int:wp-subpages}}',
     'wp-duration' => 'Duration',
+    'notemplate' => 'Empty',
     /* Actions */
     'wp-seeall' => 'see all',
     'wp-subscribe' => 'Subscribe',
@@ -70,18 +71,19 @@ $messages['en'] = array(
     'wp-name-field' => 'Name:',
     'wp-template-field' => 'Template :',
     'wp-create-template-help' => 'Sélectionnez ici le modèle utilisé pour cette page. Modifiez par la suite ce patron générique pour personaliser votre wikiplace.',  
-    'wp-license-field' => '{{int:license}}',
+    'wp-license-field' => '{{int:license}} :',
     'wp-create-license-help' => 'Select here the license you wish to associate with this page. Your work is to be released under this license.',
     'wp-create-name-help' => 'Type here the Name of your new Wikiplace. It will be available at <u>www.seizam.com/<b>Name</b></u> and its Subpages will be at <u>www.seizam.com/<b>Name</b>/Subpage</u>. <b>Advice:</b> Make it short, easy to remember and easy to type!',
     'wp-createpage-header' => 'Please fill the form below to create a new page within one of your Wikiplaces.',
     'wp-createpage-section' => 'Create a Page',
     'wp-wikiplace-field' => 'Parent Wikiplace:',
+    'wp-createtalk-field' => 'Also create and open the associated Talk for this page.',
     'wp-createpage-wikiplace-help' => 'Select here the parent Wikiplace. Your Page will be available at <u>www.seizam.com/<b>Parent</b>/Name</u>.',
     'wp-createpage-name-help' => 'Type here the Name of your Page. It will be available at <u>www.seizam.com/Parent/<b>Name</b></u>. <b>Advice:</b> Make it short, easy to remember and easy to type!',
-    'wp-createpage-template-help' => 'Select here the model of page you wish to use',
-    'wp-createpage-license-help' => '',
-    'wp-createpage-createtalk-help' => '',
-    
+    'wp-createpage-template-help' => 'Select here the model of page you wish to use. Your new page will be created with corresponding generic content inside. It can be changed anytime.',
+    'wp-createpage-license-help' => 'Select here the type of Intellectual Property Licensing this page is released under. We advise free licensing but that is your call.',
+    'wp-createpage-createtalk-help' => 'Check this box if you wish to open the Talk for this page. This second talk page will be available at <u>www.seizam.com/<b>Talk:</b>Parent/Name</u>.',
+    'wp-createtalk-help' => 'Check this box if you wish to open the Talk for this page. This second talk page will be available at <u>www.seizam.com/<b>Talk:</b>Name</u>.',
     /* Disclaimer: Wikiplace */
     'wp-create-wp-success' => '==Congratulation!==
 
@@ -230,6 +232,7 @@ $messages['fr'] = array(
     'wp-max_wikiplaces' => '{{int:wp-wikiplaces}}',
     'wp-max_pages' => '{{int:wp-subpages}}',
     'wp-duration' => 'Durée',
+    'notemplate' => 'Vide',
     /* Actions */
     'wp-seeall' => 'voir tout',
     'wp-subscribe' => 'Abonnement',
@@ -265,9 +268,14 @@ $messages['fr'] = array(
     'wp-create-name-help' => 'Saisissez ici le nom de votre nouveau Wikiplace. Il sera disponnible depuis <u>www.seizam.com/<b>Nom</b></u> et toutes ses sous-pages seront depuis <u>www.seizam.com/<b>Name</b>/Subpage</u>. <b>Conseil :</b> Choisissez un nom court, facile à retenir et facile à saisir !',
     'wp-createpage-header' => 'Merci de remplir ce formulaire pour créer une nouvelle page dans l\'un de vos Wikiplaces',
     'wp-createpage-section' => 'Créer une page',
-    'wp-wikiplace-field' => 'Wikiplace parent:',
+    'wp-wikiplace-field' => 'Wikiplace parent :',
     'wp-createpage-wikiplace-help' => 'Sélectionnez ici le Wikiplace parent. Votre page sera disponnible depuis <u>www.seizam.com/<b>Parent</b>/Nom</u>.',
-    'wp-createpage-name-help' => 'Saisissez ic le nom de votre page. Elle sera disponnible depuis <u>www.seizam.com/Parent/<b>Nom</b></u>. <b>Conseil :</b> Choisissez un nom court, facile à retenir et facile à saisir !',
+    'wp-createpage-name-help' => 'Saisissez ici le nom de votre page. Elle sera disponnible depuis <u>www.seizam.com/Parent/<b>Nom</b></u>. <b>Conseil :</b> Choisissez un nom court, facile à retenir et facile à saisir !',
+    'wp-createtalk-field' => 'Créer et ouvrir la page de discussion associée.',
+    'wp-createpage-template-help' => 'Sélectionnez ici le modèle de page que vous souhaitez utiliser. Votre nouvelle page sera créée avec ce contenu générique à l\'intérieur. Cela peut être changé à tout moment.',
+    'wp-createpage-license-help' => 'Sélectionnez ici le type de licence (Propriété Intellectuelle) sous laquelle votre page sera diffusée. Nous conseillons une license libre, mais c\'est votre choix.',
+    'wp-createpage-createtalk-help' => 'Cochez cette case si vous désirez ouvrir la Discussion pour votre page. Cette seconde page de discussion sera disponnible depuis <u>www.seizam.com/<b>Talk:</b>Parent/Nom</u>.',
+    'wp-createtalk-help' => 'Cochez cette case si vous désirez ouvrir la Discussion pour votre page. Cette seconde page de discussion sera disponnible depuis <u>www.seizam.com/<b>Talk:</b>Nom</u>.',
     /* Disclaimer: Wikiplace */
     'wp-create-wp-success' => '==Félicitation !==
 
