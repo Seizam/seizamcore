@@ -1110,7 +1110,7 @@ abstract class HTMLFormField {
 class HTMLTextField extends HTMLFormField {
 
     function getSize() {
-        return isset($this->mParams['size']) ? $this->mParams['size'] : 27;
+        return isset($this->mParams['size']) ? $this->mParams['size'] : null;
     }
 
     function getInputHTML($value) {

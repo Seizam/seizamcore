@@ -120,6 +120,21 @@ $messages['en'] = array(
     'sz-triptic2-src' => '{{STYLEPATH}}/skinzam/content/shelf.jpg',
     'sz-triptic2-caption' => 'Frequently Asked Questions, tutorials, examples, documentation... Everything you need to learn how to build great wikiplaces is here.',
 
+    /* i18n overwrite */
+    'confirmemail_oncreate' => 'A confirmation code was sent to your e-mail address. Please check your e-mails and follow the provided instructions to enable e-mail features and subscriptions within Seizam.',
+    'welcomecreation' => '== Welcome, $1! ==
+Congratulations and thank you! Your Seizam account has been successfully created.
+=== What is next? ===
+* To enable Wikiplaces, pick a [[Special:Plans|plan]] and [[Special:Subscriptions|subscribe]] to Seizam.
+* Visit [[Special:MySeizam|My Seizam]], everything you need is there, and much more!
+* Check [[Special:Preferences|My Preferences]] for advanced setup.
+* Look into [[Help:Contents|the help]] to learn how to use Seizam.
+=== Remember! ===
+Please, remember we are always available through [[Project:Contact]] for any questions, critics or advice...
+
+Regards,
+
+[[Project:Team|The Team]]'
 );
 
 /** 
@@ -241,4 +256,19 @@ $messages['fr'] = array(
     'sz-triptic2-src' => '{{STYLEPATH}}/skinzam/content/shelf.jpg',
     'sz-triptic2-caption' => 'Tutoriaux, exemples, Foire Aux Questions, documentation... Tout ce dont vous avez besoin pour construire vos Wikiplaces se trouve là.',
 
+    /* i18n overwrite */
+    'confirmemail_oncreate' => 'Un code de confirmation a été envoyé à votre adresse de courriel. Merci de consulter vos courriels et de suivre les instuctions fournies pour activer les fonctions de messagerie et d\'abonnement.',
+    'welcomecreation' => '== Bienvenue, $1! ==
+Félicitation et merci ! Votre compte Seizam a été créé avec succès.
+=== Que faire maintenant ? ===
+* Pour activer les Wikiplaces, choisissez une [[Special:Plans|offre]] et [[Special:Subscriptions|abonnez-vous]] à Seizam.
+* Visitez [[Special:MySeizam|Mon Seizam]], tout ce dont vous avez besoin est là, et bien plus !
+* Vérifiez [[Special:Preferences|Mes Préférences]] pour les réglages avancés.
+* Consultez [[Help:Contents|l\'aide]] pour apprendre à utiliser Seizam.
+=== N\'oubliez pas ! ===
+S\'il vous plaît, rappelez-vous que nous restons à votre disposition à travers [[Project:Contact|la page de contact]] pour toutes questions, critiques ou conseils...
+
+Cordialement,
+
+[[Project:Team|L\'équipe]]'
 );

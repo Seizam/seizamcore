@@ -152,7 +152,7 @@ class SpecialWikiplaces extends SpecialPage {
 				'class' => 'Licenses',
 			),
 			'CreateTalk' => array(
-				'class' => 'HTMLCheckField',
+				'type' => 'check',
 				'label-message' => 'wp-createtalk-field',
 				'section' => 'create-section',
 				'help-message' => 'wp-create-createtalk-help',
@@ -296,7 +296,8 @@ class SpecialWikiplaces extends SpecialPage {
 			),
 			
 		);
-
+        
+        $name = null;
 		if ($this->name != null) {
 			$name = Title::newFromDBkey($this->name)->getText();
 		}
