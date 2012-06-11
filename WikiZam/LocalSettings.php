@@ -248,7 +248,7 @@ $wgNamespaceProtection[NS_HELP] = array('edithelpns');
 
 
 # Where is the favicon ?
-$wgFavicon = "/favicon.ico";
+$wgFavicon = "/skins/common/images/favicon.ico";
 
 # ensure to clear cache when modifications occur on this file
 $wgInvalidateCacheOnLocalSettingsChange = true;

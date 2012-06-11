@@ -366,11 +366,11 @@ class WikiplacesHooks {
 		
 		$back = array();
 		
-		if (WpPage::isHomepage($title)) {
-			$back[] = 'badarticleerror';
-			
-		}elseif ( $user->isAllowed(WP_ADMIN_RIGHT) ) {
+		if ( $user->isAllowed(WP_ADMIN_RIGHT) ) {
 			// ok
+			
+		}elseif (WpPage::isHomepage($title)) {
+			$back[] = 'badarticleerror';
 			
 		}elseif ( ! WpPage::isOwner($title->getArticleID(), $user) ) {
 			$back[] = 'wp-not-owner';
