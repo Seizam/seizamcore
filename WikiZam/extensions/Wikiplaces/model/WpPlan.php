@@ -318,7 +318,7 @@ class WpPlan {
 		$offers = array();
 		foreach ( $result as $row ) {
             $offer = self::constructFromDatabaseRow($row);
-			$offer->cleverAppendToArray(&$offers);
+			$offer->cleverAppendToArray($offers);
 		}
 		
 		$dbr->freeResult( $result );
