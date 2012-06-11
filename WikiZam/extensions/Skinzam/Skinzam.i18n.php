@@ -264,7 +264,7 @@ Félicitation et merci ! Votre compte Seizam a été créé avec succès.
 * Pour activer les Wikiplaces, choisissez une [[Special:Plans|offre]] et [[Special:Subscriptions|abonnez-vous]] à Seizam.
 * Visitez [[Special:MySeizam|Mon Seizam]], tout ce dont vous avez besoin est là, et bien plus !
 * Vérifiez [[Special:Preferences|Mes Préférences]] pour les réglages avancés.
-* Consultez [[Help:Contents|l\'aide]] pour apprend à utiliser Seizam.
+* Consultez [[Help:Contents|l\'aide]] pour apprendre à utiliser Seizam.
 === N\'oubliez pas ! ===
 S\'il vous plaît, rappelez-vous que nous restons à votre disposition à travers [[Project:Contact|la page de contact]] pour toutes questions, critiques ou conseils...
 
