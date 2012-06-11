@@ -59,7 +59,7 @@ $wgDebugLogGroups['EPErrors'] = '/var/log/seizam/ep_errors.log'; #@TODO: pretty 
 require_once($dir . 'CMCIC_Tpe.inc.php');
 
 
-$wgTestEnv = true; #Activate test environment (accept test money)
+$wgTestEnv = false; #Activate test environment (accept test money)
 
 Class EPMessage {
 #Required Params

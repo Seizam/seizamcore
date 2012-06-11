@@ -868,6 +868,7 @@ div.mw-content-ltr {
 #header h1, #header h2 {
     margin:0;
 }
+
 #header.project h2 {
     position: absolute;
     bottom: 22px;
@@ -2463,7 +2464,7 @@ p.ms-wl-empty {
 .block_join h3.title {
 	width: 190px;
     /* @embed */
-	background: url(images/bg_title_red.png);
+	background-image: url(images/bg_title_red.png);
     background-color: #da1b1e;
     background-position: 0 0;
     background-repeat: repeat-x;

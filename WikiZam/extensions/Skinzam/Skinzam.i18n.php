@@ -171,8 +171,8 @@ $messages['fr'] = array(
     'sz-discoverseizam' => '[[Project:Bienvenue|Découvrez Seizam]]',
     'sz-browseseizam' => '[[Special:AllPages|Parcourez Seizam]]',
     'sz-joinseizam' => '[[Special:UserLogin|Rejoignez Seizam]]',
-    'sz-help' => '[[Help:Contents|Aide]]',
-    'sz-faq' => '[[Help:FAQ|Questions fréquentes]]',
+    'sz-help' => '[[Help:Contents/fr|Aide]]',
+    'sz-faq' => '[[Help:FAQ/fr|Questions fréquentes]]',
     
     'sz-communicate' => 'Communiquer avec nous',
     'sz-reportabuse' => '[[Project:Contact/fr|Signaler un abus]]',
