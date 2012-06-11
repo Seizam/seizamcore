@@ -94,7 +94,7 @@ $messages['en'] = array(
     
     'sz-blockjoin0' => 'Our Offers',
     'sz-blockjoin0-href' => '{{canonicalurl:Project:Offers}}',
-    'sz-blockjoin0-catch' => 'From <s>5.00€</s> <b>0.00€</b> per month.',
+    'sz-blockjoin0-catch' => 'From <b>5.00€</b> per month.',
     'sz-blockjoin1' => '{{int:sz-myseizam}}',
     'sz-blockjoin1-href' => '{{canonicalurl:Special:MySeizam}}',
     'sz-blockjoin1-catch' => 'Everything you need is here.',
@@ -113,7 +113,7 @@ $messages['en'] = array(
     'sz-triptic1' => 'Follow',
     'sz-triptic1-href' => 'http://www.davidcanwin.com',
     'sz-triptic1-src' => '{{STYLEPATH}}/skinzam/content/bambi.jpg',
-    'sz-triptic1-caption' => 'On <b>DavidCanWin.com</b>, our development blog, you will find the latest news about Seizam but also inspiring content about Art & Freedom.',
+    'sz-triptic1-caption' => 'Art, freedom and sling-shooting. <b>DavidCanWin.com</b> is the development blog and thought process of Seizam.',
     
     'sz-triptic2' => 'Learn',
     'sz-triptic2-href' => '{{canonicalurl:Help:Content}}',
@@ -197,7 +197,7 @@ $messages['fr'] = array(
     'sz-slideshow1' => 'L\'absence de pollution : ',
     'sz-slideshow1-href' => '{{canonicalurl:Project:Pollution/fr}}',
     'sz-slideshow1-src' => '{{STYLEPATH}}/skinzam/content/neon.jpg',
-    'sz-slideshow1-body' => 'Pas de pub, pas de spam. Ici, votre travail ne sera jamais pollué.',
+    'sz-slideshow1-body' => 'Pas de publicité, pas de spam. Ici, votre travail ne sera jamais pollué.',
     
     'sz-slideshow2' => 'L\'ouverture vers la collaboration : ',
     'sz-slideshow2-href' => '{{canonicalurl:Project:Collaboration/fr}}',
@@ -215,7 +215,7 @@ $messages['fr'] = array(
     
     'sz-blockjoin0' => 'Nos offres',
     'sz-blockjoin0-href' => '{{canonicalurl:Project:Offers}}',
-    'sz-blockjoin0-catch' => 'À partir de <s>5,00€</s> <b>0,00€</b> par mois.',
+    'sz-blockjoin0-catch' => 'À partir de <b>5,00€</b> par mois.',
     
     'sz-blockjoin1-catch' => 'Tout Seizam à portée de main.',
     
