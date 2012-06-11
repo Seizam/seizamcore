@@ -211,12 +211,7 @@ class WikiplacesHooks {
 			// this is a new Wikiplace
 			$msg = 'new wikiplace';
 
-			if ($user->isAllowed(WP_ADMIN_RIGHT)) {
-				/** @todo: in futur release, admin will be able to create a wikiplace for someone else */
-				$result = array('badarticleerror');
-				$msg .= ', admin cannot create wikiplace';
-				
-			} elseif (($reason = WpSubscription::userCanCreateWikiplace($user_id)) !== true) {
+			if (($reason = WpSubscription::userCanCreateWikiplace($user_id)) !== true) {
 				$result = array($reason);
 				$msg .= ', ' . $reason;
 				
