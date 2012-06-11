@@ -52,11 +52,6 @@ $wgSpecialPageGroups['ElectronicPayment'] = 'other';
 $wgAvailableRights[] = 'epadmin';
 $wgGroupPermissions['sysop']['epadmin'] = true;
 
-# Settings
-# TPE Settings
-# Warning !! CMCIC_Config contains the key, you have to protect this file with all the mechanism available in your development environment.
-# You may for instance put this file in another directory and/or change its name.
-require_once($dir . 'ElectronicPayment.config.php');
 
 # Debug file (written on unauthentificated inbound message)
 $wgDebugLogGroups['EPErrors'] = '/var/log/seizam/ep_errors.log'; #@TODO: pretty log management in LocalSettings/ServerSettings

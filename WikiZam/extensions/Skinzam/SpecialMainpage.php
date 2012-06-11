@@ -108,9 +108,10 @@ class SpecialMainpage extends SpecialPage {
         $html = Xml::openElement('div', array('class' => 'block block_join'));
         $html .= Xml::element('h3', array('class' => 'title'), wfMessage('sz-mp-joinus')->text());
         $html .= Xml::openElement('div', array('class' => 'inside'));
+        global $wgServer;
         $html .= Xml::openElement('form', array(
                     'id' => 'userloginS',
-                    'action' => '/WikiZam/index.php?title=Special:UserLogin&action=submitlogin&type=signup',
+                    'action' => $wgServer.'/index.php?title=Special:UserLogin&action=submitlogin&type=signup',
                     'method' => 'post',
                     'name' => 'userlogin'
                 ));

@@ -242,6 +242,9 @@ $wgGroupPermissions['bureaucrat']['editprotectedns'] = true;
 $wgGroupPermissions['sysop']['editprotectedns'] = true;
 
 $wgNamespaceProtection[NS_PROJECT] = array('editprotectedns');
+$wgAvailableRights[] = 'edithelpns';
+$wgGroupPermissions['user']['edithelpns'] = true;
+$wgNamespaceProtection[NS_HELP] = array('edithelpns');
 
 
 # Where is the favicon ?
