@@ -235,9 +235,12 @@ $wgGroupPermissions['bureaucrat']['editprotectedns'] = true;
 $wgGroupPermissions['sysop']['editprotectedns'] = true;
 
 $wgNamespaceProtection[NS_PROJECT] = array('editprotectedns');
-$wgAvailableRights[] = 'edithelpns';
-$wgGroupPermissions['user']['edithelpns'] = true;
-$wgNamespaceProtection[NS_HELP] = array('edithelpns');
+$wgAvailableRights[] = 'editlimitedns';
+$wgGroupPermissions['user']['editlimitedns'] = true;
+$wgNamespaceProtection[NS_HELP] = array('editlimitedns');
+$wgNamespaceProtection[NS_TEMPLATE] = array('editlimitedns');
+$wgNamespaceProtection[NS_CATEGORY] = array('editlimitedns');
+
 
 
 # Where is the favicon ?
@@ -423,3 +426,4 @@ require_once( "$IP/extensions/Wikiplaces/Wikiplaces.php" );
 # MySeizam (to be inclueded after the integrated extensions
 require_once( "$IP/extensions/MySeizam/MySeizam.php" );
 
+$wgAllowExternalImagesFrom = array('http://i.creativecommons.org/',$wgServer);

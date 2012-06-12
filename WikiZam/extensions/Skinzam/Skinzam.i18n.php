@@ -120,6 +120,19 @@ $messages['en'] = array(
     'sz-triptic2-src' => '{{STYLEPATH}}/skinzam/content/shelf.jpg',
     'sz-triptic2-caption' => 'Frequently Asked Questions, tutorials, examples, documentation... Everything you need to learn how to build great wikiplaces is here.',
 
+    /* Licensing */
+    'license-no' => 'undefined license',
+    'license-text' => 'This work is licensed under a $1.',
+    'no-license' => 'No license has been selected for this work. All rights are assumed to be reserved.',
+    'copyright-text' => 'This work is copyrighted. All rights reserved.',
+    
+    'cc-by-30' => 'Creative Commons Attribution 3.0 License',
+    'cc-by-sa-30' => 'Creative Commons Attribution-ShareAlike 3.0 License',
+    'cc-by-nd-30' => 'Creative Commons Attribution-NoDerivs 3.0 License',
+    'cc-by-nc-30' => 'Creative Commons Attribution-NonCommercial 3.0 License',
+    'cc-by-nc-sa-30' => 'Creative Commons Attribution-NonCommercial-ShareAlike 3.0 License',
+    'cc-by-nc-nd-30' => 'Creative Commons Attribution-NonCommercial-NoDerivs 3.0 License',
+    
     /* i18n overwrite */
     'confirmemail_oncreate' => 'A confirmation code was sent to your e-mail address. Please check your e-mails and follow the provided instructions to enable e-mail features and subscriptions within Seizam.',
     'welcomecreation' => '== Welcome, $1! ==
@@ -256,6 +269,20 @@ $messages['fr'] = array(
     'sz-triptic2-src' => '{{STYLEPATH}}/skinzam/content/shelf.jpg',
     'sz-triptic2-caption' => 'Tutoriaux, exemples, Foire Aux Questions, documentation... Tout ce dont vous avez besoin pour construire vos Wikiplaces se trouve là.',
 
+    
+    /* Licensing */
+    'undefined-license' => 'licence indéfinie',
+    'no-license' => 'Aucune licence n\'a été sélectionnée pour cette oeuvre. Tous les droits sont considérés réservés.',
+    'license-text' => 'Cette oeuvre est soumise à la $1.',
+    'copyright-text' => 'Cette oeuvre est soumise à copyright. Tous droits réservés.',
+    
+    'cc-by-30' => 'Licence Creative Commons Attribution 3.0',
+    'cc-by-sa-30' => 'Licence Creative Commons Attribution - Partage à l\'Identique 3.0',
+    'cc-by-nd-30' => 'Licence Creative Commons Attribution - Pas de Modification 3.0',
+    'cc-by-nc-30' => 'Licence Creative Commons Attribution - Pas d\'Utilisation Commerciale 3.0',
+    'cc-by-nc-sa-30' => 'Licence Creative Commons Attribution - Pas d\'Utilisation Commerciale - Partage à l\'Identique 3.0',
+    'cc-by-nc-nd-30' => 'Licence Creative Commons Attribution - Pas d\'Utilisation Commerciale - Pas de Modification 3.0',
+    
     /* i18n overwrite */
     'confirmemail_oncreate' => 'Un code de confirmation a été envoyé à votre adresse de courriel. Merci de consulter vos courriels et de suivre les instuctions fournies pour activer les fonctions de messagerie et d\'abonnement.',
     'welcomecreation' => '== Bienvenue, $1! ==

@@ -202,7 +202,7 @@ class SpecialWikiplaces extends SpecialPage {
 			$content = '{{subst:' . $template . '}}';
 		}
 		if ( strlen($license) > 0) {
-			$content .= "\n\n" . '== {{int:license-header}} ==' . "\n" . '{{' . $license . '}}';
+			$content .= "\n" . '{{' . $license . '}}';
 		}
 		return $content;
 	}

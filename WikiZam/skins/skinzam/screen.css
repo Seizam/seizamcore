@@ -752,6 +752,23 @@ li, td, tr, table, span, div, input[type="submit"], a {
 }
 
 
+/* License */
+div.license {
+    float: none;
+    clear:both;
+    margin: 8px 0 -8px;
+    padding: 8px;
+    font-size: 0.8em;
+    border: 1px solid #dad9d9;
+    border-bottom: none;
+    text-align: left;
+}
+
+div.license img {
+    float: left;
+    margin-right: 16px;
+}
+
 
 /* -----------------------------------------------------------------------------
    ==  Primary styles
