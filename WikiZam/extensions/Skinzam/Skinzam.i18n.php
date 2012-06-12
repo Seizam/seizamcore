@@ -242,13 +242,13 @@ $messages['fr'] = array(
     'sz-mp-youremail' => 'Courriel',
     
     'sz-blockjoin0' => 'Nos offres',
-    'sz-blockjoin0-href' => '{{canonicalurl:Project:Offers}}',
+    'sz-blockjoin0-href' => '{{canonicalurl:Project:Offres}}',
     'sz-blockjoin0-catch' => 'À partir de <b>5,00€</b> par mois.',
     
     'sz-blockjoin1-catch' => 'Tout Seizam à portée de main.',
     
     'sz-blockjoin2' => 'Aidez-nous',
-    'sz-blockjoin2-href' => '{{canonicalurl:Project:Contribute}}',
+    'sz-blockjoin2-href' => '{{canonicalurl:Project:Contribuer}}',
     'sz-blockjoin2-catch' => 'La communauté a besoin de vous.',
     
     /* Triptic */
@@ -285,7 +285,7 @@ $messages['fr'] = array(
     
     /* i18n overwrite */
     'confirmemail_oncreate' => 'Un code de confirmation a été envoyé à votre adresse de courriel. Merci de consulter vos courriels et de suivre les instuctions fournies pour activer les fonctions de messagerie et d\'abonnement.',
-    'welcomecreation' => '== Bienvenue, $1! ==
+    'welcomecreation' => '== Bienvenue, $1 ! ==
 Félicitation et merci ! Votre compte Seizam a été créé avec succès.
 === Que faire maintenant ? ===
 * Pour activer les Wikiplaces, choisissez une [[Special:Plans|offre]] et [[Special:Subscriptions|abonnez-vous]] à Seizam.

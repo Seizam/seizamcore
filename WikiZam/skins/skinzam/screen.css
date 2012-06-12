@@ -1159,6 +1159,10 @@ html.client-nojs #bodyContent>.inside {
     border: none;
 }
 
+#contentOther #mw-hidden-catlinks {
+    display: none;
+}
+
 #contentOther ul,
 #contentOther .inside div {
     display: inline;
@@ -1570,7 +1574,7 @@ body.ns-6.action-view #bodyContent > .inside > br,
 ul#filetoc,
 h2#filelinks,
 div#mw-imagepage-nolinkstoimage,
-div#mw-imagepage-section-linkstoimage
+div#mw-imagepage-section-linkstoimage,
 div#mw-imagepage-section-duplicates {
     display: none;
 }
