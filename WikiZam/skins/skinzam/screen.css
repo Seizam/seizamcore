@@ -1164,15 +1164,9 @@ html.client-nojs #bodyContent>.inside {
 }
 
 #contentOther ul,
-#contentOther .inside div {
-    display: inline;
-    margin: 0;
-    padding: 0;
-}
-
-
 #contentOther li,
-#contentOther h5 {
+#contentOther h5,
+#contentOther .inside div {
     display: inline-block;
     margin: 0;
     padding: 0;

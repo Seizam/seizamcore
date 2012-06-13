@@ -411,9 +411,8 @@ class SkinzamTemplate extends BaseTemplate {
             <!-- language_urls -->
             <div class="portal" id="p-lang"<?php echo Linker::tooltip('p-lang') ?>>
                 <h5<?php $this->html('userlangattributes') ?>><?php echo wfMessage('otherlanguages')->text() . wfMsgExt('colon-separator', 'escapenoentities'); ?></h5>
-
                 <ul>
-            <?php $this->renderNavigation(array('LANG')); ?>
+                    <?php $this->renderNavigation(array('LANG')); ?>
                 </ul>
             </div>
             <!-- /language_urls -->

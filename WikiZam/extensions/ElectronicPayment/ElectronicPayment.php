@@ -31,7 +31,7 @@ $wgGroupPermissions['user'][EP_ACCESS_RIGHT] = true;
 
 define('EP_ADMIN_RIGHT', 'epadmin');
 $wgAvailableRights[] = EP_ADMIN_RIGHT; 
-$wgGroupPermissions['user'][EP_ADMIN_RIGHT] = true;
+$wgGroupPermissions['sysop'][EP_ADMIN_RIGHT] = true;
 
 $dir = dirname(__FILE__) . '/';
 

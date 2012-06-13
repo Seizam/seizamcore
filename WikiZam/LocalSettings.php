@@ -143,11 +143,11 @@ $wgResourceLoaderMaxQueryLength = 1024;
 
 # End Developement Settings
 # Polyglot (auto select page version regarding user language)
-require_once( "$IP/extensions/Polyglot/Polyglot.php" );
+require_once( "$IP/extensions/PolyglotS/PolyglotS.php" );
 # Supported languages
-$wgPolyglotLanguages = null;
+$wgPolyglotLanguages = null ;
 # Enable redirect on target page (eg. MainPage -> MainPage/fr -> Accueil)
-$wfPolyglotFollowRedirects = true;
+$wgPolyglotFollowRedirects = true;
 
 # Language Selector (auto select user language and drop down menu)
 require_once( "$IP/extensions/LanguageSelector/LanguageSelector.php" );

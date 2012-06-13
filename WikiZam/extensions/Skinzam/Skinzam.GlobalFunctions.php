@@ -163,4 +163,13 @@ function wfGetPrettyBacktrace()
     
 }
 
+/**
+ * Print the object on output.
+ *
+ * @param type $obj 
+ */
+function wfEchoObject($obj) {
+    echo '<pre>'.print_r($obj,true).'</pre>';
+}
+
 
