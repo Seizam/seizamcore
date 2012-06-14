@@ -84,6 +84,9 @@ $messages['en'] = array(
     'wp-createpage-license-help' => 'Select here the type of Intellectual Property Licensing this page is released under. We advise free licensing but that is your call.',
     'wp-createpage-createtalk-help' => 'Check this box if you wish to open the Talk for this page. This second talk page will be available at <u>www.seizam.com/<b>Talk:</b>Parent/Name</u>.',
     'wp-createtalk-help' => 'Check this box if you wish to open the Talk for this page. This second talk page will be available at <u>www.seizam.com/<b>Talk:</b>Name</u>.',
+    
+    'wp-subpage-talk-default' => '{{Subst:Default_Talk}}',
+    'wp-homepage-talk-default' => '{{Subst:Default_Talk}}',
     /* Disclaimer: Wikiplace */
     'wp-create-wp-success' => '==Congratulation!==
 

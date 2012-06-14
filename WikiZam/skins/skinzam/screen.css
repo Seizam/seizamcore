@@ -660,6 +660,12 @@ input:invalid, textarea:invalid { background-color: #f2e3e4; }
     margin-bottom: 16px;
 }
 
+/* Widgets */
+iframe, video, audio {
+    border: 1px solid #dad9d9;
+}
+
+
 .sread {
     position:absolute;
     left:-9999px;

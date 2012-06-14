@@ -134,10 +134,10 @@ class SkinzamTemplate extends BaseTemplate {
             <!-- /newtalk -->
         <?php endif; ?>
         <!-- content -->
+        <div id="heightwrapper">
         <?php $this->renderContent() ?>
-        <!-- contentFooter -->
         </div>
-        <!-- /content -->
+        <!-- contentFooter -->
         <!-- footer -->
         <?php $this->renderFooter(); ?>
         <!-- /footer -->
@@ -426,7 +426,7 @@ class SkinzamTemplate extends BaseTemplate {
         <div class="portal" id="p-tb"<?php echo Linker::tooltip('p-tb') ?>>
             <h5<?php $this->html('userlangattributes') ?>><?php echo wfMessage('toolbox')->text() . wfMsgExt('colon-separator', 'escapenoentities'); ?></h5>
             <ul>
-        <?php $this->renderNavigation(array('TOOLBOX')); ?>
+                <?php $this->renderNavigation(array('TOOLBOX')); ?>
             </ul>
         </div>
         <!-- /toolbox -->
