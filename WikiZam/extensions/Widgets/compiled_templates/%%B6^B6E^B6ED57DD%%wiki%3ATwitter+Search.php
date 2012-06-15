@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.18-dev, created on 2012-06-14 02:03:31
+<?php /* Smarty version 2.6.18-dev, created on 2012-06-15 13:20:56
          compiled from wiki:Twitter+Search */ ?>
 <?php require_once(SMARTY_CORE_DIR . 'core.load_plugins.php');
 smarty_core_load_plugins(array('plugins' => array(array('modifier', 'escape', 'wiki:Twitter Search', 6, false),array('modifier', 'default', 'wiki:Twitter Search', 6, false),array('modifier', 'validate', 'wiki:Twitter Search', 11, false),)), $this); ?>
@@ -7,7 +7,7 @@ smarty_core_load_plugins(array('plugins' => array(array('modifier', 'escape', 'w
 new TWTR.Widget({
   version: 2,
   type: 'search',
-  rpp: '<?php echo ((is_array($_tmp=((is_array($_tmp=$this->_tpl_vars['count'])) ? $this->_run_mod_handler('escape', true, $_tmp, 'quotes') : smarty_modifier_escape($_tmp, 'quotes')))) ? $this->_run_mod_handler('default', true, $_tmp, 10) : smarty_modifier_default($_tmp, 10)); ?>
+  rpp: '<?php echo ((is_array($_tmp=((is_array($_tmp=$this->_tpl_vars['count'])) ? $this->_run_mod_handler('escape', true, $_tmp, 'quotes') : smarty_modifier_escape($_tmp, 'quotes')))) ? $this->_run_mod_handler('default', true, $_tmp, 5) : smarty_modifier_default($_tmp, 5)); ?>
 ',
   search: '<?php echo ((is_array($_tmp=$this->_tpl_vars['query'])) ? $this->_run_mod_handler('escape', true, $_tmp, 'quotes') : smarty_modifier_escape($_tmp, 'quotes')); ?>
 ',

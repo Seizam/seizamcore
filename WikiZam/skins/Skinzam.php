@@ -639,13 +639,13 @@ class SkinzamTemplate extends BaseTemplate {
                                 <?php if ($this->data['rtl']): ?>
                                         <?php echo $this->makeSearchButton('image', array('id' => 'searchButton', 'src' => $this->skin->getSkinStylePath('images/search-rtl.png'))); ?>
                                     <?php endif; ?>
-                                    <?php echo $this->makeSearchInput(array('id' => 'searchInput', 'type' => 'text')); ?>
+                                    <?php echo $this->makeSearchInput(array('id' => 'searchInput', 'type' => 'text', 'placeholder' => wfMessage('search')->text())); ?>
                                     <?php if (!$this->data['rtl']): ?>
                                         <?php echo $this->makeSearchButton('image', array('id' => 'searchButton', 'src' => $this->skin->getSkinStylePath('images/search-ltr.png'))); ?>
                                     <?php endif; ?>
                                 </div>
                                 <?php else: ?>
-                                <?php echo $this->makeSearchInput(array('id' => 'searchInput')); ?>
+                                <?php echo $this->makeSearchInput(array('id' => 'searchInput', 'placeholder' => wfMessage('search')->text())); ?>
                                 <?php echo $this->makeSearchButton('go', array('id' => 'searchGoButton', 'class' => 'searchButton')); ?>
                                 <?php echo $this->makeSearchButton('fulltext', array('id' => 'mw-searchButton', 'class' => 'searchButton')); ?>
                             <?php endif; ?>

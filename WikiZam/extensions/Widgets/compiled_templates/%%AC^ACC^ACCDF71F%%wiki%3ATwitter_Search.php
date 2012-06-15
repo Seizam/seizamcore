@@ -1,13 +1,14 @@
-<?php /* Smarty version 2.6.18-dev, created on 2012-06-14 02:03:42
+<?php /* Smarty version 2.6.18-dev, created on 2012-06-15 13:44:22
          compiled from wiki:Twitter_Search */ ?>
 <?php require_once(SMARTY_CORE_DIR . 'core.load_plugins.php');
-smarty_core_load_plugins(array('plugins' => array(array('modifier', 'escape', 'wiki:Twitter_Search', 6, false),array('modifier', 'default', 'wiki:Twitter_Search', 6, false),array('modifier', 'validate', 'wiki:Twitter_Search', 11, false),)), $this); ?>
-<div class="twitter<?php if (isset ( $this->_tpl_vars['right'] )): ?> right<?php elseif (isset ( $this->_tpl_vars['left'] )): ?> left<?php endif; ?>"><script charset="utf-8" src="http://widgets.twimg.com/j/2/widget.js"></script>
+smarty_core_load_plugins(array('plugins' => array(array('function', 'counter', 'wiki:Twitter_Search', 1, false),array('modifier', 'escape', 'wiki:Twitter_Search', 6, false),array('modifier', 'default', 'wiki:Twitter_Search', 6, false),array('modifier', 'validate', 'wiki:Twitter_Search', 11, false),)), $this); ?>
+<div class="twitter<?php if (isset ( $this->_tpl_vars['right'] )): ?> right<?php elseif (isset ( $this->_tpl_vars['left'] )): ?> left<?php endif; ?>"><?php echo smarty_function_counter(array('name' => 'twittercounter','assign' => 'twitterincluded'), $this);?>
+<?php if ($this->_tpl_vars['twitterincluded'] == 1): ?><script charset="utf-8" src="http://widgets.twimg.com/j/2/widget.js"></script><?php endif; ?>
 <script>
 new TWTR.Widget({
   version: 2,
   type: 'search',
-  rpp: '<?php echo ((is_array($_tmp=((is_array($_tmp=$this->_tpl_vars['count'])) ? $this->_run_mod_handler('escape', true, $_tmp, 'quotes') : smarty_modifier_escape($_tmp, 'quotes')))) ? $this->_run_mod_handler('default', true, $_tmp, 10) : smarty_modifier_default($_tmp, 10)); ?>
+  rpp: '<?php echo ((is_array($_tmp=((is_array($_tmp=$this->_tpl_vars['count'])) ? $this->_run_mod_handler('escape', true, $_tmp, 'quotes') : smarty_modifier_escape($_tmp, 'quotes')))) ? $this->_run_mod_handler('default', true, $_tmp, 5) : smarty_modifier_default($_tmp, 5)); ?>
 ',
   search: '<?php echo ((is_array($_tmp=$this->_tpl_vars['query'])) ? $this->_run_mod_handler('escape', true, $_tmp, 'quotes') : smarty_modifier_escape($_tmp, 'quotes')); ?>
 ',

@@ -33,8 +33,7 @@ $wgMetaNamespace = "Project";
 $wgStylePath = "$wgScriptPath/skins";
 
 ## The relative URL path to the logo.  Make sure you change this from the default,
-## or else you'll overwrite your logo when you upgrade!
-# $wgLogo             = "$wgStylePath/common/images/seizam.png";
+## or else you'll overwrite your logo when you upgrade! 
 $wgLogo = "$wgStylePath/skinzam/images/logo_mini_h.png";
 
 ## UPO means: this is also a user preference option
@@ -159,9 +158,10 @@ $wgLanguageSelectorLanguagesShorthand = array('en', 'fr');
 $wgLanguageSelectorDetectLanguage = LANGUAGE_SELECTOR_PREFER_CLIENT_LANG; #Automatic selection regarding browser
 # Where to put the language selection dropdown menu
 $wgLanguageSelectorLocation = LANGUAGE_SELECTOR_MANUAL; #Hard integrated for Skinzam
-# Google Analytics
-require_once( "$IP/extensions/googleAnalytics/googleAnalytics.php" );
-$wgGoogleAnalyticsAccount = "UA-25393782-2";
+//
+# GAnalytics
+require_once( "$IP/extensions/GAnalytics/GAnalytics.php" );
+$wgGAnalyticsPropertyID = "UA-32666889-1";
 
 # Contact Page
 require_once( "$IP/extensions/ContactPage/ContactPage.php" );
