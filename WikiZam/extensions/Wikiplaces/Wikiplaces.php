@@ -130,7 +130,10 @@ $wgWikiplaceNameBlacklist = array(
     'admin',
     'user',
     'file',
-    'project' );
+    'project',
+	'icons', // default apache2 folder /icons/ contains public icons, that may be reused bu users on their wikipages
+	'files', // our public files
+	);
 
 // i18n message (often a page in MediaWiki namespace) containing templates listing
 // (same syntax as MediaWiki:Licenses)
