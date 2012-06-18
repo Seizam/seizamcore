@@ -202,7 +202,7 @@ class SpecialWikiplaces extends SpecialPage {
 			$content = '{{subst:' . $template . '}}';
 		}
 		if ( strlen($license) > 0) {
-			$content .= "\n\n" . '== {{int:license-header}} ==' . "\n" . '{{' . $license . '}}';
+			$content .= "\n" . '{{' . $license . '}}';
 		}
 		return $content;
 	}
@@ -228,7 +228,7 @@ class SpecialWikiplaces extends SpecialPage {
 		if ( $formData['CreateTalk'] === true) {
 			// The wikiplace was created by a hook and is not accessible from here, so we need to get the wikiplace this way
 			
-			$talk_page = WpPage::createTalk($homepage, $user, wfMessage('wp-homepage-talk-default', $homepage_dbkey)->parse());
+			$talk_page = WpPage::createTalk($homepage, $user, '{{Subst:Default_Talk}}');
 
 			if (!( $talk_page instanceof Title )) {
 				// wikiplace was created, but, error on talk
@@ -384,7 +384,7 @@ class SpecialWikiplaces extends SpecialPage {
 		if ( $formData['CreateTalk'] === true) {
 			// The wikiplace was created by a hook and is not accessible from here, so we need to get the wikiplace this way
 			
-			$talk_page = WpPage::createTalk($subpage, $user, wfMessage('wp-subpage-talk-default', $subpage->getDBkey())->parse());
+			$talk_page = WpPage::createTalk($subpage, $user, '{{Subst:Default_Talk}}');
 
 			if (!( $talk_page instanceof Title )) {
 				// wikiplace was created, but, error on talk

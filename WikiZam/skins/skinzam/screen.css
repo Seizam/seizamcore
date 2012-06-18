@@ -118,7 +118,18 @@ sub { bottom: -0.25em; }
    -------------------------------------------------------------------------- */
 
 ul, ol { margin: 1em 0; padding: 0 0 0 40px;}
-li { margin: 0; padding: 0;}
+li {
+    margin: 0;
+    padding: 0;
+    
+}
+
+.inside > .mw-content-ltr > ul > li {
+    padding-bottom: 6px;
+    list-style-position: inside;
+    list-style-type: square;
+}
+
 dd { margin: 0 0 0 40px; }
 #nav ul, #nav ol { list-style: none; margin: 0; padding: 0; }
 
@@ -649,16 +660,22 @@ input:invalid, textarea:invalid { background-color: #f2e3e4; }
 .right {
     float:right;
     clear:right;
-    margin-left: 16px;
-    margin-bottom: 16px;
+    margin-left: 24px;
+    margin-bottom: 24px;
 }
 
 .left {
     float:left;
     clear:left;
-    margin-right: 16px;
-    margin-bottom: 16px;
+    margin-right: 24px;
+    margin-bottom: 24px;
 }
+
+/* Widgets */
+iframe, video, audio {
+    border: 1px solid #dad9d9;
+}
+
 
 .sread {
     position:absolute;
@@ -678,7 +695,8 @@ a.important:focus {
 }
 .informations, div#contentSub, .errorbox, .warningbox, .successbox, div.error, div.success,
 div.mw-specialpage-summary,
-body.ns--1 div#bodyContent > div.inside > p:first-child {
+body.ns--1 div#bodyContent > div.inside > p:first-child,
+div.noarticletext {
     float: none;
     margin: 0 0 18px;
     padding: 12px;
@@ -689,7 +707,8 @@ body.ns--1 div#bodyContent > div.inside > p:first-child {
 }
 
 div.mw-specialpage-summary,
-body.ns--1 div#bodyContent >div.inside > p:first-child {
+body.ns--1 div#bodyContent >div.inside > p:first-child,
+div.noarticletext {
     background-color: transparent;
     border-top: none;
 }
@@ -751,6 +770,31 @@ li, td, tr, table, span, div, input[type="submit"], a {
     transition: background 0.75s;
 }
 
+a.addthis_counter {
+    -webkit-transition: background 0s;
+    -moz-transition: background 0s;
+    -ms-transition: background 0s;
+    -o-transition: background 0s;
+    transition: background 0;
+}
+
+
+/* License */
+div.license {
+    float: none;
+    clear:both;
+    margin: 8px 0 -8px;
+    padding: 8px;
+    font-size: 0.8em;
+    border: 1px solid #dad9d9;
+    border-bottom: none;
+    text-align: left;
+}
+
+div.license img {
+    float: left;
+    margin-right: 16px;
+}
 
 
 /* -----------------------------------------------------------------------------
@@ -868,6 +912,7 @@ div.mw-content-ltr {
 #header h1, #header h2 {
     margin:0;
 }
+
 #header.project h2 {
     position: absolute;
     bottom: 22px;
@@ -1141,16 +1186,14 @@ html.client-nojs #bodyContent>.inside {
     border: none;
 }
 
-#contentOther ul,
-#contentOther .inside div {
-    display: inline;
-    margin: 0;
-    padding: 0;
+#contentOther #mw-hidden-catlinks {
+    display: none;
 }
 
-
+#contentOther ul,
 #contentOther li,
-#contentOther h5 {
+#contentOther h5,
+#contentOther .inside div {
     display: inline-block;
     margin: 0;
     padding: 0;
@@ -1299,7 +1342,7 @@ a.feedlink:first-child {
 }
 
 #absoluteFooter .content ul {
-    padding: 7px 0 0 75px;
+    padding: 7px 0 0 60px;
     margin:0;
 }
 #absoluteFooter .content ul {
@@ -1317,6 +1360,8 @@ a.feedlink:first-child {
     text-decoration:none;
     color:#4d4e4f;
     font-style:italic;
+    font-weight: bold;
+    font-size: 13px;
     padding-left: 14px;
     /* @embed */
     background-image: url(images/dot_square.png);
@@ -1552,7 +1597,7 @@ body.ns-6.action-view #bodyContent > .inside > br,
 ul#filetoc,
 h2#filelinks,
 div#mw-imagepage-nolinkstoimage,
-div#mw-imagepage-section-linkstoimage
+div#mw-imagepage-section-linkstoimage,
 div#mw-imagepage-section-duplicates {
     display: none;
 }
@@ -2463,7 +2508,7 @@ p.ms-wl-empty {
 .block_join h3.title {
 	width: 190px;
     /* @embed */
-	background: url(images/bg_title_red.png);
+	background-image: url(images/bg_title_red.png);
     background-color: #da1b1e;
     background-position: 0 0;
     background-repeat: repeat-x;
@@ -2705,4 +2750,6 @@ div.mw-warning-with-logexcerpt {
     margin-bottom: 16px;
 }
 
-
+div.addthis_toolbox {
+    display: inline-block;
+}

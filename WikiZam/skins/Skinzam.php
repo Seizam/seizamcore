@@ -134,10 +134,10 @@ class SkinzamTemplate extends BaseTemplate {
             <!-- /newtalk -->
         <?php endif; ?>
         <!-- content -->
+        <div id="heightwrapper">
         <?php $this->renderContent() ?>
-        <!-- contentFooter -->
         </div>
-        <!-- /content -->
+        <!-- contentFooter -->
         <!-- footer -->
         <?php $this->renderFooter(); ?>
         <!-- /footer -->
@@ -411,9 +411,8 @@ class SkinzamTemplate extends BaseTemplate {
             <!-- language_urls -->
             <div class="portal" id="p-lang"<?php echo Linker::tooltip('p-lang') ?>>
                 <h5<?php $this->html('userlangattributes') ?>><?php echo wfMessage('otherlanguages')->text() . wfMsgExt('colon-separator', 'escapenoentities'); ?></h5>
-
                 <ul>
-            <?php $this->renderNavigation(array('LANG')); ?>
+                    <?php $this->renderNavigation(array('LANG')); ?>
                 </ul>
             </div>
             <!-- /language_urls -->
@@ -427,7 +426,7 @@ class SkinzamTemplate extends BaseTemplate {
         <div class="portal" id="p-tb"<?php echo Linker::tooltip('p-tb') ?>>
             <h5<?php $this->html('userlangattributes') ?>><?php echo wfMessage('toolbox')->text() . wfMsgExt('colon-separator', 'escapenoentities'); ?></h5>
             <ul>
-        <?php $this->renderNavigation(array('TOOLBOX')); ?>
+                <?php $this->renderNavigation(array('TOOLBOX')); ?>
             </ul>
         </div>
         <!-- /toolbox -->
@@ -640,13 +639,13 @@ class SkinzamTemplate extends BaseTemplate {
                                 <?php if ($this->data['rtl']): ?>
                                         <?php echo $this->makeSearchButton('image', array('id' => 'searchButton', 'src' => $this->skin->getSkinStylePath('images/search-rtl.png'))); ?>
                                     <?php endif; ?>
-                                    <?php echo $this->makeSearchInput(array('id' => 'searchInput', 'type' => 'text')); ?>
+                                    <?php echo $this->makeSearchInput(array('id' => 'searchInput', 'type' => 'text', 'placeholder' => wfMessage('search')->text())); ?>
                                     <?php if (!$this->data['rtl']): ?>
                                         <?php echo $this->makeSearchButton('image', array('id' => 'searchButton', 'src' => $this->skin->getSkinStylePath('images/search-ltr.png'))); ?>
                                     <?php endif; ?>
                                 </div>
                                 <?php else: ?>
-                                <?php echo $this->makeSearchInput(array('id' => 'searchInput')); ?>
+                                <?php echo $this->makeSearchInput(array('id' => 'searchInput', 'placeholder' => wfMessage('search')->text())); ?>
                                 <?php echo $this->makeSearchButton('go', array('id' => 'searchGoButton', 'class' => 'searchButton')); ?>
                                 <?php echo $this->makeSearchButton('fulltext', array('id' => 'mw-searchButton', 'class' => 'searchButton')); ?>
                             <?php endif; ?>

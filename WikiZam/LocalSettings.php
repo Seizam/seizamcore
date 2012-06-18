@@ -33,8 +33,7 @@ $wgMetaNamespace = "Project";
 $wgStylePath = "$wgScriptPath/skins";
 
 ## The relative URL path to the logo.  Make sure you change this from the default,
-## or else you'll overwrite your logo when you upgrade!
-# $wgLogo             = "$wgStylePath/common/images/seizam.png";
+## or else you'll overwrite your logo when you upgrade! 
 $wgLogo = "$wgStylePath/skinzam/images/logo_mini_h.png";
 
 ## UPO means: this is also a user preference option
@@ -143,11 +142,11 @@ $wgResourceLoaderMaxQueryLength = 1024;
 
 # End Developement Settings
 # Polyglot (auto select page version regarding user language)
-require_once( "$IP/extensions/Polyglot/Polyglot.php" );
+require_once( "$IP/extensions/PolyglotS/PolyglotS.php" );
 # Supported languages
-$wgPolyglotLanguages = null;
+$wgPolyglotLanguages = null ;
 # Enable redirect on target page (eg. MainPage -> MainPage/fr -> Accueil)
-$wfPolyglotFollowRedirects = true;
+$wgPolyglotFollowRedirects = true;
 
 # Language Selector (auto select user language and drop down menu)
 require_once( "$IP/extensions/LanguageSelector/LanguageSelector.php" );
@@ -159,9 +158,10 @@ $wgLanguageSelectorLanguagesShorthand = array('en', 'fr');
 $wgLanguageSelectorDetectLanguage = LANGUAGE_SELECTOR_PREFER_CLIENT_LANG; #Automatic selection regarding browser
 # Where to put the language selection dropdown menu
 $wgLanguageSelectorLocation = LANGUAGE_SELECTOR_MANUAL; #Hard integrated for Skinzam
-# Google Analytics
-require_once( "$IP/extensions/googleAnalytics/googleAnalytics.php" );
-$wgGoogleAnalyticsAccount = "UA-25393782-2";
+//
+# GAnalytics
+require_once( "$IP/extensions/GAnalytics/GAnalytics.php" );
+$wgGAnalyticsPropertyID = "UA-32666889-1";
 
 # Contact Page
 require_once( "$IP/extensions/ContactPage/ContactPage.php" );
@@ -235,9 +235,12 @@ $wgGroupPermissions['bureaucrat']['editprotectedns'] = true;
 $wgGroupPermissions['sysop']['editprotectedns'] = true;
 
 $wgNamespaceProtection[NS_PROJECT] = array('editprotectedns');
-$wgAvailableRights[] = 'edithelpns';
-$wgGroupPermissions['user']['edithelpns'] = true;
-$wgNamespaceProtection[NS_HELP] = array('edithelpns');
+$wgAvailableRights[] = 'editlimitedns';
+$wgGroupPermissions['user']['editlimitedns'] = true;
+$wgNamespaceProtection[NS_HELP] = array('editlimitedns');
+$wgNamespaceProtection[NS_TEMPLATE] = array('editlimitedns');
+$wgNamespaceProtection[NS_CATEGORY] = array('editlimitedns');
+
 
 
 # Where is the favicon ?
@@ -423,3 +426,4 @@ require_once( "$IP/extensions/Wikiplaces/Wikiplaces.php" );
 # MySeizam (to be inclueded after the integrated extensions
 require_once( "$IP/extensions/MySeizam/MySeizam.php" );
 
+$wgAllowExternalImagesFrom = array('http://i.creativecommons.org/',$wgServer);

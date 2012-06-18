@@ -62,7 +62,7 @@ $messages['en'] = array(
     'sorry' => 'Sorry!',
 	'sz-internal-error' => 'Sorry, an internal error occured. {{int:sz-report}}',
     'sz-invalid-request' => 'Sorry, we do not understand what you want to do OR you are not allowed to do it. {{int:sz-report}}',
-	
+	'sz-maintenance' => 'Sorry, this side of the website is closed for maintenance. Please try again later.',
     
     /* Mainpage */
     /* Slideshow */
@@ -116,10 +116,23 @@ $messages['en'] = array(
     'sz-triptic1-caption' => 'Art, freedom and sling-shooting. <b>DavidCanWin.com</b> is the development blog and thought process of Seizam.',
     
     'sz-triptic2' => 'Learn',
-    'sz-triptic2-href' => '{{canonicalurl:Help:Content}}',
+    'sz-triptic2-href' => '{{canonicalurl:Help:Contents}}',
     'sz-triptic2-src' => '{{STYLEPATH}}/skinzam/content/shelf.jpg',
     'sz-triptic2-caption' => 'Frequently Asked Questions, tutorials, examples, documentation... Everything you need to learn how to build great wikiplaces is here.',
 
+    /* Licensing */
+    'license-no' => 'undefined license',
+    'license-text' => 'This work is licensed under a $1.',
+    'no-license' => 'No license has been selected for this work. All rights are assumed to be reserved.',
+    'copyright-text' => 'This work is copyrighted. All rights reserved.',
+    
+    'cc-by-30' => 'Creative Commons Attribution 3.0 License',
+    'cc-by-sa-30' => 'Creative Commons Attribution-ShareAlike 3.0 License',
+    'cc-by-nd-30' => 'Creative Commons Attribution-NoDerivs 3.0 License',
+    'cc-by-nc-30' => 'Creative Commons Attribution-NonCommercial 3.0 License',
+    'cc-by-nc-sa-30' => 'Creative Commons Attribution-NonCommercial-ShareAlike 3.0 License',
+    'cc-by-nc-nd-30' => 'Creative Commons Attribution-NonCommercial-NoDerivs 3.0 License',
+    
     /* i18n overwrite */
     'confirmemail_oncreate' => 'A confirmation code was sent to your e-mail address. Please check your e-mails and follow the provided instructions to enable e-mail features and subscriptions within Seizam.',
     'welcomecreation' => '== Welcome, $1! ==
@@ -171,8 +184,8 @@ $messages['fr'] = array(
     'sz-discoverseizam' => '[[Project:Bienvenue|Découvrez Seizam]]',
     'sz-browseseizam' => '[[Special:AllPages|Parcourez Seizam]]',
     'sz-joinseizam' => '[[Special:UserLogin|Rejoignez Seizam]]',
-    'sz-help' => '[[Help:Contents|Aide]]',
-    'sz-faq' => '[[Help:FAQ|Questions fréquentes]]',
+    'sz-help' => '[[Help:Contents/fr|Aide]]',
+    'sz-faq' => '[[Help:FAQ/fr|Questions fréquentes]]',
     
     'sz-communicate' => 'Communiquer avec nous',
     'sz-reportabuse' => '[[Project:Contact/fr|Signaler un abus]]',
@@ -198,7 +211,7 @@ $messages['fr'] = array(
     'sorry' => 'Désolé!',
 	'sz-internal-error' => 'Pardon, une erreur interne s\'est produite. {{int:sz-report}}',
     'sz-invalid-request' => 'Pardon, nous ne comprenons pas votre requête OU vous n\'êtes pas autorisé à la réaliser. {{int:sz-report}}',
-	
+	'sz-maintenance' => 'Pardon, cette partie du site est fermée pour maintenance. Merci de réessayer plus tard.',
     
     /* Mainpage */
     /* Slideshow */
@@ -229,20 +242,20 @@ $messages['fr'] = array(
     'sz-mp-youremail' => 'Courriel',
     
     'sz-blockjoin0' => 'Nos offres',
-    'sz-blockjoin0-href' => '{{canonicalurl:Project:Offers}}',
+    'sz-blockjoin0-href' => '{{canonicalurl:Project:Offres}}',
     'sz-blockjoin0-catch' => 'À partir de <b>5,00€</b> par mois.',
     
     'sz-blockjoin1-catch' => 'Tout Seizam à portée de main.',
     
     'sz-blockjoin2' => 'Aidez-nous',
-    'sz-blockjoin2-href' => '{{canonicalurl:Project:Contribute}}',
+    'sz-blockjoin2-href' => '{{canonicalurl:Project:Contribuer}}',
     'sz-blockjoin2-catch' => 'La communauté a besoin de vous.',
     
     /* Triptic */
     'sz-mp-triptic' => 'Découvrez Seizam',
     
     'sz-triptic0' => 'Visitez',
-    'sz-triptic0-href' => '{{canonicalurl:Project:Tour}}',
+    'sz-triptic0-href' => '{{canonicalurl:Project:Tour/fr}}',
     'sz-triptic0-src' => '{{STYLEPATH}}/skinzam/content/tiptoe.jpg',
     'sz-triptic0-caption' => 'Cette visite rapide vous guidera à travers tout Seizam. De la philosophie à la technologie, vous ne manquerez rien.',
     
@@ -252,13 +265,27 @@ $messages['fr'] = array(
     'sz-triptic1-caption' => '<b>DavidCanWin.com</b>, c\'est notre blog de developpement mais aussi un lieu d\'échange et de réflexion à propos d\'art et de liberté.',
     
     'sz-triptic2' => 'Apprenez',
-    'sz-triptic2-href' => '{{canonicalurl:Help:Content}}',
+    'sz-triptic2-href' => '{{canonicalurl:Help:Contents/fr}}',
     'sz-triptic2-src' => '{{STYLEPATH}}/skinzam/content/shelf.jpg',
     'sz-triptic2-caption' => 'Tutoriaux, exemples, Foire Aux Questions, documentation... Tout ce dont vous avez besoin pour construire vos Wikiplaces se trouve là.',
 
+    
+    /* Licensing */
+    'undefined-license' => 'licence indéfinie',
+    'no-license' => 'Aucune licence n\'a été sélectionnée pour cette oeuvre. Tous les droits sont considérés réservés.',
+    'license-text' => 'Cette oeuvre est soumise à la $1.',
+    'copyright-text' => 'Cette oeuvre est soumise à copyright. Tous droits réservés.',
+    
+    'cc-by-30' => 'Licence Creative Commons Attribution 3.0',
+    'cc-by-sa-30' => 'Licence Creative Commons Attribution - Partage à l\'Identique 3.0',
+    'cc-by-nd-30' => 'Licence Creative Commons Attribution - Pas de Modification 3.0',
+    'cc-by-nc-30' => 'Licence Creative Commons Attribution - Pas d\'Utilisation Commerciale 3.0',
+    'cc-by-nc-sa-30' => 'Licence Creative Commons Attribution - Pas d\'Utilisation Commerciale - Partage à l\'Identique 3.0',
+    'cc-by-nc-nd-30' => 'Licence Creative Commons Attribution - Pas d\'Utilisation Commerciale - Pas de Modification 3.0',
+    
     /* i18n overwrite */
     'confirmemail_oncreate' => 'Un code de confirmation a été envoyé à votre adresse de courriel. Merci de consulter vos courriels et de suivre les instuctions fournies pour activer les fonctions de messagerie et d\'abonnement.',
-    'welcomecreation' => '== Bienvenue, $1! ==
+    'welcomecreation' => '== Bienvenue, $1 ! ==
 Félicitation et merci ! Votre compte Seizam a été créé avec succès.
 === Que faire maintenant ? ===
 * Pour activer les Wikiplaces, choisissez une [[Special:Plans|offre]] et [[Special:Subscriptions|abonnez-vous]] à Seizam.

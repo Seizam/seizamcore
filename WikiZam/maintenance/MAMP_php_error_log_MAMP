@@ -1,0 +1,14 @@
+[22-Mar-2012 18:57:25] PHP Warning:  PHP Startup: Unable to load dynamic library 'MAMP_extension_dir_MAMP/imap.so' - dlopen(MAMP_extension_dir_MAMP/imap.so, 9): image not found in Unknown on line 0
+[22-Mar-2012 18:57:25] PHP Warning:  PHP Startup: Unable to load dynamic library 'MAMP_extension_dir_MAMP/gettext.so' - dlopen(MAMP_extension_dir_MAMP/gettext.so, 9): image not found in Unknown on line 0
+[22-Mar-2012 18:57:25] PHP Warning:  PHP Startup: Unable to load dynamic library 'MAMP_extension_dir_MAMP/mcrypt.so' - dlopen(MAMP_extension_dir_MAMP/mcrypt.so, 9): image not found in Unknown on line 0
+[22-Mar-2012 18:57:25] PHP Warning:  PHP Startup: Unable to load dynamic library 'MAMP_extension_dir_MAMP/yaz.so' - dlopen(MAMP_extension_dir_MAMP/yaz.so, 9): image not found in Unknown on line 0
+[22-Mar-2012 18:57:25] PHP Warning:  PHP Startup: Unable to load dynamic library 'MAMP_extension_dir_MAMP/pgsql.so' - dlopen(MAMP_extension_dir_MAMP/pgsql.so, 9): image not found in Unknown on line 0
+[22-Mar-2012 18:57:25] PHP Warning:  PHP Startup: Unable to load dynamic library 'MAMP_extension_dir_MAMP/pdo_pgsql.so' - dlopen(MAMP_extension_dir_MAMP/pdo_pgsql.so, 9): image not found in Unknown on line 0
+[22-Mar-2012 18:57:25] PHP Warning:  PHP Startup: Unable to load dynamic library 'MAMP_extension_dir_MAMP/pdo_mysql.so' - dlopen(MAMP_extension_dir_MAMP/pdo_mysql.so, 9): image not found in Unknown on line 0
+[22-Mar-2012 19:02:44] PHP Warning:  PHP Startup: Unable to load dynamic library 'MAMP_extension_dir_MAMP/imap.so' - dlopen(MAMP_extension_dir_MAMP/imap.so, 9): image not found in Unknown on line 0
+[22-Mar-2012 19:02:44] PHP Warning:  PHP Startup: Unable to load dynamic library 'MAMP_extension_dir_MAMP/gettext.so' - dlopen(MAMP_extension_dir_MAMP/gettext.so, 9): image not found in Unknown on line 0
+[22-Mar-2012 19:02:44] PHP Warning:  PHP Startup: Unable to load dynamic library 'MAMP_extension_dir_MAMP/mcrypt.so' - dlopen(MAMP_extension_dir_MAMP/mcrypt.so, 9): image not found in Unknown on line 0
+[22-Mar-2012 19:02:44] PHP Warning:  PHP Startup: Unable to load dynamic library 'MAMP_extension_dir_MAMP/yaz.so' - dlopen(MAMP_extension_dir_MAMP/yaz.so, 9): image not found in Unknown on line 0
+[22-Mar-2012 19:02:44] PHP Warning:  PHP Startup: Unable to load dynamic library 'MAMP_extension_dir_MAMP/pgsql.so' - dlopen(MAMP_extension_dir_MAMP/pgsql.so, 9): image not found in Unknown on line 0
+[22-Mar-2012 19:02:44] PHP Warning:  PHP Startup: Unable to load dynamic library 'MAMP_extension_dir_MAMP/pdo_pgsql.so' - dlopen(MAMP_extension_dir_MAMP/pdo_pgsql.so, 9): image not found in Unknown on line 0
+[22-Mar-2012 19:02:44] PHP Warning:  PHP Startup: Unable to load dynamic library 'MAMP_extension_dir_MAMP/pdo_mysql.so' - dlopen(MAMP_extension_dir_MAMP/pdo_mysql.so, 9): image not found in Unknown on line 0

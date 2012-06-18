@@ -12,8 +12,7 @@
     
     
     // footer margin
-    $('#content').wrap('<div id="heightwrapper" />');
-    $('#heightwrapper').css('min-height',$(window).height()-55);
+    $('div#heightwrapper').css('min-height',$(window).height()-55);
 	
 	
     // footer slide
@@ -50,7 +49,7 @@
 	
     // dropdown menu - menu déroulant
     
-	$('#nav .nav_actions').show();
+    $('#nav .nav_actions').show();
     
     if($('#nav .nav_actions').length == 1) {
 	

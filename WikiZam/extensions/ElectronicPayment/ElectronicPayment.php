@@ -29,6 +29,10 @@ define('EP_ACCESS_RIGHT', 'epaccess');
 $wgAvailableRights[] = EP_ACCESS_RIGHT; 
 $wgGroupPermissions['user'][EP_ACCESS_RIGHT] = true;
 
+define('EP_ADMIN_RIGHT', 'epadmin');
+$wgAvailableRights[] = EP_ADMIN_RIGHT; 
+$wgGroupPermissions['sysop'][EP_ADMIN_RIGHT] = true;
+
 $dir = dirname(__FILE__) . '/';
 
 #Load Hooks
@@ -59,7 +63,7 @@ $wgDebugLogGroups['EPErrors'] = '/var/log/seizam/ep_errors.log'; #@TODO: pretty 
 require_once($dir . 'CMCIC_Tpe.inc.php');
 
 
-$wgTestEnv = true; #Activate test environment (accept test money)
+$wgTestEnv = false; #Activate test environment (accept test money)
 
 Class EPMessage {
 #Required Params

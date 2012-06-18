@@ -48,7 +48,7 @@ $messages['en'] = array(
     'wp-create' => 'Create!',
     /* Tips */
     'wp-url-tip' => 'Your Wikiplace is available at [[$1|<u>http://www.<b>seizam.com/$1</b></u>]].',
-    'wp-suburl-tip' => 'Your Page is available at [[$1|<u>http://www.<b>seizam.com/$1/$2</b></u>]].',
+    'wp-suburl-tip' => 'Your Page is available at [[$1/$2|<u>http://www.<b>seizam.com/$1/$2</b></u>]].',
     'wp-link-tip' => 'Type <b><nowiki>[[$1]]</nowiki></b> anywhere to make a link like: [[$1]].',
     'wp-linkalias-tip' => 'Type <b><nowiki>[[$1|$2]]</nowiki></b> to make a link like: [[$1|$2]].',
     'wp-sublink-tip' => 'Type <b><nowiki>[[$1/$2]]</nowiki></b> anywhere to make a link like: [[$1/$2]].',
@@ -84,6 +84,9 @@ $messages['en'] = array(
     'wp-createpage-license-help' => 'Select here the type of Intellectual Property Licensing this page is released under. We advise free licensing but that is your call.',
     'wp-createpage-createtalk-help' => 'Check this box if you wish to open the Talk for this page. This second talk page will be available at <u>www.seizam.com/<b>Talk:</b>Parent/Name</u>.',
     'wp-createtalk-help' => 'Check this box if you wish to open the Talk for this page. This second talk page will be available at <u>www.seizam.com/<b>Talk:</b>Name</u>.',
+    
+    'wp-subpage-talk-default' => '{{Subst:Default_Talk}}',
+    'wp-homepage-talk-default' => '{{Subst:Default_Talk}}',
     /* Disclaimer: Wikiplace */
     'wp-create-wp-success' => '==Congratulation!==
 
@@ -241,7 +244,7 @@ $messages['fr'] = array(
     'wp-create' => 'Créer !',
     /* Tips */
     'wp-url-tip' => 'Votre Wikiplace est disponnible depuis [[$1|<u>http://www.<b>seizam.com/$1</b></u>]].',
-    'wp-suburl-tip' => 'Votre page est disponnible depuis [[$1|<u>http://www.<b>seizam.com/$1/$2</b></u>]].',
+    'wp-suburl-tip' => 'Votre page est disponnible depuis [[$1/$2|<u>http://www.<b>seizam.com/$1/$2</b></u>]].',
     'wp-link-tip' => 'Saisissez <b><nowiki>[[$1]]</nowiki></b> n\'importe où pour faire un lien du type : [[$1]].',
     'wp-linkalias-tip' => 'Saisissez <b><nowiki>[[$1|$2]]</nowiki></b> n\'importe où pour faire un lien du type : [[$1|$2]].',
     'wp-sublink-tip' => 'Saisissez <b><nowiki>[[$1/$2]]</nowiki></b> n\'importe où pour faire un lien du type : [[$1/$2]].',
