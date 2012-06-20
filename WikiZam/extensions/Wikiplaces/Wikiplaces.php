@@ -48,6 +48,10 @@ $wgAutoloadClasses['WpSubscriptionsTablePager'] = $_dir . 'model/WpSubscriptions
 $wgAutoloadClasses['WikiplaceUpload'] = $_dir . 'WikiplaceUpload.php';
 $wgAutoloadClasses['WpHomepageTemplate'] = $_dir . 'model/HtmlTemplateField.php';
 $wgAutoloadClasses['WpSubpageTemplate'] = $_dir . 'model/HtmlTemplateField.php';
+$wgAutoloadClasses['WpInvitation'] = $_dir . 'model/WpInvitation.php';
+$wgAutoloadClasses['WpInvitationCategory'] = $_dir . 'model/WpInvitationCategory.php';
+$wgAutoloadClasses['WpInvitationsTablePager'] = $_dir . 'model/WpInvitationsTablePager.php';
+$wgAutoloadClasses['SpecialInvitations'] = $_dir . 'SpecialInvitations.php';
 
 # i18n
 $wgExtensionMessagesFiles['Wikiplaces'] = $_dir.'Wikiplaces.i18n.php';
@@ -65,6 +69,8 @@ $wgSpecialPages['WikiplacesAdmin'] = 'SpecialWikiplacesAdmin';
 $wgSpecialPageGroups['WikiplacesAdmin'] = 'wikiplace';
 $wgSpecialPages['Plans'] = 'SpecialPlans';
 $wgSpecialPageGroups['Plans'] = 'wikiplace';
+$wgSpecialPages['Invitations'] = 'SpecialInvitations';
+$wgSpecialPageGroups['Invitations'] = 'wikiplace';
 
 // define the default renewal plan
 define('WP_FALLBACK_PLAN_ID', 1);
