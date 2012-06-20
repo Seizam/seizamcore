@@ -1,0 +1,1 @@
+ALTER TABLE wp_subscription ADD COLUMN wps_wpi_id int(10) unsigned COMMENT 'Invitation code used';

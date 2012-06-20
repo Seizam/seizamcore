@@ -880,9 +880,10 @@ class WpSubscription {
      * @param int $minutes + or - minutes shift
      * @param int $hours + or - hours shift
      * @param int $days + or - $days shift
+     * @param int $months + or - $months shift
      * @return string MySQL DATETIME string
      */
-    public static function now($seconds = 0, $minutes = 0, $hours = 0, $days = 0) {
+    public static function now($seconds = 0, $minutes = 0, $hours = 0, $days = 0, $months = 0) {
 
         if (!is_int($seconds) || !is_int($minutes) || !is_int($hours) || !is_int($days)) {
             throw new MWException("Cannot compute 'now with delay', invalid argument.");
@@ -890,8 +891,8 @@ class WpSubscription {
 
         $start = new DateTime('now', new DateTimeZone('GMT'));
 
-        if (($seconds != 0) || ($minutes != 0) || ($hours != 0) || ($days != 0)) {
-            $start->modify("$seconds second $minutes minute $hours hour $days day");
+        if (($seconds != 0) || ($minutes != 0) || ($hours != 0) || ($days != 0) || ($months != 0)) {
+            $start->modify("$seconds second $minutes minute $hours hour $days day $months month");
         }
 
         return $start->format('Y-m-d H:i:s');

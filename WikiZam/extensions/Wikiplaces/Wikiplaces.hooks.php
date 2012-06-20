@@ -18,7 +18,10 @@ class WikiplacesHooks {
 			'wp_old_usage',
 			'wp_wikiplace',
 			'wp_page',
-			'wp_old_subscription'
+			'wp_old_subscription',
+			'wp_invitation',
+			'wp_invitation_category',
+			'wp_wpi_wpp',
 		);
 
 		$mysql_dir = dirname(__FILE__) . '/schema/mysql';
@@ -26,6 +29,12 @@ class WikiplacesHooks {
 			$updater->addExtensionUpdate(array('addTable', $table, "$mysql_dir/$table.sql", true));
 		}
 
+		$db = wfGetDB( DB_MASTER );
+
+		if ( !$db->fieldExists( 'wp_subscription', 'wps_wpi_id', __METHOD__ ) ) {
+			$db->sourceFile( "$mysql_dir/add_wps_wpi_field.sql" );
+		}
+		
 		return true;
 	}
 
