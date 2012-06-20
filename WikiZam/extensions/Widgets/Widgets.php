@@ -80,9 +80,14 @@ function widgetParserFunctions( &$parser ) {
 }
 
 function processEncodedWidgetOutput( &$out, &$text ) {
+    $text = preg_replace(
+		'/\<p\>(ENCODED_CONTENT .* END_ENCODED_CONTENT)\n\<\/p\>/',
+		"$1\n",
+		$text
+	);
 	// Find all hidden content and restore to normal
 	$text = preg_replace(
-		'/ENCODED_CONTENT ([0-9a-zA-Z\/+]+=*)* END_ENCODED_CONTENT/esm',
+		'/ENCODED_CONTENT ([0-9a-zA-Z\/+]+=*)* END_ENCODED_CONTENT?/esm',
 		'base64_decode("$1")',
 		$text
 	);

@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.18-dev, created on 2012-06-18 16:31:55
+<?php /* Smarty version 2.6.18-dev, created on 2012-06-20 19:38:45
          compiled from wiki:AddThis */ ?>
 <?php require_once(SMARTY_CORE_DIR . 'core.load_plugins.php');
 smarty_core_load_plugins(array('plugins' => array(array('function', 'counter', 'wiki:AddThis', 13, false),array('modifier', 'escape', 'wiki:AddThis', 13, false),array('modifier', 'default', 'wiki:AddThis', 13, false),)), $this); ?>
@@ -16,4 +16,5 @@ smarty_core_load_plugins(array('plugins' => array(array('function', 'counter', '
 </div>
 <?php echo smarty_function_counter(array('name' => 'addthiscounter','assign' => 'addthisincluded'), $this);?>
 <?php if ($this->_tpl_vars['addthisincluded'] == 1): ?><script type="text/javascript">var addthis_config={data_ga_property:'UA-32666889-1',data_ga_social:true,services_exclude:'print'};</script><script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=<?php echo ((is_array($_tmp=((is_array($_tmp=$this->_tpl_vars['pubid'])) ? $this->_run_mod_handler('escape', true, $_tmp, 'urlpathinfo') : smarty_modifier_escape($_tmp, 'urlpathinfo')))) ? $this->_run_mod_handler('default', true, $_tmp, 'ra-4fdafa43072e511d') : smarty_modifier_default($_tmp, 'ra-4fdafa43072e511d')); ?>
-"></script><?php endif; ?>
+"></script>
+<?php endif; ?>

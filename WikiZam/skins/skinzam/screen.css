@@ -54,36 +54,18 @@ body, button, input, select, textarea {
     color: #4d4e4f;
 }
 
-
-
 ::-moz-selection { background: #ee383a; color: #fff; text-shadow: none; }
 ::selection { background: #ee383a; color: #fff; text-shadow: none; }
-
-
-h1:first-child, h2:first-child, h3:first-child, h4:first-child, h5:first-child, h6:first-child, p:first-child {
-    margin-top: 0;
-}
-
-h1:last-child, h2:last-child, h3:last-child, h4:last-child, h5:last-child, h6:last-child, p:last-child, fieldset:last-child {
-    margin-bottom: 0;
-}
 
 
 /* -----------------------------------------------------------------------------
    ==  Links
    -------------------------------------------------------------------------- */
 
-a {
-    color: #E22C2E; text-decoration:none;
-}
+a { color: #E22C2E; text-decoration:none;}
 a:visited { color: #E22C2E; }
 a:focus { outline: thin dotted; }
-
-a.stub, a.new {
-    text-decoration: underline;
-}
-
-
+a.stub, a.new {text-decoration: underline;}
 a:hover, a:active, a.stub:hover, a.new:hover { outline:0; color:#7C2122;}
 
 
@@ -124,14 +106,147 @@ li {
 
 }
 
-.inside > .mw-content-ltr > ul > li {
-    padding-bottom: 6px;
+dd { margin: 0 0 0 40px; }
+#nav ul, #nav ol { list-style: none; margin: 0; padding: 0; }
+
+
+/* -----------------------------------------------------------------------------
+   ==  BodyContent Format
+   -------------------------------------------------------------------------- */
+
+/* p */
+
+.mw-content-ltr > p, .mw-content-rtl > p {
+    margin: 0 0 24px 0;
+    
+}
+
+.mw-content-ltr > p:first-letter, .mw-content-rtl > p:first-letter {
+    color: black;
+    font-size: 16px;
+}
+
+
+.mw-content-ltr div.poem p, .mw-content-rtl div.poem p {
+    margin: 0 0 16px 0;
+    text-indent: 0;
+    line-height: 22px;
+}
+
+div.poem  p:first-letter {
+    color: inherit;
+    font-size: inherit;
+}
+
+/* Headers */
+
+.mw-content-ltr > h2, .mw-content-rtl > h2 {
+    margin: 0 0 8px 0;
+    padding: 0;
+    font-family: "Gill Sans", Verdana, sans-serif;
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+    letter-spacing: 3px;
+    word-spacing: 7px;
+    line-height: 16px;
+    text-transform: uppercase;
+    color: #000;
+}
+
+.mw-content-ltr > h3, .mw-content-rtl > h3 {
+    margin: 0 256px 8px 0;
+    padding: 0;
+    font-family: "Gill Sans", Verdana, sans-serif;
+    text-align: left;
+    font-weight: normal;
+    font-size: 16px;
+    letter-spacing: 3px;
+    word-spacing: 7px;
+    line-height: 16px;
+    font-variant: small-caps;
+    color: #000;
+}
+
+mw-content-rtl > h3 {
+    margin: 0 0 8px 256px;
+    text-align: right;
+}
+
+.mw-content-ltr > h4, .mw-content-rtl > h4 {
+    margin: 0 192px 8px 36px;
+    padding: 0;
+    text-align: left;
+    font-weight: normal;
+    font-size: 16px;
+    font-style: italic;
+    letter-spacing: 2px;
+    word-spacing: 5px;
+    line-height: 16px;
+    color: #ccced1;
+}
+
+.mw-content-rtl > h4 {
+    margin: 0 36px 8px 192px;
+    text-align: right;
+}
+
+.mw-content-ltr > h5, .mw-content-rtl > h5 {
+    margin: 0 36px;
+    padding: 0;
+    text-align: center;
+    font-weight: normal;
+    font-size: 13px;
+    font-style: italic;
+    letter-spacing: 1px;
+    word-spacing: 2px;
+    line-height: 13px;
+    color: #000;
+}
+
+/* ul li */
+
+.mw-content-ltr > ul, .mw-content-rtl .mw-content-ltr > ul,
+.mw-content-ltr > ol, .mw-content-rtl .mw-content-ltr > ol {
+    margin: 0 0 24px 0;
+    padding: 0;
+}
+
+.mw-content-ltr > ul li, .mw-content-rtl > ul li{
+    margin: 0;
+    padding: 0 0 6px 0;
     list-style-position: inside;
     list-style-type: square;
 }
 
-dd { margin: 0 0 0 40px; }
-#nav ul, #nav ol { list-style: none; margin: 0; padding: 0; }
+.mw-content-ltr > ol li, .mw-content-rtl .mw-content-ltr > ol li {
+    margin: 0;
+    padding: 0 0 6px 0;
+    list-style-position: inside;
+}
+
+/* pre */
+pre, .mw-code {
+    font-family: monospace,Courier;
+    background: #f2f2f2;
+    border: 1pt dashed #dad9d9;
+    color: black;
+    font-size: 13px;
+    line-height: 20px;
+    overflow: auto;
+    padding: 12px;
+    margin: 0 0 24px 0;
+}
+
+/* Last-Child fix */
+.mw-content-ltr > p:last-child, .mw-content-rtl > p:last-child,
+.mw-content-ltr > ul:last-child, .mw-content-rtl .mw-content-ltr > ul:last-child,
+.mw-content-ltr > ol:last-child, .mw-content-rtl .mw-content-ltr > ol:last-child,
+pre:last-child, .mw-code:last-child {
+    margin-bottom: 0;
+}
+
+
 
 
 /* -----------------------------------------------------------------------------
@@ -147,8 +262,46 @@ img {
 /* Correct overflow displayed oddly in IE9 */
 svg:not(:root) { overflow: hidden; }
 
-video {
+
+/* Widgets */
+iframe, video, audio {
+    border: 1px solid #dad9d9;
     max-width: 100%
+}
+
+div.addthis_toolbox.vertical a{
+    margin-bottom:4px
+}
+div.addthis_toolbox{
+    display:inline-block;
+    width:64px
+}
+div.addthis_toolbox.counter{
+    width:98px
+}
+div.addthis_toolbox.long{
+    width:104px
+}
+div.addthis_toolbox.long.counter{
+    width:138px
+}
+div.addthis_toolbox.vertical{
+    width:16px
+}
+div.addthis_toolbox.addthis_32x32_style{
+    width:112px
+}
+div.addthis_toolbox.addthis_32x32_style.counter{
+    width:170px
+}
+div.addthis_toolbox.addthis_32x32_style.long{
+    width:184px
+}
+div.addthis_toolbox.addthis_32x32_style.long.counter{
+    width:242px
+}
+div.addthis_toolbox.addthis_32x32_style.vertical{
+    width:32px
 }
 
 /* -----------------------------------------------------------------------------
@@ -170,24 +323,12 @@ table { border-collapse: collapse; border-spacing: 0; }
    ==  From MediaWiki's Vector CSS
    -------------------------------------------------------------------------- */
 
-/* Sub-navigation */
-#siteSub, #jump-to-nav {
+/* Removing Content we do not want */
+#siteSub, #jump-to-nav, div#content .printfooter, div#content .editsection, #p-search h5 {
     display: none;
 }
 
-
-div#content .printfooter {
-    display: none;
-}
-
-div#content .editsection{
-    display: none;
-}
-
-/* Search form */
-#p-search h5 {
-    display: none;
-}
+/* Search on AbsoluteFooter */
 
 #p-search {
     float: left;
@@ -660,56 +801,18 @@ input:invalid, textarea:invalid { background-color: #f2e3e4; }
 .right {
     float:right;
     clear:right;
-    margin-left: 24px;
-    margin-bottom: 24px;
+    margin-left: 18px;
+    margin-bottom: 18px;
 }
 
 .left {
     float:left;
     clear:left;
-    margin-right: 24px;
-    margin-bottom: 24px;
+    margin-right: 18px;
+    margin-bottom: 18px;
 }
 
-/* Widgets */
-iframe, video, audio {
-    border: 1px solid #dad9d9;
-}
 
-div.addthis_toolbox.vertical a{
-    margin-bottom:4px
-}
-div.addthis_toolbox{
-    display:inline-block;
-    width:64px
-}
-div.addthis_toolbox.counter{
-    width:98px
-}
-div.addthis_toolbox.long{
-    width:104px
-}
-div.addthis_toolbox.long.counter{
-    width:138px
-}
-div.addthis_toolbox.vertical{
-    width:16px
-}
-div.addthis_toolbox.addthis_32x32_style{
-    width:112px
-}
-div.addthis_toolbox.addthis_32x32_style.counter{
-    width:170px
-}
-div.addthis_toolbox.addthis_32x32_style.long{
-    width:184px
-}
-div.addthis_toolbox.addthis_32x32_style.long.counter{
-    width:242px
-}
-div.addthis_toolbox.addthis_32x32_style.vertical{
-    width:32px
-}
 
 
 .sread {
@@ -797,20 +900,12 @@ a, a span, a small {
     transition: color 0.75s;
 }
 
-li, td, tr, table, span, div, input[type="submit"], a {
+li, td, tr, table, span, div, input[type="submit"], a.fade {
     -webkit-transition: background 0.75s;
     -moz-transition: background 0.75s;
     -ms-transition: background 0.75s;
     -o-transition: background 0.75s;
     transition: background 0.75s;
-}
-
-a.addthis_counter {
-    -webkit-transition: background 0s;
-    -moz-transition: background 0s;
-    -ms-transition: background 0s;
-    -o-transition: background 0s;
-    transition: background 0;
 }
 
 
@@ -1353,7 +1448,7 @@ a.feedlink:first-child {
     background-position: 0 0;
 }
 #absoluteFooter .content {
-    padding: 9px 20px;
+    padding: 9px 0 9px 20px;
     position: relative;
     overflow: hidden;
     z-index: 15;
@@ -1603,10 +1698,17 @@ a.feedlink:first-child {
 
 
 /* -----------------------------------------------------------------------------
-   ==  NS_HELP
+   ==  GENERIC
    -------------------------------------------------------------------------- */
 
-body.ns-12, body.ns-13 {
+/* -----------------------------------------------------------------------------
+   ==  NS_MEDIAWIKI, NS_TEMPLATE, NS_HELP, NS_WIDGET,
+   -------------------------------------------------------------------------- */
+
+body.ns-8, body.ns-9,
+body.ns-10, body.ns-11,
+body.ns-12, body.ns-13,
+body.ns-274, body.ns-275 {
     background-image: url(images/help.bg.jpg);
     background-position: top right;
 }

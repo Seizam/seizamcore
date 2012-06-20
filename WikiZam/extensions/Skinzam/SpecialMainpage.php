@@ -156,7 +156,7 @@ class SpecialMainpage extends SpecialPage {
         $blockjoin = array('sz-blockjoin0','sz-blockjoin1','sz-blockjoin2');
 
         foreach ($blockjoin as $box) {
-            $html .= Xml::openElement('a', array('href' => wfMessage($box.'-href')->text()));
+            $html .= Xml::openElement('a', array('class'=>'fade','href' => wfMessage($box.'-href')->text()));
             $html .= Xml::element('span', array(), wfMessage($box)->text());
             $html .= Html::rawElement('small', array(), wfMessage($box.'-catch')->parse());
             $html .= Xml::closeElement('a');

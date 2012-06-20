@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.18-dev, created on 2012-06-13 22:00:04
+<?php /* Smarty version 2.6.18-dev, created on 2012-06-20 19:29:40
          compiled from wiki:Video */ ?>
 <?php require_once(SMARTY_CORE_DIR . 'core.load_plugins.php');
 smarty_core_load_plugins(array('plugins' => array(array('modifier', 'validate', 'wiki:Video', 1, false),array('modifier', 'default', 'wiki:Video', 1, false),array('modifier', 'escape', 'wiki:Video', 1, false),)), $this); ?>

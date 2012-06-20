@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.18-dev, created on 2012-06-13 22:00:48
+<?php /* Smarty version 2.6.18-dev, created on 2012-06-20 19:42:33
          compiled from wiki:Facebook */ ?>
 <?php require_once(SMARTY_CORE_DIR . 'core.load_plugins.php');
 smarty_core_load_plugins(array('plugins' => array(array('modifier', 'default', 'wiki:Facebook', 1, false),array('modifier', 'escape', 'wiki:Facebook', 1, false),array('modifier', 'validate', 'wiki:Facebook', 1, false),)), $this); ?>

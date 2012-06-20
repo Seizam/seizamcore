@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.18-dev, created on 2012-06-15 13:44:22
+<?php /* Smarty version 2.6.18-dev, created on 2012-06-20 19:44:30
          compiled from wiki:Twitter_List */ ?>
 <?php require_once(SMARTY_CORE_DIR . 'core.load_plugins.php');
 smarty_core_load_plugins(array('plugins' => array(array('function', 'counter', 'wiki:Twitter_List', 1, false),array('modifier', 'escape', 'wiki:Twitter_List', 6, false),array('modifier', 'default', 'wiki:Twitter_List', 6, false),array('modifier', 'validate', 'wiki:Twitter_List', 10, false),)), $this); ?>

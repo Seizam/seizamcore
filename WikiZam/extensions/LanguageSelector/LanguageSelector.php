@@ -137,8 +137,7 @@ function wfGetLanguageSelectorLanguages(){
 function wfGetLanguageSelectorLanguagesShorthand(){
 	global $wgLanguageSelectorLanguagesShorthand, $wgLanguageSelectorShowAll;
 	if ( $wgLanguageSelectorLanguagesShorthand === null ) {
-		$wgLanguageSelectorLanguagesShorthand = array_keys( Language::getLanguageNames( !$wgLanguageSelectorShowAll ) );
-		sort( $wgLanguageSelectorLanguagesShorthand );
+		$wgLanguageSelectorLanguagesShorthand = wfGetLanguageSelectorLanguages();
 	}
 	return $wgLanguageSelectorLanguagesShorthand;
 }
@@ -370,6 +369,21 @@ function wfLanguageSelectorAddJavascript( $outputPage, $parserOutput, $data ) {
 	$outputPage->addModules( 'ext.languageSelector' );
 }
 
+/**
+ *
+ * @global type $wgLang
+ * @global type $wgContLang
+ * @global type $wgScript
+ * @global boolean $wgLanguageSelectorShowCode
+ * @staticvar int $id
+ * @param Title $title
+ * @param type $style
+ * @param type $class
+ * @param type $selectorstyle
+ * @param type $buttonstyle
+ * @param boolean $showCode
+ * @return String The Html 
+ */
 function wfLanguageSelectorHTML( Title $title, $style = null, $class = null, $selectorstyle = null, $buttonstyle = null, $showCode = null ) {
 	global $wgLang, $wgContLang, $wgScript,
 		$wgLanguageSelectorShowCode;
@@ -402,8 +416,13 @@ function wfLanguageSelectorHTML( Title $title, $style = null, $class = null, $se
 		'id' => 'languageselector-select-' . $id,
 		'style' => $selectorstyle
 	) );
+    
+    $selectorLanguages = wfGetLanguageSelectorLanguagesShorthand();
+    
+    if (!in_array($code, $selectorLanguages))
+        array_unshift ($selectorLanguages, $code);
 
-	foreach ( wfGetLanguageSelectorLanguagesShorthand() as $ln ) {
+	foreach ( $selectorLanguages as $ln ) {
 		$name = $wgContLang->getLanguageName( $ln );
 		if ( $showCode ) $name = wfBCP47( $ln ) . ' - ' . $name;
 

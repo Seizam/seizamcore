@@ -10,7 +10,7 @@
 # http://www.mediawiki.org/wiki/Manual:Configuration_settings
 # Protect against web entry
 if (!defined('MEDIAWIKI')) {
-    exit;
+    exit; 
 }
 
 # Include of ServerSetting.php where Server Side settings are stored
@@ -151,9 +151,9 @@ $wgPolyglotFollowRedirects = true;
 # Language Selector (auto select user language and drop down menu)
 require_once( "$IP/extensions/LanguageSelector/LanguageSelector.php" );
 # Supported languages
-$wgLanguageSelectorLanguages = null;
+$wgLanguageSelectorLanguages = array('ar','de','en','fr','es','it','ja','pl','pt','zh');;
 # Displayed languages
-$wgLanguageSelectorLanguagesShorthand = array('en', 'fr');
+$wgLanguageSelectorLanguagesShorthand = array('en','fr');
 # Method of language selection
 $wgLanguageSelectorDetectLanguage = LANGUAGE_SELECTOR_PREFER_CLIENT_LANG; #Automatic selection regarding browser
 # Where to put the language selection dropdown menu
@@ -236,7 +236,7 @@ $wgGroupPermissions['sysop']['editprotectedns'] = true;
 
 $wgNamespaceProtection[NS_PROJECT] = array('editprotectedns');
 $wgAvailableRights[] = 'editlimitedns';
-$wgGroupPermissions['user']['editlimitedns'] = true;
+$wgGroupPermissions['autoconfirmed']['editlimitedns'] = true;
 $wgNamespaceProtection[NS_HELP] = array('editlimitedns');
 $wgNamespaceProtection[NS_TEMPLATE] = array('editlimitedns');
 $wgNamespaceProtection[NS_CATEGORY] = array('editlimitedns');
