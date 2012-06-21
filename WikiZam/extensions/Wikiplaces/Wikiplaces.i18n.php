@@ -168,7 +168,12 @@ You are also promising us that you wrote this yourself, or copied it from a publ
 	'wp-invite-nomore' => 'Invitation code creation is limited to $1 per month. You have reached this limit.',
 	'wp-inv-category-field' => 'Invitation category',
 	'wp-inv-code-field' => 'Code',
-	'wp-inv-counter-field' => 'How many times this code can be used',	
+	'wp-inv-counter-field' => 'How many times this code can be used',
+	'wp-use-invitation' => 'Invitation (optional):',
+	'link-use-invitation' => 'Click here to enter code',
+	'wp-sub-invitation-header' => 'The community can you take advantage of promotional offers. You can use an invitation here.',
+	'wp-sub-invitation-field' => 'Invitation code:',
+	'wp-use-invitation-go' => 'Use this code!',
     /* Plans */
     'wpp-basic' => 'Basic',
     'wpp-pro' => 'Professional',

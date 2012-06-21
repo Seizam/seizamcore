@@ -31,7 +31,7 @@ class WikiplacesHooks {
 
 		$db = wfGetDB( DB_MASTER );
 
-		if ( !$db->fieldExists( 'wp_subscription', 'wps_wpi_id', __METHOD__ ) ) {
+                if ( $db->tableExists('wp_subscription') && !$db->fieldExists( 'wp_subscription', 'wps_wpi_id', __METHOD__ ) ) {
 			$db->sourceFile( "$mysql_dir/add_wps_wpi_field.sql" );
 		}
 		

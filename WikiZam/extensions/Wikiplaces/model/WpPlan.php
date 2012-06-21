@@ -182,22 +182,33 @@ class WpPlan {
 	
 	
 	/**
-	 * Checks that this plan is available for this user, and give sufficient quotas.
-	 * Can be used for both first subscription and renewal
-	 * <b>INVITATION SYSTEM TO BE IMPLEMENTED HERE</b>
-	 * Check that a user can subscribe to a specific plan.
-	 * Invitation system can take place here, if we use e-mail address as invitation identifier
-	 * @todo: implement invitation system here
-	 * @param User $user Optional, will be used later for invations
+	 * Check that a user take her first subscription to this plan.
+	 * @param User $user Only required with invitation
+	 * @param WpInvitation $invitation Optional
 	 * @return boolean 
 	 */
-	public function canBeTakenAsFirst($user) {
+	public function canBeTakenAsFirst($user = null, $invitation = null) {
 		
 		$now = WpSubscription::now();
-		
-		return ( ( $this->wpp_start_date <= $now )
-				&& ( $this->wpp_end_date > $now )
-				&& ( !$this->wpp_invitation_only ) );
+		if ( ($this->wpp_start_date > $now) || ($this->wpp_end_date < $now) ) {
+			return false;
+		}
+		if ( $this->wpp_invitation_only ) {
+			if ( (! $user instanceof User) || (! $invitation instanceof WpInvitation) ) {
+				return false;
+			}
+			$category = $invitation->getCategory();
+			if (! $category instanceof WpInvitationCategory) {
+				return false;
+			}
+			$plans = $category->getPlans();
+			foreach ( $plans as $plan ) {
+				if ( $this->wpp_id == $plan->wpp_id ) {
+					return true;
+				}
+			}
+			return false;
+		}
 
 	}
 	
@@ -294,14 +305,16 @@ class WpPlan {
 	
 	
 	/**
-	 * Returns available offers, with at least theses quotas (by default: no minimum requirement)
-	 * @param int $nb_wikiplaces
-	 * @param int $nb_wikiplace_pages
-	 * @param int $diskspace in MB
+	 * Returns available offers, taking account of the invitation.
+	 * @param WpInvitation $invitation Optional invitation
 	 * @return array array of WpPlans 
 	 * @todo also add plan available using an invitation
 	 */
-	public static function factoryAvailableForFirstSubscription( $nb_wikiplaces = 0, $nb_wikiplace_pages = 0, $diskspace = 0) {
+	public static function factoryAvailableForFirstSubscription( $invitation = null) {
+		
+		$nb_wikiplaces = 0;
+		$nb_wikiplace_pages = 0;
+		$diskspace = 0;
 		
 		$dbr = wfGetDB(DB_SLAVE);
 		$now =  $dbr->addQuotes( wfTimestamp(TS_DB) );
@@ -319,6 +332,13 @@ class WpPlan {
 		foreach ( $result as $row ) {
             $offer = self::constructFromDatabaseRow($row);
 			$offer->cleverAppendToArray($offers);
+		}
+		
+		if ( $invitation instanceof WpInvitation ) {
+			$invitatonOffers = $invitation->getCategory()->getPlans();
+			foreach ( $invitatonOffers as $offer ) {
+				$offer->cleverAppendToArray($offers);
+			}
 		}
 		
 		$dbr->freeResult( $result );

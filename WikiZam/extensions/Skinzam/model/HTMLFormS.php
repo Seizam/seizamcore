@@ -104,6 +104,8 @@ class HTMLFormS {
     protected $mHiddenFields = array();
     protected $mButtons = array();
     protected $mWrapperLegend = false;
+	
+	public $blockSubmit = false;
 
     /**
      * Build a new HTMLForm from an array of field attributes
@@ -217,12 +219,20 @@ class HTMLFormS {
         $editToken = $this->getRequest()->getVal('wpEditToken');
 
         $result = false;
-        if ($this->getMethod() != 'post' || $this->getUser()->matchEditToken($editToken)) {
+        if ( ! $this->blockSubmit && ($this->getMethod() != 'post' || $this->getUser()->matchEditToken($editToken)) ) {
             $result = $this->trySubmit();
         }
         return $result;
     }
 
+	/**
+	 * When set to true, it disables submission processing.
+	 * @param boolean $block 
+	 */
+	public function setBlockSubmit($block) {
+		$this->blockSubmit = $block;
+	}
+	
     /**
      * The here's-one-I-made-earlier option: do the submission if
      * posted, or display the form with or without funky valiation
@@ -962,7 +972,7 @@ abstract class HTMLFormField {
             $verticalLabel = true;
         }
 
-        if ($errors === true || (!$this->mParent->getRequest()->wasPosted() && ( $this->mParent->getMethod() == 'post' ) )) {
+        if ($errors === true || $this->mParent->blockSubmit || (!$this->mParent->getRequest()->wasPosted() && ( $this->mParent->getMethod() == 'post' ) )) {
             $errors = '';
             $errorClass = '';
         } else {

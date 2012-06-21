@@ -11,6 +11,8 @@ class WpInvitation {
 			$wpi_counter,
 			$wpi_wpic_id;
 	
+	private $category;
+	
 	private function __construct( $id, $code, $toEmail, $fromUserId, $created, $lastUsed, $counter, $invitationCategoryId) {
 
         $this->wpi_id = intval($id);
@@ -21,8 +23,52 @@ class WpInvitation {
         $this->wpi_date_last_used = $lastUsed;
         $this->wpi_counter = intval($counter);
 		$this->wpi_wpic_id = intval($invitationCategoryId);
+		
+		$this->category = null;
 
     }
+	
+	/**
+	 *
+	 * @param type $row
+	 * @return \self
+	 * @throws MWException 
+	 */
+	public static function constructFromDatabaseRow($row) {
+
+        if ($row === null) {
+            throw new MWException('No SQL row.');
+        }
+
+        return new self(
+				$row->wpi_id,
+				$row->wpi_code,
+				$row->wpi_to_email,
+				$row->wpi_from_user_id,
+				$row->wpi_date_created,
+				$row->wpi_date_last_used,
+				$row->wpi_counter,
+				$row->wpi_wpic_id );
+    }
+	
+	/**
+	 *
+	 * @return string 
+	 */
+	public function getCode() {
+		return $this->wpi_code;
+	}
+	
+	/**
+	 *
+	 * @return WpInvitationCategory 
+	 */
+	public function getCategory() {
+		if ( $this->category == null ) {
+			$this->category = WpInvitationCategory::newFromId($this->wpi_wpic_id);
+		}
+		return $this->category;
+	}
 
 	public static function generateCode($userId=0) {
 
@@ -83,6 +129,66 @@ class WpInvitation {
 		
 	}
 	
+	/**
+	 * Contruct the invitation having this code if valid, ie category 
+	 * started and not ended and counter not empty.
+	 * @param String $code
+	 * @return WpInvitation 
+	 */
+	public static function newValidFromCode($code) {
+		
+		$databaseBase = wfGetDB(DB_SLAVE);
+		$now = $databaseBase->addQuotes(WpSubscription::now());
+		$tables = array( 'wp_invitation', 'wp_invitation_category' );
+		$vars = array( '*' );
+		$conds = array(
+					'wpi_code' => $code,
+					'wpi_counter > 0');
+		$fname = __METHOD__;
+		$options = array();
+		$join_conds = array('wp_invitation_category' => array('INNER JOIN', 
+			'wpi_wpic_id = wpic_id'
+			.' AND wpic_start_date <= '.$now
+			.' AND wpic_end_date >= '.$now
+			));
+		
+		$result = $databaseBase->selectRow($tables, $vars, $conds, $fname, $options, $join_conds);
+		if ($result === false) {
+			// not found, so return null
+			return null;
+		}
+		
+		$invitation = self::constructFromDatabaseRow($result);
+		$invitation->category = WpInvitationCategory::constructFromDatabaseRow($result);
+		
+		return $invitation;
+	}
+	
+/*
+	private static function factoryFromConds($conds, $databaseBase = null) {
+		
+		if ($databaseBase == null) {
+			$databaseBase = wfGetDB(DB_SLAVE);
+		}
+
+		$tables = array('wp_invitation', 'wp_invitation_category');
+		$vars = array('wp_invitation.*');
+		$fname = __METHOD__;
+		$options = array();
+		$join_conds = array();
+
+		$results = $databaseBase->select($tables, $vars, $conds, $fname, $options, $join_conds);
+		$invitations = array();
+		foreach ($results as $row) {
+			$invitations[] = self::constructFromDatabaseRow($row);
+		}
+
+		$databaseBase->freeResult($results);
+
+		return $invitations;
+	}
+ */
+
 	/**
 	 *
 	 * @param int $invitationCategoryId

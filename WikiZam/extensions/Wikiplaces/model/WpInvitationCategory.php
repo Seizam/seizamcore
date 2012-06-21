@@ -9,7 +9,7 @@ class WpInvitationCategory {
 			$wpic_monthly_limit,
 			$wpic_public;
 	
-	private $plansIds;
+	private $plans;
 	
 	private function __construct( $id, $start, $end, $desc, $monthlyLimit, $public ) {
 		
@@ -20,7 +20,7 @@ class WpInvitationCategory {
         $this->wpic_monthly_limit = intval($monthlyLimit);
         $this->wpic_public = ( $public !== 0 );
 		
-		$this->plansIds = null;
+		$this->plans = null;
 		
 	}
 	
@@ -51,115 +51,8 @@ class WpInvitationCategory {
 				$row->wpic_monthly_limit,
 				$row->wpic_public );
     }
-	
-/*
-	public static function newFromPlan($plan) {
-		
-        if (! $plan instanceof WpPlan) {
-            throw new MWException('Plan required.');
-        }
 
-        $dbr = wfGetDB(DB_SLAVE);
-        $result = $dbr->selectRow(
-				array ( 'wp_invitation_category', 'wp_wpi_wpp'),
-				'*',
-				array('wpip_wpp_id' => $plan->getId()),
-				__METHOD__,
-				array(),
-				array('wp_wpi_wpp' => array('INNER JOIN', 'wpic_id = wpip_wpic_id')) );
-
-        if ($result === false) {
-            // not found, so return null
-            return null;
-        }
-
-        return self::constructFromDatabaseRow($result);
-	}
- */
-	
-	public static function newPublicCategory() {
-		$dbr = wfGetDB(DB_SLAVE);
-		$now = $dbr->addQuotes(WpSubscription::now());
-        $results = $dbr->select(
-				array ( 'wp_invitation_category', 'wp_wpi_wpp'),
-				'*',
-				array(
-					'wpic_public' => 1,
-					'wpic_start_date <= '.$now,
-					'wpic_end_date > '.$now),
-				__METHOD__,
-				array(),
-				array('wp_wpi_wpp' => array('LEFT JOIN', 'wpic_id = wpip_wpic_id')) );
-
-        if ($results === false) {
-            // not found, so return null
-            return null;
-        }
-
-        $category = null;
-		foreach ($results as $row) {
-			
-			if ( $category == null ) {
-				$category = self::constructFromDatabaseRow($row);
-				$category->plansIds = array();
-				
-			} 
-				
-			if ( $row->wpip_wpp_id != null ) {
-				$category->plansIds[] = $row->wpip_wpp_id;
-			} 
-
-		}
-		return $category;
-	}
-	
-	public static function factoryAdminCategories() {
-		$dbr = wfGetDB(DB_SLAVE);
-		$now = $dbr->addQuotes(WpSubscription::now());
-        $results = $dbr->select(
-				array ( 'wp_invitation_category', 'wp_wpi_wpp'),
-				'*',
-				array(
-					'wpic_public' => 0,
-					'wpic_start_date <= '.$now,
-					'wpic_end_date > '.$now ),
-				__METHOD__,
-				array('ORDER BY' => 'wpic_id'),
-				array('wp_wpi_wpp' => array('LEFT JOIN', 'wpic_id = wpip_wpic_id')) );
-
-        if ($results === false) {
-            // not found, so return null
-            return array();
-        }
-
-        $categories = array();
-		$category = null;
-        foreach ($results as $row) {
-			
-			if ( $category == null ) {
-				$category = self::constructFromDatabaseRow($row);
-				$category->plansIds = array();
-				
-			} elseif( $category->getId() != $row->wpic_id) {
-				$categories[] = $category;
-				$category = self::constructFromDatabaseRow($row);
-				$category->plansIds = array();
-			}
-				
-			if ( $row->wpip_wpp_id != null ) {
-				$category->plansIds[] = $row->wpip_wpp_id;
-			} 
-
-		}
-		if ( $category != null ) {
-			$categories[] = $category;
-		}
-
-        return $categories;
-	}
-	
-	
-	/**
+		/**
 	 *
 	 * @return int 
 	 */
@@ -181,6 +74,145 @@ class WpInvitationCategory {
 	 */
 	public function getDescription() {
 		return $this->wpic_desc;
+	}
+	
+	/**
+	 *
+	 * @return array Array of Plans 
+	 */
+	public function getPlans() {
+		if ($this->plans == null) {
+			
+			$this->plans = array();
+			
+			$databaseBase = wfGetDB(DB_SLAVE);
+			$results = $databaseBase->select(
+				array ( 'wp_wpi_wpp', 'wp_plan'),
+				'*',
+				array( 'wpip_wpic_id' => $this->wpic_id ),
+				__METHOD__,
+				array(),
+				array( 'wp_plan' => array('INNER JOIN', 'wpip_wpp_id = wpp_id') ) );
+
+			if ($results !== false) {
+
+				foreach ($results as $row) {
+					$plan = WpPlan::constructFromDatabaseRow($row);
+					if ($plan != null) {
+						$this->plans[] = $plan;
+					}
+				}
+
+			}
+		}
+		return $this->plans;
+	}
+
+
+	public static function newFromId($id) {
+		return self::newFromConds(array( 'wpic_id' => $id )); 
+	}
+	
+	public static function newPublicCategory() {
+		$dbr = wfGetDB(DB_SLAVE);
+		$now = $dbr->addQuotes(WpSubscription::now());
+		return self::newFromConds(array(
+					'wpic_public' => 1,
+					'wpic_start_date <= ' . $now,
+					'wpic_end_date > ' . $now), $dbr);
+	}
+
+	/**
+	 *
+	 * @param array $conds SQL conditions
+	 * @param DatabaseBase $databaseBase Optional (default = DB_SLAVE)
+	 * @return null 
+	 */
+	private static function newFromConds($conds, $databaseBase = null) {
+		if ( $databaseBase == null ) {
+			$databaseBase = wfGetDB(DB_SLAVE);
+		}
+        $results = $databaseBase->select(
+				array ( 'wp_invitation_category', 'wp_wpi_wpp', 'wp_plan'),
+				'*',
+				$conds,
+				__METHOD__,
+				array(),
+				array(
+					'wp_wpi_wpp' => array('LEFT JOIN', 'wpic_id = wpip_wpic_id'),
+					'wp_plan' => array('LEFT JOIN', 'wpip_wpp_id = wpp_id')) );
+
+        if ($results === false) {
+            // not found, so return null
+            return null;
+        }
+
+        $category = null;
+		foreach ($results as $row) {
+			
+			if ( $category == null ) {
+				$category = self::constructFromDatabaseRow($row);
+				$category->plans = array();
+			} 
+				
+			if ( $row->wpp_id != null ) {
+				$plan = WpPlan::constructFromDatabaseRow($row);
+				if ($plan != null) {
+					$category->plans[] = $plan;
+				}
+			} 
+
+		}
+		return $category;
+	}
+	
+	public static function factoryAdminCategories() {
+		$dbr = wfGetDB(DB_SLAVE);
+		$now = $dbr->addQuotes(WpSubscription::now());
+        $results = $dbr->select(
+				array ( 'wp_invitation_category', 'wp_wpi_wpp', 'wp_plan'),
+				'*',
+				array(
+					'wpic_public' => 0,
+					'wpic_start_date <= '.$now,
+					'wpic_end_date > '.$now ),
+				__METHOD__,
+				array('ORDER BY' => 'wpic_id'),
+				array(
+					'wp_wpi_wpp' => array('LEFT JOIN', 'wpic_id = wpip_wpic_id'),
+					'wp_plan' => array('LEFT JOIN', 'wpip_wpp_id = wpp_id')) );
+
+        if ($results === false) {
+            // not found, so return null
+            return array();
+        }
+
+        $categories = array();
+		$category = null;
+        foreach ($results as $row) {
+			
+			if ( $category == null ) {
+				$category = self::constructFromDatabaseRow($row);
+				
+			} elseif( $category->getId() != $row->wpic_id) {
+				$categories[] = $category;
+				$category = self::constructFromDatabaseRow($row);
+				$category->plans = array();
+			}
+				
+			if ( $row->wpp_id != null ) {
+				$plan = WpPlan::constructFromDatabaseRow($row);
+				if ($plan != null) {
+					$category->plans[] = $plan;
+				}
+			} 
+
+		}
+		if ( $category != null ) {
+			$categories[] = $category;
+		}
+
+        return $categories;
 	}
 	
 }
