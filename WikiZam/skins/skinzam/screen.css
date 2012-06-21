@@ -99,12 +99,6 @@ sub { bottom: -0.25em; }
    ==  Lists
    -------------------------------------------------------------------------- */
 
-ul, ol { margin: 1em 0; padding: 0 0 0 40px;}
-li {
-    margin: 0;
-    padding: 0;
-
-}
 
 dd { margin: 0 0 0 40px; }
 #nav ul, #nav ol { list-style: none; margin: 0; padding: 0; }
@@ -116,45 +110,41 @@ dd { margin: 0 0 0 40px; }
 
 /* p */
 
-.mw-content-ltr > p, .mw-content-rtl > p {
+p, div.poem {
     margin: 0 0 24px 0;
+    line-height: 1.8em;
     
 }
 
-.mw-content-ltr > p:first-letter, .mw-content-rtl > p:first-letter {
+div#bodyContent p:first-letter {
     color: black;
     font-size: 16px;
 }
 
 
-.mw-content-ltr div.poem p, .mw-content-rtl div.poem p {
-    margin: 0 0 16px 0;
-    text-indent: 0;
-    line-height: 22px;
-}
-
-div.poem  p:first-letter {
+div#bodyContent div.prefsectiontip p:first-letter,
+div#bodyContent .edit_col_2 #help_zone p:first-letter{
     color: inherit;
     font-size: inherit;
 }
 
 /* Headers */
 
-.mw-content-ltr > h2, .mw-content-rtl > h2 {
+h2 {
     margin: 0 0 8px 0;
     padding: 0;
     font-family: "Gill Sans", Verdana, sans-serif;
     text-align: center;
-    font-weight: bold;
-    font-size: 16px;
+    font-weight: normal;
+    font-size: 18px;
     letter-spacing: 3px;
     word-spacing: 7px;
-    line-height: 16px;
+    line-height: 18px;
     text-transform: uppercase;
     color: #000;
 }
 
-.mw-content-ltr > h3, .mw-content-rtl > h3 {
+h3 {
     margin: 0 256px 8px 0;
     padding: 0;
     font-family: "Gill Sans", Verdana, sans-serif;
@@ -168,12 +158,12 @@ div.poem  p:first-letter {
     color: #000;
 }
 
-mw-content-rtl > h3 {
+mw-content-rtl h3 {
     margin: 0 0 8px 256px;
     text-align: right;
 }
 
-.mw-content-ltr > h4, .mw-content-rtl > h4 {
+h4 {
     margin: 0 192px 8px 36px;
     padding: 0;
     text-align: left;
@@ -186,12 +176,12 @@ mw-content-rtl > h3 {
     color: #ccced1;
 }
 
-.mw-content-rtl > h4 {
+.mw-content-rtl h4 {
     margin: 0 36px 8px 192px;
     text-align: right;
 }
 
-.mw-content-ltr > h5, .mw-content-rtl > h5 {
+h5 {
     margin: 0 36px;
     padding: 0;
     text-align: center;
@@ -206,20 +196,20 @@ mw-content-rtl > h3 {
 
 /* ul li */
 
-.mw-content-ltr > ul, .mw-content-rtl .mw-content-ltr > ul,
-.mw-content-ltr > ol, .mw-content-rtl .mw-content-ltr > ol {
+ul, .mw-content-ltr ul, .mw-content-rtl  ul,
+ol, .mw-content-ltr ol, .mw-content-rtl  ol {
     margin: 0 0 24px 0;
     padding: 0;
 }
 
-.mw-content-ltr > ul li, .mw-content-rtl > ul li{
+ul > li {
     margin: 0;
     padding: 0 0 6px 0;
     list-style-position: inside;
     list-style-type: square;
 }
 
-.mw-content-ltr > ol li, .mw-content-rtl .mw-content-ltr > ol li {
+ol > li  {
     margin: 0;
     padding: 0 0 6px 0;
     list-style-position: inside;
@@ -239,13 +229,17 @@ pre, .mw-code {
 }
 
 /* Last-Child fix */
-.mw-content-ltr > p:last-child, .mw-content-rtl > p:last-child,
-.mw-content-ltr > ul:last-child, .mw-content-rtl .mw-content-ltr > ul:last-child,
-.mw-content-ltr > ol:last-child, .mw-content-rtl .mw-content-ltr > ol:last-child,
-pre:last-child, .mw-code:last-child {
+p:last-child,
+ul:last-child,
+ol:last-child,
+pre:last-child,
+.mw-code:last-child {
     margin-bottom: 0;
 }
 
+p + p.printfooter {
+    border: 1px solid red;
+}
 
 
 
@@ -528,15 +522,8 @@ div#simpleSearch button#searchButton > img {
 /* Structural Elements */
 #userlogin h2,
 #userloginForm h2{
-    color: black;
-    background: none;
-    font-weight: normal;
-    margin: 0;
-    overflow: hidden;
-    padding-top: .5em;
-    padding-bottom: .17em;
     border-bottom: 1px solid #dad9d9;
-    width: auto;
+    padding-bottom: 8px;
 }
 
 #userlogin table td,
@@ -859,7 +846,7 @@ div.noarticletext {
 .informations ul,
 ul.warning,
 div.error ul {
-    margin: 0 0 0 16px;
+    margin: 0;
     padding: 0;
 }
 
@@ -1003,9 +990,15 @@ div.mw-content-ltr {
     width: 255px;
     text-align: center;
     margin: 0;
-    padding: 6px 5px;
+    padding: 10px 5px 9px;
     font-size: 18px;
     border: 1px solid #dedddd;
+    font-family: Georgia, Times, "Time New Roman", serif;
+    font-variant: normal;
+    font-size: 18px;
+    color: #4d4e4f;
+    word-spacing: 0;
+    letter-spacing: 0;
     border-bottom: 0;
     /* @embed */
     background-image: url(images/bg_title.png);
@@ -1044,6 +1037,8 @@ div.mw-content-ltr {
 }
 
 #header.project h2 {
+    font-family: Georgia, Times, "Time New Roman", serif;
+    text-transform: none;
     position: absolute;
     bottom: 22px;
     right: 22px;
@@ -1584,16 +1579,19 @@ a.feedlink:first-child {
 #footer .section p {
     font-style: italic;
     font-size: 1.2em;
+    margin: 0;
 }
 #footer ul {
     float: none;
-    padding-top: 5px;
+    padding-top: 16px;
     padding-left: 0;
 }
 #footer li {
     float: none;
     list-style:none;
     font-size: 0.75em;
+    margin: 0;
+    padding: 0;
     font-family: Arial, Helvetica, Verdana, sans-serif;
 }
 #footer li + li {
@@ -1860,29 +1858,10 @@ ul.gallery li {
    ==  LISTS {ChangeList (e.g. Special:History), Log (e.g. Special:Log),...}
    -------------------------------------------------------------------------- */
 
-body.mw-special-Contributions #bodyContent ul,
-body.mw-special-Log #bodyContent ul,
-body.mw-special-Watchlist #bodyContent ul,
-body.mw-special-Recentchanges #bodyContent ul,
-div#ms-quickwatchlist ul,
-div.mw-spcontent ul,
-div.mw-spcontent ol,
-body.ns--1 div#bodyContent>div.inside>ul
-{ 
-    margin: 0;
-    padding: 0;
-}
-
-body.mw-special-Contributions #bodyContent li,
-body.mw-special-Log #bodyContent li,
-body.mw-special-Watchlist #bodyContent li,
-body.mw-special-Recentchanges #bodyContent li,
-div#ms-quickwatchlist li,
+div#ms-quickwatchlist > li,
 div.mw-spcontent li,
 body.ns--1 div#bodyContent>div.inside>ul>li {
-    margin: 0;
     padding: 8px 16px;
-    list-style-position: inside;
     border-bottom: 1px solid #dad9d9;
 }
 
@@ -2163,6 +2142,10 @@ div.form_header table {
 
 
 .edit_col_2 #help_zone h4 {
+    color: black;
+    font-size: 13px;
+    letter-spacing: 0;
+    word-spacing: 0;
     margin: 0;
     border: 0;
 }
@@ -2170,7 +2153,6 @@ div.form_header table {
 .edit_col_2 #help_zone p {
     margin-top: 0.5em;
     margin-bottom: 18px;
-    font-style: italic;
     font-size: 0.9em;
     line-height: 1.65em;
 }
@@ -2424,10 +2406,6 @@ table.WpPlan td.wpp_name {
    ==  MySeizam
    -------------------------------------------------------------------------- */
 
-/*
-    QuickWatchList
-*/
-
 .mw-special-MySeizam div#ms-quickaccount {
     float: left;
     width: 180px;
@@ -2435,12 +2413,6 @@ table.WpPlan td.wpp_name {
     margin-bottom: 40px;
     border: 1px solid #debdbf;
     background: #f2e3e4;
-}
-
-body.mw-special-MySeizam div#ms-quickaccount>ul,
-body.mw-special-MySeizam div#ms-morelinks>ul{
-    margin: 0;
-    padding: 0;
 }
 
 body.mw-special-MySeizam div#ms-quickaccount>ul>li,
@@ -2478,7 +2450,8 @@ p.ms-wl-empty {
     border : 1px solid #dad9d9;
     border-left: none;
     border-right: none;
-    padding: 15px;
+    margin-top: 8px;
+    padding: 8px;
 }
 
 .mw-special-MySeizam div#ms-quickwatchlist *
@@ -2550,28 +2523,35 @@ p.ms-wl-empty {
     padding-top: 7px;
 }
 .slideshow li, .slideshow ul {
-    margin:0; padding:0;
+    margin:0;
+    padding:0;
     list-style: none;
 }
 .slideshow a { color: #4D4E4F; }
 
 .slideshow div {
     font-size: 14px;
-    letter-spacing: 1px;
-    word-spacing: 3px;
     padding-right: 8px;
     text-align: justify;
 }
 
 .slideshow h4 {
     display: inline;
+    font-size: 14px;
+    letter-spacing: 1px;
+    word-spacing: 3px;
+    font-style: normal;
     margin: 0;
     padding: 0;
     font-weight: bold;
+    color: black;
 }
 
 .slideshow p {
     display: inline;
+    letter-spacing: 1px;
+    word-spacing: 3px;
+    line-height: 1em;
     margin: 0;
     padding: 0;
 }
@@ -2712,7 +2692,7 @@ p.ms-wl-empty {
 }
 
 .block_join a:first-child {
-    margin-top: 35px;
+    margin-top: 36px;
     color: white;
     background: #110e0e none;
 }
@@ -2768,6 +2748,7 @@ p.ms-wl-empty {
 }
 .inside .third_parts h4 {
     margin:0;
+    color: #4d4e4f;
     padding-bottom: 12px;
     font-style: italic;
     font-weight: bold;
@@ -2870,6 +2851,12 @@ h2.diff-currentversion-title {
 
 h2.diff-currentversion-title:after {
     content: " :";
+}
+
+/* Category */
+
+div#mw-pages table li {
+    margin-left: 3px;
 }
 
 /* Other */
