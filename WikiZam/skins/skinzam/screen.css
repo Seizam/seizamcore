@@ -113,11 +113,14 @@ dd { margin: 0 0 0 40px; }
 p, div.poem {
     margin: 0 0 24px 0;
     line-height: 1.8em;
-    
+    text-align: justify;
+}
+
+div.mw-content-rtl p, div.mw-content-rtl div.poem {
+    text-align: right;
 }
 
 div#bodyContent p:first-letter {
-    color: black;
     font-size: 16px;
 }
 
@@ -237,10 +240,6 @@ pre:last-child,
     margin-bottom: 0;
 }
 
-p + p.printfooter {
-    border: 1px solid red;
-}
-
 
 
 /* -----------------------------------------------------------------------------
@@ -304,13 +303,6 @@ div.addthis_toolbox.addthis_32x32_style.vertical{
 
 figure { margin: 0; }
 
-
-
-/* -----------------------------------------------------------------------------
-   ==  Tables
-   -------------------------------------------------------------------------- */
-
-table { border-collapse: collapse; border-spacing: 0; }
 
 
 /* -----------------------------------------------------------------------------
@@ -446,6 +438,7 @@ div#simpleSearch button#searchButton > img {
     background-image: url(images/preferences-break.png);
     background-position: bottom right;
     background-repeat: no-repeat;
+    list-style-position: outside;
 }
 /* Sadly, IE6 won't understand this */
 #preftoc li:first-child {
@@ -521,9 +514,11 @@ div#simpleSearch button#searchButton > img {
 
 /* Structural Elements */
 #userlogin h2,
-#userloginForm h2{
+#userloginForm h2,
+h2.mw-specialpagesgroup {
     border-bottom: 1px solid #dad9d9;
     padding-bottom: 8px;
+    margin-bottom: 8px;
 }
 
 #userlogin table td,
@@ -707,11 +702,6 @@ img.thumbborder {
 }
 .hiddenStructure {
     display: none;
-}
-
-h2.mw-specialpagesgroup {
-    font-size: 1.2em;
-    border-bottom: 1px solid #dad9d9;
 }
 
 
@@ -962,10 +952,6 @@ div.license img {
     background-repeat: no-repeat;
     background-position: bottom center;
     overflow:hidden;
-}
-
-div.mw-content-ltr {
-    text-align: justify;
 }
 
 .block_medium {
@@ -1813,6 +1799,12 @@ h2#metadata{
     max-width: 820px;
     text-shadow: -1px 0 #dad9d9, 0 1px #dad9d9, 1px 0 #dad9d9, 0 -1px #dad9d9;
     margin: 0 0 0 6px;
+    text-align: left;
+    font-family: Georgia, Times, "Time New Roman", serif;
+    text-transform: none;
+    letter-spacing: 0;
+    word-spacing: 0;
+    line-height: inherit;
     font-style: italic;
     font-weight: normal;
     word-wrap: break-word;
@@ -1841,18 +1833,6 @@ body.action-submit div.mw-warning-with-logexcerpt {
     display: none;
 }
 
-/* -----------------------------------------------------------------------------
-   ==  ListFiles (gallery)
-   -------------------------------------------------------------------------- */
-
-ul.gallery {
-    text-align: center;
-}
-
-ul.gallery li {
-    margin: 12px;
-}
-
 
 /* -----------------------------------------------------------------------------
    ==  LISTS {ChangeList (e.g. Special:History), Log (e.g. Special:Log),...}
@@ -1860,13 +1840,16 @@ ul.gallery li {
 
 div#ms-quickwatchlist > li,
 div.mw-spcontent li,
-body.ns--1 div#bodyContent>div.inside>ul>li {
+body.ns--1 div#bodyContent>div.inside>ul>li,
+body.ns--1 div#bodyContent>div.inside>ol>li {
     padding: 8px 16px;
     border-bottom: 1px solid #dad9d9;
 }
 
+div#ms-quickwatchlist > li:hover,
+div.mw-spcontent li:hover,
 body.ns--1 div#bodyContent>div.inside>ul>li:hover,
-#ms-quickwatchlist li:hover{
+body.ns--1 div#bodyContent>div.inside>ol>li:hover{
     background-color: #f2f2f2;
     color: black;
 }
@@ -1916,6 +1899,21 @@ table.mw-enhanced-rc:hover {
     padding: 8px 0;
     background: #f2f2f2;
     border-top: none;
+}
+
+
+
+/* -----------------------------------------------------------------------------
+   ==  ListFiles (gallery)
+   -------------------------------------------------------------------------- */
+
+ul.gallery {
+    text-align: center;
+}
+
+body.ns--1 div#bodyContent div.inside ul.gallery li {
+    margin: 12px;
+    border: none;
 }
 
 
@@ -2192,9 +2190,12 @@ p.mw-htmlform-invalid-input.mw-htmlform-field-HTMLCheckField span.error {
    ==  Table pager (e.g. Special:ListFiles)
    -------------------------------------------------------------------------- */
 
+table.mw-specialpages-table, 
 table {
-    margin: 0 auto 0;
+    margin: 0 auto 24px;
     width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
 }
 
 table.TablePager {
@@ -2872,4 +2873,25 @@ div.mw-warning-with-logexcerpt {
     background-color: #f2f2f2;
     padding: 8px;
     margin-bottom: 16px;
+}
+
+div.mw-search-formheader li {
+    list-style-type: none;
+}
+
+fieldset#mw-searchoptions h4 {
+    color: #4d4e4f;
+    letter-spacing: 0;
+    word-spacing: 0;
+    font-style: normal;
+}
+
+fieldset#mw-searchoptions table {
+    margin: 0;
+    width: auto;
+    margin: 0 30px;
+}
+
+fieldset#mw-searchoptions table td {
+    padding: 4px;
 }

@@ -30,6 +30,11 @@ $messages['en'] = array(
     'po-artist' => 'Subscribed Artists',
     'po-owner' => 'Only Me',
 	'badaccess-groups' => '{{int:badaccess-group0}}',
+    'restriction-level-owner' => 'Owner only',
+    'restriction-level-user' => 'Registered Users',
+    'restriction-level-artist' => 'Subscribed Artists',
+    'restriction-read' => 'Read'
+    
 );
 
 /** French
@@ -53,4 +58,8 @@ $messages['fr'] = array(
     'po-user' => 'Les utilisateurs enregistrés',
     'po-artist' => 'Les artistes abonnés',
     'po-owner' => 'Seulement moi',
+    'restriction-level-owner' => 'Propriétaire seulement',
+    'restriction-level-user' => 'Utilisateurs enregistrés',
+    'restriction-level-artist' => 'Artistes abonnés',
+    'restriction-read' => 'Lire'
 );
