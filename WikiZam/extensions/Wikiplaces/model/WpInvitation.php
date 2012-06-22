@@ -8,7 +8,7 @@ class WpInvitation {
 			$wpi_from_user_id,
 			$wpi_date_created,
 			$wpi_date_last_used,
-			$wpi_counter,
+			$wpi_counter, // -1 = unlimited
 			$wpi_wpic_id;
 	
 	private $category;
@@ -51,6 +51,10 @@ class WpInvitation {
 				$row->wpi_wpic_id );
     }
 	
+	public function getId() {
+		return $this->wpi_id;
+	}
+	
 	/**
 	 *
 	 * @return string 
@@ -69,7 +73,65 @@ class WpInvitation {
 		}
 		return $this->category;
 	}
+	
+	/**
+	 *
+	 * @param User $userFrom User creating the code
+	 * @param string $to Email address to send to
+	 * @return boolean True = ok, false = error while sending
+	 */
+	public function sendCode($userFrom, $to) {
+		
+		$language = $userFrom->getOption('language');
 
+		$to = new MailAddress($to);
+		
+		$from = new MailAddress($userFrom);
+		
+        $subject = wfMessage('wp-mail-invitation-subj')->inLanguage($language)->text();
+
+        $body = wfMessage('wp-mail-invitation-body', $userFrom->getName(), $this->wpi_code)->inLanguage($language)->text();
+        $body .= wfMessage('wp-mail-footer')->inLanguage($language)->text();
+		
+		try {	
+			UserMailer::send( 
+					$to,
+					$from, // from
+					$subject,
+					$body );
+		} catch (Exception $e) {
+            wfDebugLog('wikiplaces', 'WpInvitation::sendCode: ERROR SENDING EMAIL from ' . $from . '", to '
+                    . $to . ', code ' . $code);
+			return false;
+        }
+
+        return true;
+	}
+
+	public function consume() {
+		
+		$dbw = wfGetDB(DB_MASTER);
+		$dbw->begin();
+
+		$success = $dbw->update(
+				'wp_invitation',
+				array('wpi_counter = wpi_counter - 1'),
+				array('wpi_id' => $this->wpi_id));
+
+		$dbw->commit();
+
+		if (!$success) {
+			throw new MWException('Error while updating Invitation record.');
+		}
+		return true;
+		
+	}
+	
+	/**
+	 *
+	 * @param int $userId
+	 * @return string 
+	 */
 	public static function generateCode($userId=0) {
 
 		$dt = new DateTime('now', new DateTimeZone('GMT'));
@@ -94,6 +156,12 @@ class WpInvitation {
 		
 	}
 	
+	/**
+	 *
+	 * @param User $user
+	 * @param WpInvitationCategory $invitationCategory
+	 * @return int
+	 */
 	public static function countMonthlyInvitations($user, $invitationCategory) {
 
 		if ( ! $user instanceof User ) {
@@ -143,7 +211,7 @@ class WpInvitation {
 		$vars = array( '*' );
 		$conds = array(
 					'wpi_code' => $code,
-					'wpi_counter > 0');
+					'wpi_counter != 0');
 		$fname = __METHOD__;
 		$options = array();
 		$join_conds = array('wp_invitation_category' => array('INNER JOIN', 
@@ -160,6 +228,33 @@ class WpInvitation {
 		
 		$invitation = self::constructFromDatabaseRow($result);
 		$invitation->category = WpInvitationCategory::constructFromDatabaseRow($result);
+		
+		return $invitation;
+	}
+	
+	/**
+	 * Contruct the invitation having this code.
+	 * @param String $code
+	 * @return WpInvitation 
+	 */
+	public static function newFromCode($code) {
+		
+		$databaseBase = wfGetDB(DB_SLAVE);
+
+		$tables = array( 'wp_invitation' );
+		$vars = array( '*' );
+		$conds = array( 'wpi_code' => $code );
+		$fname = __METHOD__;
+		$options = array();
+		$join_conds = array();
+		
+		$result = $databaseBase->selectRow($tables, $vars, $conds, $fname, $options, $join_conds);
+		if ($result === false) {
+			// not found, so return null
+			return null;
+		}
+		
+		$invitation = self::constructFromDatabaseRow($result);
 		
 		return $invitation;
 	}
@@ -196,7 +291,7 @@ class WpInvitation {
 	 * @param string $code
 	 * @param string $toEmail
 	 * @param int $counter
-	 * @return boolean|\self 
+	 * @return WpInvitation 
 	 */
 	public static function create( $invitationCategoryId, $fromUserId, $code, $toEmail=null, $counter=1) {
 
@@ -224,7 +319,7 @@ class WpInvitation {
         $dbw->commit();
 
         if (!$success) {
-            return false;
+            return null;
         }
 
         return new self($id, $code, $toEmail, $fromUserId, $created, null, $counter, $invitationCategoryId);

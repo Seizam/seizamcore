@@ -133,6 +133,14 @@ class WpPlan {
     public function getMonthlyBandwidth() {
         return $this->wpp_monthly_bandwidth;
     }
+	
+	/**
+	 *
+	 * @return boolean 
+	 */
+	public function isInvitationRequired() {
+		return $this->wpp_invitation_only;
+	}
 
         /**
 	 * Returns the renewal suggested plan. Please note that the returned plan
@@ -193,6 +201,7 @@ class WpPlan {
 		if ( ($this->wpp_start_date > $now) || ($this->wpp_end_date < $now) ) {
 			return false;
 		}
+		
 		if ( $this->wpp_invitation_only ) {
 			if ( (! $user instanceof User) || (! $invitation instanceof WpInvitation) ) {
 				return false;
@@ -209,6 +218,8 @@ class WpPlan {
 			}
 			return false;
 		}
+		
+		return true;
 
 	}
 	

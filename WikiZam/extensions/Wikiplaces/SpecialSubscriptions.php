@@ -289,10 +289,14 @@ class SpecialSubscriptions extends SpecialPage {
         // displayNew() checked $user->canSubscribe() and validatePlanId() checked $user->canSubscribeTo()
         // so now, the subscription can be really done
 
-        $subscription = WpSubscription::subscribe($this->getUser(), $plan);
+        $subscription = WpSubscription::subscribe($this->getUser(), $plan, $this->invitation);
         if ($subscription == null) {
             return wfMessage('sz-internal-error')->text();
         }
+		
+		if ( ( $this->invitation instanceof WpInvitation ) && ( $plan->isInvitationRequired()) ){
+			$this->invitation->consume();
+		}
 
         $this->just_subscribed = $subscription;
 

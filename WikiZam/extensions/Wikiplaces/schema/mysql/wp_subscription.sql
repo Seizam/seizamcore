@@ -16,6 +16,6 @@ CREATE TABLE IF NOT EXISTS `wp_subscription` (
   `wps_active` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '0 = not active, 1 = currently in use',
   `wps_renew_wpp_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '0 = no next plan, x = wpp_id of the next plan when this subscription ends: IT HAS TO RESPECT CURRENT PLAN QUOTAS',
   `wps_renewal_notified` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '0 = no email sent, 1 = email already sent',
-  `wps_wpi_id` int(10) unsigned DEFAULT NULL COMMENT 'Invitation code used',
+  `wps_wpi_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'if != 0 : invitation primary key that has been used when subscribing',
   PRIMARY KEY (`wps_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=binary COMMENT='Wikiplace subscriptions table';

@@ -146,6 +146,13 @@ to credit your account.',
      */
     'wpm-renewal-ok-subj' => 'Your subscription has been renewed.',
     'wpm-renewal-ok-body' => '{{int:wpm-activation-body|$1|$2|$3}}',
+	
+	'wp-mail-invitation-subj' => 'An artist sent you an invitation',
+	'wp-mail-invitation-body' => 'Hi,
+
+$1 just created an invitation code for you: $2.
+
+Using this code, you can access special offers. Try out! {{canonicalurl:{{#special:Subscriptions/invitation}}}}',
 );
 
 /*

@@ -11,7 +11,9 @@ class WpSubscription {
     $wps_end_date, // datetime
     $wps_active, // tinyint(3) unsigned
     $wps_renew_wpp_id, // int(10) unsigned
-    $wps_renewal_notified; // tinyint(3) unsigned
+    $wps_renewal_notified, // tinyint(3) unsigned
+	$wps_wpi_id;
+	
     private $attributes_to_update;
 
     /**
@@ -42,7 +44,7 @@ class WpSubscription {
      * @param type $monthlyBandwidth 
      */
     private function __construct(
-    $id, $planId, $buyerUserId, $transactionId, $transactionStatus, $startDate, $endDate, $active, $renewPlanId, $renewalNotified) {
+    $id, $planId, $buyerUserId, $transactionId, $transactionStatus, $startDate, $endDate, $active, $renewPlanId, $renewalNotified, $invitationId) {
 
         $this->wps_id = intval($id);
         $this->wps_wpp_id = intval($planId);
@@ -54,6 +56,7 @@ class WpSubscription {
         $this->wps_active = $active !== '0';
         $this->wps_renew_wpp_id = intval($renewPlanId);
         $this->wps_renewal_notified = $renewalNotified !== '0';
+		$this->wps_wpi_id = intval($invitationId);
 
         $this->attributes_to_update = array();
     }
@@ -459,11 +462,12 @@ class WpSubscription {
         // wps_start_date and wps_end_date can be null, but nothing else
         if (!isset($row->wps_id) || !isset($row->wps_wpp_id) || !isset($row->wps_buyer_user_id) ||
                 !isset($row->wps_tmr_id) || !isset($row->wps_tmr_status) ||
-                !isset($row->wps_active) || !isset($row->wps_renew_wpp_id) || !isset($row->wps_renewal_notified)) {
+                !isset($row->wps_active) || !isset($row->wps_renew_wpp_id) || !isset($row->wps_renewal_notified) ||
+				!isset($row->wps_wpi_id)) {
             throw new MWException('Cannot construct the Subscription from the supplied row (missing field).');
         }
 
-        return new self($row->wps_id, $row->wps_wpp_id, $row->wps_buyer_user_id, $row->wps_tmr_id, $row->wps_tmr_status, $row->wps_start_date, $row->wps_end_date, $row->wps_active, $row->wps_renew_wpp_id, $row->wps_renewal_notified);
+        return new self($row->wps_id, $row->wps_wpp_id, $row->wps_buyer_user_id, $row->wps_tmr_id, $row->wps_tmr_status, $row->wps_start_date, $row->wps_end_date, $row->wps_active, $row->wps_renew_wpp_id, $row->wps_renewal_notified, $row->wps_wpi_id);
     }
 
     /**
@@ -677,15 +681,21 @@ class WpSubscription {
      * WARNING, you should ensure the user can subscribe before calling this: use canSubscribe() and canSubscribeTo()
      * @param User $use The user who buy the plan, and will use it 
      * @param WpPlan $plan
+	 * @param WpInvitation $invitation Optional
      * @return WpSubscription the newly created subscription if ok, or null if an error occured (db error)
      */
-    public static function subscribe($user, $plan) {
+    public static function subscribe($user, $plan, $invitation = null) {
 
         if (($user === null) || !($user instanceof User) ||
                 ($plan === null) || !($plan instanceof WpPlan)) {
             throw new MWException('Cannot subscribe, invalid argument.');
         }
 
+		$invitationId = 0;
+		if ($invitation instanceof WpInvitation) {
+			$invitationId = $invitation->getId();
+		}
+		
         $user_id = $user->getId();
         $db_master = $dbw = wfGetDB(DB_MASTER);
 
@@ -711,7 +721,9 @@ class WpSubscription {
                                 $now, // start
                                 $end, // end
                                 true, // active
-                                $renewal_plan_id, false, // no email sent about renewal
+                                $renewal_plan_id,
+								false, // no email sent about renewal
+								$invitationId,
                                 $db_master
 				);
                 if ($sub == null) {
@@ -732,6 +744,7 @@ class WpSubscription {
                                 false, // not active
                                 WPP_ID_NORENEW, // renewal, this value need to be updated as soon as we know the start date
                                 false, // no email sent about renewal
+								$invitationId,
                                 $db_master
 				);
         }
@@ -797,10 +810,11 @@ class WpSubscription {
      * @param type $db_master The wfGetDB(DB_MASTER) if already have (avoid multiple master db connection)
      * @return the created WpSubscription, or null if a db error occured
      */
-    private static function create($planId, $buyerUserId, $transactionId, $transactionStatus, $startDate, $endDate, $active, $renewPlanId, $renewalNotified, $db_master = null) {
+    private static function create($planId, $buyerUserId, $transactionId, $transactionStatus, $startDate, $endDate, $active, $renewPlanId, $renewalNotified, $invitationId, $db_master = null) {
 
         if (($planId === null) || ($buyerUserId === null) || ($transactionId === null) ||
-                ($transactionStatus === null) || ($active === null) || ($renewPlanId === null)) {
+                ($transactionStatus === null) || ($active === null) || ($renewPlanId === null) ||
+				($invitationId === null) ) {
             throw new MWException('Cannot create Subscription, missing argument.');
         }
 
@@ -808,7 +822,8 @@ class WpSubscription {
                 ( ($startDate !== null) && !preg_match('/^(\d{4})\-(\d\d)\-(\d\d) (\d\d):(\d\d):(\d\d)$/D', $startDate) ) ||
                 ( ($endDate !== null) && !preg_match('/^(\d{4})\-(\d\d)\-(\d\d) (\d\d):(\d\d):(\d\d)$/D', $endDate) ) ||
                 !is_bool($active) || !is_bool($renewalNotified) ||
-                !is_numeric($renewPlanId)) {
+                !is_numeric($renewPlanId) ||
+				!is_numeric($invitationId) ) {
             throw new MWException('Cannot create Subscription, invalid argument.');
         }
 
@@ -828,7 +843,8 @@ class WpSubscription {
             'wps_end_date' => $endDate,
             'wps_active' => $active ? 1 : 0,
             'wps_renew_wpp_id' => $renewPlanId,
-            'wps_renewal_notified' => $renewalNotified ? 1 : 0
+            'wps_renewal_notified' => $renewalNotified ? 1 : 0,
+			'wps_wpi_id' => $invitationId
                 ));
 
         // Setting id from auto incremented id in DB
@@ -842,7 +858,7 @@ class WpSubscription {
 
         return new self($id, $planId, $buyerUserId,
                         $transactionId, $transactionStatus,
-                        $startDate, $endDate, $active, $renewPlanId, $renewalNotified);
+                        $startDate, $endDate, $active, $renewPlanId, $renewalNotified, $invitationId);
     }
 
     /**
@@ -885,7 +901,7 @@ class WpSubscription {
      */
     public static function now($seconds = 0, $minutes = 0, $hours = 0, $days = 0, $months = 0) {
 
-        if (!is_int($seconds) || !is_int($minutes) || !is_int($hours) || !is_int($days)) {
+        if (!is_int($seconds) || !is_int($minutes) || !is_int($hours) || !is_int($days) || !is_int($months)) {
             throw new MWException("Cannot compute 'now with delay', invalid argument.");
         }
 

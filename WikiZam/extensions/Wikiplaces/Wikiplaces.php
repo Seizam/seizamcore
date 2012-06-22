@@ -51,6 +51,7 @@ $wgAutoloadClasses['WpSubpageTemplate'] = $_dir . 'model/HtmlTemplateField.php';
 $wgAutoloadClasses['WpInvitation'] = $_dir . 'model/WpInvitation.php';
 $wgAutoloadClasses['WpInvitationCategory'] = $_dir . 'model/WpInvitationCategory.php';
 $wgAutoloadClasses['WpInvitationsTablePager'] = $_dir . 'model/WpInvitationsTablePager.php';
+$wgAutoloadClasses['WpInvitationsTablePagerAdmin'] = $_dir . 'model/WpInvitationsTablePager.php';
 $wgAutoloadClasses['SpecialInvitations'] = $_dir . 'SpecialInvitations.php';
 
 # i18n

@@ -6,19 +6,17 @@ class WpInvitationCategory {
 			$wpic_start_date,
 			$wpic_end_date,
 			$wpic_desc,
-			$wpic_monthly_limit,
-			$wpic_public;
+			$wpic_monthly_limit;
 	
 	private $plans;
 	
-	private function __construct( $id, $start, $end, $desc, $monthlyLimit, $public ) {
+	private function __construct( $id, $start, $end, $desc, $monthlyLimit ) {
 		
 		$this->wpic_id = intval($id);
         $this->wpic_start_date = $start;
         $this->wpic_end_date = $end;
         $this->wpic_desc = $desc;
         $this->wpic_monthly_limit = intval($monthlyLimit);
-        $this->wpic_public = ( $public !== 0 );
 		
 		$this->plans = null;
 		
@@ -38,8 +36,7 @@ class WpInvitationCategory {
 				|| !isset($row->wpic_start_date)
 				|| !isset($row->wpic_end_date)
 				|| !isset($row->wpic_desc)
-				|| !isset($row->wpic_monthly_limit)
-				|| !isset($row->wpic_public) ) {
+				|| !isset($row->wpic_monthly_limit) ) {
             throw new MWException('Missing field in SQL row.');
         }
 
@@ -48,8 +45,7 @@ class WpInvitationCategory {
 				$row->wpic_start_date,
 				$row->wpic_end_date,
 				$row->wpic_desc,
-				$row->wpic_monthly_limit,
-				$row->wpic_public );
+				$row->wpic_monthly_limit);
     }
 
 		/**
@@ -108,16 +104,24 @@ class WpInvitationCategory {
 		return $this->plans;
 	}
 
-
+	/**
+	 *
+	 * @param int $id
+	 * @return WpInvitationCategory 
+	 */
 	public static function newFromId($id) {
 		return self::newFromConds(array( 'wpic_id' => $id )); 
 	}
 	
+	/**
+	 *
+	 * @return WpInvitationCategory 
+	 */
 	public static function newPublicCategory() {
 		$dbr = wfGetDB(DB_SLAVE);
 		$now = $dbr->addQuotes(WpSubscription::now());
 		return self::newFromConds(array(
-					'wpic_public' => 1,
+					'wpic_monthly_limit > 0',
 					'wpic_start_date <= ' . $now,
 					'wpic_end_date > ' . $now), $dbr);
 	}
@@ -126,7 +130,7 @@ class WpInvitationCategory {
 	 *
 	 * @param array $conds SQL conditions
 	 * @param DatabaseBase $databaseBase Optional (default = DB_SLAVE)
-	 * @return null 
+	 * @return WpInvitationCategory  
 	 */
 	private static function newFromConds($conds, $databaseBase = null) {
 		if ( $databaseBase == null ) {
@@ -166,14 +170,17 @@ class WpInvitationCategory {
 		return $category;
 	}
 	
-	public static function factoryAdminCategories() {
+	/**
+	 *
+	 * @return array Array of WpInvitationCategory 
+	 */
+	public static function factoryAllAvailableCategories() {
 		$dbr = wfGetDB(DB_SLAVE);
 		$now = $dbr->addQuotes(WpSubscription::now());
         $results = $dbr->select(
 				array ( 'wp_invitation_category', 'wp_wpi_wpp', 'wp_plan'),
 				'*',
 				array(
-					'wpic_public' => 0,
 					'wpic_start_date <= '.$now,
 					'wpic_end_date > '.$now ),
 				__METHOD__,

@@ -11,6 +11,8 @@ class SpecialInvitations extends SpecialPage {
 	private $msgType = null;
     private $msgKey = null;
 	
+	private $selectedCategory = null;
+	
     public function __construct() {
         parent::__construct(self::TITLE_NAME, WP_ACCESS_RIGHT);
     }
@@ -65,7 +67,6 @@ class SpecialInvitations extends SpecialPage {
 	private function displayCreateInvitationForm() {
 		
 		$user = $this->getUser();
-		$output = $this->getOutput();
 				
 		if ( $user->isAllowed(WP_ADMIN_RIGHT)) {
 			
@@ -74,14 +75,15 @@ class SpecialInvitations extends SpecialPage {
 			if ($inviteForm->show()) {
 				
 				$this->displayInformation( wfMessage('wp-invite-success')->text() );
+				$inviteForm->setBlockSubmit(true);
 				$inviteForm->displayForm('');
 
 			}
 			
-		} else {
+		} elseif( WpSubscription::newActiveByUserId($user->getId()) instanceof WpSubscription ) {
 			
 			$category = WpInvitationCategory::newPublicCategory();
-			if ($category==null){
+			if ( ! $category instanceof WpInvitationCategory ){
 				$this->displayInformation( wfMessage('wp-invite-no')->text() );
 				return;
 			}
@@ -106,21 +108,33 @@ class SpecialInvitations extends SpecialPage {
 					$this->displayInformation( wfMessage('wp-invite-nomore', $limit)->parse() );
 				}
 			}
+			
+		} else {
+			
+			$this->displayInformation( wfMessage('wp-no-active-sub')->parse() );
+			
 		}
 		
 	}
 	
 	public function displayInformation($info) {
+		
 		$this->getOutput()->addHTML(Html::rawElement('div', array('class' => "informations"), $info));
+		
 	}
 	
 	private function displayInvitationsList() {
 		
 		// display invitiation list of this user
-		$inviteList = new WpInvitationsTablePager();
+		$user = $this->getUser();
+		if ( $user->isAllowed(WP_ADMIN_RIGHT)) {
+			$inviteList = new WpInvitationsTablePagerAdmin();
+		} else {
+			$inviteList = new WpInvitationsTablePager();
+		}
 		$inviteList->setSelectConds(array(
-			'wpi_from_user_id' => $this->getUser()->getID(),
-			'wpi_counter > 0',
+			'wpi_from_user_id' => $user->getID(),
+			// 'wpi_counter > 0',
 				));
 		$this->getOutput()->addHTML($inviteList->getWholeHtml());
 		
@@ -159,9 +173,9 @@ class SpecialInvitations extends SpecialPage {
 			),
 		);
 		
-		$categories = WpInvitationCategory::factoryAdminCategories();
+		$categories = WpInvitationCategory::factoryAllAvailableCategories();
 		foreach ( $categories as $category ) {
-            $formDescriptor['Category']['options'][$category->getDescription()] = $category->getId();
+            $formDesc['Category']['options'][$category->getDescription()] = $category->getId();
 		}
 		
 		$htmlForm = new HTMLFormS($formDesc);
@@ -200,15 +214,29 @@ class SpecialInvitations extends SpecialPage {
 	public function processAdminInvite($formData) {
 		
 		$user = $this->getUser();
+		$userId = $user->getId();
 		
 		$email = null;
 		if ($formData['Email']!='') {
 			$email = $formData['Email'];
 		}
 		
-		//WpInvitation::create($invitationCategoryId, $fromUserId, $toEmail)
+		$category = WpInvitationCategory::newFromId($formData['Category']);
+		if (! $category instanceof WpInvitationCategory) {
+			return wfMessage('sz-internal-error')->text();
+		}
+		
+		$invitation = WpInvitation::create($category->getId(), $userId, $formData['Code'], $email, $formData['Counter']);
+		if ( ! $invitation instanceof WpInvitation ){
+			return wfMessage('sz-internal-error')->text();
+		}
+		
+		if ($email != null) {
+			$invitation->sendCode($user, $email);
+		}
 
 		return true; // say: all ok
+		
 	}
 	
 	public function processPublicInvite($formData) {
@@ -222,7 +250,7 @@ class SpecialInvitations extends SpecialPage {
 		}
 		
 		$publicCategory = WpInvitationCategory::newPublicCategory();
-		if ($publicCategory == null) {
+		if (! $publicCategory instanceof WpInvitationCategory) {
 			return wfMessage('sz-internal-error')->text();
 		}
 		
@@ -230,14 +258,23 @@ class SpecialInvitations extends SpecialPage {
 		if ($invitation == null){
 			return wfMessage('sz-internal-error')->text();
 		}
+		
+		if ($email != null) {
+			$invitation->sendCode($user, $email);
+		}
 
 		return true; // say: all ok
 	}
 	
 	public function validateCategory($id, $alldata) {
 		if (!preg_match('/^[0-9]{1,10}$/', $id)) {
-            return 'Error: Invalid Category ID';
+            return 'Error: Invalid Category';
         }
+		$category = WpInvitationCategory::newFromId($id);
+		if ( ! $category instanceof WpInvitationCategory) {
+			return 'Error: Invalid Category';
+		}
+		$this->selectedCategory = $category;
         return true;
     }
 	
@@ -245,12 +282,16 @@ class SpecialInvitations extends SpecialPage {
 		if (!preg_match('/^[0-9A-Z]+$/', $code)) {
 			return 'Error: Code should be alphanumeric uppercased';
 		}
+		$invitation = WpInvitation::newFromCode($code);
+		if ( $invitation instanceof WpInvitation ) {
+			return 'Error: This code already exists.';
+		}
         return true;
     }
 	
 	public function validateCounter($counter, $alldata) {
-		if (!preg_match('/^([1-9])([0-9]{0,9})$/', $counter)) {
-            return 'Error: Counter must be numeric > 0';
+		if ( ($counter!='-1') && (!preg_match('/^([1-9])([0-9]{0,9})$/', $counter)) ) {
+            return 'Error: Must be -1 or integer > 0';
         }
         return true;
     }
