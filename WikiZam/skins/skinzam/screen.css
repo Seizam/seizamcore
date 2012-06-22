@@ -111,7 +111,7 @@ dd { margin: 0 0 0 40px; }
 /* p */
 
 p, div.poem {
-    margin: 0 0 24px 0;
+    margin: 0 0 16px 0;
     line-height: 1.8em;
     text-align: justify;
 }
@@ -134,7 +134,7 @@ div#bodyContent .edit_col_2 #help_zone p:first-letter{
 /* Headers */
 
 h2 {
-    margin: 0 0 8px 0;
+    margin: 0 0 16px 0;
     padding: 0;
     font-family: "Gill Sans", Verdana, sans-serif;
     text-align: center;
@@ -148,7 +148,7 @@ h2 {
 }
 
 h3 {
-    margin: 0 256px 8px 0;
+    margin: 0 256px 12px 0;
     padding: 0;
     font-family: "Gill Sans", Verdana, sans-serif;
     text-align: left;
@@ -167,7 +167,7 @@ mw-content-rtl h3 {
 }
 
 h4 {
-    margin: 0 192px 8px 36px;
+    margin: 0 192px 4px 36px;
     padding: 0;
     text-align: left;
     font-weight: normal;
@@ -180,12 +180,12 @@ h4 {
 }
 
 .mw-content-rtl h4 {
-    margin: 0 36px 8px 192px;
+    margin: 0 36px 4px 192px;
     text-align: right;
 }
 
 h5 {
-    margin: 0 36px;
+    margin: 0;
     padding: 0;
     text-align: center;
     font-weight: normal;
@@ -201,7 +201,7 @@ h5 {
 
 ul, .mw-content-ltr ul, .mw-content-rtl  ul,
 ol, .mw-content-ltr ol, .mw-content-rtl  ol {
-    margin: 0 0 24px 0;
+    margin: 0 0 16px 0;
     padding: 0;
 }
 
@@ -228,7 +228,7 @@ pre, .mw-code {
     line-height: 20px;
     overflow: auto;
     padding: 12px;
-    margin: 0 0 24px 0;
+    margin: 0 0 16px 0;
 }
 
 /* Last-Child fix */
@@ -239,6 +239,10 @@ pre:last-child,
 .mw-code:last-child {
     margin-bottom: 0;
 }
+
+/* Margin fix */
+p + h2, ul + h2, ol + h2, div.poem + h2, table + h2, pre + h2, code + h2 { margin-top: 48px}
+p + h3, ul + h3, ol + h3, div.poem + h3, table + h3, pre + h3, code + h3 { margin-top: 32px}
 
 
 
@@ -1308,6 +1312,12 @@ html.client-nojs #bodyContent>.inside {
     display: inline-block;
     margin: 0;
     padding: 0;
+}
+
+#contentOther h5 {
+    word-spacing: 0;
+    letter-spacing: 0;
+    font-style: normal;
 }
 
 #contentOther .inside>div {
