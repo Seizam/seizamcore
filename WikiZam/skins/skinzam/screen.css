@@ -199,8 +199,8 @@ h5 {
 
 /* ul li */
 
-ul, .mw-content-ltr ul, .mw-content-rtl  ul,
-ol, .mw-content-ltr ol, .mw-content-rtl  ol {
+ul, .mw-content-ltr ul, .mw-content-rtl ul,
+ol, .mw-content-ltr ol, .mw-content-rtl ol {
     margin: 0 0 16px 0;
     padding: 0;
 }
@@ -216,6 +216,16 @@ ol > li  {
     margin: 0;
     padding: 0 0 6px 0;
     list-style-position: inside;
+}
+
+li ul, .mw-content-ltr li ul, .mw-content-rtl li ul,
+li ol, .mw-content-ltr li ol, .mw-content-rtl li ol {
+    margin: 6px 0 0 32px;
+}
+
+li > ul > li,
+li > ol > li {
+    list-style-type: inherit;
 }
 
 /* pre */
@@ -236,7 +246,8 @@ p:last-child,
 ul:last-child,
 ol:last-child,
 pre:last-child,
-.mw-code:last-child {
+.mw-code:last-child,
+table:last-child {
     margin-bottom: 0;
 }
 
@@ -2904,4 +2915,10 @@ fieldset#mw-searchoptions table {
 
 fieldset#mw-searchoptions table td {
     padding: 4px;
+}
+
+#mw-subcategories + #mw-pages {
+    margin-top: 18px;
+    border-top: 1px solid #dad9d9;
+    padding-top: 18px;
 }
