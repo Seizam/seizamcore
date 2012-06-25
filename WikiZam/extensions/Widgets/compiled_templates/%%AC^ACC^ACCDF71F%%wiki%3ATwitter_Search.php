@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.18-dev, created on 2012-06-20 19:47:33
+<?php /* Smarty version 2.6.18-dev, created on 2012-06-25 10:27:31
          compiled from wiki:Twitter_Search */ ?>
 <?php require_once(SMARTY_CORE_DIR . 'core.load_plugins.php');
 smarty_core_load_plugins(array('plugins' => array(array('function', 'counter', 'wiki:Twitter_Search', 1, false),array('modifier', 'escape', 'wiki:Twitter_Search', 6, false),array('modifier', 'default', 'wiki:Twitter_Search', 6, false),array('modifier', 'validate', 'wiki:Twitter_Search', 11, false),)), $this); ?>

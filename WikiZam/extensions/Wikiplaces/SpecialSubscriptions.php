@@ -46,7 +46,7 @@ class SpecialSubscriptions extends SpecialPage {
             $explosion = explode(':', $par);
             if (count($explosion) == 1) {
                 $this->action = $explosion[0];
-                $this->planName = null;
+                $this->planName = $request->getText('plan', null);
             } else if (count($explosion) == 2) {
                 $this->action = $explosion[0];
                 $this->planName = $explosion[1];

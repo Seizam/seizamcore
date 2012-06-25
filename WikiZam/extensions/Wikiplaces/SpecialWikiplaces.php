@@ -53,7 +53,7 @@ class SpecialWikiplaces extends SpecialPage {
 			$explosion = explode(':', $par);
 			if (count($explosion) == 1) {
 				$this->action = $explosion[0];
-				$this->name = null;
+                $this->name = $this->getRequest()->getText('name', null);
 			} else if (count($explosion) == 2) {
 				$this->action = $explosion[0];
 				$this->name = $explosion[1];

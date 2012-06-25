@@ -47,8 +47,10 @@ class SpecialMainpage extends SpecialPage {
      * Special page entry point
      */
     public function execute($par) {
-        $this->setHeaders();
         $output = $this->getOutput();
+        $output->setArticleRelated( false );
+		$output->setPageTitle( $this->getDescription() );
+        
         $user = $this->getUser();
 
         $output->addHTML($this->displaySlideshow());

@@ -88,10 +88,10 @@ class WpInvitation {
 		
 		$from = new MailAddress($userFrom);
 		
-        $subject = wfMessage('wp-mail-invitation-subj')->inLanguage($language)->text();
+        $subject = wfMessage('wpm-invitation-subj')->inLanguage($language)->text();
 
-        $body = wfMessage('wp-mail-invitation-body', $userFrom->getName(), $this->wpi_code)->inLanguage($language)->text();
-        $body .= wfMessage('wp-mail-footer')->inLanguage($language)->text();
+        $body = wfMessage('wpm-invitation-body', $userFrom->getName(), $this->wpi_code)->inLanguage($language)->text();
+        $body .= wfMessage('wpm-footer')->inLanguage($language)->text();
 		
 		try {	
 			UserMailer::send( 
