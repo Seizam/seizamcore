@@ -257,6 +257,7 @@ p + h3, ul + h3, ol + h3, div.poem + h3, table + h3, pre + h3, code + h3 { margi
 
 
 
+
 /* -----------------------------------------------------------------------------
    ==  Embedded content
    -------------------------------------------------------------------------- */
@@ -274,7 +275,8 @@ svg:not(:root) { overflow: hidden; }
 /* Widgets */
 iframe, video, audio {
     border: 1px solid #dad9d9;
-    max-width: 100%
+    max-width: 100%;
+    margin-bottom: 18px;
 }
 
 div.addthis_toolbox.vertical a{
@@ -794,14 +796,12 @@ input:invalid, textarea:invalid { background-color: #f2e3e4; }
     float:right;
     clear:right;
     margin-left: 18px;
-    margin-bottom: 18px;
 }
 
 .left {
     float:left;
     clear:left;
     margin-right: 18px;
-    margin-bottom: 18px;
 }
 
 .sread {
@@ -825,6 +825,7 @@ div.clearright {
 }
 div.column {
     overflow: hidden;
+    margin-bottom: 18px;
 }
 div.column.frame.left {
     border-right : 1px solid #dad9d9;
