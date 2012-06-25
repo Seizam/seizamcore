@@ -254,6 +254,8 @@ table:last-child {
 /* Margin fix */
 p + h2, ul + h2, ol + h2, div.poem + h2, table + h2, pre + h2, code + h2 { margin-top: 48px}
 p + h3, ul + h3, ol + h3, div.poem + h3, table + h3, pre + h3, code + h3 { margin-top: 32px}
+h4 + ul, .mw-content-ltr h4 + ul, .mw-content-rtl h4 + ul,
+h4 + ol, .mw-content-ltr h4 + ol, .mw-content-rtl h4 + ol { margin-top: 10px}
 
 
 
@@ -650,24 +652,6 @@ div#self_general ul li {
     margin: 0 0 0 10px;
     line-height: 1.4em;
 }
-
-/* Images */
-div.floatright, table.floatright {
-    clear: right;
-    float: right;
-    position: relative;
-    margin: 0 0 .5em .5em;
-    border: 0;
-}
-div.floatright p { font-style: italic; }
-div.floatleft, table.floatleft {
-    float: left;
-    clear: left;
-    position: relative;
-    margin: 0 .5em .5em 0;
-    border: 0;
-}
-div.floatleft p { font-style: italic; }
 /* Thumbnails */
 div.thumb {
     margin-bottom: .5em;
@@ -792,13 +776,13 @@ input:invalid, textarea:invalid { background-color: #f2e3e4; }
    -------------------------------------------------------------------------- */
 
 
-.right {
+.right, .floatright {
     float:right;
     clear:right;
     margin-left: 18px;
 }
 
-.left {
+.left, .floatleft {
     float:left;
     clear:left;
     margin-right: 18px;
