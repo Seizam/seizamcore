@@ -167,7 +167,7 @@ mw-content-rtl h3 {
 }
 
 h4 {
-    margin: 0 25% 4px 36px;
+    margin: 0 25% 8px 36px;
     padding: 0;
     text-align: left;
     font-weight: normal;
@@ -247,15 +247,14 @@ ul:last-child,
 ol:last-child,
 pre:last-child,
 .mw-code:last-child,
-table:last-child {
+table:last-child,
+iframe:last-child {
     margin-bottom: 0;
 }
 
 /* Margin fix */
 p + h2, ul + h2, ol + h2, div.poem + h2, table + h2, pre + h2, code + h2 { margin-top: 48px}
 p + h3, ul + h3, ol + h3, div.poem + h3, table + h3, pre + h3, code + h3 { margin-top: 32px}
-h4 + ul, .mw-content-ltr h4 + ul, .mw-content-rtl h4 + ul,
-h4 + ol, .mw-content-ltr h4 + ol, .mw-content-rtl h4 + ol { margin-top: 10px}
 
 
 
@@ -2925,4 +2924,10 @@ fieldset#mw-searchoptions table td {
     margin-top: 18px;
     border-top: 1px solid #dad9d9;
     padding-top: 18px;
+}
+
+div.templatesUsed p {
+    margin-top: 24px;
+    border-top: 1px solid #dad9d9;
+    padding-top: 16px;
 }
