@@ -48,12 +48,28 @@ class WpInvitationCategory {
 				$row->wpic_monthly_limit);
     }
 
-		/**
+	/**
 	 *
 	 * @return int 
 	 */
 	public function getId() {
 		return $this->wpic_id;
+	}
+	
+	/**
+	 *
+	 * @return string 
+	 */
+	public function getStartDate() {
+		return $this->wpic_start_date;
+	}
+	
+	/**
+	 *
+	 * @return string 
+	 */
+	public function getEndDate() {
+		return $this->wpic_end_date;
 	}
 	
 	/**
@@ -171,28 +187,63 @@ class WpInvitationCategory {
 	}
 	
 	/**
-	 *
-	 * @return array Array of WpInvitationCategory 
+	 * @param int $userId The user identifier
+	 * @return array Array of WpInvitationCategory (indexes are categories identifiers)
 	 */
-	public static function factoryAllAvailableCategories() {
+	public static function factoryPublicAvailable() {
 		$dbr = wfGetDB(DB_SLAVE);
 		$now = $dbr->addQuotes(WpSubscription::now());
+
         $results = $dbr->select(
 				array ( 'wp_invitation_category', 'wp_wpi_wpp', 'wp_plan'),
 				'*',
 				array(
+					'wpic_monthly_limit > 0',
 					'wpic_start_date <= '.$now,
-					'wpic_end_date > '.$now ),
+					'wpic_end_date >= '.$now ),
 				__METHOD__,
 				array('ORDER BY' => 'wpic_id'),
 				array(
 					'wp_wpi_wpp' => array('LEFT JOIN', 'wpic_id = wpip_wpic_id'),
 					'wp_plan' => array('LEFT JOIN', 'wpip_wpp_id = wpp_id')) );
 
-        if ($results === false) {
-            // not found, so return null
-            return array();
-        }
+        return self::factoryFromResults($results);
+	}
+	
+	/**
+	 *
+	 * @return array Array of WpInvitationCategory (indexes are categories identifiers)
+	 */
+	public static function factoryAllAvailable() {
+		$dbr = wfGetDB(DB_SLAVE);
+		$now = $dbr->addQuotes(WpSubscription::now());
+		
+        $results = $dbr->select(
+				array ( 'wp_invitation_category', 'wp_wpi_wpp', 'wp_plan'),
+				'*',
+				array(
+					'wpic_start_date <= '.$now,
+					'wpic_end_date >= '.$now ),
+				__METHOD__,
+				array('ORDER BY' => 'wpic_id'),
+				array(
+					'wp_wpi_wpp' => array('LEFT JOIN', 'wpic_id = wpip_wpic_id'),
+					'wp_plan' => array('LEFT JOIN', 'wpip_wpp_id = wpp_id')) );
+		
+		return self::factoryFromResults($results);
+	}
+	
+	/**
+	 *
+	 * @param ResultWrapper $results Results from SQL select
+	 * @param DatabaseBase $databaseBase Optoional, default = wfGetDB(DB_SLAVE)
+	 * @return array Array of WpInvitationCategory (indexes are categories identifiers)
+	 */
+	private static function factoryFromResults($results) {
+		
+		if ( ! $results instanceof ResultWrapper) {
+			return array();
+		}
 
         $categories = array();
 		$category = null;
@@ -202,7 +253,7 @@ class WpInvitationCategory {
 				$category = self::constructFromDatabaseRow($row);
 				
 			} elseif( $category->getId() != $row->wpic_id) {
-				$categories[] = $category;
+				$categories[$category->getId()] = $category;
 				$category = self::constructFromDatabaseRow($row);
 				$category->plans = array();
 			}
@@ -216,7 +267,7 @@ class WpInvitationCategory {
 
 		}
 		if ( $category != null ) {
-			$categories[] = $category;
+			$categories[$category->getId()] = $category;
 		}
 
         return $categories;

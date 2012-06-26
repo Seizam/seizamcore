@@ -78,9 +78,10 @@ class WpInvitation {
 	 *
 	 * @param User $userFrom User creating the code
 	 * @param string $to Email address to send to
+	 * @param string $message The user message, to send along the code
 	 * @return boolean True = ok, false = error while sending
 	 */
-	public function sendCode($userFrom, $to) {
+	public function sendCode($userFrom, $to, $message) {
 		
 		$language = $userFrom->getOption('language');
 
@@ -90,8 +91,8 @@ class WpInvitation {
 		
         $subject = wfMessage('wpm-invitation-subj')->inLanguage($language)->text();
 
-        $body = wfMessage('wpm-invitation-body', $userFrom->getName(), $this->wpi_code)->inLanguage($language)->text();
-        $body .= wfMessage('wpm-footer')->inLanguage($language)->text();
+        $body = wfMessage('wpm-invitation-body', $userFrom->getName(), $message, $this->wpi_code)->inLanguage($language)->text();
+        $body .= wfMessage('wp-mail-footer')->inLanguage($language)->text();
 		
 		try {	
 			UserMailer::send( 
@@ -129,11 +130,16 @@ class WpInvitation {
 	
 	/**
 	 *
-	 * @param int $userId
+	 * @param User $user
 	 * @return string 
 	 */
-	public static function generateCode($userId=0) {
+	public static function generateCode($user) {
 
+		if ( $user instanceof User) {
+			$userId = $user->getId();
+		} else {
+			$userId = mt_rand(0, 99);
+		}
 		$dt = new DateTime('now', new DateTimeZone('GMT'));
 		$now = $dt->format('symiHd'); //length = 12
 
@@ -160,76 +166,59 @@ class WpInvitation {
 	 *
 	 * @param User $user
 	 * @param WpInvitationCategory $invitationCategory
-	 * @return int
+	 * @return array Array of InvitationCategoryId => count
 	 */
-	public static function countMonthlyInvitations($user, $invitationCategory) {
+	public static function countMonthlyInvitations($user) {
 
 		if ( ! $user instanceof User ) {
 			throw new MWException( 'Invalid user.' );
 		}	
-		if ( ! $invitationCategory instanceof WpInvitationCategory) {
-			throw new MWException('Invalid invitation category.');
-		}
 		
 		$dbr = wfGetDB(DB_SLAVE);
 		
 		$userId = $user->getId();
-		$categoryId = $invitationCategory->getId();
 		$oneMonthAgo =  $dbr->addQuotes( WpSubscription::now(0, 0, 0, 0, -1) );
 		
 		// count all intation generated from one month ago for this category
-		$result = $dbr->selectRow( 
+		$results = $dbr->select( 
 				'wp_invitation',
-				array( 'count(*) as total' ),
+				array( 'wpi_wpic_id' , 'count(*) as total' ),
 				array( 
 					'wpi_from_user_id' => $userId,
-					'wpi_wpic_id' => $categoryId,
 					'wpi_date_created > '.$oneMonthAgo ),
 				__METHOD__,
-				array(),
+				array('GROUP BY' => 'wpi_wpic_id'),
 				array() );
 		
-		$generated = 0;
-		if ($result !== null) {
-			$generated = $result->total;
+		if ( ! $results instanceof ResultWrapper) {
+			return array();
 		}
-		return $generated;
+		
+		$back = array();
+		foreach ($results as $result) {
+			$back[$result->wpi_wpic_id] = $result->total;
+		}
+		return $back;
 		
 	}
 	
-	/**
-	 * Contruct the invitation having this code if valid, ie category 
-	 * started and not ended and counter not empty.
-	 * @param String $code
-	 * @return WpInvitation 
-	 */
-	public static function newValidFromCode($code) {
+	public function canBeUsed() {
 		
-		$databaseBase = wfGetDB(DB_SLAVE);
-		$now = $databaseBase->addQuotes(WpSubscription::now());
-		$tables = array( 'wp_invitation', 'wp_invitation_category' );
-		$vars = array( '*' );
-		$conds = array(
-					'wpi_code' => $code,
-					'wpi_counter != 0');
-		$fname = __METHOD__;
-		$options = array();
-		$join_conds = array('wp_invitation_category' => array('INNER JOIN', 
-			'wpi_wpic_id = wpic_id'
-			.' AND wpic_start_date <= '.$now
-			.' AND wpic_end_date >= '.$now
-			));
-		
-		$result = $databaseBase->selectRow($tables, $vars, $conds, $fname, $options, $join_conds);
-		if ($result === false) {
-			// not found, so return null
-			return null;
+		if ( $this->wpi_counter == 0 ) {
+			return false;
 		}
 		
-		$invitation = self::constructFromDatabaseRow($result);
-		$invitation->category = WpInvitationCategory::constructFromDatabaseRow($result);
+		$category = $this->getCategory();
+		if ( ! $category instanceof WpInvitationCategory ) {
+			return false;
+		}
 		
-		return $invitation;
+		$start = wfTimestamp( TS_MW, $category->getStartDate() );
+		$end = wfTimestamp( TS_MW, $category->getEndDate() );
+		$now = wfTimestampNow( TS_MW, WpSubscription::now());
+		
+		return ( ( $start <= $now ) && ( $end >= $now ) );
+				
 	}
 	
 	/**
@@ -240,13 +229,13 @@ class WpInvitation {
 	public static function newFromCode($code) {
 		
 		$databaseBase = wfGetDB(DB_SLAVE);
-
-		$tables = array( 'wp_invitation' );
+		$now = $databaseBase->addQuotes(WpSubscription::now());
+		$tables = array( 'wp_invitation', 'wp_invitation_category' );
 		$vars = array( '*' );
-		$conds = array( 'wpi_code' => $code );
+		$conds = array(	'wpi_code' => $code);
 		$fname = __METHOD__;
 		$options = array();
-		$join_conds = array();
+		$join_conds = array('wp_invitation_category' => array('LEFT JOIN', 'wpi_wpic_id = wpic_id'));
 		
 		$result = $databaseBase->selectRow($tables, $vars, $conds, $fname, $options, $join_conds);
 		if ($result === false) {
@@ -255,48 +244,30 @@ class WpInvitation {
 		}
 		
 		$invitation = self::constructFromDatabaseRow($result);
+		if ( $result->wpic_id != null ) {
+			$invitation->category = WpInvitationCategory::constructFromDatabaseRow($result);
+		}
 		
 		return $invitation;
-	}
-	
-/*
-	private static function factoryFromConds($conds, $databaseBase = null) {
 		
-		if ($databaseBase == null) {
-			$databaseBase = wfGetDB(DB_SLAVE);
-		}
-
-		$tables = array('wp_invitation', 'wp_invitation_category');
-		$vars = array('wp_invitation.*');
-		$fname = __METHOD__;
-		$options = array();
-		$join_conds = array();
-
-		$results = $databaseBase->select($tables, $vars, $conds, $fname, $options, $join_conds);
-		$invitations = array();
-		foreach ($results as $row) {
-			$invitations[] = self::constructFromDatabaseRow($row);
-		}
-
-		$databaseBase->freeResult($results);
-
-		return $invitations;
 	}
- */
 
 	/**
 	 *
 	 * @param int $invitationCategoryId
-	 * @param int $fromUserId
+	 * @param User $fromUser
+	 * 
 	 * @param string $code
 	 * @param string $toEmail
 	 * @param int $counter
 	 * @return WpInvitation 
 	 */
-	public static function create( $invitationCategoryId, $fromUserId, $code, $toEmail=null, $counter=1) {
+	public static function create( $invitationCategoryId, $fromUser, $code, $toEmail=null, $counter=1) {
 
 		$dbw = wfGetDB(DB_MASTER);
         $dbw->begin();
+		
+		$fromUserId = $fromUser->getId();
 
         // With PostgreSQL, a value is returned, but null returned for MySQL because of autoincrement system
         $id = $dbw->nextSequenceValue('wp_invitation_wpi_id_seq');

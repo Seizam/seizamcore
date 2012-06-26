@@ -1,1 +1,1 @@
-ALTER TABLE wp_subscription ADD COLUMN wps_wpi_id int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'if != 0 : invitation primary key that has been used when subscribing';
+ALTER TABLE wp_subscription ADD COLUMN wps_wpi_id int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'if != 0 : invitation primary key that has been type (but maybe not consumed) when subscribing';

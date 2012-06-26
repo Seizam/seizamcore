@@ -234,6 +234,7 @@ class WpSubscription {
                 $this->unsetRenewalPlan();
                 break;
             case 'wps_wpp_id':
+			case 'wps_wpi_id':
                 if (!is_numeric($value) || ($value < 0)) {
                     throw new MWException('Value error (int >= 0 needed) for ' . $attribut_name);
                 }
@@ -340,6 +341,8 @@ class WpSubscription {
         $this->set('wps_start_date', $start, false);
         $this->set('wps_end_date', $end, false);
         $this->set('wps_renewal_notified', false, false); // clear this flag
+		$this->set('wps_wpi_id', 0, false); // clear this key
+		
         $this->set('wps_renew_wpp_id', $renewal_plan_id); // 3rd arg != false, so saving record now
 
         return true;
@@ -365,7 +368,8 @@ class WpSubscription {
             'wpos_tmr_id' => 'wps_tmr_id',
             'wpos_tmr_status' => 'wps_tmr_status',
             'wpos_start_date' => 'wps_start_date',
-            'wpos_end_date' => 'wps_end_date'
+            'wpos_end_date' => 'wps_end_date',
+			'wpos_wpi_id' => 'wps_wpi_id'
                 ), array('wps_id' => $this->wps_id), __METHOD__);
 
         $updated = $dbw->affectedRows();

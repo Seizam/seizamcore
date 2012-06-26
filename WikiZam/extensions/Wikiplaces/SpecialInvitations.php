@@ -9,9 +9,18 @@ class SpecialInvitations extends SpecialPage {
 	
 	private $action = null;
 	private $msgType = null;
-    private $msgKey = null;
+    private $msg = null;
 	
 	private $selectedCategory = null;
+	
+	private $creationErrorAlreadydisplayed = false;
+	
+	private $userInvitationsCategories = null;
+	private $userInvitationsCount = null;
+	private $userIsAdmin = false;
+	private $userActiveSubscription = null;
+	
+	private $sentTo = null;
 	
     public function __construct() {
         parent::__construct(self::TITLE_NAME, WP_ACCESS_RIGHT);
@@ -42,6 +51,24 @@ class SpecialInvitations extends SpecialPage {
 		
 		$this->action = $request->getText('action', $par);
 		
+		if ( $user->isAllowed(WP_ADMIN_RIGHT) ) {
+			$this->userIsAdmin = true;
+			$this->userInvitationsCategories = WpInvitationCategory::factoryAllAvailable();
+		} else {
+			$this->userIsAdmin = false;
+			$this->userActiveSubscription = WpSubscription::newActiveByUserId($user->getId());
+			$this->userInvitationsCategories = WpInvitationCategory::factoryPublicAvailable();
+			$this->userInvitationsCount = WpInvitation::countMonthlyInvitations($user);
+		}
+		
+		$this->creationErrorAlreadydisplayed = false;
+		
+		$this->msgType = $request->getText('msgtype', null);
+        $msgKey = $request->getText('msgkey',null);
+		if ( $msgKey != null ) {
+			$this->msg = wfMessage($msgKey);
+		}
+		
 	    $this->display();
     }
 
@@ -49,234 +76,251 @@ class SpecialInvitations extends SpecialPage {
 		
         $output = $this->getOutput();
 
-        // Top Infobox Messaging
-        if ($this->msgType != null) {
-            $msg = wfMessage($this->msgKey);
-            if ($msg->exists()) {
-                $output->addHTML(Html::rawElement('div', array('class' => "informations $this->msgType"), $msg->parse()));
-            }
-        }
+        // Display requested message.
+		if ($this->msg instanceof Message) {
+			$output->addHTML(Html::rawElement(
+					'div',
+					array('class' => "informations ".(($this->msgType != null)?$this->msgType:'')),
+					$this->msg->parse()));
+		}
 		
-
-		$this->displayCreateInvitationForm();
-		
-		$this->displayInvitationsList();        
+		// dispatch
+		switch ($this->action) {
+			case self::ACTION_CREATE:
+				$this->displayCreate();
+				break;
+			case self::ACTION_LIST:
+			default:
+				$this->displayList();
+				break;
+		}	    
 		
     }
 	
-	private function displayCreateInvitationForm() {
+	/**
+	 *
+	 * @return Message The i18n error message, or true if no error
+	 */
+	private function getCanCreateError() {
 		
-		$user = $this->getUser();
-				
-		if ( $user->isAllowed(WP_ADMIN_RIGHT)) {
+		if (  ( ! $this->userIsAdmin ) && ( ! $this->userActiveSubscription instanceof WpSubscription ) ) {
 			
-			$inviteForm = $this->getAdminInviteForm();
+			return wfMessage('wp-inv-nosub');
 			
-			if ($inviteForm->show()) {
-				
-				$this->displayInformation( wfMessage('wp-invite-success')->text() );
-				$inviteForm->setBlockSubmit(true);
-				$inviteForm->displayForm('');
+		} elseif ( empty($this->userInvitationsCategories) ) {
+			
+			return wfMessage('wp-inv-no');
+			
+		} elseif ( ! $this->userIsAdmin ) {
+		
+			$availableCategories = $this->filterCategories($this->userInvitationsCategories, $this->userInvitationsCount);
 
+			if ( empty($availableCategories)) {
+				return wfMessage('wp-inv-limitreached');
 			}
 			
-		} elseif( WpSubscription::newActiveByUserId($user->getId()) instanceof WpSubscription ) {
-			
-			$category = WpInvitationCategory::newPublicCategory();
-			if ( ! $category instanceof WpInvitationCategory ){
-				$this->displayInformation( wfMessage('wp-invite-no')->text() );
-				return;
+		}
+		
+		return true;
+		
+	}
+	
+	private function displayCreate() {
+		
+		$error = $this->getCanCreateError();
+		if ( $error instanceof Message ) {
+			$this->msgType = 'error';
+			$this->msg = $error;
+			$this->creationErrorAlreadydisplayed = true; //ensure that LIST action won't talk about this error again
+			$this->action = self::ACTION_LIST;
+			$this->display();
+			return;
+		}
+		
+		$inviteForm = $this->getInviteForm();		
+		if ($inviteForm->show()) {
+
+			$this->msgType = 'succes';
+			if ($this->sentTo != null) {
+				$this->msg = wfMessage('wp-inv-success-sent', $this->sentTo);
+			} else {
+				$this->msg = wfMessage('wp-inv-success');
 			}
-			
-			$count = WpInvitation::countMonthlyInvitations($user, $category);
-			$limit = $category->getMonthlyLimit();
-			
-			if ( $count >= $limit ) {
-				$this->displayInformation( wfMessage('wp-invite-nomore', $limit)->parse() );
-				return;
-			}
-			
-			$inviteForm = $this->getPublicInviteForm();
-			if ($inviteForm->show()) {
-				
-				$this->displayInformation( wfMessage('wp-invite-success')->text() );
-				
-				if ( ($count+1) < $limit ) {
-					// redisplay form if counter not reached
-					$inviteForm->displayForm('');
-				} else {
-					$this->displayInformation( wfMessage('wp-invite-nomore', $limit)->parse() );
-				}
-			}
-			
-		} else {
-			
-			$this->displayInformation( wfMessage('wp-no-active-sub')->parse() );
-			
+
+			$this->action = self::ACTION_LIST;
+			$this->display();
+			return;
+
 		}
 		
 	}
 	
-	public function displayInformation($info) {
-		
-		$this->getOutput()->addHTML(Html::rawElement('div', array('class' => "informations"), $info));
-		
+	/**
+	 *
+	 * @param array $allCategories Array: categoryId => Category
+	 * @param array $userCounter Array: categoryId => monthly counter
+	 * @return array Filtered categories array: categoryId => Category
+	 */
+	private function filterCategories($allCategories, $userCounter) {
+		$availableCategories = $allCategories;
+			
+			foreach ($userCounter as $categoryId => $count ) {
+				if ( (array_key_exists($categoryId, $allCategories))
+						&& ($count >= $allCategories[$categoryId]->getMonthlyLimit()) ) {
+					unset($availableCategories[$categoryId]); // this category will is no more available for this user
+				}
+			}
+			
+		return $availableCategories;
 	}
 	
-	private function displayInvitationsList() {
+	private function displayList() {
 		
 		// display invitiation list of this user
-		$user = $this->getUser();
-		if ( $user->isAllowed(WP_ADMIN_RIGHT)) {
+		if ( $this->userIsAdmin ) {
 			$inviteList = new WpInvitationsTablePagerAdmin();
 		} else {
 			$inviteList = new WpInvitationsTablePager();
 		}
+		
+		if ( $this->creationErrorAlreadydisplayed ) {
+			$inviteList->setHeader(wfMessage('wp-inv-see-below')->text());
+		} else {
+			$createMessage = $this->getCanCreateError();
+			if ( ! $createMessage instanceof Message ) {
+				$createMessage = wfMessage('wp-inv-create');
+			}
+			$inviteList->setHeader(wfMessage('wp-inv-list-header', $createMessage->parse() )->text());
+		}
+		
 		$inviteList->setSelectConds(array(
-			'wpi_from_user_id' => $user->getID(),
+			'wpi_from_user_id' => $this->getUser()->getID(),
 			// 'wpi_counter > 0',
 				));
+				
 		$this->getOutput()->addHTML($inviteList->getWholeHtml());
 		
 	}
 	
-	
-	private function getAdminInviteForm() {
+	/**
+	 *
+	 * @return \HTMLFormS 
+	 */
+	private function getInviteForm() {
 			
 		$formDesc = array(
 			'Category' => array(
 				'type' => 'select',
 				'label-message' => 'wp-inv-category-field',
 				'help-message' => 'wp-inv-category-help',
-				'validation-callback' => array($this, 'validateCategory'),
 				'options' => array(),
 			),
-			'Code' => array(
+			'Email' => array(
+				'type' => 'text',
+				'label-message' => 'wp-inv-email-field',
+				'help-message' => 'wp-inv-email-help',
+				'validation-callback' => array($this, 'validateEmail'),
+			),
+			'Message' => array(
+                'type' => 'textarea',
+                'label-message' => 'wp-inv-msg-field',
+                'default' => wfMessage('wp-inv-default-msg')->text(),
+                'rows' => 3, # Display height of field
+                'cols' => 30 # Display width of field
+            ),
+		);
+		
+		if ($this->userIsAdmin) {
+			
+			$formDesc['Code'] = array(
 				'type' => 'text',
 				'label-message' => 'wp-inv-code-field',
 				'help-message' => 'wp-inv-code-help',
-				'default' => WpInvitation::generateCode($this->getUser()->getId()),
+				'default' => WpInvitation::generateCode($this->getUser()),
 				'validation-callback' => array($this, 'validateCode'),
-			),
-			'Counter' => array(
+			);
+			$formDesc['Counter'] = array(
 				'type' => 'text',
 				'label-message' => 'wp-inv-counter-field',
 				'help-message' => 'wp-inv-counter-help',
 				'default' => 1,
 				'validation-callback' => array($this, 'validateCounter'),
-			),
-			'Email' => array(
-				'type' => 'text',
-				'label-message' => 'wp-inv-email-field',
-				'help-message' => 'wp-inv-email-help',
-				'validation-callback' => array($this, 'validateEmail'),
-			),
-		);
-		
-		$categories = WpInvitationCategory::factoryAllAvailableCategories();
-		foreach ( $categories as $category ) {
-            $formDesc['Category']['options'][$category->getDescription()] = $category->getId();
+			);
+			foreach ( $this->userInvitationsCategories as $category ) {
+				$formDesc['Category']['options'][$category->getDescription()] = $category->getId();
+			}
+			
+		} else {
+			
+			$categories = $this->filterCategories($this->userInvitationsCategories, $this->userInvitationsCount);
+			
+			foreach ( $categories as $category ) {
+				$formDesc['Category']['options'][wfMessage(
+						'wp-inv-category-desc',
+						wfMessage($category->getDescription())->text(),
+						$category->getMonthlyLimit())->parse()] = $category->getId();
+			}
 		}
 		
 		$htmlForm = new HTMLFormS($formDesc);
 		$htmlForm->setMessagePrefix('wp');
-		$htmlForm->setTitle($this->getTitle());
-		$htmlForm->setSubmitCallback(array($this, 'processAdminInvite'));
-		$htmlForm->setSubmitText(wfMessage('wp-invite')->text());
+		$htmlForm->setTitle($this->getTitle(self::ACTION_CREATE));
+		$htmlForm->setSubmitText(wfMessage('wp-inv-go')->text());
+		
+		$htmlForm->setSubmitCallback(array($this, 'processInvite'));
 		
 		return $htmlForm;
 		
 	}
 	
-	private function getPublicInviteForm() {
-			
-		$formDesc = array(
-			'Email' => array(
-				'type' => 'text',
-				'label-message' => 'wp-inv-email-field',
-				'help-message' => 'wp-inv-email-help',
-				'validation-callback' => array($this, 'validateEmail'),
-			),
-		);
-		
-		$htmlForm = new HTMLFormS($formDesc);
-		$htmlForm->setMessagePrefix('wp');
-		$htmlForm->setTitle($this->getTitle());
-		$htmlForm->setSubmitCallback(array($this, 'processPublicInvite'));
-		$htmlForm->setSubmitText(wfMessage('wp-invite')->text());
-		
-		return $htmlForm;
-		
-	}
-	
-
-	
-	public function processAdminInvite($formData) {
+	public function processInvite($formData) {
 		
 		$user = $this->getUser();
-		$userId = $user->getId();
 		
-		$email = null;
-		if ($formData['Email']!='') {
-			$email = $formData['Email'];
-		}
-		
-		$category = WpInvitationCategory::newFromId($formData['Category']);
+		$category = $this->userInvitationsCategories[$formData['Category']];
 		if (! $category instanceof WpInvitationCategory) {
 			return wfMessage('sz-internal-error')->text();
 		}
 		
-		$invitation = WpInvitation::create($category->getId(), $userId, $formData['Code'], $email, $formData['Counter']);
-		if ( ! $invitation instanceof WpInvitation ){
-			return wfMessage('sz-internal-error')->text();
-		}
-		
-		if ($email != null) {
-			$invitation->sendCode($user, $email);
-		}
-
-		return true; // say: all ok
-		
-	}
-	
-	public function processPublicInvite($formData) {
-		
-		$user = $this->getUser();
-		$userId = $user->getId();
-		
 		$email = null;
 		if ($formData['Email']!='') {
 			$email = $formData['Email'];
 		}
 		
-		$publicCategory = WpInvitationCategory::newPublicCategory();
-		if (! $publicCategory instanceof WpInvitationCategory) {
+		$message = $formData['Message'];
+		
+		if ( $this->userIsAdmin ) {
+			$code = $formData['Code'];
+			$counter = $formData['Counter'];
+			
+		} else {
+			$code = WpInvitation::generateCode($user);
+			$counter = 1;
+		}
+		
+		$invitation = WpInvitation::create($category->getId(), $user, $code, $email, $counter);
+		if ( ! $invitation instanceof WpInvitation ){
 			return wfMessage('sz-internal-error')->text();
 		}
 		
-		$invitation = WpInvitation::create($publicCategory->getId(), $userId, WpInvitation::generateCode($userId), $email, 1);
-		if ($invitation == null){
-			return wfMessage('sz-internal-error')->text();
+		if ( ! $this->userIsAdmin ) {
+			if ( isset($this->userInvitationsCount[$category->getId()]) ) {
+				$this->userInvitationsCount[$category->getId()] ++;
+			} else {
+				$this->userInvitationsCount[$category->getId()] = 1;
+			}
 		}
 		
-		if ($email != null) {
-			$invitation->sendCode($user, $email);
+		
+		if ( ($email != null) && ( $invitation->sendCode($user, $email, $message) ) ) {
+			$this->sentTo = $email;
+		} else {
+			$this->sentTo = null;
 		}
 
 		return true; // say: all ok
+		
 	}
-	
-	public function validateCategory($id, $alldata) {
-		if (!preg_match('/^[0-9]{1,10}$/', $id)) {
-            return 'Error: Invalid Category';
-        }
-		$category = WpInvitationCategory::newFromId($id);
-		if ( ! $category instanceof WpInvitationCategory) {
-			return 'Error: Invalid Category';
-		}
-		$this->selectedCategory = $category;
-        return true;
-    }
 	
 	public function validateCode($code, $alldata) {
 		if (!preg_match('/^[0-9A-Z]+$/', $code)) {

@@ -12,5 +12,6 @@ CREATE TABLE IF NOT EXISTS `wp_old_subscription` (
   `wpos_tmr_status` varbinary(2) NOT NULL COMMENT 'Paiement status when the record was saved (may be outdated) PE,KO = not paid, OK = paid',
   `wpos_start_date` datetime DEFAULT NULL COMMENT 'When the subscription starts',
   `wpos_end_date` datetime DEFAULT NULL COMMENT 'When the subscription ends',
+  `wpos_wpi_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'if != 0 : invitation primary key that has been type (but maybe not consumed) when subscribing',
   PRIMARY KEY (`wpos_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary COMMENT='Wikiplace subscriptions history table';

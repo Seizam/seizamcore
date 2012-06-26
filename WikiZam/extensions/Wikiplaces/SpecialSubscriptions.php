@@ -9,14 +9,15 @@ class SpecialSubscriptions extends SpecialPage {
     const ACTION_RENEW = 'renew';
     const ACTION_LIST = 'list';
 
-    private $action = self::ACTION_LIST;
-    private $planName = null;
-    private $msgType = null;
-    private $msgKey = null;
-	private $invitation = null;
+    protected $action = self::ACTION_LIST;
+    protected $planName = null;
+	protected $invitationCode = null;
+    protected $msgType = null;
+    protected $msgKey = null;
+	protected $invitation = null;
 
-    public function __construct() {
-        parent::__construct(self::TITLE_NAME, WP_ACCESS_RIGHT);
+    public function __construct($name = self::TITLE_NAME) {
+        parent::__construct($name, WP_ACCESS_RIGHT);
     }
 
     public function execute($par) {
@@ -44,24 +45,35 @@ class SpecialSubscriptions extends SpecialPage {
         // Reading parameter from request
         if (isset($par) & $par != '') {
             $explosion = explode(':', $par);
+			$arg = null;
             if (count($explosion) == 1) {
                 $this->action = $explosion[0];
-                $this->planName = $request->getText('plan', null);
+                $arg = $request->getText('plan', $request->getText('invitation', null) );
             } else if (count($explosion) == 2) {
                 $this->action = $explosion[0];
-                $this->planName = $explosion[1];
+                $arg = $explosion[1];
             }
+			if ($this->action == self::ACTION_USE_INVITATION) {
+				$this->invitationCode = $arg;
+			} else {
+				$this->planName = $arg;
+			}
         } else {
             $this->action = $request->getText('action', null);
-            $this->planName = $request->getText('plan', null);
+			if ($this->action == self::ACTION_USE_INVITATION) {
+				$this->invitationCode = $request->getText('invitation', null);
+			} else {
+				$this->planName = $request->getText('plan', null);
+			}
         }
+		
         $this->msgType = $request->getText('msgtype', $this->msgType);
         $this->msgKey = $request->getText('msgkey', $this->msgKey);
 
         $this->display();
     }
 
-    private function display() {
+    protected function display() {
         $output = $this->getOutput();
 
         // Top Infobox Messaging
@@ -96,7 +108,7 @@ class SpecialSubscriptions extends SpecialPage {
 	   /**
      * User wants to take a new subscription
      */
-    private function displayInvitation() {
+    protected function displayInvitation() {
 
         $check = WpSubscription::canSubscribe($this->getUser());
         if ($check !== true) {
@@ -110,39 +122,56 @@ class SpecialSubscriptions extends SpecialPage {
 		$invitationForm = array(
 			'InvitationCode' => array(
 				'type' => 'text',
-				'label-message' => 'wp-sub-invitation-field',
-				'help-message' => 'wp-sub-invitation-help',
+				'default' => ($this->invitationCode != null) ? $this->invitationCode : '', 
+				'label-message' => 'wp-use-inv-field',
+				'help-message' => 'wp-use-inv-help',
 				'validation-callback' => array($this, 'validateInvitationCode'),
 			) );
 		$invitationHtml = new HTMLFormS($invitationForm);
-        $invitationHtml->addHeaderText(wfMessage('wp-sub-invitation-header')->parse());
+        $invitationHtml->addHeaderText(wfMessage('wp-use-inv-header')->parse());
         $invitationHtml->setMessagePrefix('wp');
-        $invitationHtml->setTitle($this->getTitle(self::ACTION_USE_INVITATION));
+        $invitationHtml->setTitle($this->getTitleFor(self::TITLE_NAME, self::ACTION_USE_INVITATION));
         $invitationHtml->setSubmitCallback(array($this, 'processInvitation'));
-        $invitationHtml->setSubmitText(wfMessage('wp-use-invitation-go')->text());
+        $invitationHtml->setSubmitText(wfMessage('wp-use-inv-go')->text());
 
-        // validate and process the form
-        if ($invitationHtml->show()) {
-			// if code is valid, display subscribe using this code
-            $this->action = self::ACTION_NEW;
-            $this->msgKey = 'wp-sub-inv-ok';
-            $this->msgType = 'success';
-            $this->display();
-        }
+        
+        if ( $this->invitationCode != null ) { // handle invitation code from url 
+			$invitationHtml->prepareForm(); // fill form with default value specified in descriptor
+			$result = $invitationHtml->trySubmit(); // validate and process
+			if ( $result === true ) {
+				// code ok
+				$this->action = self::ACTION_NEW;
+				$this->msgKey = 'wp-use-inv-ok';
+				$this->msgType = 'success';
+				$this->display();
+			} else {
+				$invitationHtml->displayForm($result);
+			}
+		} else { // or display and process form from post
+			if ($invitationHtml->show()) {
+				$this->action = self::ACTION_NEW;
+				$this->msgKey = 'wp-use-inv-ok';
+				$this->msgType = 'success';
+				$this->display();
+			}
+		}
 	}
 	
 	
 	public function validateInvitationCode($code, $allData) {
-		if ( $code === '') {
+		if ( ( $code === null) || ( $code === '') ) {
 			return wfMessage('htmlform-required')->text();
 		}
 		if (!preg_match('/^[0-9A-Za-z]+$/', $code)) {
-			return wfMessage('wp-invitation-invalid')->text();
+			return wfMessage('wp-use-inv-invalid')->text();
 		}
 		$code = strtoupper($code);
-		$invitation = WpInvitation::newValidFromCode($code);
+		$invitation = WpInvitation::newFromCode($code);
 		if ( ! $invitation instanceof WpInvitation ) {
-			return wfMessage('wp-invitation-invalid')->text();
+			return wfMessage('wp-use-inv-invalid')->text();
+		}
+		if ( ! $invitation->canBeUsed() ) {
+			return wfMessage('wp-use-inv-nolonger')->text();
 		}
 		
 		$this->invitation = $invitation;
@@ -156,7 +185,7 @@ class SpecialSubscriptions extends SpecialPage {
     /**
      * User wants to take a new subscription
      */
-    private function displayNew() {
+    protected function displayNew() {
 
         $check = WpSubscription::canSubscribe($this->getUser());
         if ($check !== true) {
@@ -174,40 +203,46 @@ class SpecialSubscriptions extends SpecialPage {
 		if ( $this->invitation != null ) {
 			$invitation = $this->invitation;
 		}elseif ( $request->getCheck('wpInvitation') ) {
-			$invitation = WpInvitation::newValidFromCode($request->getText('wpInvitation'));
+			$invitation = WpInvitation::newFromCode($request->getText('wpInvitation'));
+			if ($invitation instanceof WpInvitation ) {
+				if ( ! $invitation->canBeUsed() ) {
+					$invitation = null; // can no longer be used
+				}
+			}
 		}
 
-		$formDescriptor = array(
-			'UseInvitation' => array(
+		$formDescriptor = array();
+		
+		if ($invitation instanceof WpInvitation) {
+			$formDescriptor['UseInvitation'] = array(
 				'type' => 'info',
 				'section' => 'sub-new-section',
-				'label-message' => 'wp-use-invitation',
-				'default' => ($invitation != null ?
-						wfMessage($invitation->getCategory()->getDescription())->text()
-						: self::getLinkUseInvitation() ),
+				'label-message' => 'wp-use-inv-field',
+				'default' => $invitation->getCode(),
 				'raw' => true # don't escape
-			),
-			'Invitation' => array(
+			);
+		}
+		
+		$formDescriptor['Invitation'] = array(
 				'type' => 'hidden',
 				'label' => 'hidden',
 				'default' => ($invitation != null ? $invitation->getCode() : ''),
-			),
-			'Plan' => array(
+			);
+		$formDescriptor['Plan'] = array(
 				'type' => 'select',
 				'section' => 'sub-new-section',
 				'label-message' => 'wp-planfield',
 				'help-message' => 'wp-planfield-help',
-				'validation-callback' => array($this, 'validateSubscribePlanId'),
+				'validation-callback' => array($this, 'validateSubscribeNewPlanId'),
 				'options' => array(),
-            ),
-            'Check' => array(
+            );
+        $formDescriptor['Check'] = array(
                 'type' => 'check',
                 'section' => 'sub-new-section',
                 'label-message' => 'wp-checkfield',
                 'validation-callback' => array($this, 'validateSubscribeCheck'),
                 'required' => 'true'
-            )
-        );
+            );
 
         $plans = WpPlan::factoryAvailableForFirstSubscription($invitation);
         foreach ($plans as $plan) {
@@ -221,7 +256,7 @@ class SpecialSubscriptions extends SpecialPage {
         $htmlForm = new HTMLFormS($formDescriptor);
         $htmlForm->addHeaderText(wfMessage('wp-sub-new-header')->parse());
         $htmlForm->setMessagePrefix('wp');
-        $htmlForm->setTitle($this->getTitle(self::ACTION_NEW));
+        $htmlForm->setTitle($this->getTitleFor(self::TITLE_NAME, self::ACTION_NEW));
         $htmlForm->setSubmitCallback(array($this, 'processNew'));
         $htmlForm->setSubmitText(wfMessage('wp-plan-subscribe-go')->text());
 
@@ -257,7 +292,7 @@ class SpecialSubscriptions extends SpecialPage {
         return true;
     }
 
-    public function validateSubscribePlanId($id, $allData) {
+    public function validateSubscribeNewPlanId($id, $allData) {
         if (!preg_match('/^[0-9]{1,10}$/', $id)) {
             return 'Error: Invalid Plan ID';
         }
@@ -289,6 +324,7 @@ class SpecialSubscriptions extends SpecialPage {
         // displayNew() checked $user->canSubscribe() and validatePlanId() checked $user->canSubscribeTo()
         // so now, the subscription can be really done
 
+		// NOTE: we record that the invitation code has been typed, even if it will not be consumed
         $subscription = WpSubscription::subscribe($this->getUser(), $plan, $this->invitation);
         if ($subscription == null) {
             return wfMessage('sz-internal-error')->text();
@@ -306,14 +342,14 @@ class SpecialSubscriptions extends SpecialPage {
     /**
      * @todo: implement this functionality
      */
-    private function displayChange() {
+    protected function displayChange() {
         $this->action = self::ACTION_LIST;
         $this->msgType = 'error';
         $this->msgKey = 'wp-subscribe-change';
         $this->display();
     }
 
-    private function displayRenew() {
+    protected function displayRenew() {
 
         // at this point, user is logged in
         $user_id = $this->getUser()->getId();
@@ -365,7 +401,7 @@ class SpecialSubscriptions extends SpecialPage {
         $htmlForm = new HTMLFormS($formDescriptor);
         $htmlForm->setMessagePrefix('wp');
         $htmlForm->addHeaderText(wfMessage('wp-sub-renew-header')->parse());
-        $htmlForm->setTitle($this->getTitle(self::ACTION_RENEW));
+        $htmlForm->setTitle($this->getTitleFor(self::TITLE_NAME, self::ACTION_RENEW));
         $htmlForm->setSubmitCallback(array($this, 'processRenew'));
         $htmlForm->setSubmitText(wfMessage('wp-plan-renew-go')->text());
 
@@ -428,7 +464,7 @@ class SpecialSubscriptions extends SpecialPage {
         return true;
     }
 
-    private function displayList() {
+    protected function displayList() {
         $user = $this->getUser();
         $output = $this->getOutput();
 

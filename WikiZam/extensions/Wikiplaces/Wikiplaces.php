@@ -52,6 +52,7 @@ $wgAutoloadClasses['WpInvitation'] = $_dir . 'model/WpInvitation.php';
 $wgAutoloadClasses['WpInvitationCategory'] = $_dir . 'model/WpInvitationCategory.php';
 $wgAutoloadClasses['WpInvitationsTablePager'] = $_dir . 'model/WpInvitationsTablePager.php';
 $wgAutoloadClasses['WpInvitationsTablePagerAdmin'] = $_dir . 'model/WpInvitationsTablePager.php';
+$wgAutoloadClasses['SpecialInvitation'] = $_dir . 'SpecialInvitation.php';
 $wgAutoloadClasses['SpecialInvitations'] = $_dir . 'SpecialInvitations.php';
 
 # i18n
@@ -72,6 +73,8 @@ $wgSpecialPages['WikiplacesAdmin'] = 'SpecialWikiplacesAdmin';
 $wgSpecialPageGroups['WikiplacesAdmin'] = 'wikiplace';
 $wgSpecialPages['Plans'] = 'SpecialPlans';
 $wgSpecialPageGroups['Plans'] = 'wikiplace';
+$wgSpecialPages['Invitation'] = 'SpecialInvitation';
+$wgSpecialPageGroups['Invitation'] = 'wikiplace';
 $wgSpecialPages['Invitations'] = 'SpecialInvitations';
 $wgSpecialPageGroups['Invitations'] = 'wikiplace';
 
