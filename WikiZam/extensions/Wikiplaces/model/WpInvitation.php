@@ -79,11 +79,10 @@ class WpInvitation {
 	 * @param User $userFrom User creating the code
 	 * @param string $to Email address to send to
 	 * @param string $message The user message, to send along the code
+	 * @param mixed $language The language to translate generic message
 	 * @return boolean True = ok, false = error while sending
 	 */
-	public function sendCode($userFrom, $to, $message) {
-		
-		$language = $userFrom->getOption('language');
+	public function sendCode($userFrom, $to, $message, $language) {
 
 		$to = new MailAddress($to);
 		
@@ -91,7 +90,12 @@ class WpInvitation {
 		
         $subject = wfMessage('wpm-invitation-subj')->inLanguage($language)->text();
 
-        $body = wfMessage('wpm-invitation-body', $userFrom->getName(), $message, $this->wpi_code)->inLanguage($language)->text();
+        $body = wfMessage('wpm-invitation-body', 
+				$userFrom->getName(),
+				$message,
+				$this->wpi_code,
+				wfMessage($this->getCategory()->getDescription())->inLanguage($language)->text()
+				)->inLanguage($language)->text();
         $body .= wfMessage('wp-mail-footer')->inLanguage($language)->text();
 		
 		try {	
@@ -102,7 +106,7 @@ class WpInvitation {
 					$body );
 		} catch (Exception $e) {
             wfDebugLog('wikiplaces', 'WpInvitation::sendCode: ERROR SENDING EMAIL from ' . $from . '", to '
-                    . $to . ', code ' . $code);
+                    . $to . ', code ' . $this->wpi_code);
 			return false;
         }
 

@@ -2,7 +2,7 @@
 
 class SpecialInvitation extends SpecialSubscriptions {
 	
-	const ACTION_USE_INVITATION_SHORT = 'use';
+	const ACTION_USE_INVITATION_SHORT = 'Use';
 	
 	public function __construct() {
         parent::__construct('Invitation');
