@@ -53,11 +53,11 @@ class SpecialInvitations extends SpecialPage {
 		
 		if ( $user->isAllowed(WP_ADMIN_RIGHT) ) {
 			$this->userIsAdmin = true;
-			$this->userInvitationsCategories = WpInvitationCategory::factoryAllAvailable();
+			$this->userInvitationsCategories = WpInvitationCategory::factoryAllAvailable(true); // with admin categories
 		} else {
 			$this->userIsAdmin = false;
 			$this->userActiveSubscription = WpSubscription::newActiveByUserId($user->getId());
-			$this->userInvitationsCategories = WpInvitationCategory::factoryPublicAvailable();
+			$this->userInvitationsCategories = WpInvitationCategory::factoryAllAvailable(false); // without admin categories
 			$this->userInvitationsCount = WpInvitation::countMonthlyInvitations($user);
 		}
 		

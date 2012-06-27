@@ -185,45 +185,26 @@ class WpInvitationCategory {
 		}
 		return $category;
 	}
-	
-	/**
-	 * @param int $userId The user identifier
-	 * @return array Array of WpInvitationCategory (indexes are categories identifiers)
-	 */
-	public static function factoryPublicAvailable() {
-		$dbr = wfGetDB(DB_SLAVE);
-		$now = $dbr->addQuotes(WpSubscription::now());
-
-        $results = $dbr->select(
-				array ( 'wp_invitation_category', 'wp_wpi_wpp', 'wp_plan'),
-				'*',
-				array(
-					'wpic_monthly_limit > 0',
-					'wpic_start_date <= '.$now,
-					'wpic_end_date >= '.$now ),
-				__METHOD__,
-				array('ORDER BY' => 'wpic_id'),
-				array(
-					'wp_wpi_wpp' => array('LEFT JOIN', 'wpic_id = wpip_wpic_id'),
-					'wp_plan' => array('LEFT JOIN', 'wpip_wpp_id = wpp_id')) );
-
-        return self::factoryFromResults($results);
-	}
-	
+		
 	/**
 	 *
 	 * @return array Array of WpInvitationCategory (indexes are categories identifiers)
 	 */
-	public static function factoryAllAvailable() {
+	public static function factoryAllAvailable($inldudeAdmin = false) {
 		$dbr = wfGetDB(DB_SLAVE);
 		$now = $dbr->addQuotes(WpSubscription::now());
+		
+		$conds = array(
+					'wpic_start_date <= '.$now,
+					'wpic_end_date >= '.$now );
+		if ( ! $inldudeAdmin ) {
+			$conds[] = 'wpic_monthly_limit > 0';
+		}
 		
         $results = $dbr->select(
 				array ( 'wp_invitation_category', 'wp_wpi_wpp', 'wp_plan'),
 				'*',
-				array(
-					'wpic_start_date <= '.$now,
-					'wpic_end_date >= '.$now ),
+				$conds,
 				__METHOD__,
 				array('ORDER BY' => 'wpic_id'),
 				array(
