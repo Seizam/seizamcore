@@ -221,6 +221,12 @@ class SpecialInvitations extends SpecialPage {
 				'help-message' => 'wp-inv-email-help',
 				'validation-callback' => array($this, 'validateEmail'),
 			),
+			'Language' => array (
+				'type' => 'select',
+				'label-message' => 'wp-inv-language-field',
+				'help-message' => 'wp-inv-language-help',
+				'options' => array(),
+			),
 			'Message' => array(
                 'type' => 'textarea',
                 'label-message' => 'wp-inv-msg-field',
@@ -229,6 +235,14 @@ class SpecialInvitations extends SpecialPage {
                 'cols' => 30 # Display width of field
             ),
 		);
+		
+		global $wgLanguageSelectorLanguagesShorthand, $wgLang;
+		foreach ($wgLanguageSelectorLanguagesShorthand as $ln) {
+			$formDesc['Language']['options'][$wgLang->getLanguageName($ln)] = $ln;
+			if ($ln = $wgLang->getCode()) {
+				$formDesc['Language']['Default'] = $ln;
+			}
+		}
 		
 		if ($this->userIsAdmin) {
 			
@@ -298,6 +312,8 @@ class SpecialInvitations extends SpecialPage {
 			$counter = 1;
 		}
 		
+		$language = $formData['Language'];
+		
 		$invitation = WpInvitation::create($category->getId(), $user, $code, $email, $counter);
 		if ( ! $invitation instanceof WpInvitation ){
 			return wfMessage('sz-internal-error')->text();
@@ -312,7 +328,7 @@ class SpecialInvitations extends SpecialPage {
 		}
 		
 		
-		if ( ($email != null) && ( $invitation->sendCode($user, $email, $message) ) ) {
+		if ( ($email != null) && ( $invitation->sendCode($user, $email, $message, $language) ) ) {
 			$this->sentTo = $email;
 		} else {
 			$this->sentTo = null;

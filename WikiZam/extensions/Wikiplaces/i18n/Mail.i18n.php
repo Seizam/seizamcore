@@ -154,8 +154,8 @@ $1 created an invitation code for you, along with this message:
 ---
 $2
 ---
-Using the code $3, you can access special offers.
-Try out! {{canonicalurl:{{#special:Invitation/use:$3}}}}',
+Using the code $3, you can access special offers from category $4.
+Try out! {{canonicalurl:{{#special:Invitation/Use:$3}}}}',
 );
 
 /*
@@ -308,4 +308,14 @@ pour créditer votre compte.',
      */
     'wpm-renewal-ok-subj' => 'Votre abonnement a été renouvellé !',
     'wpm-renewal-ok-body' => '{{int:wpm-activation-body|$1|$2|$3}}',
+	
+	'wpm-invitation-subj' => 'Un artiste vous a envoyé une invitation',
+	'wpm-invitation-body' => 'Bonjour,
+
+$1 vous a envoyé une invitation, accompagnée de ce message:
+---
+$2
+---
+En utilisant le code $3, vous pouvez accéder à des offres spéciales de la catégorie $4.
+Essayez le! {{canonicalurl:{{#special:Invitation/Use:$3}}}}',
 );
