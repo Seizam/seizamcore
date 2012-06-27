@@ -2,6 +2,13 @@
 
 class WpInvitation {
 	
+	private static $CODE_CHARS = array (
+		0 => 'A', 1 => 'C', 2 => 'D' , 3 => 'E' , 4 =>'F' ,
+		5 => 'G', 6 => 'H', 7 => 'J' , 8 => 'K' , 9 =>'M' ,
+		10 => 'N', 11 => 'P', 12 => 'Q' , 13 => 'R' , 14 =>'T' ,
+		15 => 'U', 16 => 'V', 17 => 'W' , 18 => 'X' , 19 =>'Y' ,
+		20 => '3', 21 => '4', 22 => '6' , 23 => '7' , 24 =>'9' );
+	
 	private	$wpi_id,
 			$wpi_code,
 			$wpi_to_email,
@@ -142,7 +149,7 @@ class WpInvitation {
 	}
 	
 	/**
-	 *
+	 * get a random code from 9R79A9R79AAA to MF7779MF7779
 	 * @param User $user
 	 * @return string 
 	 */
@@ -161,20 +168,40 @@ class WpInvitation {
 		
 		$userId = sprintf('%02d', $userId);
 
-		$code = $now{0} . $now{1}
+		$codeBegin = $now{5} . $now{1}
 				. $now{2} . $nb{0} . $now{3}
-				. $now{4} . $now{5}
-				. $now{6} . $nb{1} . $now{7}
+				. $now{4} . $now{0}
+				. $now{6} ;
+		$codeEnd = $now{11} . $now{7}
 				. $now{8} . $userId{strlen($userId)-1} . $now{9}
-				. $now{10} . $userId{strlen($userId)-2} . $now{11};
+				. $now{10} . $userId{strlen($userId)-2} . $nb{1};
 				
-		$human = dechex(substr($code, 0, 8)) . dechex(substr($code, 8, 8));
-		//$human = base_convert(substr($code, 0, 8),10, 36) . base_convert(substr($code, 8, 8),10, 36);
-		$human = strtoupper($human);
+		$human = self::num2alpha(intval($codeBegin)) . self::num2alpha(intval($codeEnd)); 
+		while ( strlen($human) < 12 ) {
+			$human .= 'A';
+		}
 		return $human;
 		
 	}
 	
+	/**
+	 * Converts an integer into the alphabet base (A-Z).
+	 * Based from sample code found at http://php.net/manual/en/function.base-convert.php, written by Theriault
+	 *
+	 * @param int $n This is the number to convert.
+	 * @return string The converted number.
+	 *
+	 */
+	private static function num2alpha($n) {
+		$r = '';
+		$newBase = count(self::$CODE_CHARS);
+		for ($i = 1; $n >= 0 && $i < 10; $i++) {
+			$r = self::$CODE_CHARS[$n % pow($newBase, $i) / pow($newBase, $i - 1)] . $r;
+			$n -= pow($newBase, $i);
+		}
+		return $r;
+	}
+
 	/**
 	 *
 	 * @param User $user
