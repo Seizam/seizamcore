@@ -54,6 +54,7 @@ $messages['en'] = array(
     'sz-asap' => 'Our team will make it happen as fast as possible!',
     
     'tipsntricks' => 'Tips and Tricks',
+    'optional-field' => 'This field is <b>optional</b>.',
     
     'fileurl' => 'File\'s address:',
     

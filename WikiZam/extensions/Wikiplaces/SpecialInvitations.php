@@ -212,35 +212,39 @@ class SpecialInvitations extends SpecialPage {
 			'Category' => array(
 				'type' => 'select',
 				'label-message' => 'wp-inv-category-field',
+                'section' => 'create-section',
 				'help-message' => 'wp-inv-category-help',
 				'options' => array(),
 			),
 			'Email' => array(
 				'type' => 'text',
-				'label-message' => 'wp-inv-email-field',
+				'label-message' => 'emailto',
+                'section' => 'mail-section',
 				'help-message' => 'wp-inv-email-help',
 				'validation-callback' => array($this, 'validateEmail'),
 			),
+			'Message' => array(
+                'type' => 'textarea',
+                'label-message' => 'emailmessage',
+                'section' => 'mail-section',
+				'help-message' => 'wp-inv-msg-help',
+                'default' => wfMessage('wp-inv-msg-default')->text(),
+            ),
 			'Language' => array (
 				'type' => 'select',
 				'label-message' => 'wp-inv-language-field',
+                'section' => 'mail-section',
 				'help-message' => 'wp-inv-language-help',
 				'options' => array(),
-			),
-			'Message' => array(
-                'type' => 'textarea',
-                'label-message' => 'wp-inv-msg-field',
-                'default' => wfMessage('wp-inv-default-msg')->text(),
-                'rows' => 3, # Display height of field
-                'cols' => 30 # Display width of field
-            ),
+			)
 		);
 		
-		global $wgLanguageSelectorLanguagesShorthand, $wgLang;
+		global $wgLanguageSelectorLanguagesShorthand;
+        $language = $this->getLanguage();
 		foreach ($wgLanguageSelectorLanguagesShorthand as $ln) {
-			$formDesc['Language']['options'][$wgLang->getLanguageName($ln)] = $ln;
-			if ($ln = $wgLang->getCode()) {
-				$formDesc['Language']['Default'] = $ln;
+			$formDesc['Language']['options'][$language->getLanguageName($ln)] = $ln;
+			if ($ln == $language->getCode()) {
+				$formDesc['Language']['default'] = $ln;
 			}
 		}
 		
@@ -276,8 +280,9 @@ class SpecialInvitations extends SpecialPage {
 			}
 		}
 		
+        
 		$htmlForm = new HTMLFormS($formDesc);
-		$htmlForm->setMessagePrefix('wp');
+		$htmlForm->setMessagePrefix('wp-inv');
 		$htmlForm->setTitle($this->getTitle(self::ACTION_CREATE));
 		$htmlForm->setSubmitText(wfMessage('wp-inv-go')->text());
 		

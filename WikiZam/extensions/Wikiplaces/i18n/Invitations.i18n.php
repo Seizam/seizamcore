@@ -6,40 +6,53 @@ $messages = array();
  * English
  */
 $messages['en'] = array(
-	
+	/* General */
 	'invitations' => 'My Invitations',
-	'wp-inv-nosub' => 'You need an active subscription in order to create invitations.  [[Special:Subscriptions/new|You can subscribe here]] or [[Special:Invitation/use|use an invitation there]].',	
-	'wp-inv-create' => 'You can [[Special:Invitations/create|create invitations]] for your friends.',
-	'wp-inv-limitreached' => 'You have reached your invitations monthly creation limit.',
-	'wp-inv-no' => 'Invitations are currently disabled.',
-	'wp-inv-see-below' => 'See below invitations that you created earlier.',
-	'wp-inv-list-header' => '$1 {{int:wp-inv-see-below}}',
-	'wpi_code' => 'Invitation code',
-	'wpi_to_email' => 'Sent to',
-	'wpi_date_created' => 'Created',
-	'wpi_counter' => 'Status',
-	'wp_not_used' => 'not used',
-	'wp_used' => 'used on $1',	
-	'wp-inv-category-field' => 'Invitation category:',
-	'wp-inv-category-desc' => '$1, limited to $2/month',
-	'wp-inv-email-field' => 'Optional: you can specify an email to send your invitation code to:',
-	'wp-inv-msg-field' => 'Optional, you can customize the message sent:',
-    'wp-inv-default-msg' => 'There is your pass to freedom! ;)',
-	'wp-inv-code-field' => 'Code:',
-	'wp-inv-counter-field' => 'How many times this code can be used (-1 for unlimited):',
-	'wp-inv-go' => 'Generate',
-	'wp-inv-success' => 'A new code was successfully generated.',
-	'wp-inv-success-sent' => '{{int:wp-inv-success}} It was sent to <b><nowiki>$1</nowiki></b> .',
-
 	'invitation' => 'My Invitation',
-	'wp-use-inv-notloggedin' => 'You must be logged in to use an invitation code. Please $1 or $2.',
-	'wp-use-inv-header' => 'The community can you take advantage of promotional offers. You can use an invitation here, or [[Special:Subscriptions/new|go back to regular offers]].',
-	'wp-use-inv-field' => 'Invitation code:',
-	'wp-use-inv-go' => 'Use this code!',
-	'wp-use-inv-ok' => 'Your invitation code is valid. You now have access to new offers.',
-	'wp-use-inv-invalid' => 'This code is not valid.',
-	'wp-use-inv-nolonger' => 'This code is no longer valid.',
+    /* Create Warnings */
+	'wp-inv-nosub' => 'You need an active subscription in order to create invitations.  [[Special:Subscriptions/new|You can subscribe here]] or [[Special:Invitation/use|use an invitation there]].',	
+	'wp-inv-create' => 'You can <b>[[Special:Invitations/create|invite your friends]]</b>.',
+	'wp-inv-limitreached' => 'Sorry, you have reached the invitation limit for the month.',
+	'wp-inv-no' => 'Sorry, invitations are currently disabled.',
+	'wp-inv-success' => 'Great! Your invitation was successfully created.',
+	'wp-inv-success-sent' => '{{int:wp-inv-success}} It was sent to <b><nowiki>$1</nowiki></b> .',
+    /* Create TP */
+	'wp-inv-see-below' => 'Here is the list of all the invitation you created.',
+	'wp-inv-list-header' => '$1 {{int:wp-inv-see-below}}',
+	'wpi_code' => 'Code',
+	'wpi_to_email' => 'Sent to',
+	'wp_used' => 'Used by [[User:$1|$1]] on $2',
+    /* Create Form */
+    'wp-inv-create-section' => 'Create an invitation',
+	'wp-inv-category-field' => 'Category:',
+	'wp-inv-category-desc' => '$1 ($2 remaining)',
+	'wp-inv-category-help' => 'Select here the type of invitation you wish to send. Be careful, the best invitations unlocks great special offers but they are rare!',	
+    'wp-inv-mail-section' => 'Send the invitation (optional)',
+    'wp-inv-email-help' => 'Type here the e-mail adress of the person you are inviting. {{int:optional-field}}',
+    'wp-inv-msg-field' => 'Custom message:',
+    'wp-inv-msg-help' => 'Type here a personal message you wish to send to the person you are inviting. {{int:optional-field}}',
+    'wp-inv-msg-default' => 'Hello,
+As promised, here is the invitation to Seizam.
+Enjoy!
+$1',
+    'wp-inv-language-field' => 'Language:',
+    'wp-inv-language-help' => 'Select here the language of the invitation e-mail. We provide this option in case the person you are inviting does not speak your language. {{int:optional-field}}',
+	'wp-inv-code-field' => 'Code:',
+	'wp-inv-code-help' => 'This is the code used to authenticate the invitation. You can change it and make it prettier if you wish to.',
+	'wp-inv-counter-field' => 'Limit:',
+	'wp-inv-counter-help' => 'How many times can the code be used. Type "-1" for unlimited.',
     
+    /* Use Warnings */
+	'wp-use-inv-notloggedin' => 'Sorry. You need to be logged in to use your invitation. Please $1 or $2.',
+	'wp-use-inv-header' => 'Please fill the form below to use an invitation code. Or check out [[Special:Subscriptions/new|our regular offers]].',
+	'wp-use-inv-ok' => 'Great! Your invitation is valid. You now have access to new special offers.',
+	'wp-use-inv-invalid' => 'Sorry. This code is invalid. {{int:sz-report}}',
+	'wp-use-inv-nolonger' => 'Sorry. Your invitation has expired. {{int:sz-report}}',
+    
+    /* Use TP */
+    'wp-use-inv-field' => 'Code:',
+    'wp-use-inv-help' => 'Type here the invitation code you received. Most likely a string looking like "3066E159C501F".',
+	'wp-use-inv-go' => 'Use this code!',
 );
 
 /*
