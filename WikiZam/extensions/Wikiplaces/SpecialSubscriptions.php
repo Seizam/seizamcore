@@ -333,7 +333,7 @@ class SpecialSubscriptions extends SpecialPage {
         }
 		
 		if ( $this->invitation instanceof WpInvitation ){
-			$this->invitation->consume($user);
+			$this->invitation->consume();
 		}
 
         $this->just_subscribed = $subscription;

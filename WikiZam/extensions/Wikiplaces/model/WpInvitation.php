@@ -9,12 +9,11 @@ class WpInvitation {
 			$wpi_date_created,
 			$wpi_date_last_used,
 			$wpi_counter, // -1 = unlimited
-			$wpi_wpic_id,
-			$wpi_last_used_user_id;
+			$wpi_wpic_id;
 	
 	private $category;
 	
-	private function __construct( $id, $code, $toEmail, $fromUserId, $created, $lastUsed, $counter, $invitationCategoryId, $lastUsedUserId) {
+	private function __construct( $id, $code, $toEmail, $fromUserId, $created, $lastUsed, $counter, $invitationCategoryId) {
 
         $this->wpi_id = intval($id);
         $this->wpi_code = $code;
@@ -24,7 +23,6 @@ class WpInvitation {
         $this->wpi_date_last_used = $lastUsed;
         $this->wpi_counter = intval($counter);
 		$this->wpi_wpic_id = intval($invitationCategoryId);
-		$this->wpi_last_used_user_id = intval($lastUsedUserId);
 		
 		$this->category = null;
 
@@ -50,8 +48,7 @@ class WpInvitation {
 				$row->wpi_date_created,
 				$row->wpi_date_last_used,
 				$row->wpi_counter,
-				$row->wpi_wpic_id,
-				$row->wpi_last_used_user_id);
+				$row->wpi_wpic_id );
     }
 	
 	public function getId() {
@@ -118,11 +115,10 @@ class WpInvitation {
 
 	/**
 	 *
-	 * @param User $user User who consume this invitation code
 	 * @return boolean
 	 * @throws MWException 
 	 */
-	public function consume($user) {
+	public function consume() {
 		
 		$dbw = wfGetDB(DB_MASTER);
 		$dbw->begin();
@@ -133,8 +129,7 @@ class WpInvitation {
 				'wp_invitation',
 				array(
 					'wpi_counter = wpi_counter - 1',
-					'wpi_date_last_used' => $now,
-					'wpi_last_used_user_id' => $user->getId() ),
+					'wpi_date_last_used' => $now ),
 				array('wpi_id' => $this->wpi_id));
 
 		$dbw->commit();
@@ -302,7 +297,6 @@ class WpInvitation {
 			// 'wpi_date_last_used' => null,
 			'wpi_counter' => $counter,
 			'wpi_wpic_id' => $invitationCategoryId,
-			'wpi_last_used_user_id' => 0
 				));
 
         // Setting id from auto incremented id in DB
@@ -314,7 +308,7 @@ class WpInvitation {
             return null;
         }
 
-        return new self($id, $code, $toEmail, $fromUserId, $created, null, $counter, $invitationCategoryId, 0);
+        return new self($id, $code, $toEmail, $fromUserId, $created, null, $counter, $invitationCategoryId);
 		
 	}
 	
