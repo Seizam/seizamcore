@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS `wp_invitation` (
   `wpi_date_last_used` datetime DEFAULT NULL COMMENT 'Last time the code was used',
   `wpi_counter` int(10) NOT NULL DEFAULT '1' COMMENT 'How many time the code can be used (-1 = unlimited)',
   `wpi_wpic_id` int(10) unsigned NOT NULL COMMENT 'Invitation category primary key',
+  `wpi_last_used_user_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'User who last used the code',
   PRIMARY KEY (`wpi_id`),
   UNIQUE KEY `wpi_code` (`wpi_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary ;

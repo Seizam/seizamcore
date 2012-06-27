@@ -9,11 +9,12 @@ class WpInvitation {
 			$wpi_date_created,
 			$wpi_date_last_used,
 			$wpi_counter, // -1 = unlimited
-			$wpi_wpic_id;
+			$wpi_wpic_id,
+			$wpi_last_used_user_id;
 	
 	private $category;
 	
-	private function __construct( $id, $code, $toEmail, $fromUserId, $created, $lastUsed, $counter, $invitationCategoryId) {
+	private function __construct( $id, $code, $toEmail, $fromUserId, $created, $lastUsed, $counter, $invitationCategoryId, $lastUsedUserId) {
 
         $this->wpi_id = intval($id);
         $this->wpi_code = $code;
@@ -23,6 +24,7 @@ class WpInvitation {
         $this->wpi_date_last_used = $lastUsed;
         $this->wpi_counter = intval($counter);
 		$this->wpi_wpic_id = intval($invitationCategoryId);
+		$this->wpi_last_used_user_id = intval($lastUsedUserId);
 		
 		$this->category = null;
 
@@ -48,7 +50,8 @@ class WpInvitation {
 				$row->wpi_date_created,
 				$row->wpi_date_last_used,
 				$row->wpi_counter,
-				$row->wpi_wpic_id );
+				$row->wpi_wpic_id,
+				$row->wpi_last_used_user_id);
     }
 	
 	public function getId() {
@@ -113,14 +116,25 @@ class WpInvitation {
         return true;
 	}
 
-	public function consume() {
+	/**
+	 *
+	 * @param User $user User who consume this invitation code
+	 * @return boolean
+	 * @throws MWException 
+	 */
+	public function consume($user) {
 		
 		$dbw = wfGetDB(DB_MASTER);
 		$dbw->begin();
+		
+		$now = WpSubscription::now();
 
 		$success = $dbw->update(
 				'wp_invitation',
-				array('wpi_counter = wpi_counter - 1'),
+				array(
+					'wpi_counter = wpi_counter - 1',
+					'wpi_date_last_used' => $now,
+					'wpi_last_used_user_id' => $user->getId() ),
 				array('wpi_id' => $this->wpi_id));
 
 		$dbw->commit();
@@ -269,13 +283,15 @@ class WpInvitation {
 	public static function create( $invitationCategoryId, $fromUser, $code, $toEmail=null, $counter=1) {
 
 		$dbw = wfGetDB(DB_MASTER);
+		
+		$created = WpSubscription::now();
+		
         $dbw->begin();
 		
 		$fromUserId = $fromUser->getId();
 
         // With PostgreSQL, a value is returned, but null returned for MySQL because of autoincrement system
         $id = $dbw->nextSequenceValue('wp_invitation_wpi_id_seq');
-		$created = WpSubscription::now();
 		
         $success = $dbw->insert('wp_invitation', array(
 			'wpi_id' => $id,
@@ -286,6 +302,7 @@ class WpInvitation {
 			// 'wpi_date_last_used' => null,
 			'wpi_counter' => $counter,
 			'wpi_wpic_id' => $invitationCategoryId,
+			'wpi_last_used_user_id' => 0
 				));
 
         // Setting id from auto incremented id in DB
@@ -297,7 +314,7 @@ class WpInvitation {
             return null;
         }
 
-        return new self($id, $code, $toEmail, $fromUserId, $created, null, $counter, $invitationCategoryId);
+        return new self($id, $code, $toEmail, $fromUserId, $created, null, $counter, $invitationCategoryId, 0);
 		
 	}
 	
