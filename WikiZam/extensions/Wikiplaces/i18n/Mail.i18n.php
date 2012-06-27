@@ -309,9 +309,6 @@ pour créditer votre compte.',
     'wpm-renewal-ok-subj' => 'Votre abonnement a été renouvellé !',
     'wpm-renewal-ok-body' => '{{int:wpm-activation-body|$1|$2|$3}}',
 	
-	'wpm-renewal-ok-subj' => 'Your subscription has been renewed.',
-    'wpm-renewal-ok-body' => '{{int:wpm-activation-body|$1|$2|$3}}',
-	
 	'wpm-invitation-subj' => 'Un artiste vous a envoyé une invitation',
 	'wpm-invitation-body' => 'Bonjour,
 
