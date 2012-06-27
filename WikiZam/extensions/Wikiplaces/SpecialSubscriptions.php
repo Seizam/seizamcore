@@ -3,11 +3,11 @@
 class SpecialSubscriptions extends SpecialPage {
     const TITLE_NAME = 'Subscriptions';
 
-    const ACTION_NEW = 'new';
-	const ACTION_USE_INVITATION = 'invitation';
-    const ACTION_CHANGE = 'change';
-    const ACTION_RENEW = 'renew';
-    const ACTION_LIST = 'list';
+    const ACTION_NEW = 'New';
+	const ACTION_USE_INVITATION = 'Invited';
+    const ACTION_CHANGE = 'Change';
+    const ACTION_RENEW = 'Renew';
+    const ACTION_LIST = 'List';
 
     protected $action = self::ACTION_LIST;
     protected $planName = null;

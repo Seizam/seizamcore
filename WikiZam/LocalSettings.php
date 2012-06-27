@@ -151,7 +151,7 @@ $wgPolyglotFollowRedirects = true;
 # Language Selector (auto select user language and drop down menu)
 require_once( "$IP/extensions/LanguageSelector/LanguageSelector.php" );
 # Supported languages
-$wgLanguageSelectorLanguages = array('ar','de','en','fr','es','it','ja','pl','pt','zh');;
+$wgLanguageSelectorLanguages = array('ar','de','en','fr','es','it','ja','pl','pt','zh');
 # Displayed languages
 $wgLanguageSelectorLanguagesShorthand = array('en','fr');
 # Method of language selection

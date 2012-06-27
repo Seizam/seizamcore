@@ -7,8 +7,8 @@ $messages = array();
  */
 $messages['en'] = array(
 	
-	'invitations' => 'My invitations',
-	'wp-inv-nosub' => 'You must have an active subscription to one of our offers in order to create invitations for your friends.  [[Special:Subscriptions/new|You can subscribe here]] or [[Special:Invitation/use|use an invitation there]].',	
+	'invitations' => 'My Invitations',
+	'wp-inv-nosub' => 'You need an active subscription in order to create invitations.  [[Special:Subscriptions/new|You can subscribe here]] or [[Special:Invitation/use|use an invitation there]].',	
 	'wp-inv-create' => 'You can [[Special:Invitations/create|create invitations]] for your friends.',
 	'wp-inv-limitreached' => 'You have reached your invitations monthly creation limit.',
 	'wp-inv-no' => 'Invitations are currently disabled.',
@@ -31,8 +31,8 @@ $messages['en'] = array(
 	'wp-inv-success' => 'A new code was successfully generated.',
 	'wp-inv-success-sent' => '{{int:wp-inv-success}} It was sent to <b><nowiki>$1</nowiki></b> .',
 
-	'invitation' => 'My invitation to freedom',
-	'wp-use-inv-notloggedin' => 'You must be logged in to use an invitation code. Please [[Special:UserLogin/signup|create an account]] or [[Special:UserLogin|log in]].',
+	'invitation' => 'My Invitation',
+	'wp-use-inv-notloggedin' => 'You must be logged in to use an invitation code. Please $1 or $2.',
 	'wp-use-inv-header' => 'The community can you take advantage of promotional offers. You can use an invitation here, or [[Special:Subscriptions/new|go back to regular offers]].',
 	'wp-use-inv-field' => 'Invitation code:',
 	'wp-use-inv-go' => 'Use this code!',

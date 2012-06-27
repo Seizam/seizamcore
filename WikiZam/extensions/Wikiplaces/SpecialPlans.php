@@ -2,7 +2,7 @@
 
 class SpecialPlans extends SpecialPage {
     
-    const ACTION_LIST = 'list';
+    const ACTION_LIST = 'List';
     
     private $action = self::ACTION_LIST;
     private $planName = null;
