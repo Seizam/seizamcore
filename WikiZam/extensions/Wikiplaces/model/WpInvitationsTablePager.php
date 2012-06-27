@@ -10,16 +10,21 @@ if (!defined('MEDIAWIKI')) {
 class WpInvitationsTablePager extends SkinzamTablePager {
     # Fields for default behavior
 
-    protected $selectTables = array('wp_invitation');
+    protected $selectTables = array('wp_invitation','wp_invitation_category','wp_subscription','user');
     protected $selectFields = array(
         'wpi_code',
+		'wpic_desc',
 		'wpi_to_email',
 		// 'wpi_from_user_id',
 		'wpi_date_created',
 		'wpi_date_last_used',
 		'wpi_counter',
-		//'wpi_wpic_id',
+        'user_name'
 		);
+    protected $selectJoinConditions = array(
+        'wp_invitation_category' => array('INNER JOIN', 'wpi_wpic_id = wpic_id'),
+        'wp_subscription' => array('LEFT JOIN', 'wps_wpi_id = wpi_id'),
+        'user' => array('LEFT JOIN', 'user_id = wps_buyer_user_id'));
     protected $defaultSort = 'wpi_date_created';
     public $mDefaultDirection = true; // true = DESC
     public $forceDefaultLimit = 20;
@@ -43,12 +48,21 @@ class WpInvitationsTablePager extends SkinzamTablePager {
 				return $wgLang->date($value, true);
 			case 'wpi_counter':
 				if ( $value < 0) {
-					return wfMessage ('wp_unlimited')->text ();
+					return wfMessage ('wpi-unlimited',-($value+1))->text();
 				} elseif ( $value == 0) {
-					return wfMessage ('wp_used', $wgLang->date($this->mCurrentRow->wpi_date_last_used, true))->parse();
+					return wfMessage ('wpi-used', $this->mCurrentRow->user_name, $wgLang->date($this->mCurrentRow->wpi_date_last_used, true))->parse();
+				} elseif ($value == 1) {
+					return wfMessage ('status-PE')->text();
 				} else {
-					return wfMessage ('wp_not_used')->text ();
-				}
+                    return wfMessage ('wpi-remaining',$value)->text();
+                }
+            case 'wpi_to_email':
+                if (empty ($value))
+                    return wfMessage('wpi-notsent')->text();
+                else
+                    return htmlspecialchars($value);
+            case 'wpic_desc':
+                return wfMessage($value)->text();
             default:
                 return htmlspecialchars($value);
         }
@@ -56,12 +70,13 @@ class WpInvitationsTablePager extends SkinzamTablePager {
 	
 	function getFieldNames() {
         $fieldNames = parent::getFieldNames();
-		unset($fieldNames['wpi_counter']);
 		unset($fieldNames['wpi_date_last_used']);
-		$fieldNames['wpi_code'] = wfMessage ('wpi_code')->text ();
-		$fieldNames['wpi_to_email'] = wfMessage ('wpi_to_email')->text ();
-		$fieldNames['wpi_date_created'] = wfMessage ('wpi_date_created')->text ();
-		$fieldNames['wpi_counter'] = wfMessage ('wpi_counter')->text ();
+		unset($fieldNames['user_name']);
+		$fieldNames['wpi_code'] = wfMessage ('wpi-code')->text ();
+		$fieldNames['wpic_desc'] = wfMessage('wpi-type')->text();
+		$fieldNames['wpi_to_email'] = wfMessage ('wpi-to-email')->text ();
+		$fieldNames['wpi_date_created'] = wfMessage ('date_created')->text ();
+		$fieldNames['wpi_counter'] = wfMessage ('status')->text ();
         return $fieldNames;
     }
 	
@@ -80,47 +95,4 @@ class WpInvitationsTablePager extends SkinzamTablePager {
         return $classes;
     }
 
-}
-
-
-class WpInvitationsTablePagerAdmin extends WpInvitationsTablePager {
-	
-	protected $selectTables = array('wp_invitation', 'wp_invitation_category');
-    protected $selectFields = array(
-		'wpic_desc',
-        'wpi_code',
-		'wpi_to_email',
-		// 'wpi_from_user_id',
-		'wpi_date_created',
-		'wpi_date_last_used',
-		'wpi_counter',
-		//'wpi_wpic_id',
-		);
-	protected $selectJoinConditions = array(
-		'wp_invitation_category' => array('LEFT JOIN', 'wpi_wpic_id = wpic_id') );
-	
-	function formatValue($name, $value) {
-        global $wgLang;
-        switch ($name) {
-			case 'wpi_date_created':
-				return $wgLang->date($value, true);
-			case 'wpi_counter':
-				if ( $value < 0) {
-					return 'unlimited, already used '.(-($value+1)).' times';
-				}elseif ( $value == 0) {
-					return 'no longer available, last used '.$wgLang->date($this->mCurrentRow->wpi_date_last_used, true);
-				}else{
-					return 'can still be used '.$value.' times';
-				}
-            default:
-                return htmlspecialchars($value);
-        }
-    }
-
-	function getFieldNames() {
-        $fieldNames = parent::getFieldNames();
-		$fieldNames['wpic_desc'] = 'Category';
-		return $fieldNames;
-	}
-	
 }

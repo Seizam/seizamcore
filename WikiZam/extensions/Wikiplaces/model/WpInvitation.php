@@ -208,7 +208,7 @@ class WpInvitation {
 	 * @param WpInvitationCategory $invitationCategory
 	 * @return array Array of InvitationCategoryId => count
 	 */
-	public static function countMonthlyInvitations($user) {
+	public static function getUsageForUserThisMonth($user) {
 
 		if ( ! $user instanceof User ) {
 			throw new MWException( 'Invalid user.' );

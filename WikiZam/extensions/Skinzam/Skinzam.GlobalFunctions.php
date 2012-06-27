@@ -168,8 +168,8 @@ function wfGetPrettyBacktrace()
  *
  * @param type $obj 
  */
-function wfEchoObject($obj) {
-    echo '<pre>'.print_r($obj,true).'</pre>';
+function wfEchoObject($obj, $comment = 'wfEchoObject') {
+    echo '<h3>'.$comment.'</h3><pre>'.print_r($obj,true).'</pre>';
 }
 
 

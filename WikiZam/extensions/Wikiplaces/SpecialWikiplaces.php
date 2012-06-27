@@ -80,9 +80,9 @@ class SpecialWikiplaces extends SpecialPage {
             }
         }
 
-        switch ($this->action) {
+        switch (strtolower($this->action)) {
 
-			case self::ACTION_CONSULT_WIKIPLACE:
+			case strtolower(self::ACTION_CONSULT_WIKIPLACE):
 				if ($this->name != null) {
 					$this->displayConsultWikiplace();
 				} else {
@@ -90,15 +90,15 @@ class SpecialWikiplaces extends SpecialPage {
 				}
 				break;
 
-			case self::ACTION_CREATE_SUBPAGE:
+			case strtolower(self::ACTION_CREATE_SUBPAGE):
 				$this->displayCreateSubpage();
 				break;
 
-			case self::ACTION_CREATE_WIKIPLACE:
+			case strtolower(self::ACTION_CREATE_WIKIPLACE):
 				$this->displayCreateWikiplace();
 				break;
 
-			case self::ACTION_LIST_WIKIPLACES:
+			case strtolower(self::ACTION_LIST_WIKIPLACES):
 			default:
 				$this->displayList();
 				break;
@@ -428,10 +428,6 @@ class SpecialWikiplaces extends SpecialPage {
 	 * @return string a HTML link
 	 */
 	public static function getLinkCreateSubpage($homepage_title_name = null, $i18n_key = 'create') {
-		$params = array('action' => self::ACTION_CREATE_SUBPAGE);
-		if ($homepage_title_name != null) {
-			$params['name'] = $homepage_title_name;
-		}
 		return Linker::linkKnown(
 						self::getTitleFor(self::TITLE_NAME, self::ACTION_CREATE_SUBPAGE . ':' . $homepage_title_name), wfMessage($i18n_key)->text());
 	}

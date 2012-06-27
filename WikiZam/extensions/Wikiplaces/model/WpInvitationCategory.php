@@ -188,7 +188,7 @@ class WpInvitationCategory {
 		
 	/**
 	 *
-	 * @return array Array of WpInvitationCategory (indexes are categories identifiers)
+	 * @return WpInvitationCategory Array of WpInvitationCategory (indexes are categories identifiers)
 	 */
 	public static function factoryAllAvailable($inldudeAdmin = false) {
 		$dbr = wfGetDB(DB_SLAVE);
