@@ -15,28 +15,7 @@ class SpecialInvitation extends SpecialSubscriptions {
         $user = $this->getUser();
         $output = $this->getOutput();
         $request = $this->getRequest();
-		
-        // Check rights and block if necessary
-        if (!$this->userCanExecute($user)) {
-			
-            // If anon, redirect to login
-            if ($user->isAnon()) {
-                $output->addHTML(Html::rawElement('div', array('class' => "informations"), wfMessage('wp-use-inv-notloggedin')->parse()));
-                return;
-            }
-
-            // Else display an error page.
-            $this->displayRestrictionError();
-            return;
-        }
-		
-		$check = WpSubscription::canSubscribe($this->getUser());
-		if ($check !== true) {
-			$output->redirect($this->getTitleFor('Invitations')->getLocalURL(array('msgkey' => $check,'msgtype'=>'error')), '302');
-			//$output->addHTML(Html::rawElement('div', array('class' => "informations error"), wfMessage($check)->parse()));
-			return;
-		}
-		
+        
         // Reading parameter from request
         if (isset($par) & $par != '') {
             $explosion = explode(':', $par);
@@ -64,6 +43,28 @@ class SpecialInvitation extends SpecialSubscriptions {
 		
         $this->msgType = $request->getText('msgtype', $this->msgType);
         $this->msgKey = $request->getText('msgkey', $this->msgKey);
+		
+        // Check rights and block if necessary
+        if (!$this->userCanExecute($user)) {
+			
+            // If anon, redirect to login
+            if ($user->isAnon()) {
+                $output->addHTML(wfMessage('wp-use-inv-notloggedin',$this->invitationCode)->parse());
+                return;
+            }
+
+            // Else display an error page.
+            $this->displayRestrictionError();
+            return;
+        }
+		
+		$check = WpSubscription::canSubscribe($this->getUser());
+		if ($check !== true) {
+			$output->redirect($this->getTitleFor('Subscriptions')->getLocalURL(array('msgkey' => $check,'msgtype'=>'error')), '302');
+			//$output->addHTML(Html::rawElement('div', array('class' => "informations error"), wfMessage($check)->parse()));
+			return;
+		}
+		
 
         $this->display();
     }

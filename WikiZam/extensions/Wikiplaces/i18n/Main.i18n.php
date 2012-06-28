@@ -153,6 +153,10 @@ You are also promising us that you wrote this yourself, or copied it from a publ
 	'wp-plan-not-available-renewal' => 'Plan not available (we do not offer it anymore).',
     /* TablePager: Plans */
     'wp-planslist-header' => 'Here is the list of all the subscription plans offered by Seizam.',
+    'wp-planslist-footer' => '=== About Pro Plans ===
+Every Pro Plan includes personal editorial consulting (10 hours per year). Get help from Seizam team and save time integrating your content ; through instant messaging, Skype or e-mail.
+=== Tailored Offers ===
+It is our goal to answer the needs of every artist. Please [[Project:Contact|contact us]] to ask an estimate for any task you may have for us.',
     'wp-hard-quotas' => 'Hard Quotas',
     'wp-monthly-quotas' => 'Monthly Quotas',
     'wp-period' => '{{PLURAL:$1|one month|$1 months}}',
@@ -161,35 +165,36 @@ You are also promising us that you wrote this yourself, or copied it from a publ
     'wpp-pro' => 'Professional',
     'wpp-test' => 'Discovery',
     'wpp-launchoffer' => 'special launch offer',
+    'wpp-invitation-only' => 'invitation only',
     'wpp-1' => '1 month',
     'wpp-3' => '3 months',
     'wpp-6' => '6 months',
     'wpp-12' => '1 year',
     
-    'wpp-basic1' => '{{int:wpp-basic}} ({{int:wpp-1}})',
-    'wpp-basic3' => '{{int:wpp-basic}} ({{int:wpp-3}})',
-    'wpp-basic6' => '{{int:wpp-basic}} ({{int:wpp-6}})',
-    'wpp-basic12' => '{{int:wpp-basic}} ({{int:wpp-12}})',
+    'wpp-basic1' => '{{int:wpp-basic}} ({{int:wpp-1}}, {{int:wpp-launchoffer}})',
+    'wpp-basic3' => '{{int:wpp-basic}} ({{int:wpp-3}}, {{int:wpp-launchoffer}})',
+    'wpp-basic6' => '{{int:wpp-basic}} ({{int:wpp-6}}, {{int:wpp-launchoffer}})',
+    'wpp-basic12' => '{{int:wpp-basic}} ({{int:wpp-12}}, {{int:wpp-launchoffer}})',
     
-    'wpp-pro1' => '{{int:wpp-pro}} ({{int:wpp-1}})',
-    'wpp-pro3' => '{{int:wpp-pro}} ({{int:wpp-3}})',
-    'wpp-pro6' => '{{int:wpp-pro}} ({{int:wpp-6}})',
-    'wpp-pro12' => '{{int:wpp-pro}} ({{int:wpp-12}})',
+    'wpp-pro1' => '{{int:wpp-pro}} ({{int:wpp-1}}, {{int:wpp-launchoffer}})',
+    'wpp-pro3' => '{{int:wpp-pro}} ({{int:wpp-3}}, {{int:wpp-launchoffer}})',
+    'wpp-pro6' => '{{int:wpp-pro}} ({{int:wpp-6}}, {{int:wpp-launchoffer}})',
+    'wpp-pro12' => '{{int:wpp-pro}} ({{int:wpp-12}}, {{int:wpp-launchoffer}})',
     
-    'wpp-basic1-launch' => '{{int:wpp-basic}} ({{int:wpp-1}}, {{int:wpp-launchoffer}}) ',
-    'wpp-basic3-launch' => '{{int:wpp-basic}} ({{int:wpp-3}}, {{int:wpp-launchoffer}})',
-    'wpp-basic6-launch' => '{{int:wpp-basic}} ({{int:wpp-6}}, {{int:wpp-launchoffer}})',
-    'wpp-basic12-launch' => '{{int:wpp-basic}} ({{int:wpp-12}}, {{int:wpp-launchoffer}})',
+    'wpp-basic1-launch' => '{{int:wpp-basic}} ({{int:wpp-1}}, {{int:wpp-invitation-only}}) ',
+    'wpp-basic3-launch' => '{{int:wpp-basic}} ({{int:wpp-3}}, {{int:wpp-invitation-only}})',
+    'wpp-basic6-launch' => '{{int:wpp-basic}} ({{int:wpp-6}}, {{int:wpp-invitation-only}})',
+    'wpp-basic12-launch' => '{{int:wpp-basic}} ({{int:wpp-12}}, {{int:wpp-invitation-only}})',
     
-    'wpp-pro1-launch' => '{{int:wpp-pro}} ({{int:wpp-1}}, {{int:wpp-launchoffer}})',
-    'wpp-pro3-launch' => '{{int:wpp-pro}} ({{int:wpp-3}}, {{int:wpp-launchoffer}})',
-    'wpp-pro6-launch' => '{{int:wpp-pro}} ({{int:wpp-6}}, {{int:wpp-launchoffer}})',
-    'wpp-pro12-launch' => '{{int:wpp-pro}} ({{int:wpp-12}}, {{int:wpp-launchoffer}})',
+    'wpp-pro1-launch' => '{{int:wpp-pro}} ({{int:wpp-1}}, {{int:wpp-invitation-only}})',
+    'wpp-pro3-launch' => '{{int:wpp-pro}} ({{int:wpp-3}}, {{int:wpp-invitation-only}})',
+    'wpp-pro6-launch' => '{{int:wpp-pro}} ({{int:wpp-6}}, {{int:wpp-invitation-only}})',
+    'wpp-pro12-launch' => '{{int:wpp-pro}} ({{int:wpp-12}}, {{int:wpp-invitation-only}})',
     
-    'wpp-test1-launch' => '{{int:wpp-test}} ({{int:wpp-1}}, {{int:wpp-launchoffer}})',
-    'wpp-test3-launch' => '{{int:wpp-test}} ({{int:wpp-3}}, {{int:wpp-launchoffer}})',
-    'wpp-test6-launch' => '{{int:wpp-test}} ({{int:wpp-6}}, {{int:wpp-launchoffer}})',
-    'wpp-test12-launch' => '{{int:wpp-test}} ({{int:wpp-12}}, {{int:wpp-launchoffer}})',
+    'wpp-test1-launch' => '{{int:wpp-test}} ({{int:wpp-1}}, {{int:wpp-invitation-only}})',
+    'wpp-test3-launch' => '{{int:wpp-test}} ({{int:wpp-3}}, {{int:wpp-invitation-only}})',
+    'wpp-test6-launch' => '{{int:wpp-test}} ({{int:wpp-6}}, {{int:wpp-invitation-only}})',
+    'wpp-test12-launch' => '{{int:wpp-test}} ({{int:wpp-12}}, {{int:wpp-invitation-only}})',
     
 );
 
@@ -348,14 +353,19 @@ Vous nous promettez aussi que vous avez écrit ceci vous-même, ou que vous l’
 	'wp-plan-not-available-renewal' => 'Offre indisponnible (cette offre n\'est plus disponnible).',
     /* TablePager: Plans */
     'wp-planslist-header' => 'Voici la liste de toutes les offres d\'abonnement proposées par Seizam.',
+    'wp-planslist-footer' => '=== À propos des offres professionelles ===
+Chaque offre professionelle inclut des conseils éditoriaux personalisés (10 heures par an) . Soyez aidé par l\'équipe Seizam et gagnez du temps d\'intégration de votre travail ; à travers messagerie instantanée, Skype ou courriel.
+=== Offres sur mesure ===
+Notre objectif est de répondre aux besoins de chaque artiste. N\'hésitez pas à [[Project:Contact/fr|nous contacter]] et demander un devis pour toute mission que vous aimeriez nous confier.',
     'wp-hard-quotas' => 'Quotas durs',
     'wp-monthly-quotas' => 'Quotas mensuels',
     'wp-period' => '$1 mois',
     /* Plans */
     'wpp-basic' => 'Basique',
-    'wpp-pro' => 'Professionel',
+    'wpp-pro' => 'Professionelle',
     'wpp-test' => 'Découverte',
     'wpp-launchoffer' => 'offre spéciale de lancement',
+    'wpp-invitation-only' => 'sur invitation',
     'wpp-1' => '1 mois',
     'wpp-3' => '3 mois',
     'wpp-6' => '6 mois',

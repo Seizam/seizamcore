@@ -123,13 +123,14 @@ class SpecialSubscriptions extends SpecialPage {
 			'InvitationCode' => array(
 				'type' => 'text',
 				'default' => ($this->invitationCode != null) ? $this->invitationCode : '', 
-				'label-message' => 'wp-use-inv-field',
+                'section' => 'use-section',
+				'label-message' => 'wp-inv-code-field',
 				'help-message' => 'wp-use-inv-help',
 				'validation-callback' => array($this, 'validateInvitationCode'),
 			) );
 		$invitationHtml = new HTMLFormS($invitationForm);
         $invitationHtml->addHeaderText(wfMessage('wp-use-inv-header')->parse());
-        $invitationHtml->setMessagePrefix('wp');
+        $invitationHtml->setMessagePrefix('wp-inv');
         $invitationHtml->setTitle($this->getTitleFor(self::TITLE_NAME, self::ACTION_USE_INVITATION));
         $invitationHtml->setSubmitCallback(array($this, 'processInvitation'));
         $invitationHtml->setSubmitText(wfMessage('wp-use-inv-go')->text());
@@ -162,10 +163,9 @@ class SpecialSubscriptions extends SpecialPage {
 		if ( ( $code === null) || ( $code === '') ) {
 			return wfMessage('htmlform-required')->text();
 		}
-		if (!preg_match('/^[0-9A-Za-z]+$/', $code)) {
+		if (!preg_match('/^[\w ]+$/', $code)) {
 			return wfMessage('wp-use-inv-invalid')->text();
 		}
-		$code = strtoupper($code);
 		$invitation = WpInvitation::newFromCode($code);
 		if ( ! $invitation instanceof WpInvitation ) {
 			return wfMessage('wp-use-inv-invalid')->text();
@@ -215,11 +215,12 @@ class SpecialSubscriptions extends SpecialPage {
 		
 		if ($invitation instanceof WpInvitation) {
 			$formDescriptor['UseInvitation'] = array(
-				'type' => 'info',
+				'type' => 'text',
 				'section' => 'sub-new-section',
-				'label-message' => 'wp-use-inv-field',
+				'label-message' => 'wp-inv-code-field',
+                'help-message' => 'wp-use-inv-help',
 				'default' => $invitation->getCode(),
-				'raw' => true # don't escape
+                'disabled' => true
 			);
 		}
 		

@@ -3,10 +3,10 @@
 class WpInvitation {
 	
 	private static $CODE_CHARS = array (
-		0 => 'A', 1 => 'C', 2 => 'D' , 3 => 'E' , 4 =>'F' ,
-		5 => 'G', 6 => 'H', 7 => 'J' , 8 => 'K' , 9 =>'M' ,
-		10 => 'N', 11 => 'P', 12 => 'Q' , 13 => 'R' , 14 =>'T' ,
-		15 => 'U', 16 => 'V', 17 => 'W' , 18 => 'X' , 19 =>'Y' ,
+		0 => 'a', 1 => 'c', 2 => 'd' , 3 => 'e' , 4 =>'f' ,
+		5 => 'g', 6 => 'h', 7 => 'j' , 8 => 'k' , 9 =>'m' ,
+		10 => 'n', 11 => 'p', 12 => 'q' , 13 => 'r' , 14 =>'t' ,
+		15 => 'u', 16 => 'v', 17 => 'w' , 18 => 'x' , 19 =>'y' ,
 		20 => '3', 21 => '4', 22 => '6' , 23 => '7' , 24 =>'9' );
 	
 	private	$wpi_id,
@@ -95,13 +95,13 @@ class WpInvitation {
 		
 		$from = new MailAddress($userFrom);
 		
-        $subject = wfMessage('wpm-invitation-subj')->inLanguage($language)->text();
+        $subject = wfMessage('wpm-invitation-subj', $userFrom->getName())->inLanguage($language)->text();
 
         $body = wfMessage('wpm-invitation-body', 
 				$userFrom->getName(),
 				$message,
 				$this->wpi_code,
-				wfMessage($this->getCategory()->getDescription())->inLanguage($language)->text()
+				'wpi-'.$this->getCategory()->getDescription()
 				)->inLanguage($language)->text();
         $body .= wfMessage('wp-mail-footer')->inLanguage($language)->text();
 		
@@ -149,9 +149,9 @@ class WpInvitation {
 	}
 	
 	/**
-	 * get a random code from 9R79A9R79AAA to MF7779MF7779
+	 * get a random code from 9r79a9r79aaa to mf7779mf7779 
 	 * @param User $user
-	 * @return string 
+	 * @return string (Supposed lowercased)
 	 */
 	public static function generateCode($user) {
 
@@ -178,9 +178,9 @@ class WpInvitation {
 				
 		$human = self::num2alpha(intval($codeBegin)) . self::num2alpha(intval($codeEnd)); 
 		while ( strlen($human) < 12 ) {
-			$human .= 'A';
+			$human .= 'a';
 		}
-		return $human;
+		return strtolower($human); //strtolower is not really needed.
 		
 	}
 	
@@ -268,6 +268,7 @@ class WpInvitation {
 	 */
 	public static function newFromCode($code) {
 		
+        $code = strtolower($code);
 		$databaseBase = wfGetDB(DB_SLAVE);
 		$now = $databaseBase->addQuotes(WpSubscription::now());
 		$tables = array( 'wp_invitation', 'wp_invitation_category' );
@@ -303,7 +304,8 @@ class WpInvitation {
 	 * @return WpInvitation 
 	 */
 	public static function create( $invitationCategoryId, $fromUser, $code, $toEmail=null, $counter=1) {
-
+        $code = strtolower($code);
+        
 		$dbw = wfGetDB(DB_MASTER);
 		
 		$created = WpSubscription::now();

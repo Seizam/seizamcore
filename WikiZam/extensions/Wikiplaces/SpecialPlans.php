@@ -77,8 +77,9 @@ class SpecialPlans extends SpecialPage {
     private function displayList() {
         $output = $this->getOutput();
         $tp = new WpPlansTablePager();
-        $tp->setSelectConds(array('wpp_start_date < now()', 'wpp_end_date > now()', 'wpp_invitation_only' => 0));
+        $tp->setSelectConds(array('wpp_start_date < now()', 'wpp_end_date > now()'));
         $tp->setHeader(wfMessage('wp-planslist-header')->parse());
+        $tp->setFooter(wfMessage('wp-planslist-footer')->parse());
         $output->addHTML($tp->getWholeHtml());
     }
 	

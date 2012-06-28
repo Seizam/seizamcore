@@ -146,16 +146,39 @@ to credit your account.',
      */
     'wpm-renewal-ok-subj' => 'Your subscription has been renewed.',
     'wpm-renewal-ok-body' => '{{int:wpm-activation-body|$1|$2|$3}}',
-	
-	'wpm-invitation-subj' => 'An artist sent you an invitation',
-	'wpm-invitation-body' => 'Hi,
+	/*
+     * 'wpm-invitation-body', 
+     * 
+     * $userFrom->getName(),
+     * $message,
+     * $this->wpi_code,
+     * 'wpi-'.$this->getCategory()->getDescription()
+     */	
+	'wpm-invitation-subj' => '$1 sent you an invitation code for Seizam',
+	'wpm-invitation-body' => 'Hello,
 
-$1 created an invitation code for you, along with this message:
----
-$2
----
-Using the code $3, you can access special offers from category $4.
-Try out! {{canonicalurl:{{#special:Invitation/Use:$3}}}}',
+Seizam offers all artists an elegant and clean space to create and spread their work on the Internet. 
+
+$1 already joined our community and just offered you one of her/his invitation :
+{{int:$4}} - {{int:$4-desc}}
+
+Here is the attached message :
+«$2»
+
+What to do ?
+
+Visit
+http://www.seizam.com
+and discover our freedoms.
+
+Create your account on
+{{canonicalurl:{{#special:UserLogin/signup}}}}
+if you do not have one yet.
+
+Use your invitation code
+$3
+simply by visiting
+{{canonicalurl:{{#special:Invitation/Use:$3}}}}',
 );
 
 /*
@@ -308,14 +331,37 @@ pour créditer votre compte.',
      */
     'wpm-renewal-ok-subj' => 'Votre abonnement a été renouvellé !',
     'wpm-renewal-ok-body' => '{{int:wpm-activation-body|$1|$2|$3}}',
-	
-	'wpm-invitation-subj' => 'Un artiste vous a envoyé une invitation',
+	/*
+     * 'wpm-invitation-body', 
+     * 
+     * $userFrom->getName(),
+     * $message,
+     * $this->wpi_code,
+     * 'wpi-'.$this->getCategory()->getDescription()
+     */	
+	'wpm-invitation-subj' => '$1 vous a envoyé un code d\'invitation pour Seizam',
 	'wpm-invitation-body' => 'Bonjour,
 
-$1 vous a envoyé une invitation, accompagnée de ce message:
----
-$2
----
-En utilisant le code $3, vous pouvez accéder à des offres spéciales de la catégorie $4.
-Essayez le! {{canonicalurl:{{#special:Invitation/Use:$3}}}}',
+Seizam propose à tous les artistes un espace élégant et propre pour créer et diffuser leurs oeuvres sur Internet.
+
+$1 a déjà rejoint notre communauté et viens de vous offrir l\'une de ses invitations :
+{{int:$4}} - {{int:$4-desc}}
+
+Voici le message joint :
+«$2»
+
+Que faire ?
+
+Visitez
+http://www.seizam.com
+et découvrez nos libertés.
+
+Créez votre compte sur
+{{canonicalurl:{{#special:UserLogin/signup}}}}
+si vous n\'en avez pas encore.
+
+Utilisez votre code d\'invitation
+$3
+en allant simplement sur 
+{{canonicalurl:{{#special:Invitation/Use:$3}}}}',
 );

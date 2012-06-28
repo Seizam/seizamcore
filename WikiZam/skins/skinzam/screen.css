@@ -2425,6 +2425,16 @@ table.WpPlan td.wpp_name {
     width: 150px;
 }
 
+/* Invitations */
+table.WpInvitation td.wpi_code {
+    font-family: "Courier New", Courier, mono;
+    font-size: 1.2em;
+}
+
+table.WpInvitation tr.pending td {
+    color: #6b8c40;
+}
+
 
 
 /* -----------------------------------------------------------------------------

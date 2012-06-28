@@ -62,7 +62,7 @@ class WpInvitationsTablePager extends SkinzamTablePager {
                 else
                     return htmlspecialchars($value);
             case 'wpic_desc':
-                return wfMessage($value)->text();
+                return wfMessage('wpi-'.$value)->text();
             default:
                 return htmlspecialchars($value);
         }
@@ -89,8 +89,8 @@ class WpInvitationsTablePager extends SkinzamTablePager {
     function getRowClasses($row) {
         $classes = array();
 
-        if ($row->wpi_counter < 1)
-            $classes[] = 'used';
+        if ($row->wpi_counter == 1)
+            $classes[] = 'pending';
 
         return $classes;
     }

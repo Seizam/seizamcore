@@ -27,12 +27,13 @@ class WpPlansTablePager extends SkinzamTablePager {
         'wpp_monthly_bandwidth'
 		);
     protected $defaultSort = 'wpp_end_date';
-    public $mDefaultDirection = false; // true = DESC
+    public $mDefaultDirection = true; // true = DESC
     protected $tableClasses = array('WpPlan'); # Array
     protected $messagesPrefix = 'wp-';
-	
+    public $forceDefaultLimit = 6; # if > 0 use instead of $wgUser->getOption( 'rclimit' )
 
-    /**
+
+        /**
      * Format a table cell. The return value should be HTML, but use an empty
      * string not &#160; for empty cells. Do not include the <td> and </td>.
      *

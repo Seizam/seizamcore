@@ -210,7 +210,7 @@ class SpecialInvitations extends SpecialPage {
             $html .= '<li>';
             $html .= wfMessage('wp-inv-list-footer-li',
                     $category_id,
-                    $category->getDescription(),
+                    'wpi-'.$category->getDescription(),
                     isset($this->userUsageLeftThisMonth[$category_id]) ? $this->userUsageLeftThisMonth[$category_id] : 0,
                     $category->getMonthlyLimit()
                     )->parse();
@@ -276,24 +276,28 @@ class SpecialInvitations extends SpecialPage {
                 'type' => 'text',
                 'label-message' => 'wp-inv-code-field',
                 'help-message' => 'wp-inv-code-help',
+                'section' => 'admin-section',
                 'default' => WpInvitation::generateCode($this->getUser()),
                 'validation-callback' => array($this, 'validateCode'),
             );
             $formDesc['Counter'] = array(
                 'type' => 'text',
                 'label-message' => 'wp-inv-counter-field',
+                'section' => 'admin-section',
                 'help-message' => 'wp-inv-counter-help',
                 'default' => 1,
                 'validation-callback' => array($this, 'validateCounter'),
             );
-            foreach ($this->userInvitationsCategories as $category) {
-                $formDesc['Category']['options'][$category->getDescription()] = $category->getId();
+            foreach ($this->userInvitationsCategories as $category_id => $category) {
+                $formDesc['Category']['options'][wfMessage(
+                                'wp-inv-category-desc', wfMessage('wpi-'.$category->getDescription())->text(), '-1', 'I'
+                        )->parse()] = $category_id;
             }
         } else {
 
             foreach ($this->userUsageLeftThisMonth as $category_id => $usageLeft) {
                 $formDesc['Category']['options'][wfMessage(
-                                'wp-inv-category-desc', wfMessage($this->userInvitationsCategories[$category_id]->getDescription())->text(), $usageLeft, $this->userInvitationsCategories[$category_id]->getMonthlyLimit()
+                                'wp-inv-category-desc', wfMessage('wpi-'.$this->userInvitationsCategories[$category_id]->getDescription())->text(), $usageLeft, $this->userInvitationsCategories[$category_id]->getMonthlyLimit()
                         )->parse()] = $category_id;
             }
         }
@@ -327,7 +331,7 @@ class SpecialInvitations extends SpecialPage {
         $message = $formData['Message'];
 
         if ($this->userIsAdmin) {
-            $code = $formData['Code'];
+            $code = strtolower($formData['Code']);
             $counter = $formData['Counter'];
         } else {
             $code = WpInvitation::generateCode($user);
@@ -357,7 +361,7 @@ class SpecialInvitations extends SpecialPage {
     }
 
     public function validateCode($code, $alldata) {
-        if (!preg_match('/^[\w]+$/', $code)) {
+        if (!preg_match('/^[\w ]+$/', $code)) {
             return 'Error: Code should be alphanumeric';
         }
         $invitation = WpInvitation::newFromCode($code);
