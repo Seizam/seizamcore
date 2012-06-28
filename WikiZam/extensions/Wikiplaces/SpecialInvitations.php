@@ -83,7 +83,10 @@ class SpecialInvitations extends SpecialPage {
         $this->msgType = $request->getText('msgtype', null);
         $msgKey = $request->getText('msgkey', null);
         if ($msgKey != null) {
-            $this->msg = wfMessage($msgKey);
+			$msg = wfMessage($msgKey);
+			if ($msg->exists()) {
+				$this->msg = $msg;
+			}
         }
 
         $this->display();
