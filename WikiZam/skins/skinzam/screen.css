@@ -112,7 +112,7 @@ dd { margin: 0 0 0 40px; }
 
 p, div.poem {
     margin: 0 0 16px 0;
-    line-height: 1.8em;
+    line-height: 22px;
     text-align: justify;
 }
 
@@ -2047,7 +2047,7 @@ body.ns--1 div#bodyContent div.inside ul.gallery li {
     background-color: #fff;
 }
 .edit_col_1 .content_block textarea + .help {
-    top: 16px;
+    top: 22px;
 }
 
 .edit_col_1 .content_block .input_like select {

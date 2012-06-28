@@ -60,9 +60,9 @@ class WpWikiplacesTablePager extends SkinzamTablePager {
                 $html .= '</ul>';
                 return $html;
             case 'wpw_monthly_page_hits':
-                return wgFormatNumber($value).' '.  wfMessage('wp-hits')->text();
+                return wfFormatNumber($value).' '.  wfMessage('wp-hits')->text();
             case 'wpw_monthly_bandwidth':
-                return wgformatSizekB($value);
+                return wfFormatSizekB($value);
             case 'wpw_report_updated':
             case 'wpw_date_expires':
                 return ($value === null) ? '-' : $wgLang->timeanddate($value, true);

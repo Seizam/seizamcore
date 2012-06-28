@@ -253,6 +253,7 @@ class SpecialInvitations extends SpecialPage {
                 'section' => 'mail-section',
                 'help-message' => 'wp-inv-msg-help',
                 'default' => wfMessage('wp-inv-msg-default', $signature)->text(),
+                'validation-callback' => array($this, 'validateMessage'),
                 'rows' => 4,
             ),
             'Language' => array(
@@ -292,9 +293,9 @@ class SpecialInvitations extends SpecialPage {
                 'validation-callback' => array($this, 'validateCounter'),
             );
             foreach ($this->userInvitationsCategories as $category_id => $category) {
-                $formDesc['Category']['options'][wfMessage(
-                                'wp-inv-category-desc', wfMessage('wpi-'.$category->getDescription())->text(), '-1', 'I'
-                        )->parse()] = $category_id;
+                $formDesc['Category']['options'][wfMessage('wpi-'.$category->getDescription())->text()] = $category_id;
+                if ($this->category_id == $category_id)
+                    $formDesc['Category']['default'] = $category_id;
             }
         } else {
 
@@ -302,6 +303,8 @@ class SpecialInvitations extends SpecialPage {
                 $formDesc['Category']['options'][wfMessage(
                                 'wp-inv-category-desc', wfMessage('wpi-'.$this->userInvitationsCategories[$category_id]->getDescription())->text(), $usageLeft, $this->userInvitationsCategories[$category_id]->getMonthlyLimit()
                         )->parse()] = $category_id;
+                if ($this->category_id == $category_id)
+                    $formDesc['Category']['default'] = $category_id;
             }
         }
 
@@ -370,6 +373,13 @@ class SpecialInvitations extends SpecialPage {
         $invitation = WpInvitation::newFromCode($code);
         if ($invitation instanceof WpInvitation) {
             return 'Error: This code already exists.';
+        }
+        return true;
+    }
+    
+    public function validateMessage($message, $alldata) {
+        if (strlen($message)>500) {
+            return wfMessage('toolong',500)->text();
         }
         return true;
     }

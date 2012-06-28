@@ -15,7 +15,7 @@ if (!defined('MEDIAWIKI')) {
  * @param $size Size in MB to format
  * @return string Plain text (not HTML)
  */
-function wgformatSizeMB($size) {
+function wfFormatSizeMB($size) {
     global $wgLang;
     // For small sizes no decimal places necessary
     if ($size >= 1024) {
@@ -39,20 +39,20 @@ function wgformatSizeMB($size) {
  * @return string Plain text (not HTML)
  * @todo handle properly float $size, the problem is how to handle them with 32 bits system (substr?)
  */
-function wgformatSizekB($size) {
+function wfFormatSizekB($size) {
     
 	global $wgLang;
 	
 	if ( PHP_INT_SIZE == 8 ) { // check if system is 32 or 64 bits
 		// 64 bits
 		if ($size > 1024) {
-			return wgformatSizeMB($size/1024);
+			return wfFormatSizeMB($size/1024);
 		}
 		
 	} elseif ( PHP_INT_SIZE == 4 ) {
 		// 32 bits
 		if ( strlen($size) > 3 ) { // not very precise, but work even with big big size
-			return wgformatSizeMB ( substr($size ,0,-3) );
+			return wfFormatSizeMB ( substr($size ,0,-3) );
 		}
 		
 	} else {
@@ -75,7 +75,7 @@ function wgformatSizekB($size) {
  * @param $size number
  * @return string Plain text (not HTML)
  */
-function wgFormatNumber($number) {
+function wfFormatNumber($number) {
     global $wgLang;
     $unit = '';
     if ($number >= 10000) {

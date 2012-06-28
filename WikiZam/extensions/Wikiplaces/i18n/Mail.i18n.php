@@ -154,16 +154,16 @@ to credit your account.',
      * $this->wpi_code,
      * 'wpi-'.$this->getCategory()->getDescription()
      */	
-	'wpm-invitation-subj' => '$1 sent you an invitation code for Seizam',
+	'wpm-invitation-subj' => 'Invitation code for Seizam',
 	'wpm-invitation-body' => 'Hello,
 
 Seizam offers all artists an elegant and clean space to create and spread their work on the Internet. 
 
-$1 already joined our community and just offered you one of her/his invitation :
+$1 already joined our community and just offered you one of her/his invitation:
 {{int:$4}} - {{int:$4-desc}}
 
 Here is the attached message :
-«$2»
+« $2 »
 
 What to do ?
 
@@ -339,7 +339,7 @@ pour créditer votre compte.',
      * $this->wpi_code,
      * 'wpi-'.$this->getCategory()->getDescription()
      */	
-	'wpm-invitation-subj' => '$1 vous a envoyé un code d\'invitation pour Seizam',
+	'wpm-invitation-subj' => 'Code d\'invitation pour Seizam',
 	'wpm-invitation-body' => 'Bonjour,
 
 Seizam propose à tous les artistes un espace élégant et propre pour créer et diffuser leurs oeuvres sur Internet.
@@ -348,7 +348,7 @@ $1 a déjà rejoint notre communauté et viens de vous offrir l\'une de ses invi
 {{int:$4}} - {{int:$4-desc}}
 
 Voici le message joint :
-«$2»
+« $2 »
 
 Que faire ?
 

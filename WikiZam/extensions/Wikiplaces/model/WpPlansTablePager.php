@@ -52,10 +52,10 @@ class WpPlansTablePager extends SkinzamTablePager {
                 return wfMessage('wp-period',$value);
 			case 'wpp_nb_wikiplaces':
 			case 'wpp_nb_wikiplace_pages':
-				return wgFormatNumber($value);
+				return wfFormatNumber($value);
 			case 'wpp_monthly_bandwidth':
 			case 'wpp_diskspace':
-				return wgformatSizeMB($value);
+				return wfFormatSizeMB($value);
             case 'wpp_price':
                 $cur = ' '.$this->mCurrentRow->wpp_currency;
                 if ($cur == ' EUR')
@@ -75,9 +75,9 @@ class WpPlansTablePager extends SkinzamTablePager {
     
     function formatHardQuotas() {
         $html = Xml::openElement('ul');
-        $html .= Html::rawElement('li', array(), '<b>'.wgFormatNumber($this->mCurrentRow->wpp_nb_wikiplaces).'</b> '.wfMessage ('wp-wikiplaces')->text());
-        $html .= Html::rawElement('li', array(), '<b>'.wgFormatNumber($this->mCurrentRow->wpp_nb_wikiplace_pages).'</b> '.wfMessage ('wp-subpages')->text());
-        $html .= Html::rawElement('li', array(), '<b>'.wgformatSizeMB($this->mCurrentRow->wpp_diskspace).'</b> '.wfMessage ('wp-diskspace')->text());
+        $html .= Html::rawElement('li', array(), '<b>'.wfFormatNumber($this->mCurrentRow->wpp_nb_wikiplaces).'</b> '.wfMessage ('wp-wikiplaces')->text());
+        $html .= Html::rawElement('li', array(), '<b>'.wfFormatNumber($this->mCurrentRow->wpp_nb_wikiplace_pages).'</b> '.wfMessage ('wp-subpages')->text());
+        $html .= Html::rawElement('li', array(), '<b>'.wfFormatSizeMB($this->mCurrentRow->wpp_diskspace).'</b> '.wfMessage ('wp-diskspace')->text());
         $html .= Xml::closeElement('ul');
         
         return $html;
@@ -85,8 +85,8 @@ class WpPlansTablePager extends SkinzamTablePager {
     
     function formatMonthlyQuotas() {
         $html = Xml::openElement('ul');
-        $html .= Html::rawElement('li', array(), '<b>'.wgFormatNumber($this->mCurrentRow->wpp_monthly_page_hits).'</b> '.wfMessage ('wp-Hits')->text());
-        $html .= Html::rawElement('li', array(), '<b>'.wgformatSizeMB($this->mCurrentRow->wpp_monthly_bandwidth).'</b> '.wfMessage ('wp-bandwidth')->text());
+        $html .= Html::rawElement('li', array(), '<b>'.wfFormatNumber($this->mCurrentRow->wpp_monthly_page_hits).'</b> '.wfMessage ('wp-Hits')->text());
+        $html .= Html::rawElement('li', array(), '<b>'.wfFormatSizeMB($this->mCurrentRow->wpp_monthly_bandwidth).'</b> '.wfMessage ('wp-bandwidth')->text());
         $html .= Xml::closeElement('ul');
         
         return $html;

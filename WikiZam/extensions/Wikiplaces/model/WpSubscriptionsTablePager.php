@@ -53,10 +53,10 @@ class WpSubscriptionsTablePager extends SkinzamTablePager {
 				return wfMessage("status-$value")->text() ;
 			case 'wpp_nb_wikiplaces':
 			case 'wpp_nb_wikiplace_pages':
-				return wgFormatNumber($value);
+				return wfFormatNumber($value);
 			case 'wpp_monthly_bandwidth':
 			case 'wpp_diskspace':
-				return wgformatSizeMB($value);
+				return wfFormatSizeMB($value);
             default:
                 return htmlspecialchars($value);
         }

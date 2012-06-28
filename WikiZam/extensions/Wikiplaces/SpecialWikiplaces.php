@@ -113,8 +113,8 @@ class SpecialWikiplaces extends SpecialPage {
 		$tp = new WpWikiplacesTablePager();
 		$tp->setSelectConds(array('wpw_owner_user_id' => $user_id));
 		$tp->setHeader(wfMessage('wp-list-header')->parse());
-		$diskspace = wgformatSizeMB(WpPage::countDiskspaceUsageByUser($user_id));
-		$pages = wgFormatNumber(WpPage::countPagesOwnedByUser($user_id));
+		$diskspace = wfFormatSizeMB(WpPage::countDiskspaceUsageByUser($user_id));
+		$pages = wfFormatNumber(WpPage::countPagesOwnedByUser($user_id));
 		$tp->setFooter(wfMessage('wp-list-footer', $diskspace, $pages)->parse());
 		/** @TODO Add Total Hits, Total Bandwidth & Report Updated, ie. Make pretty getters and factories in WpWikiplace that can take the result/row from the pager as argument */
 		$output->addHTML($tp->getWholeHtml());

@@ -54,7 +54,7 @@ class WpInvitationsTablePager extends SkinzamTablePager {
 				} elseif ($value == 1) {
 					return wfMessage ('status-PE')->text();
 				} else {
-                    return wfMessage ('wpi-remaining',$value)->text();
+                    return wfMessage ('wpi-remaining',  wfFormatNumber($value))->text();
                 }
             case 'wpi_to_email':
                 if (empty ($value))

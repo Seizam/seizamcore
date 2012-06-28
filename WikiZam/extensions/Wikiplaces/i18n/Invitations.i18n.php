@@ -78,9 +78,9 @@ Thank you very much for visiting us! You received an invitation code for Seizam 
     'wpi-discovery' => 'Discovery Invitation',
     'wpi-discovery-desc' => 'Special Discovery Plans (3 months for Free! 1 year for 6€!)',
     'wpi-beta' => 'Beta Tester Invitation',
-    'wpi-beta-desc' => 'Special Plan (1 year for free!)',
+    'wpi-beta-desc' => 'Free Basic Plan (1 year for free!)',
     'wpi-star' => 'Star Invitation',
-    'wpi-star-desc' => 'Special professional plan (1 year for free!)',
+    'wpi-star-desc' => 'Free Professional plan (1 year for free!)',
 );
 
 /*
@@ -163,7 +163,7 @@ Merci beaucoup pour votre visite ! Parfait, vous avez reçu un code d\'invitatio
     'wpi-discovery' => 'Invitation découverte',
     'wpi-discovery-desc' => 'Offres spéciales de découverte (3 mois gratuits ! 1 année pour 6€ !)',
     'wpi-beta' => 'Invitation beta testeur',
-    'wpi-beta-desc' => 'Offre spéciale (1 année gratuite !)',
-    'wpi-star' => 'Invitation Star',
-    'wpi-star-desc' => 'Offre professionelle spéciale (1 année gratuite !)',
+    'wpi-beta-desc' => 'Offre basique gratuite (1 année gratuite !)',
+    'wpi-star' => 'Invitation star',
+    'wpi-star-desc' => 'Offre professionelle gratuite (1 année gratuite !)',
 );

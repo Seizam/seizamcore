@@ -52,7 +52,7 @@ class WpPagesTablePager extends SkinzamTablePager {
             case 'page_touched':
                 return $wgLang->date($value, true);
             case 'page_counter':
-                return wgFormatNumber($value) . ' ' . wfMessage('wp-hits')->text();
+                return wfFormatNumber($value) . ' ' . wfMessage('wp-hits')->text();
             case 'actions' :
                 return $this->formatActions();
             default:

@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.18-dev, created on 2012-06-28 15:42:14
+<?php /* Smarty version 2.6.18-dev, created on 2012-06-28 18:45:20
          compiled from wiki:Twitter_Faves */ ?>
 <?php require_once(SMARTY_CORE_DIR . 'core.load_plugins.php');
 smarty_core_load_plugins(array('plugins' => array(array('function', 'counter', 'wiki:Twitter_Faves', 1, false),array('modifier', 'escape', 'wiki:Twitter_Faves', 6, false),array('modifier', 'default', 'wiki:Twitter_Faves', 6, false),array('modifier', 'validate', 'wiki:Twitter_Faves', 10, false),)), $this); ?>

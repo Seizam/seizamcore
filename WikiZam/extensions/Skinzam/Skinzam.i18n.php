@@ -22,6 +22,7 @@ $messages['en'] = array(
     
     'cur-euro' => '€',
     'contactlinks' => 'Project:Contact',
+    'toolong' => '$1 characters maximum.',
     
     'sz-back' => 'back',
     'sz-legalcontent' => 'Legal Content',
@@ -173,6 +174,10 @@ $messages['fr'] = array(
     'mypreferences' => 'Mes Préférences',
     'mywatchlist' => 'Ma Liste de Suivi',
     'mytalk' => 'Ma Page de Discussion',
+    
+    
+    'contactlinks' => 'Project:Contact/fr',
+    'toolong' => '$1 caractères maximum.',
     
     'sz-back' => 'retour',
     'sz-legalcontent' => 'Contenu légal',
