@@ -238,6 +238,8 @@ class SpecialMySeizam extends SpecialPage {
         $html .= '<li>' . wfMessage('ms-upload')->parse() . '</li>';
         $html .= '<li>' . wfMessage('ms-contributions', $user->getName())->parse() . '</li>';
         $html .= '<li>' . wfMessage('ms-preferences')->parse() . '</li>';
+        if ($this->mode == 'artist')
+            $html .= '<li><b>' . wfMessage('ms-invitations')->parse() . '</b></li>';
         $html .= '<li>' . wfMessage('ms-specialpages')->parse() . '</li>';
         $html .= '</ul>';
 

@@ -128,7 +128,6 @@ class SpecialWikiplaces extends SpecialPage {
             $this->msgType = 'error';
             $this->display();
             return;
-            return;
 		}
 
 		$formDescriptor = array(

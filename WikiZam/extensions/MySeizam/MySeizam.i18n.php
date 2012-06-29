@@ -27,6 +27,7 @@ $messages['en'] = array(
         'ms-quickaccount' => 'About my account:',
         'ms-morelinks' => 'What else?',
         'ms-specialpages' => 'And [[Special:SpecialPages|much more...]]',
+        'ms-invitations' => '[[Special:Invitations|{{int:invitations}}]]'
 );
 
 /** Message documentation (Message documentation)

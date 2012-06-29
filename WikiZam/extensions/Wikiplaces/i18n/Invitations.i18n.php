@@ -26,7 +26,6 @@ Each month, you can generate a few invitation codes for your friends and relativ
     'wpi-type' => 'Type',
 	'wpi-used' => 'Used by [[User:$1|$1]] on $2',
     'wpi-unlimited' => 'Unlimited, used $1 times.',
-    'wpi-notsent' => 'Not Sent',
     'wpi-remaining' => '$1 remaining',
     /* Create Form */
     'wp-inv-create-header' => 'Please fill the form below to generate a new invitation code. If you fill up the e-mail part, the invitation will be sent automatically, otherwise you will need to transmit the generated code yourself.',
@@ -74,7 +73,7 @@ Thank you very much for visiting us! You received an invitation code for Seizam 
     
     /* Categories */
     'wpi-basic' => 'Basic Invitation',
-    'wpi-basic-desc' => 'Discounted Basic Plans (1 month for Free! 50% percent off basic prices!)',
+    'wpi-basic-desc' => 'Exclusive Basic Plans (1 month for Free! 50% percent off basic prices!)',
     'wpi-discovery' => 'Discovery Invitation',
     'wpi-discovery-desc' => 'Special Discovery Plans (3 months for Free! 1 year for 6€!)',
     'wpi-beta' => 'Beta Tester Invitation',
@@ -105,7 +104,7 @@ $messages['fr'] = array(
     /* TP */
 	'wp-inv-list-header' => 'Voici la liste de toutes les invitations que vous avez créées.',
 	'wp-inv-list-footer' => '=== Invitations disponnibles ===',
-    'wp-inv-list-footer-li' => '<b>[[Special:Invitations/Create:$1|{{int:$2}}]]</b>: {{int:$2-desc}} ($3 sur $4 restantes ce mois)',
+    'wp-inv-list-footer-li' => '<b>[[Special:Invitations/Create:$1|{{int:$2}}]]</b> : {{int:$2-desc}} ($3 sur $4 restantes ce mois)',
     'wp-inv-list-help' => '=== À propos des invitations ===
 Chaque mois, vous pouvez générer quelques codes d\'invitation pour vos amis et proches. Un code débloque de grosses réductions sur les offres de premier abonnement, il peut être utilisé sur [[Special:Invitation/Use]]. Plus d\'informations à propos des invitations [[Help:Invitations|ici]].',
 	'wpi-code' => 'Code',
@@ -113,7 +112,6 @@ Chaque mois, vous pouvez générer quelques codes d\'invitation pour vos amis et
     'wpi-type' => 'Type',
 	'wpi-used' => 'Utilisée par [[User:$1|$1]] le $2',
     'wpi-unlimited' => 'Illimitée, utilisée $1 fois.',
-    'wpi-notsent' => 'Non envoyée',
     'wpi-remaining' => '$1 restantes',
     /* Create Form */
     'wp-inv-create-header' => 'Merci de remplir le formulaire ci-dessous pour générer un nouveau code. Si vous remplissez la section "courriel", l\'invitation sera envoyée automatiquement ; sinon, vous devrez transmettre le code vous-même.',
@@ -159,7 +157,7 @@ Merci beaucoup pour votre visite ! Parfait, vous avez reçu un code d\'invitatio
     
     /* Categories */
     'wpi-basic' => 'Invitation basique',
-    'wpi-basic-desc' => 'Offres basiques soldées (1 mois gratuit ! 50% de réduction !)',
+    'wpi-basic-desc' => 'Offres basiques exclusives (1 mois gratuit ! 50% de réduction !)',
     'wpi-discovery' => 'Invitation découverte',
     'wpi-discovery-desc' => 'Offres spéciales de découverte (3 mois gratuits ! 1 année pour 6€ !)',
     'wpi-beta' => 'Invitation beta testeur',

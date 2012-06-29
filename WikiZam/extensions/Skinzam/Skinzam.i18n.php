@@ -124,9 +124,9 @@ $messages['en'] = array(
 
     /* Licensing */
     'license-no' => 'undefined license',
-    'license-text' => 'This work is licensed under a $1.',
-    'no-license' => 'No license has been selected for this work. All rights are assumed to be reserved.',
-    'copyright-text' => 'This work is copyrighted. All rights reserved.',
+    'license-text' => 'This page and its content are licensed under a $1.',
+    'no-license' => 'No license has been selected for this page and its content. All rights are assumed to be reserved.',
+    'copyright-text' => 'This page and its content are copyrighted. All rights reserved.',
     
     'cc-by-30' => 'Creative Commons Attribution 3.0 License',
     'cc-by-sa-30' => 'Creative Commons Attribution-ShareAlike 3.0 License',
@@ -278,9 +278,9 @@ $messages['fr'] = array(
     
     /* Licensing */
     'undefined-license' => 'licence indéfinie',
-    'no-license' => 'Aucune licence n\'a été sélectionnée pour cette oeuvre. Tous les droits sont considérés réservés.',
-    'license-text' => 'Cette oeuvre est soumise à la $1.',
-    'copyright-text' => 'Cette oeuvre est soumise à copyright. Tous droits réservés.',
+    'no-license' => 'Aucune licence n\'a été sélectionnée pour cette page et sont contenu. Tous les droits sont considérés réservés.',
+    'license-text' => 'Cette page et son contenu sont soumis à la $1.',
+    'copyright-text' => 'Cette page et son contenu sont soumis à copyright. Tous droits réservés.',
     
     'cc-by-30' => 'Licence Creative Commons Attribution 3.0',
     'cc-by-sa-30' => 'Licence Creative Commons Attribution - Partage à l\'Identique 3.0',

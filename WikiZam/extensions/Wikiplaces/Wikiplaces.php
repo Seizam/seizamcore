@@ -59,6 +59,7 @@ $wgAutoloadClasses['SpecialInvitations'] = $_dir . 'SpecialInvitations.php';
 $_i18n_dir = $_dir.'i18n/';
 $wgExtensionMessagesFiles['Wikiplaces'] = $_i18n_dir.'Main.i18n.php';
 $wgExtensionMessagesFiles['Wikiplaces.invitations'] = $_i18n_dir.'Invitations.i18n.php';
+$wgExtensionMessagesFiles['Wikiplaces.plans'] = $_i18n_dir.'Plans.i18n.php';
 $wgExtensionMessagesFiles['Wikiplaces.mail'] = $_i18n_dir.'Mail.i18n.php';
 
 # Name aliases
@@ -149,8 +150,8 @@ $wgWikiplaceNameBlacklist = array(
 
 // i18n message (often a page in MediaWiki namespace) containing templates listing
 // (same syntax as MediaWiki:Licenses)
-define ('WP_TEMPLATES_FOR_HOMEPAGE', 'templates for Homepage'); // MediaWiki:Templates for Homepage
-define ('WP_TEMPLATES_FOR_SUBPAGE', 'templates for Subpage'); // MediaWiki:Templates for Subpage
+define ('WP_TEMPLATES_FOR_HOMEPAGE', 'Templates for Homepage'); // MediaWiki:Templates for Homepage
+define ('WP_TEMPLATES_FOR_SUBPAGE', 'Templates for Subpage'); // MediaWiki:Templates for Subpage
 
 // deferred setup, to not break Hook execution ordering with PreventDuplicate extension
 $wgExtensionFunctions[] = 'setupWikiplaces';

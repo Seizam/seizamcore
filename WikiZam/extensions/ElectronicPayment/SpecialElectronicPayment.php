@@ -40,7 +40,7 @@ class SpecialElectronicPayment extends SpecialPage {
      * @param $request WebRequest : data posted.
      */
     public function __construct($request = null) {
-        parent::__construct('ElectronicPayment', EP_ADMIN_RIGHT);
+        parent::__construct('ElectronicPayment', EP_ACCESS_RIGHT);
     }
 
     /**
@@ -69,8 +69,8 @@ class SpecialElectronicPayment extends SpecialPage {
         if (!$this->userCanExecute($user)) {
             
             // MAINTENANCE SCRUB
-            $output->addHTML(wfMessage('sz-maintenance'));
-            return;
+            //$output->addHTML(wfMessage('sz-maintenance'));
+            //return;
             
             // If anon, redirect to login
             if ($user->isAnon()) {

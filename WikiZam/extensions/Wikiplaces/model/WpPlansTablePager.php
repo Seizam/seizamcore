@@ -26,8 +26,8 @@ class WpPlansTablePager extends SkinzamTablePager {
         'wpp_monthly_page_hits',
         'wpp_monthly_bandwidth'
 		);
-    protected $defaultSort = 'wpp_end_date';
-    public $mDefaultDirection = true; // true = DESC
+    protected $defaultSort = 'wpp_id';
+    public $mDefaultDirection = false; // true = DESC
     protected $tableClasses = array('WpPlan'); # Array
     protected $messagesPrefix = 'wp-';
     public $forceDefaultLimit = 6; # if > 0 use instead of $wgUser->getOption( 'rclimit' )

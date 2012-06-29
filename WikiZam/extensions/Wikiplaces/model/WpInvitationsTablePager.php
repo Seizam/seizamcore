@@ -58,7 +58,7 @@ class WpInvitationsTablePager extends SkinzamTablePager {
                 }
             case 'wpi_to_email':
                 if (empty ($value))
-                    return wfMessage('wpi-notsent')->text();
+                    return '-';
                 else
                     return htmlspecialchars($value);
             case 'wpic_desc':
