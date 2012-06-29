@@ -20,7 +20,7 @@ $wgExtensionCredits['other'][] = array(
     'path' => __FILE__,
     'name' => 'Transactions',
     'author' => array('Clément Dietschy', 'Seizam'),
-    'version' => '0.1.0',
+    'version' => '1.0',
     'url' => 'http://www.seizam.com/',
     'descriptionmsg' => 'tm-desc',
 );

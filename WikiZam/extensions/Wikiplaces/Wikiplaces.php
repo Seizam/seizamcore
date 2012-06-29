@@ -16,7 +16,7 @@ $wgExtensionCredits['other'][] = array(
    'author' => array('Yann Missler', 'Seizam'), 
    'url' => 'http://www.seizam.com', 
    'descriptionmsg' => 'wp-desc',
-   'version'  => '0.1.0',
+   'version'  => '1.0',
    );
 
 // defines who can access to Wikiplaces related Special pages: Special:Wikiplaces and Special:Subscriptions

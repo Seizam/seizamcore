@@ -25,7 +25,8 @@ if( !defined( 'MEDIAWIKI' ) ) {
 $wgExtensionCredits['other'][] = array( 
 	'path' => __FILE__,
 	'name' => 'PolyglotS', 
-	'author' => 'Daniel Kinzler & Clément Dietschy', 
+	'author' => array('Daniel Kinzler','Clément Dietschy'),
+	'version' => '1.0',
 	'url' => 'http://mediawiki.org/wiki/Extension:Polyglot',
 	'description' => 'Support for content in multiple languages in a single MediaWiki',
 );

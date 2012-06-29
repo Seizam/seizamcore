@@ -20,7 +20,7 @@ $wgExtensionCredits['specialpage'][] = array(
     'path' => __FILE__,
     'name' => 'Electronic Payment',
     'author' => array('Clément Dietschy', 'Seizam'),
-    'version' => '0.1.0',
+    'version' => '1.0',
     'url' => 'http://www.seizam.com/',
     'descriptionmsg' => 'electronicpayment-desc',
 );
