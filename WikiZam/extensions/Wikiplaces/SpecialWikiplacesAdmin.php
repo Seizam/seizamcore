@@ -4,43 +4,43 @@ class SpecialWikiplacesAdmin extends SpecialPage {
 	
 	const TITLE_NAME = 'WikiplacesAdmin';
 	
-	const ACTION_10EUR = '10eur';
-	const ACTION_CLEAR = 'clear';
+	const ACTION_CREDIT = 'Credit';
+    
+    
+    private $action = null;
 	
 	public function __construct($request = null) {
-		parent::__construct(self::TITLE_NAME,WP_ADMIN_RIGHT);
+		parent::__construct(self::TITLE_NAME, WP_ADMIN_RIGHT);
 	}
 	
 	public function execute( $par ) {
 		
 		$this->setHeaders(); // sets robotPolicy = "noindex,nofollow" + set page title
-		
+		$output = $this->getOutput();
+        
 		$user = $this->getUser();
 		
 		if (!$this->userCanExecute($user)) {
             $this->displayRestrictionError();
             return;
         }
-			
-		/** @todo: replace this header with something nicer */
-		$this->getOutput()->setSubtitle(Html::rawElement('span', array(), $this->getLang()->pipeList(array(
-				Linker::linkKnown($this->getTitle(self::ACTION_10EUR), 'give me 10 EUR'),
-				Linker::linkKnown($this->getTitle(self::ACTION_CLEAR), 'clear'),
-				Linker::linkKnown(SpecialPage::getTitleFor('Wikiplaces')),
-				Linker::linkKnown(SpecialPage::getTitleFor('Subscriptions')),
-				Linker::linkKnown(SpecialPage::getTitleFor('Offers')),
-				Linker::linkKnown(SpecialPage::getTitleFor('Transactions'))
-			))));
+        
+        $request = $this->getRequest();
 		
-		// dispatch
-		$action = strtolower( $this->getRequest()->getText( 'action', $par ) );
-        switch ($action) { 
-			case self::ACTION_10EUR :
-				$this->action10Eur();
+		if (isset($par) & $par != '') {
+            $this->action = $par;
+		} else {
+			$this->action = $request->getText('action', null);
+		}
+        
+        $output->addWikiText("== WikiPlace Administration Panel ==");
+        
+        switch ($this->action) {
+			case self::ACTION_CREDIT :
+				$this->credit($request->getText('name',null), $request->getInt('amount', 0));
 				break;
-			case self::ACTION_CLEAR :
-				$this->actionClear();
-				break;			
+            default :
+                $output->addWikiText("=== ERROR: Wrong action ===");
 		}
 		
 	}
@@ -48,38 +48,45 @@ class SpecialWikiplacesAdmin extends SpecialPage {
 	/**
 	 * FOR TEST ONLY: give 10 EUR in user account balance
 	 */
-	private function action10Eur() {
-		$user = $this->getUser();
+	private function credit($name = null, $amount = 0) {
+        $output = $this->getOutput();
+        
+        $output->addWikiText("=== Credit ===");
+        $output->addWikiText("name = $name");
+        $output->addWikiText("amount = $amount");
+        
+		$user = User::newFromName($name);
+        if (!$user || $user->getId() == 0 ) {
+            $output->addWikiText("=== ERROR: Invalid UserName ===");
+            return;
+        }
+        
+        $output->addWikiText("=== User ===");
+        $output->addWikiText("user_id = ".$user->getId());
+        $output->addWikiText("True balance before = ".TMRecord::getTrueBalanceFromDB($user->getId()));
+        
+        if (!is_int($amount) || $amount <= 0 || $amount > 1000 ) {
+            $output->addWikiText("=== ERROR: Invalid Amount ===");
+            return;
+        }
+            
 		$tmr = array(
 			# Params related to Message
-			'tmr_type' => 'PAYTEST', # varchar(8) NOT NULL COMMENT 'Type of message (Payment, Sale, Plan)',
+			'tmr_type' => 'gift', # varchar(8) NOT NULL COMMENT 'Type of message (Payment, Sale, Plan)',
 			# Paramas related to User
 			'tmr_user_id' => $user->getId(), # int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Foreign key to user.user_id',
 			'tmr_mail' => $user->getEmail(), # tinyblob COMMENT 'User''s Mail',
 			'tmr_ip' => IP::sanitizeIP(wfGetIP()), # tinyblob COMMENT 'User''s IP'
 			# Params related to Record
-			'tmr_amount' => 10, # decimal(9,2) NOT NULL COMMENT 'Record Amount',
+			'tmr_amount' => $amount, # decimal(9,2) NOT NULL COMMENT 'Record Amount',
 			'tmr_currency' => 'EUR', # varchar(3) NOT NULL DEFAULT 'EUR' COMMENT 'Record Currency',
-			'tmr_desc' => 'wp-transaction-test-add-10', # varchar(64) NOT NULL COMMENT 'Record Description',
+			'tmr_desc' => 'wp-tm-gift', # varchar(64) NOT NULL COMMENT 'Record Description',
 			'tmr_status' => 'OK' # varchar(2) NOT NULL COMMENT 'Record status (OK, KO, PEnding, TEst)',
 		);
 		wfRunHooks('CreateTransaction', array(&$tmr));
-		$this->getOutput()->addHTML("10 EUR given to " . $user->getName());
+        $output->addWikiText("True balance after = ".TMRecord::getTrueBalanceFromDB($user->getId()));
+		$output->addWikiText("== SUCCESS ==");
 		
-	}
-	
-	/**
-	 * FOR TEST ONLY: clear all extension content + all transactions
-	 */
-	private function actionClear() {
-		$dbw = wfGetDB(DB_MASTER);
-		$dbw->query("TRUNCATE tm_record");
-		$dbw->query("TRUNCATE wp_subscription");
-		$dbw->query("TRUNCATE wp_old_subscription");
-		$dbw->query("TRUNCATE wp_old_usage");
-		$dbw->query("TRUNCATE wp_page");
-		$dbw->query("TRUNCATE wp_wikiplace");
-		$this->getOutput()->addHTML('All wikiplaces, pages, subscriptions, transactions have been deleted!');
 	}
 	
 	

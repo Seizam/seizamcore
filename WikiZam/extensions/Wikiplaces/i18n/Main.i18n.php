@@ -151,6 +151,8 @@ You are also promising us that you wrote this yourself, or copied it from a publ
 	'wp-insufficient-quota' => 'Insufficient quota (this plan is too small for your usage).',
 	'wp-plan-not-available-renewal' => 'Plan not available (we do not offer it anymore).',
     
+    'wp-tm-gift' => 'Free Promotional Credit',
+    
 );
 
 /*
@@ -305,4 +307,7 @@ Vous nous promettez aussi que vous avez écrit ceci vous-même, ou que vous l’
     'wp-subscribe-change' => 'Vous pouvez sélectionner un abonnement qui succédera à l\'actuel depuis [[Special:Subscriptions/Renew|la page de renouvellement d\'abonnement]]. Merci de [[Project:Contact/fr|nous contacter]] si vous avez besoin de changer d\'abonnement immédiatement. {{int:sz-asap}}',
     'wp-insufficient-quota' => 'Quota insuffisant (cette offre est trop petite pour votre usage).',
 	'wp-plan-not-available-renewal' => 'Offre indisponnible (cette offre n\'est plus disponnible).',
+    
+    
+    'wp-tm-gift' => 'Crédit Promotionel Gratuit',
 );

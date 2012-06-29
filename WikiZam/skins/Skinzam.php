@@ -549,7 +549,7 @@ class SkinzamTemplate extends BaseTemplate {
             <p class="sread"><?php echo wfMessage('sz-seizamonsocialnetworks')->text() ?></p>
             <ul class="socials">
                 <li class="tumblr"><a href="http://www.davidcanwin.com">Tumblr</a></li>
-                <li class="twitter"><a href="http://twitter.com/davidcanwin">Twitter</a></li>
+                <li class="twitter"><a href="http://www.twitter.com/davidcanwin">Twitter</a></li>
                 <li class="fcbk"><a href="http://www.facebook.com/davidcanwin">Facebook</a></li>
                 <li class="linkedin"><a href="http://www.linkedin.com/company/seizam">LinkedIn</a></li>
             </ul>

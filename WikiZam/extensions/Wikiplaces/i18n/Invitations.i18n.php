@@ -67,7 +67,7 @@ Thank you very much for visiting us! You received an invitation code for Seizam 
 === You already have an account on Seizam ===
 * That is easy, just <b>[{{canonicalurl:Special:UserLogin|returnto=Special:Invitation/Use:$1}} log in]</b>.
 === You don\'t have an account yet ===
-* Do not worry. <b>[{{canonicalurl:Special:UserLogin|type=signup&returnto=Special:Invitation/Use:$1}} create your account]</b> first.
+* Do not worry. <b>[{{canonicalurl:Special:UserLogin|type=signup&returnto=Special:Invitation/Use:$1}} Create your account]</b> first.
 === You need help ===
 * We will be happy to help you, whatever your request is! Simply <b>[[Project:Contact|contact us]]</b>.',
     
@@ -151,7 +151,7 @@ Merci beaucoup pour votre visite ! Parfait, vous avez reçu un code d\'invitatio
 === Vous avez déjà un compte sur Seizam ===
 * Simplement, <b>[{{canonicalurl:Special:UserLogin|returnto=Special:Invitation/Use:$1}} connectez-vous]</b>.
 === Vous n\'avez pas de compte pour le moment ===
-* Pas de souçi. <b>[{{canonicalurl:Special:UserLogin|type=signup&returnto=Special:Invitation/Use:$1}}Créez votre compte]</b> en premier.
+* Pas de souçi. <b>[{{canonicalurl:Special:UserLogin|type=signup&returnto=Special:Invitation/Use:$1}} Créez votre compte]</b> en premier.
 === Vous avez besoin d\'aide ===
 * Nous serions heureux de vous aider, quelle que soit votre requète ! Il suffit de <b>[[Project:Contact|nous contacter]]</b>.',
     
