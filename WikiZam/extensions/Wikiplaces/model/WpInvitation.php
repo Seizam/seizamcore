@@ -94,11 +94,12 @@ class WpInvitation {
 		$to = new MailAddress($to);
 		
 		$from = new MailAddress($userFrom);
+		$userFromName = $userFrom->getName();
 		
-        $subject = wfMessage('wpm-invitation-subj', $userFrom->getName())->inLanguage($language)->text();
+        $subject = wfMessage('wpm-invitation-subj', $userFromName)->inLanguage($language)->text();
 
         $body = wfMessage('wpm-invitation-body', 
-				$userFrom->getName(),
+				$userFromName,
 				$message,
 				$this->wpi_code,
 				'wpi-'.$this->getCategory()->getDescription()
@@ -255,7 +256,7 @@ class WpInvitation {
 		
 		$start = wfTimestamp( TS_MW, $category->getStartDate() );
 		$end = wfTimestamp( TS_MW, $category->getEndDate() );
-		$now = wfTimestampNow( TS_MW, WpSubscription::now());
+		$now = wfTimestamp( TS_MW, WpSubscription::now());
 		
 		return ( ( $start <= $now ) && ( $end >= $now ) );
 				
@@ -270,7 +271,7 @@ class WpInvitation {
 		
         $code = strtolower($code);
 		$databaseBase = wfGetDB(DB_SLAVE);
-		$now = $databaseBase->addQuotes(WpSubscription::now());
+		
 		$tables = array( 'wp_invitation', 'wp_invitation_category' );
 		$vars = array( '*' );
 		$conds = array(	'wpi_code' => $code);
@@ -295,7 +296,7 @@ class WpInvitation {
 
 	/**
 	 *
-	 * @param int $invitationCategoryId
+	 * @param WpInvitationCategory $invitationCategory
 	 * @param User $fromUser
 	 * 
 	 * @param string $code
@@ -303,7 +304,9 @@ class WpInvitation {
 	 * @param int $counter
 	 * @return WpInvitation 
 	 */
-	public static function create( $invitationCategoryId, $fromUser, $code, $toEmail=null, $counter=1) {
+	public static function create( $invitationCategory, $fromUser, $code, $toEmail=null, $counter=1) {
+		
+		$invitationCategoryId = $invitationCategory->getId();
         $code = strtolower($code);
         
 		$dbw = wfGetDB(DB_MASTER);
