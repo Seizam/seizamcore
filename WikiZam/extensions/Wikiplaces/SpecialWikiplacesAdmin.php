@@ -63,12 +63,18 @@ class SpecialWikiplacesAdmin extends SpecialPage {
         
         $output->addWikiText("=== User ===");
         $output->addWikiText("user_id = ".$user->getId());
-        $output->addWikiText("True balance before = ".TMRecord::getTrueBalanceFromDB($user->getId()));
+        $output->addWikiText("user_name = ".$user->getName());
+        $output->addWikiText("user_realname = ".$user->getRealName());
+        $output->addWikiText("user_realname = ".$user->getEmail());
         
         if (!is_int($amount) || $amount <= 0 || $amount > 1000 ) {
             $output->addWikiText("=== ERROR: Invalid Amount ===");
             return;
         }
+        
+        
+        $output->addWikiText("=== Transaction ===");
+        $output->addWikiText("True balance before = ".TMRecord::getTrueBalanceFromDB($user->getId()));
             
 		$tmr = array(
 			# Params related to Message
@@ -84,6 +90,7 @@ class SpecialWikiplacesAdmin extends SpecialPage {
 			'tmr_status' => 'OK' # varchar(2) NOT NULL COMMENT 'Record status (OK, KO, PEnding, TEst)',
 		);
 		wfRunHooks('CreateTransaction', array(&$tmr));
+        $output->addWikiText("==== DONE ====");
         $output->addWikiText("True balance after = ".TMRecord::getTrueBalanceFromDB($user->getId()));
 		$output->addWikiText("== SUCCESS ==");
 		
