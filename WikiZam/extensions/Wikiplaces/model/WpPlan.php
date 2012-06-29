@@ -191,8 +191,11 @@ class WpPlan {
      */
     public function canBeTakenAsFirst($user = null, $invitation = null) {
 
-        $now = WpSubscription::now();
-        if (($this->wpp_start_date > $now) || ($this->wpp_end_date < $now)) {
+		$start = wfTimestamp( TS_MW, $this->wpp_start_date );
+		$end = wfTimestamp( TS_MW, $this->wpp_end_date );
+		$now = wfTimestamp( TS_MW, WpSubscription::now() );
+		
+        if (($start > $now) || ($end < $now)) {
             return false;
         }
 

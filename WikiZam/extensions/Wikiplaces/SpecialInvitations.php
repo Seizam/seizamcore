@@ -125,10 +125,8 @@ class SpecialInvitations extends SpecialPage {
             return wfMessage('wp-no-active-sub');
         } elseif (empty($this->userInvitationsCategories)) {
             return wfMessage('wp-inv-no');
-        } elseif (!$this->userIsAdmin) {
-            if (empty($this->userUsageLeftThisMonth)) {
-                return wfMessage('wp-inv-limitreached');
-            }
+        } elseif ( (!$this->userIsAdmin) && empty($this->userUsageLeftThisMonth) ) {
+            return wfMessage('wp-inv-limitreached');
         }
 
         return true;
@@ -346,7 +344,7 @@ class SpecialInvitations extends SpecialPage {
 
         $language = $formData['Language'];
 
-        $invitation = WpInvitation::create($category->getId(), $user, $code, $email, $counter);
+        $invitation = WpInvitation::create($category, $user, $code, $email, $counter);
         if (!$invitation instanceof WpInvitation) {
             return wfMessage('sz-internal-error')->text();
         }

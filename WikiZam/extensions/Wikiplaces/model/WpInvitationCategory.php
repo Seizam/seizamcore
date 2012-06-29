@@ -98,13 +98,18 @@ class WpInvitationCategory {
 			$this->plans = array();
 			
 			$databaseBase = wfGetDB(DB_SLAVE);
+			$now = $databaseBase->addQuotes(WpSubscription::now());
+			
 			$results = $databaseBase->select(
 				array ( 'wp_wpi_wpp', 'wp_plan'),
 				'*',
 				array( 'wpip_wpic_id' => $this->wpic_id ),
 				__METHOD__,
 				array(),
-				array( 'wp_plan' => array('INNER JOIN', 'wpip_wpp_id = wpp_id') ) );
+				array( 'wp_plan' => array('INNER JOIN', 
+					'wpip_wpp_id = wpp_id',
+					'wpp_start_date <= '.$now,
+					'wpp_end_date >= '.$now ) ) );
 
 			if ($results !== false) {
 
@@ -126,32 +131,10 @@ class WpInvitationCategory {
 	 * @return WpInvitationCategory 
 	 */
 	public static function newFromId($id) {
-		return self::newFromConds(array( 'wpic_id' => $id )); 
-	}
-	
-	/**
-	 *
-	 * @return WpInvitationCategory 
-	 */
-	public static function newPublicCategory() {
-		$dbr = wfGetDB(DB_SLAVE);
-		$now = $dbr->addQuotes(WpSubscription::now());
-		return self::newFromConds(array(
-					'wpic_monthly_limit > 0',
-					'wpic_start_date <= ' . $now,
-					'wpic_end_date > ' . $now), $dbr);
-	}
-
-	/**
-	 *
-	 * @param array $conds SQL conditions
-	 * @param DatabaseBase $databaseBase Optional (default = DB_SLAVE)
-	 * @return WpInvitationCategory  
-	 */
-	private static function newFromConds($conds, $databaseBase = null) {
-		if ( $databaseBase == null ) {
-			$databaseBase = wfGetDB(DB_SLAVE);
-		}
+		
+		$databaseBase = wfGetDB(DB_SLAVE);
+		$conds = array( 'wpic_id' => $id );
+		
         $results = $databaseBase->select(
 				array ( 'wp_invitation_category', 'wp_wpi_wpp', 'wp_plan'),
 				'*',
@@ -232,6 +215,7 @@ class WpInvitationCategory {
 			
 			if ( $category == null ) {
 				$category = self::constructFromDatabaseRow($row);
+				$category->plans = array();
 				
 			} elseif( $category->getId() != $row->wpic_id) {
 				$categories[$category->getId()] = $category;
