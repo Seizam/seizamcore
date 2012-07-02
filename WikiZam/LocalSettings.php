@@ -46,7 +46,7 @@ $wgEnableUserEmail = true; # UPO
 
 $wgEnotifUserTalk = true; # UPO
 $wgEnotifWatchlist = true; # UPO
-$wgEmailAuthentication = true;
+$wgEmailAuthentication = true; // all e-mail functions (except requesting a password reminder e-mail) only work for authenticated (confirmed) e-mail addresses
 
 /**
  * Password reminder name
@@ -227,20 +227,26 @@ require_once( "$IP/extensions/ProtectOwn/ProtectOwn.php" );
 $wgProtectOwnGroups = array('', 'user', 'artist', 'owner');
 // remove the 'move' restriction
 unset($wgRestrictionTypes[array_search('move', $wgRestrictionTypes)]);
+
 // everyone can edit, even anons, but, there can be per-page restrctions
 // by default 'user' is allowed to edit, even if '*' is not.
 $wgGroupPermissions['*']['read'] = true; // ProtectOwn override this if protection set on page
 $wgGroupPermissions['*']['edit'] = true; // ProtectOwn override this if protection set on page
-$wgGroupPermissions['bureaucrat']['editprotectedns'] = true;
-$wgGroupPermissions['sysop']['editprotectedns'] = true;
 
-$wgNamespaceProtection[NS_PROJECT] = array('editprotectedns');
+// define auto confirmed users as "email confirmed" users
+$wgAutopromote['autoconfirmed'] = APCOND_EMAILCONFIRMED;
+
+// define protected namespaces
 $wgAvailableRights[] = 'editlimitedns';
-$wgGroupPermissions['autoconfirmed']['editlimitedns'] = true;
+$wgNamespaceProtection[NS_PROJECT] = array('editprotectedns');
 $wgNamespaceProtection[NS_HELP] = array('editlimitedns');
 $wgNamespaceProtection[NS_TEMPLATE] = array('editlimitedns');
 $wgNamespaceProtection[NS_CATEGORY] = array('editlimitedns');
 
+// who can edit theses protected namespaces ?
+$wgGroupPermissions['bureaucrat']['editprotectedns'] = true;
+$wgGroupPermissions['sysop']['editprotectedns'] = true;
+$wgGroupPermissions['autoconfirmed']['editlimitedns'] = true;
 
 
 # Where is the favicon ?
