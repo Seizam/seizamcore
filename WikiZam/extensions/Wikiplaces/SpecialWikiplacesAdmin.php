@@ -46,7 +46,7 @@ class SpecialWikiplacesAdmin extends SpecialPage {
 	}
 	
 	/**
-	 * FOR TEST ONLY: give 10 EUR in user account balance
+	 * FOR TEST ONLY: give $amount EUR in user account balance
 	 */
 	private function credit($name = null, $amount = 0) {
         $output = $this->getOutput();

@@ -322,7 +322,7 @@ class WpSubscription {
 
         // process even if the plan should not be taken ($this->wps_renew_wpp_id is supposed to be good)
         // payment
-        $tmr = self::createTMR($user->getId(), $user->getEmail(), $next_plan);
+        $tmr = self::createTMR($user->getId(), $user->getEmail(), $next_plan, WP_SUBSCRIPTION_TMR_TYPE_RENEW );
         if (($tmr['tmr_status'] != 'OK') && ($tmr['tmr_status'] != 'PE')) { // not ( OK or PE ) so it cannot be renewed 			
             $this->set('wps_renew_wpp_id', WPP_ID_NORENEW);
             return 'sz-internal-error';
@@ -708,7 +708,7 @@ class WpSubscription {
         // so, be sure that you need to call this subscribe() !
         $current_sub = self::newByUserId($user_id);
 
-        $tmr = self::createTMR($user_id, $user->getEmail(), $plan);
+        $tmr = self::createTMR($user_id, $user->getEmail(), $plan, WP_SUBSCRIPTION_TMR_TYPE_NEW);
 
         // already paid, or waiting a payment ?
         switch ($tmr['tmr_status']) {
@@ -777,15 +777,16 @@ class WpSubscription {
      * @param int $user_id
      * @param string $user_email
      * @param WpPlan $plan
+	 * @param string $type
      * @return array TMR as array
      */
-    private static function createTMR($user_id, $user_email, $plan) {
+    private static function createTMR($user_id, $user_email, $plan, $type) {
 
         $price = $plan->getPrice();
 
         $tmr = array(
             # Params related to Message
-            'tmr_type' => WP_SUBSCRIPTION_TMR_TYPE,
+            'tmr_type' => $type,
             # Paramas related to User
             'tmr_user_id' => $user_id,
             'tmr_mail' => $user_email,
