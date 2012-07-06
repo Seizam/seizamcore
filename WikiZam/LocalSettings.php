@@ -237,7 +237,10 @@ $wgAutopromote['autoconfirmed'] = APCOND_EMAILCONFIRMED;
 // define protected namespaces
 $wgAvailableRights[] = 'editlimitedns';
 $wgNamespaceProtection[NS_PROJECT] = array('editprotectedns');
+$wgNamespaceProtection[NS_MEDIAWIKI] = array('editprotectedns');
+
 $wgNamespaceProtection[NS_HELP] = array('editlimitedns');
+$wgNamespaceProtection[NS_USER] = array('editlimitedns');
 $wgNamespaceProtection[NS_TEMPLATE] = array('editlimitedns');
 $wgNamespaceProtection[NS_HELP] = array('editlimitedns');
 $wgNamespaceProtection[NS_CATEGORY] = array('editlimitedns');
@@ -245,6 +248,9 @@ $wgNamespaceProtection[NS_CATEGORY] = array('editlimitedns');
 // who can edit theses protected namespaces ?
 $wgGroupPermissions['bureaucrat']['editprotectedns'] = true;
 $wgGroupPermissions['sysop']['editprotectedns'] = true;
+$wgGroupPermissions['bureaucrat']['editlimitedns'] = true;
+$wgGroupPermissions['sysop']['editlimitedns'] = true;
+
 $wgGroupPermissions['autoconfirmed']['editlimitedns'] = true;
 
 
