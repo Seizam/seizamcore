@@ -17,10 +17,10 @@
 
 // Each module may be configured individually to be globally on/off or user preference based
 $wgVectorFeatures = array(
-	'collapsiblenav' => array( 'global' => true, 'user' => true ),
+	'collapsiblenav' => array( 'global' => true, 'user' => false ),
 	'collapsibletabs' => array( 'global' => true, 'user' => false ),
-	'editwarning' => array( 'global' => false, 'user' => true ),
-	'simplesearch' => array( 'global' => false, 'user' => true ),
+	'editwarning' => array( 'global' => true, 'user' => true ),
+	'simplesearch' => array( 'global' => false, 'user' => false ),
 	// The follwing are experimental and likely unstable - use at your own risk
 	'expandablesearch' => array( 'global' => false, 'user' => false ),
 	'footercleanup' => array( 'global' => false, 'user' => false ),

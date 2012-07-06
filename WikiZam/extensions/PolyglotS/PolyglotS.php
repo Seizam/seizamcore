@@ -47,7 +47,7 @@ $wgPolyglotLanguages = null;
 * All "magic" namespaces are excempt per default. There should be no reason to change this.
 * Note: internationalizing templates is best done on-page, using the MultiLang extension.
 */
-$wgPolyglotExcemptNamespaces = array(NS_CATEGORY, NS_TEMPLATE, NS_IMAGE, NS_MEDIA, NS_SPECIAL, NS_MEDIAWIKI);
+$wgPolyglotExcemptNamespaces = array(NS_CATEGORY, NS_IMAGE, NS_MEDIA, NS_SPECIAL, NS_MEDIAWIKI);
 
 /**
 * Wether talk pages should be excempt from automatic polyglot support, with respect to

@@ -112,7 +112,6 @@ $wgRightsIcon = "";
 ## UI Elements extension for Seizam's skin
 require_once( "$IP/extensions/Skinzam/Skinzam.php" );
 
-$wgDefaultUserOptions['usenewrc'] = 1;
 
 // Browser Blacklist for unicode non compliant browsers ('/^Lynx/' retrieve from wikimedia.org CommonSettings.php)
 $wgBrowserBlackList[] = '/^Lynx/';
@@ -120,7 +119,6 @@ $wgBrowserBlackList[] = '/^Lynx/';
 $wgUseCombinedLoginLink = false;
 
 $wgVectorUseSimpleSearch = true;
-$wgDefaultUserOptions['useeditwarning'] = 1;
 
 # Path to the GNU diff3 utility. Used for conflict resolution.
 $wgDiff3 = "/usr/bin/diff3";
@@ -233,15 +231,15 @@ $wgGroupPermissions['*']['read'] = true; // ProtectOwn override this if protecti
 $wgGroupPermissions['*']['edit'] = true; // ProtectOwn override this if protection set on page
 $wgGroupPermissions['bureaucrat']['editprotectedns'] = true;
 $wgGroupPermissions['sysop']['editprotectedns'] = true;
-
 $wgNamespaceProtection[NS_PROJECT] = array('editprotectedns');
+$wgNamespaceProtection[NS_MEDIAWIKI] = array('editprotectedns');
+
 $wgAvailableRights[] = 'editlimitedns';
 $wgGroupPermissions['autoconfirmed']['editlimitedns'] = true;
-$wgNamespaceProtection[NS_HELP] = array('editlimitedns');
+$wgNamespaceProtection[NS_USER] = array('editlimitedns');
 $wgNamespaceProtection[NS_TEMPLATE] = array('editlimitedns');
+$wgNamespaceProtection[NS_HELP] = array('editlimitedns');
 $wgNamespaceProtection[NS_CATEGORY] = array('editlimitedns');
-
-
 
 # Where is the favicon ?
 $wgFavicon = "/skins/common/images/favicon.ico";

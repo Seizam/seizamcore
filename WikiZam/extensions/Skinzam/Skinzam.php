@@ -119,7 +119,24 @@ $wgSpecialPageGroups[SZ_MAIN_PAGE] = 'other';
 
 # Some global settings
 # Tune Special:Preferences
-$wgHiddenPrefs = array('userid', 'underline', 'stubthreshold', 'showtoc', 'showjumplinks', 'editsection', 'externaldiff', 'externaleditor', 'diffonly', 'norollbackdiff');
+//$wgHiddenPrefs = array('userid', 'underline', 'stubthreshold', 'showtoc', 'showjumplinks', 'editsection', 'externaldiff', 'externaleditor', );
+$wgHiddenPrefs = array('userid','editcount','registrationdate',
+    'imagesize','thumbsize','underline','stubthreshold','vector-collapsiblenav','vector-noexperiments','showjumplinks',
+    'cols','showtoolbar','uselivepreview',
+    'vector-simplesearch',
+    'diffonly', 'norollbackdiff');
+
+$wgUseExternalEditor = false;
+$wgDefaultUserOptions['usenewrc'] = 1;
+$wgDefaultUserOptions['useeditwarning'] = 1;
+$wgDefaultUserOptions['justify'] = 1;
+$wgDefaultUserOptions['showjumplinks'] = 0;
+$wgDefaultUserOptions['editsection'] = 0;
+$wgDefaultUserOptions['forceeditsummary'] = 1;
+
+// Set up the depth of Tables of Content
+$wgMaxTocLevel = 3;
+
 # Do not display IP as a username-like. (Careful, breaks SeizamFooter if turned true).
 $wgShowIPinHeader = false;
 

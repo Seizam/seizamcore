@@ -210,6 +210,7 @@ $messages['fr'] = array(
     'sz-asap' => 'Notre équipe s\'en occupera le plus rapidement possible!',
     
     'tipsntricks' => 'Trucs et astuces',
+    'optional-field' => 'Ce champ est <b>optionel</b>.',
     
     'fileurl' => 'Adresse du fichier :',
     
