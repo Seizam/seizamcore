@@ -86,7 +86,8 @@ define('WP_FALLBACK_PLAN_ID', 1);
 define('WPP_ID_NORENEW', 0);
 
 // Tmr type used for subscriptions in tm
-define('WP_SUBSCRIPTION_TMR_TYPE','subscrip');
+define('WP_SUBSCRIPTION_TMR_TYPE_NEW','wpsnew');
+define('WP_SUBSCRIPTION_TMR_TYPE_RENEW','wpsrenew');
 
 // define the group in which to add the user in when she makes her first subscription
 // (she will not be removed, even if she has no more active subscription)
