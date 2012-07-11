@@ -509,7 +509,7 @@ class SpecialUpload extends SpecialPage {
 				'== ' . $msg[ 'filesource' ] . " ==\n" . $source;
 		} else {
 			if ( $license != '' ) {
-				$filedesc = $comment == '' ? '' : '== ' . $msg[ 'filedesc' ] . " ==\n" . $comment . "\n"; // PATCH
+				$filedesc = $comment == '' ? '' : $comment . "\n"; // PATCH
 					$pageText = $filedesc . '{{' . $license . '}}' . "\n";
 			} else {
 				$pageText = $comment;

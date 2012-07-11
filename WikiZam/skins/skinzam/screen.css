@@ -67,6 +67,80 @@ a:focus { outline: thin dotted; }
 a.stub, a.new {text-decoration: underline;}
 a:hover, a:active, a.stub:hover, a.new:hover { outline:0; color:#7C2122;}
 
+div#content a.external,
+div#content a.external[href ^="gopher://"],
+div#content a.extiw {
+	/* @embed */
+	background: url(images/external-link-ltr-icon.png) center right no-repeat;
+	padding-right: 13px;
+}
+div#content a.external[href ^="mailto:"],
+.link-mailto {
+	/* @embed */
+	background: url(images/mail-icon.png) center right no-repeat;
+	padding-right: 13px;
+}
+div#content a.external[href ^="news://"] {
+	/* @embed */
+	background: url(images/news-icon.png) center right no-repeat;
+	padding-right: 13px;
+}
+div#content a.external[href ^="ftp://"],
+div#content a.external[href $=".zip"], div#content a.external[href $=".ZIP"],
+.link-ftp {
+	/* @embed */
+	background: url(images/file-icon.png) center right no-repeat;
+	padding-right: 13px;
+}
+div#content a.external[href ^="irc://"],
+div#content a.external[href ^="ircs://"],
+.link-irc {
+	/* @embed */
+	background: url(images/talk-icon.png) center right no-repeat;
+	padding-right: 13px;
+}
+div#content a.external[href $=".jpg"], div#content a.external[href $=".JPG"],
+div#content a.external[href $=".jpeg"], div#content a.external[href $=".jpeg"],
+div#content a.external[href $=".png"], div#content a.external[href $=".PNG"],
+div#content a.external[href $=".gif"], div#content a.external[href $=".GIF"],
+div#content a.external[href $=".xcf"], div#content a.external[href $=".XCF"],
+div#content a.external[href $=".svg"], div#content a.external[href $=".SVG"],
+.link-audio {
+	/* @embed */
+	background: url("images/image-icon.png?2") center right no-repeat;
+	padding-right: 13px;
+}
+div#content a.external[href $=".ogg"], div#content a.external[href $=".OGG"],
+div#content a.external[href $=".mid"], div#content a.external[href $=".MID"],
+div#content a.external[href $=".midi"], div#content a.external[href $=".MIDI"],
+div#content a.external[href $=".mp3"], div#content a.external[href $=".MP3"],
+div#content a.external[href $=".wav"], div#content a.external[href $=".WAV"],
+div#content a.external[href $=".wma"], div#content a.external[href $=".WMA"],
+.link-audio {
+	/* @embed */
+	background: url("images/audio-icon.png?2") center right no-repeat;
+	padding-right: 13px;
+}
+div#content a.external[href $=".ogm"], div#content a.external[href $=".OGM"],
+div#content a.external[href $=".ogv"], div#content a.external[href $=".OGV"],
+div#content a.external[href $=".avi"], div#content a.external[href $=".AVI"],
+div#content a.external[href $=".mpeg"], div#content a.external[href $=".MPEG"],
+div#content a.external[href $=".mpg"], div#content a.external[href $=".MPG"],
+.link-video {
+	/* @embed */
+	background: url("images/video-icon.png?2") center right no-repeat;
+	padding-right: 13px;
+}
+div#content a.external[href $=".pdf"], div#content a.external[href $=".PDF"],
+div#content a.external[href *=".pdf#"], div#content a.external[href *=".PDF#"],
+div#content a.external[href *=".pdf?"], div#content a.external[href *=".PDF?"],
+div#content a.external[href *=".djvu"], div#content a.external[href *=".DJVU"],
+.link-document {
+	/* @embed */
+	background: url("images/document-icon.png?2") center right no-repeat;
+	padding-right: 13px;
+}
+
 
 /* -----------------------------------------------------------------------------
    ==  Typography
@@ -1941,6 +2015,7 @@ table.mw-enhanced-rc:hover {
    -------------------------------------------------------------------------- */
 
 ul.gallery {
+    margin: 0 auto 16px;
     text-align: center;
 }
 
@@ -2178,6 +2253,7 @@ div.form_header table {
 
 .edit_col_2 #help_zone h4 {
     color: black;
+    text-indent: 0;
     font-size: 13px;
     letter-spacing: 0;
     word-spacing: 0;

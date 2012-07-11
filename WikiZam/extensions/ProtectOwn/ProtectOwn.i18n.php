@@ -33,7 +33,9 @@ $messages['en'] = array(
     'restriction-level-owner' => 'Owner only',
     'restriction-level-user' => 'Registered Users',
     'restriction-level-artist' => 'Subscribed Artists',
-    'restriction-read' => 'Read'
+    'restriction-read' => 'Read',
+    'tooltip-ca-setprotection' => 'Define access rights to this page',
+    'accesskey-ca-setprotection' => 'p'
     
 );
 
@@ -61,5 +63,6 @@ $messages['fr'] = array(
     'restriction-level-owner' => 'Propriétaire seulement',
     'restriction-level-user' => 'Utilisateurs enregistrés',
     'restriction-level-artist' => 'Artistes abonnés',
-    'restriction-read' => 'Lire'
+    'restriction-read' => 'Lire',
+    'tooltip-ca-setprotection' => 'Définir les droits d\'accès à cette page',
 );
