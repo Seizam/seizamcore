@@ -397,6 +397,10 @@ $wgGroupPermissions['sysop']['abusefilter-revert'] = true;
 // Duration of blocks made by AbuseFilter
 $wgAbuseFilterBlockDuration = '2 hours';
 
+
+# NUKE! (BABOOM)
+require_once( "$IP/extensions/Nuke/Nuke.php" );
+
 // Widgets \o/
 require_once("$IP/extensions/Widgets/Widgets.php");
 $wgGroupPermissions['sysop']['editwidgets'] = true;
