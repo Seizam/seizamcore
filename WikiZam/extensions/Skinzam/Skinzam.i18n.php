@@ -47,7 +47,7 @@ $messages['en'] = array(
     'sz-seizamonsocialnetworks' => 'Seizam on Social Networks',
     'sz-selectlang' => 'Select your Language',
     
-    'sz-tagline' => '[[Help:Wikiplaces|<span class="fade">Wiki</span>Places]] for Art & Freedom',
+    'sz-tagline' => '[[Help:Wikiplace|<span class="fade">Wiki</span>Places]] for Art & Freedom',
     
     'sz-htmlform-helpzonetitle' => 'Need Help?',
     'sz-htmlform-helpzonedefault' => 'This frame will display text to help you fill this form. Just fly over the "\'\'\'?\'\'\'" beside any field to obtain help or details! Visit [[Help:Contents|The Help Pages]] for more help.',
@@ -149,7 +149,13 @@ Please, remember we are always available through [[Project:Contact]] for any que
 
 Regards,
 
-[[Project:Team|The Team]]'
+[[Project:Team|The Team]]',
+	'uploadtext' => "Use the form below to upload files. See [[Help:Files]] and [[Help:Images]].
+
+To include a file in a page, use a link in one of the following forms:
+* '''<tt><nowiki>[[</nowiki>{{ns:file}}<nowiki>:File.jpg]]</nowiki></tt>''' to use the full version of the file
+* '''<tt><nowiki>[[</nowiki>{{ns:file}}<nowiki>:File.png|200px|thumb|left|alt text]]</nowiki></tt>''' to use a 200 pixel wide rendition in a box in the left margin with 'alt text' as description
+* '''<tt><nowiki>[[</nowiki>{{ns:media}}<nowiki>:File.ogg]]</nowiki></tt>''' for directly linking to the file without displaying the file",
 );
 
 /** 
@@ -190,8 +196,8 @@ $messages['fr'] = array(
     'sz-discoverseizam' => '[[Project:Bienvenue|Découvrez Seizam]]',
     'sz-browseseizam' => '[[Special:AllPages|Parcourez Seizam]]',
     'sz-joinseizam' => '[[Special:UserLogin|Rejoignez Seizam]]',
-    'sz-help' => '[[Help:Contenus|Aide]]',
-    'sz-faq' => '[[Help:Foire Aux Questions|Questions fréquentes]]',
+    'sz-help' => '[[Help:Contents/fr|Aide]]',
+    'sz-faq' => '[[Help:FAQ/fr|Questions fréquentes]]',
     
     'sz-communicate' => 'Communiquer avec nous',
     'sz-reportabuse' => '[[Project:Contact/fr|Signaler un abus]]',
@@ -202,7 +208,7 @@ $messages['fr'] = array(
     'sz-seizamonsocialnetworks' => 'Seizam sur les réseaux sociaux',
     'sz-selectlang' => 'Selectionnez votre language',
     
-    'sz-tagline' => '[[Help:Wikiplaces/fr|<span class="fade">Wiki</span>Places]] d\'Art et de Liberté',
+    'sz-tagline' => '[[Help:Wikiplace|<span class="fade">Wiki</span>Places]] d\'Art et de Liberté',
     
     'sz-htmlform-helpzonetitle' => 'Besoin d\'aide ?',
     'sz-htmlform-helpzonedefault' => 'Ce cadre affichera un texte d\'aide pour le remplissage de ce formulaire. Il vous suffit de passer sur le "\'\'\'?\'\'\'" à côté d\'un champ pour obtenir de l\'aide ou des précisions ! Visitez [[Help:Contents/fr|Les Pages d\'Aide]] pour plus d\'aide.',
@@ -304,5 +310,11 @@ S\'il vous plaît, rappelez-vous que nous restons à votre disposition à traver
 
 Cordialement,
 
-[[Project:Team|L\'équipe]]'
+[[Project:Team|L\'équipe]]',
+	'uploadtext' => "Utilisez ce formulaire pour importer des fichiers sur le serveur. Voir [[Help:Fichiers|Aide:Fichiers]] et [[Help:Images/fr|Aide:Images]].
+		
+Pour inclure un fichier dans une page, utilisez un lien de la forme :
+* '''<code><nowiki>[[</nowiki>{{ns:file}}<nowiki>:fichier.jpg]]</nowiki></code>''', pour afficher le fichier en pleine résolution (dans le cas d’une image) ;
+* '''<code><nowiki>[[</nowiki>{{ns:file}}<nowiki>:fichier.png|200px|thumb|left|texte descriptif]]</nowiki></code>''' pour utiliser une miniature de 200 pixels de large dans une boîte à gauche avec « texte descriptif » comme description ;
+* '''<code><nowiki>[[</nowiki>{{ns:media}}<nowiki>:fichier.ogg]]</nowiki></code>''' pour lier directement vers le fichier sans l’afficher.",
 );
