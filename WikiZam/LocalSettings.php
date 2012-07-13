@@ -440,4 +440,4 @@ require_once( "$IP/extensions/Wikiplaces/Wikiplaces.php" );
 # MySeizam (to be inclueded after the integrated extensions
 require_once( "$IP/extensions/MySeizam/MySeizam.php" );
 
-$wgAllowExternalImagesFrom = array('http://i.creativecommons.org/',$wgServer);
+$wgAllowExternalImagesFrom = array($wgServer);

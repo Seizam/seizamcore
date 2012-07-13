@@ -64,7 +64,7 @@ body, button, input, select, textarea {
 a { color: #E22C2E; text-decoration:none;}
 a:visited { color: #E22C2E; }
 a:focus { outline: thin dotted; }
-a.stub, a.new {text-decoration: underline;}
+a.stub, a.new {color: #4d4e4f; text-decoration: underline;}
 a:hover, a:active, a.stub:hover, a.new:hover { outline:0; color:#7C2122;}
 
 div#content a.external,
@@ -689,7 +689,8 @@ select {
 .toc #toctitle {
     text-align: center;
 }
-.toc ul {
+.toc span.tocnumber {
+    display: none;
 }
 .toc li {
     list-style-type: none;
@@ -2935,15 +2936,13 @@ div.patrollink {
 
 .mw-special-Upload #bodyContent .inside h2 {
     color: white;
-    margin: 0 0 -3px 3px;
+    margin: 0 0 0 3px;
     font-weight: normal;
-    color: #debdbf;
-}
-
-.mw-special-Upload #bodyContent .inside h2 {
-    color: white;
-    margin: 0 0 -3px 3px;
-    font-weight: normal;
+    font-family: inherit;
+    text-align: left;
+    font-size: inherit;
+    text-transform: none;
+    line-height: inherit;
     color: #debdbf;
 }
 

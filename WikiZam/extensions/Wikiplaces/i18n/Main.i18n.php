@@ -155,6 +155,8 @@ You are also promising us that you wrote this yourself, or copied it from a publ
     
     'wp-tm-gift' => 'Free Promotional Credit',
     
+    'forbidden-admin-action' => 'The action you attempting is reserverd to administrators only. {{int:sz-report}}'
+    
 );
 
 /*
@@ -310,4 +312,7 @@ Vous nous promettez aussi que vous avez écrit ceci vous-même, ou que vous l’
     
     
     'wp-tm-gift' => 'Crédit Promotionel Gratuit',
+    
+    
+    'forbidden-admin-action' => 'L\'action que vous tentez est réservé aux administrateurs. {{int:sz-report}}'
 );
