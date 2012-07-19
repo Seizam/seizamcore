@@ -351,6 +351,10 @@ img {
     max-width: 100%;
 }
 
+.twtr-widget h4 {
+    text-indent: 0;
+}
+
 /* Widgets */
 iframe, video, audio {
     border: 1px solid #dad9d9;
@@ -2330,6 +2334,7 @@ table.TablePager {
 }
 .TablePager th {
     background-color: transparent;
+    text-align: center;
     font-weight: bold;
     border: none;
     border-bottom: 1px solid #dad9d9;
@@ -2618,7 +2623,6 @@ p.ms-wl-empty {
     border: 1px solid #dad9d9;
     border-right:none;
     border-bottom: none;
-    font-weight: bold;
 }
 
 
@@ -2628,7 +2632,6 @@ p.ms-wl-empty {
     border: 1px solid #dad9d9;
     border-left:none;
     border-bottom: none;
-    font-weight: bold;
 }
 
 .ms-info-ml{
@@ -2878,6 +2881,7 @@ p.ms-wl-empty {
     font-style: italic;
     font-weight: bold;
     font-size: 14px;
+    text-indent: 0;
 }
 .inside .third_parts + .third_parts {
     margin-left: 23px;

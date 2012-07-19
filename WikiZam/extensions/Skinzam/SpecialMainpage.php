@@ -155,7 +155,10 @@ class SpecialMainpage extends SpecialPage {
     private function displayOffers() {
         $html = Xml::openElement('div', array('class' => 'block block_join'));
         
-        $blockjoin = array('sz-blockjoin0','sz-blockjoin1','sz-blockjoin2');
+        if (is_null(WpSubscription::newActiveByUserId($this->getUser()->getId())))
+            $blockjoin = array('sz-blockjoin0','sz-blockjoin1','sz-blockjoin2');
+        else
+            $blockjoin = array('sz-blockjoin0b','sz-blockjoin1','sz-blockjoin2');
 
         foreach ($blockjoin as $box) {
             $html .= Xml::openElement('a', array('class'=>'fade','href' => wfMessage($box.'-href')->text()));

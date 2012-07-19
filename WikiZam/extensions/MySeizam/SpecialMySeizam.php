@@ -128,6 +128,8 @@ class SpecialMySeizam extends SpecialPage {
         $html .= '<li>' . wfMessage('ms-electronicpayment')->parse() . '</li>';
         $html .= '<li>' . wfMessage('ms-subscriptions')->parse() . '</li>';
         $html .= '<li>' . wfMessage('ms-transactions')->parse() . '</li>';
+        if ($this->mode == 'artist')
+            $html .= '<li>' . wfMessage('ms-invitations')->parse() . '</li>';
         /** @todo Add private profile for adress, phone...
         $html .= '<li>' . wfMessage('ms-privateprofile')->parse() . '</li>';*/
         $html .= '</ul>';
@@ -238,8 +240,7 @@ class SpecialMySeizam extends SpecialPage {
         $html .= '<li>' . wfMessage('ms-upload')->parse() . '</li>';
         $html .= '<li>' . wfMessage('ms-contributions', $user->getName())->parse() . '</li>';
         $html .= '<li>' . wfMessage('ms-preferences')->parse() . '</li>';
-        if ($this->mode == 'artist')
-            $html .= '<li><b>' . wfMessage('ms-invitations')->parse() . '</b></li>';
+        $html .= '<li>' . wfMessage('ms-help')->parse() . '</li>';
         $html .= '<li>' . wfMessage('ms-specialpages')->parse() . '</li>';
         $html .= '</ul>';
 

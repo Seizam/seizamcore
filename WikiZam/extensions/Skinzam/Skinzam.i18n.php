@@ -97,6 +97,9 @@ $messages['en'] = array(
     'sz-blockjoin0' => 'Our Offers',
     'sz-blockjoin0-href' => '{{canonicalurl:Project:Offers}}',
     'sz-blockjoin0-catch' => 'From <b>5.00€</b> per month.',
+    'sz-blockjoin0b' => '{{int:invitations}}',
+    'sz-blockjoin0b-href' => '{{canonicalurl:Special:Invitations}}',
+    'sz-blockjoin0b-catch' => 'Invite your friends on Seizam',
     'sz-blockjoin1' => '{{int:sz-myseizam}}',
     'sz-blockjoin1-href' => '{{canonicalurl:Special:MySeizam}}',
     'sz-blockjoin1-catch' => 'Everything you need is here.',
@@ -176,10 +179,10 @@ $messages['fr'] = array(
     'sz-myseizam' => 'Mon Seizam',
     'welcome' => 'Bienvenue',
     
-    'mycontris' => 'Mes Contributions',
-    'mypreferences' => 'Mes Préférences',
-    'mywatchlist' => 'Ma Liste de Suivi',
-    'mytalk' => 'Ma Page de Discussion',
+    'mycontris' => 'Mes contributions',
+    'mypreferences' => 'Mes préférences',
+    'mywatchlist' => 'Ma liste de suivi',
+    'mytalk' => 'Ma page de discussion',
     
     
     'contactlinks' => 'Project:Contact/fr',
@@ -257,6 +260,8 @@ $messages['fr'] = array(
     'sz-blockjoin0' => 'Nos offres',
     'sz-blockjoin0-href' => '{{canonicalurl:Project:Offres}}',
     'sz-blockjoin0-catch' => 'À partir de <b>5,00€</b> par mois.',
+    
+    'sz-blockjoin0b-catch' => 'Invitez vos amis sur Seizam',
     
     'sz-blockjoin1-catch' => 'Tout Seizam à portée de main.',
     

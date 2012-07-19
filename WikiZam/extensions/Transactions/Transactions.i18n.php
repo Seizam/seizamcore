@@ -42,7 +42,7 @@ $messages['qqq'] = array(
 
 /** French */
 $messages['fr'] = array(
-    'transactions' => 'Mes Transactions',
+    'transactions' => 'Mes transactions',
     'tm-desc' => 'Gestionnaire central pour toutes transactions à travers Seizam.',
     'id' => 'Id',
     'type' => 'Type',

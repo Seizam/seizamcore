@@ -51,9 +51,9 @@ class WpWikiplacesTablePager extends SkinzamTablePager {
             case 'count':
                 $html = '<b>'.$value.'</b> '.  wfMessage('wp-items');
                 $html .= '<ul>';
-                $html .= '<li>'
+                $html .= '<li><b>'
 						. SpecialWikiplaces::getLinkConsultWikiplace( $this->mCurrentRow->page_title )
-                        . '</li>';
+                        . '</b></li>';
                 $html .= '<li>'
                         . SpecialWikiplaces::getLinkCreateSubpage( $this->mCurrentRow->page_title )
                         . '</li>';
@@ -113,7 +113,8 @@ class WpWikiplacesTablePager extends SkinzamTablePager {
      * @param string $field
      * @return boolean 
      *
+     */
     function isFieldSortable($field) {
         return $field == 'count' ? false : parent::isFieldSortable($field);
-    }*/
+    }
 }

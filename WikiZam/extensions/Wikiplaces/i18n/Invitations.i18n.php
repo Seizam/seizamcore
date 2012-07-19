@@ -18,9 +18,9 @@ $messages['en'] = array(
     /* TP */
 	'wp-inv-list-header' => 'Here is the list of all the invitation you created.',
 	'wp-inv-list-footer' => '=== Available Invitations ===',
-    'wp-inv-list-footer-li' => '<b>[[Special:Invitations/Create:$1|{{int:$2}}]]</b>: {{int:$2-desc}} ($3 out of $4 remaining this month)',
+    'wp-inv-list-footer-li' => '<b>[[Special:Invitations/Create:$1|{{int:$2}}]]</b>: {{int:$2-desc}} (<b>$3 out of $4</b> remaining this month)',
     'wp-inv-list-help' => '=== About Invitations ===
-Each month, you can generate a few invitation codes for your friends and relatives. A code provides great discounts on first subscription offers, it can be used through [[Special:Invitation/Use]]. More informations about invitations at [[Help:Invitations]].',
+Each month, you can generate a few invitation codes for your friends and relatives. A code provides great discounts on first subscription offers, it can be used through [[Special:Invitation/Use]].',
 	'wpi-code' => 'Code',
 	'wpi-to-email' => 'Sent to',
     'wpi-type' => 'Type',
@@ -93,8 +93,8 @@ $messages['qqq'] = array(
  */
 $messages['fr'] = array(
 	/* General */
-	'invitations' => 'Mes Invitations',
-	'invitation' => 'Mon Invitation',
+	'invitations' => 'Mes invitations',
+	'invitation' => 'Mon invitation',
     /* Create Warnings */
 	'wp-inv-create' => '<b>[[Special:Invitations/Create|Cliquez ici pour inviter quelqu\'un sur Seizam]]</b>',
 	'wp-inv-limitreached' => 'Désolé, vous avez atteint votre limite d\'invitations pour ce mois.',
@@ -104,9 +104,9 @@ $messages['fr'] = array(
     /* TP */
 	'wp-inv-list-header' => 'Voici la liste de toutes les invitations que vous avez créées.',
 	'wp-inv-list-footer' => '=== Invitations disponnibles ===',
-    'wp-inv-list-footer-li' => '<b>[[Special:Invitations/Create:$1|{{int:$2}}]]</b> : {{int:$2-desc}} ($3 sur $4 restantes ce mois)',
+    'wp-inv-list-footer-li' => '<b>[[Special:Invitations/Create:$1|{{int:$2}}]]</b> : {{int:$2-desc}} (<b>$3 sur $4</b> restantes ce mois)',
     'wp-inv-list-help' => '=== À propos des invitations ===
-Chaque mois, vous pouvez générer quelques codes d\'invitation pour vos amis et proches. Un code débloque de grosses réductions sur les offres de premier abonnement, il peut être utilisé sur [[Special:Invitation/Use]]. Plus d\'informations à propos des invitations [[Help:Invitations|ici]].',
+Chaque mois, vous pouvez générer quelques codes d\'invitation pour vos amis et proches. Un code débloque de grosses réductions sur les offres de premier abonnement, il peut être utilisé sur [[Special:Invitation/Use]].',
 	'wpi-code' => 'Code',
 	'wpi-to-email' => 'Envoyée à',
     'wpi-type' => 'Type',

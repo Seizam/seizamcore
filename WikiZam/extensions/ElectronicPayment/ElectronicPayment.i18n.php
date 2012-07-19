@@ -43,8 +43,8 @@ $messages['qqq'] = array(
 
 /** French */
 $messages['fr'] = array(
-    'electronicpayment' => 'Paiement Électronique',
-    'electronicpayment-desc' => 'Terminal de Paiement Électronique Virtuel pour Seizam.',
+    'electronicpayment' => 'Paiement électronique',
+    'electronicpayment-desc' => 'Terminal de Paiement Électronique virtuel pour Seizam.',
     'ep-attempt-formheader' => 'Cliquez sur le bouton ci-dessous  (\'\'\'Connexion\'\'\')  pour atteindre l\'interface de paiement sécurisée de notre banque (CIC). Montant du paiement : \'\'\'$1{{int:cur-euro}}\'\'\'',
     'ep-default-formheader' => 'Remplissez le formulaire ci-dessous pour créditer votre compte.',
     'ep-default-formheader-pending' => 'Vos commandes en attente s\'élèvent à \'\'\'$1{{int:cur-euro}}\'\'\'. Voici la liste :',

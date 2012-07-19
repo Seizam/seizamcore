@@ -55,7 +55,7 @@ PS: You CAN reply to this email!',
 What is next?
 
 See
-{{canonicalurl:{{#special:Wikiplaces}}}}
+{{canonicalurl:{{#special:WikiPlaces}}}}
 to create and setup your pages.
 
 Use
@@ -240,7 +240,7 @@ PS: Vous POUVEZ répondre à ce courriel !',
 Que faire ?
 
 Consultez
-{{canonicalurl:{{#special:Wikiplaces}}}}
+{{canonicalurl:{{#special:WikiPlaces}}}}
 pour créer et configurer vos pages.
 
 Utilisez
