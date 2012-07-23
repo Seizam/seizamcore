@@ -346,5 +346,28 @@ class TMRecord {
         $this->updateDB();
         return $return;
     }
+    
+    /**
+     * Check if user is owner OR user is admin AND tmr_status = PE;
+     * @param User $user
+     * @return boolean 
+     */
+    public function canCancel($user) {
+        return ($this->getUserId() == $user->getId() || $user->isAllowed(TM_ADMIN_RIGHT)) && $this->getStatus() == 'PE';
+    }
+    
+    /**
+     * Turn tmr_status to KO (only if user can & tmr_status = PE)
+     * @param User $user
+     * @return boolean True or error string 
+     */
+    public function cancel($user) {
+        if (!$this->canCancel($user)) {
+            return 'Error: Transaction cannot be cancelled';
+        }
+        $this->tmr['tmr_status'] = 'KO';
+        return $this->updateDB();
+        
+    }
 
 }

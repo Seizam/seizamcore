@@ -143,10 +143,14 @@ $messages['en'] = array(
     'welcomecreation' => '== Welcome, $1! ==
 Congratulations and thank you! Your Seizam account has been successfully created.
 === What is next? ===
-* To enable Wikiplaces, pick a [[Special:Plans|plan]] and [[Special:Subscriptions|subscribe]] to Seizam.
+#<b>Validate your email.</b> Go to your inbox and click the <u>confirmation link</u> we just sent to you.
+#Pick a [[Special:Plans|plan]] and [[Special:Subscriptions|subscribe]] to enable [[Help:Wikiplaces|WikiPlaces]].
+
+=== What else? ===
 * Visit [[Special:MySeizam|My Seizam]], everything you need is there, and much more!
 * Check [[Special:Preferences|My Preferences]] for advanced setup.
 * Look into [[Help:Contents|the help]] to learn how to use Seizam.
+
 === Remember! ===
 Please, remember we are always available through [[Project:Contact]] for any questions, critics or advice...
 
@@ -306,10 +310,12 @@ $messages['fr'] = array(
     'welcomecreation' => '== Bienvenue, $1 ! ==
 Félicitation et merci ! Votre compte Seizam a été créé avec succès.
 === Que faire maintenant ? ===
-* Pour activer les Wikiplaces, choisissez une [[Special:Plans|offre]] et [[Special:Subscriptions|abonnez-vous]] à Seizam.
-* Visitez [[Special:MySeizam|Mon Seizam]], tout ce dont vous avez besoin est là, et bien plus !
-* Vérifiez [[Special:Preferences|Mes Préférences]] pour les réglages avancés.
-* Consultez [[Help:Contents|l\'aide]] pour apprendre à utiliser Seizam.
+#<b>Validez votre adresse de courriel.</b> Allez dans votre boîte de réception et cliquez sur le <u>lien de confirmation</u> que nous vous avons envoyé.
+#Choisissez une [[Special:Plans|offre]] et [[Special:Subscriptions|abonnez-vous]] pour activer les [[Help:Wikiplaces/fr|WikiPlaces]].
+=== Quoi d\'autre ? ===
+*Visitez [[Special:MySeizam|Mon Seizam]], tout ce dont vous avez besoin est là, et bien plus !
+*Vérifiez [[Special:Preferences|Mes Préférences]] pour les réglages avancés.
+*Consultez [[Help:Contents|l\'aide]] pour apprendre à utiliser Seizam.
 === N\'oubliez pas ! ===
 S\'il vous plaît, rappelez-vous que nous restons à votre disposition à travers [[Project:Contact|la page de contact]] pour toutes questions, critiques ou conseils...
 

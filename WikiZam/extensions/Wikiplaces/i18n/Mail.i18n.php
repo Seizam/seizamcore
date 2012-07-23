@@ -162,23 +162,14 @@ Seizam offers all artists an elegant and clean space to create and spread their 
 $1 already joined our community and just offered you one of her/his invitation:
 {{int:$4}} - {{int:$4-desc}}
 
-Here is the attached message :
+Here is the attached message:
 « $2 »
 
 What to do ?
 
-Visit
-http://www.seizam.com
-and discover our freedoms.
-
-Create your account on
-{{canonicalurl:{{#special:UserLogin/signup}}}}
-if you do not have one yet.
-
-Use your invitation code
-$3
-simply by visiting
-{{canonicalurl:{{#special:Invitation/Use:$3}}}}',
+Use your personal invitation link,
+{{canonicalurl:{{#special:Invitation/Use:$3}}}}
+(hidden link, only for you, only from here).',
 );
 
 /*
@@ -352,16 +343,7 @@ Voici le message joint :
 
 Que faire ?
 
-Visitez
-http://www.seizam.com
-et découvrez nos libertés.
-
-Créez votre compte sur
-{{canonicalurl:{{#special:UserLogin/signup}}}}
-si vous n\'en avez pas encore.
-
-Utilisez votre code d\'invitation
-$3
-en allant simplement sur 
-{{canonicalurl:{{#special:Invitation/Use:$3}}}}',
+Utilisez votre lien d\'invitation personel,
+{{canonicalurl:{{#special:Invitation/Use:$3}}}}
+(lien caché, utilisable seulement par vous, seulement depuis ce mail).',
 );

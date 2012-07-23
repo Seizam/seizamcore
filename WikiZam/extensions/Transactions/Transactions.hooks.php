@@ -56,5 +56,16 @@ class TransactionsHooks {
         }
         return false;
     }
+    
+    /**
+     *
+     * @param int $tmr_id
+     * @param User $user
+     * @param boolean $result 
+     */
+    public static function cancelTransaction($tmr_id, &$user, &$result) {
+        $result = TMRecord::getById($tmr_id)->cancel($user);
+        return false;
+    }
 
 }

@@ -41,6 +41,9 @@ class SpecialWikiplacesAdmin extends SpecialPage {
 				break;
             default :
                 $output->addWikiText("=== ERROR: Wrong action ===");
+                $output->addWikiText("====Available actions:====");
+                $output->addWikiText("Credit(string '''name''', int '''amount''')");
+                break;
 		}
 		
 	}
@@ -51,7 +54,7 @@ class SpecialWikiplacesAdmin extends SpecialPage {
 	private function credit($name = null, $amount = 0) {
         $output = $this->getOutput();
         
-        $output->addWikiText("=== Credit ===");
+        $output->addWikiText("=== Credit (name, amount) ===");
         $output->addWikiText("name = $name");
         $output->addWikiText("amount = $amount");
         
@@ -67,14 +70,14 @@ class SpecialWikiplacesAdmin extends SpecialPage {
         $output->addWikiText("user_realname = ".$user->getRealName());
         $output->addWikiText("user_realname = ".$user->getEmail());
         
+        $output->addWikiText("=== Transaction ===");
+        $output->addWikiText("True balance before = ".TMRecord::getTrueBalanceFromDB($user->getId()));
+        
         if (!is_int($amount) || $amount <= 0 || $amount > 1000 ) {
             $output->addWikiText("=== ERROR: Invalid Amount ===");
             return;
         }
         
-        
-        $output->addWikiText("=== Transaction ===");
-        $output->addWikiText("True balance before = ".TMRecord::getTrueBalanceFromDB($user->getId()));
             
 		$tmr = array(
 			# Params related to Message

@@ -39,6 +39,8 @@ $wgAutoloadClasses['TransactionsTablePager'] = $dir . 'model/TransactionsTablePa
 $wgHooks['LoadExtensionSchemaUpdates'][] = 'TransactionsHooks::loadExtensionSchemaUpdates';
 # On Electronic Payment action
 $wgHooks['CreateTransaction'][] = 'TransactionsHooks::createTransaction';
+# On any cancel (if TMR is pending!)
+$wgHooks['CancelTransaction'][] = 'TransactionsHooks::cancelTransaction';
 # On Electronic Payment action
 $wgHooks['ElectronicPaymentAttempt'][] = 'TransactionsHooks::electronicPaymentAttempt';
 

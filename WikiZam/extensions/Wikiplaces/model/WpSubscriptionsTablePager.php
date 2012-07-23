@@ -14,7 +14,8 @@ class WpSubscriptionsTablePager extends SkinzamTablePager {
     protected $selectTables = array ( 'wp_subscription', 'wp_plan');
 	
 	protected $selectJoinConditions = array( 'wp_plan' => array('INNER JOIN','wps_wpp_id = wpp_id') );
-    protected $selectFields = array(	
+    protected $selectFields = array(
+        'wps_id',
 		'wps_active',
 		'wpp_name',
 		'wps_start_date',			// when the sub starts
@@ -50,7 +51,12 @@ class WpSubscriptionsTablePager extends SkinzamTablePager {
 			case 'wpp_name':
 				return  wfMessage('wpp-' . $value)->text();
 			case 'wps_tmr_status':
-				return wfMessage("status-$value")->text() ;
+                $msg = wfMessage("status-$value")->text();
+                if ($value == 'PE' && $this->mCurrentRow->wps_active == 0) {
+                    $msg .= ' ('.SpecialSubscriptions::getLinkCancel($this->mCurrentRow->wps_id).')';
+				
+                }
+                return $msg;
 			case 'wpp_nb_wikiplaces':
 			case 'wpp_nb_wikiplace_pages':
 				return wfFormatNumber($value);
@@ -66,6 +72,7 @@ class WpSubscriptionsTablePager extends SkinzamTablePager {
 
     function getFieldNames() {
         $fieldNames = parent::getFieldNames();
+        unset($fieldNames['wps_id']);
         unset($fieldNames['wps_active']);
         
         if (isset($fieldNames['wpp_name']))

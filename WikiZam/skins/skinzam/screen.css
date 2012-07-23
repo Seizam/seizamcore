@@ -2378,25 +2378,48 @@ table.TablePager_nav {
 
 /* TMRecord */
 
+span.currency {
+    font-weight: lighter;
+    color: #babfda;
+}
+
 .TMRecord td.amount {
     font-weight: bold;
 }
 
-.TMRecord tr.KO td, .TMRecord tr.KO td.amount {
+.TMRecord tr.KO td, .TMRecord tr.KO td.amount, .TMRecord tr.KO span.currency {
     color: #dad9d9;
 }
 
 .TMRecord tr.PE td, .TMRecord tr.PE td.amount {
-    color: #888888;
+    color: #6b8c40;
 }
 
 .TMRecord td.amount {
     text-align: right;
 }
 
-span.currency {
-    font-weight: lighter;
-    color: #babfda;
+
+/* WpSubscription */
+table.WpSubscription {
+    color: #ccced1;
+}
+
+table.WpSubscription tr.active td {
+    color: black;
+}
+
+table.WpSubscription tr.active td.status {
+    font-weight: bold;
+}
+
+
+table.WpSubscription tr.pending td {
+    color: #6b8c40;
+}
+
+table.WpSubscription tr.canceled td {
+    color: #dad9d9;
 }
 
 /* WpWikiplace */
@@ -2469,28 +2492,6 @@ table.WpPage span.wpp-ns {
 
 table.WpPage a:hover span {
     color:#7c2122;
-}
-
-/* WpSubscription */
-table.WpSubscription {
-    color: #ccced1;
-}
-
-table.WpSubscription tr.active td {
-    color: black;
-}
-
-table.WpSubscription tr.active td.status {
-    font-weight: bold;
-}
-
-
-table.WpSubscription tr.pending td {
-    color: #6b8c40;
-}
-
-table.WpSubscription tr.canceled td {
-    color: #974349;
 }
 
 /* WpPlan */
