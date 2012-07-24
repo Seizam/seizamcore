@@ -246,7 +246,7 @@ $messages['fr'] = array(
     'wp-createpage-createtalk-help' => 'Cochez cette case si vous désirez ouvrir la Discussion pour votre page. Cette seconde page de discussion sera disponnible depuis <u>www.seizam.com/<b>Talk:</b>Parent/Nom</u>.',
     'wp-createtalk-help' => 'Cochez cette case si vous désirez ouvrir la Discussion pour votre page. Cette seconde page de discussion sera disponnible depuis <u>www.seizam.com/<b>Talk:</b>Nom</u>.',
     /* Disclaimer: Wikiplace */
-    'wp-create-wp-success' => '==Félicitation !==
+    'wp-create-wp-success' => '==Félicitations !==
 
 Votre nouveau WikiPlace <b>[[$1]]</b> a été créé avec succès ! {{int:wp-url-tip|$1}} Vous pouvez l\'administrer depuis <b>[[Special:WikiPlaces/Consult:$1|{{int:wikiplaces}}]]</b>.
 
@@ -255,7 +255,7 @@ Votre nouveau WikiPlace <b>[[$1]]</b> a été créé avec succès ! {{int:wp-url
 * {{int:wp-linkalias-tip|$1|My Homepage!}}
 * {{int:wp-subpage-tip|$1}}
 * {{int:wp-action-tip}}',
-    'wp-create-sp-success' => '==Félicitation !==
+    'wp-create-sp-success' => '==Félicitations !==
 
 Votre nouvelle sous-page <b>[[$1/$2|$2]]</b> a été créée avec succès dans [[$1]]! {{int:wp-suburl-tip|$1|$2}} Vous pouvez administrer [[$1]] depuis <b>[[Special:WikiPlaces/Consult:$1|{{int:wikiplaces}}]]</b>.
 
