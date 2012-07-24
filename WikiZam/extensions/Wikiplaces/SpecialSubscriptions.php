@@ -172,7 +172,7 @@ class SpecialSubscriptions extends SpecialPage {
         if (( $code === null) || ( $code === '')) {
             return wfMessage('htmlform-required')->text();
         }
-        if (!preg_match('/^[\w_\-\?\!\.|,]+$/', $code)) {
+        if (!preg_match('/^[\w_\-\?\!\.\,]+$/', $code)) {
             return wfMessage('wp-use-inv-invalid')->text();
         }
         $invitation = WpInvitation::newFromCode($code);

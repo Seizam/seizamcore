@@ -371,7 +371,7 @@ class SpecialInvitations extends SpecialPage {
 
     public function validateCode($code, $alldata) {
         if (!preg_match('/^[\w_\-\?\!\.\,]+$/', $code)) {
-            return 'Error: Code should be alphanumeric';
+            return 'Error: Code should contain: alphanumeric chars _ - ? ! . , (space replaced by _)';
         }
         $invitation = WpInvitation::newFromCode($code);
         if ($invitation instanceof WpInvitation) {
