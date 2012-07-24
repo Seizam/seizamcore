@@ -135,7 +135,7 @@ $1',
     
     /* Use Warnings */
 	'wp-use-inv-header' => 'Merci de remplir le formulaire ci-dessous pour utiliser votre code d\'invitation. Ou consultez [[Special:Subscriptions/new|nos offres normales]].',
-	'wp-use-inv-ok' => 'Félicitation ! Votre invitation est valide. Vous avez maintenant accès à de nouvelles offres spéciales.',
+	'wp-use-inv-ok' => 'Félicitations ! Votre invitation est valide. Vous avez maintenant accès à de nouvelles offres spéciales.',
 	'wp-use-inv-invalid' => 'Ce code est invalide.',
 	'wp-use-inv-nolonger' => 'Désolé. Votre invitation a expiré.',
     

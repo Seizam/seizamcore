@@ -48,8 +48,10 @@ class WpInvitationsTablePager extends SkinzamTablePager {
 			case 'wpi_counter':
 				if ( !is_null($this->mCurrentRow->user_name)) {
 					return wfMessage ('wpi-used', $this->mCurrentRow->user_name)->parse();
-				} else {
+				} elseif ( $value != 0 ) {
 					return wfMessage ('status-PE')->text();
+				} else {
+					return '-';
 				}
             case 'wpi_to_email':
                 if ($this->mCurrentRow->wpi_counter < 0)
@@ -87,7 +89,7 @@ class WpInvitationsTablePager extends SkinzamTablePager {
     function getRowClasses($row) {
         $classes = array();
 
-        if ($row->wpi_counter == 1)
+        if ($row->wpi_counter != 0)
             $classes[] = 'pending';
 
         return $classes;
