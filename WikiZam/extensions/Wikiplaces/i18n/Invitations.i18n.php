@@ -24,7 +24,7 @@ Each month, you can generate a few invitation codes for your friends and relativ
 	'wpi-code' => 'Code',
 	'wpi-to-email' => 'Sent to',
     'wpi-type' => 'Type',
-	'wpi-used' => 'Used by [[User:$1|$1]] on $2',
+	'wpi-used' => 'Used by [[User:$1|$1]]',
     'wpi-unlimited' => 'Unlimited, used $1 times.',
     'wpi-remaining' => '$1 remaining',
     /* Create Form */
@@ -110,7 +110,7 @@ Chaque mois, vous pouvez générer quelques codes d\'invitation pour vos amis et
 	'wpi-code' => 'Code',
 	'wpi-to-email' => 'Envoyée à',
     'wpi-type' => 'Type',
-	'wpi-used' => 'Utilisée par [[User:$1|$1]] le $2',
+	'wpi-used' => 'Utilisée par [[User:$1|$1]]',
     'wpi-unlimited' => 'Illimitée, utilisée $1 fois.',
     'wpi-remaining' => '$1 restantes',
     /* Create Form */

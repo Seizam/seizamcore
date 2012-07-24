@@ -281,6 +281,7 @@ class SpecialInvitations extends SpecialPage {
                 'section' => 'admin-section',
                 'default' => WpInvitation::generateCode($this->getUser()),
                 'validation-callback' => array($this, 'validateCode'),
+                'filter-callback' => array($this, 'filterCode'),
             );
             $formDesc['Counter'] = array(
                 'type' => 'text',
@@ -363,9 +364,13 @@ class SpecialInvitations extends SpecialPage {
 
         return true; // say: all ok
     }
+    
+    public function filterCode($code, $allData) {
+        return str_replace(' ', '_', $code);
+    } 
 
     public function validateCode($code, $alldata) {
-        if (!preg_match('/^[\w ]+$/', $code)) {
+        if (!preg_match('/^[\w_\-\?\!\.\,]+$/', $code)) {
             return 'Error: Code should be alphanumeric';
         }
         $invitation = WpInvitation::newFromCode($code);

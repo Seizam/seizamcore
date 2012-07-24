@@ -57,14 +57,6 @@ class SpecialInvitation extends SpecialSubscriptions {
             $this->displayRestrictionError();
             return;
         }
-		
-		$check = WpSubscription::canSubscribe($this->getUser());
-		if ($check !== true) {
-			$output->redirect($this->getTitleFor('Subscriptions')->getLocalURL(array('msgkey' => $check,'msgtype'=>'error')), '302');
-			//$output->addHTML(Html::rawElement('div', array('class' => "informations error"), wfMessage($check)->parse()));
-			return;
-		}
-		
 
         $this->display();
     }
@@ -72,6 +64,7 @@ class SpecialInvitation extends SpecialSubscriptions {
     protected function display() {
         $output = $this->getOutput();
 
+        
         // Top Infobox Messaging
         if ($this->msgType != null) {
             $msg = wfMessage($this->msgKey);
@@ -79,6 +72,7 @@ class SpecialInvitation extends SpecialSubscriptions {
                 $output->addHTML(Html::rawElement('div', array('class' => "informations $this->msgType"), $msg->parse()));
             }
         }
+        
 
         switch ($this->action) {
 			
@@ -98,9 +92,7 @@ class SpecialInvitation extends SpecialSubscriptions {
 			case self::ACTION_USE_INVITATION :
 			default:
 				$this->displayInvitation();
-				//processOrDisplayInvitation();
                 break;
-			
         }  
 		
     }

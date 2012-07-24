@@ -17,7 +17,6 @@ class WpInvitationsTablePager extends SkinzamTablePager {
 		'wpi_to_email',
 		// 'wpi_from_user_id',
 		'wpi_date_created',
-		'wpi_date_last_used',
 		'wpi_counter',
         'user_name'
 		);
@@ -47,17 +46,17 @@ class WpInvitationsTablePager extends SkinzamTablePager {
 			case 'wpi_date_created':
 				return $wgLang->date($value, true);
 			case 'wpi_counter':
-				if ( $value < 0) {
-					return wfMessage ('wpi-unlimited',-($value+1))->text();
-				} elseif ( $value == 0) {
-					return wfMessage ('wpi-used', $this->mCurrentRow->user_name, $wgLang->date($this->mCurrentRow->wpi_date_last_used, true))->parse();
-				} elseif ($value == 1) {
-					return wfMessage ('status-PE')->text();
+				if ( !is_null($this->mCurrentRow->user_name)) {
+					return wfMessage ('wpi-used', $this->mCurrentRow->user_name)->parse();
 				} else {
-                    return wfMessage ('wpi-remaining',  wfFormatNumber($value))->text();
-                }
+					return wfMessage ('status-PE')->text();
+				}
             case 'wpi_to_email':
-                if (empty ($value))
+                if ($this->mCurrentRow->wpi_counter < 0)
+                    return wfMessage ('wpi-unlimited',-($this->mCurrentRow->wpi_counter+1))->text();
+                else if ($this->mCurrentRow->wpi_counter > 1)
+                    return wfMessage ('wpi-remaining',  wfFormatNumber($this->mCurrentRow->wpi_counter))->text();
+                else if (empty ($value))
                     return '-';
                 else
                     return htmlspecialchars($value);
@@ -70,7 +69,6 @@ class WpInvitationsTablePager extends SkinzamTablePager {
 	
 	function getFieldNames() {
         $fieldNames = parent::getFieldNames();
-		unset($fieldNames['wpi_date_last_used']);
 		unset($fieldNames['user_name']);
 		$fieldNames['wpi_code'] = wfMessage ('wpi-code')->text ();
 		$fieldNames['wpic_desc'] = wfMessage('wpi-type')->text();

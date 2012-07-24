@@ -131,6 +131,7 @@ class SpecialSubscriptions extends SpecialPage {
                 'label-message' => 'wp-inv-code-field',
                 'help-message' => 'wp-use-inv-help',
                 'validation-callback' => array($this, 'validateInvitationCode'),
+                'filter-callback' => array($this, 'filterInvitationCode')
             ));
         $invitationHtml = new HTMLFormS($invitationForm);
         $invitationHtml->addHeaderText(wfMessage('wp-use-inv-header')->parse());
@@ -161,12 +162,17 @@ class SpecialSubscriptions extends SpecialPage {
             }
         }
     }
+    
+    
+    public function filterInvitationCode($code, $allData) {
+        return str_replace(' ', '_', $code);
+    } 
 
     public function validateInvitationCode($code, $allData) {
         if (( $code === null) || ( $code === '')) {
             return wfMessage('htmlform-required')->text();
         }
-        if (!preg_match('/^[\w ]+$/', $code)) {
+        if (!preg_match('/^[\w_\-\?\!\.|,]+$/', $code)) {
             return wfMessage('wp-use-inv-invalid')->text();
         }
         $invitation = WpInvitation::newFromCode($code);
