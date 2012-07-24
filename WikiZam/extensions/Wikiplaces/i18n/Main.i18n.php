@@ -141,7 +141,7 @@ You are also promising us that you wrote this yourself, or copied it from a publ
     /* Disclaimer: Subscription */
     'wp-new-success-ok' => 'Thank you! Your subscription has been recorded and everything is in order. What about checking [[Special:MySeizam|{{int:myseizam}}]] out now?',
     'wp-renew-success' => 'Your next plan has been selected. Thanks!',
-    'wp-cancel-success' => 'Your pending subscription has been cancelled. [[Special:Subscriptions/New|Subscribe again!]]',
+    'wp-cancel-success' => 'Your pending subscription has been cancelled.',
     'wp-sub-noactive' => 'You do not have any active subscription.',
     /* Warning: Subscription */
     'wp-no-active-sub' => 'You need an active subscription to perform this action. [[Special:Subscriptions/New|Click here to subscribe!]]',
@@ -246,7 +246,7 @@ $messages['fr'] = array(
     'wp-createpage-createtalk-help' => 'Cochez cette case si vous désirez ouvrir la Discussion pour votre page. Cette seconde page de discussion sera disponnible depuis <u>www.seizam.com/<b>Talk:</b>Parent/Nom</u>.',
     'wp-createtalk-help' => 'Cochez cette case si vous désirez ouvrir la Discussion pour votre page. Cette seconde page de discussion sera disponnible depuis <u>www.seizam.com/<b>Talk:</b>Nom</u>.',
     /* Disclaimer: Wikiplace */
-    'wp-create-wp-success' => '==Félicitation !==
+    'wp-create-wp-success' => '==Félicitations !==
 
 Votre nouveau WikiPlace <b>[[$1]]</b> a été créé avec succès ! {{int:wp-url-tip|$1}} Vous pouvez l\'administrer depuis <b>[[Special:WikiPlaces/Consult:$1|{{int:wikiplaces}}]]</b>.
 
@@ -255,7 +255,7 @@ Votre nouveau WikiPlace <b>[[$1]]</b> a été créé avec succès ! {{int:wp-url
 * {{int:wp-linkalias-tip|$1|My Homepage!}}
 * {{int:wp-subpage-tip|$1}}
 * {{int:wp-action-tip}}',
-    'wp-create-sp-success' => '==Félicitation !==
+    'wp-create-sp-success' => '==Félicitations !==
 
 Votre nouvelle sous-page <b>[[$1/$2|$2]]</b> a été créée avec succès dans [[$1]]! {{int:wp-suburl-tip|$1|$2}} Vous pouvez administrer [[$1]] depuis <b>[[Special:WikiPlaces/Consult:$1|{{int:wikiplaces}}]]</b>.
 
@@ -300,7 +300,7 @@ Vous nous promettez aussi que vous avez écrit ceci vous-même, ou que vous l’
     /* Disclaimer: Subscription */
     'wp-new-success-ok' => 'Merci ! Votre abonnement a été enregistré et tout est en ordre. Voulez-vous accéder à [[Special:MySeizam|{{int:myseizam}}]] maintenant ?',
     'wp-renew-success' => 'Votre prochain abonnement a été sélectionné. Merci !',
-    'wp-cancel-success' => 'Votre abonnement en attente a été annulé. [[Special:Subscriptions/New|Choisissez un nouvel abonnement !]]',
+    'wp-cancel-success' => 'Votre abonnement en attente a été annulé.',
     'wp-sub-noactive' => 'Vous n\'avez pas d\'abonnement actif.',
     /* Warning: Subscription */
     'wp-no-active-sub' => 'Il vous faut un abonnement actif pour réaliser cette action. [[Special:Subscriptions/New|Cliquez ici pour vous abonner !]]',
