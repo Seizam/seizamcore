@@ -141,7 +141,7 @@ You are also promising us that you wrote this yourself, or copied it from a publ
     /* Disclaimer: Subscription */
     'wp-new-success-ok' => 'Thank you! Your subscription has been recorded and everything is in order. What about checking [[Special:MySeizam|{{int:myseizam}}]] out now?',
     'wp-renew-success' => 'Your next plan has been selected. Thanks!',
-    'wp-cancel-success' => 'Your pending subscription has been cancelled. [[Special:Subscriptions/New|Subscribe again!]]',
+    'wp-cancel-success' => 'Your pending subscription has been cancelled.',
     'wp-sub-noactive' => 'You do not have any active subscription.',
     /* Warning: Subscription */
     'wp-no-active-sub' => 'You need an active subscription to perform this action. [[Special:Subscriptions/New|Click here to subscribe!]]',
@@ -300,7 +300,7 @@ Vous nous promettez aussi que vous avez écrit ceci vous-même, ou que vous l’
     /* Disclaimer: Subscription */
     'wp-new-success-ok' => 'Merci ! Votre abonnement a été enregistré et tout est en ordre. Voulez-vous accéder à [[Special:MySeizam|{{int:myseizam}}]] maintenant ?',
     'wp-renew-success' => 'Votre prochain abonnement a été sélectionné. Merci !',
-    'wp-cancel-success' => 'Votre abonnement en attente a été annulé. [[Special:Subscriptions/New|Choisissez un nouvel abonnement !]]',
+    'wp-cancel-success' => 'Votre abonnement en attente a été annulé.',
     'wp-sub-noactive' => 'Vous n\'avez pas d\'abonnement actif.',
     /* Warning: Subscription */
     'wp-no-active-sub' => 'Il vous faut un abonnement actif pour réaliser cette action. [[Special:Subscriptions/New|Cliquez ici pour vous abonner !]]',
