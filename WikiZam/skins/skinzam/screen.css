@@ -283,8 +283,9 @@ ol, .mw-content-ltr ol, .mw-content-rtl ol {
 ul > li {
     margin: 0;
     padding: 0 0 6px 0;
-    list-style-position: inside;
     list-style-type: square;
+    list-style-position: inside;
+    
 }
 
 ol > li  {
@@ -1221,6 +1222,7 @@ h1.firstHeading a:hover {
 }
 #nav li {
     display: inline;
+    list-style-type: none;
 }
 #nav li a {
     display:inline-block;
@@ -1261,6 +1263,11 @@ h1.firstHeading a:hover {
     text-align:left;
     z-index: 20;
 }
+#nav .nav_actions ul li {
+    margin: 0;
+    padding: 0;
+}
+
 #nav .nav_actions ul li a {
     display:block;
     padding: 6px 0 6px 8px;
@@ -1327,6 +1334,10 @@ div#bodyContent div.inside #nav {
 #header.special #nav {
     float: none;
     text-align: center;
+}
+
+#header.special #nav li {
+    display: inline;
 }
 
 /* horizontal actions */
@@ -1411,7 +1422,7 @@ html.client-nojs #bodyContent>.inside {
 #contentOther li,
 #contentOther h5,
 #contentOther .inside div {
-    display: inline-block;
+    display: inline;
     margin: 0;
     padding: 0;
 }
@@ -1458,15 +1469,12 @@ a.feedlink:first-child {
 
 #contentFooter ul,
 #contentFooter p,
-#contentFooter .inside div {
-    display: inline-block;
+#contentFooter .inside div,
+#contentFooter li {
+    display: inline;
     margin: 0;
     padding: 0;
     border: none;
-}
-
-#contentFooter .inside>div {
-    margin: 0 8px 0 8px;
 }
 
 #contentFooter div#mw-revision-nav {
@@ -1477,7 +1485,7 @@ a.feedlink:first-child {
     display: inline;
 }
 
-#contentFooter span {
+#contentFooter span, #contentFooter .inside>div {
     margin: 0 8px;
 }
 
@@ -1681,6 +1689,7 @@ a.feedlink:first-child {
 }
 #footer ul {
     float: none;
+    margin: 0;
     padding-top: 16px;
     padding-left: 0;
 }
@@ -1790,6 +1799,10 @@ a.feedlink:first-child {
 .ie7 #self_general li {
     display:block;
     float:left;
+}
+
+.ie7 li {
+    list-style-position: outside;
 }
 
 
@@ -2184,8 +2197,12 @@ body.ns--1 div#bodyContent div.inside ul.gallery li {
     margin-bottom: 5px;
 }
 
-.edit_col_1 .content_block input[type="checkbox"] {
+.edit_col_1 .content_block input[type="checkbox"],
+.edit_col_1 .content_block input[type="radio"] {
     width: auto;
+    border: none;
+    background: none;
+    padding: 0;
 }
 
 .edit_col_1 .content_block p > label.checkfield {
