@@ -89,7 +89,7 @@ class WpInvitationsTablePager extends SkinzamTablePager {
     function getRowClasses($row) {
         $classes = array();
 
-        if ($row->wpi_counter == 1)
+        if ($row->wpi_counter != 0)
             $classes[] = 'pending';
 
         return $classes;
