@@ -29,7 +29,7 @@ class CarZamCarrousel {
     /**
      * Design var in px
      */
-    var $mPhotoHeight = 442, $mPhotoWidth = 786, $mThumbHeight = 120, $mThumbWidth = 786;
+    var $mPhotoHeight = 442, $mPhotoWidth = 784, $mThumbHeight = 120, $mThumbWidth = 120;
 
     /**
      * Contextual title, used when images are being screened
@@ -117,10 +117,6 @@ class CarZamCarrousel {
         $car_photos = '';
 
         $car_slider = '';
-        $ThumbParams = array(
-            'width' => $this->mThumbWidth,
-            'height' => $this->mThumbHeight
-        );
 
         # Output each image...
         foreach ($this->mImages as $pair) {

@@ -93,6 +93,12 @@
     width: 120px;
     overflow: hidden;
 }
+
+#car_slider ul li a img {
+	max-width: none;
+    max-height: none;
+}
+
 #car_slider ul li a:focus {
 	outline:0;
 	border-color: #f0373a;
