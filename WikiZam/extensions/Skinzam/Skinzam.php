@@ -77,9 +77,6 @@ $wgResourceModules += array(
     'ext.skinzam.slideshow' => $skinzamResourceTemplate + array(
         'scripts' => 'ext.skinzam.slideshow.js',
         ),
-    'ext.skinzam.carrousel' => $skinzamResourceTemplate + array(
-        'scripts' => 'ext.skinzam.carrousel.js',
-        ),
     'jquery.scrollto' => array(
          'scripts' => 'extensions/Skinzam/modules/jquery/jquery.scrollto.js'
         ),
@@ -122,7 +119,6 @@ $wgSpecialPageGroups[SZ_MAIN_PAGE] = 'other';
 
 # Some global settings
 # Tune Special:Preferences
-//$wgHiddenPrefs = array('userid', 'underline', 'stubthreshold', 'showtoc', 'showjumplinks', 'editsection', 'externaldiff', 'externaleditor', );
 $wgHiddenPrefs = array('userid','editcount','registrationdate',
     'imagesize','thumbsize','underline','stubthreshold','vector-collapsiblenav','vector-noexperiments','showjumplinks',
     'cols','showtoolbar','uselivepreview',

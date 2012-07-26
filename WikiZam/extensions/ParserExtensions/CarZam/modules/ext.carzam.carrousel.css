@@ -1,0 +1,116 @@
+/* 
+    Document   : ext.carzam.carrousel
+    Created on : Jul 26, 2012, 11:55:58 AM
+    Author     : bedhed (bedhed@seizam.com)
+    Description:
+        Style for CarZam's Carousel.
+    License: GPL v3.0
+*/
+
+
+/*
+ * Top photo
+ */
+ 
+#car_photos {
+	position:relative;
+	height:360px;
+}
+#car_photos li {
+	position:absolute;
+	display:block;
+	top:0;
+	left:0;
+	background:#fff;
+}
+#car_photos figure img {
+	border: 1px solid #827c7c;
+}
+
+/*
+ * Bottom Slider
+ */
+
+#car_slider {
+	position:relative;
+	height:140px;
+	width:780px;
+	overflow:hidden;
+}
+#car_slider ul {
+	position:absolute;
+	top:0;
+	left:0;
+	padding:0;
+	margin:0;
+	height:140px;
+	width:auto;
+	overflow:hidden;
+}
+#car_slider ul li {
+	float:left;
+	padding:0;
+	margin:0 8px;
+	height:140px;
+	width:140px;
+	list-style:none;
+}
+#car_slider ul li a {
+	display:inline-block;
+	border:1px solid #868080;
+	height: 138px;
+}
+#car_slider ul li a:focus {
+	outline:0;
+	border-color: #f0373a;
+}
+
+/*
+ * Next + Prev buttons
+ */
+
+#carrousel .prev,
+#carrousel .next {
+    position: absolute;
+    top: 80px;
+    width: 40px;
+    height: 39px;
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    border: 1px solid #dad9d9;
+    background-color: #e22c2e;
+    z-index:5;
+}
+
+#carrousel .next {
+    top: 51px;
+}
+
+#carrousel .prev {
+    /* @embed */
+    background-image: url(images/arrows_slide_left.png);
+    left: 0;
+}
+
+#carrousel .next {
+    /* @embed */
+    background-image: url(images/arrows_slide_right.png);
+    right: 0;
+}
+
+#carrousel .prev:focus,
+#carrousel .prev:hover,
+#carrousel .next:focus,
+#carrousel .next:hover {
+    background-color: #7c2122;
+}
+
+/*
+ * Errors
+ */
+
+div.CarError, div.MediaTransformError {
+    border: 1px solid #dad9d9;
+}
+
+

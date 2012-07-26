@@ -11,7 +11,6 @@
  * @author Clément Dietshcy for Seizam.com
  * 
  */
-
 $wgExtensionCredits['parserhook'][] = array(
     'path' => __FILE__,
     'name' => 'CarZam',
@@ -26,8 +25,27 @@ $dir = dirname(__FILE__) . '/';
 $wgAutoloadClasses['CarZamCarrousel'] = $dir . 'CarZam.Carrousel.php';
 $wgAutoloadClasses['CarZamHooks'] = $dir . 'CarZam.hooks.php';
 
+
+// Load JS Resources
+$wgHooks['BeforePageDisplay'][] = 'CarZamHooks::beforePageDisplay';
+// Add Tag to parser
 $wgHooks['ParserFirstCallInit'][] = 'CarZamHooks::onParserFirstCallInit';
 
 $wgExtensionMessagesFiles['CarZam'] = $dir . 'CarZam.i18n.php';
+
+// JS Resources Declaration
+$carZamResourceTemplate = array(
+    'localBasePath' => $dir . 'modules',
+    'remoteExtPath' => 'ParserExtensions/CarZam/modules',
+    'group' => 'ext.carzam',
+);
+
+$wgResourceModules += array(
+    'ext.carzam.carrousel' => $carZamResourceTemplate + array(
+            'scripts' => 'ext.carzam.carrousel.js',
+            'styles' => 'ext.carzam.carrousel.css',
+        ));
+
+
 
 

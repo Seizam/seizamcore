@@ -11,6 +11,19 @@ if (!defined('MEDIAWIKI')) {
 }
 
 class CarZamHooks {
+    
+    /**
+     * BeforePageDisplay hook
+     * 
+     * Adds the modules to the page
+     * 
+     * @param OutputPage $out output page
+     * @param Skin $skin current skin
+     */
+    public static function beforePageDisplay($out, $skin) {
+        $out->addModules(array('ext.carzam.carrousel'));
+        return true;
+    }
 
     /**
      *
@@ -38,14 +51,31 @@ class CarZamHooks {
 
 		$lines = StringUtils::explode( "\n", $in );
 		foreach ( $lines as $line ) {
-            $elements = StringUtils::explode("|", $line);
-            $elementsCount = count($elements);
-            $title = Title::newFromText( $elements[0], NS_FILE );
-            if (!$title instanceof Title)
-                continue;
-            $html = $elementsCount > 1 ? $parser->recursiveTagParse($elements[1], $frame) : '';
-            $alt = $elementsCount > 2 ? htmlspecialchars($elements[2]) : '';
-            $c->add($title, $html, $alt);
+            
+            $matches = array();
+			preg_match( "/^([^|]+)(\\|(.*))?$/", $line, $matches );
+			# Skip empty lines
+			if ( count( $matches ) == 0 ) {
+				continue;
+			}
+
+			if ( strpos( $matches[0], '%' ) !== false ) {
+				$matches[1] = rawurldecode( $matches[1] );
+			}
+            
+			$title = Title::newFromText( $matches[1], NS_FILE );
+			if ( is_null( $title ) ) {
+				# Bogus title. Ignore these so we don't bomb out later.
+				continue;
+			}
+
+			$label = '';
+			if ( isset( $matches[3] ) ) {
+
+				$label = $parser->recursiveTagParse( trim( $matches[3] ) );
+			}
+
+			$c->add( $title, $label);
 		}
 		return $c->toHTML();
     }
