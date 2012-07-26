@@ -32,7 +32,7 @@
 		
 		// DOM
 		if(nb_items > nb_visible) {
-			$car_s.append('<a href="#prev" class="prev">Photo précédente</a> <a href="#next" class="next">Photo précédente</a>');
+			$car_s.append('<a href="#prev" class="prev"></a> <a href="#next" class="next"></a>');
 		}
 		
 		

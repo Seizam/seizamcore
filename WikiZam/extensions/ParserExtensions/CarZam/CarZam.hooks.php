@@ -53,7 +53,7 @@ class CarZamHooks {
 		foreach ( $lines as $line ) {
             
             $matches = array();
-			preg_match( "/^([^|]+)(\\|(.*))?$/", $line, $matches );
+			preg_match( "/^([^|]+)(.*)?$/", $line, $matches );
 			# Skip empty lines
 			if ( count( $matches ) == 0 ) {
 				continue;
@@ -70,9 +70,8 @@ class CarZamHooks {
 			}
 
 			$label = '';
-			if ( isset( $matches[3] ) ) {
-
-				$label = $parser->recursiveTagParse( trim( $matches[3] ) );
+			if ( isset( $matches[2] ) ) {
+				$label = $parser->recursiveTagParse(substr(trim($matches[2]), 1));
 			}
 
 			$c->add( $title, $label);
