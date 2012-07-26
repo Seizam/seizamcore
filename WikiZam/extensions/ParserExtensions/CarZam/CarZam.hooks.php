@@ -48,6 +48,7 @@ class CarZamHooks {
         $c->setParser($parser);
 		$c->setContextTitle($parser->getTitle());
 		$c->setHideBadImages();
+        $c->setPhotoHeight($param['height']);
 
 		$lines = StringUtils::explode( "\n", $in );
 		foreach ( $lines as $line ) {

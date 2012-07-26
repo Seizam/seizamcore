@@ -17,7 +17,7 @@
 		var $car = $('#carrousel');
 		var $car_p = $car.find('#car_photos');
 		var $car_s = $car.find('#car_slider');
-		var nb_visible = 5;
+		var nb_visible = 6;
 		var nb_items =  $("li", $car_s).length;
 		var item_width = $("li", $car_s).outerWidth(true);
 		var nb_hidden = nb_items - nb_visible;

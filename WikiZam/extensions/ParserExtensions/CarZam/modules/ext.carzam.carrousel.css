@@ -63,8 +63,6 @@
 
 #car_slider {
 	position:relative;
-	height:122px;
-	width:100%;
     margin-top: 8px;
 }
 
@@ -73,7 +71,6 @@
 	position:relative;
 	height:122px;
 	overflow: hidden;
-	width:100%;
 }
 
 #car_slider ul {
@@ -82,8 +79,6 @@
 	left:0;
 	padding:0;
 	margin:0;
-	height:122px;
-	overflow:hidden;
 }
 #car_slider ul li {
 	float:left;
@@ -94,6 +89,9 @@
 #car_slider ul li a {
 	display:inline-block;
 	border:1px solid #868080;
+    height: 120px;
+    width: 120px;
+    overflow: hidden;
 }
 #car_slider ul li a:focus {
 	outline:0;
