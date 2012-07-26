@@ -29,7 +29,7 @@ class CarZamCarrousel {
     /**
      * Design var in px
      */
-    var $mPhotoHeight = 442, $mPhotoWidth = 786, $mThumbHeight = 120, $mThumbWidth = 120;
+    var $mPhotoHeight = 442, $mPhotoWidth = 786, $mThumbHeight = 120, $mThumbWidth = 786;
 
     /**
      * Contextual title, used when images are being screened
@@ -206,7 +206,8 @@ class CarZamCarrousel {
 
     private function thumbToHTML($img, $nt, $text = '', $alt = '', $descQuery = '') {
         $params = array(
-            'height' => $this->mThumbHeight
+            'height' => $this->mThumbHeight,
+            'width' => $this->mThumbWidth
         );
 
         if (!$img) {
