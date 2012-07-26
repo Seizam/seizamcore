@@ -207,17 +207,17 @@ class CarZamCarrousel {
         );
 
         if (!$img) {
-            $html = '<a class="CarError" style="height: ' . $params['height'] . 'px; width: ' . $params['width'] . 'px;">'
+            $html = '<a class="CarError" style="height: ' . $params['height'] . 'px; width: ' . $this->mThumbWidth . 'px;">'
                     . htmlspecialchars($nt->getText()) . '</a>';
         } else if ($this->mHideBadImages && wfIsBadImage($nt->getDBkey(), $this->getContextTitle())) {
-            $html = '<a class="CarError" style="height: ' . $params['height'] . 'px; width: ' . $params['width'] . 'px;">' .
+            $html = '<a class="CarError" style="height: ' . $params['height'] . 'px; width: ' . $this->mThumbWidth . 'px;">' .
                     Linker::link(
                             $nt, htmlspecialchars($nt->getText()), array(), array(), array('known', 'noclasses')
                     ) .
                     '</a>';
         } else if (!( $thumb = $img->transform($params) )) {
             # Error generating thumbnail.
-            $html = '<a class="CarError" style="height: ' . $params['height'] . 'px; width: ' . $params['width'] . 'px;">' . plop . '</a>';
+            $html = '<a class="CarError" style="height: ' . $params['height'] . 'px; width: ' . $this->mThumbWidth . 'px;">' . plop . '</a>';
         } else {
             $imageParameters = array(
                 'desc-link' => true,
