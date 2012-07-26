@@ -203,7 +203,7 @@ class CarZamCarrousel {
     private function thumbToHTML($img, $nt, $text = '', $alt = '', $descQuery = '') {
         $params = array(
             'height' => $this->mThumbHeight,
-            'width' => $this->mThumbWidth
+            'width' => $this->mPhotoWidth //We don't want to constraint width.
         );
 
         if (!$img) {
