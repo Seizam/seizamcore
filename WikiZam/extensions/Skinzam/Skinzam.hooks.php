@@ -67,7 +67,7 @@ class SkinzamHooks {
      */
     public static function beforePageDisplay($out, $skin) {
         if ($skin instanceof SkinSkinzam) {
-            $out->addModules(array('jquery.scrollto', 'jquery.backstretch', 'ext.skinzam.global', 'ext.skinzam.mainpage', 'ext.languageSelector'));
+            $out->addModules(array('jquery.scrollto', 'jquery.backstretch', 'ext.skinzam.global', 'ext.skinzam.slideshow', 'ext.skinzam.carrousel', 'ext.languageSelector'));
             // Add modules for enabled features
             foreach (self::$features as $name => $feature) {
                 if (isset($feature['modules']) && self::isEnabled($name)) {

@@ -421,6 +421,9 @@ $wgCapitalLinks = false;
 // Poem
 require_once("$IP/extensions/Poem/Poem.php");
 
+// CarZam (Carrousel)
+require_once("$IP/extensions/ParserExtensions/CarZam/CarZam.php");
+
 // Parser Functions
 require_once( "$IP/extensions/ParserFunctions/ParserFunctions.php");
 

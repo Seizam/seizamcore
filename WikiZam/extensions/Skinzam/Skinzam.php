@@ -74,8 +74,11 @@ $wgResourceModules += array(
     'ext.skinzam.global' => $skinzamResourceTemplate + array(
         'scripts' => 'ext.skinzam.global.js',
         ),
-    'ext.skinzam.mainpage' => $skinzamResourceTemplate + array(
-        'scripts' => 'ext.skinzam.mainpage.js',
+    'ext.skinzam.slideshow' => $skinzamResourceTemplate + array(
+        'scripts' => 'ext.skinzam.slideshow.js',
+        ),
+    'ext.skinzam.carrousel' => $skinzamResourceTemplate + array(
+        'scripts' => 'ext.skinzam.carrousel.js',
         ),
     'jquery.scrollto' => array(
          'scripts' => 'extensions/Skinzam/modules/jquery/jquery.scrollto.js'

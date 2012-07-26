@@ -89,23 +89,5 @@
 
 	}
     
-    // figure fade
-	
-	if ( $('figure').length > 0) {
-		$('.third_parts figure').each(function(){
-			$(this).append('<span class="watermark"></span>');
-			$('.watermark', $(this)).hide();
-			
-			$(this).hover(function(){
-				$(this).find('.watermark').stop().fadeTo(350, 0.5);
-			}, function(){
-				$(this).find('.watermark').stop().fadeTo(350, 0);
-			});
-			$(this).closest('a').focus(function(){ $(this).find('figure').trigger('mouseenter');});
-			$(this).closest('a').blur(function(){ $(this).find('figure').trigger('mouseleave');});
-		});
-		
-	}
-    
 	
 })(jQuery)
