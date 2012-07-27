@@ -102,8 +102,8 @@ class CarZamHooks {
         if (isset ($param['width']))
             $s->setPhotoWidth($param['width']);
         
-        if (isset ($param['crop']))
-            $s->setPhotoCrop ($param['crop']);
+        if (isset ($param['float']))
+            $s->setFloat($param['float']);
 
 		$lines = StringUtils::explode( "\n", $in );
 		foreach ( $lines as $line ) {

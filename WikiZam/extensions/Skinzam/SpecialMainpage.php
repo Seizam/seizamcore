@@ -76,7 +76,9 @@ class SpecialMainpage extends SpecialPage {
         while ($h4->exists()) {
             $html .= Xml::openElement('li');
             $html .= Xml::openElement('a', array('href' => wfMessage($key.'-href')->text()));
+            $html .= Xml::openElement('div', array('class'=>'wrapper', 'width' => 499, 'height' => 190));
             $html .= Xml::element('img', array('src' => wfMessage($key.'-src')->text(), 'width' => 497, 'height' => 188));
+            $html .= Xml::closeElement('div');
             $html .= Xml::openElement('div', array('class'=>'caption'));
             $html .= Html::rawElement('h4', array(), $h4);
             $html .= Html::rawElement('p', array(), wfMessage($key . '-body')->parse());

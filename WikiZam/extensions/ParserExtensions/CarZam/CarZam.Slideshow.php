@@ -29,7 +29,7 @@ class CarZamSlideshow {
     /**
      * Design var in px
      */
-    var $mPhotoHeight = 441, $mPhotoWidth = 784, $mPhotoCrop = false;
+    var $mPhotoHeight = 441, $mPhotoWidth = 784, $mFloat = 'none';
 
     /**
      * Contextual title, used when images are being screened
@@ -71,9 +71,10 @@ class CarZamSlideshow {
             $this->mPhotoWidth = $width - 2;
     }
 
-    public function setPhotoCrop($set = true) {
-        if ($set === true)
-            $this->mPhotoCrop = true;
+    public function setFloat($value = 'none') {
+        $value = strtolower($value);
+        if ($value == 'left' || $value == 'right')
+            $this->mFloat = $value;
     }
 
     /**
@@ -152,7 +153,7 @@ class CarZamSlideshow {
         $slidesWidth = $this->mPhotoWidth + 2;
 
         $attribs = Sanitizer::mergeAttributes(
-                        array('class' => 'slideshow', 'style' => 'height:' . $slidesHeight . 'px; width:' . $slidesWidth . 'px;'), $this->mAttribs);
+                        array('class' => 'slideshow', 'style' => 'height:' . $slidesHeight . 'px; width:' . $slidesWidth . 'px; float:' . $this->mFloat), $this->mAttribs);
 
         $output = Html::rawElement('div', $attribs, $slides);
 
@@ -162,9 +163,14 @@ class CarZamSlideshow {
     private function photoToHTML($img, $nt, $text = '', $alt = '', $descQuery = '') {
 
 
-        //Some ugly alignment logic
+        //Some ugly alignment logic used later
         $verticalPadding = 0;
         $horizontalPadding = 0;
+
+        $params = array(
+            'width' => $this->mPhotoWidth,
+            'height' => $this->mPhotoHeight,
+        );
 
         if (!$img) {
             $html = '<div class="CarError" style="height: ' . $params['height'] . 'px; width: ' . $params['width'] . 'px;">'
@@ -176,10 +182,6 @@ class CarZamSlideshow {
                     ) .
                     '</div>';
         } else {
-            $params = array(
-                'width' => $this->mPhotoWidth,
-                'height' => $this->mPhotoHeight,
-            );
             if (!( $thumb = $img->transform($params) )) {
                 # Error generating thumbnail.
                 $html = '<div class="CarError" style="height: ' . $params['height'] . 'px; width: ' . $params['width'] . 'px;">' . htmlspecialchars($img->getLastError()) . '</div>';

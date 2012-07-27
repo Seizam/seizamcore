@@ -55,7 +55,7 @@
  
 .slideshow,
 #carrousel {
-     margin: 18px auto 18px;
+     margin: 0 auto 18px;
 }
 
 #car_photos figure img,
@@ -194,12 +194,18 @@
     height: 244px;
     padding-top: 7px;
 }
+
+.slideshow div.wrapper {
+    padding: 0 10px;
+}
+
 .mw-special-Welcome .slideshow a { color: #4D4E4F; }
 
 .mw-special-Welcome .slideshow div.caption {
     font-size: 14px;
-    padding-right: 8px;
-    margin-top: 10px;
+    text-align: justify;
+    padding: 10px 10px 0;
+    margin: 0;
 }
 
 .mw-special-Welcome .slideshow h4 {
@@ -221,17 +227,6 @@
     line-height: 1em;
     margin: 0;
     padding: 0;
-}
-
-.mw-special-Welcome .slideshow li {
-    text-align: justify;
-    left: 10px;
-}
-
-.mw-special-Welcome .slideshow .prev,
-.mw-special-Welcome .slideshow .next {
-    top: 80px;
-    bottom: auto;
 }
 
 

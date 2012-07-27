@@ -896,7 +896,6 @@ div.clearright {
     clear:right;
 }
 div.column {
-    overflow: hidden;
     margin-bottom: 18px;
 }
 div.column.frame.left {
