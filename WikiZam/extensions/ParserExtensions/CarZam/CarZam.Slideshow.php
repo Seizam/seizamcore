@@ -166,11 +166,6 @@ class CarZamSlideshow {
         $verticalPadding = 0;
         $horizontalPadding = 0;
 
-        $params = array(
-            'width' => $this->mPhotoWidth,
-            'height' => $this->mPhotoHeight,
-        );
-
         if (!$img) {
             $html = '<div class="CarError" style="height: ' . $params['height'] . 'px; width: ' . $params['width'] . 'px;">'
                     . htmlspecialchars($nt->getText()) . '</div>';
@@ -181,7 +176,10 @@ class CarZamSlideshow {
                     ) .
                     '</div>';
         } else {
-            $params = $this->getThumbParams($img);
+            $params = array(
+                'width' => $this->mPhotoWidth,
+                'height' => $this->mPhotoHeight,
+            );
             if (!( $thumb = $img->transform($params) )) {
                 # Error generating thumbnail.
                 $html = '<div class="CarError" style="height: ' . $params['height'] . 'px; width: ' . $params['width'] . 'px;">' . htmlspecialchars($img->getLastError()) . '</div>';
@@ -218,9 +216,9 @@ class CarZamSlideshow {
                 }
             }
         }
-        
-        $wrapperHeight = $this->mPhotoHeight+2;
-        $wrapperWidth = $this->mPhotoWidth+2;
+
+        $wrapperHeight = $this->mPhotoHeight + 2;
+        $wrapperWidth = $this->mPhotoWidth + 2;
 
         $html = Html::rawElement('div', array('class' => 'wrapper', 'style' => 'height:' . $wrapperHeight . 'px; width:' . $wrapperWidth . 'px; padding:' . $verticalPadding . 'px ' . $horizontalPadding . 'px;'), $html);
 
