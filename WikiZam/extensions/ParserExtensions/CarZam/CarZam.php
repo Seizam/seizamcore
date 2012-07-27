@@ -23,6 +23,7 @@ $wgExtensionCredits['parserhook'][] = array(
 $dir = dirname(__FILE__) . '/';
 
 $wgAutoloadClasses['CarZamCarrousel'] = $dir . 'CarZam.Carrousel.php';
+$wgAutoloadClasses['CarZamSlideshow'] = $dir . 'CarZam.Slideshow.php';
 $wgAutoloadClasses['CarZamHooks'] = $dir . 'CarZam.hooks.php';
 
 

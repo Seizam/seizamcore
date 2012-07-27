@@ -32,6 +32,7 @@ class CarZamHooks {
      */
     public static function onParserFirstCallInit(&$parser) {
         $parser->setHook('carrousel', array('CarZamHooks', 'renderCarrouselTag'));
+        $parser->setHook('slideshow', array('CarZamHooks', 'renderSlideshowTag'));
         return true;
     }
 
@@ -79,6 +80,53 @@ class CarZamHooks {
 			$c->add( $title, $label);
 		}
 		return $c->toHTML();
+    }
+    
+    
+    /**
+     * @param  $in
+     * @param array $param
+     * @param Parser $parser
+     * @param bool $frame
+     * @return string
+     */
+    public static function renderSlideshowTag($in, $param=array(), $parser=null, $frame=false) {
+        
+		$s = new CarZamSlideshow();
+        $s->setParser($parser);
+		$s->setContextTitle($parser->getTitle());
+		$s->setHideBadImages();
+        if (isset ($param['height']))
+            $c->setPhotoHeight($param['height']);
+
+		$lines = StringUtils::explode( "\n", $in );
+		foreach ( $lines as $line ) {
+            
+            $matches = array();
+			preg_match( "/^([^|]+)(.*)?$/", $line, $matches );
+			# Skip empty lines
+			if ( count( $matches ) == 0 ) {
+				continue;
+			}
+
+			if ( strpos( $matches[0], '%' ) !== false ) {
+				$matches[1] = rawurldecode( $matches[1] );
+			}
+            
+			$title = Title::newFromText( $matches[1], NS_FILE );
+			if ( is_null( $title ) ) {
+				# Bogus title. Ignore these so we don't bomb out later.
+				continue;
+			}
+
+			$label = '';
+			if ( isset( $matches[2] ) ) {
+				$label = $parser->recursiveTagParse(substr(trim($matches[2]), 1));
+			}
+
+			$s->add($title, $label);
+		}
+		return $s->toHTML();
     }
 
 }

@@ -10,7 +10,7 @@ if (!defined('MEDIAWIKI'))
  *
  * @ingroup Extensions
  */
-class CarZamCarrousel {
+class CarZamSlideshow {
     const CAPTIONHEIGHT = 30;
 
     var $mImages = array();
@@ -29,7 +29,7 @@ class CarZamCarrousel {
     /**
      * Design var in px
      */
-    var $mPhotoHeight = 442, $mPhotoWidth = 784, $mThumbHeight = 120, $mThumbWidth = 120;
+    var $mPhotoHeight = 442, $mPhotoWidth = 784;
 
     /**
      * Contextual title, used when images are being screened
@@ -110,9 +110,7 @@ class CarZamCarrousel {
      */
     public function toHTML() {
 
-        $car_photos = '';
-
-        $car_slider = '';
+        $slides = '';
 
         # Output each image...
         foreach ($this->mImages as $pair) {
@@ -137,22 +135,16 @@ class CarZamCarrousel {
                 $img = false;
             }
 
-            $car_photos .= Html::rawElement('li', array(), $this->photoToHTML($img, $nt, $text, $alt, $descQuery));
-            $car_slider .= Html::rawElement('li', array(), $this->thumbToHTML($img, $nt, $text, $alt, $descQuery));
+            $slides .= Html::rawElement('li', array(), $this->photoToHTML($img, $nt, $text, $alt, $descQuery));
         }
 
-        $car_photos = Html::rawElement('ul', array(), $car_photos);
-        $photoHeight = $this->mPhotoHeight + self::CAPTIONHEIGHT;
-        $car_photos = Html::rawElement('div', array('id' => 'car_photos', 'style' => 'height:' . $photoHeight . 'px'), $car_photos);
-
-        $car_slider = Html::rawElement('ul', array(), $car_slider);
-        $car_slider = Html::rawElement('div', array('class' => 'car_slider_window'), $car_slider);
-        $car_slider = Html::rawElement('div', array('id' => 'car_slider'), $car_slider);
+        $slides = Html::rawElement('ul', array(), $slides);
+        $slidesHeight = $this->mPhotoHeight + self::CAPTIONHEIGHT;
 
         $attribs = Sanitizer::mergeAttributes(
-                        array('id' => 'carrousel'), $this->mAttribs);
+                        array('class' => 'slideshow','style'=>'height:' . $slidesHeight . 'px'), $this->mAttribs);
         
-        $output = Html::rawElement('div', $attribs, $car_photos . $car_slider);
+        $output = Html::rawElement('div', $attribs, $slides);
 
         return $output;
     }
@@ -198,45 +190,10 @@ class CarZamCarrousel {
                 $img->getHandler()->parserTransformHook($this->mParser, $img);
             }
         }
-        $html .= Html::rawElement('figcaption', array(), $text);
-        $html = Html::rawElement('figure', array(), $html);
+        $html .= Html::rawElement('div', array('class'=>'caption'), $text);
         return $html;
     }
 
-    private function thumbToHTML($img, $nt, $text = '', $alt = '', $descQuery = '') {
-        $params = array(
-            'height' => $this->mThumbHeight,
-            'width' => $this->mPhotoWidth //We don't want to constraint width.
-        );
-
-        if (!$img) {
-            $html = '<a class="CarError" style="height: ' . $params['height'] . 'px; width: ' . $this->mThumbWidth . 'px;">'
-                    . htmlspecialchars($nt->getText()) . '</a>';
-        } else if ($this->mHideBadImages && wfIsBadImage($nt->getDBkey(), $this->getContextTitle())) {
-            $html = '<a class="CarError" style="height: ' . $params['height'] . 'px; width: ' . $this->mThumbWidth . 'px;">' .
-                    Linker::link(
-                            $nt, htmlspecialchars($nt->getText()), array(), array(), array('known', 'noclasses')
-                    ) .
-                    '</a>';
-        } else if (!( $thumb = $img->transform($params) )) {
-            # Error generating thumbnail.
-            $html = '<a class="CarError" style="height: ' . $params['height'] . 'px; width: ' . $this->mThumbWidth . 'px;">' . plop . '</a>';
-        } else {
-            $imageParameters = array(
-                'desc-link' => true,
-                'desc-query' => $descQuery,
-                'alt' => $alt,
-            );
-
-            # In the absence of both alt text and caption, fall back on providing screen readers with the filename as alt text
-            if ($alt == '' && $text == '') {
-                $imageParameters['alt'] = $nt->getText();
-            }
-
-            $html = $thumb->toHtml($imageParameters);
-        }
-        return $html;
-    }
 
     
     /**

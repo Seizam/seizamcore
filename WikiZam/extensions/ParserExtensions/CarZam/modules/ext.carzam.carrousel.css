@@ -3,29 +3,97 @@
     Created on : Jul 26, 2012, 11:55:58 AM
     Author     : bedhed (bedhed@seizam.com)
     Description:
-        Style for CarZam's Carousel.
+        Style for CarZam's Carousel & Slideshow.
     License: GPL v3.0
 */
+
+
+/* -----------------------------------------------------------------------------
+   == COMMON
+   -------------------------------------------------------------------------- */
+
+
+/*
+ * Next + Prev buttons
+ */
+
+.prev,
+.next {
+    position: absolute;
+    top: 40px;
+    width: 40px;
+    height: 40px;
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    border: 1px solid #dad9d9;
+    background-color: #e22c2e;
+    z-index:5;
+}
+
+.slideshow .prev,
+.slideshow .next {
+    top: auto;
+    bottom: 40px;
+}
+
+.prev {
+    /* @embed */
+    background-image: url(images/arrows_slide_left.png);
+    left: -8px;
+}
+
+.next {
+    /* @embed */
+    background-image: url(images/arrows_slide_right.png);
+    right: -8px;
+}
+
+.prev:focus,
+.prev:hover,
+.next:focus,
+.next:hover{
+    background-color: #7c2122;
+}
 
 /*
  * Wrapper
  */
  
+.slideshow,
 #carrousel {
      padding: 16px 0;
+     margin-bottom: 18px;
      border-top: 1px solid #dad9d9;
      border-bottom: 1px solid #dad9d9;
 }
 
+.slideshow:first-child,
 #carrousel:first-child {
      padding-top: 0;
      border-top: none;
 }
 
+.slideshow:first-child,
 #carrousel:last-child {
      padding-bottom: 0;
+     margin-bottom: 0;
      border-bottom: none;
 }
+
+#car_photos figure img,
+#car_photos figure > div,
+.CarError,
+.slideshow li > div {
+    display: block;
+    margin: auto;
+	border: 1px solid #dad9d9;
+}
+
+
+
+/* -----------------------------------------------------------------------------
+   == CARROUSELS
+   -------------------------------------------------------------------------- */
 
 
 /*
@@ -43,13 +111,6 @@
 }
 #car_photos figure {
     width: 100%;
-}
-
-#car_photos figure img,
-#car_photos figure > div {
-    display: block;
-    margin: auto;
-	border: 1px solid #dad9d9;
 }
 
 #car_photos figure figcaption {
@@ -104,40 +165,89 @@
 	border-color: #f0373a;
 }
 
-/*
- * Next + Prev buttons
- */
 
-#carrousel .prev,
-#carrousel .next {
-    position: absolute;
-    top: 40px;
-    width: 40px;
-    height: 40px;
-    background-position: 0 0;
-    background-repeat: no-repeat;
+/* -----------------------------------------------------------------------------
+   ==  SLIDESHOW
+   -------------------------------------------------------------------------- */
+
+.slideshow {
+    position: relative;
+    width: 100%;
+}
+
+.slideshow li, .slideshow ul {
+    margin:0;
+    padding:0;
+    list-style: none;
+}
+
+.slideshow img {
     border: 1px solid #dad9d9;
-    background-color: #e22c2e;
-    z-index:5;
 }
 
-#carrousel .prev {
-    /* @embed */
-    background-image: url(images/arrows_slide_left.png);
-    left: -8px;
+.slideshow li {
+    position: absolute;
+    left: 0;
+    background: #fff;
 }
 
-#carrousel .next {
-    /* @embed */
-    background-image: url(images/arrows_slide_right.png);
-    right: -8px;
+.slideshow div.caption {
+    border: none;
+    margin-top: 4px;
 }
 
-#carrousel .prev:focus,
-#carrousel .prev:hover,
-#carrousel .next:focus,
-#carrousel .next:hover {
-    background-color: #7c2122;
+/* -----------------------------------------------------------------------------
+   ==  SLIDESHOW ON WELCOME PAGE
+   -------------------------------------------------------------------------- */
+
+.mw-special-Welcome .slideshow {
+    margin-bottom: 0;
 }
+
+.mw-special-Welcome .slideshow {
+    width: 518px;
+    height: 244px;
+    padding-top: 7px;
+}
+.mw-special-Welcome .slideshow a { color: #4D4E4F; }
+
+.mw-special-Welcome .slideshow div.caption {
+    font-size: 14px;
+    padding-right: 8px;
+    margin-top: 10px;
+}
+
+.mw-special-Welcome .slideshow h4 {
+    display: inline;
+    font-size: 14px;
+    letter-spacing: 1px;
+    word-spacing: 3px;
+    font-style: normal;
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+    color: black;
+}
+
+.mw-special-Welcome .slideshow p {
+    display: inline;
+    letter-spacing: 1px;
+    word-spacing: 3px;
+    line-height: 1em;
+    margin: 0;
+    padding: 0;
+}
+
+.mw-special-Welcome .slideshow li {
+    left: 10px;
+}
+
+.mw-special-Welcome .slideshow .prev,
+.mw-special-Welcome .slideshow .next {
+    top: 80px;
+    bottom: auto;
+}
+
+
 
 
