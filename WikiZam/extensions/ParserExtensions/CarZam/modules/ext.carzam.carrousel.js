@@ -105,11 +105,10 @@
 		
 		var auto_slide= false;
         
-		var img_height = $('img', $slider).outerHeight(true);
+		var img_height = $('div.wrapper', $slider).outerHeight(true);
+        var arrow_pos = 10;
         if (img_height > 0)
-            var arrow_pos = img_height/2-20;
-        else
-            var arrow_pos = 40;
+            arrow_pos = img_height/2-20;
 		
 		// ajout des liens next et prev
 		$slider.prepend('<a href="#prev" class="prev fade" style="top:'+arrow_pos+'px"></a> <a href="#next" class="next fade" style="top:'+arrow_pos+'px"></a>');

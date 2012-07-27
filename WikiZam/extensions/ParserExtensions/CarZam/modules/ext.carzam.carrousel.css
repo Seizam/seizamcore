@@ -55,31 +55,16 @@
  
 .slideshow,
 #carrousel {
-     padding: 16px 0;
-     margin-bottom: 18px;
-     border-top: 1px solid #dad9d9;
-     border-bottom: 1px solid #dad9d9;
-}
-
-.slideshow:first-child,
-#carrousel:first-child {
-     padding-top: 0;
-     border-top: none;
-}
-
-.slideshow:first-child,
-#carrousel:last-child {
-     padding-bottom: 0;
-     margin-bottom: 0;
-     border-bottom: none;
+     margin: 18px auto 18px;
 }
 
 #car_photos figure img,
 #car_photos figure > div,
 .CarError,
-.slideshow li > div {
+.slideshow li > div.wrapper > div {
     display: block;
     margin: auto;
+    padding: 0;
 	border: 1px solid #dad9d9;
 }
 
@@ -175,6 +160,10 @@
     list-style: none;
 }
 
+.slideshow div.wrapper {
+    overflow: hidden;
+}
+
 .slideshow img {
     border: 1px solid #dad9d9;
 }
@@ -183,12 +172,12 @@
     position: absolute;
     left: 0;
     background: #fff;
-    text-align: center;
     width: 100%;
 }
 
-.slideshow div.caption {
+.slideshow p.caption {
     border: none;
+    text-align: center;
     margin-top: 4px;
 }
 

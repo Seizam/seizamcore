@@ -97,10 +97,13 @@ class CarZamHooks {
 		$s->setContextTitle($parser->getTitle());
 		$s->setHideBadImages();
         if (isset ($param['height']))
-            $c->setPhotoHeight($param['height']);
+            $s->setPhotoHeight($param['height']);
         
         if (isset ($param['width']))
-            $c->setPhotoWidth($param['width']);
+            $s->setPhotoWidth($param['width']);
+        
+        if (isset ($param['crop']))
+            $s->setPhotoCrop ($param['crop']);
 
 		$lines = StringUtils::explode( "\n", $in );
 		foreach ( $lines as $line ) {

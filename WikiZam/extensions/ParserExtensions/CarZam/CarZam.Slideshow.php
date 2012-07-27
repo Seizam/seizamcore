@@ -29,7 +29,7 @@ class CarZamSlideshow {
     /**
      * Design var in px
      */
-    var $mPhotoHeight = 442, $mPhotoWidth = 784;
+    var $mPhotoHeight = 441, $mPhotoWidth = 784, $mPhotoCrop = false;
 
     /**
      * Contextual title, used when images are being screened
@@ -61,14 +61,19 @@ class CarZamSlideshow {
         $this->mHideBadImages = $flag;
     }
 
-    public function setPhotoHeight($height = 442) {
+    public function setPhotoHeight($height = 441) {
         if (is_int(intval($height)) && $height > 120)
             $this->mPhotoHeight = $height;
     }
-    
-    public function setPhotoWidth($width = 784) {
+
+    public function setPhotoWidth($width = 786) {
         if (is_int(intval($width)) && $width > 120)
-            $this->mPhotoWidth = $width;
+            $this->mPhotoWidth = $width - 2;
+    }
+
+    public function setPhotoCrop($set = true) {
+        if ($set === true)
+            $this->mPhotoCrop = true;
     }
 
     /**
@@ -144,19 +149,26 @@ class CarZamSlideshow {
 
         $slides = Html::rawElement('ul', array(), $slides);
         $slidesHeight = $this->mPhotoHeight + self::CAPTIONHEIGHT;
+        $slidesWidth = $this->mPhotoWidth + 2;
 
         $attribs = Sanitizer::mergeAttributes(
-                        array('class' => 'slideshow','style'=>'height:' . $slidesHeight . 'px'), $this->mAttribs);
-        
+                        array('class' => 'slideshow', 'style' => 'height:' . $slidesHeight . 'px; width:' . $slidesWidth . 'px;'), $this->mAttribs);
+
         $output = Html::rawElement('div', $attribs, $slides);
 
         return $output;
     }
 
     private function photoToHTML($img, $nt, $text = '', $alt = '', $descQuery = '') {
+
+
+        //Some ugly alignment logic
+        $verticalPadding = 0;
+        $horizontalPadding = 0;
+
         $params = array(
             'width' => $this->mPhotoWidth,
-            'height' => $this->mPhotoHeight
+            'height' => $this->mPhotoHeight,
         );
 
         if (!$img) {
@@ -168,38 +180,54 @@ class CarZamSlideshow {
                             $nt, htmlspecialchars($nt->getText()), array(), array(), array('known', 'noclasses')
                     ) .
                     '</div>';
-        } else if (!( $thumb = $img->transform($params) )) {
-            # Error generating thumbnail.
-            $html = '<div class="CarError" style="height: ' . $params['height'] . 'px; width: ' . $params['width'] . 'px;">' . htmlspecialchars($img->getLastError()) . '</div>';
         } else {
-            $imageParameters = array(
-                'desc-link' => true,
-                'desc-query' => $descQuery,
-                'alt' => $alt,
-            );
+            $params = $this->getThumbParams($img);
+            if (!( $thumb = $img->transform($params) )) {
+                # Error generating thumbnail.
+                $html = '<div class="CarError" style="height: ' . $params['height'] . 'px; width: ' . $params['width'] . 'px;">' . htmlspecialchars($img->getLastError()) . '</div>';
+            } else {
+                $imageParameters = array(
+                    'desc-link' => true,
+                    'desc-query' => $descQuery,
+                    'alt' => $alt,
+                );
 
-            # In the absence of both alt text and caption, fall back on providing screen readers with the filename as alt text
-            if ($alt == '') {
-                if ($text == '')
-                    $imageParameters['alt'] = $nt->getText();
-                else {
-                    $imageParameters['alt'] = htmlspecialchars($text);
+                # In the absence of both alt text and caption, fall back on providing screen readers with the filename as alt text
+                if ($alt == '') {
+                    if ($text == '')
+                        $imageParameters['alt'] = $nt->getText();
+                    else {
+                        $imageParameters['alt'] = htmlspecialchars($text);
+                    }
+                }
+
+                $html = $thumb->toHtml($imageParameters);
+
+
+                //Some ugly alignment logic
+                $thumbHeight = $thumb->getHeight();
+                $thumbWidth = $thumb->getWidth();
+                if ($this->mPhotoHeight > $thumbHeight)
+                    $verticalPadding = floor(($wrapperHeight - $thumbHeight) / 2);
+                if ($this->mPhotoWidth > $thumbWidth)
+                    $horizontalPadding = floor(($wrapperWidth - $thumbWidth) / 2);
+
+                // Call parser transform hook
+                if ($this->mParser && $img->getHandler()) {
+                    $img->getHandler()->parserTransformHook($this->mParser, $img);
                 }
             }
-
-            $html = $thumb->toHtml($imageParameters);
-
-            // Call parser transform hook
-            if ($this->mParser && $img->getHandler()) {
-                $img->getHandler()->parserTransformHook($this->mParser, $img);
-            }
         }
-        $html .= Html::rawElement('div', array('class'=>'caption'), $text);
+        
+        $wrapperHeight = $this->mPhotoHeight+2;
+        $wrapperWidth = $this->mPhotoWidth+2;
+
+        $html = Html::rawElement('div', array('class' => 'wrapper', 'style' => 'height:' . $wrapperHeight . 'px; width:' . $wrapperWidth . 'px; padding:' . $verticalPadding . 'px ' . $horizontalPadding . 'px;'), $html);
+
+        $html .= Html::rawElement('p', array('class' => 'caption'), $text);
         return $html;
     }
 
-
-    
     /**
      * @return Integer: number of images in the gallery
      */
