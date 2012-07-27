@@ -206,9 +206,9 @@ class CarZamSlideshow {
                 $thumbHeight = $thumb->getHeight();
                 $thumbWidth = $thumb->getWidth();
                 if ($this->mPhotoHeight > $thumbHeight)
-                    $verticalPadding = floor(($wrapperHeight - $thumbHeight) / 2);
+                    $verticalPadding = floor(($this->mPhotoHeight - $thumbHeight) / 2);
                 if ($this->mPhotoWidth > $thumbWidth)
-                    $horizontalPadding = floor(($wrapperWidth - $thumbWidth) / 2);
+                    $horizontalPadding = floor(($this->mPhotoWidth - $thumbWidth) / 2);
 
                 // Call parser transform hook
                 if ($this->mParser && $img->getHandler()) {
@@ -222,7 +222,7 @@ class CarZamSlideshow {
 
         $html = Html::rawElement('div', array('class' => 'wrapper', 'style' => 'height:' . $wrapperHeight . 'px; width:' . $wrapperWidth . 'px; padding:' . $verticalPadding . 'px ' . $horizontalPadding . 'px;'), $html);
 
-        $html .= Html::rawElement('p', array('class' => 'caption'), $text);
+        $html .= Html::rawElement('div', array('class' => 'caption'), $text);
         return $html;
     }
 

@@ -175,7 +175,7 @@
     width: 100%;
 }
 
-.slideshow p.caption {
+.slideshow div.caption {
     border: none;
     text-align: center;
     margin-top: 4px;
