@@ -173,7 +173,6 @@
     margin:0;
     padding:0;
     list-style: none;
-    text-align: center;
 }
 
 .slideshow img {
@@ -184,6 +183,8 @@
     position: absolute;
     left: 0;
     background: #fff;
+    text-align: center;
+    width: 100%;
 }
 
 .slideshow div.caption {
