@@ -98,6 +98,9 @@ class CarZamHooks {
 		$s->setHideBadImages();
         if (isset ($param['height']))
             $c->setPhotoHeight($param['height']);
+        
+        if (isset ($param['width']))
+            $c->setPhotoWidth($param['width']);
 
 		$lines = StringUtils::explode( "\n", $in );
 		foreach ( $lines as $line ) {

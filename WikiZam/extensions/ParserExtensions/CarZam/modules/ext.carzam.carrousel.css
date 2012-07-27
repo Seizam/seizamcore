@@ -30,12 +30,6 @@
     z-index:5;
 }
 
-.slideshow .prev,
-.slideshow .next {
-    top: auto;
-    bottom: 40px;
-}
-
 .prev {
     /* @embed */
     background-image: url(images/arrows_slide_left.png);
@@ -179,6 +173,7 @@
     margin:0;
     padding:0;
     list-style: none;
+    text-align: center;
 }
 
 .slideshow img {
@@ -239,6 +234,7 @@
 }
 
 .mw-special-Welcome .slideshow li {
+    text-align: justify;
     left: 10px;
 }
 

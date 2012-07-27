@@ -62,9 +62,13 @@ class CarZamSlideshow {
     }
 
     public function setPhotoHeight($height = 442) {
-        
-        if (is_int(intval($height)) && $height > $mThumbHeight = 120)
+        if (is_int(intval($height)) && $height > 120)
             $this->mPhotoHeight = $height;
+    }
+    
+    public function setPhotoWidth($width = 784) {
+        if (is_int(intval($width)) && $width > 120)
+            $this->mPhotoWidth = $width;
     }
 
     /**
@@ -175,7 +179,7 @@ class CarZamSlideshow {
             );
 
             # In the absence of both alt text and caption, fall back on providing screen readers with the filename as alt text
-            if ($alt == '' && $text == '') {
+            if ($alt == '') {
                 if ($text == '')
                     $imageParameters['alt'] = $nt->getText();
                 else {
