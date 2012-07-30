@@ -30,6 +30,7 @@ class CarZamSlideshow {
      * Design var in px
      */
     var $mPhotoHeight = 441, $mPhotoWidth = 784, $mFloat = 'none';
+    var $mMarginLeft = 0, $mMarginRight = 0;
 
     /**
      * Contextual title, used when images are being screened
@@ -73,8 +74,13 @@ class CarZamSlideshow {
 
     public function setFloat($value = 'none') {
         $value = strtolower($value);
-        if ($value == 'left' || $value == 'right')
+        if ($value == 'left') {
             $this->mFloat = $value;
+            $this->mMarginRight = 18;
+        } else if ($value == 'right') {
+            $this->mFloat = $value;
+            $this->mMarginLeft = 18;
+        }
     }
 
     /**
@@ -153,7 +159,7 @@ class CarZamSlideshow {
         $slidesWidth = $this->mPhotoWidth + 2;
 
         $attribs = Sanitizer::mergeAttributes(
-                        array('class' => 'slideshow', 'style' => 'height:' . $slidesHeight . 'px; width:' . $slidesWidth . 'px; float:' . $this->mFloat), $this->mAttribs);
+                        array('class' => 'slideshow', 'style' => 'height:' . $slidesHeight . 'px; width:' . $slidesWidth . 'px; float:' . $this->mFloat . '; margin-left:'. $this->mMarginLeft. 'px; margin-right:'. $this->mMarginRight .'px;'), $this->mAttribs);
 
         $output = Html::rawElement('div', $attribs, $slides);
 

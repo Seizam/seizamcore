@@ -31,7 +31,8 @@ $messages['en'] = array(
     'status-TE' => 'Test',
     'tm-balance' => 'Your current account balance is \'\'\'$1 {{int:$2}}\'\'\'.',
     'tm-table-desc' => 'Here is the list of all your transactions.',
-    'tm-bill' => 'Bill'
+    'tm-bill' => 'Bill',
+    'tm-refound' => 'Credit (refound)'
 );
 
 /** 
@@ -61,5 +62,6 @@ $messages['fr'] = array(
     'status-TE' => 'Test',
     'tm-balance' => 'Le solde actuel de votre compte est de \'\'\'$1 {{int:$2}}\'\'\'.',
     'tm-table-desc' => 'Voici la liste de toutes vos transactions.',
-    'tm-bill' => 'Facture'
+    'tm-bill' => 'Facture',
+    'tm-refound' => 'Avoir (remboursement)'
 );
