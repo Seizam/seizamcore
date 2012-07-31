@@ -26,7 +26,8 @@ class TMRecord {
         'tmr_currency' => null, # varchar(3) NOT NULL DEFAULT 'EUR' COMMENT 'Record Currency',
         'tmr_mac' => null, # varchar(40) COMMENT 'Record Verification Sum',
         'tmr_desc' => null, # varchar(64) NOT NULL COMMENT 'Record Description',
-        'tmr_status' => null # varchar(2) NOT NULL COMMENT 'Record status (OK, KO, PEnding, TEst)',
+        'tmr_status' => null, # varchar(2) NOT NULL COMMENT 'Record status (OK, KO, PEnding, TEst)',
+        'tmr_tmb_id' => null #int(10) unsigned COMMENT 'Foreign key to tm_bill'
     );
 
     private function __construct($id, $tmr) {
@@ -99,6 +100,23 @@ class TMRecord {
         return self::constructFromDatabaseRow($result);
     }
 
+    public static function newFromBillId($id) {
+        if (($id === null) || !is_int($id) || ($id < 1)) {
+            throw new MWException('Cannot fectch TMRecord matching the identifier (invalid identifier)');
+        }
+
+        # We need to read, but with money issues, best read from master.
+        $dbr = wfGetDB(DB_MASTER);
+        $result = $dbr->selectRow('tm_record', '*', array('tmr_tmb_id' => $id), __METHOD__);
+
+        if ($result === false) {
+            // not found, so return null
+            return null;
+        }
+
+        return self::constructFromDatabaseRow($result);
+    }
+
     /**
      *
      * @param array $tmr
@@ -124,13 +142,17 @@ class TMRecord {
                 !in_array($tmr['tmr_status'], array('OK', 'KO', 'PE', 'TE'))) {
             throw new MWException('Cannot create TMRecord (invalid argument)');
         }
-        
+
         if ($tmr['tmr_amount'] <= 0 && $tmr['tmr_status'] !== 'PE') {
-            throw new MWException('Cannot create TMRecord (expense should be PEnding)'.print_r($tmr,true));
+            throw new MWException('Cannot create TMRecord (expense should be PEnding)' . print_r($tmr, true));
         }
 
         # Setting the date of update
         $tmr['tmr_date_created'] = $tmr['tmr_date_modified'] = wfTimestamp(TS_DB);
+
+        # Setting the bill id (for a refound), bill id for expense is done later in react()
+        if ($tmr['tmr_type'] == TM_REFOUND_TYPE && $tmr['tmr_amount'] > 0)
+            $tmr['tmr_tmb_id'] = TMBill::newFromScratch()->getId();
 
         # We need to write, therefore we need the master
         $dbw = wfGetDB(DB_MASTER);
@@ -319,15 +341,28 @@ class TMRecord {
      */
     private function attemptPEtoOK($balanceOk) {
         $amount = 0;
-        if ($this->tmr['tmr_currency'] === 'EUR' && ($this->tmr['tmr_amount']+$balanceOk) >= 0) {
+        if ($this->tmr['tmr_currency'] === 'EUR' #Only Euro for the moment
+                && $this->tmr['tmr_amount'] < 0 #This is about (pending) expenses only
+                && $this->tmr['tmr_status'] === 'PE' #This is about pending (expenses) only
+                && ($this->tmr['tmr_amount'] + $balanceOk) >= 0) { #We can validate if the balance is positive or null
+            $this->toOK();
+            //amount to return
             $amount = $this->tmr['tmr_amount'];
-            $this->tmr['tmr_status'] = 'OK';
-            $this->updateDB();
-			$tmr = $this->tmr;
-			$tmr['tmr_id'] = $this->id;
-            wfRunHooks('TransactionUpdated',  array($tmr));
+            //Notify the other extensions
+            $tmr = $this->tmr;
+            $tmr['tmr_id'] = $this->id;
+            wfRunHooks('TransactionUpdated', array($tmr));
         }
         return $amount;
+    }
+
+    private function toOK() {
+        //new status
+        $this->tmr['tmr_status'] = 'OK';
+        //Do the billing
+        $this->tmr['tmr_tmb_id'] = TMBill::newFromScratch()->getId();
+        //Update de DB
+        $this->updateDB();
     }
 
     /**
@@ -340,13 +375,12 @@ class TMRecord {
     private function reactToExpense() {
         $return = false;
         if (self::getTrueBalanceFromDB($this->getUserId()) >= 0) {
-            $this->tmr['tmr_status'] = 'OK';
+            $this->toOK();
             $return = true;
         }
-        $this->updateDB();
         return $return;
     }
-    
+
     /**
      * Check if user is owner OR user is admin AND tmr_status = PE;
      * @param User $user
@@ -355,7 +389,7 @@ class TMRecord {
     public function canCancel($user) {
         return ($this->getUserId() == $user->getId() || $user->isAllowed(TM_ADMIN_RIGHT)) && $this->getStatus() == 'PE';
     }
-    
+
     /**
      * Turn tmr_status to KO (only if user can & tmr_status = PE)
      * @param User $user
@@ -367,7 +401,6 @@ class TMRecord {
         }
         $this->tmr['tmr_status'] = 'KO';
         return $this->updateDB();
-        
     }
 
 }

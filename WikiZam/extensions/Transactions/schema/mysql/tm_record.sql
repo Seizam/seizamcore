@@ -17,6 +17,8 @@ CREATE TABLE IF NOT EXISTS `tm_record` (
   `tmr_mac` varchar(40) DEFAULT NULL COMMENT 'Record Verification Sum',
   `tmr_desc` varchar(64) NOT NULL COMMENT 'Record Description',
   `tmr_status` varchar(2) NOT NULL DEFAULT 'KO' COMMENT 'Record status (OK, KO, PEnding, TEst)',
+  `tmr_tmb_id` int(10) unsigned DEFAULT NULL COMMENT 'Foreign key to tm_bill',
   PRIMARY KEY (`tmr_id`),
+  UNIQUE KEY `tmr_tmb_id` (`tmr_tmb_id`),
   KEY `tmr_user_id` (`tmr_user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Transaction Manager Main Table' AUTO_INCREMENT=1 ;

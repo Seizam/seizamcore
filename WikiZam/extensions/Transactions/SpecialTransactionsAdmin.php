@@ -1,6 +1,6 @@
 <?php
 
-class SpecialWikiplacesAdmin extends SpecialPage {
+class SpecialTransactionsAdmin extends SpecialPage {
 	
 	const TITLE_NAME = 'TransactionsAdmin';
 	
@@ -68,7 +68,7 @@ class SpecialWikiplacesAdmin extends SpecialPage {
         $output->addWikiText("user_id = ".$user->getId());
         $output->addWikiText("user_name = ".$user->getName());
         $output->addWikiText("user_realname = ".$user->getRealName());
-        $output->addWikiText("user_realname = ".$user->getEmail());
+        $output->addWikiText("user_email = ".$user->getEmail());
         
         $output->addWikiText("=== Transaction ===");
         $output->addWikiText("True balance before = ".TMRecord::getTrueBalanceFromDB($user->getId()));
@@ -81,7 +81,7 @@ class SpecialWikiplacesAdmin extends SpecialPage {
             
 		$tmr = array(
 			# Params related to Message
-			'tmr_type' => 'refound', # varchar(8) NOT NULL COMMENT 'Type of message (Payment, Sale, Plan)',
+			'tmr_type' => TM_REFOUND_TYPE, # varchar(8) NOT NULL COMMENT 'Type of message (Payment, Sale, Plan)',
 			# Paramas related to User
 			'tmr_user_id' => $user->getId(), # int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Foreign key to user.user_id',
 			'tmr_mail' => $user->getEmail(), # tinyblob COMMENT 'User''s Mail',

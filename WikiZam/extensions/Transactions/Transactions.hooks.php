@@ -22,6 +22,8 @@ class TransactionsHooks {
     public static function loadExtensionSchemaUpdates($updater) {
         $updater->addExtensionUpdate(array('addTable', 'tm_record',
             dirname(__FILE__) . '/schema/mysql/tm_record.sql', true));
+        $updater->addExtensionUpdate(array('addTable', 'tm_bill',
+            dirname(__FILE__) . '/schema/mysql/tm_bill.sql', true));
         return true;
     }
 

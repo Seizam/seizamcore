@@ -16,7 +16,8 @@ class TransactionsTablePager extends SkinzamTablePager {
         'tmr_date_modified',
         'tmr_amount',
         'tmr_currency',
-        'tmr_status');
+        'tmr_status',
+        'tmr_tmb_id');
     protected $defaultSort = 'tmr_date_created';
     public $mDefaultDirection = true;
     protected $tableClasses = array('TMRecord'); # Array
@@ -36,8 +37,8 @@ class TransactionsTablePager extends SkinzamTablePager {
         global $wgLang;
         switch ($name) {
             case 'tmr_id':
-                if ($this->mCurrentRow->tmr_amount < 0 && $this->mCurrentRow->tmr_status != 'KO')
-                    return SpecialTransactions::getLinkBill($value, $wgLang->formatNum($value));
+                if (isset($this->mCurrentRow->tmr_tmb_id))
+                    return SpecialBills::getLinkBill($this->mCurrentRow->tmr_tmb_id, $wgLang->formatNum($value));
                 else
                     return $wgLang->formatNum($value);
             case 'tmr_type':
@@ -62,8 +63,9 @@ class TransactionsTablePager extends SkinzamTablePager {
     
     function getFieldNames() {
         $fieldNames = parent::getFieldNames();
-        if (isset ($fieldNames['tmr_currency']))
-            unset($fieldNames['tmr_currency']);
+        unset($fieldNames['tmr_currency']);
+        unset($fieldNames['tmr_tmb_id']);
+        
         if (isset ($fieldNames['tmr_id']))
             $fieldNames['tmr_id'] = wfMessage('id')->text();
         

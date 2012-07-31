@@ -24,7 +24,7 @@ function wfFormatSizeMB($size) {
         $size = round($size, 2);
         return wfMessage('size-gigabytes', $wgLang->formatNum($size))->text();
     } else if ($size < 1) {
-        return '< '.wfMessage('size-megabytes', $wgLang->formatNum(1))->text();
+        return '< ' . wfMessage('size-megabytes', $wgLang->formatNum(1))->text();
     } else {
         $size = round($size, 2);
         return wfMessage('size-megabytes', $wgLang->formatNum($size))->text();
@@ -40,33 +40,30 @@ function wfFormatSizeMB($size) {
  * @todo handle properly float $size, the problem is how to handle them with 32 bits system (substr?)
  */
 function wfFormatSizekB($size) {
-    
-	global $wgLang;
-	
-	if ( PHP_INT_SIZE == 8 ) { // check if system is 32 or 64 bits
-		// 64 bits
-		if ($size > 1024) {
-			return wfFormatSizeMB($size/1024);
-		}
-		
-	} elseif ( PHP_INT_SIZE == 4 ) {
-		// 32 bits
-		if ( strlen($size) > 3 ) { // not very precise, but work even with big big size
-			return wfFormatSizeMB ( substr($size ,0,-3) );
-		}
-		
-	} else {
-		// ???
-		return wfMessage('size-kilobytes', $wgLang->formatNum($size))->text();
-	}
-	
-	// if we arrive here, we know that size is less than 1024 or 1000
-	if ($size < 1) {
-        return '< '.wfMessage('size-kilobytes', $wgLang->formatNum(1))->text();
+
+    global $wgLang;
+
+    if (PHP_INT_SIZE == 8) { // check if system is 32 or 64 bits
+        // 64 bits
+        if ($size > 1024) {
+            return wfFormatSizeMB($size / 1024);
+        }
+    } elseif (PHP_INT_SIZE == 4) {
+        // 32 bits
+        if (strlen($size) > 3) { // not very precise, but work even with big big size
+            return wfFormatSizeMB(substr($size, 0, -3));
+        }
+    } else {
+        // ???
+        return wfMessage('size-kilobytes', $wgLang->formatNum($size))->text();
+    }
+
+    // if we arrive here, we know that size is less than 1024 or 1000
+    if ($size < 1) {
+        return '< ' . wfMessage('size-kilobytes', $wgLang->formatNum(1))->text();
     } else {
         return wfMessage('size-kilobytes', $wgLang->formatNum($size))->text();
     }
-	
 }
 
 /**
@@ -106,8 +103,7 @@ function wfFormatNumber($number) {
  * 
  * @return string A pretty summarized backtrace (filenames, lines, functions names, ...)
  */
-function wfGetPrettyBacktrace()
-{
+function wfGetPrettyBacktrace() {
 
     $backtrace = debug_backtrace();
     $output = null;
@@ -119,48 +115,48 @@ function wfGetPrettyBacktrace()
                 $args .= ', ';
             }
             switch (gettype($a)) {
-            case 'integer':
-            case 'double':
-                $args .= $a;
-                break;
-            case 'string':
-                $a = htmlspecialchars(substr($a, 0, 64)).((strlen($a) > 64) ? '...' : '');
-                $args .= "\"$a\"";
-                break;
-            case 'array':
-                $args .= 'Array('.count($a).')';
-                break;
-            case 'object':
-                $args .= 'Object('.get_class($a).')';
-                break;
-            case 'resource':
-                $args .= 'Resource('.strstr($a, '#').')';
-                break;
-            case 'boolean':
-                $args .= $a ? 'True' : 'False';
-                break;
-            case 'NULL':
-                $args .= 'Null';
-                break;
-            default:
-                $args .= 'Unknown';
+                case 'integer':
+                case 'double':
+                    $args .= $a;
+                    break;
+                case 'string':
+                    $a = htmlspecialchars(substr($a, 0, 64)) . ((strlen($a) > 64) ? '...' : '');
+                    $args .= "\"$a\"";
+                    break;
+                case 'array':
+                    $args .= 'Array(' . count($a) . ')';
+                    break;
+                case 'object':
+                    $args .= 'Object(' . get_class($a) . ')';
+                    break;
+                case 'resource':
+                    $args .= 'Resource(' . strstr($a, '#') . ')';
+                    break;
+                case 'boolean':
+                    $args .= $a ? 'True' : 'False';
+                    break;
+                case 'NULL':
+                    $args .= 'Null';
+                    break;
+                default:
+                    $args .= 'Unknown';
             }
         }
-	
-	if ($output==null)
-	    $output = '';
-	else
-	    $output.="\n" ;
-	
-        $output .= " file: ".( isset($bt['file']) ? $bt['file'] : '?' ).
-		" line: ".( isset($bt['line']) ? $bt['line'] : '?' ) ;
-        $output .= " call: ".( isset($bt['class']) ? $bt['class'] : '' ). 
-		(isset($bt['type']) ? $bt['type'] : '' ) .
-		(isset($bt['function']) ? $bt['function'] : '') ."($args)";;
+
+        if ($output == null)
+            $output = '';
+        else
+            $output.="\n";
+
+        $output .= " file: " . ( isset($bt['file']) ? $bt['file'] : '?' ) .
+                " line: " . ( isset($bt['line']) ? $bt['line'] : '?' );
+        $output .= " call: " . ( isset($bt['class']) ? $bt['class'] : '' ) .
+                (isset($bt['type']) ? $bt['type'] : '' ) .
+                (isset($bt['function']) ? $bt['function'] : '') . "($args)";
+        ;
     }
 
     return $output;
-    
 }
 
 /**
@@ -169,7 +165,27 @@ function wfGetPrettyBacktrace()
  * @param type $obj 
  */
 function wfEchoObject($obj, $comment = 'wfEchoObject') {
-    echo '<h3>'.$comment.'</h3><pre>'.print_r($obj,true).'</pre>';
+    echo '<h3>' . $comment . '</h3><pre>' . print_r($obj, true) . '</pre>';
 }
 
+/**
+ *
+ * @param ResultWrapper $resultWrapper
+ * @param string $comment
+ * @param boolean $inline true for return, false for echo
+ * @return string 
+ */
+function wfEchoResultWrapper($resultWrapper, $comment = 'wfEchoResultWrapper', $inline = 'true') {
+    $html = '<h3>' . $comment . '</h3>';
+    foreach ($resultWrapper as $id => $row) {
+        $html .= '<h4>Result ' . $id . '</h4>';
+        $html .= '<pre>';
+        $html .= print_r($row, true);
+        $html .= '</pre>';
+    }
+    if ($inline)
+        return $html;
+    else
+        echo $html;
+}
 

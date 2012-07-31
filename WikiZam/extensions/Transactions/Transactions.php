@@ -31,6 +31,7 @@ $dir = dirname(__FILE__) . '/';
 #Load Classes
 $wgAutoloadClasses['TransactionsHooks'] = $dir . 'Transactions.hooks.php';
 $wgAutoloadClasses['TMRecord'] = $dir . 'model/TMRecord.php';
+$wgAutoloadClasses['TMBill'] = $dir . 'model/TMBill.php';
 $wgAutoloadClasses['TransactionsTablePager'] = $dir . 'model/TransactionsTablePager.php';
 
 
@@ -48,11 +49,23 @@ $wgHooks['ElectronicPaymentAttempt'][] = 'TransactionsHooks::electronicPaymentAt
 $wgExtensionMessagesFiles['Transactions'] = $dir . 'Transactions.i18n.php';
 $wgExtensionAliasesFiles['Transactions'] = $dir . 'Transactions.alias.php';
 
-# Special Electronic Payment (OUTbound)
+# Special Transactions
 $wgAutoloadClasses['SpecialTransactions'] = $dir . 'SpecialTransactions.php';
 $wgSpecialPages['Transactions'] = 'SpecialTransactions';
-
 $wgSpecialPageGroups['Transactions'] = 'users';
+
+
+# Special Transactions
+$wgAutoloadClasses['SpecialBills'] = $dir . 'SpecialBills.php';
+$wgSpecialPages['Bills'] = 'SpecialBills';
+
+# Special TransactionsAdmin
+$wgAutoloadClasses['SpecialTransactionsAdmin'] = $dir . 'SpecialTransactionsAdmin.php';
+$wgSpecialPages['TransactionsAdmin'] = 'SpecialTransactionsAdmin';
+
+#tmr_type for refound
+define('TM_REFOUND_TYPE', 'refound');
+
 
 # Right for Transaction administration
 define('TM_ACCESS_RIGHT', 'tmaccess');

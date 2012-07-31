@@ -13,6 +13,8 @@ $messages = array();
  */
 $messages['en'] = array(
     'transactions' => 'My Transactions',
+    'transactionsadmin' => 'Transactions Administration',
+    'bills' => 'My Bills',
     'tm-desc' => 'Central manager for all transactions accross Seizam.',
     'id' => 'Id',
     'type' => 'Type',
@@ -44,6 +46,7 @@ $messages['qqq'] = array(
 /** French */
 $messages['fr'] = array(
     'transactions' => 'Mes transactions',
+    'bills' => 'Mes factures',
     'tm-desc' => 'Gestionnaire central pour toutes transactions à travers Seizam.',
     'id' => 'Id',
     'type' => 'Type',

@@ -230,7 +230,7 @@ $messages['fr'] = array(
     /* Errors */
     'sorry' => 'Désolé!',
 	'sz-internal-error' => 'Pardon, une erreur interne s\'est produite. {{int:sz-report}}',
-    'sz-invalid-request' => 'Pardon, nous ne comprenons pas votre requête OU vous n\'êtes pas autorisé à la réaliser. {{int:sz-report}}',
+    'sz-invalid-request' => 'Pardon, nous ne comprenons pas votre requête OU vous n\'êtes pas autorisé(e) à la réaliser. {{int:sz-report}}',
 	'sz-maintenance' => 'Pardon, cette partie du site est fermée pour maintenance. Merci de réessayer plus tard.',
     
     /* Mainpage */
