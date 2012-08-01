@@ -157,12 +157,7 @@ Please, remember we are always available through [[Project:Contact]] for any que
 Regards,
 
 [[Project:Team|The Team]]',
-	'uploadtext' => "Use the form below to upload files. See [[Help:Files]] and [[Help:Images]].
-
-To include a file in a page, use a link in one of the following forms:
-* '''<tt><nowiki>[[</nowiki>{{ns:file}}<nowiki>:File.jpg]]</nowiki></tt>''' to use the full version of the file
-* '''<tt><nowiki>[[</nowiki>{{ns:file}}<nowiki>:File.png|200px|thumb|left|alt text]]</nowiki></tt>''' to use a 200 pixel wide rendition in a box in the left margin with 'alt text' as description
-* '''<tt><nowiki>[[</nowiki>{{ns:media}}<nowiki>:File.ogg]]</nowiki></tt>''' for directly linking to the file without displaying the file",
+	'uploadtext' => "Use the form below to upload files. See [[Help:Files]] and [[Help:Images]].",
 );
 
 /** 
@@ -228,7 +223,7 @@ $messages['fr'] = array(
     'fileurl' => 'Adresse du fichier :',
     
     /* Errors */
-    'sorry' => 'Désolé!',
+    'sorry' => 'Désolé !',
 	'sz-internal-error' => 'Pardon, une erreur interne s\'est produite. {{int:sz-report}}',
     'sz-invalid-request' => 'Pardon, nous ne comprenons pas votre requête OU vous n\'êtes pas autorisé(e) à la réaliser. {{int:sz-report}}',
 	'sz-maintenance' => 'Pardon, cette partie du site est fermée pour maintenance. Merci de réessayer plus tard.',
@@ -322,10 +317,5 @@ S\'il vous plaît, rappelez-vous que nous restons à votre disposition à traver
 Cordialement,
 
 [[Project:Team|L\'équipe]]',
-	'uploadtext' => "Utilisez ce formulaire pour importer des fichiers sur le serveur. Voir [[Help:Fichiers|Aide:Fichiers]] et [[Help:Images/fr|Aide:Images]].
-		
-Pour inclure un fichier dans une page, utilisez un lien de la forme :
-* '''<code><nowiki>[[</nowiki>{{ns:file}}<nowiki>:fichier.jpg]]</nowiki></code>''', pour afficher le fichier en pleine résolution (dans le cas d’une image) ;
-* '''<code><nowiki>[[</nowiki>{{ns:file}}<nowiki>:fichier.png|200px|thumb|left|texte descriptif]]</nowiki></code>''' pour utiliser une miniature de 200 pixels de large dans une boîte à gauche avec « texte descriptif » comme description ;
-* '''<code><nowiki>[[</nowiki>{{ns:media}}<nowiki>:fichier.ogg]]</nowiki></code>''' pour lier directement vers le fichier sans l’afficher.",
+	'uploadtext' => "Utilisez ce formulaire pour importer des fichiers sur le serveur. Voir [[Help:Fichiers|Aide:Fichiers]] et [[Help:Images/fr|Aide:Images]].",
 );
