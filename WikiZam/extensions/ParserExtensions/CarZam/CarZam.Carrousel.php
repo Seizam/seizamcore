@@ -63,7 +63,7 @@ class CarZamCarrousel {
 
     public function setPhotoHeight($height = 442) {
         
-        if (is_int(intval($height)) && $height > $mThumbHeight)
+        if (intval($height) && $height > $this->mThumbHeight)
             $this->mPhotoHeight = $height;
     }
 

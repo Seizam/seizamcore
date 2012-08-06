@@ -63,12 +63,12 @@ class CarZamSlideshow {
     }
 
     public function setPhotoHeight($height = 441) {
-        if (is_int(intval($height)) && $height > 120)
+        if (intval($height) && $height > 120)
             $this->mPhotoHeight = $height;
     }
 
     public function setPhotoWidth($width = 786) {
-        if (is_int(intval($width)) && $width > 120)
+        if (intval($width) && $width > 120)
             $this->mPhotoWidth = $width - 2;
     }
 
