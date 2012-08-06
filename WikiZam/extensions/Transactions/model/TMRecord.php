@@ -360,7 +360,9 @@ class TMRecord {
         //new status
         $this->tmr['tmr_status'] = 'OK';
         //Do the billing
-        $this->tmr['tmr_tmb_id'] = TMBill::newFromScratch()->getId();
+		if ( $this->tmr['tmr_amount'] != 0 ) {
+	        $this->tmr['tmr_tmb_id'] = TMBill::newFromScratch()->getId();
+		}
         //Update de DB
         $this->updateDB();
     }
