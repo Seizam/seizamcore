@@ -34,7 +34,7 @@ class SpecialPlans extends SpecialPage {
         }
         
         // Reading parameter from request
-        if (isset($par) & $par != '') {
+        if (isset($par) && $par != '') {
             $explosion = explode(':', $par);
             if (count($explosion) == 1) {
                 $this->action = $explosion[0];

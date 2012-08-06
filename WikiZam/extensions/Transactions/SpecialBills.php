@@ -71,7 +71,7 @@ class SpecialBills extends SpecialPage {
             return;
         }
 
-        if (isset($par) & $par != '') {
+        if (isset($par) && $par != '') {
             $this->id = intval($par);
         } else {
             $this->id = $request->getInt('id');

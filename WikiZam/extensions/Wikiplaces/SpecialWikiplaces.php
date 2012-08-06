@@ -49,7 +49,7 @@ class SpecialWikiplaces extends SpecialPage {
 			return;
 		}
 
-		if (isset($par) & $par != '') {
+		if (isset($par) && $par != '') {
 			$explosion = explode(':', $par);
 			if (count($explosion) == 1) {
 				$this->action = $explosion[0];

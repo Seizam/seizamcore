@@ -44,7 +44,7 @@ class SpecialSubscriptions extends SpecialPage {
         }
 
         // Reading parameter from request
-        if (isset($par) & $par != '') {
+        if (isset($par) && $par != '') {
             $explosion = explode(':', $par);
             $arg = null;
             if (count($explosion) == 1) {
