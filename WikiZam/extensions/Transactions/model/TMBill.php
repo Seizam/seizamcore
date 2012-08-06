@@ -9,6 +9,8 @@ if (!defined('MEDIAWIKI')) {
  */
 
 class TMBill {
+    
+    const TABLE_NAME = 'tm_bill';
 
     /** @var int */
     private $id; #tmb_id int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Primary key'
@@ -66,7 +68,7 @@ class TMBill {
         $entry[self::DATE_CREATED_FIELD] = wfTimestamp(TS_DB);
 
         # Writing...
-        $success = $dbw->insert('tm_bill', $entry);
+        $success = $dbw->insert(self::TABLE_NAME, $entry);
 
         # Setting tmr_id from auto incremented id in DB
         $entry[self::ID_FIELD] = $dbw->insertId();
@@ -111,7 +113,7 @@ class TMBill {
 
         # We need to read, but with money issues, best read from master.
         $dbr = wfGetDB(DB_MASTER);
-        $result = $dbr->selectRow('tm_bill', '*', array('tmb_id' => $id), __METHOD__);
+        $result = $dbr->selectRow(self::TABLE_NAME, '*', array(self::ID_FIELD => $id), __METHOD__);
 
         if ($result === false) {
             // not found, so return null
