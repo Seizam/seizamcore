@@ -150,8 +150,8 @@ class TMRecord {
         # Setting the date of update
         $tmr['tmr_date_created'] = $tmr['tmr_date_modified'] = wfTimestamp(TS_DB);
 
-        # Setting the bill id (for a refound), bill id for expense is done later in react()
-        if ($tmr['tmr_type'] == TM_REFOUND_TYPE && $tmr['tmr_amount'] > 0)
+        # Setting the bill id (for a refund), bill id for expense is done later in react()
+        if ($tmr['tmr_type'] == TM_REFUND_TYPE && $tmr['tmr_amount'] > 0)
             $tmr['tmr_tmb_id'] = TMBill::newFromScratch()->getId();
 
         # We need to write, therefore we need the master

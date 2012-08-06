@@ -81,7 +81,7 @@ class SpecialTransactionsAdmin extends SpecialPage {
             
 		$tmr = array(
 			# Params related to Message
-			'tmr_type' => TM_REFOUND_TYPE, # varchar(8) NOT NULL COMMENT 'Type of message (Payment, Sale, Plan)',
+			'tmr_type' => TM_REFUND_TYPE, # varchar(8) NOT NULL COMMENT 'Type of message (Payment, Sale, Plan)',
 			# Paramas related to User
 			'tmr_user_id' => $user->getId(), # int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Foreign key to user.user_id',
 			'tmr_mail' => $user->getEmail(), # tinyblob COMMENT 'User''s Mail',
@@ -89,7 +89,7 @@ class SpecialTransactionsAdmin extends SpecialPage {
 			# Params related to Record
 			'tmr_amount' => $amount, # decimal(9,2) NOT NULL COMMENT 'Record Amount',
 			'tmr_currency' => 'EUR', # varchar(3) NOT NULL DEFAULT 'EUR' COMMENT 'Record Currency',
-			'tmr_desc' => 'tm-refound', # varchar(64) NOT NULL COMMENT 'Record Description',
+			'tmr_desc' => 'tm-refund', # varchar(64) NOT NULL COMMENT 'Record Description',
 			'tmr_status' => 'OK' # varchar(2) NOT NULL COMMENT 'Record status (OK, KO, PEnding, TEst)',
 		);
 		wfRunHooks('CreateTransaction', array(&$tmr));

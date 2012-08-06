@@ -63,8 +63,8 @@ $wgSpecialPages['Bills'] = 'SpecialBills';
 $wgAutoloadClasses['SpecialTransactionsAdmin'] = $dir . 'SpecialTransactionsAdmin.php';
 $wgSpecialPages['TransactionsAdmin'] = 'SpecialTransactionsAdmin';
 
-#tmr_type for refound
-define('TM_REFOUND_TYPE', 'refound');
+#tmr_type for refund
+define('TM_REFUND_TYPE', 'refund');
 
 
 # Right for Transaction administration
