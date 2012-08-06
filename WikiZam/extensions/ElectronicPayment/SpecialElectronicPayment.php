@@ -50,7 +50,7 @@ class SpecialElectronicPayment extends SpecialPage {
         $this->setHeaders();
         $request = $this->getRequest();
 
-        if (isset($par) & $par != '') {
+        if (isset($par) && $par != '') {
             $action = $par;
         } else {
             $action = $request->getText('action');

@@ -25,7 +25,7 @@ class SpecialWikiplacesAdmin extends SpecialPage {
         
         $request = $this->getRequest();
 		
-		if (isset($par) & $par != '') {
+		if (isset($par) && $par != '') {
             $this->action = $par;
 		} else {
 			$this->action = $request->getText('action', null);
