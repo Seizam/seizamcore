@@ -165,6 +165,7 @@ td, th {border: 1px solid #CCCCCC; text-align: right; padding: 0.5em;}
         $values['ht'] = $this->getHTFromTTC($values['ttc']);
         $values['tttc'] = $values['ttc'] * $q;
         $values['tht'] = $values['ht'] * $q;
+        $values['ttva'] = $values['tttc'] - $values['tht'];
         
         foreach ($values as $type => $value) {
             $values[$type] = number_format($value, 2, ',', '');
@@ -179,8 +180,6 @@ td, th {border: 1px solid #CCCCCC; text-align: right; padding: 0.5em;}
 
         $html .= '<div id="client"><h3>Client :</h3>';
         $html .= '<p>' . $tmUser->getName() . '<br/>';
-        if ($realname != '')
-            $html .= '(' . $realname . ')<br/>';
         $html .= $tmUser->getEmail() . '</p></div>';
 
         $html .= '<h3>Immatriculation :</h3>';
@@ -197,6 +196,7 @@ td, th {border: 1px solid #CCCCCC; text-align: right; padding: 0.5em;}
         $html .= '<td>' . $values['tttc'] . '</td>';
         $html .= '</tr>';
         $html .= '<tr><th colspan="4">TOTAL HT (€)</th><td>' . $values['tht'] . '</td></tr>';
+        $html .= '<tr><th colspan="4">TOTAL TVA 19.6% (€)</th><td>' . $values['ttva'] . '</td></tr>';
         $html .= '<tr><th colspan="4">TOTAL TTC (€)</th><td>' . $values['tttc'] . '</td></tr>';
         $html .= '</table>';
 
