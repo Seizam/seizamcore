@@ -29,7 +29,7 @@ class CarZamCarrousel {
     /**
      * Design var in px
      */
-    var $mPhotoHeight = 442, $mPhotoWidth = 784, $mThumbHeight = 120, $mThumbWidth = 120;
+    var $mPhotoHeight = 440, $mPhotoWidth = 784, $mThumbHeight = 120, $mThumbWidth = 120;
 
     /**
      * Contextual title, used when images are being screened
@@ -61,8 +61,7 @@ class CarZamCarrousel {
         $this->mHideBadImages = $flag;
     }
 
-    public function setPhotoHeight($height = 442) {
-        
+    public function setPhotoHeight($height = 440) {
         if (intval($height) && $height > $this->mThumbHeight)
             $this->mPhotoHeight = $height;
     }

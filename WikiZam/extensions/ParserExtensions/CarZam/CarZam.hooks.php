@@ -49,8 +49,10 @@ class CarZamHooks {
         $c->setParser($parser);
 		$c->setContextTitle($parser->getTitle());
 		$c->setHideBadImages();
-        if (isset ($param['height']))
-            $c->setPhotoHeight($param['height']);
+        if (isset ($param['height'])) {
+            $explosion = explode('px', strtolower($param['height']));
+            $s->setPhotoHeight($explosion[0]);
+        }
 
 		$lines = StringUtils::explode( "\n", $in );
 		foreach ( $lines as $line ) {
@@ -96,11 +98,15 @@ class CarZamHooks {
         $s->setParser($parser);
 		$s->setContextTitle($parser->getTitle());
 		$s->setHideBadImages();
-        if (isset ($param['height']))
-            $s->setPhotoHeight($param['height']);
+        if (isset ($param['height'])) {
+            $explosion = explode('px', strtolower($param['height']));
+            $s->setPhotoHeight($explosion[0]);
+        }
         
-        if (isset ($param['width']))
-            $s->setPhotoWidth($param['width']);
+        if (isset ($param['width'])) {
+            $explosion = explode('px', strtolower($param['width']));
+            $s->setPhotoWidth($explosion[0]);
+        }
         
         if (isset ($param['float']))
             $s->setFloat($param['float']);

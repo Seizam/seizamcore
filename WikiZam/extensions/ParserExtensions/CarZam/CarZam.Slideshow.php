@@ -29,7 +29,7 @@ class CarZamSlideshow {
     /**
      * Design var in px
      */
-    var $mPhotoHeight = 441, $mPhotoWidth = 784, $mFloat = 'none';
+    var $mPhotoHeight = 440, $mPhotoWidth = 784, $mFloat = 'none';
     var $mMarginLeft = 0, $mMarginRight = 0;
 
     /**
@@ -62,14 +62,14 @@ class CarZamSlideshow {
         $this->mHideBadImages = $flag;
     }
 
-    public function setPhotoHeight($height = 441) {
+    public function setPhotoHeight($height = 440) {
         if (intval($height) && $height > 120)
             $this->mPhotoHeight = $height;
     }
 
-    public function setPhotoWidth($width = 786) {
+    public function setPhotoWidth($width = 784) {
         if (intval($width) && $width > 120)
-            $this->mPhotoWidth = $width - 2;
+            $this->mPhotoWidth = $width;
     }
 
     public function setFloat($value = 'none') {
@@ -225,8 +225,8 @@ class CarZamSlideshow {
             }
         }
 
-        $wrapperHeight = $this->mPhotoHeight + 2;
-        $wrapperWidth = $this->mPhotoWidth + 2;
+        $wrapperHeight = $this->mPhotoHeight - 2 * $verticalPadding  + 2;
+        $wrapperWidth = $this->mPhotoWidth - 2 * $horizontalPadding + 2;
 
         $html = Html::rawElement('div', array('class' => 'wrapper', 'style' => 'height:' . $wrapperHeight . 'px; width:' . $wrapperWidth . 'px; padding:' . $verticalPadding . 'px ' . $horizontalPadding . 'px;'), $html);
 
