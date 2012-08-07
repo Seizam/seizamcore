@@ -150,10 +150,6 @@ class TMRecord {
         # Setting the date of update
         $tmr['tmr_date_created'] = $tmr['tmr_date_modified'] = wfTimestamp(TS_DB);
 
-        # Setting the bill id (for a refund), bill id for expense is done later in react()
-        if ($tmr['tmr_type'] == TM_REFUND_TYPE && $tmr['tmr_amount'] > 0)
-            $tmr['tmr_tmb_id'] = TMBill::newFromScratch()->getId();
-
         # We need to write, therefore we need the master
         $dbw = wfGetDB(DB_MASTER);
         $dbw->begin();
@@ -331,6 +327,13 @@ class TMRecord {
         foreach ($pendingExpenses as $expense) {
             $balanceOk += $expense->attemptPEtoOK($balanceOk);
         }
+        
+        # Setting the bill id (for a refund), bill id for expense is done later in react()
+        if ($this->tmr['tmr_type'] == TM_REFUND_TYPE && $this->tmr['tmr_amount'] > 0) {
+            $this->tmr['tmr_tmb_id'] = TMBill::newFromScratch()->getId();
+            $this->updateDB();
+        }
+        
         return $return;
     }
 

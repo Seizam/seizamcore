@@ -115,7 +115,6 @@ class SpecialBills extends SpecialPage {
         
         $tmRecord = $tmBill->getRecord();
         $tmUser = User::newFromId($tmRecord->getUserId());
-        $tmr = $tmRecord->getTMR();
         
         if ($user->getId() != $tmUser->getId()) {
             $this->msgKey = 'sz-invalid-request';
@@ -129,7 +128,7 @@ class SpecialBills extends SpecialPage {
         header("Content-type: text/html");
 
         print_r($this->constructHtmlHead()
-                . $this->constructHtmlBody($tmr, $tmUser));
+                . $this->constructHtmlBody($tmBill, $tmRecord, $tmUser));
     }
 
     private function constructHtmlHead() {
@@ -150,12 +149,13 @@ td, th {border: 1px solid #CCCCCC; text-align: right; padding: 0.5em;}
     }
 
     /**
-     *
+     * @param TmBill $tmBill
      * @param TmRecord $tmRecord
      * @param User $tmUser
      * @return string 
      */
-    private function constructHtmlBody($tmr, $tmUser) {
+    private function constructHtmlBody($tmBill, $tmRecord, $tmUser) {
+        $tmr = $tmRecord->getTMR();
         $lang = Language::factory('fr');
 
         $realname = $tmUser->getRealName();
@@ -185,7 +185,7 @@ td, th {border: 1px solid #CCCCCC; text-align: right; padding: 0.5em;}
         $html .= '<h3>Immatriculation :</h3>';
         $html .= '<p>SIREN : 537 537 045<br/>RCS Mulhouse (68100)</p>';
 
-        $html .= '<h1><u>Facture ' .($values['tttc']<0?'d\'avoir ':''). $this->id . '</u> émise le ' . $lang->date($tmr['tmr_date_created']) . '</h1>';
+        $html .= '<h1><u>Facture ' .($values['tttc']<0?'d\'avoir ':''). $this->id . '</u> émise le ' . $lang->date($tmBill->getDateCreated()) . '</h1>';
 
         $html .= '<table><tr><th style="text-align:left">Désignation</th><th>Quantité</th><th>PU HT (€)</th><th>Total HT (€)</th><th>Total TTC (€)</th></tr>';
         $html .= '<tr>';
@@ -204,7 +204,7 @@ td, th {border: 1px solid #CCCCCC; text-align: right; padding: 0.5em;}
         if ($tmr['tmr_status'] == 'PE')
             $html .= 'À payer sous 30 jours.';
         elseif ($tmr['tmr_status'] == 'OK')
-            $html .= 'Payée le ' . $lang->timeanddate($tmr['tmr_date_modified']) . ' GMT.';
+            $html .= 'Payée le ' . $lang->timeanddate($tmBill->getDateCreated()) . ' GMT.';
         $html .= '</p>';
 
         $html .= '<p id="pied"><b>Seizam - Sàrl au capital de 10000€</b>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;24 avenue de Bâle - 68300 - Saint-Louis&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;SIREN : 537 537 045 - RCS Mulhouse (68100)</p>';
