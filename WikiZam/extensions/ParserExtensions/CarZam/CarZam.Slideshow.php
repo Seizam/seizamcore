@@ -29,7 +29,7 @@ class CarZamSlideshow {
     /**
      * Design var in px
      */
-    var $mPhotoHeight = 440, $mPhotoWidth = 784, $mFloat = 'none';
+    var $mPhotoHeight = 441, $mPhotoWidth = 784, $mFloat = 'none';
     var $mMarginLeft = 0, $mMarginRight = 0;
 
     /**
@@ -62,7 +62,7 @@ class CarZamSlideshow {
         $this->mHideBadImages = $flag;
     }
 
-    public function setPhotoHeight($height = 440) {
+    public function setPhotoHeight($height = 441) {
         if (intval($height) && $height > 120)
             $this->mPhotoHeight = $height;
     }

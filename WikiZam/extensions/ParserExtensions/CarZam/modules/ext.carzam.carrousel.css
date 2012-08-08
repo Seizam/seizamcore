@@ -42,9 +42,7 @@
     right: -8px;
 }
 
-.prev:focus,
 .prev:hover,
-.next:focus,
 .next:hover{
     background-color: #7c2122;
 }
