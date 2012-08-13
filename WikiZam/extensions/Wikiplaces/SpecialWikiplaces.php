@@ -198,7 +198,11 @@ class SpecialWikiplaces extends SpecialPage {
 	private static function preparePageContent($template = '', $license = '') {
 		$content = '';
 		if ( strlen($template) > 0) {
-			$content = '{{subst:' . $template . '}}';
+			$content = '{{subst:' . $template;
+			if ( strlen($license) > 0) {
+				$content .= '|nolicense=nolicense' ;
+			}
+			$content .= '}}';
 		}
 		if ( strlen($license) > 0) {
 			$content .= "\n" . '{{' . $license . '}}';
