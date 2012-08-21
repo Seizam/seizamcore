@@ -56,6 +56,11 @@
      margin: 0 auto 18px;
 }
 
+.slideshow:last-child,
+#carrousel:last-child {
+    margin-bottom: 0;
+}
+
 #car_photos figure img,
 #car_photos figure > div,
 .CarError,
