@@ -35,22 +35,25 @@ class SpecialTransactionsAdmin extends SpecialPage {
         
         $output->addWikiText("== Transaction Administration Panel ==");
         
-        switch ($this->action) {
-			case self::ACTION_CREDIT :
+        switch (strtolower($this->action)) {
+			case strtolower(self::ACTION_CREDIT) :
 				$this->credit($request->getText('name',null), $request->getInt('amount', 0));
 				break;
             default :
                 $output->addWikiText("=== ERROR: Wrong action ===");
                 $output->addWikiText("====Available actions:====");
-                $output->addWikiText("Credit(string '''name''', int '''amount''')");
+                $output->addWikiText(self::ACTION_CREDIT."(string '''name''', int '''amount''')");
                 break;
 		}
 		
 	}
-	
-	/**
-	 * FOR TEST ONLY: give $amount EUR in user account balance
-	 */
+    
+    /**
+     *
+     * @param string $name
+     * @param int $amount
+     * @return boolean false if failed
+     */
 	private function credit($name = null, $amount = 0) {
         $output = $this->getOutput();
         
@@ -61,7 +64,7 @@ class SpecialTransactionsAdmin extends SpecialPage {
 		$user = User::newFromName($name);
         if (!$user || $user->getId() == 0 ) {
             $output->addWikiText("=== ERROR: Invalid UserName ===");
-            return;
+            return false;
         }
         
         $output->addWikiText("=== User ===");
@@ -75,7 +78,7 @@ class SpecialTransactionsAdmin extends SpecialPage {
         
         if (!is_int($amount) || $amount <= 0 || $amount > 1000 ) {
             $output->addWikiText("=== ERROR: Invalid Amount ===");
-            return;
+            return false;
         }
         
             

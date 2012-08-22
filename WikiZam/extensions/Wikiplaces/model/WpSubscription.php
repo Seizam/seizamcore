@@ -254,9 +254,9 @@ class WpSubscription {
                 }
                 $db_value = ( $value ? 1 : 0 );
                 break;
-                /**
-                 * @todo Better validation for date (cf create())
-                 */
+            /**
+             * @todo Better validation for date (cf create())
+             */
             case 'wps_start_date':
             case 'wps_end_date':
             case 'wps_tmr_status':
@@ -598,12 +598,13 @@ class WpSubscription {
     }
 
     /**
-     * Check if $user user can cancel $this (only for new pending subs, admins pass through)
+     * Check if $user user can cancel $this (only for pending subs, admins only can cancel active subs)
      * @param user $user
      * @return boolean 
      */
     public function canCancel($user) {
-        return ($this->getBuyerUserId() == $user->getId() || $user->isAllowed(WP_ADMIN_RIGHT)) && $this->getTmrStatus() == 'PE' && !$this->isActive();
+        return ($this->getBuyerUserId() == $user->getId() && !$this->isActive() && $this->getTmrStatus() == 'PE')
+                || $user->isAllowed(WP_ADMIN_RIGHT);
     }
 
     public function cancel($user) {
@@ -611,14 +612,17 @@ class WpSubscription {
             return 'ERROR: Subscription cannot be cancelled.';
         }
 
-        $result = false;
-        wfRunHooks('CancelTransaction', array($this->getTmrId(), &$user, &$result));
-
-        if ($result !== true) {
-            return $result;
+        if ($this->getTmrStatus() == 'PE') {
+            $result = false;
+            wfRunHooks('CancelTransaction', array($this->getTmrId(), &$user, &$result));
+            if ($result !== true) {
+                return $result;
+            }
+            $this->set('wps_tmr_status', 'KO');
         }
 
-        $this->set('wps_tmr_status', 'KO', true);
+        $this->set('wps_end_date', self::now());
+        $this->set('wps_active', false, true);
         return true;
     }
 
