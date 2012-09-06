@@ -26,7 +26,7 @@ class WpInvitationsTablePager extends SkinzamTablePager {
         'user' => array('LEFT JOIN', 'user_id = wps_buyer_user_id'));
     protected $defaultSort = 'wpi_date_created';
     public $mDefaultDirection = true; // true = DESC
-    public $forceDefaultLimit = 20;
+    public $forceDefaultLimit = 10;
     protected $tableClasses = array('WpInvitation'); # Array
     protected $messagesPrefix = 'wp-';
 

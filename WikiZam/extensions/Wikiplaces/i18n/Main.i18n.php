@@ -103,7 +103,7 @@ Your new WikiPlace <b>[[$1]]</b> has been successfully created! {{int:wp-url-tip
 
 Your new Subpage <b>[[$1/$2|$2]]</b> has been successfully created in [[$1]]! {{int:wp-suburl-tip|$1|$2}} You can administrate [[$1]] from <b>[[Special:WikiPlaces/Consult:$1|{{int:wikiplaces}}]]</b>.
 
-===Tips & Tricks===
+==={{int:tipsntricks}}===
 * {{int:wp-sublink-tip|$1|$2}}
 * {{int:wp-sublinkalias-tip|$1|$2}}
 * {{int:wp-action-tip}}',
@@ -257,7 +257,7 @@ Votre nouveau WikiPlace <b>[[$1]]</b> a été créé avec succès ! {{int:wp-url
 
 Votre nouvelle sous-page <b>[[$1/$2|$2]]</b> a été créée avec succès dans [[$1]]! {{int:wp-suburl-tip|$1|$2}} Vous pouvez administrer [[$1]] depuis <b>[[Special:WikiPlaces/Consult:$1|{{int:wikiplaces}}]]</b>.
 
-===Tips & Tricks===
+==={{int:tipsntricks}}===
 * {{int:wp-sublink-tip|$1|$2}}
 * {{int:wp-sublinkalias-tip|$1|$2}}
 * {{int:wp-action-tip}}',

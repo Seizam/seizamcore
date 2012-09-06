@@ -89,7 +89,8 @@ $wgNamespacesWithSubpages = array(
     NS_TEMPLATE_TALK => true,
     NS_HELP => true,
     NS_HELP_TALK => true,
-    NS_CATEGORY_TALK => true
+    NS_CATEGORY_TALK => true,
+    NS_SPECIAL => true,
 );
 
 # FEEDS

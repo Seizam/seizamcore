@@ -76,6 +76,20 @@ class WpPlan {
             'amount' => $this->wpp_price,
             'currency' => $this->wpp_currency);
     }
+    
+    /**
+     * Return the localized pretty price with currency
+     * @todo localize the order currency/amount too
+     * @param User $user
+     * @return string 
+     */
+    public function getLocalizedPrice($user) {
+        $language = Language::factory($user->getOption('language'));
+        $price = $this->getPrice();
+        $amount = $language->formatNum($price['amount']);
+        $currency = $price['currency'] == 'EUR' ? '€' : $price['currency'];
+        return $amount.$currency;
+    }
 
     /**
      * The period of the plan, in number of months.

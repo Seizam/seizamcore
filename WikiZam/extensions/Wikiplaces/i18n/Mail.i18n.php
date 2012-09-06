@@ -91,13 +91,14 @@ What to do?
      * $old_next_plan->getName(),
      * $next_plan->getName() ,
      * $reason
+     * $plan->getLocalizedPrice($user)
      */
     'wpm-renewal-soon-warning-subj' => 'Your subscription will be renewed soon!',
     'wpm-renewal-soon-warning-body' => '{{int:sub-started-end|$1|$2|$3}}
 
 Sadly, your renewal plan previously selected « {{int:$4}} » is not valid for the following reason:
 - {{int:$6}}
-We therefore replaced it with the plan « {{int:$5}} ».
+We therefore replaced it with the plan « {{int:$5}} » for 7$.
 
 WARNING: Your subscription will be automatically renewed from $3 with this plan!
 
@@ -111,11 +112,12 @@ What to do?
      * self::timeAndDateUserLocalized($user, $this->wps_start_date ),
      * self::timeAndDateUserLocalized($user, $this->wps_end_date),
      * $next_plan->getName());
+     * $plan->getLocalizedPrice($user)
      */
     'wpm-renewal-soon-valid-subj' => '{{int:wpm-renewal-soon-warning-subj}}',
     'wpm-renewal-soon-valid-body' => '{{int:sub-started-end|$1|$2|$3}}
 
-Your renewal plan « {{int:$4}} » will be automatically activated from $3. Although, you could still change it.
+Your renewal plan « {{int:$4}} » for $5 will be automatically activated from $3. Although, you could still change it.
 
 What to do?
 
@@ -267,13 +269,14 @@ Que faire ?
      * $old_next_plan->getName(),
      * $next_plan->getName() ,
      * $reason
+     * $plan->getLocalizedPrice($user)
      */
     'wpm-renewal-soon-warning-subj' => 'Votre abonnement va bientôt être renouvellé !',
     'wpm-renewal-soon-warning-body' => '{{int:sub-started-end|$1|$2|$3}}
 
 Malheureusement, l\'offre de renouvellement précédement sélectionnée « {{int:$4}} » n\'est pas valide pour la raison suivante :
 - {{int:$6}}
-Nous l\'avons donc remplacée par l\'offre « {{int:$5}} ».
+Nous l\'avons donc remplacée par l\'offre « {{int:$5}} » à $7.
 
 ATTENTION : Votre abonnement va être automatiquement renouvellé à partir du $3 avec cette offre !
 
@@ -287,11 +290,12 @@ Que faire ?
      * self::timeAndDateUserLocalized($user, $this->wps_start_date ),
      * self::timeAndDateUserLocalized($user, $this->wps_end_date),
      * $next_plan->getName());
+     * $plan->getLocalizedPrice($user)
      */
     'wpm-renewal-soon-valid-subj' => '{{int:wpm-renewal-soon-warning-subj}}',
     'wpm-renewal-soon-valid-body' => '{{int:sub-started-end|$1|$2|$3}}
 
-Votre offre de renouvellement « {{int:$4}} » sera automatiquement activée à partir du $3. Cependant, vous pouvez toujours en changer.
+Votre offre de renouvellement « {{int:$4}} » à $5 sera automatiquement activée à partir du $3. Cependant, vous pouvez toujours en changer.
 
 Que faire ?
 

@@ -175,14 +175,14 @@ class SkinzamHooks {
             $middle['myseizam'] = array(
                 'text' => wfMsg('sz-myseizam'),
                 'href' => $href,
-                'active' => ( $title->getText() == 'MySeizam' )
+                'active' => ( $title->getBaseText() == 'MySeizam' )
             );
             // Add MyWikiPlaces
             $href = Title::makeTitle(NS_SPECIAL, 'Wikiplaces')->getCanonicalURL();
             $middle['wikiplaces'] = array(
                 'text' => wfMsg('wikiplaces'),
                 'href' => $href,
-                'active' => ( $title->getText() == 'Wikiplaces' )
+                'active' => ( $title->getBaseText() == 'WikiPlaces' )
             );
             $personal_urls = array_merge($middle, $personal_urls);
         }

@@ -5,6 +5,7 @@ class SpecialWikiplacesAdmin extends SpecialPage {
 
 
     const ACTION_CANCEL_SUBSCRIPTION = 'Cancel';
+    const ACTION_TEST = 'Test';
 
 
     private $action = null;
@@ -39,10 +40,14 @@ class SpecialWikiplacesAdmin extends SpecialPage {
             case strtolower(self::ACTION_CANCEL_SUBSCRIPTION) :
                 $this->cancelSubscription($request->getText('name', null), $request->getBool('confirm'));
                 break;
+            case strtolower(self::ACTION_TEST) :
+                $this->test($request->getText('arg1', null),$request->getText('arg2', null),$request->getText('arg3', null));
+                break;
             default :
                 $output->addWikiText("=== ERROR: Wrong action ===");
                 $output->addWikiText("====Available actions:====");
                 $output->addWikiText(self::ACTION_CANCEL_SUBSCRIPTION . "(string '''name''', boolean '''confirm''')");
+                $output->addWikiText(self::ACTION_TEST . "(string '''arg1''', string '''arg2''', string '''arg3''')");
                 break;
         }
     }
@@ -126,4 +131,16 @@ class SpecialWikiplacesAdmin extends SpecialPage {
         }
     }
 
+    private function test($arg1='null', $arg2='null', $arg3='null') {
+        $plan=WpPlan::newFromId($arg1);
+        $price = $plan->getLocalizedPrice($this->getUser());
+        $output = $this->getOutput();
+        $output->addWikiText("=== Test (arg1, arg2, arg3) ===");
+        $output->addWikiText("arg1 = $arg1");
+        $output->addWikiText("arg2 = $arg2");
+        $output->addWikiText("arg3 = $arg3");
+        $output->addWikiText("=== RESULT ===");
+        $output->addWikiText($price);
+        $output->addWikiText("== DONE ==");
+    }
 }

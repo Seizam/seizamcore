@@ -1237,7 +1237,7 @@ class WpSubscription {
         $next_plan = $this->getRenewalPlan();
 
         $subject = wfMessage("wpm-renewal-soon-warning-subj");
-        $body = wfMessage("wpm-renewal-soon-warning-body", 'wpp-' . $plan->getName(), self::dateUserLocalized($user, $this->wps_start_date), self::dateUserLocalized($user, $this->wps_end_date), 'wpp-' . $old_next_plan->getName(), 'wpp-' . $next_plan->getName(), $reason);
+        $body = wfMessage("wpm-renewal-soon-warning-body", 'wpp-' . $plan->getName(), self::dateUserLocalized($user, $this->wps_start_date), self::dateUserLocalized($user, $this->wps_end_date), 'wpp-' . $old_next_plan->getName(), 'wpp-' . $next_plan->getName(), $reason, $plan->getLocalizedPrice($user));
 
         return self::sendEmailToUserLocalized($user, $subject, $body);
     }
@@ -1253,7 +1253,7 @@ class WpSubscription {
         $next_plan = $this->getRenewalPlan();
 
         $subject = wfMessage("wpm-renewal-soon-valid-subj");
-        $body = wfMessage("wpm-renewal-soon-valid-body", 'wpp-' . $plan->getName(), self::dateUserLocalized($user, $this->wps_start_date), self::dateUserLocalized($user, $this->wps_end_date), 'wpp-' . $next_plan->getName());
+        $body = wfMessage("wpm-renewal-soon-valid-body", 'wpp-' . $plan->getName(), self::dateUserLocalized($user, $this->wps_start_date), self::dateUserLocalized($user, $this->wps_end_date), 'wpp-' . $next_plan->getName(), $plan->getLocalizedPrice($user));
 
         return self::sendEmailToUserLocalized($user, $subject, $body);
     }

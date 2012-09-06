@@ -2036,6 +2036,10 @@ ul.gallery {
     text-align: center;
 }
 
+ul.gallery:last-child {
+    margin-bottom: 0;
+}
+
 body.ns--1 div#bodyContent div.inside ul.gallery li {
     margin: 12px;
     border: none;
@@ -2382,10 +2386,6 @@ table.TablePager {
 .TablePager tr:hover td {
     background-color: #f2f2f2;
     color: black;
-}
-
-table.TablePager_nav {
-    border-bottom: 1px solid #dad9d9;
 }
 
 /*
