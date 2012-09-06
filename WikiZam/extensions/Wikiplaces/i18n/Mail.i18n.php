@@ -98,7 +98,7 @@ What to do?
 
 Sadly, your renewal plan previously selected « {{int:$4}} » is not valid for the following reason:
 - {{int:$6}}
-We therefore replaced it with the plan « {{int:$5}} » for 7$.
+We therefore replaced it with the plan « {{int:$5}} » for $7.
 
 WARNING: Your subscription will be automatically renewed from $3 with this plan!
 
