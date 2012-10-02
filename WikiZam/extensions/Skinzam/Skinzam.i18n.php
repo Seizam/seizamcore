@@ -262,7 +262,7 @@ $messages['fr'] = array(
     /* Mainpage */
     /* Slideshow */
     'sz-mp-ourfreedoms' => 'Nos libertés',
-    
+    /*
     'sz-slideshow0' => 'L\'espace pour la création : ',
     'sz-slideshow0-href' => '{{canonicalurl:Project:Creation/fr}}',
     'sz-slideshow0-src' => '{{STYLEPATH}}/skinzam/content/backflip.jpg',
@@ -277,7 +277,7 @@ $messages['fr'] = array(
     'sz-slideshow2-href' => '{{canonicalurl:Project:Collaboration/fr}}',
     'sz-slideshow2-src' => '{{STYLEPATH}}/skinzam/content/slam.jpg',
     'sz-slideshow2-body' => 'Vous décidez comment partager votre travail, mais aussi qui peut y participer.',
-    
+    */
     /* Form */
     'sz-mp-joinus' => 'Nous rejoindre',
     'sz-mp-enter' => 'Entrez',
