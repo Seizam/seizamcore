@@ -118,7 +118,7 @@ $messages['en'] = array(
     
     /* Form */
     'sz-mp-joinus' => 'Join us',
-    'sz-mp-enter' => 'Enter',
+    'sz-mp-enter' => '{{int:createaccount}}',
     
     'sz-mp-yourname' => 'Username',
     'sz-mp-yourpassword' => 'Password',
@@ -280,7 +280,6 @@ $messages['fr'] = array(
     */
     /* Form */
     'sz-mp-joinus' => 'Nous rejoindre',
-    'sz-mp-enter' => 'Entrez',
     
     'sz-mp-yourname' => 'Nom d’utilisateur',
     'sz-mp-yourpassword' => 'Mot de passe',

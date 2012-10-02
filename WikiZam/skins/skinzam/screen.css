@@ -202,7 +202,8 @@ div#bodyContent div.gallerytext p:first-letter {
 
 
 div#bodyContent div.prefsectiontip p:first-letter,
-div#bodyContent .edit_col_2 #help_zone p:first-letter{
+div#bodyContent .edit_col_2 #help_zone p:first-letter,
+div#bodyContent div.block_join p:first-letter{
     color: inherit;
     font-size: inherit;
 }
@@ -2694,7 +2695,7 @@ p.ms-wl-empty {
 }
 
 .block_join input {
-    width: 173px;
+    width: 177px;
     padding: 8px 12px;
     background: #fff;
     border: 0 none;
@@ -2703,9 +2704,6 @@ p.ms-wl-empty {
 }
 .block_join .submit {
     text-align: right;
-    /* @embed */
-    background-image: url(images/arrow_white.png);
-    background-position: 30% 50%;
     background-repeat: no-repeat;
 }
 
@@ -2714,7 +2712,7 @@ p.ms-wl-empty {
     display: inline;
     min-width: inherit;
     width: auto;
-    padding: 8px 34px;
+    padding: 8px 16px;
     background: #f0373a;
     color: #fff;
 }
@@ -2782,6 +2780,21 @@ p.ms-wl-empty {
 }
 .block_join form p + p.submit {
     margin-top: 19px;
+}
+
+.block_join .submit a {
+    display: inline;
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: none;
+    color:#686a6b;
+    font-size: 0.8em;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    -ms-box-shadow: none;
+    -o-box-shadow: none;
+    box-shadow: none;
 }
 
 /* -----------------------------------------------------------------------------
