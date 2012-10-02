@@ -79,11 +79,11 @@ class ResourceLoaderUserOptionsModule extends ResourceLoaderModule {
 				'a:lang(mzn), a:lang(ps), a:lang(ur) { text-decoration: none; }';
 			}
 			if ( $options['highlightbroken'] ) {
-				$rules[] = "a.new, #quickbar a.new { color: #ba0000; }\n";
+				$rules[] = "a.new, #quickbar a.new { color: #E22C2E; }\n";
 			} else {
 				$rules[] = "a.new, #quickbar a.new, a.stub, #quickbar a.stub { color: inherit; }";
-				$rules[] = "a.new:after, #quickbar a.new:after { content: '?'; color: #ba0000; }";
-				$rules[] = "a.stub:after, #quickbar a.stub:after { content: '!'; color: #772233; }";
+				$rules[] = "a.new:after, #quickbar a.new:after { content: '?'; color: #E22C2E; }";
+				$rules[] = "a.stub:after, #quickbar a.stub:after { content: '!'; color: #E22C2E; }";
 			}
 			if ( $options['justify'] ) {
 				$rules[] = "#article, #bodyContent, #mw_content { text-align: justify; }\n";
