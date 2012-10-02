@@ -2759,7 +2759,7 @@ p.ms-wl-empty {
     /* @embed */
     background-image:  url(images/check_black.png);
     background-color: transparent;
-    background-position: 0 30%;
+    background-position: left 30%;
     background-repeat: no-repeat;
 }
 

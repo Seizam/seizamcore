@@ -30,12 +30,14 @@
     z-index:5;
 }
 
+
+/* @noflip */
 .prev {
     /* @embed */
     background-image: url(images/arrows_slide_left.png);
     left: -8px;
 }
-
+/* @noflip */
 .next {
     /* @embed */
     background-image: url(images/arrows_slide_right.png);
