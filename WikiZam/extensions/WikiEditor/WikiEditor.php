@@ -20,25 +20,25 @@ $wgWikiEditorFeatures = array(
 
 	/* Textarea / i-frame compatible (OK to deploy) */
 
-	'toolbar' => array( 'global' => true, 'user' => false ),
+	'toolbar' => array( 'global' => false, 'user' => true ),
 	// Provides interactive tools
-	'dialogs' => array( 'global' => true, 'user' => false ),
+	'dialogs' => array( 'global' => false, 'user' => true ),
 	// Hide signature button from main namespace
 	'hidesig' => array( 'global' => true, 'user' => false ),
 
 	/* Textarea / i-frame compatible, but still experimental and unstable (do not deploy!) */
 
 	// Adds a tab for previewing in-line
-	'preview' => array( 'global' => false, 'user' => false ),
+	'preview' => array( 'global' => false, 'user' => true ),
 	// Adds a button for previewing in a dialog
 	'previewDialog' => array( 'global' => false, 'user' => false ),
 	//  Adds a button and dialog for step-by-step publishing
-	'publish' => array( 'global' => false, 'user' => false ),
+	'publish' => array( 'global' => false, 'user' => true ),
 
 	/* I-frame dependent (do not deploy!) */
 
 	// Failry stable table of contents
-	'toc' => array( 'global' => false, 'user' => false ),
+	'toc' => array( 'global' => false, 'user' => true ),
 	// Pretty broken template collapsing/editing
 	'templateEditor' => array( 'global' => false, 'user' => false ),
 	// Bare-bones (probably broken) template collapsing
