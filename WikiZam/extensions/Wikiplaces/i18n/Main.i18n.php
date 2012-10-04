@@ -155,7 +155,7 @@ You are also promising us that you wrote this yourself, or copied it from a publ
 	'wp-insufficient-quota' => 'Insufficient quota (this plan is too small for your usage).',
 	'wp-plan-not-available-renewal' => 'Plan not available (we do not offer it anymore).',
     
-    'forbidden-admin-action' => 'The action you attempting is reserverd to administrators only. {{int:sz-report}}'
+    'forbidden-admin-action' => 'The action you are attempting is reserverd to administrators only. {{int:sz-report}}'
     
 );
 
