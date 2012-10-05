@@ -181,8 +181,6 @@ $wgDefaultUserOptions['usebetatoolbar'] = 1;
 $wgDefaultUserOptions['usebetatoolbar-cgd'] = 1;
 $wgDefaultUserOptions['wikieditor-preview'] = 0;
 
-
-
 # =================
 # RIGHTS & SECURITY
 # =================

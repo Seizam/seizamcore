@@ -76,8 +76,8 @@ $messages['en'] = array(
     'sz-slideshow3-src' => '{{STYLEPATH}}/skinzam/content/en/Seizam.Reach_through_Widgets.jpg',
     'sz-slideshow4-src' => '{{STYLEPATH}}/skinzam/content/en/Seizam.Absence_of_Pollution.jpg',
     'sz-slideshow5-src' => '{{STYLEPATH}}/skinzam/content/en/Seizam.Depth_by_WikiPlaces.jpg',
-    'sz-slideshow6-src' => '{{STYLEPATH}}/skinzam/content/en/Seizam.Bounty_of_Multilinguism.jpg',
-    'sz-slideshow7-src' => '{{STYLEPATH}}/skinzam/content/en/Seizam.Openness_towards_Collaboration.jpg',
+    'sz-slideshow6-src' => '{{STYLEPATH}}/skinzam/content/en/Seizam.Bounty_of_Multilingualism.jpg',
+    'sz-slideshow7-src' => '{{STYLEPATH}}/skinzam/content/en/Seizam.Openness_for_Collaboration.jpg',
     'sz-slideshow8-src' => '{{STYLEPATH}}/skinzam/content/en/Seizam.Choice_of_Licenses.jpg',
     'sz-slideshow9-src' => '{{STYLEPATH}}/skinzam/content/en/Seizam.Belief_in_Free_Thinking.jpg',
     
@@ -272,7 +272,7 @@ $messages['fr'] = array(
     'sz-slideshow6-src' => '{{STYLEPATH}}/skinzam/content/fr/Seizam.Richesse_du_multilinguisme.jpg',
     'sz-slideshow7-src' => '{{STYLEPATH}}/skinzam/content/fr/Seizam.Ouverture_à_la_collaboration.jpg',
     'sz-slideshow8-src' => '{{STYLEPATH}}/skinzam/content/fr/Seizam.Choix_des_licences.jpg',
-    'sz-slideshow9-src' => '{{STYLEPATH}}/skinzam/content/fr/Seizam.Modèle_libre.jpg',
+    'sz-slideshow9-src' => '{{STYLEPATH}}/skinzam/content/fr/Seizam.Modèle_du_libre.jpg',
     
     'sz-slideshow0' => 'La liberté de créer : ',
     'sz-slideshow1' => 'La flexibilité du WikiText : ',
@@ -283,7 +283,7 @@ $messages['fr'] = array(
     'sz-slideshow6' => 'La richesse du multilinguisme : ',
     'sz-slideshow7' => 'L\'ouverture à la collaboration : ',
     'sz-slideshow8' => 'Le choix des licences : ',
-    'sz-slideshow9' => 'Le modèle libre : ',
+    'sz-slideshow9' => 'Le modèle du libre : ',
     
     'sz-slideshow0-href' => '{{canonicalurl:Project:Liberté de créer}}',
     'sz-slideshow1-href' => '{{canonicalurl:Project:Flexibilité du WikiText}}',
@@ -294,7 +294,7 @@ $messages['fr'] = array(
     'sz-slideshow6-href' => '{{canonicalurl:Project:Richesse du multilinguisme}}',
     'sz-slideshow7-href' => '{{canonicalurl:Project:Ouverture à la collaboration}}',
     'sz-slideshow8-href' => '{{canonicalurl:Project:Choix des licences}}',
-    'sz-slideshow9-href' => '{{canonicalurl:Project:Modèle libre}}',
+    'sz-slideshow9-href' => '{{canonicalurl:Project:Modèle du libre}}',
     
     'sz-slideshow0-body' => 'Publiez votre art en ligne, quelles que soient vos disciplines, quelle que soit votre vision.',
     'sz-slideshow1-body' => 'Concevez l\'apparence de vos pages avec précision grâce à la technologie de Wikipédia.',
