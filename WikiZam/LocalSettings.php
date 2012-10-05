@@ -377,6 +377,9 @@ require_once("$IP/extensions/Poem/Poem.php");
 # =[CarZam (Carrousel)]=
 require_once("$IP/extensions/CarZam/CarZam.php");
 
+# =[WidgetsFramework]=
+require_once( "$IP/extensions/WidgetsFramework/WidgetsFramework.php" );
+ 
 # Allow external images to be displayed as <img>
 $wgAllowExternalImagesFrom = array($wgServer);
 
