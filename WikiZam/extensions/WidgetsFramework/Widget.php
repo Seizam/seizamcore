@@ -10,7 +10,5 @@ interface Widget {
      */
     public static function Setup( $parser ) ;
     
-    public static function getOutput() ;
-    
 }
 

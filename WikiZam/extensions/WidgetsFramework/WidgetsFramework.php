@@ -38,9 +38,17 @@ $_dir = dirname( __FILE__ );
 
 $wgExtensionMessagesFiles['WidgetsFramework'] =  $_dir . '/WidgetsFramework.i18n.php';
 
+$wgAutoloadClasses['WidgetsFramework\\Boolean'] = $_dir . '/Parameters/Boolean.php';
+$wgAutoloadClasses['WidgetsFramework\\Integer'] = $_dir . '/Parameters/Integer.php';
 $wgAutoloadClasses['WidgetsFramework\\Parameter'] = $_dir . '/Parameters/Parameter.php';
+$wgAutoloadClasses['WidgetsFramework\\PixelSize'] = $_dir . '/Parameters/PixelSize.php';
+$wgAutoloadClasses['WidgetsFramework\\String'] = $_dir . '/Parameters/String.php';
+$wgAutoloadClasses['WidgetsFramework\\XorParameter'] = $_dir . '/Parameters/XorParameter.php';
 
+$wgAutoloadClasses['WidgetsFramework\\DeveloperError'] = $_dir . '/DeveloperError.php';
 $wgAutoloadClasses['WidgetsFramework\\ParserFunction'] = $_dir . '/ParserFunction.php';
+$wgAutoloadClasses['WidgetsFramework\\Tools'] = $_dir . '/Tools.php';
+$wgAutoloadClasses['WidgetsFramework\\UserError'] = $_dir . '/UserError.php';
 $wgAutoloadClasses['WidgetsFramework\\Widget'] = $_dir . '/Widget.php';
 
 $wgWFmkEnabledWidgets = array();
@@ -80,6 +88,7 @@ foreach ( glob( $_dir . '/Widgets/*', GLOB_ONLYDIR ) as $widget_dir ) {
                     //wfDebugLog('WidgetsFramework', 'initilization: added i18n magic '.$infos['basename']);
                     break;
                 case 'i18n':
+                    /** @todo */
                     break;
             }
 
