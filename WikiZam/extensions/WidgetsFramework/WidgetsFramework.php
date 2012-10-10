@@ -40,6 +40,7 @@ $wgExtensionMessagesFiles['WidgetsFramework'] =  $_dir . '/WidgetsFramework.i18n
 
 $wgAutoloadClasses['WidgetsFramework\\Boolean'] = $_dir . '/Parameters/Boolean.php';
 $wgAutoloadClasses['WidgetsFramework\\Integer'] = $_dir . '/Parameters/Integer.php';
+$wgAutoloadClasses['WidgetsFramework\\Option'] = $_dir . '/Parameters/Option.php';
 $wgAutoloadClasses['WidgetsFramework\\Parameter'] = $_dir . '/Parameters/Parameter.php';
 $wgAutoloadClasses['WidgetsFramework\\PixelSize'] = $_dir . '/Parameters/PixelSize.php';
 $wgAutoloadClasses['WidgetsFramework\\String'] = $_dir . '/Parameters/String.php';
@@ -47,6 +48,7 @@ $wgAutoloadClasses['WidgetsFramework\\XorParameter'] = $_dir . '/Parameters/XorP
 
 $wgAutoloadClasses['WidgetsFramework\\DeveloperError'] = $_dir . '/DeveloperError.php';
 $wgAutoloadClasses['WidgetsFramework\\ParserFunction'] = $_dir . '/ParserFunction.php';
+$wgAutoloadClasses['WidgetsFramework\\WidgetStripper'] = $_dir . '/WidgetStripper.php';
 $wgAutoloadClasses['WidgetsFramework\\Tools'] = $_dir . '/Tools.php';
 $wgAutoloadClasses['WidgetsFramework\\UserError'] = $_dir . '/UserError.php';
 $wgAutoloadClasses['WidgetsFramework\\Widget'] = $_dir . '/Widget.php';
@@ -122,3 +124,5 @@ function efWidgetsFrameworkRegisterWidgets( $parser ) {
     return true; // true = do not break other extensions using this hook
 }
  
+# Register ParserStripper for unstripping
+$wgHooks['ParserAfterTidy'][] = 'WidgetsFramework\\WidgetStripper::UnstripItems';

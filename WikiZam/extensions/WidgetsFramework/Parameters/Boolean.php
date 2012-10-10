@@ -34,9 +34,8 @@ class Boolean extends Parameter {
         return $value;
     }
 
-    public function getHtml() {
-        $value = $this->getValue();
-        if ($value) {
+    public function getOutput() {
+        if ($this->getValue()) {
             return 'true';
         } else {
             return 'false';

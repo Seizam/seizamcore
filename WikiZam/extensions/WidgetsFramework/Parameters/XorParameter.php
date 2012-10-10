@@ -7,6 +7,8 @@ class XorParameter extends Parameter {
     protected $parameters;
     protected $default_parameter;
     
+    protected $consumed_positions;
+    
     /**
      * <ul>
      * <li>no default parameter</li>
@@ -19,8 +21,36 @@ class XorParameter extends Parameter {
 
         $this->parameters = array();
         $this->default_parameter = null;
+        $this->consumed_positions = -1;
     }
 
+    /**
+     * 
+     * @param int $position
+     * @return int The position of the next parameter.
+     */
+    public function updatePosition($position) {
+        
+        if ($this->hasBeenSet()) {
+            $this->position = -1;
+            return $position;
+        }
+        
+        $this->position = $position;
+  
+        foreach ($this->parameters as $parameter) {
+            $consumed = $parameter->updatePosition($position);
+            if ($this->consumed_positions == -1) {
+                $this->consumed_positions = $consumed;
+            } elseif ($this->consumed_positions != $consumed) {
+                throw new \MWException(__CLASS__.' named '.$this->getName ().' require parameters having same position consumption.');
+            }
+        }
+             
+        return $this->position + $this->consumed_positions;
+        
+    }
+    
     public function addParameter($parameter) {
         if ( !is_null($parameter) && !$parameter instanceof Parameter ) {
             throw new \MWException(__METHOD__.' require an argument of type Parameter.');
@@ -139,6 +169,15 @@ class XorParameter extends Parameter {
     }
     
     /**
+     * This is not possible for XorParameter. Naming is mandatory.
+     */
+    public function trySetByOrder($argument, $unamed_arg_position, $call_arg_position ) {
+ 
+        return false;
+ 
+    }
+    
+    /**
      * Set a default value to the default parameter
      * @param mixed $default_value 
      * @param boolean $do_validate Validate before saving the default value (default = true)
@@ -156,10 +195,10 @@ class XorParameter extends Parameter {
         
     }
     
-    public function getHtml() {
+    public function getOutput() {
         $parameter_which_is_set = $this->getParameter();
         if (!is_null($parameter_which_is_set)) {
-            return $parameter_which_is_set->getHtml();
+            return $parameter_which_is_set->getOutput();
         }
         // else
         return '';

@@ -14,9 +14,9 @@ class Tools {
      * @link http://smarty.php.net/manual/en/language.modifier.escape.php
      *          escape (Smarty online manual)
      * @author   Monte Ohrt <monte at ohrt dot com>
-     * @param string
-     * @param html|htmlall|url|quotes|hex|hexentity|javascript
-     * @return string
+     * @param string $value
+     * @param html|htmlall|url|urlpathinfo|quotes|hex|hexentity|decentity|javascript|mail|nonstd $esc_type
+     * @return string The escaped string
      */
     public static function Escape($string = '', $esc_type = 'html', $char_set = 'ISO-8859-1') {
         

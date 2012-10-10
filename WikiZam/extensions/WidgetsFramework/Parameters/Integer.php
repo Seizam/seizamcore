@@ -40,7 +40,7 @@ class Integer extends Parameter {
         } 
         
         // else
-        return intval($px_free);
+        return intval($spaces_free);
         
     }
         
@@ -92,19 +92,17 @@ class Integer extends Parameter {
      */
     public function validateDuringSet($value) {
         
-        $value = parent::validateDuringSet($value);
-        
         $min = $this->getMin();
         if ( !is_null($min) ) {
             if ($value < $min) {
-                Tools::throwUserError('Parameter '.$this->getName().' cannot be less than '.$min);
+                Tools::throwUserError('Parameter '.$this->getName().' cannot be less than '.$min.' ('.$value.' given).');
             }
         }
         
         $max = $this->getMax();
         if ( !is_null($max) ) {
-            if ($value < $max) {
-                Tools::throwUserError('Parameter '.$this->getName().' cannot be more than '.$max);
+            if ($value > $max) {
+                Tools::throwUserError('Parameter '.$this->getName().' cannot be more than '.$max.' ('.$value.' given).');
             }
         }     
         
@@ -112,7 +110,7 @@ class Integer extends Parameter {
         
     }
 
-    public function getHtml() {
+    public function getOutput() {
         return strval($this->getValue());
     }
     

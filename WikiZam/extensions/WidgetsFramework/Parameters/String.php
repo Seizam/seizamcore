@@ -39,7 +39,7 @@ class String extends Parameter {
         return $value;
     }
 
-    public function getHtml() {
+    public function getOutput() {
         return Tools::Escape($this->getValue(), $this->getEscapeMode());
     }
 

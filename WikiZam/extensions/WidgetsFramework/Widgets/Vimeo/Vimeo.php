@@ -12,77 +12,60 @@ class Vimeo extends ParserFunction {
     protected $height;
     protected $width;
     
-
-
-    public function declareParameters() {
-        
-        wfDebugLog('WidgetsFramework', "Vimeo->declareParameters()");      
+    protected function declareParameters() {    
         
         $this->id = new String('id');
+        $this->id->setRequired();
         $this->id->setEscapeMode('urlpathinfo');
         $this->addParameter($this->id);
+        
+        
+        $this->width = new PixelSize('width');
+        $this->width->setDefaultValue(784);
+        $this->width->setMin(320);
+        $this->width->setMax(784);
+        $this->addParameter($this->width);
+        
+        
+        $this->height = new PixelSize('height');
+        $this->height->setDefaultValue(441);
+        $this->height->setMin(180);
+        $this->height->setMax(441);
+        $this->addParameter($this->height);
         
        
         $this->float = new XorParameter('float');
         
-        $left = new Boolean('left');
+        $left = new Option('left');
         $this->float->addParameter($left);        
         $this->float->setDefaultParameter($left);
         
-        $right = new Boolean('right');
+        $right = new Option('right');
         $this->float->addParameter($right);
         
         $this->addParameter($this->float);
         
         
-        $this->height = new PixelSize('height');
-        $this->height->setMin(100);
-        $this->height->setMax(200);
-        $this->addParameter($this->height);
-        
-        
-        $this->width = new PixelSize('width');
-        $this->width->setMin(300);
-        $this->width->setMax(400);
-        $this->addParameter($this->width);
+
         
     }
 
-    public function render() {
+    public function getOutput() {
         
-        wfDebugLog('WidgetsFramework', "Vimeo->render()");
+        $float = $this->float->getOutput();
+        $height = $this->height->getOutput();
+        $id = Tools::Escape($this->id->getOutput(),'urlpathinfo');
+        $width = $this->width->getOutput();
 
         return '<iframe 
-                    class="vimeo '.$this->float->getHtml().'"
+                    class="vimeo '.$float.'"
                     allowfullscreen=""
                     frameborder="0"
-                    height="'.$this->height->getHtml().'"
-                    src="http://player.vimeo.com/video/'. $this->id->getHtml().'?title=0&amp;byline=0&amp;portrait=0"
+                    height="'.$height.'"
+                    src="http://player.vimeo.com/video/'.$id.'?title=0&amp;byline=0&amp;portrait=0"
                     webkitallowfullscreen=""
-                    width="'.$this->width->getHtml().'">
+                    width="'.$width.'">
                 </iframe>';
-        
-        /*
-        $class = 'vimeo';
-        if (isset($right)) {
-            $class .= ' right';
-        } elseif (isset($left)) {
-            $class .= ' left';
-        }
-        
-        $height = 441;
-        if (isset($height)) {
-            $height = html_escape($height);
-        }
-        
-        $id = escape_urlpathinfo($id);
-        
-        $width = 784;
-        if (isset($width)) {
-            $width = html_escape($width);
-        }
-        
-     */   
         
     }
 

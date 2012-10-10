@@ -23,14 +23,14 @@ class PixelSize extends Integer {
             $parsed = parent::parse( str_ireplace('px','',$value) );     
             
         } catch (UserError $e) {        
-            Tools::throwUserError('Parameter '.$this->getName().' only accepts digits and "px" as value.');        
+            Tools::throwUserError('Parameter '.$this->getName().' only accepts digits and "px" as value ('.$value.' given).');        
         }
         
         return $parsed;
         
     }
 
-    public function getHtml() {
+    public function getOutput() {
         return $this->getValue().'px';
     }
     
