@@ -30,13 +30,11 @@ class TwitterSearch extends ParserFunction {
         
                 
         $this->title = new String('title');
-        $this->title->setRequired();
         $this->title->setEscapeMode('quotes');
         $this->addParameter($this->title);
         
         
         $this->subject = new String('subject');
-        $this->subject->setRequired();
         $this->subject->setEscapeMode('quotes');
         $this->addParameter($this->subject);
         
