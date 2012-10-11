@@ -141,6 +141,7 @@ class SpecialMainpage extends SpecialPage {
         $html .= Xml::closeElement('p');
 
         $html .= Xml::openElement('p', array('class' => 'submit'));
+        $html .= Linker::link(SpecialPage::getTitleFor('UserLogin'), wfMessage('login')->text());
         $html .= Xml::element('label', array('for' => 'wpCreateaccountS', 'class' => 'sread'), wfMessage('createaccount')->text());
         $html .= Xml::element('input', array('id' => 'wpCreateaccountS', 'name' => 'wpCreateaccount', 'type' => 'submit', 'value' => wfMessage('sz-mp-enter')->text()));
         $html .= Xml::closeElement('p');

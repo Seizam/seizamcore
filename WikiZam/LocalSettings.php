@@ -117,6 +117,10 @@ $wgDefaultSkin = "skinzam";
 $wgSkipSkins = array("chick", "cologneblue", "nostalgia", "simple", "standard", "monobook", "myskin", "modern");
 # =[ VECTOR (the extension) ]= Usability extension for Vector (base of Skinzam)
 require_once( "$IP/extensions/Vector/Vector.php" );
+$wgVectorFeatures['collapsiblenav']['user'] = false;
+$wgVectorFeatures['editwarning']['global'] = true;
+$wgVectorFeatures['simplesearch']['user'] = false;
+
 
 $wgVectorUseSimpleSearch = true;
 //$wgEnableMWSuggest = true; # Enable AJAX autocomplete search suggestions (autosuggest) while typing in search boxes
@@ -163,6 +167,16 @@ $wgContactRequireAll = true;
 
 # =[ WikiEditor ]=
 require_once( "$IP/extensions/WikiEditor/WikiEditor.php" );
+$wgWikiEditorFeatures['toolbar']['global'] = true;
+$wgWikiEditorFeatures['toolbar']['user'] = false;
+$wgWikiEditorFeatures['dialogs']['global'] = true;
+$wgWikiEditorFeatures['dialogs']['user'] = false;
+$wgWikiEditorFeatures['preview']['user'] = false;
+$wgWikiEditorFeatures['publish']['user'] = false;
+$wgWikiEditorFeatures['toc']['user'] = false;
+
+
+# =[ MediaWiki & SkinZam ]=
 $wgDefaultUserOptions['usebetatoolbar'] = 1;
 $wgDefaultUserOptions['usebetatoolbar-cgd'] = 1;
 $wgDefaultUserOptions['wikieditor-preview'] = 0;
