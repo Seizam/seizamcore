@@ -6,6 +6,6 @@
 $magicWords = array();
  
 $magicWords['en'] = array(
-    'Vimeo' => array( 0, 'vimeo' ),
+    'AddThis' => array( 0, 'addthis' ),
 );
 

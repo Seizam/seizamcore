@@ -4,13 +4,14 @@ namespace WidgetsFramework; // need to be declared at the very begining of the f
 class Vimeo extends ParserFunction {
     
     // call it using wikitext {{#vimeo:}}
-    protected static $NAME = 'vimeo';
     //protected static $FLAGS = 0; 
 
     protected $id;
-    protected $float;
+    protected $left;
+    protected $right;
     protected $height;
     protected $width;
+    
     
     protected function declareParameters() {    
         
@@ -20,51 +21,49 @@ class Vimeo extends ParserFunction {
         $this->addParameter($this->id);
         
         
-        $this->width = new PixelSize('width');
+        $this->width = new IntegerInPixel('width');
         $this->width->setDefaultValue(784);
-        $this->width->setMin(320);
+        $this->width->setMin(0);
         $this->width->setMax(784);
         $this->addParameter($this->width);
         
         
-        $this->height = new PixelSize('height');
+        $this->height = new IntegerInPixel('height');
         $this->height->setDefaultValue(441);
-        $this->height->setMin(180);
-        $this->height->setMax(441);
+        $this->height->setMin(0);
         $this->addParameter($this->height);
         
        
-        $this->float = new XorParameter('float');
+        $float = new XorParameter('float');
         
-        $left = new Option('left');
-        $this->float->addParameter($left);        
-        $this->float->setDefaultParameter($left);
+        $this->left = new Boolean('left');
+        $float->addParameter($this->left);        
         
-        $right = new Option('right');
-        $this->float->addParameter($right);
+        $this->right = new Boolean('right');
+        $float->addParameter($this->right);
         
-        $this->addParameter($this->float);
-        
-        
-
-        
+        $this->addParameter($float);
+              
     }
 
     public function getOutput() {
         
-        $float = $this->float->getOutput();
+        $left_or_right = $this->right->getValue() ? 'right' : 'left';
+        
         $height = $this->height->getOutput();
-        $id = Tools::Escape($this->id->getOutput(),'urlpathinfo');
+        
+        $id = $this->id->getOutput();
+        
         $width = $this->width->getOutput();
 
         return '<iframe 
-                    class="vimeo '.$float.'"
+                    class="vimeo '.$left_or_right.'"
                     allowfullscreen=""
                     frameborder="0"
-                    height="'.$height.'"
+                    height="'.$height.'px"
                     src="http://player.vimeo.com/video/'.$id.'?title=0&amp;byline=0&amp;portrait=0"
                     webkitallowfullscreen=""
-                    width="'.$width.'">
+                    width="'.$width.'px">
                 </iframe>';
         
     }

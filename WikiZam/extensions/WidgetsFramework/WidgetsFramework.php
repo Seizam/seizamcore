@@ -40,9 +40,8 @@ $wgExtensionMessagesFiles['WidgetsFramework'] =  $_dir . '/WidgetsFramework.i18n
 
 $wgAutoloadClasses['WidgetsFramework\\Boolean'] = $_dir . '/Parameters/Boolean.php';
 $wgAutoloadClasses['WidgetsFramework\\Integer'] = $_dir . '/Parameters/Integer.php';
-$wgAutoloadClasses['WidgetsFramework\\Option'] = $_dir . '/Parameters/Option.php';
 $wgAutoloadClasses['WidgetsFramework\\Parameter'] = $_dir . '/Parameters/Parameter.php';
-$wgAutoloadClasses['WidgetsFramework\\PixelSize'] = $_dir . '/Parameters/PixelSize.php';
+$wgAutoloadClasses['WidgetsFramework\\IntegerInPixel'] = $_dir . '/Parameters/IntegerInPixel.php';
 $wgAutoloadClasses['WidgetsFramework\\String'] = $_dir . '/Parameters/String.php';
 $wgAutoloadClasses['WidgetsFramework\\XorParameter'] = $_dir . '/Parameters/XorParameter.php';
 
@@ -126,3 +125,4 @@ function efWidgetsFrameworkRegisterWidgets( $parser ) {
  
 # Register ParserStripper for unstripping
 $wgHooks['ParserAfterTidy'][] = 'WidgetsFramework\\WidgetStripper::UnstripItems';
+

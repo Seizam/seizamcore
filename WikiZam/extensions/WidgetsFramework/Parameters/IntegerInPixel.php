@@ -2,7 +2,7 @@
 namespace WidgetsFramework;
 
 
-class PixelSize extends Integer {
+class IntegerInPixel extends Integer {
     
     public function __construct($name) {
         parent::__construct($name);
@@ -28,10 +28,6 @@ class PixelSize extends Integer {
         
         return $parsed;
         
-    }
-
-    public function getOutput() {
-        return $this->getValue().'px';
     }
     
 }

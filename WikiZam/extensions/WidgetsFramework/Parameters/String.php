@@ -35,10 +35,13 @@ class String extends Parameter {
      * Validate everything
      * @param string $value
      */
-    public function validateDuringSet($value) {
+    public function validate($value) {
         return $value;
     }
 
+    /** 
+     * @return String The escaped value. Escaping mode can be defined using setEscapeMode().
+     */
     public function getOutput() {
         return Tools::Escape($this->getValue(), $this->getEscapeMode());
     }

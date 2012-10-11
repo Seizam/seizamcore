@@ -94,7 +94,7 @@ class XorParameter extends Parameter {
 
 
     /**
-     * Returns the parameter which is set.
+     * Returns the parameter which is set, or the default parameter if none set.
      * @return Parameter
      */
     public function getParameter() {
@@ -195,10 +195,17 @@ class XorParameter extends Parameter {
         
     }
     
+    /**
+     * Returs the getOutput() of the parameter that has been set.
+     * If none set, returns the getOutput() of the default parameter.
+     * If no default parameter set, returns empty string.
+     * @return string
+     */
     public function getOutput() {
-        $parameter_which_is_set = $this->getParameter();
-        if (!is_null($parameter_which_is_set)) {
-            return $parameter_which_is_set->getOutput();
+        
+        $parameter = $this->getParameter();
+        if (!is_null($parameter)) {
+            return $parameter->getOutput();
         }
         // else
         return '';
@@ -216,7 +223,7 @@ class XorParameter extends Parameter {
         throw new \MWException(__METHOD__.' cannot be called for this object.');
     }
 
-    protected function validateDuringSet($value) {
+    protected function validate($value) {
         throw new \MWException(__METHOD__.' cannot be called for this object.');
     }
 

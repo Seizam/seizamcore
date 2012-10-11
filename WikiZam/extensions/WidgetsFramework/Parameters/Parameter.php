@@ -167,12 +167,11 @@ abstract class Parameter {
     
     /**
      * Parse the value from wikitext string.
-     * If the value cannot be parsed (contains bad caracters, is too long, ...), an Exception is thrown.
+     * If the value cannot be parsed (contains bad caracters, is too long, ...), an Exception is thrown with Tools::throwUserError().
      * This method can transform the value, so only the returned value can be considered as parsed.
-     * See Boolean or PixelSize classes as good examples.
+     * See Boolean or IntegerInPixel classes as good examples.
      * @param string $value The wikitext string (only the value, without "name=")
      * @return mixed $value The type depends on the final class extending Parameter.
-     * In most cases, is should be a string.
      * @throws UserError if $value cannot be parsed
      */
     abstract protected function parse($value) ;
@@ -180,7 +179,7 @@ abstract class Parameter {
     /**
      * Ensure the given value is acceptable. (minimum, maximum, ...)
      * If the value is not acceptable, an Exception is thrown.
-     * See Boolean or PixelSize classes as good examples.
+     * See Boolean or Integer classes as good examples.
      * @param mixed $value The type depends on the final class extending Parameter.
      * In most cases, is should be a string.
      * @return mixed The unchanged $value, type depends on the final class extending Parameter.
@@ -188,7 +187,7 @@ abstract class Parameter {
      * For futur use.
      * @throws UserError if $value cannot be validated
      */
-    abstract protected function validateDuringSet($value) ;
+    abstract protected function validate($value) ;
        
     /**
      * Used when parsing wikitext.
@@ -215,7 +214,7 @@ abstract class Parameter {
         
         $parsed = $this->parse($raw); // can throw UserError Exception
         
-        $validated = $this->validateDuringSet($parsed); // can throw UserError Exception
+        $validated = $this->validate($parsed); // can throw UserError Exception
         
         $this->setValue($validated);
         
@@ -247,7 +246,7 @@ abstract class Parameter {
         
         $parsed = $this->parse($argument); // can throw UserError Exception
         
-        $validated = $this->validateDuringSet($parsed); // can throw UserError Exception
+        $validated = $this->validate($parsed); // can throw UserError Exception
         
         $this->setValue($validated);
         
@@ -270,7 +269,7 @@ abstract class Parameter {
             try {
                 $as_string = strval($default_value);
                 $parsed = $this->parse($as_string); // can throw UserError Exception
-                $default_value = $this->validateDuringSet($parsed); // can throw UserError Exception
+                $default_value = $this->validate($parsed); // can throw UserError Exception
                 
             } catch (UserError $e) {
                 throw new \MWException($e->getMessage(), $e->getCode(), $e->getPrevious());

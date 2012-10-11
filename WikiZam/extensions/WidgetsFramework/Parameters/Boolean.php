@@ -30,7 +30,7 @@ class Boolean extends Parameter {
         }
     }
 
-    protected function validateDuringSet($value) {
+    protected function validate($value) {
         return $value;
     }
 

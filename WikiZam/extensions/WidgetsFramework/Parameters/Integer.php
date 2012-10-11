@@ -33,14 +33,14 @@ class Integer extends Parameter {
      */
     public function parse($value) {
         
-        $spaces_free = str_replace(' ','',trim($value));
+        $space_free = str_replace(' ','',$value);
         
-        if (!ctype_digit($spaces_free)) {
+        if (!ctype_digit($space_free)) {
             Tools::throwUserError('Parameter '.$this->getName().' only accepts digits as value.');
         } 
         
         // else
-        return intval($spaces_free);
+        return intval($space_free);
         
     }
         
@@ -90,7 +90,7 @@ class Integer extends Parameter {
      * @return int The unchanged $value, for futur use
      * @throws UserError If minimal/maximal value exceeded.
      */
-    public function validateDuringSet($value) {
+    public function validate($value) {
         
         $min = $this->getMin();
         if ( !is_null($min) ) {

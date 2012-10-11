@@ -5,7 +5,7 @@ namespace WidgetsFramework; // need to be declared at the very begining of the f
 abstract class ParserFunction implements Widget {
     
     protected static $PARSER_MARKER = 1;
-    protected static $NAME = 'ParserFunction';
+    protected static $NAME = null;
     protected static $FLAGS = SFH_NO_HASH;
 
     protected $parameters;
@@ -37,7 +37,7 @@ abstract class ParserFunction implements Widget {
     public function addParameter($new_parameter) {
 
         if (!$new_parameter instanceof Parameter) {
-            throw new MWException(__METHOD__ . ' called without argument of type "Parameter".');
+            throw new \MWException(__METHOD__ . ' called without argument of type "Parameter".');
         }
 
         $this->parameters[$new_parameter->getName()] = $new_parameter;
@@ -60,7 +60,7 @@ abstract class ParserFunction implements Widget {
             foreach ($this->parameters as $parameter) {
                 if ($parameter->trySetByName($argument, $position)) {
                     $set = true;
-                    wfDebugLog('WidgetsFramework', 'ParserFunction '.static::$NAME.' -> Parameter ' . $parameter->getName() . ' : consumed by name argument "' . $argument . '"');
+                    wfDebugLog('WidgetsFramework', 'ParserFunction '.static::GetName().' -> Parameter ' . $parameter->getName() . ' : consumed by name argument "' . $argument . '"');
                     break;
                 }
             }
@@ -85,7 +85,7 @@ abstract class ParserFunction implements Widget {
         $unsassigned = array();
         $unamed_arg_position = 1;
 
-        // construct the list of parameter which can still accpet values
+        // construct the list of parameter which can still accept values
         $not_set_parameters = array();
         foreach ($this->parameters as $parameter) {
             if (!$parameter->hasBeenSet()) {
@@ -104,7 +104,7 @@ abstract class ParserFunction implements Widget {
                     if ($parameter->hasBeenSet()) {
                         unset($not_set_parameters[$index]);
                     }
-                    wfDebugLog('WidgetsFramework', 'ParserFunction '.static::$NAME.' -> Parameter ' . $parameter->getName() . ' : consumed by order argument "' . $argument . '"');
+                    wfDebugLog('WidgetsFramework', 'ParserFunction '.static::GetName().' -> Parameter ' . $parameter->getName() . ' : consumed by order argument "' . $argument . '"');
                     break;
                 }
             }
@@ -141,7 +141,7 @@ abstract class ParserFunction implements Widget {
      */
     public function execute($arguments) {
         
-        wfDebugLog('WidgetsFramework', 'ParserFunction '.static::$NAME.' -> execute('.count($arguments).' arguments)');
+        wfDebugLog('WidgetsFramework', 'ParserFunction '.static::GetName().' -> execute('.count($arguments).' arguments)');
         
         // configuration
         $isHTML = false; // parser default = false
@@ -162,7 +162,7 @@ abstract class ParserFunction implements Widget {
         // second pass : identify arguments by position
         $unassigned = $this->setParametersByOrder($not_named);
         
-        wfDebugLog('WidgetsFramework', 'ParserFunction '.static::$NAME.' -> execute : '.count($unassigned).' argument(s) unassigned');
+        wfDebugLog('WidgetsFramework', 'ParserFunction '.static::GetName().' -> execute : '.count($unassigned).' argument(s) unassigned');
         
         // check all parameters (required, ...)
         $this->validateParametersAfterSet();
@@ -200,21 +200,28 @@ abstract class ParserFunction implements Widget {
             
         } catch (UserError $e) {
 
-            wfDebugLog('WidgetsFramework', 'ParserFunction '.static::$NAME.' -> tryExecute : EXCEPTION "'.$e->getMessage().'"');
+            wfDebugLog('WidgetsFramework', 'ParserFunction '.static::GetName().' -> tryExecute : EXCEPTION "'.$e->getMessage().'"');
             
             return array(
-                '<div class="error">' . $e->getHTML() . '</div>',
+                '<div class="error"><b>Error in widget '.static::GetName().'</b><br />' . $e->getHTML() . '</div>',
                 'isHTML' => true
             );
         }
         
     }
     
+    public static function GetName() {
+
+        return implode('', array_slice(explode('\\', get_called_class()), -1));
+
+    }
+    
     public static function Setup($parser) {
-        $name = static::$NAME;
-        $function = get_called_class() . '::onParserFunctionHook';
-        // ensure using string arguments (not array of object)
-        $flags = static::$FLAGS & ~SFH_OBJECT_ARGS;
+        
+        $name = static::GetName();
+        $function = get_called_class() . '::onParserFunctionHook';      
+        $flags = static::$FLAGS & ~SFH_OBJECT_ARGS; // ensure using string arguments (not array of object)
+        
         $parser->setFunctionHook($name, $function, $flags);
 
         wfDebugLog('WidgetsFramework', 'ParserFunction::Setup() : name=' . $name . ' function=' . $function . ' flags=' . $flags);
