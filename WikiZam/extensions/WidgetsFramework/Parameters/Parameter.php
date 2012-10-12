@@ -296,7 +296,9 @@ abstract class Parameter {
     }
     
     /**
-     * @return string The output
+     * Returns the string that represents the value of this parameter.
+     * This method is used to output a parameter in widgets getOuput() method.
+     * @return string The string representation of this parameter value. 
      */
     abstract public function getOutput() ;
     

@@ -30,10 +30,19 @@ class Boolean extends Parameter {
         }
     }
 
+    /**
+     * Boolean can only have too values, and we accepts both.
+     * @param boolean $value
+     * @return boolean
+     */
     protected function validate($value) {
         return $value;
     }
 
+    /**
+     * 
+     * @return string "true" or "false" depending on what the parameter getValue() method returns.
+     */
     public function getOutput() {
         if ($this->getValue()) {
             return 'true';

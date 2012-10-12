@@ -10,9 +10,11 @@ abstract class ParserFunction implements Widget {
 
     protected $parameters;
     protected $parser;
+    protected $frame;
 
-    public function __construct($parser) {
+    public function __construct($parser, $frame) {
         $this->parser = $parser;
+        $this->frame = $frame;
         $this->parameters = array();
     }
     
@@ -116,14 +118,45 @@ abstract class ParserFunction implements Widget {
         }
     }
 
+        
     /**
-     * 
-     * @param Parser $parser
-     * @return string the HTML output
+     * Called after all parameters have tried to parse available arguments
+     * (some of this arguments may not have been used) and after validateParametersAfterSet().
+     * This method can simply returns a string, or an array in order to change MediaWiki parser output configuration.
+     * The key <i>output</i> is required, others are optionals.
+     * See Parser.php method braceSubstitution() (starting around line 2930) for more options.
+     * The main keys/values are:
+     * <ul>
+     * <li> <i>output</i> => (string) the widget output, <b>REQUIRED</b></li>
+     * <li> <i>nowiki</i> => (boolean) parser flag: "wiki markup in <i>output</i> should be escaped", default 
+     * is <b>false</b></li>
+     * <li> <i>isHTML</i> => (boolean) parser flag: "<i>output</i> is HTML, armour it against wikitext 
+     * transformation", default is <b>false</b> 
+     * WARNING: is set to true, a preceding blank line will be added, creating an empty paragraphe
+     * on the final page (use <i>fixHtmlEmptyP</i> option to remove this preceding line)</li>
+     * <li> <i>fixHtmlEmptyP</i> => (boolean) WidgetsFramework flag: "remove preceding blank line added by parser when 
+     * <i>isHTML</i> is true", default is <b>false</b></li>
+     * <li> <i>noparse</i> => (boolean) parser flag, indicate to not parse the <i>output</i>, default is <b>true</b></li>
+     * <li> <i>preprocessFlags</i> => (integer) additional flags used if noparse is false, default is <b>0</b></li>
+     * <li> <i>found</i> => (boolean) parser flag "<i>output</i> has been filled", default is <b>true</b></li>
+     * <li> <i>isChildObj<i> => (boolean) parser flag "$text is a DOM node needing expansion in a child frame", default
+     * is <b>false</b>, but is forced to true if <i>noparse</i> is false</li>
+     * <li> <i>isLocalObj</i> => (boolean) parser flag: "<i>output</i> is a DOM node needing expansion in the current 
+     * frame", default is <b>false</b></li>
+     * </ul>
+     * @return string|array The output string, or an array to specify special output configuration.
      */
     abstract protected function getOutput();
     
 
+    private function insertNoWikiStripItem( $text ) {
+		$rnd = "{$this->parser->mUniqPrefix}-item-{$this->parser->mMarkerIndex}-" . \Parser::MARKER_SUFFIX;
+		$this->parser->mMarkerIndex++;
+//		$this->parser->mStripState->addNoWiki( $rnd, $text );
+		$this->parser->mStripState->addGeneral( $rnd, $text );        
+		return $rnd;
+	}
+    
     /**
      * @todo implement configuration
      * @param array $arguments Array of strings
@@ -134,12 +167,6 @@ abstract class ParserFunction implements Widget {
         
         wfDebugLog('WidgetsFramework', 'ParserFunction '.static::GetName().' -> execute('.count($arguments).' arguments)');
         
-        // configuration
-        $isHTML = false; // parser default = false
-        $trim_newlines = true;
-        $display_source = false; // require $isHTML=false
-        $bypass_parser_mod = true;
- 
         // initialize
         $this->declareParameters();
         $this->updateParametersPositions();
@@ -158,20 +185,35 @@ abstract class ParserFunction implements Widget {
         // check all parameters (required, ...)
         $this->validateParametersAfterSet();
         
-        $rendered = $this->getOutput();
-
-        // display it as requested
-        if ($trim_newlines) {
-            $rendered = preg_replace('/\s\s+/', ' ', $rendered);
-        }
-        if ($display_source) {
-            $rendered = '<pre>' . $rendered . '</pre>';
-        }
+        $output = $this->getOutput();
+        //$output = preg_replace('/\s\s+/', ' ', $output);
+        $output = $this->frame->expand( $output, \PPFrame::RECOVER_ORIG );
+            
+        // avoid a hardcoded "\n\n" that is prepended to the HTML output of parser functions
+        // see http://www.mediawiki.org/wiki/Manual:Parser_functions#Controlling_the_parsing_of_output
+        return $this->insertNoWikiStripItem( $output );
         
-        $rendered = WidgetStripper::StripItem($rendered);
+
+        
+        
+        // configuration
+        $isHTML = false; // parser default = false
+        $trim_newlines = true;
+        $display_source = false; // require $isHTML=false
+        $bypass_parser_mod = true;
+        
+        // display it as requested
+        if ($trimNewLines) {
+            $text = preg_replace('/\s\s+/', ' ', $text);
+        }
+        if ($displayAsSource) {
+            $text = '<pre>' . $text . '</pre>';
+        }
+
+        $result = WidgetStripper::StripItem($result);
         
         return array(
-            $rendered,
+            $result,
             'isHTML' => $isHTML
         );
 
@@ -185,19 +227,19 @@ abstract class ParserFunction implements Widget {
      */
     public function tryExecute($arguments) {
         
-       try {
+        try {
 
-            return $this->execute($arguments) ;
+            return $this->execute($arguments);
             
         } catch (UserError $e) {
 
-            wfDebugLog('WidgetsFramework', 'ParserFunction '.static::GetName().' -> tryExecute : EXCEPTION "'.$e->getMessage().'"');
-            
-            return array(
-                '<div class="error"><b>Error in widget '.static::GetName().'</b><br />' . $e->getHTML() . '</div>',
-                'isHTML' => true
-            );
+            wfDebugLog('WidgetsFramework', 'ParserFunction '.static::GetName().' -> tryExecute : UserError exception "'.$e->getMessage().'"');
+            // avoid a hardcoded "\n\n" that is prepended to the HTML output of parser functions
+            // see http://www.mediawiki.org/wiki/Manual:Parser_functions#Controlling_the_parsing_of_output
+            return $this->parser->insertStripItem( '<div class="error"><b>Error in widget '.static::GetName().'</b><br />' . $e->getHTML() . '</div>' );
         }
+        
+        
         
     }
     
@@ -207,15 +249,23 @@ abstract class ParserFunction implements Widget {
 
     }
     
-    public static function Setup($parser) {
+    
+    public static function Setup() {
+        
+    }
+    
+    public static function Register($parser) {
         
         $name = static::GetName();
         $function = get_called_class() . '::onParserFunctionHook';      
-        $flags = static::$FLAGS & ~SFH_OBJECT_ARGS; // ensure using string arguments (not array of object)
+//        $flags = static::$FLAGS & ~SFH_OBJECT_ARGS; // ensure using string arguments (not array of object)
+        $flags = static::$FLAGS | SFH_OBJECT_ARGS; // ensure using string arguments (not array of object)
         
         $parser->setFunctionHook($name, $function, $flags);
 
         wfDebugLog('WidgetsFramework', 'ParserFunction::Setup() : name=' . $name . ' function=' . $function . ' flags=' . $flags);
+        
+        return true;
     }
 
     /**
@@ -225,7 +275,7 @@ abstract class ParserFunction implements Widget {
      * @param array $args
      * @return string Html output
      */
-    public static function onParserFunctionHook($parser) {
+ /*   public static function onParserFunctionHook($parser) {
         
         $arguments = func_get_args();
         array_shift($arguments); // shift off the parser
@@ -238,6 +288,30 @@ abstract class ParserFunction implements Widget {
         $child_class = get_called_class();
 
         $widget = new $child_class($parser);
+        
+        return $widget->tryExecute($arguments);
+        
+    }
+  */
+    
+    /**
+     * 
+     * @param Parser $parser
+     * @param PPFrame $frame
+     * @param array $args
+     * @return string Html output
+     */
+    public static function onParserFunctionHook($parser, $frame, $args) {
+        
+        $arguments = array();
+        
+        foreach ($args as $arg) {
+            $arguments[] = trim($frame->expand($arg));
+        }
+
+        $child_class = get_called_class();
+
+        $widget = new $child_class($parser, $frame);
         
         return $widget->tryExecute($arguments);
         

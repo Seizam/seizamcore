@@ -98,7 +98,9 @@ class AddThis extends ParserFunction {
         
         return
         
-        '<div class="addthis_toolbox addthis_default_style'.$classes.'">
+        '
+            
+<div class="addthis_toolbox addthis_default_style'.$classes.'">
             '.$buttons.'
             <a class="addthis_button_compact"></a>
             '.$extra_bubble_button.'

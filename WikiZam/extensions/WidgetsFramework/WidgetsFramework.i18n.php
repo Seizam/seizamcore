@@ -6,7 +6,7 @@ $messages = array();
  * English
  */
 $messages['en'] = array(
-    'plans' => 'Our Plans',
+    'widgetsframework-desc' => 'A framework to develop and integrate widgets to MediaWiki parser.',
 );
 
 /*
