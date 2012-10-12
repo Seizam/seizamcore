@@ -25,7 +25,9 @@ abstract class ParserFunction implements Widget {
     protected function updateParametersPositions() {
         $position = 1;
         foreach ($this->parameters as $parameter) {
-            $position = $parameter->updatePosition($position);
+            // $position = $parameter->updatePosition($position);
+            $parameter->setPosition($position);
+            $position++;
         }
     }
 
@@ -82,41 +84,30 @@ abstract class ParserFunction implements Widget {
      */
     protected function setParametersByOrder($arguments) {
 
-        $unsassigned = array();
-        $unamed_arg_position = 1;
-
-        // construct the list of parameter which can still accept values
+        // construct the list of parameter that can still accept values
         $not_set_parameters = array();
+        $index = 1;
         foreach ($this->parameters as $parameter) {
             if (!$parameter->hasBeenSet()) {
-                $not_set_parameters[] = $parameter;
+                $not_set_parameters[$index] = $parameter;
+                $index++;
             }
         }
         
+        $index = 1;
+        $unused_arguments = array();
+        
         foreach ($arguments as $call_arg_position => $argument) {
-
-            $assigned = false;
-
-            foreach ($not_set_parameters as $index => $parameter) {
-
-                if ($parameter->trySetByOrder($argument, $unamed_arg_position, $call_arg_position)) {
-                    $assigned = true;
-                    if ($parameter->hasBeenSet()) {
-                        unset($not_set_parameters[$index]);
-                    }
-                    wfDebugLog('WidgetsFramework', 'ParserFunction '.static::GetName().' -> Parameter ' . $parameter->getName() . ' : consumed by order argument "' . $argument . '"');
-                    break;
-                }
-            }
-
-            if (!$assigned) {
-                $unsassigned[$call_arg_position] = $argument;
+            
+            if ( ! $not_set_parameters[$index]->trySetByOrder($argument, $index, $call_arg_position)) {              
+                $unused_arguments[$call_arg_position] = $argument;            
             }
             
-            $unamed_arg_position++;
+            $index++;        
         }
 
-        return $unsassigned;
+        return $unused_arguments;
+        
     }
 
     protected function validateParametersAfterSet() {

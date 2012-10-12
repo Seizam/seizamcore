@@ -104,7 +104,7 @@ abstract class Parameter {
     
     /**
      * 
-     * @param int $position The position that the current parameter can take in the list of parameters which can still read a value
+     * @param int $position The position of this parameter.
      * @return int The position of the next parameter.
      */
     public function updatePosition($position) {
@@ -115,6 +115,14 @@ abstract class Parameter {
         // else
         $this->position = $position;
         return $position + 1;
+    }
+    
+    /**
+     * Set this parameter position in the widget parameter list.
+     * @param int $position
+     */
+    public function setPosition($position) {
+        $this->position = $position;
     }
     
     /**
@@ -236,11 +244,7 @@ abstract class Parameter {
         if ($this->hasBeenSet()) {
             return false;
         }
-        
-        if ($this->getPosition() != $unamed_arg_position) {
-            return false;
-        }
-        
+               
         // strip whitespaces before and after
         $argument = trim($argument);
         
