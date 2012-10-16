@@ -90,7 +90,7 @@ $messages['en'] = array(
     'wp-subpage-talk-default' => '{{Subst:Default_Talk}}',
     'wp-homepage-talk-default' => '{{Subst:Default_Talk}}',
     /* Disclaimer: Wikiplace */
-    'wp-create-wp-success' => '==Congratulation!==
+    'wp-create-wp-success' => '==Congratulations!==
 
 Your new WikiPlace <b>[[$1]]</b> has been successfully created! {{int:wp-url-tip|$1}} You can administrate it from <b>[[Special:WikiPlaces/Consult:$1|{{int:wikiplaces}}]]</b>.
 
@@ -99,7 +99,7 @@ Your new WikiPlace <b>[[$1]]</b> has been successfully created! {{int:wp-url-tip
 * {{int:wp-linkalias-tip|$1|My Homepage!}}
 * {{int:wp-subpage-tip|$1}}
 * {{int:wp-action-tip}}',
-    'wp-create-sp-success' => '==Congratulation!==
+    'wp-create-sp-success' => '==Congratulations!==
 
 Your new Subpage <b>[[$1/$2|$2]]</b> has been successfully created in [[$1]]! {{int:wp-suburl-tip|$1|$2}} You can administrate [[$1]] from <b>[[Special:WikiPlaces/Consult:$1|{{int:wikiplaces}}]]</b>.
 

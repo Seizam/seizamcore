@@ -11,23 +11,42 @@ abstract class ParserFunction implements Widget {
     protected $parameters;
     protected $parser;
     protected $frame;
+    
+    // output configuration
+    protected $is_html; 
+    protected $is_block;
+    
 
     public function __construct($parser, $frame) {
         $this->parser = $parser;
         $this->frame = $frame;
         $this->parameters = array();
+        
+        $this->is_block = true;
+        $this->is_html = true;
     }
     
     /**
-     * Child class write their parameters instaciation in this method.
+     * This method return the name of the parser function, ie the name of the child class.
+     * Even if it is static, it uses Late Static Binding to returns the real name of each instance.
+     * @return string
+     */
+    public static function GetName() {
+        return implode('', array_slice(explode('\\', get_called_class()), -1));
+    }
+        
+    /**
+     * Child class write their parameters instanciation in this method.
      * @return void
      */
     abstract protected function declareParameters();
     
+    /**
+     * For futur use.
+     */
     protected function updateParametersPositions() {
         $position = 1;
         foreach ($this->parameters as $parameter) {
-            // $position = $parameter->updatePosition($position);
             $parameter->setPosition($position);
             $position++;
         }
@@ -41,21 +60,26 @@ abstract class ParserFunction implements Widget {
     public function addParameter($new_parameter) {
 
         if (!$new_parameter instanceof Parameter) {
-            throw new \MWException(__METHOD__ . ' called without argument of type "Parameter".');
+            throw new \MWException('Method addParameter() of widget '.static::GetName().' requires an argument of type "Parameter".');
         }
 
+        $new_parameter_name = $new_parameter->getName();
+        if (array_key_exists($new_parameter_name, $this->parameters)) {
+            throw new \MWException('Cannot add parameter "'.$new_parameter_name.'". Each parameter need disctinct name.');
+        }
+        
         $this->parameters[$new_parameter->getName()] = $new_parameter;
     }
 
     /**
      * 
      * @param array $arguments Array of string
-     * @return array Array of string: arguments that have not been assigned.
+     * @return array Array of string: arguments that have not been used.
      */
     protected function setParametersByName($arguments) {
 
         $position = 1;
-        $unset_arguments = array();
+        $unused_arguments = array();
 
         foreach ($arguments as $argument) {
 
@@ -64,25 +88,25 @@ abstract class ParserFunction implements Widget {
             foreach ($this->parameters as $parameter) {
                 if ($parameter->trySetByName($argument, $position)) {
                     $set = true;
-                    wfDebugLog('WidgetsFramework', 'ParserFunction '.static::GetName().' -> Parameter ' . $parameter->getName() . ' : consumed by name argument "' . $argument . '"');
+                    wfDebugLog('WidgetsFramework', static::GetName().' : parameter ' . $parameter->getName() . ' used argument "' . $argument . '" by name');
                     break;
                 }
             }
 
             if (!$set) {
-                $unset_arguments[$position] = $argument;
+                $unused_arguments[$position] = $argument;
             }
 
             $position++;
         }
 
-        return $unset_arguments;
+        return $unused_arguments;
     }
 
     /**
      * 
      * @param array $arguments Array of string: (int)position => (string)argument
-     * @return array Array of string: arguments that have not been assigned.
+     * @return array Array of string: arguments that have not been used.
      */
     protected function setParametersByOrder($arguments) {
 
@@ -96,16 +120,25 @@ abstract class ParserFunction implements Widget {
             }
         }
         
-        $index = 1;
-        $unused_arguments = array();
-        
-        foreach ($arguments as $call_arg_position => $argument) {
+        $unused_arguments = $arguments; // copy
+        reset($not_set_parameters);
+        reset($arguments);
+        // loop in $not_set_parameters and $arguments arrays, while possible        
+        while ( 
+                (list($index, $parameter) = each($not_set_parameters)) && 
+                (list($call_arg_position, $argument) = each($arguments)) ) {
             
-            if ( ! $not_set_parameters[$index]->trySetByOrder($argument, $index, $call_arg_position)) {              
-                $unused_arguments[$call_arg_position] = $argument;            
+            if ( ! $parameter->trySetByOrder($argument, $index, $call_arg_position)) {
+                
+                wfDebugLog('WidgetsFramework', static::GetName().' : parameter ' . $parameter->getName() . ' DID NOT USED "' . $argument . '" by order');
+                
+            } else {
+                
+                unset($unused_arguments[$call_arg_position]);
+                wfDebugLog('WidgetsFramework', static::GetName().' : parameter ' . $parameter->getName() . ' used argument "' . $argument . '" by order');
+                
             }
             
-            $index++;        
         }
 
         return $unused_arguments;
@@ -114,7 +147,7 @@ abstract class ParserFunction implements Widget {
 
     protected function validateParametersAfterSet() {
         foreach ($this->parameters as $parameter) {
-            $parameter->validateAfterSet();
+            $parameter->validateAfterSet(); 
         }
     }
 
@@ -122,20 +155,23 @@ abstract class ParserFunction implements Widget {
     /**
      * Called after all parameters have tried to parse available arguments
      * (some of this arguments may not have been used) and after validateParametersAfterSet().
-     * This method can simply returns a string, or an array in order to change MediaWiki parser output configuration.
-     * The key <i>output</i> is required, others are optionals.
+     * <ul>
+     * <li>This method can simply returns a string, that will be rendered as defined by a previous call
+     * to one of the <i>setOutputAs...()</i> methods. (setOutputAsHTMLBlock() by default)</li>
+     * <li>The returned value can also be an array. In this case, the framework will no longer
+     * format the output, and this array is directly given to the MediaWiki parser.
+     * The first value of the array is the <i>output</i> and is required.
+     * Others keys define some parser flag with their value. All are optionals.
      * See Parser.php method braceSubstitution() (starting around line 2930) for more options.
      * The main keys/values are:
      * <ul>
-     * <li> <i>output</i> => (string) the widget output, <b>REQUIRED</b></li>
+     * <li> First array element => (string) the widget output, <b>REQUIRED</b></li>
      * <li> <i>nowiki</i> => (boolean) parser flag: "wiki markup in <i>output</i> should be escaped", default 
      * is <b>false</b></li>
      * <li> <i>isHTML</i> => (boolean) parser flag: "<i>output</i> is HTML, armour it against wikitext 
      * transformation", default is <b>false</b> 
      * WARNING: is set to true, a preceding blank line will be added, creating an empty paragraphe
      * on the final page (use <i>fixHtmlEmptyP</i> option to remove this preceding line)</li>
-     * <li> <i>fixHtmlEmptyP</i> => (boolean) WidgetsFramework flag: "remove preceding blank line added by parser when 
-     * <i>isHTML</i> is true", default is <b>false</b></li>
      * <li> <i>noparse</i> => (boolean) parser flag, indicate to not parse the <i>output</i>, default is <b>true</b></li>
      * <li> <i>preprocessFlags</i> => (integer) additional flags used if noparse is false, default is <b>0</b></li>
      * <li> <i>found</i> => (boolean) parser flag "<i>output</i> has been filled", default is <b>true</b></li>
@@ -144,7 +180,8 @@ abstract class ParserFunction implements Widget {
      * <li> <i>isLocalObj</i> => (boolean) parser flag: "<i>output</i> is a DOM node needing expansion in the current 
      * frame", default is <b>false</b></li>
      * </ul>
-     * @return string|array The output string, or an array to specify special output configuration.
+     * </ul>
+     * @return string|array The output string, or an array containing output and MediaWiki parser flags.
      */
     abstract protected function getOutput();
     
@@ -152,10 +189,56 @@ abstract class ParserFunction implements Widget {
     private function insertNoWikiStripItem( $text ) {
 		$rnd = "{$this->parser->mUniqPrefix}-item-{$this->parser->mMarkerIndex}-" . \Parser::MARKER_SUFFIX;
 		$this->parser->mMarkerIndex++;
-//		$this->parser->mStripState->addNoWiki( $rnd, $text );
-		$this->parser->mStripState->addGeneral( $rnd, $text );        
+		$this->parser->mStripState->addNoWiki( $rnd, $text );
+//		$this->parser->mStripState->addGeneral( $rnd, $text );        
 		return $rnd;
 	}
+
+    /**
+     * Defines the output as to not be modified by the parser.
+     * @param boolean $is_html True=<i>the output will be rendered as it is, without any parser interpretation
+     * or modification</i> <b>(this is the default behavior)</b>
+     */
+    protected function setHTML($is_html = true) {
+        $this->is_html = $is_html;
+    }
+    
+    /**
+     * 
+     * @param boolean $is_block True=<i>will be rendered inside a DIV element</i> <b>(this is the default behavior)</b><br />
+     * False=<i>will be rendered as the parser wants to, most often inside a P element</i>
+     */
+    protected function setBlock($is_block = true) {
+        $this->is_block = $is_block;
+    }
+    
+    /**
+     * 
+     * @param string|array $output A string, or an array containing output text and parser flag that 
+     * will stay unchanged by this method
+     * @return string|array Prepared string $output for parser, or unchanged array $output.
+     */
+    protected function getOutputForParser($output) {
+        
+        if ( is_array( $output ) ) {         
+            // this array should contains MediaWiki parser flags
+            return $output;
+            
+        }
+        
+        // else
+        
+        if ($this->is_html) {           
+            // do nowiki strip format
+            $output = $this->insertNoWikiStripItem($output);
+        } 
+        
+        if ($this->is_block) {
+            $output = '<div>'.$output.'</div>';
+        }
+        
+        return $output;
+    }
     
     /**
      * @todo implement configuration
@@ -163,139 +246,60 @@ abstract class ParserFunction implements Widget {
      * @return string HTML output
      * @throws \MWException
      */
-    public function execute($arguments) {
+    public function tryExecute($arguments) {
         
-        wfDebugLog('WidgetsFramework', 'ParserFunction '.static::GetName().' -> execute('.count($arguments).' arguments)');
+        wfDebugLog('WidgetsFramework', static::GetName().'->execute('.count($arguments).' argument(s))');
         
         // initialize
         $this->declareParameters();
-        $this->updateParametersPositions();
+        $this->updateParametersPositions(); // for futur use
         
-        //first pass : identify by name
+        // first pass : identify by name
         $not_named = $this->setParametersByName($arguments);
         
-        // reset unset parameters positions
+        // reset unset parameters positions, for futur use
         $this->updateParametersPositions();
 
         // second pass : identify arguments by position
-        $unassigned = $this->setParametersByOrder($not_named);
-        
-        wfDebugLog('WidgetsFramework', 'ParserFunction '.static::GetName().' -> execute : '.count($unassigned).' argument(s) unassigned');
+        $unused = $this->setParametersByOrder($not_named);
+        wfDebugLog('WidgetsFramework', static::GetName().'->execute() : '.count($unused).' argument(s) left unused');
         
         // check all parameters (required, ...)
         $this->validateParametersAfterSet();
         
-        $output = $this->getOutput();
-        //$output = preg_replace('/\s\s+/', ' ', $output);
-        $output = $this->frame->expand( $output, \PPFrame::RECOVER_ORIG );
-            
-        // avoid a hardcoded "\n\n" that is prepended to the HTML output of parser functions
-        // see http://www.mediawiki.org/wiki/Manual:Parser_functions#Controlling_the_parsing_of_output
-        return $this->insertNoWikiStripItem( $output );
+        // the last step, format the output
+        $output = $this->getOutputForParser($this->getOutput());
         
-
-        
-        
-        // configuration
-        $isHTML = false; // parser default = false
-        $trim_newlines = true;
-        $display_source = false; // require $isHTML=false
-        $bypass_parser_mod = true;
-        
-        // display it as requested
-        if ($trimNewLines) {
-            $text = preg_replace('/\s\s+/', ' ', $text);
-        }
-        if ($displayAsSource) {
-            $text = '<pre>' . $text . '</pre>';
-        }
-
-        $result = WidgetStripper::StripItem($result);
-        
-        return array(
-            $result,
-            'isHTML' => $isHTML
-        );
+        return $output;
 
     }
 
-        /**
+    /**
      * @todo implements $bypass_parser_mod option
      * @param array $arguments Array of strings
      * @return string HTML output
      * @throws \MWException
      */
-    public function tryExecute($arguments) {
+    public function execute($arguments) {
         
         try {
 
-            return $this->execute($arguments);
+            return $this->tryExecute($arguments);
             
         } catch (UserError $e) {
 
-            wfDebugLog('WidgetsFramework', 'ParserFunction '.static::GetName().' -> tryExecute : UserError exception "'.$e->getMessage().'"');
-            // avoid a hardcoded "\n\n" that is prepended to the HTML output of parser functions
-            // see http://www.mediawiki.org/wiki/Manual:Parser_functions#Controlling_the_parsing_of_output
-            return $this->parser->insertStripItem( '<div class="error"><b>Error in widget '.static::GetName().'</b><br />' . $e->getHTML() . '</div>' );
+            wfDebugLog('WidgetsFramework', static::GetName().'->tryExecute() UserError exception catched : "'.$e->getMessage().'"');
+            
+            $this->setHTML();
+            $this->setBlock();
+            return $this->getOutputForParser( wfMessage('wfmk-error-in-widget', static::GetName(), $e->getHTML())->text() );
+
         }
-        
-        
-        
-    }
     
-    public static function GetName() {
-
-        return implode('', array_slice(explode('\\', get_called_class()), -1));
-
     }
-    
-    
-    public static function Setup() {
         
-    }
-    
-    public static function Register($parser) {
-        
-        $name = static::GetName();
-        $function = get_called_class() . '::onParserFunctionHook';      
-//        $flags = static::$FLAGS & ~SFH_OBJECT_ARGS; // ensure using string arguments (not array of object)
-        $flags = static::$FLAGS | SFH_OBJECT_ARGS; // ensure using string arguments (not array of object)
-        
-        $parser->setFunctionHook($name, $function, $flags);
-
-        wfDebugLog('WidgetsFramework', 'ParserFunction::Setup() : name=' . $name . ' function=' . $function . ' flags=' . $flags);
-        
-        return true;
-    }
-
     /**
-     * 
-     * @param Parser $parser
-     * @param PPFrame $frame
-     * @param array $args
-     * @return string Html output
-     */
- /*   public static function onParserFunctionHook($parser) {
-        
-        $arguments = func_get_args();
-        array_shift($arguments); // shift off the parser
-        //
-        // when no arguments given (in wikitext), receive an array with 1 empty string : remove this string
-        if (count($arguments)==1 && reset($arguments)=='') {
-            array_shift($arguments);
-        }
-        
-        $child_class = get_called_class();
-
-        $widget = new $child_class($parser);
-        
-        return $widget->tryExecute($arguments);
-        
-    }
-  */
-    
-    /**
-     * 
+     * Called by the parser when this parser function is used
      * @param Parser $parser
      * @param PPFrame $frame
      * @param array $args
@@ -305,16 +309,36 @@ abstract class ParserFunction implements Widget {
         
         $arguments = array();
         
+        // transform objects to strings
         foreach ($args as $arg) {
             $arguments[] = trim($frame->expand($arg));
         }
+        
+        // if no argument given, we receive an array with one empty string, remove it
+        if ( count($arguments)==1 && reset($arguments)=='') {
+            array_shift($arguments);
+        }
 
+        // instanciate
         $child_class = get_called_class();
-
         $widget = new $child_class($parser, $frame);
         
-        return $widget->tryExecute($arguments);
+        // try to execute (catch UserError exceptions to display nice error message)
+        return $widget->execute($arguments);
         
     }
 
+    public static function Register($parser) {
+        
+        $name = static::GetName();
+        $method = get_called_class() . '::onParserFunctionHook';      
+        $flags = static::$FLAGS | SFH_OBJECT_ARGS; // ensure we will receive a PPFrame object and arguments as objects 
+        
+        $parser->setFunctionHook($name, $method, $flags);
+
+        wfDebugLog('WidgetsFramework', $name.'::Register() : parser function registered with flags=' . $flags);
+        
+        return true;
+    }
+    
 }

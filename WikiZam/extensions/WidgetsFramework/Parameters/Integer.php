@@ -8,12 +8,17 @@ class Integer extends Parameter {
     protected $max;
     
     /**
+     * Default behavior:
      * <ul>
-     * <li>default value is 0</li>
+     * <li>value not set</li>
+     * <li>parameter is not required</li>
+     * <li>position is not set (for futur use)</li>
+     * <li>default value is integer 0</li>
      * <li>no minimal value</li>
      * <li>no maximal value</li>
-     * </ul>
-     * @param string $name
+     * </ul>  
+     * @param string $name The parameter name, case insensitive
+     * @throws \MWException if $name not specified
      */
     public function __construct($name) {
         
@@ -26,17 +31,34 @@ class Integer extends Parameter {
     }
     
     /**
-     * Only accepts digits as value.
-     * @param string $value
+     * Convert from string to signed integer.
+     * The minimum and maximum value depends on the system. 32 bit systems have 
+     * a maximum signed integer range of -2147483648 to 2147483647.
+     * The maximum signed integer value for 64 bit systems is 9223372036854775807.
+     * Empty string is considered as 0.
+     * @param string $value 
      * @return int
      * @throws UserError
      */
     public function parse($value) {
         
-        $space_free = str_replace(' ','',$value);
+        $space_free = str_replace(' ','',$value); // remove any space inside the number
         
-        if (!ctype_digit($space_free)) {
-            Tools::throwUserError('Parameter '.$this->getName().' only accepts digits as value.');
+        if (strlen($value) == 0) { // empty string
+            Tools::throwUserError(wfMessage('wfmk-validate',
+                    $this->getName(), $value, wfMessage('wfmk-req-integer-value') )->text() );
+        }
+
+        // remove the minus sign to not break ctype_digit()
+        if ($space_free[0] == '-') {
+            $ctype_test = substr($space_free, 1);
+        } else {
+            $ctype_test = $space_free;
+        }
+        
+        if (!ctype_digit($ctype_test)) {
+            Tools::throwUserError(wfMessage('wfmk-validate',
+                    $this->getName(), $value, wfMessage('wfmk-req-integer-value') )->text() );
         } 
         
         // else

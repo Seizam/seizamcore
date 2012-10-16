@@ -13,7 +13,7 @@ class XorParameter extends Parameter {
      * <ul>
      * <li>no default parameter</li>
      * </ul>  
-     * @param string $name Required, case insensisitve
+     * @param string $name The parameter name, case insensitive
      * @throws \MWException if $name not specified
      */
     public function __construct($name) {
@@ -23,37 +23,10 @@ class XorParameter extends Parameter {
         $this->default_parameter = null;
         $this->consumed_positions = -1;
     }
-
-    /**
-     * 
-     * @param int $position
-     * @return int The position of the next parameter.
-     */
-    public function updatePosition($position) {
-        
-        if ($this->hasBeenSet()) {
-            $this->position = -1;
-            return $position;
-        }
-        
-        $this->position = $position;
-  
-        foreach ($this->parameters as $parameter) {
-            $consumed = $parameter->updatePosition($position);
-            if ($this->consumed_positions == -1) {
-                $this->consumed_positions = $consumed;
-            } elseif ($this->consumed_positions != $consumed) {
-                throw new \MWException(__CLASS__.' named '.$this->getName ().' require parameters having same position consumption.');
-            }
-        }
-             
-        return $this->position + $this->consumed_positions;
-        
-    }
     
     public function addParameter($parameter) {
         if ( !is_null($parameter) && !$parameter instanceof Parameter ) {
-            throw new \MWException(__METHOD__.' require an argument of type Parameter.');
+            throw new \MWException('Method addParameter() of parameter '.$this->getName().' requires an argument of type Parameter.');
         }
         $this->parameters[] = $parameter;
     }
@@ -79,7 +52,7 @@ class XorParameter extends Parameter {
      */
     public function setDefaultParameter($parameter = null) {
         if ( !is_null($parameter) && !$parameter instanceof Parameter ) {
-            throw new \MWException(__METHOD__.' require an argument of type Parameter.');
+            throw new \MWException('Method setDefaultParameter() of parameter '.$this->getName().' requires an argument of type Parameter.');
         }
         $this->default_parameter = $parameter;  
     }
@@ -212,19 +185,19 @@ class XorParameter extends Parameter {
     }
     
     protected function setValue($value) {
-        throw new \MWException(__METHOD__.' cannot be called for this object.');
+        throw new \MWException(__METHOD__.' cannot be called for parameter '.$this->getName().'.');
     }
 
     protected function identifyByName($argument) {
-        throw new \MWException(__METHOD__.' cannot be called for this object.');
+        throw new \MWException(__METHOD__.' cannot be called for parameter '.$this->getName().'.');
     }
 
     protected function parse($value) {
-        throw new \MWException(__METHOD__.' cannot be called for this object.');
+        throw new \MWException(__METHOD__.' cannot be called for parameter '.$this->getName().'.');
     }
 
     protected function validate($value) {
-        throw new \MWException(__METHOD__.' cannot be called for this object.');
+        throw new \MWException(__METHOD__.' cannot be called for parameter '.$this->getName().'.');
     }
 
 }

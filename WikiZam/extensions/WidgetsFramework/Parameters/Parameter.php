@@ -6,31 +6,33 @@ abstract class Parameter {
 
     protected $name;
     protected $value;
-    protected $default_value;
-    protected $position;
-    
+    protected $default_value; 
     protected $required;
+    
+    protected $position; // for futur use
 
     /**
+     * Default behavior:
      * <ul>
-     * <li>default value is empty string,</li>
+     * <li>value not set</li>
+     * <li>default value is empty string</li>
      * <li>parameter is not required</li>
-     * <li>position not set</li>
+     * <li>position is not set (for futur use)</li>
      * </ul>  
-     * @param string $name Required, case insensisitve
+     * @param string $name The parameter name, case insensitive
      * @throws \MWException if $name not specified
      */
     public function __construct($name) {
 
         if (!is_string($name)) {
-            throw new \MWException('Parameter constructor need a name of type string.');
+            throw new \MWException('Parameter object constructor need an argument "name" of type string.');
         }
         $this->name = strtolower($name);
-
         $this->value = null;
         $this->default_value = '';
         $this->required = false;
-        $this->position = -1;
+        
+        $this->position = -1; // for futur use
     }
 
     /**
@@ -42,15 +44,15 @@ abstract class Parameter {
     }
 
     /**
-     * Indicate if the parameter can still read a value.
-     * @return boolean
+     * Indicate if this parameter can still read a value.
+     * @return boolean true=<i>cannot read a value anymore</i> , false=<i>value not yet set</i>
      */
     public function hasBeenSet() {
         return !is_null($this->value);
     }
     
     /**
-     * Internally called with a parsed and validated value
+     * Internally called to store a parsed and validated value.
      * @param mixed $value The type of this argument depends on the final class extending Parameter.
      * In most cases, is should be a string.
      */
@@ -59,10 +61,11 @@ abstract class Parameter {
     }
     
     /**
-     * Get the set value. or default value if it has not been set. 
+     * Returns the set value.
+     * If it hasn't been set, returns the default value. 
      * @return mixed The type depends on the final class extending Parameter.
      * In most cases, is should be a string.
-     * This value should be always valid.
+     * This value should always be valid.
      */
     public function getValue() {
         if ($this->hasBeenSet()) {
@@ -73,7 +76,7 @@ abstract class Parameter {
     }
 
     /**
-     * 
+     * Returns the default value.
      * @return mixed The type depends on the final class extending Parameter.
      * In most cases, is should be a string.
      */
@@ -88,7 +91,7 @@ abstract class Parameter {
     public function setRequired($required = true) {
         
         if (!is_bool($required)) {
-            throw new \MWException(__METHOD__.' need a boolean argument');
+            throw new \MWException('Method setRequired() of parameter '.$this->getName().' need a boolean argument.');
         }
         
         $this->required = $required;
@@ -103,21 +106,7 @@ abstract class Parameter {
     }
     
     /**
-     * 
-     * @param int $position The position of this parameter.
-     * @return int The position of the next parameter.
-     */
-    public function updatePosition($position) {
-        if ($this->hasBeenSet()) {
-            $this->position = -1;
-            return $position;
-        }
-        // else
-        $this->position = $position;
-        return $position + 1;
-    }
-    
-    /**
+     * <b>For futur use.</b><br/>
      * Set this parameter position in the widget parameter list.
      * @param int $position
      */
@@ -126,6 +115,7 @@ abstract class Parameter {
     }
     
     /**
+     * <b>For futur use.</b><br/>
      * The position in the list of parameters which can still read a value
      * @return int
      */
@@ -134,9 +124,10 @@ abstract class Parameter {
     }
 
     /**
-     * 
+     * Analyse this argument, and look for a named value using this parameter name, case insensitive.
      * @param string $argument The raw argument
-     * @return boolean/string The string value, or false if not identified
+     * @return string|null The string value (without "name=") if $argument is a 
+     * named value for this parameter, or null if not.
      */
     protected function identifyByName($argument) {
         
@@ -144,7 +135,7 @@ abstract class Parameter {
         $name_length = strlen($name);
         
         if ( strlen($argument) < $name_length ) {
-            return false; // cannot be found
+            return null; // too short, name cannot be found
         }
         
         // comparison is case insensitive
@@ -153,32 +144,36 @@ abstract class Parameter {
                 0, $name_length,
                 true) ) { 
             
-            return false; // name not found
+            return null; // name not found
         }
         
         // else: name has been found :)
- 
-        // strip the name, any space just after
+
+        // strip the name, and any space just after
         $argument_without_name = ltrim(substr($argument, $name_length));
         if (strlen($argument_without_name) == 0) {
-            return '';
+            return ''; // no value, juste the name of the parameter, this can be acceptable for some parameter
         }
         
-        // strip any '=' juste after, and any space just after
-        if ($argument_without_name[0] == '=') {
-            $argument_without_name = ltrim(substr($argument_without_name, 1));
+        // the next char must be '=', and maybe some spaces after
+        if ($argument_without_name[0] != '=') {
+            // this is not a named value
+            return null;
         }
         
-        return $argument_without_name;
+        // get the value by removing '=' and any spaces just after
+        $value = ltrim(substr($argument_without_name, 1));
+        return $value;
 
     }
     
     /**
      * Parse the value from wikitext string.
-     * If the value cannot be parsed (contains bad caracters, is too long, ...), an Exception is thrown with Tools::throwUserError().
+     * If the value cannot be parsed (contains bad caracters, is too long, ...), a UserError exception
+     * is thrown with Tools::throwUserError().
      * This method can transform the value, so only the returned value can be considered as parsed.
-     * See Boolean or IntegerInPixel classes as good examples.
-     * @param string $value The wikitext string (only the value, without "name=")
+     * See Boolean as a good example.
+     * @param string $value The wikitext string value, without "name=", can be empty string
      * @return mixed $value The type depends on the final class extending Parameter.
      * @throws UserError if $value cannot be parsed
      */
@@ -186,46 +181,49 @@ abstract class Parameter {
     
     /**
      * Ensure the given value is acceptable. (minimum, maximum, ...)
-     * If the value is not acceptable, an Exception is thrown.
-     * See Boolean or Integer classes as good examples.
+     * If the value is not acceptable, a UserError exception is thrown with Tools::throwUserError().
+     * See Integer or String classes as good examples.
      * @param mixed $value The type depends on the final class extending Parameter.
      * In most cases, is should be a string.
      * @return mixed The unchanged $value, type depends on the final class extending Parameter.
      * In most cases, is should be a string.
-     * For futur use.
      * @throws UserError if $value cannot be validated
      */
     abstract protected function validate($value) ;
        
     /**
      * Used when parsing wikitext.
-     * Try to set the value of this parameter if the named argument correspond.
-     * Note that the name is not case sensitive.
-     * @param string $argument Raw argument
-     * @param int $position
-     * @return boolean True if set successfull
-     * @throws UserError If parse() or validateDuringSet() failed
+     * Try to set the value if $argument is a named value for this parameter.
+     * The name is case insensitive.
+     * @param string $argument Raw argument, with no spaces at the begin or at the end
+     * @param int $position (for futur use)
+     * @return boolean True if set successfull, false is $argument is not a named value for this parameter.
+     * @throws UserError If $argument is a named value for this parameter, but the value cannot
+     * be parsed or validated.
      */
     public function trySetByName($argument, $position) {
  
         if ($this->hasBeenSet()) {
+            return false; // cannot read a value anymore
+        }
+        
+        if (strlen($argument) == 0) {
+            // no name can be found
             return false;
         }
         
-        // strip whitespaces before and after
-        $argument = trim($argument);
-        
-        $raw = $this->identifyByName($argument);
-        if ( $raw === false ) {
-            return false;
+        $named_value = $this->identifyByName($argument);
+        if ( is_null($named_value) ) {
+            return false; // $argument is not a named value for this parameter
         }
         
-        $parsed = $this->parse($raw); // can throw UserError Exception
+        // $argument is a named value for this parameter, try to parse and validate
         
+        $parsed = $this->parse($named_value); // can throw UserError Exception      
         $validated = $this->validate($parsed); // can throw UserError Exception
         
+        // value is ok :)
         $this->setValue($validated);
-        
         return true;
         
     }
@@ -234,35 +232,39 @@ abstract class Parameter {
      * Used when parsing wikitext.
      * Try to set the value of this parameter if the position of argument correspond.
      * @param string $argument Raw argument
-     * @param int $unamed_arg_position The position of the argument in the unamed list
-     * @param int $call_arg_position The orignal position (in wikitext widget call)
-     * @return boolean True if set successfull
-     * @throws UserError If parse() or validateDuringSet() failed
+     * @param int $unamed_arg_position The position of the argument in the unamed list (for futur use)
+     * @param int $call_arg_position The orignal position in wikitext widget call (for futur use)
+     * @return boolean True if set successfull, false if $argument not read
+     * @throws UserError If the parameter has already read a value, or if $argument cannot be 
+     * parsed and validated.
      */
     public function trySetByOrder($argument, $unamed_arg_position, $call_arg_position ) {
  
         if ($this->hasBeenSet()) {
-            return false;
+            // cannot read a value anymore
+            Tools::throwUserError(wfMessage('wfmk-already-assigned',
+                    $this->getName(), $this->getOutput(), $argument)); 
         }
-               
-        // strip whitespaces before and after
-        $argument = trim($argument);
         
+        if (strlen($argument) == 0) {
+            return false; // nothing to read
+        }
+        
+        // $argument should be the value, try to parse and validate
         $parsed = $this->parse($argument); // can throw UserError Exception
-        
         $validated = $this->validate($parsed); // can throw UserError Exception
         
+        // value is ok :)
         $this->setValue($validated);
-        
         return true;
         
     }
     
     /**
-     * 
-     * @param string|mixed $default_value As string, except if $do_validate is false
-     * (in this case, it should be the same type as the final child class handle the value)
-     * @param boolean $do_validate Validate before saving the default value (default is true)
+     * Store the default value. 
+     * @param string|mixed $default_value As string (safer), will be parsed 
+     * (except if $do_validate is false)<br/>
+     * @param boolean $do_validate do validate the $default_value (default is true, safer) 
      * @return void
      * @throws \MWException if $default_value cannot be parsed or validated
      */
@@ -271,9 +273,12 @@ abstract class Parameter {
         if ($do_validate) {
             
             try {
-                $as_string = strval($default_value);
-                $parsed = $this->parse($as_string); // can throw UserError Exception
-                $default_value = $this->validate($parsed); // can throw UserError Exception
+                
+                if (is_string($default_value)) {
+                    $default_value = $this->parse($default_value); // can throw UserError Exception
+                }
+                
+                $default_value = $this->validate($default_value); // can throw UserError Exception
                 
             } catch (UserError $e) {
                 throw new \MWException($e->getMessage(), $e->getCode(), $e->getPrevious());
@@ -287,11 +292,11 @@ abstract class Parameter {
     /**
      * Check the parameter requirements.
      * @return void
-     * @throws UserError
+     * @throws UserError If this parameter is required and has not been set.
      */
     public function validateAfterSet() {
         if ($this->isRequired() && !$this->hasBeenSet()) {
-            Tools::throwUserError('The parameter '.$this->getName().' is required.');
+            Tools::throwUserError( wfMessage('wfmk-req-parameter', $this->getName())->text() );
         }
     }
     

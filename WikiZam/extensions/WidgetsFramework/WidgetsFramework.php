@@ -20,7 +20,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
     exit( 1 );
 }
 
-# Credits
+// Credits
 
 $wgExtensionCredits['parserhook'][] = array(
     'path' => __FILE__,
@@ -33,7 +33,7 @@ $wgExtensionCredits['parserhook'][] = array(
 
 
 
-# Load framework core files
+// Load framework core files
 
 $_dir = dirname( __FILE__ );
 
@@ -59,10 +59,16 @@ foreach ( glob( $_dir . '/Parameters/*' ) as $parameter_file ) {
 
 // Automatic load of all widgets
 
+// This var is an array, telling wich widgets need automatic magic words.
+$wgWidgetsFrameworkNeedMagicWords = array();
+
 foreach ( glob( $_dir . '/Widgets/*', GLOB_ONLYDIR ) as $widget_dir ) {
     
     $infos = pathinfo($widget_dir);
     $widget_name = $infos['filename'];
+    
+    $registered = false;
+    $has_magic_file = false;   
     
     foreach ( glob( $widget_dir . '/*.php' ) as $widget_php_file ) {
 
@@ -76,8 +82,9 @@ foreach ( glob( $_dir . '/Widgets/*', GLOB_ONLYDIR ) as $widget_dir ) {
             //wfDebugLog('WidgetsFramework', 'initilization: added autoload '.$widget_name.'/'.$infos['basename']);
             
             if ( $widget_name == $infos['filename']) {
-                // this is the main widget class, register its Setup() to ParserFirstCallInit hook
+                // this is the main widget class, register its Register() method to ParserFirstCallInit hook
                 $wgHooks['ParserFirstCallInit'][] = 'WidgetsFramework\\'.$widget_name.'::Register';
+                $registered = true;
             }
             
         } else {
@@ -85,7 +92,7 @@ foreach ( glob( $_dir . '/Widgets/*', GLOB_ONLYDIR ) as $widget_dir ) {
             switch ( substr($infos['filename'], $meta_start_pos + 1 ) ) {
                 case 'magic': // MyWidget.magic.php or MyWidget.i18n.magic.php
                     $wgExtensionMessagesFiles['WidgetsFramework/'.$widget_name.'Magic'] = $widget_php_file;
-                    //wfDebugLog('WidgetsFramework', 'initilization: added i18n magic '.$infos['basename']);
+                    $has_magic_file = true;
                     break;
                 case 'i18n':
                     $wgExtensionMessagesFiles['WidgetsFramework/'.$widget_name] = $widget_php_file;
@@ -94,9 +101,16 @@ foreach ( glob( $_dir . '/Widgets/*', GLOB_ONLYDIR ) as $widget_dir ) {
 
         }    
     }
+    
+    if ($registered && !$has_magic_file) {
+        $wgWidgetsFrameworkNeedMagicWords[] = $widget_name;
+    }
 }
-   
 
-# Register ParserStripper for unstripping
-$wgHooks['ParserAfterTidy'][] = 'WidgetsFramework\\WidgetStripper::UnstripItems';
+// Magic words can be generated automatically for widgets in WidgetsFramework.i18n.magic.php
+// You may need to use   maintenance/rebuildLocalisationCache.php --force   just after installing a widgets
+// that doesn't have its own i18n.magic.php file 
+$wgExtensionMessagesFiles['WidgetsFrameworkMagic'] =  $_dir . '/WidgetsFramework.i18n.magic.php';
+
+// $wgHooks['ParserAfterTidy'][] = 'WidgetsFramework\\WidgetStripper::UnstripItems';
 

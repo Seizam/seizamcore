@@ -7,7 +7,7 @@ interface Widget {
      * Called by the framework during mediawiki initialisation.
      * If needed, this method can handle registering magic words, other hooks, etc...
      */
-    public static function Setup() ;   
+    // public static function Setup() ;   
     
     /**
      * Called by MediaWiki hook ParserFirstCallInit.

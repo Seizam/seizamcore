@@ -14,13 +14,12 @@ class Vimeo extends ParserFunction {
     
     
     protected function declareParameters() {    
-        
+                
         $this->id = new String('id');
         $this->id->setRequired();
         $this->id->setEscapeMode('urlpathinfo');
         $this->addParameter($this->id);
-        
-        
+              
         $this->width = new IntegerInPixel('width');
         $this->width->setDefaultValue(784);
         $this->width->setMin(0);
@@ -29,7 +28,7 @@ class Vimeo extends ParserFunction {
         
         
         $this->height = new IntegerInPixel('height');
-        $this->height->setDefaultValue(441);
+        $this->height->setDefaultValue('441');
         $this->height->setMin(0);
         $this->addParameter($this->height);
         
