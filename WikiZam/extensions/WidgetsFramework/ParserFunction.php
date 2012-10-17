@@ -27,8 +27,8 @@ abstract class ParserFunction implements Widget {
     }
     
     /**
-     * This method return the name of the parser function, ie the name of the child class.
-     * Even if it is static, it uses Late Static Binding to returns the real name of each instance.
+     * This method returns the name of the parser function, ie the name of the child class.
+     * Although it is static, it uses Late Static Binding to return the real name of the child class.
      * @return string
      */
     public static function GetName() {
@@ -36,7 +36,7 @@ abstract class ParserFunction implements Widget {
     }
         
     /**
-     * Child class write their parameters instanciation in this method.
+     * Child class write its parameters instanciation in this method.
      * @return void
      */
     abstract protected function declareParameters();
@@ -53,7 +53,7 @@ abstract class ParserFunction implements Widget {
     }
 
     /**
-     * 
+     * Add a parameter.
      * @param Parameter $new_parameter
      * @return void
      */
@@ -72,9 +72,9 @@ abstract class ParserFunction implements Widget {
     }
 
     /**
-     * 
+     * Loop on the parameter list to call their trySetByName() method.
      * @param array $arguments Array of string
-     * @return array Array of string: arguments that have not been used.
+     * @return array Array of string: arguments not used.
      */
     protected function setParametersByName($arguments) {
 
@@ -104,7 +104,7 @@ abstract class ParserFunction implements Widget {
     }
 
     /**
-     * 
+     * Loop on each not set parameter to call their trySetByOrder() method.
      * @param array $arguments Array of string: (int)position => (string)argument
      * @return array Array of string: arguments that have not been used.
      */
@@ -186,7 +186,7 @@ abstract class ParserFunction implements Widget {
     abstract protected function getOutput();
     
 
-    private function insertNoWikiStripItem( $text ) {
+    protected function insertNoWikiStripItem( $text ) {
 		$rnd = "{$this->parser->mUniqPrefix}-item-{$this->parser->mMarkerIndex}-" . \Parser::MARKER_SUFFIX;
 		$this->parser->mMarkerIndex++;
 		$this->parser->mStripState->addNoWiki( $rnd, $text );
@@ -221,7 +221,7 @@ abstract class ParserFunction implements Widget {
     protected function getOutputForParser($output) {
         
         if ( is_array( $output ) ) {         
-            // this array should contains MediaWiki parser flags
+            // this array contains MediaWiki parser flags
             return $output;
             
         }

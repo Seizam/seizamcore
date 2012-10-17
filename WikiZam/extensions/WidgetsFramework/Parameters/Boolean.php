@@ -68,7 +68,7 @@ class Boolean extends Parameter {
 
     /**
      * 
-     * @return string "true" or "false" depending on what the getValue() method returns.
+     * @return string "true" or "false" depending on the getValue() return.
      */
     public function getOutput() {
         if ($this->getValue()) {

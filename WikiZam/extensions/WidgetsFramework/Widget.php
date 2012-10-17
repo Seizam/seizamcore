@@ -4,12 +4,6 @@ namespace WidgetsFramework; // need to be declared at the very begining of the f
 interface Widget {
 
     /**
-     * Called by the framework during mediawiki initialisation.
-     * If needed, this method can handle registering magic words, other hooks, etc...
-     */
-    // public static function Setup() ;   
-    
-    /**
      * Called by MediaWiki hook ParserFirstCallInit.
      * Should be used to register the widget to the parser.
      * @param Parser $parser

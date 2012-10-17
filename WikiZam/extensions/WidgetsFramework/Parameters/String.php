@@ -64,6 +64,10 @@ class String extends Parameter {
         
     }
     
+    public function getMinimalLength() {
+        return $this->min_length;
+    }
+    
     /**
      * Defines a maximal length for the string value.
      * @param int $max 0 means unlimited, this is the default.
@@ -75,6 +79,10 @@ class String extends Parameter {
         }
         // else
         $this->max_length = $max;        
+    }
+
+    public function getMaximalLength() {
+        return $this->max_length;
     }
 
     /**
@@ -100,13 +108,13 @@ class String extends Parameter {
         
         $length = strlen($value);
         
-        if ($length < $this->min_length) {
+        if ($length < $this->getMinimalLength()) {
             Tools::throwUserError(wfMessage('wfmk-validate',
-                    $this->getName(), $value, wfMessage('wfmk-req-string-min-length', $this->min_length) )->text() );
+                    $this->getName(), $value, wfMessage('wfmk-req-string-min-length', $this->getMinimalLength()) )->text() );
                         
-        } elseif ( ($this->max_length != 0) && ($length > $this->max_length) ) {
+        } elseif ( ($this->getMaximalLength() != 0) && ($length > $this->getMaximalLength()) ) {
             Tools::throwUserError(wfMessage('wfmk-validate',
-                    $this->getName(), $value, wfMessage('wfmk-req-string-max-length', $this->min_length) )->text() );         
+                    $this->getName(), $value, wfMessage('wfmk-req-string-max-length', $this->getMaximalLength()) )->text() );         
         }
         
         // else

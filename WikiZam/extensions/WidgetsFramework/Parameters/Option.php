@@ -38,6 +38,10 @@ class Option extends Boolean {
         $this->output_on_true = $output;
     }
     
+    public function getOutputOnTrue() {
+        return $this->output_on_true;
+    }
+    
     /**
      * 
      * @param string $value The output string when value is false. 
@@ -46,6 +50,10 @@ class Option extends Boolean {
         $this->output_on_false = $output;
     }
     
+    public function getOutputOnFalse() {
+        return $this->output_on_false;
+    }
+
     /**
      * 
      * @return string Returns output according the value. See setOutputOnTrue() and setOutputOnFalse();
@@ -53,10 +61,10 @@ class Option extends Boolean {
     public function getOutput() {
         
         if ($this->getValue()) {
-            return $this->output_on_true;
+            return $this->getOutputOnTrue();
             
         } else {
-            return $this->output_on_false;
+            return $this->getOutputOnFalse();
         }
     }
     

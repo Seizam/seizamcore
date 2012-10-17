@@ -36,7 +36,7 @@ abstract class Parameter {
     }
 
     /**
-     * 
+     * Returns this parameter name.
      * @return string
      */
     public function getName() {
@@ -44,8 +44,8 @@ abstract class Parameter {
     }
 
     /**
-     * Indicate if this parameter can still read a value.
-     * @return boolean true=<i>cannot read a value anymore</i> , false=<i>value not yet set</i>
+     * Indicate if this parameter as already be valuated.
+     * @return boolean true=<i>already valuated, cannot read a value anymore</i> , false=<i>value not set yet</i>
      */
     public function hasBeenSet() {
         return !is_null($this->value);
@@ -85,7 +85,9 @@ abstract class Parameter {
     }
     
     /**
-     * 
+     * Set this parameter as required.
+     * When a parameter is set as required, if it is not valuated during argument parsing,
+     * it will thrown a UserError exception during validateAfterSet().
      * @param boolean $required If not specified, considered as true
      */
     public function setRequired($required = true) {
@@ -98,7 +100,7 @@ abstract class Parameter {
     }
     
     /**
-     * 
+     * Is this parameter required ?
      * @return boolean
      */
     public function isRequired() {
@@ -127,7 +129,7 @@ abstract class Parameter {
      * Analyse this argument, and look for a named value using this parameter name, case insensitive.
      * @param string $argument The raw argument
      * @return string|true|false If name found followed by assignment sign '=', returns the string value (without "name=")<br />
-     * If name found without assignment sign '=', return true <br/>
+     * If name found without anything else, return true<br />
      * Else returns false
      */
     protected function identifyByName($argument) {
@@ -227,7 +229,7 @@ abstract class Parameter {
     
     /**
      * Used when parsing wikitext.
-     * Try to set the value of this parameter if the position of argument correspond.
+     * Try to set the value.
      * @param string $argument Raw argument
      * @param int $unamed_arg_position The position of the argument in the unamed list (for futur use)
      * @param int $call_arg_position The orignal position in wikitext widget call (for futur use)

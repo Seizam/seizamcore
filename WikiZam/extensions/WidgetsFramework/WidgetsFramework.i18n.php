@@ -14,9 +14,7 @@ $messages['en'] = array(
     'wfmk-already-assigned' => 'Parameter "$1" is already assigned with "$2". It cannot been overridden by "$3" ',
     
     'wfmk-req-parameter' => 'The parameter "$1" is required. You can specify a value using "$1=value".',
-    
-    'wfmk-req-value' => 'The parameter "$1" require a value when it is specified. Assign it a value using "$1=value", or don\'t name this parameter.',
-    
+    'wfmk-req-value' => 'The parameter "$1" require a value when it is specified. Assign it a value using "$1=value", or don\'t name this parameter.',    
     'wfmk-req-boolean-value'=> 'You can assign a boolean value ("true" or "false"), or just name the parameter without value to set it true.',
     'wfmk-req-integer-value'=> 'This parameter only accepts an integer value.',  
     'wfmk-req-integerinpixel-value'=> 'This parameter only accepts integer value, with or without "px" unit.',

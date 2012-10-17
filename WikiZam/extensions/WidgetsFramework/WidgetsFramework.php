@@ -40,7 +40,6 @@ $_dir = dirname( __FILE__ );
 $wgExtensionMessagesFiles['WidgetsFramework'] =  $_dir . '/WidgetsFramework.i18n.php';
 
 $wgAutoloadClasses['WidgetsFramework\\ParserFunction'] = $_dir . '/ParserFunction.php';
-$wgAutoloadClasses['WidgetsFramework\\WidgetStripper'] = $_dir . '/WidgetStripper.php';
 $wgAutoloadClasses['WidgetsFramework\\Tools'] = $_dir . '/Tools.php';
 $wgAutoloadClasses['WidgetsFramework\\UserError'] = $_dir . '/UserError.php';
 $wgAutoloadClasses['WidgetsFramework\\Widget'] = $_dir . '/Widget.php';
