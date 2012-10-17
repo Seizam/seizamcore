@@ -126,8 +126,9 @@ abstract class Parameter {
     /**
      * Analyse this argument, and look for a named value using this parameter name, case insensitive.
      * @param string $argument The raw argument
-     * @return string|null The string value (without "name=") if $argument is a 
-     * named value for this parameter, or null if not.
+     * @return string|true|false If name found followed by assignment sign '=', returns the string value (without "name=")<br />
+     * If name found without assignment sign '=', return true <br/>
+     * Else returns false
      */
     protected function identifyByName($argument) {
         
@@ -135,7 +136,7 @@ abstract class Parameter {
         $name_length = strlen($name);
         
         if ( strlen($argument) < $name_length ) {
-            return null; // too short, name cannot be found
+            return false; // too short, name cannot be found
         }
         
         // comparison is case insensitive
@@ -144,7 +145,7 @@ abstract class Parameter {
                 0, $name_length,
                 true) ) { 
             
-            return null; // name not found
+            return false; // name not found
         }
         
         // else: name has been found :)
@@ -152,13 +153,13 @@ abstract class Parameter {
         // strip the name, and any space just after
         $argument_without_name = ltrim(substr($argument, $name_length));
         if (strlen($argument_without_name) == 0) {
-            return ''; // no value, juste the name of the parameter, this can be acceptable for some parameter
+            return true; // no value, juste the name of this parameter
         }
         
         // the next char must be '=', and maybe some spaces after
         if ($argument_without_name[0] != '=') {
-            // this is not a named value
-            return null;
+            // this is not the name of this parameter
+            return false;
         }
         
         // get the value by removing '=' and any spaces just after
@@ -173,7 +174,8 @@ abstract class Parameter {
      * is thrown with Tools::throwUserError().
      * This method can transform the value, so only the returned value can be considered as parsed.
      * See Boolean as a good example.
-     * @param string $value The wikitext string value, without "name=", can be empty string
+     * @param string|true $value The wikitext string value, without "name=" (can be empty string)<br />
+     * true if parameter specified without value assignment
      * @return mixed $value The type depends on the final class extending Parameter.
      * @throws UserError if $value cannot be parsed
      */
@@ -207,13 +209,8 @@ abstract class Parameter {
             return false; // cannot read a value anymore
         }
         
-        if (strlen($argument) == 0) {
-            // no name can be found
-            return false;
-        }
-        
         $named_value = $this->identifyByName($argument);
-        if ( is_null($named_value) ) {
+        if ( $named_value === false ) {
             return false; // $argument is not a named value for this parameter
         }
         

@@ -78,11 +78,15 @@ class String extends Parameter {
     }
 
     /**
-     * Accept everything, change nothing
-     * @param string $value
+     * Accept every string, reject parameter specified without value
+     * @param string|true $value The string value to transform, or true if parameter specified without value
      * @return string
      */
     public function parse($value) {
+        if ( $value === true ) {
+            // parameter specified without value
+            Tools::throwUserError(wfMessage('wfmk-req-value', $this->getName())->text());
+        }
         return $value;
     }
 

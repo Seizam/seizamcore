@@ -15,9 +15,13 @@ $messages['en'] = array(
     
     'wfmk-req-parameter' => 'The parameter "$1" is required. You can specify a value using "$1=value".',
     
-    'wfmk-req-boolean-value'=> 'Boolean value ("true" or "false") required.',  
-    'wfmk-req-integer-value'=> 'Integer value required.',  
-    'wfmk-req-integerinpixel-value'=> 'Integer value required,  with or without "px" unit.',
+    'wfmk-req-value' => 'The parameter "$1" require a value when it is specified. Assign it a value using "$1=value", or don\'t name this parameter.',
+    
+    'wfmk-req-boolean-value'=> 'You can assign a boolean value ("true" or "false"), or just name the parameter without value to set it true.',
+    'wfmk-req-integer-value'=> 'This parameter only accepts an integer value.',  
+    'wfmk-req-integerinpixel-value'=> 'This parameter only accepts integer value, with or without "px" unit.',
+    'wfmk-req-xorparameter-value'=> 'You should specify the name of a sub-parameter for parameter "$1".', 
+    
     'wfmk-req-string-min-length'=> 'Minimal length required: $1',
     'wfmk-req-string-max-length'=> 'Maximal length: $1',
     

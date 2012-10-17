@@ -36,32 +36,35 @@ class Integer extends Parameter {
      * a maximum signed integer range of -2147483648 to 2147483647.
      * The maximum signed integer value for 64 bit systems is 9223372036854775807.
      * Empty string is considered as 0.
-     * @param string $value 
+     * @param string|true $value The string value to transform, or true if parameter specified without value
      * @return int
-     * @throws UserError
+     * @throws UserError If parameter named without value or value is not a signed integer
      */
     public function parse($value) {
         
+        if ( $value === true ) {
+            // parameter specified without value
+            Tools::throwUserError(wfMessage('wfmk-req-value', $this->getName())->text() );            
+        }
+        
+        // value is a string
+        
         $space_free = str_replace(' ','',$value); // remove any space inside the number
         
-        if (strlen($value) == 0) { // empty string
+        if (strlen($value) == 0) { 
+            // empty string
             Tools::throwUserError(wfMessage('wfmk-validate',
                     $this->getName(), $value, wfMessage('wfmk-req-integer-value') )->text() );
         }
 
-        // remove the minus sign to not break ctype_digit()
-        if ($space_free[0] == '-') {
-            $ctype_test = substr($space_free, 1);
-        } else {
-            $ctype_test = $space_free;
-        }
+        // remove the minus sign if present to not break ctype_digit()
+        $ctype_test = $space_free[0] == '-' ? substr($space_free, 1) : $space_free ;
         
         if (!ctype_digit($ctype_test)) {
             Tools::throwUserError(wfMessage('wfmk-validate',
                     $this->getName(), $value, wfMessage('wfmk-req-integer-value') )->text() );
         } 
         
-        // else
         return intval($space_free);
         
     }

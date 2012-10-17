@@ -31,18 +31,24 @@ class Boolean extends Parameter {
      * <li>string "false" => returns boolean <b>false</b></li>
      * <li>anything else => throws UserError exception
      * </ul>
-     * @param string $value The string to transform
+     * @param string|true $value The string value to transform, or true if parameter specified without value
      * @return boolean
      * @throws UserError
      */
     protected function parse($value) {
 
-        $value = strtolower(trim($value)); // case insensitive normalisation, and remove spaces before and after
+        if ($value === true) {
+            // parameter specified without value
+            return true;
+        }
+        
+        // value is a string
+        $value = strtolower($value); // case insensitive normalisation, and remove spaces before and after
 
         if ($value == 'false') {
             return false;
             
-        } elseif ((strlen($value) == 0) || ($value == 'true')) {
+        } elseif ($value == 'true') {
             return true;
             
         } else {
@@ -52,9 +58,9 @@ class Boolean extends Parameter {
     }
 
     /**
-     * Boolean can only have too values, and we accepts both.
-     * @param boolean $value
-     * @return boolean
+     * Accept avery parsed value
+     * @param mixed $value
+     * @return mixed
      */
     protected function validate($value) {
         return $value;
