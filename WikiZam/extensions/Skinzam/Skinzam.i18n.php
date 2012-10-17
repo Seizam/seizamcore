@@ -362,7 +362,7 @@ $messages['fr'] = array(
     /* i18n overwrite */
     'confirmemail_oncreate' => 'Un code de confirmation a été envoyé à votre adresse de courriel. Merci de consulter vos courriels et de suivre les instuctions fournies pour activer les fonctions de messagerie et d\'abonnement.',
     'welcomecreation' => '== Bienvenue, $1 ! ==
-Félicitation et merci ! Votre compte Seizam a été créé avec succès.
+Félicitations et merci ! Votre compte Seizam a été créé avec succès.
 === Que faire maintenant ? ===
 #<b>Validez votre adresse de courriel.</b> Allez dans votre boîte de réception et cliquez sur le <u>lien de confirmation</u> que nous vous avons envoyé.
 #Choisissez une [[Special:Plans|offre]] et [[Special:Subscriptions|abonnez-vous]] pour activer les [[Help:Wikiplaces/fr|WikiPlaces]].
