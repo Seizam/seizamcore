@@ -46,7 +46,7 @@ class IntegerInPixel extends Integer {
             
         } catch (UserError $e) {        
             Tools::throwUserError(wfMessage('wfmk-validate',
-                    $this->getName(), $value, wfMessage('wfmk-req-integerinpixel-value') )->text() ); 
+                    $this->getName(), $value, wfMessage('wfmk-req-integer-value')->text() ) ); 
         }
         
         return $parsed;

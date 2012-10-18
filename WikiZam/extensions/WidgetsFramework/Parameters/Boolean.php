@@ -53,7 +53,7 @@ class Boolean extends Parameter {
             
         } else {
             Tools::throwUserError(wfMessage('wfmk-validate',
-                    $this->getName(), $value, wfMessage('wfmk-req-boolean-value') )->text() );
+                    $this->getName(), $value, wfMessage('wfmk-req-boolean-value') ) );
         }
     }
 

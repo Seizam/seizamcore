@@ -127,7 +127,7 @@ class XorParameter extends Parameter {
      * @throws UserError If $argument is a named value for this parameter, but the value cannot
      * be parsed or validated.
      */
-    protected function trySetByNameParameters($argument, $position) {
+    protected function trySetParametersByName($argument, $position) {
         
         // check it $argument is a named value of a sub parameter
         foreach ($this->parameters as $parameter) {           
@@ -156,40 +156,28 @@ class XorParameter extends Parameter {
             return false; // cannot read a value anymore
         }
 
+        // Identify the XorParameter by its name
         $named_value = $this->identifyByName($argument);
         
-        if ($named_value === true) {
-            // this parameter is specified, without value
-            Tools::throwUserError(wfMessage('wfmk-req-value', $this->getName())->text());
-            
-        } 
-        
         if ($named_value === false) {
-            // $argument is not a named value for this parameter,
-            // let's try for the sub parameters
-            return $this->trySetByNameParameters($argument, $position);
-        }
-
-        // this XOR parameter has been named
-        // one of the sub parameter has to identified itself
-        
-        if ($this->trySetByNameParameters($named_value, $position)) {          
-            // ok, a sub parameter has been set
+            // $argument is not named for this xorparameter,
+            // let's try the subparameters
+            return $this->trySetParametersByName($argument, $position);
+        } elseif ($named_value === true) {
+            // $argument is declared with no value
+            Tools::throwUserError(wfMessage('wfmk-req-value', $this->getName()));
+        } elseif ($this->trySetParametersByName($named_value, $position)) {          
+            // $argument is named for this xorparameter and we matched a subparameter by name.
             return true;
-            
         } else {          
-            // no sub parameter identified itself
-            // last chance if a default parameter has been set and accept the value
+            // $argument did not match any subparameter by name, try force the default parameter.
             $default = $this->getDefaultParameter();
-            if ($default != null) {
-                if ( $default->trySetByOrder($named_value, $position, $position) ) {
-                    return true;
-                }
+            if ($default != null && $default->trySetByOrder($named_value, $position, $position)) {
+                return true;
+            } else {
+                Tools::throwUserError(wfMessage('wfmk-req-xorparameter-value', $this->getName()));
             }
         }
-        
-        // this xor parameter has been named, but the value cannot be used
-        throw new UserError(wfMessage('wfmk-req-xorparameter-value', $this->getName())->text());   
     }
     
     /**

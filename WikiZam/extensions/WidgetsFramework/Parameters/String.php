@@ -93,7 +93,7 @@ class String extends Parameter {
     public function parse($value) {
         if ( $value === true ) {
             // parameter specified without value
-            Tools::throwUserError(wfMessage('wfmk-req-value', $this->getName())->text());
+            Tools::throwUserError(wfMessage('wfmk-req-value', $this->getName()));
         }
         return $value;
     }
@@ -110,11 +110,11 @@ class String extends Parameter {
         
         if ($length < $this->getMinimalLength()) {
             Tools::throwUserError(wfMessage('wfmk-validate',
-                    $this->getName(), $value, wfMessage('wfmk-req-string-min-length', $this->getMinimalLength()) )->text() );
+                    $this->getName(), $value, wfMessage('wfmk-req-string-min-length', $this->getMinimalLength()) ) );
                         
         } elseif ( ($this->getMaximalLength() != 0) && ($length > $this->getMaximalLength()) ) {
             Tools::throwUserError(wfMessage('wfmk-validate',
-                    $this->getName(), $value, wfMessage('wfmk-req-string-max-length', $this->getMaximalLength()) )->text() );         
+                    $this->getName(), $value, wfMessage('wfmk-req-string-max-length', $this->getMaximalLength()) ) );         
         }
         
         // else

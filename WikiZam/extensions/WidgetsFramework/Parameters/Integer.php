@@ -44,7 +44,7 @@ class Integer extends Parameter {
         
         if ( $value === true ) {
             // parameter specified without value
-            Tools::throwUserError(wfMessage('wfmk-req-value', $this->getName())->text() );            
+            Tools::throwUserError(wfMessage('wfmk-req-value', $this->getName()) );            
         }
         
         // value is a string
@@ -54,7 +54,7 @@ class Integer extends Parameter {
         if (strlen($value) == 0) { 
             // empty string
             Tools::throwUserError(wfMessage('wfmk-validate',
-                    $this->getName(), $value, wfMessage('wfmk-req-integer-value') )->text() );
+                    $this->getName(), $value, wfMessage('wfmk-req-integer-value')->text() ) );
         }
 
         // remove the minus sign if present to not break ctype_digit()
@@ -62,7 +62,7 @@ class Integer extends Parameter {
         
         if (!ctype_digit($ctype_test)) {
             Tools::throwUserError(wfMessage('wfmk-validate',
-                    $this->getName(), $value, wfMessage('wfmk-req-integer-value') )->text() );
+                    $this->getName(), $value, wfMessage('wfmk-req-integer-value')->text() ) );
         } 
         
         return intval($space_free);
@@ -120,14 +120,14 @@ class Integer extends Parameter {
         $min = $this->getMin();
         if ( !is_null($min) ) {
             if ($value < $min) {
-                Tools::throwUserError('Parameter '.$this->getName().' cannot be less than '.$min.' ('.$value.' given).');
+                Tools::throwUserError(wfMessage('wfmk-req-integer-min', $min));
             }
         }
         
         $max = $this->getMax();
         if ( !is_null($max) ) {
             if ($value > $max) {
-                Tools::throwUserError('Parameter '.$this->getName().' cannot be more than '.$max.' ('.$value.' given).');
+                Tools::throwUserError(wfMessage('wfmk-req-integer-max', $min));
             }
         }     
         

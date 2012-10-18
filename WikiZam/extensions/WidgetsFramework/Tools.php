@@ -90,10 +90,10 @@ class Tools {
     
     /**
      * This function is used to generate an error about how the final users use the parameter
-     * @param type $message
+     * @param Message $message
      * @throws UserError
      */
     public static function throwUserError($message) {
-        throw new UserError($message);
+        throw new UserError($message->text());
     }
 }

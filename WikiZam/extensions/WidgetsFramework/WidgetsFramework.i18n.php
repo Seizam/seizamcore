@@ -6,22 +6,25 @@ $messages = array();
  * English
  */
 $messages['en'] = array(
-    'widgetsframework-desc' => 'A framework to develop and integrate widgets to MediaWiki parser.',
+    'widgetsframework-desc' => 'A framework to develop and integrate widgets to MediaWiki\'s parser.',
     
-    'wfmk-error-in-widget' => '<div class="error"><b>Error in widget $1</b><br />$2</div>',
+    'wfmk-error-in-widget' => '<div class="error"><b>Error in widget [[Widget:$1|$1]]</b><br />$2</div>',
         
-    'wfmk-validate' => 'Parameter "$1" validation error. $3 (value received: "$2")',
-    'wfmk-already-assigned' => 'Parameter "$1" is already assigned with "$2". It cannot been overridden by "$3" ',
+    'wfmk-validate' => 'Parameter \'\'\'$1\'\'\' validation error. $3 (value given: \'\'$2\'\')',
+    'wfmk-already-assigned' => 'Parameter \'\'\'$1\'\'\' is already assigned with \'\'$2\'\'. It cannot been overridden by \'\'$3\'\' ',
     
-    'wfmk-req-parameter' => 'The parameter "$1" is required. You can specify a value using "$1=value".',
-    'wfmk-req-value' => 'The parameter "$1" require a value when it is specified. Assign it a value using "$1=value", or don\'t name this parameter.',    
-    'wfmk-req-boolean-value'=> 'You can assign a boolean value ("true" or "false"), or just name the parameter without value to set it true.',
-    'wfmk-req-integer-value'=> 'This parameter only accepts an integer value.',  
-    'wfmk-req-integerinpixel-value'=> 'This parameter only accepts integer value, with or without "px" unit.',
-    'wfmk-req-xorparameter-value'=> 'You should specify the name of a sub-parameter for parameter "$1".', 
+    'wfmk-req-parameter' => 'Parameter \'\'\'$1\'\'\' is required. Type: <code>$1=value</code>.',
+    'wfmk-req-value' => 'Parameter \'\'\'$1\'\'\' must take a value. Type: <code>$1=value</code>.',    
+    'wfmk-req-boolean-value'=> 'This parameter takes \'\'true\'\' or \'\'false\'\' or nothing (which mean true)',
+    'wfmk-req-integer-value'=> 'This parameter takes integers only.',  
+    'wfmk-req-xorparameter-value'=> 'Parameter \'\'\'$1\'\'\' should be given a named sub-parameter.', 
     
-    'wfmk-req-string-min-length'=> 'Minimal length required: $1',
+    'wfmk-req-string-min-length'=> 'Minimal length: $1',
     'wfmk-req-string-max-length'=> 'Maximal length: $1',
+    
+    'wfmk-req-integer-min' => 'Minimum: $1',
+    'wfmk-req-integer-max' => 'Maximum: $1',
+    
     
 );
 

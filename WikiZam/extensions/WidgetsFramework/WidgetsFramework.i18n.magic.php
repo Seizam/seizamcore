@@ -8,12 +8,7 @@ global $wgWidgetsFrameworkNeedMagicWords;
  
 foreach ($wgWidgetsFrameworkNeedMagicWords as $widget) {
     wfDebugLog('WidgetsFramework', 'Adding automatic magic word for widget '.$widget);
-    $magicWords['en'] = array(
-        $widget => array(
-            0,
-            strtolower($widget)
-        )
-    );
+    $magicWords['en'][$widget] = array(0, strtolower($widget));
 }
 
 
