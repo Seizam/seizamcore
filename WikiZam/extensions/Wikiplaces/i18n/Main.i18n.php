@@ -130,7 +130,7 @@ You are also promising us that you wrote this yourself, or copied it from a publ
     'wp-sub-new-section' => 'Subscribe',
     'wp-planfield' => 'Plan:',
     'wp-planfield-help' => 'Select the Seizam Plan you wish to subscribe to from this dropdown list. More details [[Special:Plans|here]].',
-    'wp-checkfield' => 'I read, understood and agree with Seizam General Terms and Conditions of Use ([[Project:GTCU|GTCU]]) <b>AND</b> Seizam Artist Specific Terms and Conditions of Use ([[Project:ASTCU|ASTCU]]).',
+    'wp-checkfield' => 'I read, understood and agree with Seizam General Terms and Conditions of Use ([[Project:GTCU|GTCU]]) <b>AND</b> Seizam Artist Specific Terms and Conditions of Use ([[Project:STCUA|STCUA]]).',
     'wp-checkfield-unchecked' => 'You need to agree with our Terms and Conditions to subscribe. Please check the box above.',
     'wp-plan-desc-short' => '$1 for $2€',
     'wp-plan-subscribe-go' => 'I subscribe',
@@ -226,17 +226,17 @@ $messages['fr'] = array(
 * Total de pages : $2',
     'wp-consult-header' => '<span style="float:right">Voir : <b>[[Help:Wikiplaces/fr|Aide]]</b></span>Voici toutes les pages dans <b>[[$1]]</b>.',
     /* Form: Wikiplace */
-    'wp-create-header' => 'Merci de remplir ce formulaire pour créer un nouveau WikiPlace.',
-    'wp-create-section' => 'Créer un WikiPlace',
+    'wp-create-header' => 'Merci de remplir ce formulaire pour créer une nouvelle WikiPlace.',
+    'wp-create-section' => 'Créer une WikiPlace',
     'wp-name-field' => 'Nom :',
     'wp-template-field' => 'Modèle :',
     'wp-create-template-help' => 'Sélectionnez ici le modèle utilisé pour cette page. Modifiez par la suite ce patron générique pour personaliser votre WikiPlace.',
     'wp-create-license-help' => 'Sélectionnez ici la licence que vous souhaitez associer à cette page. Votre travail sera soumis à cette licence.',
-    'wp-create-name-help' => 'Saisissez ici le nom de votre nouveau WikiPlace. Il sera disponnible depuis <u>www.seizam.com/<b>Nom</b></u> et toutes ses sous-pages seront depuis <u>www.seizam.com/<b>Name</b>/Subpage</u>. <b>Conseil :</b> Choisissez un nom court, facile à retenir et facile à saisir !',
-    'wp-createpage-header' => 'Merci de remplir ce formulaire pour créer une nouvelle page dans l\'un de vos WikiPlaces',
+    'wp-create-name-help' => 'Saisissez ici le nom de votre nouvelle WikiPlace. Il sera disponnible depuis <u>www.seizam.com/<b>Nom</b></u> et toutes ses sous-pages seront depuis <u>www.seizam.com/<b>Name</b>/Subpage</u>. <b>Conseil :</b> Choisissez un nom court, facile à retenir et facile à saisir !',
+    'wp-createpage-header' => 'Merci de remplir ce formulaire pour créer une nouvelle page dans l\'une de vos WikiPlaces',
     'wp-createpage-section' => 'Créer une page',
-    'wp-wikiplace-field' => 'WikiPlace parent :',
-    'wp-createpage-wikiplace-help' => 'Sélectionnez ici le WikiPlace parent. Votre page sera disponnible depuis <u>www.seizam.com/<b>Parent</b>/Nom</u>.',
+    'wp-wikiplace-field' => 'WikiPlace parente :',
+    'wp-createpage-wikiplace-help' => 'Sélectionnez ici la WikiPlace parente. Votre page sera disponnible depuis <u>www.seizam.com/<b>Parent</b>/Nom</u>.',
     'wp-createpage-name-help' => 'Saisissez ici le nom de votre page. Elle sera disponnible depuis <u>www.seizam.com/Parent/<b>Nom</b></u>. <b>Conseil :</b> Choisissez un nom court, facile à retenir et facile à saisir !',
     'wp-createtalk-field' => 'Créer et ouvrir la page de discussion associée.',
     'wp-createpage-template-help' => 'Sélectionnez ici le modèle de page que vous souhaitez utiliser. Votre nouvelle page sera créée avec ce contenu générique à l\'intérieur. Cela peut être changé à tout moment.',
@@ -246,7 +246,7 @@ $messages['fr'] = array(
     /* Disclaimer: Wikiplace */
     'wp-create-wp-success' => '==Félicitations !==
 
-Votre nouveau WikiPlace <b>[[$1]]</b> a été créé avec succès ! {{int:wp-url-tip|$1}} Vous pouvez l\'administrer depuis <b>[[Special:WikiPlaces/Consult:$1|{{int:wikiplaces}}]]</b>.
+Votre nouvelle WikiPlace <b>[[$1]]</b> a été créée avec succès ! {{int:wp-url-tip|$1}} Vous pouvez l\'administrer depuis <b>[[Special:WikiPlaces/Consult:$1|{{int:wikiplaces}}]]</b>.
 
 ==={{int:tipsntricks}}===
 * {{int:wp-link-tip|$1}}
@@ -261,20 +261,17 @@ Votre nouvelle sous-page <b>[[$1/$2|$2]]</b> a été créée avec succès dans [
 * {{int:wp-sublink-tip|$1|$2}}
 * {{int:wp-sublinkalias-tip|$1|$2}}
 * {{int:wp-action-tip}}',
-    'copyrightwarning3' => "Please note that all contributions to WikiPlaces on {{SITENAME}} might be edited or altered depending on the level of protection set by the WikiPlace owner (see [[Help:Protection]] for details).<br />
-You are also promising us that you wrote this yourself, or copied it from a public domain or similar free resource (see $1 for details).
-'''Do not submit copyrighted work without permission!'''",
     'copyrightwarning3' => "Toutes les contributions à des WikiPlaces sur {{SITENAME}} pourraient être modifiées en fonction du niveau de protection mis en place par le propriétaire du WikiPlace (voir [[Help:Protection/fr]] pour plus de détails).<br />
 Vous nous promettez aussi que vous avez écrit ceci vous-même, ou que vous l’avez copié d’une source provenant du domaine public, ou d’une ressource libre. (voir $1 pour plus de détails).
 '''N'utilisez pas de travaux sous droit d'auteur sans autorisation expresse'''",
     /* Warning: Wikiplace */
     'wp-invalid-name' => 'Ce nom est invalide.',
     'wp-name-already-exists' => 'Ce nom existe déjà. Merci d\'utiliser un autre nom.',
-    'wp-create-wp-first' => 'Vous devez d\'abord créer un WikiPlace.',
+    'wp-create-wp-first' => 'Vous devez d\'abord créer une WikiPlace.',
 	'wp-duplicate-exists' => 'Une page ayant le même nom avec une casse différente ([[$1]]) existe déjà.',
 	'wp-duplicate-related' => 'Une page liée ayant le même nom mais avec une casse différente ([[$1]]) existe. Cette page devra se nommer [[$2]].',
-	'wp-no-container-found' => 'Cette page devrait appartenir à un WikiPlace. Rééssayez avec un nom commencant par celui d\'un WikiPlace.',
-	'wp-not-owner' => 'Vous n\'êtes pas le propriétaire de ce WikiPlace.',
+	'wp-no-container-found' => 'Cette page devrait appartenir à une WikiPlace. Rééssayez avec un nom commencant par celui d\'une WikiPlace.',
+	'wp-not-owner' => 'Vous n\'êtes pas le propriétaire de cette WikiPlace.',
 	'wp-notloggedin' => 'Cette action nécessite que vous soyez identifié. Vous pouvez [[Special:UserLogin/signup|créer un compte]] ou [[Special:UserLogin|vous connecter]].',
     'wp-nosub' => 'Les WikiPlaces ne sont disponibles qu\'après abonnement. [[Special:Subscriptions/New|Cliquez ici pour vous abonner !]]',
     /* TablePager: Subscription */
