@@ -295,7 +295,7 @@ abstract class Parameter {
      */
     public function validateAfterSet() {
         if ($this->isRequired() && !$this->hasBeenSet()) {
-            Tools::throwUserError( wfMessage('wfmk-req-parameter', $this->getName())->text() );
+            Tools::throwUserError( wfMessage('wfmk-req-parameter', $this->getName()) );
         }
     }
     

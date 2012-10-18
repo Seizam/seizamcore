@@ -65,16 +65,16 @@ abstract class ParserFunction implements Widget {
 
         $new_parameter_name = $new_parameter->getName();
         if (array_key_exists($new_parameter_name, $this->parameters)) {
-            throw new \MWException('Cannot add parameter "'.$new_parameter_name.'". Each parameter need disctinct name.');
+            throw new \MWException('Cannot add parameter "'.$new_parameter_name.'". Each parameter needs a disctinct name.');
         }
         
-        $this->parameters[$new_parameter->getName()] = $new_parameter;
+        $this->parameters[$new_parameter_name] = $new_parameter;
     }
 
     /**
-     * Loop on the parameter list to call their trySetByName() method.
+     * Lopp on each argument then loop on each parameter to call their trySetByName() method.
      * @param array $arguments Array of string
-     * @return array Array of string: arguments not used.
+     * @return array Array of strings: arguments not used.
      */
     protected function setParametersByName($arguments) {
 
@@ -104,7 +104,7 @@ abstract class ParserFunction implements Widget {
     }
 
     /**
-     * Loop on each not set parameter to call their trySetByOrder() method.
+     * Loop on each not set parameter to call its trySetByOrder() method.
      * @param array $arguments Array of string: (int)position => (string)argument
      * @return array Array of string: arguments that have not been used.
      */
