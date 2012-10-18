@@ -220,10 +220,14 @@ abstract class ParserFunction implements Widget {
      */
     protected function getOutputForParser($output) {
         
+        if (is_null($output) ) {
+            // avoid mess
+            return '';
+        }
+        
         if ( is_array( $output ) ) {         
             // this array contains MediaWiki parser flags
-            return $output;
-            
+            return $output;         
         }
         
         // else
