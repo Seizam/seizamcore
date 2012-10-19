@@ -141,10 +141,10 @@ $messages['en'] = array(
     /* Triptic */
     'sz-mp-triptic' => 'Discover Seizam',
     
-    'sz-triptic0' => 'Visit',
-    'sz-triptic0-href' => '{{canonicalurl:Project:Tour}}',
-    'sz-triptic0-src' => '{{STYLEPATH}}/skinzam/content/tiptoe.jpg',
-    'sz-triptic0-caption' => 'This quick guided tour will get you all the way through Seizam. From the philosophy to the technology, you will not miss anything.',
+    'sz-triptic0' => 'Watch',
+    'sz-triptic0-href' => '{{canonicalurl:Project:Build a WikiPlace}}',
+    'sz-triptic0-src' => '{{STYLEPATH}}/skinzam/content/demo.jpg',
+    'sz-triptic0-caption' => 'This 5 minutes demonstration will show you how to publish your first WikiPlace. From WikiText to widgets, you will not miss anything.',
     
     'sz-triptic1' => 'Follow',
     'sz-triptic1-href' => 'http://www.davidcanwin.com',
@@ -154,7 +154,7 @@ $messages['en'] = array(
     'sz-triptic2' => 'Learn',
     'sz-triptic2-href' => '{{canonicalurl:Help:Contents}}',
     'sz-triptic2-src' => '{{STYLEPATH}}/skinzam/content/shelf.jpg',
-    'sz-triptic2-caption' => 'Frequently Asked Questions, tutorials, examples, documentation... Everything you need to learn how to build great wikiplaces is here.',
+    'sz-triptic2-caption' => 'Frequently Asked Questions, tutorials, examples, documentation... Everything you need to learn how to build great WikiPlaces is here.',
 
     /* Licensing */
     'license-no' => 'undefined license',
@@ -330,10 +330,10 @@ $messages['fr'] = array(
     /* Triptic */
     'sz-mp-triptic' => 'Découvrez Seizam',
     
-    'sz-triptic0' => 'Visitez',
-    'sz-triptic0-href' => '{{canonicalurl:Project:Tour/fr}}',
-    'sz-triptic0-src' => '{{STYLEPATH}}/skinzam/content/tiptoe.jpg',
-    'sz-triptic0-caption' => 'Cette visite rapide vous guidera à travers tout Seizam. De la philosophie à la technologie, vous ne manquerez rien.',
+    'sz-triptic0' => 'Regardez',
+    'sz-triptic0-href' => '{{canonicalurl:Project:Construisez une WikiPlace}}',
+    'sz-triptic0-src' => '{{STYLEPATH}}/skinzam/content/demo.jpg',
+    'sz-triptic0-caption' => 'Cette démonstration de 5 minutes vous montre comment publier votre première WikiPlace. Du WikiTexte aux widgets, vous ne manquerez rien.',
     
     'sz-triptic1' => 'Suivez',
     'sz-triptic1-href' => 'http://www.davidcanwin.com',
@@ -343,7 +343,7 @@ $messages['fr'] = array(
     'sz-triptic2' => 'Apprenez',
     'sz-triptic2-href' => '{{canonicalurl:Help:Contents/fr}}',
     'sz-triptic2-src' => '{{STYLEPATH}}/skinzam/content/shelf.jpg',
-    'sz-triptic2-caption' => 'Tutoriaux, exemples, Foire Aux Questions, documentation... Tout ce dont vous avez besoin pour construire vos Wikiplaces se trouve là.',
+    'sz-triptic2-caption' => 'Tutoriaux, exemples, Foire Aux Questions, documentation... Tout ce dont vous avez besoin pour construire vos WikiPlaces se trouve là.',
 
     
     /* Licensing */
