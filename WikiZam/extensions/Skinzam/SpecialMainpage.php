@@ -203,8 +203,8 @@ class SpecialMainpage extends SpecialPage {
         foreach ($triptic as $ptic) {
             # third_parts
             $html .= Xml::openElement('div', array('class' => 'third_parts'));
-            $html .= Xml::element('h4', array(), wfMessage($ptic)->text());
             $html .= Xml::openElement('a', array('href' => wfMessage($ptic.'-href')->text()));
+            $html .= Xml::element('h4', array(), wfMessage($ptic)->text());
             $html .= Xml::openElement('figure');
             $html .= Xml::element('img', array('src' => wfMessage($ptic.'-src')->text(), 'alt' => wfMessage($ptic)->text(),'width' => 241, 'height' => 133));
             $html .= Html::rawElement('figcaption', array(), wfMessage($ptic.'-caption')->parse());

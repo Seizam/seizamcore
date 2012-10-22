@@ -184,58 +184,5 @@
     border: none;
     text-align: center;
     margin-top: 4px;
-}
-
-/* -----------------------------------------------------------------------------
-   ==  SLIDESHOW ON WELCOME PAGE
-   -------------------------------------------------------------------------- */
-
-.mw-special-Welcome .slideshow {
-    margin-bottom: 0;
-}
-
-.mw-special-Welcome .slideshow {
-    width: 518px;
-    height: 244px;
-    padding-top: 7px;
-}
-
-.slideshow div.wrapper {
-    padding: 0 10px;
-    width: 499px;
-    height: 190px;
-}
-
-.mw-special-Welcome .slideshow a { color: #4D4E4F; }
-
-.mw-special-Welcome .slideshow div.caption {
-    font-size: 14px;
-    text-align: justify;
-    padding: 10px 10px 0;
-    margin: 0;
-}
-
-.mw-special-Welcome .slideshow h4 {
-    display: inline;
-    font-size: 14px;
-    letter-spacing: 1px;
-    word-spacing: 3px;
-    font-style: normal;
-    margin: 0;
-    padding: 0;
-    font-weight: bold;
-    color: black;
-}
-
-.mw-special-Welcome .slideshow p {
-    display: inline;
-    letter-spacing: 1px;
-    word-spacing: 3px;
-    line-height: 1em;
-    margin: 0;
-    padding: 0;
-}
-
-
 
 

@@ -146,7 +146,7 @@ $messages['en'] = array(
     'sz-triptic0' => 'Watch',
     'sz-triptic0-href' => '{{canonicalurl:Project:Build a WikiPlace}}',
     'sz-triptic0-src' => '{{STYLEPATH}}/skinzam/content/demo.jpg',
-    'sz-triptic0-caption' => 'This 5 minutes demonstration will show you how to publish your first WikiPlace. From WikiText to widgets, you will not miss anything.',
+    'sz-triptic0-caption' => 'This 5 minutes demonstration will show you how to publish your first WikiPlace. From WikiText to widgets, walk through the basics of Seizam.',
     
     'sz-triptic1' => 'Learn',
     'sz-triptic1-href' => '{{canonicalurl:Help:Contents}}',
@@ -337,7 +337,7 @@ $messages['fr'] = array(
     'sz-triptic0' => 'Regardez',
     'sz-triptic0-href' => '{{canonicalurl:Project:Construisez une WikiPlace}}',
     'sz-triptic0-src' => '{{STYLEPATH}}/skinzam/content/demo.jpg',
-    'sz-triptic0-caption' => 'Cette démonstration de 5 minutes vous montre comment publier votre première WikiPlace. Du WikiTexte aux widgets, vous ne manquerez rien.',
+    'sz-triptic0-caption' => 'Cette démonstration de 5 minutes vous montre comment publier votre première WikiPlace. Du WikiTexte aux widgets, soyez guidé à travers les basiques de Seizam.',
     
     'sz-triptic1' => 'Apprenez',
     'sz-triptic1-href' => '{{canonicalurl:Help:Contents/fr}}',
