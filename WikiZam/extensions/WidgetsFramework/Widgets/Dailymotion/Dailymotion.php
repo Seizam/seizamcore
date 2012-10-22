@@ -1,8 +1,8 @@
 <?php
 
-namespace WidgetsFramework; // need to be declared at the very begining of the file
+namespace WidgetsFramework;
 
-class Vimeo extends ParserFunction {
+class Dailymotion extends ParserFunction {
 
     protected $id;
     protected $width;
@@ -13,23 +13,18 @@ class Vimeo extends ParserFunction {
     protected function declareParameters() {
 
         $this->id = new String('id');
-        $this->id->setRequired();
         $this->id->setEscapeMode('urlpathinfo');
+        $this->id->setRequired();
         $this->addParameter($this->id);
-
 
         $this->width = new IntegerInPixel('width');
         $this->width->setDefaultValue(784);
-        $this->width->setMin(0);
         $this->width->setMax(784);
         $this->addParameter($this->width);
 
-
         $this->height = new IntegerInPixel('height');
         $this->height->setDefaultValue(441);
-        $this->height->setMin(0);
         $this->addParameter($this->height);
-
 
         $float = new XorParameter('float');
 
@@ -46,7 +41,7 @@ class Vimeo extends ParserFunction {
 
         $classes = array();
 
-        $classes[] = 'vimeo';
+        $classes[] = 'dailymotion';
 
         if ($this->right->getValue()) {
             $classes[] = 'right';
@@ -57,18 +52,14 @@ class Vimeo extends ParserFunction {
         return Tools::arrayToCSSClasses($classes);
     }
 
-    public function getOutput() {
-
-        return '<iframe 
+    protected function getOutput() {
+        return '<iframe
                     class="' . $this->getCSSClasses() . '"
-                    allowfullscreen=""
                     frameborder="0"
-                    height="' . $this->height->getOutput() . 'px"
-                    src="http://player.vimeo.com/video/' . $this->id->getOutput() . '?title=0&amp;byline=0&amp;portrait=0"
-                    webkitallowfullscreen=""
-                    width="' . $this->width->getOutput() . 'px">
-                </iframe>';
+                    width="' . $this->width->getOutput() . '"
+                    height="' . $this->height->getOutput() . '"
+                    src="http://www.dailymotion.com/embed/video/' . $this->id->getOutput() . '">
+               </iframe>';
     }
 
 }
-

@@ -8,7 +8,8 @@ namespace WidgetsFramework;
 class String extends Parameter {
 
     protected $escape_mode;
-
+    protected $validate_type;
+    
     protected $min_length;
     protected $max_length;
     
@@ -18,7 +19,6 @@ class String extends Parameter {
      * <li>value not set</li>
      * <li>default value is empty string</li>
      * <li>parameter is not required</li>
-     * <li>position is not set (for futur use)</li>
      * <li>escape mode: <i>html</i></li>
      * <li>minimal length: <i>1 character</i></li>
      * <li>maximal length: <i>unlimited</i></li>
@@ -29,6 +29,7 @@ class String extends Parameter {
     public function __construct($name) {
         parent::__construct($name);
         $this->escape_mode = 'html';
+        $this->validate_type = 'all';
         $this->min_length = 1; // non-empty string
         $this->max_length = 0; // unlimited length
     }
@@ -49,6 +50,21 @@ class String extends Parameter {
         return $this->escape_mode;
     }
     
+    /**
+     * Set the validating rule. Default is "all"
+     * @param all|url|int|boolean|float|email|ip $validate_type
+     * @throws \MWException
+     */
+    public function setValidateType($validate_type) {
+        if (!is_string($validate_type)) {
+            throw new \MWException( 'Method setValidateType() requires an argument "$validate_type" of type string.' );
+        }
+        $this->validate_type = $validate_type;
+    }
+    
+    public function getValidateType() {
+        return $this->validate_type;
+    }
     
     /**
      * Defines a minimal length for this string value.
@@ -114,10 +130,13 @@ class String extends Parameter {
                         
         } elseif ( ($this->getMaximalLength() != 0) && ($length > $this->getMaximalLength()) ) {
             Tools::throwUserError(wfMessage('wfmk-validate',
-                    $this->getName(), $value, wfMessage('wfmk-req-string-max-length', $this->getMaximalLength()) ) );         
+                    $this->getName(), $value, wfMessage('wfmk-req-string-max-length', $this->getMaximalLength()) ) );  
+            
+        } elseif ( !Tools::Validate($value, $this->validate_type) ) {
+            Tools::throwUserError(wfMessage('wfmk-validate',
+                    $this->getName(), $value, wfMessage('wfmk-req-string-validate', $this->validate_type) ) );
         }
         
-        // else
         return $value;
     }
 

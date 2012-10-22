@@ -14,7 +14,6 @@ class Option extends Boolean {
      * <li>value not set</li>
      * <li>default value is boolean false</li>
      * <li>parameter is not required</li>
-     * <li>position is not set (for futur use)</li>
      * <li>output on true is this parameter name</li>
      * <li>output on false is empty string</li>
      * </ul>  
@@ -54,6 +53,36 @@ class Option extends Boolean {
         return $this->output_on_false;
     }
 
+    /**
+     * Transforms from string to boolean.
+     * Analyse is case insensitive.
+     * <ul>
+     * <li>string "true" or boolean true (parameter declared without value) => returns boolean <b>true</b></li>
+     * <li>anything else => throws UserError exception
+     * </ul>
+     * @param string|true $value The string value to transform, or true if parameter declared without value
+     * @return boolean
+     * @throws UserError
+     */
+    protected function parse($value) {
+
+        if ($value === true) {
+            // parameter declared without value
+            return true;
+        }
+        
+        // value is a string
+        $value = strtolower($value); // case insensitive normalisation, and remove spaces before and after
+
+        if ($value == 'true') {
+            return true;
+            
+        } else {
+            Tools::throwUserError(wfMessage('wfmk-validate',
+                    $this->getName(), $value, wfMessage('wfmk-req-boolean-value') ) );
+        }
+    }
+    
     /**
      * 
      * @return string Returns output according the value. See setOutputOnTrue() and setOutputOnFalse();

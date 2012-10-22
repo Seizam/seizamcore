@@ -1,10 +1,10 @@
 <?php
 
-namespace WidgetsFramework; // need to be declared at the very begining of the file
+namespace WidgetsFramework;
 
-class Vimeo extends ParserFunction {
+class Video extends ParserFunction {
 
-    protected $id;
+    protected $url;
     protected $width;
     protected $height;
     protected $right;
@@ -12,24 +12,18 @@ class Vimeo extends ParserFunction {
 
     protected function declareParameters() {
 
-        $this->id = new String('id');
-        $this->id->setRequired();
-        $this->id->setEscapeMode('urlpathinfo');
-        $this->addParameter($this->id);
-
+        $this->url = new String('url');
+        $this->url->setValidateType('url');
+        $this->url->setRequired();
+        $this->addParameter($this->url);
 
         $this->width = new IntegerInPixel('width');
         $this->width->setDefaultValue(784);
-        $this->width->setMin(0);
         $this->width->setMax(784);
         $this->addParameter($this->width);
 
-
         $this->height = new IntegerInPixel('height');
-        $this->height->setDefaultValue(441);
-        $this->height->setMin(0);
         $this->addParameter($this->height);
-
 
         $float = new XorParameter('float');
 
@@ -46,7 +40,7 @@ class Vimeo extends ParserFunction {
 
         $classes = array();
 
-        $classes[] = 'vimeo';
+        $classes[] = 'video';
 
         if ($this->right->getValue()) {
             $classes[] = 'right';
@@ -57,18 +51,15 @@ class Vimeo extends ParserFunction {
         return Tools::arrayToCSSClasses($classes);
     }
 
-    public function getOutput() {
-
-        return '<iframe 
+    protected function getOutput() {
+        return '<video
                     class="' . $this->getCSSClasses() . '"
-                    allowfullscreen=""
-                    frameborder="0"
-                    height="' . $this->height->getOutput() . 'px"
-                    src="http://player.vimeo.com/video/' . $this->id->getOutput() . '?title=0&amp;byline=0&amp;portrait=0"
-                    webkitallowfullscreen=""
-                    width="' . $this->width->getOutput() . 'px">
-                </iframe>';
+                    src="' . $this->url->getOutput() . '"
+                    width="' . $this->width->getOutput() . '"
+                    height="' . ( $this->height->hasBeenSet() ? $this->height->getOutput() : '' ) . '"
+                    controls
+                    preload >
+                </video>';
     }
 
 }
-

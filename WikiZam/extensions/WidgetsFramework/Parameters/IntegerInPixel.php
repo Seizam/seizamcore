@@ -10,7 +10,6 @@ class IntegerInPixel extends Integer {
      * <ul>
      * <li>value not set</li>
      * <li>parameter is not required</li>
-     * <li>position is not set (for futur use)</li>
      * <li>default value is integer 0</li>
      * <li>minimal value is 0</li>
      * <li>no maximal value</li>

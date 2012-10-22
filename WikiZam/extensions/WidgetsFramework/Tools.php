@@ -3,13 +3,60 @@
 namespace WidgetsFramework;
 
 class Tools {
+    /*
+     * Smarty plugin
+     * -------------------------------------------------------------
+     * File:     modifier.validate.php
+     * Type:     modifier
+     * Name:     validate
+     * Purpose:  Validates parameter format ('url' by default).
+     *           Useful when you need to validate but not escape.
+     * -------------------------------------------------------------
+     */
     
     /**
-     * Returns the escaped value, originally in Smarty named smarty_modifier_escape.<br />
+     * This function is used to validate string.
+     * Originally in Smarty, function named smarty_modifier_validate.<br />
+     * Smarty modifier validate plugin
+     * 
+     * Type:     modifier<br />
+     * Name:     validate<br />
+     * Purpose:  Validates parameter format.<br />
+     *           Useful when you need to validate but not escape.
+     * @param string $string
+     * @param all|url|int|boolean|float|email|ip $type Default = 'all' => validate everything
+     * @return boolean True if valid, false otherwise
+     */
+    public static function Validate($string, $type = 'all') {
+        
+        if ( $type == 'all' ) {
+            return true;
+        }
+        
+        // mapping for PHP filters (http://us2.php.net/manual/en/filter.constants.php)
+        $filters = array(
+            'url' => FILTER_VALIDATE_URL,
+            'int' => FILTER_VALIDATE_INT,
+            'boolean' => FILTER_VALIDATE_BOOLEAN,
+            'float' => FILTER_VALIDATE_FLOAT,
+            'email' => FILTER_VALIDATE_EMAIL,
+            'ip' => FILTER_VALIDATE_IP
+        );
+
+        if (array_key_exists($type, $filters) && filter_var($string, $filters[$type]) !== FALSE) {
+            return true;
+        }
+
+        // unless it matched some validation rule, it's not valid
+        return false;
+    }
+
+    /**
+     * Returns the escaped value, originally in Smarty, function named smarty_modifier_escape.<br />
      * Smarty escape modifier plugin
      *
-     * Type:     modifier<br>
-     * Name:     escape<br>
+     * Type:     modifier<br />
+     * Name:     escape<br />
      * Purpose:  Escape the string according to escapement type
      * @link http://smarty.php.net/manual/en/language.modifier.escape.php
      *          escape (Smarty online manual)
@@ -19,7 +66,7 @@ class Tools {
      * @return string The escaped string
      */
     public static function Escape($string = '', $esc_type = 'html', $char_set = 'ISO-8859-1') {
-        
+
         switch ($esc_type) {
             case 'html':
                 return htmlspecialchars($string, ENT_QUOTES, $char_set);
@@ -83,11 +130,10 @@ class Tools {
 
             default: // from original code, changed from returning string unchanged to htmlall escaping (safer when wrong $esc_type)
                 return htmlentities($string, ENT_QUOTES, $char_set);
-                //return $string;
+            //return $string;
         }
     }
-    
-    
+
     /**
      * This function is used to generate an error about how the final users use the parameter
      * @param Message $message
@@ -96,4 +142,18 @@ class Tools {
     public static function throwUserError($message) {
         throw new UserError($message->text());
     }
+
+    public static function arrayToCSSClasses($array) {
+        $back = '';
+        foreach ($array as $class) {
+            if (!empty($class)) {
+                if (!empty($back)) {
+                    $back .= ' ';
+                }
+                $back .= $class;
+            }
+        }
+        return $back;
+    }
+
 }

@@ -10,7 +10,6 @@ class Boolean extends Parameter {
      * <li>value not set</li>
      * <li>default value is boolean false</li>
      * <li>parameter is not required</li>
-     * <li>position is not set (for futur use)</li>
      * </ul>  
      * @param string $name The parameter name, case insensitive
      * @throws \MWException if $name not specified
@@ -27,18 +26,18 @@ class Boolean extends Parameter {
      * Transforms from string to boolean.
      * Analyse is case insensitive.
      * <ul>
-     * <li>string "true" or empty => returns boolean <b>true</b></li>
+     * <li>string "true" or boolean true (parameter declared without value) => returns boolean <b>true</b></li>
      * <li>string "false" => returns boolean <b>false</b></li>
      * <li>anything else => throws UserError exception
      * </ul>
-     * @param string|true $value The string value to transform, or true if parameter specified without value
+     * @param string|true $value The string value to transform, or true if parameter declared without value
      * @return boolean
      * @throws UserError
      */
     protected function parse($value) {
 
         if ($value === true) {
-            // parameter specified without value
+            // parameter declared without value
             return true;
         }
         

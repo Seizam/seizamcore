@@ -3,29 +3,26 @@
 namespace WidgetsFramework; // need to be declared at the very begining of the file
 
 abstract class ParserFunction implements Widget {
-    
+
     protected static $PARSER_MARKER = 1;
     protected static $NAME = null;
     protected static $FLAGS = SFH_NO_HASH;
-
     protected $parameters;
     protected $parser;
     protected $frame;
-    
     // output configuration
-    protected $is_html; 
+    protected $is_html;
     protected $is_block;
-    
 
     public function __construct($parser, $frame) {
         $this->parser = $parser;
         $this->frame = $frame;
         $this->parameters = array();
-        
+
         $this->is_block = true;
         $this->is_html = true;
     }
-    
+
     /**
      * This method returns the name of the parser function, ie the name of the child class.
      * Although it is static, it uses Late Static Binding to return the real name of the child class.
@@ -34,23 +31,12 @@ abstract class ParserFunction implements Widget {
     public static function GetName() {
         return implode('', array_slice(explode('\\', get_called_class()), -1));
     }
-        
+
     /**
      * Child class write its parameters instanciation in this method.
      * @return void
      */
     abstract protected function declareParameters();
-    
-    /**
-     * For futur use.
-     */
-    protected function updateParametersPositions() {
-        $position = 1;
-        foreach ($this->parameters as $parameter) {
-            $parameter->setPosition($position);
-            $position++;
-        }
-    }
 
     /**
      * Add a parameter.
@@ -60,15 +46,23 @@ abstract class ParserFunction implements Widget {
     public function addParameter($new_parameter) {
 
         if (!$new_parameter instanceof Parameter) {
-            throw new \MWException('Method addParameter() of widget '.static::GetName().' requires an argument of type "Parameter".');
+            throw new \MWException('Method addParameter() of widget ' . static::GetName() . ' requires an argument of type "Parameter".');
         }
 
         $new_parameter_name = $new_parameter->getName();
         if (array_key_exists($new_parameter_name, $this->parameters)) {
-            throw new \MWException('Cannot add parameter "'.$new_parameter_name.'". Each parameter needs a disctinct name.');
+            throw new \MWException('Cannot add parameter "' . $new_parameter_name . '". Each parameter needs a disctinct name.');
         }
-        
+
         $this->parameters[$new_parameter_name] = $new_parameter;
+    }
+
+    /**
+     * 
+     * @return array Array of Parameters
+     */
+    public function getParameters() {
+        return $this->parameters;
     }
 
     /**
@@ -78,80 +72,83 @@ abstract class ParserFunction implements Widget {
      */
     protected function setParametersByName($arguments) {
 
-        $position = 1;
+        $parameters = $this->getParameters(); // get all parameters
         $unused_arguments = array();
 
         foreach ($arguments as $argument) {
 
             $set = false;
 
-            foreach ($this->parameters as $parameter) {
-                if ($parameter->trySetByName($argument, $position)) {
+            foreach ($parameters as $parameter) {
+                if ($parameter->trySetByName($argument)) {
                     $set = true;
-                    wfDebugLog('WidgetsFramework', static::GetName().' : parameter ' . $parameter->getName() . ' used argument "' . $argument . '" by name');
+                    wfDebugLog('WidgetsFramework', static::GetName() . ' : parameter ' . $parameter->getName() . ' used argument "' . $argument . '" by name');
                     break;
                 }
             }
 
             if (!$set) {
-                $unused_arguments[$position] = $argument;
+                $unused_arguments[] = $argument;
             }
-
-            $position++;
         }
 
         return $unused_arguments;
     }
 
     /**
+     * Return the list of parameters that can still accept values.
+     * @return array Array of Parameters
+     */
+    protected function getNotSetParameters() {
+
+        $parameters = $this->getParameters();
+        $filtered = array();
+
+        foreach ($parameters as $parameter) {
+            if (!$parameter->hasBeenSet()) {
+                $filtered[] = $parameter;
+            }
+        }
+
+        return $filtered;
+    }
+
+    /**
      * Loop on each not set parameter to call its trySetByOrder() method.
-     * @param array $arguments Array of string: (int)position => (string)argument
+     * @param array $arguments Array of string
      * @return array Array of string: arguments that have not been used.
      */
     protected function setParametersByOrder($arguments) {
 
-        // construct the list of parameter that can still accept values
-        $not_set_parameters = array();
-        $index = 1;
-        foreach ($this->parameters as $parameter) {
-            if (!$parameter->hasBeenSet()) {
-                $not_set_parameters[$index] = $parameter;
-                $index++;
-            }
-        }
-        
+        $parameters = $this->getNotSetParameters(); // only get not set parameters
+
         $unused_arguments = $arguments; // copy
-        reset($not_set_parameters);
+        reset($parameters);
         reset($arguments);
         // loop in $not_set_parameters and $arguments arrays, while possible        
-        while ( 
-                (list($index, $parameter) = each($not_set_parameters)) && 
-                (list($call_arg_position, $argument) = each($arguments)) ) {
-            
-            if ( ! $parameter->trySetByOrder($argument, $index, $call_arg_position)) {
-                
-                wfDebugLog('WidgetsFramework', static::GetName().' : parameter ' . $parameter->getName() . ' DID NOT USED "' . $argument . '" by order');
-                
+        while ((list(, $parameter) = each($parameters)) &&
+        (list($index, $argument) = each($arguments))) {
+
+            if (!$parameter->trySet($argument)) {
+
+                wfDebugLog('WidgetsFramework', static::GetName() . ' : parameter ' . $parameter->getName() . ' DID NOT USED "' . $argument . '" by order');
             } else {
-                
-                unset($unused_arguments[$call_arg_position]);
-                wfDebugLog('WidgetsFramework', static::GetName().' : parameter ' . $parameter->getName() . ' used argument "' . $argument . '" by order');
-                
+
+                unset($unused_arguments[$index]);
+                wfDebugLog('WidgetsFramework', static::GetName() . ' : parameter ' . $parameter->getName() . ' used argument "' . $argument . '" by order');
             }
-            
         }
 
         return $unused_arguments;
-        
     }
 
-    protected function validateParametersAfterSet() {
-        foreach ($this->parameters as $parameter) {
-            $parameter->validateAfterSet(); 
+    protected function validate() {
+        $parameters = $this->getParameters();
+        foreach ($parameters as $parameter) {
+            $parameter->validateAfterSet();
         }
     }
 
-        
     /**
      * Called after all parameters have tried to parse available arguments
      * (some of this arguments may not have been used) and after validateParametersAfterSet().
@@ -184,15 +181,13 @@ abstract class ParserFunction implements Widget {
      * @return string|array The output string, or an array containing output and MediaWiki parser flags.
      */
     abstract protected function getOutput();
-    
 
-    protected function insertNoWikiStripItem( $text ) {
-		$rnd = "{$this->parser->mUniqPrefix}-item-{$this->parser->mMarkerIndex}-" . \Parser::MARKER_SUFFIX;
-		$this->parser->mMarkerIndex++;
-		$this->parser->mStripState->addNoWiki( $rnd, $text );
-//		$this->parser->mStripState->addGeneral( $rnd, $text );        
-		return $rnd;
-	}
+    protected function insertNoWikiStripItem($text) {
+        $rnd = "{$this->parser->mUniqPrefix}-item-{$this->parser->mMarkerIndex}-" . \Parser::MARKER_SUFFIX;
+        $this->parser->mMarkerIndex++;
+        $this->parser->mStripState->addNoWiki($rnd, $text);
+        return $rnd;
+    }
 
     /**
      * Defines the output as to not be modified by the parser.
@@ -202,7 +197,7 @@ abstract class ParserFunction implements Widget {
     protected function setHTML($is_html = true) {
         $this->is_html = $is_html;
     }
-    
+
     /**
      * 
      * @param boolean $is_block True=<i>will be rendered inside a DIV element</i> <b>(this is the default behavior)</b><br />
@@ -211,39 +206,42 @@ abstract class ParserFunction implements Widget {
     protected function setBlock($is_block = true) {
         $this->is_block = $is_block;
     }
-    
+
     /**
-     * 
-     * @param string|array $output A string, or an array containing output text and parser flag that 
-     * will stay unchanged by this method
+     * @param string $output <i>OPTIONAL</i> By default, use the getOutput() method returned value.
+     * If this parameter is specified, its value will be used instead.
      * @return string|array Prepared string $output for parser, or unchanged array $output.
      */
-    protected function getOutputForParser($output) {
-        
-        if (is_null($output) ) {
+    protected function getOutputForParser( $output = null ) {
+
+        if ( is_null($output) ) {
+            $output = $this->getOutput();
+        }
+
+        if ( is_null($output) ) {
             // avoid mess
             return '';
         }
-        
-        if ( is_array( $output ) ) {         
+
+        if ( is_array($output) ) {
             // this array contains MediaWiki parser flags
-            return $output;         
+            return $output;
         }
-        
+
         // else
-        
-        if ($this->is_html) {           
-            // do nowiki strip format
+
+        if ( $this->is_html ) {
+            // do nowiki strip
             $output = $this->insertNoWikiStripItem($output);
-        } 
-        
-        if ($this->is_block) {
-            $output = '<div>'.$output.'</div>';
         }
-        
+
+        if ( $this->is_block ) {
+            $output = '<div class="wfmkwidget">' . $output . "</div>";
+        }
+
         return $output;
     }
-    
+
     /**
      * @todo implement configuration
      * @param array $arguments Array of strings
@@ -251,31 +249,26 @@ abstract class ParserFunction implements Widget {
      * @throws \MWException
      */
     public function tryExecute($arguments) {
-        
-        wfDebugLog('WidgetsFramework', static::GetName().'->execute('.count($arguments).' argument(s))');
-        
+
+        wfDebugLog('WidgetsFramework', static::GetName() . '->execute(' . count($arguments) . ' argument(s))');
+
         // initialize
         $this->declareParameters();
-        $this->updateParametersPositions(); // for futur use
-        
+
         // first pass : identify by name
-        $not_named = $this->setParametersByName($arguments);
-        
-        // reset unset parameters positions, for futur use
-        $this->updateParametersPositions();
+        $arguments_without_name = $this->setParametersByName($arguments);
 
-        // second pass : identify arguments by position
-        $unused = $this->setParametersByOrder($not_named);
-        wfDebugLog('WidgetsFramework', static::GetName().'->execute() : '.count($unused).' argument(s) left unused');
-        
+        // second pass : try to set the value by matching the order parameters are declared in widget class and typed in wikitext
+        $unused_arguments = $this->setParametersByOrder($arguments_without_name);
+        wfDebugLog('WidgetsFramework', static::GetName() . '->execute() : ' . count($unused_arguments) . ' argument(s) left unused');
+
         // check all parameters (required, ...)
-        $this->validateParametersAfterSet();
-        
-        // the last step, format the output
-        $output = $this->getOutputForParser($this->getOutput());
-        
-        return $output;
+        $this->validate();
 
+        // the last step, format the output
+        $output = $this->getOutputForParser();
+
+        return $output;
     }
 
     /**
@@ -285,23 +278,19 @@ abstract class ParserFunction implements Widget {
      * @throws \MWException
      */
     public function execute($arguments) {
-        
-        try {
 
+        try {
             return $this->tryExecute($arguments);
-            
         } catch (UserError $e) {
 
-            wfDebugLog('WidgetsFramework', static::GetName().'->tryExecute() UserError exception catched : "'.$e->getMessage().'"');
-            
+            wfDebugLog('WidgetsFramework', static::GetName() . '->tryExecute() UserError exception catched : "' . $e->getMessage() . '"');
+
             $this->setHTML();
             $this->setBlock();
-            return $this->getOutputForParser( wfMessage('wfmk-error-in-widget', static::GetName(), $e->getHTML())->text() );
-
+            return $this->getOutputForParser(wfMessage('wfmk-error-in-widget', static::GetName(), $e->getText())->parse());
         }
-    
     }
-        
+
     /**
      * Called by the parser when this parser function is used
      * @param Parser $parser
@@ -310,39 +299,38 @@ abstract class ParserFunction implements Widget {
      * @return string Html output
      */
     public static function onParserFunctionHook($parser, $frame, $args) {
-        
+
         $arguments = array();
-        
+
         // transform objects to strings
         foreach ($args as $arg) {
             $arguments[] = trim($frame->expand($arg));
         }
-        
+
         // if no argument given, we receive an array with one empty string, remove it
-        if ( count($arguments)==1 && reset($arguments)=='') {
+        if (count($arguments) == 1 && reset($arguments) == '') {
             array_shift($arguments);
         }
 
         // instanciate
         $child_class = get_called_class();
         $widget = new $child_class($parser, $frame);
-        
+
         // try to execute (catch UserError exceptions to display nice error message)
         return $widget->execute($arguments);
-        
     }
 
     public static function Register($parser) {
-        
+
         $name = static::GetName();
-        $method = get_called_class() . '::onParserFunctionHook';      
+        $method = get_called_class() . '::onParserFunctionHook';
         $flags = static::$FLAGS | SFH_OBJECT_ARGS; // ensure we will receive a PPFrame object and arguments as objects 
-        
+
         $parser->setFunctionHook($name, $method, $flags);
 
-        wfDebugLog('WidgetsFramework', $name.'::Register() : parser function registered with flags=' . $flags);
-        
+        wfDebugLog('WidgetsFramework', $name . '::Register() : parser function registered with flags=' . $flags);
+
         return true;
     }
-    
+
 }

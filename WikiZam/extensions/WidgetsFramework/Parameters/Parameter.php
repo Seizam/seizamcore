@@ -8,8 +8,7 @@ abstract class Parameter {
     protected $value;
     protected $default_value; 
     protected $required;
-    
-    protected $position; // for futur use
+
 
     /**
      * Default behavior:
@@ -17,7 +16,6 @@ abstract class Parameter {
      * <li>value not set</li>
      * <li>default value is empty string</li>
      * <li>parameter is not required</li>
-     * <li>position is not set (for futur use)</li>
      * </ul>  
      * @param string $name The parameter name, case insensitive
      * @throws \MWException if $name not specified
@@ -31,8 +29,7 @@ abstract class Parameter {
         $this->value = null;
         $this->default_value = '';
         $this->required = false;
-        
-        $this->position = -1; // for futur use
+
     }
 
     /**
@@ -105,24 +102,6 @@ abstract class Parameter {
      */
     public function isRequired() {
         return $this->required;
-    }
-    
-    /**
-     * <b>For futur use.</b><br/>
-     * Set this parameter position in the widget parameter list.
-     * @param int $position
-     */
-    public function setPosition($position) {
-        $this->position = $position;
-    }
-    
-    /**
-     * <b>For futur use.</b><br/>
-     * The position in the list of parameters which can still read a value
-     * @return int
-     */
-    public function getPosition() {
-        return $this->position;
     }
 
     /**
@@ -200,12 +179,11 @@ abstract class Parameter {
      * Try to set the value if $argument is a named value for this parameter.
      * The name is case insensitive.
      * @param string $argument Raw argument, with no spaces at the begin or at the end
-     * @param int $position (for futur use)
      * @return boolean True if set successfull, false is $argument is not a named value for this parameter.
      * @throws UserError If $argument is a named value for this parameter, but the value cannot
      * be parsed or validated.
      */
-    public function trySetByName($argument, $position) {
+    public function trySetByName($argument) {
  
         if ($this->hasBeenSet()) {
             return false; // cannot read a value anymore
@@ -231,13 +209,11 @@ abstract class Parameter {
      * Used when parsing wikitext.
      * Try to set the value.
      * @param string $argument Raw argument
-     * @param int $unamed_arg_position The position of the argument in the unamed list (for futur use)
-     * @param int $call_arg_position The orignal position in wikitext widget call (for futur use)
      * @return boolean True if set successfull, false if $argument not read
      * @throws UserError If the parameter has already read a value, or if $argument cannot be 
      * parsed and validated.
      */
-    public function trySetByOrder($argument, $unamed_arg_position, $call_arg_position ) {
+    public function trySet($argument ) {
  
         if ($this->hasBeenSet()) {
             // cannot read a value anymore
