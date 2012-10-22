@@ -26,7 +26,7 @@ $wgExtensionCredits['other'][] = array(
 	'path' => __FILE__,
 	'name' => 'PolyglotS', 
 	'author' => array('Daniel Kinzler','Clément Dietschy'),
-	'version' => '1.0',
+	'version' => '1.1',
 	'url' => 'http://mediawiki.org/wiki/Extension:Polyglot',
 	'description' => 'Support for content in multiple languages in a single MediaWiki',
 );

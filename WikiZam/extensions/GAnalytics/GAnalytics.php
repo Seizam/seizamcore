@@ -6,7 +6,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 $wgExtensionCredits['other'][] = array(
 	'path'           => __FILE__,
 	'name'           => 'GAnalytics',
-	'version'        => '0.1.0',
+	'version'        => '1.0',
 	'author'         => array('Tim Laqua','Clément Dietschy', 'Seizam Sàrl'),
 	'descriptionmsg' => 'googleanalytics-desc',
 	'url'            => 'http://www.seizam.com',

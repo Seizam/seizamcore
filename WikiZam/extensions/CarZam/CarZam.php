@@ -16,6 +16,7 @@ $wgExtensionCredits['parserhook'][] = array(
     'name' => 'CarZam',
     'author' => array('[http://www.seizam.com/User:Bedhed Clément Dietschy]'),
     'url' => 'http://www.seizam.com',
+    'version' => '1.0',
     'descriptionmsg' => 'carzam-desc',
 );
 

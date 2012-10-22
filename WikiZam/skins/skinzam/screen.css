@@ -1614,9 +1614,10 @@ a.feedlink:first-child {
     /* @embed */
     background-image: url(images/dot_arrow_up.png);
 }
+
 #absoluteFooter .content li.inactive a {
     /* @embed */
-    color: #dad9d9;
+    color: #4d4e4f;
 }
 
 #absoluteFooter .content #search {

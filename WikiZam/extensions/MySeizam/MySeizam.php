@@ -20,7 +20,7 @@ $wgExtensionCredits['specialpage'][] = array(
 	'path' => __FILE__,
 	'name' => 'MySeizam',
 	'author' => array( 'Clément Dietschy', 'Seizam'),
-	'version' => '1.0',
+	'version' => '1.1',
 	'url' => 'http://www.seizam.com/',
 	'descriptionmsg' => 'ms-myseizam-desc',
 );

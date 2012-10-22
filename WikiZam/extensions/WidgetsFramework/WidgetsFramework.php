@@ -28,7 +28,7 @@ $wgExtensionCredits['parserhook'][] = array(
     'author' => array('[http://www.seizam.com/User:Yannouk Yann Missler] & [http://www.seizam.com/User:Bedhed Clément Dietschy]'),
     'url' => 'http://www.seizam.com',
     'descriptionmsg' => 'widgetsframework-desc',
-    'version'  => '0.1 alpha',
+    'version'  => '0.2',
 );
 
 
