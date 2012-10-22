@@ -63,9 +63,12 @@ class SpecialMainpage extends SpecialPage {
     }
 
     private function displaySlideshow() {
+        # block_medium
         $html = Xml::openElement('div', array('class' => 'block block_medium'));
         $html .= Xml::element('h3', array('class' => 'title'), wfMessage('sz-mp-ourfreedoms')->text());
+        # inside
         $html .= Xml::openElement('div', array('class' => 'inside'));
+        # slideshow
         $html .= Xml::openElement('div', array('class' => 'slideshow'));
         $html .= Xml::openElement('ul');
         
@@ -76,12 +79,16 @@ class SpecialMainpage extends SpecialPage {
         while ($h4->exists()) {
             $html .= Xml::openElement('li');
             $html .= Xml::openElement('a', array('href' => wfMessage($key.'-href')->text()));
-            $html .= Xml::openElement('div', array('class'=>'wrapper', 'width' => 499, 'height' => 190));
+            # wrapper
+            $html .= Xml::openElement('div', array('class'=>'wrapper'));
             $html .= Xml::element('img', array('src' => wfMessage($key.'-src')->text(),'alt' => $h4, 'width' => 497, 'height' => 188));
+            # /wrapper
             $html .= Xml::closeElement('div');
+            # caption
             $html .= Xml::openElement('div', array('class'=>'caption'));
             $html .= Html::rawElement('h4', array(), $h4);
             $html .= Html::rawElement('p', array(), wfMessage($key . '-body')->parse());
+            # /caption
             $html .= Xml::closeElement('div');
             $html .= Xml::closeElement('a');
             $html .= Xml::closeElement('li');
@@ -92,9 +99,12 @@ class SpecialMainpage extends SpecialPage {
 
 
         $html .= Xml::closeElement('ul');
-        $html .= Xml::closeElement('div'); //Slideshow
-        $html .= Xml::closeElement('div'); //Inside
-        $html .= Xml::closeElement('div'); //block
+        # /slideshow
+        $html .= Xml::closeElement('div');
+        # /inside
+        $html .= Xml::closeElement('div');
+        # /block_medium
+        $html .= Xml::closeElement('div');
 
         return $html;
     }
@@ -109,8 +119,10 @@ class SpecialMainpage extends SpecialPage {
         }
         $token = LoginForm::getCreateaccountToken();
 
+        # block_join
         $html = Xml::openElement('div', array('class' => 'block block_join'));
         $html .= Xml::element('h3', array('class' => 'title'), wfMessage('sz-mp-joinus')->text());
+        # inside
         $html .= Xml::openElement('div', array('class' => 'inside'));
         global $wgServer;
         $html .= Xml::openElement('form', array(
@@ -149,13 +161,16 @@ class SpecialMainpage extends SpecialPage {
         $html .= Xml::element('input', array('name' => 'wpCreateaccountToken', 'type' => 'hidden', 'value' => $token));
 
         $html .= Xml::closeElement('form');
-        $html .= Xml::closeElement('div'); //Inside
-        $html .= Xml::closeElement('div'); //Block
+        # /inside
+        $html .= Xml::closeElement('div');
+        # /block
+        $html .= Xml::closeElement('div');
 
         return $html;
     }
 
     private function displayOffers() {
+        # block_join
         $html = Xml::openElement('div', array('class' => 'block block_join'));
         
         if (is_null(WpSubscription::newActiveByUserId($this->getUser()->getId())))
@@ -170,34 +185,40 @@ class SpecialMainpage extends SpecialPage {
             $html .= Xml::closeElement('a');
         }
 
+        # /block_join
         $html .= Xml::closeElement('div');
 
         return $html;
     }
 
     private function displayTriptic() {
+        # block_full
         $html = Xml::openElement('div', array('class' => 'block block_full'));
         $html .= Xml::element('h3', array('class' => 'title'), wfMessage('sz-mp-triptic')->text());
+        # inside
         $html .= Xml::openElement('div', array('class' => 'inside'));
 
         $triptic = array('sz-triptic0','sz-triptic1','sz-triptic2');
         
         foreach ($triptic as $ptic) {
-
+            # third_parts
             $html .= Xml::openElement('div', array('class' => 'third_parts'));
             $html .= Xml::element('h4', array(), wfMessage($ptic)->text());
             $html .= Xml::openElement('a', array('href' => wfMessage($ptic.'-href')->text()));
             $html .= Xml::openElement('figure');
-            $html .= Xml::element('img', array('src' => wfMessage($ptic.'-src')->text(), 'width' => 241, 'height' => 133));
+            $html .= Xml::element('img', array('src' => wfMessage($ptic.'-src')->text(), 'alt' => wfMessage($ptic)->text(),'width' => 241, 'height' => 133));
             $html .= Html::rawElement('figcaption', array(), wfMessage($ptic.'-caption')->parse());
             $html .= Xml::closeElement('figure');
             $html .= Xml::closeElement('a');
+            # /third_parts
             $html .= Xml::closeElement('div');
         }
 
-        $html .= Xml::element('div', array('class' => 'clearfix'));
-
+        $html .= Xml::openElement('div', array('class' => 'clearfix'));
         $html .= Xml::closeElement('div');
+        # /inside
+        $html .= Xml::closeElement('div');
+        # /block_full
         $html .= Xml::closeElement('div');
 
         return $html;

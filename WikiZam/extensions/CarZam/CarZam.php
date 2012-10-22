@@ -39,6 +39,7 @@ $carZamResourceTemplate = array(
     'localBasePath' => $dir . 'modules',
     'remoteExtPath' => 'ParserExtensions/CarZam/modules',
     'group' => 'ext.carzam',
+    'position' => 'top'
 );
 
 $wgResourceModules += array(
