@@ -131,7 +131,7 @@ abstract class ParserFunction implements Widget {
 
             if (!$parameter->trySet($argument)) {
 
-                wfDebugLog('WidgetsFramework', static::GetName() . ' : parameter ' . $parameter->getName() . ' DID NOT USED "' . $argument . '" by order');
+                wfDebugLog('WidgetsFramework', static::GetName() . ' : parameter ' . $parameter->getName() . ' DID NOT USE "' . $argument . '" by order');
             } else {
 
                 unset($unused_arguments[$index]);
