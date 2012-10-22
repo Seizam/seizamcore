@@ -1,4 +1,5 @@
 <?php
+
 namespace WidgetsFramework; // need to be declared at the very begining of the file
 
 interface Widget {
@@ -10,7 +11,6 @@ interface Widget {
      * @return boolean true to continue hook processing
      * (or false to abort this parser hook, but will probably breaks other extensions)
      */
-    public static function Register( $parser ) ;
-    
+    public static function Register($parser);
 }
 

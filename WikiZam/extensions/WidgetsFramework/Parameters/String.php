@@ -9,10 +9,9 @@ class String extends Parameter {
 
     protected $escape_mode;
     protected $validate_type;
-    
     protected $min_length;
     protected $max_length;
-    
+
     /**
      * Default behavior:
      * <ul>
@@ -33,7 +32,7 @@ class String extends Parameter {
         $this->min_length = 1; // non-empty string
         $this->max_length = 0; // unlimited length
     }
-    
+
     /**
      * Set the output escape mode, default is "html".
      * @param html|htmlall|url|urlpathinfo|quotes|hex|hexentity|decentity|javascript|mail|nonstd $escape_mode string
@@ -41,15 +40,15 @@ class String extends Parameter {
      */
     public function setEscapeMode($escape_mode) {
         if (!is_string($escape_mode)) {
-            throw new \MWException( 'Method setEscapeMode() requires an argument "$escape_mode" of type string.' );
+            throw new \MWException('Method setEscapeMode() requires an argument "$escape_mode" of type string.');
         }
         $this->escape_mode = $escape_mode;
     }
-    
+
     public function getEscapeMode() {
         return $this->escape_mode;
     }
-    
+
     /**
      * Set the validating rule. Default is "all"
      * @param all|url|int|boolean|float|email|ip $validate_type
@@ -57,15 +56,15 @@ class String extends Parameter {
      */
     public function setValidateType($validate_type) {
         if (!is_string($validate_type)) {
-            throw new \MWException( 'Method setValidateType() requires an argument "$validate_type" of type string.' );
+            throw new \MWException('Method setValidateType() requires an argument "$validate_type" of type string.');
         }
         $this->validate_type = $validate_type;
     }
-    
+
     public function getValidateType() {
         return $this->validate_type;
     }
-    
+
     /**
      * Defines a minimal length for this string value.
      * @param int $min Default is 1.
@@ -77,13 +76,12 @@ class String extends Parameter {
         }
         // else
         $this->min_length = $min;
-        
     }
-    
+
     public function getMinimalLength() {
         return $this->min_length;
     }
-    
+
     /**
      * Defines a maximal length for the string value.
      * @param int $max 0 means unlimited, this is the default.
@@ -94,7 +92,7 @@ class String extends Parameter {
             throw new \MWException('Method setMaximalLength() requires an argument "$max" of type int, greater or equal than 0.');
         }
         // else
-        $this->max_length = $max;        
+        $this->max_length = $max;
     }
 
     public function getMaximalLength() {
@@ -107,7 +105,7 @@ class String extends Parameter {
      * @return string
      */
     public function parse($value) {
-        if ( $value === true ) {
+        if ($value === true) {
             // parameter specified without value
             Tools::throwUserError(wfMessage('wfmk-req-value', $this->getName()));
         }
@@ -121,26 +119,21 @@ class String extends Parameter {
      * @throws UserError
      */
     public function validate($value) {
-        
+
         $length = strlen($value);
-        
+
         if ($length < $this->getMinimalLength()) {
-            Tools::throwUserError(wfMessage('wfmk-validate',
-                    $this->getName(), $value, wfMessage('wfmk-req-string-min-length', $this->getMinimalLength()) ) );
-                        
-        } elseif ( ($this->getMaximalLength() != 0) && ($length > $this->getMaximalLength()) ) {
-            Tools::throwUserError(wfMessage('wfmk-validate',
-                    $this->getName(), $value, wfMessage('wfmk-req-string-max-length', $this->getMaximalLength()) ) );  
-            
-        } elseif ( !Tools::Validate($value, $this->validate_type) ) {
-            Tools::throwUserError(wfMessage('wfmk-validate',
-                    $this->getName(), $value, wfMessage('wfmk-req-string-validate', $this->validate_type) ) );
+            Tools::throwUserError(wfMessage('wfmk-validate', $this->getName(), $value, wfMessage('wfmk-req-string-min-length', $this->getMinimalLength())));
+        } elseif (($this->getMaximalLength() != 0) && ($length > $this->getMaximalLength())) {
+            Tools::throwUserError(wfMessage('wfmk-validate', $this->getName(), $value, wfMessage('wfmk-req-string-max-length', $this->getMaximalLength())));
+        } elseif (!Tools::Validate($value, $this->validate_type)) {
+            Tools::throwUserError(wfMessage('wfmk-validate', $this->getName(), $value, wfMessage('wfmk-req-string-validate', $this->validate_type)));
         }
-        
+
         return $value;
     }
 
-    /** 
+    /**
      * @return String The escaped value. Escaping mode can be defined using setEscapeMode().
      */
     public function getOutput() {

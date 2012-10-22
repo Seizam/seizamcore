@@ -6,7 +6,6 @@ class XorParameter extends Parameter {
 
     protected $parameters;
     protected $default_parameter;
-    
 
     /** Default behavior:
      * <ul>
@@ -23,7 +22,6 @@ class XorParameter extends Parameter {
 
         $this->parameters = array();
         $this->default_parameter = null;
-        
     }
 
     /**
@@ -43,7 +41,7 @@ class XorParameter extends Parameter {
     protected function validate($value) {
         return $value;
     }
-    
+
     /**
      * Set the subparameter used:
      * <ul>
@@ -54,34 +52,34 @@ class XorParameter extends Parameter {
      * @throws \MWException
      */
     public function setDefaultParameter($default_parameter) {
-        
+
         if (!$default_parameter instanceof Parameter) {
             throw new \MWException('An argument of type Parameter is required.');
         }
-        
+
         $this->default_parameter = $default_parameter;
     }
-    
+
     /**
      * Add a parameter to the XOR list.
      * @param \WidgetsFramework\Parameter $parameter
      * @throws \MWException
      */
     public function addParameter($parameter) {
-        if ( !is_null($parameter) && !$parameter instanceof Parameter ) {
-            throw new \MWException('Method addParameter() of parameter '.$this->getName().' requires an argument of type Parameter.');
+        if (!is_null($parameter) && !$parameter instanceof Parameter) {
+            throw new \MWException('Method addParameter() of parameter ' . $this->getName() . ' requires an argument of type Parameter.');
         }
         $this->parameters[] = $parameter;
     }
-    
+
     /**
      * Returns true if one subparameter has been set or xorparameter has a value.
      * @return boolean
      */
     public function hasBeenSet() {
-        return ( !is_null( $this->getParameter()) );
+        return (!is_null($this->getParameter()) );
     }
-    
+
     /**
      * 
      * @return Parameter
@@ -89,7 +87,6 @@ class XorParameter extends Parameter {
     public function getDefaultParameter() {
         return $this->default_parameter;
     }
-
 
     /**
      * Returns the parameter which is set, or null if none set.
@@ -104,23 +101,21 @@ class XorParameter extends Parameter {
         // no parameter set
         return null;
     }
-        
+
     /**
      * If a default parameter has been set, returns its default value.
      * Else, return empty string.
      * @return mixed
      */
     public function getDefaultValue() {
-        
-        if ( !is_null($default_parameter = $this->getDefaultParameter()) ) {
+
+        if (!is_null($default_parameter = $this->getDefaultParameter())) {
             return $default_parameter->getDefaultValue();
-        
         } else {
             return '';
         }
-
     }
-    
+
     /**
      * If a parameter has been set, return its value.
      * Else, if a default parameter has been set, returns its default value.
@@ -128,18 +123,14 @@ class XorParameter extends Parameter {
      * @return mixed The type depends on the final Parameter class
      */
     public function getValue() {
-        
-        if ( !is_null($parameter = $this->getParameter()) ) {
+
+        if (!is_null($parameter = $this->getParameter())) {
             return $parameter->getValue();
-        
         } else {
             return $this->getDefaultValue();
         }
-        
     }
 
-
-    
     /**
      * Try to set by name all of the sub parameter with this $argument. 
      * @param string $argument Raw argument, with no spaces at the begin or at the end
@@ -148,10 +139,10 @@ class XorParameter extends Parameter {
      * be parsed or validated.
      */
     protected function trySetParametersByName($argument) {
-        
+
         // check it $argument is a named value of a sub parameter
-        foreach ($this->parameters as $parameter) {           
-            if ( $parameter->trySetByName($argument) ) {
+        foreach ($this->parameters as $parameter) {
+            if ($parameter->trySetByName($argument)) {
                 // a parameter as identified itsef, parsed and validated succesfully
                 return true;
             }
@@ -160,7 +151,6 @@ class XorParameter extends Parameter {
         return false;
     }
 
-       
     /**
      * Used when parsing wikitext.
      * @param string $argument Raw argument
@@ -169,66 +159,60 @@ class XorParameter extends Parameter {
      * @todo use identifyByName
      */
     public function trySetByName($argument) {
-              
+
         if ($this->hasBeenSet()) {
             return false; // cannot read a value anymore
         }
 
         // Identify the XorParameter by its name
         $named_value = $this->identifyByName($argument);
-        
+
         if ($named_value === false) {
             // $argument is not named for this xorparameter,
             // let's try the subparameters
             return $this->trySetParametersByName($argument);
-            
         } elseif ($named_value === true) {
             // $argument is declared with no value
             Tools::throwUserError(wfMessage('wfmk-req-value', $this->getName()));
-            
-        } elseif ($this->trySetParametersByName($named_value)) {          
+        } elseif ($this->trySetParametersByName($named_value)) {
             // $argument is named for this xorparameter and we matched a subparameter by name.
             return true;
-            
-        } else {          
+        } else {
             // $argument did not match any subparameter by name, try force the default parameter.
             $default = $this->getDefaultParameter();
-            
+
             if ($default != null && $default->trySet($named_value)) {
                 return true;
-                
             } else {
                 Tools::throwUserError(wfMessage('wfmk-req-xorparameter-value', $this->getName()));
             }
         }
     }
-    
+
     /**
      * Call the trySetByOrder() method of the default parameter if set
      */
     public function trySet($argument) {
-        
+
         if ($this->getDefaultParameter() == null) {
             return false;
         }
-        
+
         return $this->getDefaultParameter()->trySet($argument);
     }
 
-    
     /**
      * Set a default value to the default parameter
      */
     public function setDefaultValue($default_value, $do_validate = true) {
-        
+
         if (!is_null($default_parameter = $this->getDefaultParameter())) {
             throw new \MWException('No default parameter defined. Use setDefaultParameter() before.');
-            
         } else {
             $default_parameter->setDefaultValue($default_value, $do_validate);
         }
     }
-    
+
     /**
      * Returs the getOutput() of the parameter that has been set.
      * If none set, returns the getOutput() of the default parameter.
@@ -236,26 +220,22 @@ class XorParameter extends Parameter {
      * @return string
      */
     public function getOutput() {
-        
-        if ( !is_null($parameter = $this->getParameter()) ) {
+
+        if (!is_null($parameter = $this->getParameter())) {
             return $parameter->getOutput();
-        
-        } elseif ( !is_null($default_parameter = $this->getDefaultParameter()) ) {
+        } elseif (!is_null($default_parameter = $this->getDefaultParameter())) {
             return $default_parameter->getOutput();
-        
         } else {
             return '';
         }
-        
     }
-    
 
     /**
      * <b>This method cannot be use on xorparameter object</b>
      * @throws \MWException Everytime
      */
     protected function setValue($value) {
-        throw new \MWException('You cannot use the method setValue() of xorparameter "'.$this->getName().'".');
+        throw new \MWException('You cannot use the method setValue() of xorparameter "' . $this->getName() . '".');
     }
 
 }

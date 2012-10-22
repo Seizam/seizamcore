@@ -158,9 +158,9 @@ class Twitter extends ParserFunction {
     protected function getOutput() {
 
         $type = $this->getType();
-        
+
         if ($type == 'search') {
-            $search = "search: '".$this->source->getOutput()."',"; // source = search
+            $search = "search: '" . $this->source->getOutput() . "',"; // source = search
         } else {
             $search = "";
         }
@@ -175,7 +175,7 @@ class Twitter extends ParserFunction {
                           version: 2,
                           type: '" . $type . "',
                           rpp: '" . $this->count->getOutput() . "',
-                          ".$search."
+                          " . $search . "
                           interval: 6000,
                           title: '" . $this->title->getOutput() . "',
                           subject: '" . $this->subject->getOutput() . "',

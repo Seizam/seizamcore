@@ -19,7 +19,6 @@ class Boolean extends Parameter {
         parent::__construct($name);
 
         $this->default_value = false;
-        
     }
 
     /**
@@ -40,19 +39,16 @@ class Boolean extends Parameter {
             // parameter declared without value
             return true;
         }
-        
+
         // value is a string
         $value = strtolower($value); // case insensitive normalisation, and remove spaces before and after
 
         if ($value == 'false') {
             return false;
-            
         } elseif ($value == 'true') {
             return true;
-            
         } else {
-            Tools::throwUserError(wfMessage('wfmk-validate',
-                    $this->getName(), $value, wfMessage('wfmk-req-boolean-value') ) );
+            Tools::throwUserError(wfMessage('wfmk-validate', $this->getName(), $value, wfMessage('wfmk-req-boolean-value')));
         }
     }
 

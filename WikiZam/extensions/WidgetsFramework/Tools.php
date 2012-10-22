@@ -13,7 +13,7 @@ class Tools {
      *           Useful when you need to validate but not escape.
      * -------------------------------------------------------------
      */
-    
+
     /**
      * This function is used to validate string.
      * Originally in Smarty, function named smarty_modifier_validate.<br />
@@ -28,11 +28,11 @@ class Tools {
      * @return boolean True if valid, false otherwise
      */
     public static function Validate($string, $type = 'all') {
-        
-        if ( $type == 'all' ) {
+
+        if ($type == 'all') {
             return true;
         }
-        
+
         // mapping for PHP filters (http://us2.php.net/manual/en/filter.constants.php)
         $filters = array(
             'url' => FILTER_VALIDATE_URL,

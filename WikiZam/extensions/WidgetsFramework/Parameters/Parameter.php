@@ -6,9 +6,8 @@ abstract class Parameter {
 
     protected $name;
     protected $value;
-    protected $default_value; 
+    protected $default_value;
     protected $required;
-
 
     /**
      * Default behavior:
@@ -29,7 +28,6 @@ abstract class Parameter {
         $this->value = null;
         $this->default_value = '';
         $this->required = false;
-
     }
 
     /**
@@ -47,7 +45,7 @@ abstract class Parameter {
     public function hasBeenSet() {
         return !is_null($this->value);
     }
-    
+
     /**
      * Internally called to store a parsed and validated value.
      * @param mixed $value The type of this argument depends on the final class extending Parameter.
@@ -56,7 +54,7 @@ abstract class Parameter {
     protected function setValue($value) {
         $this->value = $value;
     }
-    
+
     /**
      * Returns the set value.
      * If it hasn't been set, returns the default value. 
@@ -80,7 +78,7 @@ abstract class Parameter {
     public function getDefaultValue() {
         return $this->default_value;
     }
-    
+
     /**
      * Set this parameter as required.
      * When a parameter is set as required, if it is not valuated during argument parsing,
@@ -88,14 +86,14 @@ abstract class Parameter {
      * @param boolean $required If not specified, considered as true
      */
     public function setRequired($required = true) {
-        
+
         if (!is_bool($required)) {
-            throw new \MWException('Method setRequired() of parameter '.$this->getName().' need a boolean argument.');
+            throw new \MWException('Method setRequired() of parameter ' . $this->getName() . ' need a boolean argument.');
         }
-        
+
         $this->required = $required;
     }
-    
+
     /**
      * Is this parameter required ?
      * @return boolean
@@ -112,43 +110,39 @@ abstract class Parameter {
      * Else returns false
      */
     protected function identifyByName($argument) {
-        
+
         $name = $this->getName();
         $name_length = strlen($name);
-        
-        if ( strlen($argument) < $name_length ) {
+
+        if (strlen($argument) < $name_length) {
             return false; // too short, name cannot be found
         }
-        
+
         // comparison is case insensitive
-        if ( 0 != substr_compare(
-                $argument, $name, 
-                0, $name_length,
-                true) ) { 
-            
+        if (0 != substr_compare(
+                        $argument, $name, 0, $name_length, true)) {
+
             return false; // name not found
         }
-        
-        // else: name has been found :)
 
+        // else: name has been found :)
         // strip the name, and any space just after
         $argument_without_name = ltrim(substr($argument, $name_length));
         if (strlen($argument_without_name) == 0) {
             return true; // no value, juste the name of this parameter
         }
-        
+
         // the next char must be '=', and maybe some spaces after
         if ($argument_without_name[0] != '=') {
             // this is not the name of this parameter
             return false;
         }
-        
+
         // get the value by removing '=' and any spaces just after
         $value = ltrim(substr($argument_without_name, 1));
         return $value;
-
     }
-    
+
     /**
      * Parse the value from wikitext string.
      * If the value cannot be parsed (contains bad caracters, is too long, ...), a UserError exception
@@ -160,8 +154,8 @@ abstract class Parameter {
      * @return mixed $value The type depends on the final class extending Parameter.
      * @throws UserError if $value cannot be parsed
      */
-    abstract protected function parse($value) ;
-    
+    abstract protected function parse($value);
+
     /**
      * Ensure the given value is acceptable. (minimum, maximum, ...)
      * If the value is not acceptable, a UserError exception is thrown with Tools::throwUserError().
@@ -172,8 +166,8 @@ abstract class Parameter {
      * In most cases, is should be a string.
      * @throws UserError if $value cannot be validated
      */
-    abstract protected function validate($value) ;
-       
+    abstract protected function validate($value);
+
     /**
      * Used when parsing wikitext.
      * Try to set the value if $argument is a named value for this parameter.
@@ -184,27 +178,25 @@ abstract class Parameter {
      * be parsed or validated.
      */
     public function trySetByName($argument) {
- 
+
         if ($this->hasBeenSet()) {
             return false; // cannot read a value anymore
         }
-        
+
         $named_value = $this->identifyByName($argument);
-        if ( $named_value === false ) {
+        if ($named_value === false) {
             return false; // $argument is not a named value for this parameter
         }
-        
+
         // $argument is a named value for this parameter, try to parse and validate
-        
+
         $parsed = $this->parse($named_value); // can throw UserError Exception      
         $validated = $this->validate($parsed); // can throw UserError Exception
-        
         // value is ok :)
         $this->setValue($validated);
         return true;
-        
     }
-    
+
     /**
      * Used when parsing wikitext.
      * Try to set the value.
@@ -213,28 +205,25 @@ abstract class Parameter {
      * @throws UserError If the parameter has already read a value, or if $argument cannot be 
      * parsed and validated.
      */
-    public function trySet($argument ) {
- 
+    public function trySet($argument) {
+
         if ($this->hasBeenSet()) {
             // cannot read a value anymore
-            Tools::throwUserError(wfMessage('wfmk-already-assigned',
-                    $this->getName(), $this->getOutput(), $argument)); 
+            Tools::throwUserError(wfMessage('wfmk-already-assigned', $this->getName(), $this->getOutput(), $argument));
         }
-        
+
         if (strlen($argument) == 0) {
             return false; // nothing to read
         }
-        
+
         // $argument should be the value, try to parse and validate
         $parsed = $this->parse($argument); // can throw UserError Exception
         $validated = $this->validate($parsed); // can throw UserError Exception
-        
         // value is ok :)
         $this->setValue($validated);
         return true;
-        
     }
-    
+
     /**
      * Store the default value. 
      * @param string|mixed $default_value As string (safer), will be parsed 
@@ -244,26 +233,24 @@ abstract class Parameter {
      * @throws \MWException if $default_value cannot be parsed or validated
      */
     public function setDefaultValue($default_value, $do_validate = true) {
-        
+
         if ($do_validate) {
-            
+
             try {
-                
+
                 if (is_string($default_value)) {
                     $default_value = $this->parse($default_value); // can throw UserError Exception
                 }
-                
+
                 $default_value = $this->validate($default_value); // can throw UserError Exception
-                
             } catch (UserError $e) {
                 throw new \MWException($e->getMessage(), $e->getCode(), $e->getPrevious());
             }
         }
 
         $this->default_value = $default_value;
-        
     }
-    
+
     /**
      * Check the parameter requirements.
      * @return void
@@ -271,16 +258,15 @@ abstract class Parameter {
      */
     public function validateAfterSet() {
         if ($this->isRequired() && !$this->hasBeenSet()) {
-            Tools::throwUserError( wfMessage('wfmk-req-parameter', $this->getName()) );
+            Tools::throwUserError(wfMessage('wfmk-req-parameter', $this->getName()));
         }
     }
-    
+
     /**
      * Returns the string that represents the value of this parameter.
      * This method is used to output a parameter in widgets getOuput() method.
      * @return string The string representation of this parameter value. 
      */
-    abstract public function getOutput() ;
-    
+    abstract public function getOutput();
 }
 

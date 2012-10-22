@@ -43,8 +43,8 @@ class Audio extends ParserFunction {
 
     protected function getOutput() {
         return '<audio
-                    class="'.$this->getCSSClasses().'"
-                    src="'.$this->url->getOutput().'"
+                    class="' . $this->getCSSClasses() . '"
+                    src="' . $this->url->getOutput() . '"
                     controls
                     preload >
                 </audio>';

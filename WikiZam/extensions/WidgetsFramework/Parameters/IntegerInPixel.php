@@ -1,10 +1,9 @@
 <?php
+
 namespace WidgetsFramework;
 
-
 class IntegerInPixel extends Integer {
-    
-    
+
     /**
      * Default behavior:
      * <ul>
@@ -17,11 +16,11 @@ class IntegerInPixel extends Integer {
      * @param string $name The parameter name, case insensitive
      * @throws \MWException if $name not specified
      */
-    public function __construct($name) {     
-        parent::__construct($name);  
+    public function __construct($name) {
+        parent::__construct($name);
         $this->setMin(0);
     }
-    
+
     /**
      * Convert from string to signed integer.
      * The string can contains the "px" unit.
@@ -34,22 +33,19 @@ class IntegerInPixel extends Integer {
      * @throws UserError
      */
     public function parse($value) {
-        
+
         // remove the px unit
-        if ( is_string($value) ) {
-            $value = str_ireplace(array('px', 'p'),'',$value);
+        if (is_string($value)) {
+            $value = str_ireplace(array('px', 'p'), '', $value);
         }
-                
+
         try {
-            $parsed = parent::parse( $value);     
-            
-        } catch (UserError $e) {        
-            Tools::throwUserError(wfMessage('wfmk-validate',
-                    $this->getName(), $value, wfMessage('wfmk-req-integer-value')->text() ) ); 
+            $parsed = parent::parse($value);
+        } catch (UserError $e) {
+            Tools::throwUserError(wfMessage('wfmk-validate', $this->getName(), $value, wfMessage('wfmk-req-integer-value')->text()));
         }
-        
+
         return $parsed;
-        
     }
-    
+
 }

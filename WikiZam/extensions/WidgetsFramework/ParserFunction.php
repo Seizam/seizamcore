@@ -212,30 +212,30 @@ abstract class ParserFunction implements Widget {
      * If this parameter is specified, its value will be used instead.
      * @return string|array Prepared string $output for parser, or unchanged array $output.
      */
-    protected function getOutputForParser( $output = null ) {
+    protected function getOutputForParser($output = null) {
 
-        if ( is_null($output) ) {
+        if (is_null($output)) {
             $output = $this->getOutput();
         }
 
-        if ( is_null($output) ) {
+        if (is_null($output)) {
             // avoid mess
             return '';
         }
 
-        if ( is_array($output) ) {
+        if (is_array($output)) {
             // this array contains MediaWiki parser flags
             return $output;
         }
 
         // else
 
-        if ( $this->is_html ) {
+        if ($this->is_html) {
             // do nowiki strip
             $output = $this->insertNoWikiStripItem($output);
         }
 
-        if ( $this->is_block ) {
+        if ($this->is_block) {
             $output = '<div class="wfmkwidget">' . $output . "</div>";
         }
 

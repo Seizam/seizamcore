@@ -3,11 +3,10 @@
 namespace WidgetsFramework;
 
 class Option extends Boolean {
-    
+
     protected $output_on_true;
     protected $output_on_false;
-    
-    
+
     /**
      * Default behavior:
      * <ul>
@@ -23,12 +22,11 @@ class Option extends Boolean {
     public function __construct($name) {
 
         parent::__construct($name);
-        
+
         $this->output_on_true = $name;
         $this->output_on_false = '';
-        
     }
-    
+
     /**
      * 
      * @param string $value The output string when value is true.
@@ -36,11 +34,11 @@ class Option extends Boolean {
     public function setOutputOnTrue($output) {
         $this->output_on_true = $output;
     }
-    
+
     public function getOutputOnTrue() {
         return $this->output_on_true;
     }
-    
+
     /**
      * 
      * @param string $value The output string when value is false. 
@@ -48,7 +46,7 @@ class Option extends Boolean {
     public function setOutputOnFalse($output) {
         $this->output_on_false = $output;
     }
-    
+
     public function getOutputOnFalse() {
         return $this->output_on_false;
     }
@@ -70,31 +68,28 @@ class Option extends Boolean {
             // parameter declared without value
             return true;
         }
-        
+
         // value is a string
         $value = strtolower($value); // case insensitive normalisation, and remove spaces before and after
 
         if ($value == 'true') {
             return true;
-            
         } else {
-            Tools::throwUserError(wfMessage('wfmk-validate',
-                    $this->getName(), $value, wfMessage('wfmk-req-boolean-value') ) );
+            Tools::throwUserError(wfMessage('wfmk-validate', $this->getName(), $value, wfMessage('wfmk-req-boolean-value')));
         }
     }
-    
+
     /**
      * 
      * @return string Returns output according the value. See setOutputOnTrue() and setOutputOnFalse();
      */
     public function getOutput() {
-        
+
         if ($this->getValue()) {
             return $this->getOutputOnTrue();
-            
         } else {
             return $this->getOutputOnFalse();
         }
     }
-    
+
 }
