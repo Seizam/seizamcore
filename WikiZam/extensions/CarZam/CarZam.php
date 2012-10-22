@@ -38,14 +38,14 @@ $wgExtensionMessagesFiles['CarZam'] = $dir . 'CarZam.i18n.php';
 $carZamResourceTemplate = array(
     'localBasePath' => $dir . 'modules',
     'remoteExtPath' => 'ParserExtensions/CarZam/modules',
-    'group' => 'ext.carzam',
-    'position' => 'top'
+    'group' => 'ext.carzam'
 );
 
 $wgResourceModules += array(
     'ext.carzam.carrousel' => $carZamResourceTemplate + array(
             'scripts' => 'ext.carzam.carrousel.js',
             'styles' => 'ext.carzam.carrousel.css',
+            'position' => 'bottom'
         ));
 
 
