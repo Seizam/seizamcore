@@ -43,7 +43,7 @@ $wgExtensionCredits['validextensionclass'][] = array(
     'author' => array('Yann Missler', 'Seizam'),
     'url' => 'http://www.seizam.com',
     'descriptionmsg' => 'po-desc',
-    'version' => '0.1.0',
+    'version' => '0.1',
 );
 
 

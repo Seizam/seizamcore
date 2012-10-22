@@ -85,24 +85,24 @@ class SpecialSubscriptions extends SpecialPage {
             }
         }
 
-        switch ($this->action) {
+        switch (strtolower($this->action)) {
 
-            case self::ACTION_USE_INVITATION :
+            case strtolower(self::ACTION_USE_INVITATION) :
                 $this->displayInvitation();
                 break;
-            case self::ACTION_NEW :
+            case strtolower(self::ACTION_NEW) :
                 $this->displayNew();
                 break;
-            case self::ACTION_CHANGE:
+            case strtolower(self::ACTION_CHANGE):
                 $this->displayChange();
                 break;
-            case self::ACTION_RENEW:
+            case strtolower(self::ACTION_RENEW):
                 $this->displayRenew();
                 break;
-            case self::ACTION_CANCEL:
+            case strtolower(self::ACTION_CANCEL):
                 $this->processCancel();
                 break;
-            case self::ACTION_LIST:
+            case strtolower(self::ACTION_LIST):
             default:
                 $this->displayList();
                 break;

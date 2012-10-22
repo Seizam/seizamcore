@@ -16,6 +16,7 @@ $wgExtensionCredits['parserhook'][] = array(
     'name' => 'CarZam',
     'author' => array('[http://www.seizam.com/User:Bedhed Clément Dietschy]'),
     'url' => 'http://www.seizam.com',
+    'version' => '1.0',
     'descriptionmsg' => 'carzam-desc',
 );
 
@@ -38,13 +39,14 @@ $wgExtensionMessagesFiles['CarZam'] = $dir . 'CarZam.i18n.php';
 $carZamResourceTemplate = array(
     'localBasePath' => $dir . 'modules',
     'remoteExtPath' => 'ParserExtensions/CarZam/modules',
-    'group' => 'ext.carzam',
+    'group' => 'ext.carzam'
 );
 
 $wgResourceModules += array(
     'ext.carzam.carrousel' => $carZamResourceTemplate + array(
             'scripts' => 'ext.carzam.carrousel.js',
             'styles' => 'ext.carzam.carrousel.css',
+            'position' => 'bottom'
         ));
 
 

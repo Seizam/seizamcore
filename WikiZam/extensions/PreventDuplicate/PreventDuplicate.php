@@ -16,7 +16,7 @@ $wgExtensionCredits['other'][] = array(
    'author' => array('Yann Missler', 'Seizam'), 
    'url' => 'http://www.seizam.com', 
    'descriptionmsg' => 'pvdp-desc',
-   'version'  => '0.1.0',
+   'version'  => '1.0',
    );
 
 $_dir = dirname( __FILE__ ).'/';

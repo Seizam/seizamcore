@@ -20,6 +20,8 @@ $messages['en'] = array(
     'sz-myseizam' => 'My Seizam',
     'welcome' => 'Welcome',
     
+    'sz-meta-desc' => 'WikiPlaces for Art & Freedom. Seizam liberates the artists thanks to Wikipedia’s philosophy and technology.',
+    
     'cur-euro' => '€',
     'contactlinks' => 'Project:Contact',
     'toolong' => '$1 characters maximum.',
@@ -32,10 +34,10 @@ $messages['en'] = array(
     'sz-privacypolicy' => '[[Project:Privacy_policy|Privacy Policy]]',
     
     'sz-generalinfo' => 'General Information',
-    'sz-discoverseizam' => '[[Project:Welcome|Discover Seizam]]',
-    'sz-browseseizam' => '[[Special:AllPages|Browse Seizam]]',
-    'sz-joinseizam' => '[[Special:UserLogin|Join Seizam]]',
-    'sz-help' => '[[Help:Contents|Help]]',
+    'sz-about' => '[[Project:About|About Seizam]]',
+    'sz-freedoms' => '[[Project:Freedoms|Freedoms at Seizam]]',
+    'sz-browse' => '[[Special:AllPages|Browse Seizam]]',
+    'sz-help' => '[[Help:Contents|Help and Documentation]]',
     'sz-faq' => '[[Help:FAQ|Frequently Asked Questions]]',
     
     'sz-communicate' => 'Communicate with us',
@@ -141,21 +143,21 @@ $messages['en'] = array(
     /* Triptic */
     'sz-mp-triptic' => 'Discover Seizam',
     
-    'sz-triptic0' => 'Visit',
-    'sz-triptic0-href' => '{{canonicalurl:Project:Tour}}',
-    'sz-triptic0-src' => '{{STYLEPATH}}/skinzam/content/tiptoe.jpg',
-    'sz-triptic0-caption' => 'This quick guided tour will get you all the way through Seizam. From the philosophy to the technology, you will not miss anything.',
+    'sz-triptic0' => 'Watch',
+    'sz-triptic0-href' => '{{canonicalurl:Project:Build a WikiPlace}}',
+    'sz-triptic0-src' => '{{STYLEPATH}}/skinzam/content/demo.jpg',
+    'sz-triptic0-caption' => 'This 5 minutes demonstration will show you how to publish your first WikiPlace. From WikiText to widgets, walk through the basics of Seizam.',
     
-    'sz-triptic1' => 'Follow',
-    'sz-triptic1-href' => 'http://www.davidcanwin.com',
-    'sz-triptic1-src' => '{{STYLEPATH}}/skinzam/content/bambi.jpg',
-    'sz-triptic1-caption' => 'Art, freedom and sling-shooting. <b>DavidCanWin.com</b> is the development blog and thought process of Seizam.',
-    
-    'sz-triptic2' => 'Learn',
-    'sz-triptic2-href' => '{{canonicalurl:Help:Contents}}',
-    'sz-triptic2-src' => '{{STYLEPATH}}/skinzam/content/shelf.jpg',
-    'sz-triptic2-caption' => 'Frequently Asked Questions, tutorials, examples, documentation... Everything you need to learn how to build great wikiplaces is here.',
+    'sz-triptic1' => 'Learn',
+    'sz-triptic1-href' => '{{canonicalurl:Help:Contents}}',
+    'sz-triptic1-src' => '{{STYLEPATH}}/skinzam/content/shelf.jpg',
+    'sz-triptic1-caption' => 'Frequently Asked Questions, tutorials, examples, documentation... Everything you need to learn how to build great WikiPlaces is here.',
 
+    'sz-triptic2' => 'Follow',
+    'sz-triptic2-href' => 'http://www.davidcanwin.com',
+    'sz-triptic2-src' => '{{STYLEPATH}}/skinzam/content/bambi.jpg',
+    'sz-triptic2-caption' => 'Art, freedom and sling-shooting. <b>DavidCanWin.com</b> is the development blog and thought process of Seizam.',
+    
     /* Licensing */
     'license-no' => 'undefined license',
     'license-text' => 'This page and its content are licensed under a $1.',
@@ -209,6 +211,8 @@ $messages['fr'] = array(
     'sz-myseizam' => 'Mon Seizam',
     'welcome' => 'Bienvenue',
     
+    'sz-meta-desc' => 'WikiPlaces d\'Art et de Liberté. Seizam libère les artistes grâce à la philosophie et la technologie de Wikipedia.',
+    
     'mycontris' => 'Mes contributions',
     'mypreferences' => 'Mes préférences',
     'mywatchlist' => 'Ma liste de suivi',
@@ -226,11 +230,11 @@ $messages['fr'] = array(
     'sz-privacypolicy' => '[[Project:Politique_de_confidentialité|Politique de confidentialité]]',
     
     'sz-generalinfo' => 'Informations générales',
-    'sz-discoverseizam' => '[[Project:Bienvenue|Découvrez Seizam]]',
-    'sz-browseseizam' => '[[Special:AllPages|Parcourez Seizam]]',
-    'sz-joinseizam' => '[[Special:UserLogin|Rejoignez Seizam]]',
-    'sz-help' => '[[Help:Contents/fr|Aide]]',
-    'sz-faq' => '[[Help:FAQ/fr|Questions fréquentes]]',
+    'sz-about' => '[[Project:À propos|À propos de Seizam]]',
+    'sz-freedoms' => '[[Project:Libertés|Les libertés Seizam]]',
+    'sz-browse' => '[[Special:AllPages|Parcourez Seizam]]',
+    'sz-help' => '[[Help:Contenus|Aide et documentation]]',
+    'sz-faq' => '[[Help:Questions fréquentes|Questions fréquentes]]',
     
     'sz-communicate' => 'Communiquer avec nous',
     'sz-reportabuse' => '[[Project:Contact/fr|Signaler un abus]]',
@@ -330,21 +334,21 @@ $messages['fr'] = array(
     /* Triptic */
     'sz-mp-triptic' => 'Découvrez Seizam',
     
-    'sz-triptic0' => 'Visitez',
-    'sz-triptic0-href' => '{{canonicalurl:Project:Tour/fr}}',
-    'sz-triptic0-src' => '{{STYLEPATH}}/skinzam/content/tiptoe.jpg',
-    'sz-triptic0-caption' => 'Cette visite rapide vous guidera à travers tout Seizam. De la philosophie à la technologie, vous ne manquerez rien.',
+    'sz-triptic0' => 'Regardez',
+    'sz-triptic0-href' => '{{canonicalurl:Project:Construisez une WikiPlace}}',
+    'sz-triptic0-src' => '{{STYLEPATH}}/skinzam/content/demo.jpg',
+    'sz-triptic0-caption' => 'Cette démonstration de 5 minutes vous montre comment publier votre première WikiPlace. Du WikiTexte aux widgets, soyez guidé à travers les basiques de Seizam.',
     
-    'sz-triptic1' => 'Suivez',
-    'sz-triptic1-href' => 'http://www.davidcanwin.com',
-    'sz-triptic1-src' => '{{STYLEPATH}}/skinzam/content/bambi.jpg',
-    'sz-triptic1-caption' => '<b>DavidCanWin.com</b>, c\'est notre blog de developpement mais aussi un lieu d\'échange et de réflexion à propos d\'art et de liberté.',
-    
-    'sz-triptic2' => 'Apprenez',
-    'sz-triptic2-href' => '{{canonicalurl:Help:Contents/fr}}',
-    'sz-triptic2-src' => '{{STYLEPATH}}/skinzam/content/shelf.jpg',
-    'sz-triptic2-caption' => 'Tutoriaux, exemples, Foire Aux Questions, documentation... Tout ce dont vous avez besoin pour construire vos Wikiplaces se trouve là.',
+    'sz-triptic1' => 'Apprenez',
+    'sz-triptic1-href' => '{{canonicalurl:Help:Contents/fr}}',
+    'sz-triptic1-src' => '{{STYLEPATH}}/skinzam/content/shelf.jpg',
+    'sz-triptic1-caption' => 'Tutoriaux, exemples, Foire Aux Questions, documentation... Tout ce dont vous avez besoin pour construire vos WikiPlaces se trouve là.',
 
+    'sz-triptic2' => 'Suivez',
+    'sz-triptic2-href' => 'http://www.davidcanwin.com',
+    'sz-triptic2-src' => '{{STYLEPATH}}/skinzam/content/bambi.jpg',
+    'sz-triptic2-caption' => '<b>DavidCanWin.com</b>, c\'est notre blog de developpement mais aussi un lieu d\'échange et de réflexion à propos d\'art et de liberté.',
+    
     
     /* Licensing */
     'undefined-license' => 'licence indéfinie',

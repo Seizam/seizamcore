@@ -38,9 +38,11 @@ class SkinSkinzam extends SkinTemplate {
         // this is better than including this in a CSS fille since it doesn't
         // wait for the CSS file to load before fetching the HTC file.
         $min = $wgRequest->getFuzzyBool('debug') ? '' : '.min';
-        $out->addHeadItem('csshover', '<!--[if lt IE 7]><style type="text/css">body{behavior:url("' .
+        $description = wfMessage('sz-meta-desc');
+        $out->addHeadItem('description', "\n<meta name=\"description\" content=\"$description\">");
+        $out->addHeadItem('csshover', "\n<!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"" .
                 htmlspecialchars($wgLocalStylePath) .
-                "/{$this->stylename}/csshover{$min}.htc\")}</style><![endif]-->"
+                "/{$this->stylename}/csshover{$min}.htc\")}</style><![endif]-->\n"
         );
     }
 
@@ -525,9 +527,9 @@ class SkinzamTemplate extends BaseTemplate {
         <div class="section">
             <p><?php echo wfMessage('sz-generalinfo')->text() ?></p>
             <ul>
-                <li><?php echo wfMessage('sz-discoverseizam')->parse() ?></li>
-                <li><?php echo wfMessage('sz-browseseizam')->parse() ?></li>
-                <li><?php echo wfMessage('sz-joinseizam')->parse() ?></li>
+                <li><?php echo wfMessage('sz-about')->parse() ?></li>
+                <li><?php echo wfMessage('sz-freedoms')->parse() ?></li>
+                <li><?php echo wfMessage('sz-browse')->parse() ?></li>
                 <li><?php echo wfMessage('sz-help')->parse() ?></li>
                 <li><?php echo wfMessage('sz-faq')->parse() ?></li>
             </ul>
@@ -549,8 +551,8 @@ class SkinzamTemplate extends BaseTemplate {
             <p class="sread"><?php echo wfMessage('sz-seizamonsocialnetworks')->text() ?></p>
             <ul class="socials">
                 <li class="tumblr"><a href="http://www.davidcanwin.com">Tumblr</a></li>
-                <li class="twitter"><a href="http://www.twitter.com/davidcanwin">Twitter</a></li>
-                <li class="fcbk"><a href="http://www.facebook.com/davidcanwin">Facebook</a></li>
+                <li class="twitter"><a href="http://www.twitter.com/seizam">Twitter</a></li>
+                <li class="fcbk"><a href="http://facebook.seizam.com">Facebook</a></li>
                 <li class="linkedin"><a href="http://www.linkedin.com/company/seizam">LinkedIn</a></li>
             </ul>
         <?php $footericons = $this->getFooterIcons("icononly");

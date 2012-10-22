@@ -968,12 +968,20 @@ div.error, .errorbox, .warningbox, #mw-missingsummary {
     transition: all 0.50s;
 }
 
-a, a span, a small {
+a, a span, a small, a p, a h4 {
     -webkit-transition: color 0.75s;
     -moz-transition: color 0.75s;
     -ms-transition: color 0.75s;
     -o-transition: color 0.75s;
     transition: color 0.75s;
+}
+
+a img {
+    -webkit-transition: border 0.75s;
+    -moz-transition: border 0.75s;
+    -ms-transition: border 0.75s;
+    -o-transition: border 0.75s;
+    transition: border 0.75s;
 }
 
 li, td, tr, table, span, div, input[type="submit"], a.fade {
@@ -1147,7 +1155,7 @@ div.license img {
 
 #header.project h2 a:hover,
 #header.project h2 a:hover span.fade {
-    color: #7c2122;
+    color: #e22c2e;
 }
 
 
@@ -1606,9 +1614,10 @@ a.feedlink:first-child {
     /* @embed */
     background-image: url(images/dot_arrow_up.png);
 }
+
 #absoluteFooter .content li.inactive a {
     /* @embed */
-    color: #dad9d9;
+    color: #4d4e4f;
 }
 
 #absoluteFooter .content #search {
@@ -2736,7 +2745,7 @@ p.ms-wl-empty {
 .block_join > a:hover,
 .block_join > a:focus {
     color: white;
-    background:  #7c2122;
+    background:  #e22c2e;
 }
 
 .block_join > a > span {
@@ -2789,8 +2798,74 @@ p.ms-wl-empty {
     box-shadow: none;
 }
 
+
+}
+
 /* -----------------------------------------------------------------------------
-   ==  MAIN PAGE TRIPTIC
+   ==  SLIDESHOW ON WELCOME PAGE
+   -------------------------------------------------------------------------- */
+
+.mw-special-Welcome .slideshow {
+    margin-bottom: 0;
+}
+
+.mw-special-Welcome .slideshow {
+    width: 518px;
+    height: 244px;
+    padding-top: 7px;
+}
+
+.slideshow div.wrapper {
+    padding: 0 10px;
+    width: 499px;
+    height: 190px;
+}
+
+.mw-special-Welcome .slideshow a { color: #4D4E4F; }
+
+.mw-special-Welcome .slideshow div.caption {
+    font-size: 14px;
+    text-align: justify;
+    padding: 10px 10px 0;
+    margin: 0;
+}
+
+.mw-special-Welcome .slideshow h4 {
+    display: inline;
+    font-size: 14px;
+    letter-spacing: 1px;
+    word-spacing: 3px;
+    font-style: normal;
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+    color: #4D4E4F;
+}
+
+.mw-special-Welcome .slideshow a:hover h4 {
+    color: #e22c2e;
+}
+
+.mw-special-Welcome .slideshow p {
+    display: inline;
+    letter-spacing: 1px;
+    word-spacing: 3px;
+    line-height: 1em;
+    margin: 0;
+    padding: 0;
+}
+
+.mw-special-Welcome .slideshow a:hover p {
+    color: #e22c2e;
+}
+
+.mw-special-Welcome .slideshow a:hover img {
+    border: 1px solid #e22c2e;
+}
+
+
+/* -----------------------------------------------------------------------------
+   ==  MAIN PAGE TRIPTIC (Special:Welcome)
    -------------------------------------------------------------------------- */
 
 .inside .third_parts {
@@ -2806,32 +2881,35 @@ p.ms-wl-empty {
     font-size: 14px;
     text-indent: 0;
 }
+
+.inside .third_parts a:hover h4 {
+    color: #e22c2e;
+}
+
 .inside .third_parts + .third_parts {
     margin-left: 23px;
 }
 .inside .third_parts figure {
     position: relative;
 }
+
 .inside .third_parts img {
     border: 1px solid #d8d7d7;
 }
-.inside .third_parts .watermark {
-    position: absolute;
-    top:1px; left:1px;
-    width: 241px; height: 133px;
-    /* @embed */
-    background-image: url(images/wm_plus.png);
-    background-color: #000;
-    background-position: 90% 18%;
-    background-repeat: no-repeat;
 
+.inside .third_parts a:hover img {
+    border: 1px solid #e22c2e;
 }
-.third_parts a {
+.inside .third_parts a {
     color: #4D4E4F;
     font-size: 12px;
     line-height: 1.5em;
     text-align: justify;
     text-decoration:none;
+}
+
+.inside .third_parts a:hover {
+    color: #e22c2e;
 }
 
 /* -----------------------------------------------------------------------------
