@@ -404,7 +404,7 @@ figure { margin: 0; }
    -------------------------------------------------------------------------- */
 
 /* Removing Content we do not want */
-#siteSub, #jump-to-nav, div#content .printfooter, #p-search h5 {
+#siteSub, #jump-to-nav, div#content .printfooter, #p-search h5, #hidden_footer {
     display: none;
 }
 
@@ -1514,7 +1514,6 @@ a.feedlink:first-child {
     background-repeat: no-repeat;
     background-position: center center;
 }
-
 
 /* -----------------------------------------------------------------------------
    ==  FOOTERS (absolute + regular)
