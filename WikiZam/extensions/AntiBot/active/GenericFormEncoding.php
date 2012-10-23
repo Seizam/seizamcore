@@ -18,8 +18,11 @@ class AntiBot_GenericFormEncoding {
 		if ( isset( $headers['Content-Type'] )
 			&& $headers['Content-Type'] == 'application/x-www-form-urlencoded' )
 		{
-			if ( AntiBot::trigger( __CLASS__ ) == 'fail' ) {
-				return false;
+			global $wgUser;
+			if ( !$wgUser->isAllowed( 'bot' ) ) {
+				if ( AntiBot::trigger( __CLASS__ ) == 'fail' ) {
+					return false;
+				}
 			}
 		}
 		return true;
