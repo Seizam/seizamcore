@@ -118,7 +118,7 @@ class SkinzamTemplate extends BaseTemplate {
         ?>
         <div id="mw-js-message" style="display:none;"<?php $this->html('userlangattributes') ?>></div>
         <!-- tagline -->
-        <div id="siteSub"><?php $this->msg('tagline') ?><img id="logo" height="200px" width="200px" alt="Seizam's Logo" src="<?php echo $this->data['logopath'] ?>"></div>
+        <div id="siteSub"><?php $this->msg('tagline') ?><img id="logo" height="200px" width="200px" alt="Seizam's Logo" src="<?php echo wfExpandUrl($this->data['logopath']) ?>"></div>
         <!-- /tagline -->
         <?php if ($this->data['showjumplinks']): ?>
             <!-- jumpto -->
