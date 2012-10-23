@@ -29,7 +29,7 @@ $wgExtensionCredits['parserhook'][] = array (
 	"name" => "OpenGraphMeta",
 	"author" => "[http://mediawiki.org/wiki/User:Dantman Daniel Friesen]",
 	'descriptionmsg' => 'opengraphmeta-desc',
-	'url' => 'http://www.mediawiki.org/wiki/Extension:OpenGraphMeta',
+	'url' => 'https://www.mediawiki.org/wiki/Extension:OpenGraphMeta',
 );
 
 $dir = dirname( __FILE__ );
@@ -37,8 +37,7 @@ $wgExtensionMessagesFiles['OpenGraphMetaMagic'] = $dir . '/OpenGraphMeta.magic.p
 $wgExtensionMessagesFiles['OpenGraphMeta'] = $dir . '/OpenGraphMeta.i18n.php';
 
 /*
- * PATCH1 We remove the {{#setmainimage:...}} feature (broken)
- * 
+ * PATCH1, this behavior is broken
  * $wgHooks['ParserFirstCallInit'][] = 'efOpenGraphMetaParserInit';
  */
 function efOpenGraphMetaParserInit( $parser ) {
@@ -53,7 +52,7 @@ function efSetMainImagePF( $parser, $mainimage ) {
 	$file = Title::newFromText( $mainimage, NS_FILE );
 	$parserOutput->addOutputHook( 'setmainimage', array( 'dbkey' => $file->getDBkey() ) );
 	$parserOutput->eHasMainImageAlready = true;
-	
+
 	return $mainimage;
 }
 
@@ -67,40 +66,56 @@ function efOpenGraphMetaPageHook( &$out, &$sk ) {
 	global $wgLogo, $wgSitename, $wgXhtmlNamespaces, $egFacebookAppId, $egFacebookAdmins;
 	$wgXhtmlNamespaces["og"] = "http://opengraphprotocol.org/schema/";
 	$title = $out->getTitle();
-	$isMainpage = $title->equals(Title::newMainPage());
-	
-	$meta = array();
-	
-	$meta["og:type"] = $isMainpage ? "website" : "article";
-	$meta["og:site_name"] = $wgSitename;
-	
-	// Try to chose the most appropriate title for showing in news feeds.
-	if ((defined('NS_BLOG_ARTICLE') && $title->getNamespace() == NS_BLOG_ARTICLE) || 
-		(defined('NS_BLOG_ARTICLE_TALK') && $title->getNamespace() == NS_BLOG_ARTICLE_TALK)){
-		$meta["og:title"] = $title->getSubpageText();
-	} else {
-		$meta["og:title"] = $title->getText();
-	}
+	$isMainpage = $title->isMainPage();
 
-	if ( isset($out->mMainImage) && ($out->mMainImage !== false) ) {
-		$meta["og:image"] = wfExpandUrl($out->mMainImage->createThumb(100*3, 100));
-	} else { // PATCH /!\ was elseif ($isMainpage)
-		$meta["og:image"] = $wgLogo;
-	}
-	if ( isset($out->mDescription) ) // set by Description2 extension, install it if you want proper og:description support
-		$meta["og:description"] = $out->mDescription;
-	$meta["og:url"] = $title->getFullURL();
-	if ( $egFacebookAppId )
-		$meta["fb:app_id"] = $egFacebookAppId;
-	if ( $egFacebookAdmins )
-		$meta["fb:admins"] = $egFacebookAdmins;
-	
-	foreach( $meta as $property => $value ) {
-		if ( $value ){
-			$out->addMeta("property:$property", $value );
+	$meta = array();
+
+	if ( $isMainpage ) {
+		$meta["og:type"] = "website";
+		$meta["og:title"] = $wgSitename;
+	} else {
+		$meta["og:type"] = "article";
+		$meta["og:site_name"] = $wgSitename;
+		// Try to chose the most appropriate title for showing in news feeds.
+		if ( ( defined('NS_BLOG_ARTICLE') && $title->getNamespace() == NS_BLOG_ARTICLE ) ||
+			( defined('NS_BLOG_ARTICLE_TALK') && $title->getNamespace() == NS_BLOG_ARTICLE_TALK ) ){
+			$meta["og:title"] = $title->getSubpageText();
+		} else {
+			$meta["og:title"] = $title->getText();
 		}
 	}
-	
+
+	if ( isset( $out->mMainImage ) && ( $out->mMainImage !== false ) ) {
+		if( is_object( $out->mMainImage ) ){
+			$meta["og:image"] = wfExpandUrl($out->mMainImage->createThumb(100*3, 100));
+		} else {
+			// In some edge-cases we won't have defined an object but rather a full URL.
+			$meta["og:image"] = $out->mMainImage;
+		}
+	} elseif ( $isMainpage ) {
+		$meta["og:image"] = wfExpandUrl($wgLogo);
+	}
+	if ( isset($out->mDescription) ) { // set by Description2 extension, install it if you want proper og:description support
+		$meta["og:description"] = $out->mDescription;
+	}
+	$meta["og:url"] = $title->getFullURL();
+	if ( $egFacebookAppId ) {
+		$meta["fb:app_id"] = $egFacebookAppId;
+	}
+	if ( $egFacebookAdmins ) {
+		$meta["fb:admins"] = $egFacebookAdmins;
+	}
+
+	foreach( $meta as $property => $value ) {
+		if ( $value ) {
+			if ( isset( OutputPage::$metaAttrPrefixes ) && isset( OutputPage::$metaAttrPrefixes['property'] ) ) {
+				$out->addMeta( "property:$property", $value );
+			} else {
+				$out->addHeadItem("meta:property:$property", "	".Html::element( 'meta', array( 'property' => $property, 'content' => $value ) )."\n");
+			}
+		}
+	}
+
 	return true;
 }
 
