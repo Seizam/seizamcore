@@ -77,6 +77,27 @@ class SkinzamHooks {
         }
         return true;
     }
+    
+    /**
+     * BeforePageDisplay hook
+     * 
+     * Adds the a default description to the page (uses the Description2 extension)
+     *
+     * @global type $wgLogo
+     * @global type $wgSitename
+     * @global array $wgXhtmlNamespaces
+     * @global type $egFacebookAppId
+     * @global type $egFacebookAdmins
+     * @param type $out
+     * @param type $sk
+     * @return type 
+     */
+    public static function setupDefaultDescription( &$out, &$sk ) {
+	if ( !isset($out->mDescription) ) // set by Description2 extension, install it if you want proper og:description support
+		$out->mDescription = wfMessage('sz-meta-desc')->text();
+	
+	return true;
+}
 
     /**
      * parserClearState hook

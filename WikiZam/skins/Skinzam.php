@@ -38,7 +38,6 @@ class SkinSkinzam extends SkinTemplate {
         // this is better than including this in a CSS fille since it doesn't
         // wait for the CSS file to load before fetching the HTC file.
         $min = $wgRequest->getFuzzyBool('debug') ? '' : '.min';
-        $out->addMeta('description', wfMessage('sz-meta-desc')->text());
         $out->addHeadItem('csshover', "\n<!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"" .
                 htmlspecialchars($wgLocalStylePath) .
                 "/{$this->stylename}/csshover{$min}.htc\")}</style><![endif]-->\n"

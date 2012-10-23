@@ -391,6 +391,14 @@ require_once("$IP/extensions/CarZam/CarZam.php");
 
 # =[WidgetsFramework]=
 require_once( "$IP/extensions/WidgetsFramework/WidgetsFramework.php" );
+
+# =[Description2]=
+require_once( "$IP/extensions/Description2/Description2.php" );
+$wgEnableMetaDescriptionFunctions = true;
+
+# =[OpenGraphMeta]=
+require_once( "$IP/extensions/OpenGraphMeta/OpenGraphMeta.php" );
+
  
 # Allow external images to be displayed as <img>
 $wgAllowExternalImagesFrom = array($wgServer);

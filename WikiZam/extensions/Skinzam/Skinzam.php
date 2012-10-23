@@ -52,6 +52,8 @@ $wgExtensionAliasesFiles['Skinzam'] = $dir . 'Skinzam.alias.php';
 
 // Load JS Resources
 $wgHooks['BeforePageDisplay'][] = 'SkinzamHooks::beforePageDisplay';
+// Setup default meta description with Description2
+$wgHooks['BeforePageDisplay'][] = 'SkinzamHooks::setupDefaultDescription';
 // Remove TOC
 $wgHooks['ParserClearState'][] = 'SkinzamHooks::parserClearState';
 // Cook the skin Template
@@ -59,7 +61,7 @@ $wgHooks['SkinTemplateOutputPageBeforeExec'][] = 'SkinzamHooks::skinTemplateOutp
 // Cook the personal navigation (on top of special pages)
 $wgHooks['PersonalUrls'][] = 'SkinzamHooks::PersonalUrls';
 // Cook the toolbox
-$wgHooks['BaseTemplateToolbox'][] = 'SkinzamHooks::BaseTemplateToolbox'; 
+$wgHooks['BaseTemplateToolbox'][] = 'SkinzamHooks::BaseTemplateToolbox';
 
 
 
