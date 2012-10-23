@@ -1565,6 +1565,11 @@ a.feedlink:first-child {
     display: block;
     width: 107px;
     height: 35px;
+    /* @embed */
+    background-image: url(images/seizam_logo_small.png);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center center;
 }
 
 #absoluteFooter .content ul {
