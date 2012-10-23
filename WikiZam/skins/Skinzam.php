@@ -38,8 +38,7 @@ class SkinSkinzam extends SkinTemplate {
         // this is better than including this in a CSS fille since it doesn't
         // wait for the CSS file to load before fetching the HTC file.
         $min = $wgRequest->getFuzzyBool('debug') ? '' : '.min';
-        $description = wfMessage('sz-meta-desc');
-        $out->addHeadItem('description', "\n<meta name=\"description\" content=\"$description\">");
+        $out->addMeta('description', wfMessage('sz-meta-desc')->text());
         $out->addHeadItem('csshover', "\n<!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"" .
                 htmlspecialchars($wgLocalStylePath) .
                 "/{$this->stylename}/csshover{$min}.htc\")}</style><![endif]-->\n"
@@ -275,7 +274,7 @@ class SkinzamTemplate extends BaseTemplate {
             <!-- header -->
             <div id="header" class="block block_full project noprint">
                 <div class="hgroup inside">
-                    <h1><a id="logo_project" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"></a></h1>
+                    <h1><a id="logo_project" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"><img width="289" height="97" alt="Seizam's logo" src="<?php echo $this->data['stylepath'].'/skinzam/images/seizam.logo.png' ?>"></a></h1>
                     <h2><?php echo wfMessage('sz-tagline')->parse() ?></h2>
                 </div>
             </div>
@@ -344,7 +343,7 @@ class SkinzamTemplate extends BaseTemplate {
             <!-- header -->
             <div id="header" class="block block_full special noprint">
                 <div class="inside">
-                    <h1><a id="logo_special" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"></a></h1>
+                    <h1><a id="logo_special" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"><img width="140" height="48" alt="Seizam's logo" src="<?php echo $this->data['stylepath'].'/skinzam/images/seizam.logo_mini_h.png' ?>"></a></h1>
 
                     <div id="nav">
                         <ul>
@@ -377,7 +376,7 @@ class SkinzamTemplate extends BaseTemplate {
     }
 
     /**
-     * Render the NS-4 (Project:) #content content
+     * Render the Special:Welcome (mainpage) #content content
      */
     private function renderContentMainpage() {
         ?>
@@ -387,7 +386,7 @@ class SkinzamTemplate extends BaseTemplate {
             <!-- header -->
             <div id="header" class="block block_full project">
                 <div class="hgroup inside">
-                    <h1><a id="logo_project" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"></a></h1>
+                    <h1><a id="logo_project" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"><img width="289" height="97" alt="Seizam's logo" src="<?php echo $this->data['stylepath'].'/skinzam/images/seizam.logo.png' ?>"></a></h1>
                     <h2><?php echo wfMessage('sz-tagline')->parse() ?></h2>
                 </div>
             </div>
