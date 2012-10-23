@@ -106,10 +106,10 @@ $wgAdvertisedFeedTypes = array('rss', 'atom');
 $wgStylePath = "$wgScriptPath/skins";
 
 # The relative URL path to the logo.
-$wgLogo = "$wgStylePath/skinzam/images/seizam.logo.png";
+$wgLogo = "$wgStylePath/skinzam/images/seizam_logo_small.png";
 
 # Where is the favicon ?
-$wgFavicon = "/skins/common/images/favicon.ico";
+$wgFavicon = "$wgStylePath/common/images/favicon.ico";
 
 # Default skin
 $wgDefaultSkin = "skinzam";
@@ -398,6 +398,8 @@ $wgEnableMetaDescriptionFunctions = true;
 
 # =[OpenGraphMeta]=
 require_once( "$IP/extensions/OpenGraphMeta/OpenGraphMeta.php" );
+# PATCH1 : The Parser function {{#setmainimage:...}} is broken, we removed this feature.
+# Also see PATCH2 in OpenGraphMeta.php to take $wgLogo as default mainimage.
 
  
 # Allow external images to be displayed as <img>

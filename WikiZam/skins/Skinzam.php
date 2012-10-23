@@ -273,7 +273,7 @@ class SkinzamTemplate extends BaseTemplate {
             <!-- header -->
             <div id="header" class="block block_full project noprint">
                 <div class="hgroup inside">
-                    <h1><a id="logo_project" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"><img width="289" height="97" alt="Seizam's logo" src="<?php echo $this->data['stylepath'].'/skinzam/images/seizam.logo.png' ?>"></a></h1>
+                    <h1><a id="logo_project" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"></a></h1>
                     <h2><?php echo wfMessage('sz-tagline')->parse() ?></h2>
                 </div>
             </div>
@@ -342,7 +342,7 @@ class SkinzamTemplate extends BaseTemplate {
             <!-- header -->
             <div id="header" class="block block_full special noprint">
                 <div class="inside">
-                    <h1><a id="logo_special" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"><img width="140" height="48" alt="Seizam's logo" src="<?php echo $this->data['stylepath'].'/skinzam/images/seizam.logo_mini_h.png' ?>"></a></h1>
+                    <h1><a id="logo_special" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"></a></h1>
 
                     <div id="nav">
                         <ul>
@@ -385,7 +385,7 @@ class SkinzamTemplate extends BaseTemplate {
             <!-- header -->
             <div id="header" class="block block_full project">
                 <div class="hgroup inside">
-                    <h1><a id="logo_project" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"><img width="289" height="97" alt="Seizam's logo" src="<?php echo $this->data['stylepath'].'/skinzam/images/seizam.logo.png' ?>"></a></h1>
+                    <h1><a id="logo_project" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']) ?>"></a></h1>
                     <h2><?php echo wfMessage('sz-tagline')->parse() ?></h2>
                 </div>
             </div>
@@ -483,7 +483,7 @@ class SkinzamTemplate extends BaseTemplate {
                         <span id="prettyUserName"><?php $this->text('sz_pretty_username') ?></span>
                     <?php endif; ?>
                     <!-- logo -->
-                    <a id="logo_mini" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']); ?>"></a>
+                    <a id="logo_mini" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']); ?>"><img width="107" height="35" alt="Seizam's logo" src="<?php echo $this->data['logopath'] ?>"></a>
                     <!-- /logo -->
                     <!-- search -->
         <?php $this->renderNavigation(array('SEARCH')); ?>

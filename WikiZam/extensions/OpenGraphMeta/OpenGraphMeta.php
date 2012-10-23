@@ -36,7 +36,11 @@ $dir = dirname( __FILE__ );
 $wgExtensionMessagesFiles['OpenGraphMetaMagic'] = $dir . '/OpenGraphMeta.magic.php';
 $wgExtensionMessagesFiles['OpenGraphMeta'] = $dir . '/OpenGraphMeta.i18n.php';
 
-$wgHooks['ParserFirstCallInit'][] = 'efOpenGraphMetaParserInit';
+/*
+ * PATCH1 We remove the {{#setmainimage:...}} feature (broken)
+ * 
+ * $wgHooks['ParserFirstCallInit'][] = 'efOpenGraphMetaParserInit';
+ */
 function efOpenGraphMetaParserInit( $parser ) {
 	$parser->setFunctionHook( 'setmainimage', 'efSetMainImagePF' );
 	return true;
@@ -80,7 +84,7 @@ function efOpenGraphMetaPageHook( &$out, &$sk ) {
 
 	if ( isset($out->mMainImage) && ($out->mMainImage !== false) ) {
 		$meta["og:image"] = wfExpandUrl($out->mMainImage->createThumb(100*3, 100));
-	} else if ( $isMainpage ) {
+	} else { // PATCH /!\ was elseif ($isMainpage)
 		$meta["og:image"] = $wgLogo;
 	}
 	if ( isset($out->mDescription) ) // set by Description2 extension, install it if you want proper og:description support

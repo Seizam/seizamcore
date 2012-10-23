@@ -1495,10 +1495,24 @@ a.feedlink:first-child {
 
 #logo_project {
     display: inline-block;
+    width: 289px;
+    height: 97px;
+    /* @embed */
+    background-image: url(images/seizam_logo_big.png);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center center;
 }
 
 #logo_special {
     display: inline-block;
+    width: 140px;
+    height: 48px;
+    /* @embed */
+    background-image: url(images/seizam_logo_medium.png);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center center;
 }
 
 
@@ -1551,11 +1565,6 @@ a.feedlink:first-child {
     display: block;
     width: 107px;
     height: 35px;
-    /* @embed */
-    background-image: url(images/seizam.logo_mini.png);
-    background-color: transparent;
-    background-repeat: no-repeat;
-    background-position: center center;
 }
 
 #absoluteFooter .content ul {

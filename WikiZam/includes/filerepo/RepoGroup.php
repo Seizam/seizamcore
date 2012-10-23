@@ -113,7 +113,7 @@ class RepoGroup {
 		}
 
 		if ( $title->getNamespace() != NS_MEDIA && $title->getNamespace() != NS_FILE ) {
-			throw new MWException( __METHOD__ . ' received an Title object with incorrect namespace' );
+			throw new MWException( __METHOD__ . ' received a Title object with incorrect namespace' );
 		}
 
 		# Check the cache
