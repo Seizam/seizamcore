@@ -20,7 +20,7 @@ $messages['en'] = array(
     'sz-myseizam' => 'My Seizam',
     'welcome' => 'Welcome',
     
-    'sz-meta-desc' => 'WikiPlaces for Art & Freedom. Seizam liberates the artists thanks to Wikipedia’s philosophy and technology.',
+    'sz-meta-desc' => 'WikiPlaces for Art & Freedom. Seizam is a community of artists liberated thanks to Wikipedia’s philosophy and technology.',
     
     'cur-euro' => '€',
     'contactlinks' => 'Project:Contact',
@@ -211,7 +211,7 @@ $messages['fr'] = array(
     'sz-myseizam' => 'Mon Seizam',
     'welcome' => 'Bienvenue',
     
-    'sz-meta-desc' => 'WikiPlaces d\'Art et de Liberté. Seizam libère les artistes grâce à la philosophie et la technologie de Wikipedia.',
+    'sz-meta-desc' => 'WikiPlaces d\'Art et de Liberté. Seizam est une communauté d\'artistes libérés grâce à la philosophie et la technologie de Wikipedia.',
     
     'mycontris' => 'Mes contributions',
     'mypreferences' => 'Mes préférences',
