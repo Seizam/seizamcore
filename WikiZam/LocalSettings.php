@@ -106,7 +106,7 @@ $wgAdvertisedFeedTypes = array('rss', 'atom');
 $wgStylePath = "$wgScriptPath/skins";
 
 # The relative URL path to the logo.
-$wgLogo = "$wgStylePath/skinzam/images/seizam_logo_square.png";
+$wgLogo = "$wgStylePath/skinzam/images/seizam_logo_vertical.png";
 
 # Where is the favicon ?
 $wgFavicon = "$wgStylePath/common/images/favicon.ico";
