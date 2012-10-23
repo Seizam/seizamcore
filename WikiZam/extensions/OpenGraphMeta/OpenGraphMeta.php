@@ -76,12 +76,12 @@ function efOpenGraphMetaPageHook( &$out, &$sk ) {
 	} else {
 		$meta["og:type"] = "article";
 		$meta["og:site_name"] = $wgSitename;
-		// Try to chose the most appropriate title for showing in news feeds.
+		// Try to choose the most appropriate title for showing in news feeds.
 		if ( ( defined('NS_BLOG_ARTICLE') && $title->getNamespace() == NS_BLOG_ARTICLE ) ||
 			( defined('NS_BLOG_ARTICLE_TALK') && $title->getNamespace() == NS_BLOG_ARTICLE_TALK ) ){
 			$meta["og:title"] = $title->getSubpageText();
 		} else {
-			$meta["og:title"] = $title->getText();
+			$meta["og:title"] = htmlspecialchars($out->getHTMLTitle()); # PATCH3 better source for page title
 		}
 	}
 
