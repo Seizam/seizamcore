@@ -1478,6 +1478,7 @@ a.feedlink:first-child {
 }
 
 #contentFooter div#mw-revision-nav {
+    display: inline-block;
     margin-left: 16px;
 }
 
