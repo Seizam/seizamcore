@@ -9,7 +9,6 @@
    -------------------------------------------------------------------------- */
 
 article, aside, details, figcaption, figure, footer, header, hgroup, nav, section { display: block; }
-audio[controls], canvas, video { display: inline-block; }
 .oldie audio[controls], .oldie canvas, .oldie video { *display: inline; *zoom: 1; }
 
 /* -----------------------------------------------------------------------------
@@ -345,17 +344,42 @@ img {
     max-width: 100%;
 }
 
+
+/* -----------------------------------------------------------------------------
+   ==  WidgetsFramework
+   -------------------------------------------------------------------------- */
+
+.wfmk_block {
+    display: block;
+    overflow: hidden;
+    max-width: 100%;
+    margin-bottom: 16px;
+    padding: 0;
+}
+
+.wfmk_frame {
+    border: 1px solid #dad9d9;
+}
+
+.wfmk_left {
+    float:left;
+    clear:left;
+    margin-right: 18px;
+}
+
+.wfmk_right {
+    float:right;
+    clear:right;
+    margin-left: 18px;
+}
+
+
+/* Twitter */
 .twtr-widget h4 {
     text-indent: 0;
 }
 
-/* Widgets */
-iframe, video, audio {
-    border: 1px solid #dad9d9;
-    max-width: 100%;
-    margin-bottom: 18px;
-}
-
+/* AddThis */
 div.addthis_toolbox.vertical a{
     margin-bottom:4px
 }
@@ -1178,7 +1202,7 @@ h1.firstHeading {
 
 h1.notWikiPlace {
     margin-top: 20px;
-    text-shadow: -1px 0 #686a6b, 0 1px #686a6b, 1px 0 #686a6b, 0 -1px #686a6b;.
+    text-shadow: -1px 0 #686a6b, 0 1px #686a6b, 1px 0 #686a6b, 0 -1px #686a6b;
 }
 
 
@@ -2796,9 +2820,6 @@ p.ms-wl-empty {
     -ms-box-shadow: none;
     -o-box-shadow: none;
     box-shadow: none;
-}
-
-
 }
 
 /* -----------------------------------------------------------------------------
