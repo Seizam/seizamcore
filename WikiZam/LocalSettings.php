@@ -72,8 +72,16 @@ $wgEnotifUserTalk = true; # UPO
 $wgEnotifWatchlist = true; # UPO
 $wgEmailAuthentication = true; // all e-mail functions (except requesting a password reminder e-mail) only work for authenticated (confirmed) e-mail addresses
 
-# ensure to clear cache when modifications occur on this file
+# Ensure to clear cache when modifications occur on this file
 $wgInvalidateCacheOnLocalSettingsChange = true;
+
+# Widget namespace
+define( 'NS_WIDGET', 274 );
+$wgExtraNamespaces[NS_WIDGET] = 'Widget';
+
+# Widget_talk namespace
+define( 'NS_WIDGET_TALK', NS_WIDGET + 1 );
+$wgExtraNamespaces[NS_WIDGET_TALK] = 'Widget_talk';
 
 # Enable subpages
 $wgNamespacesWithSubpages = array(
@@ -91,6 +99,8 @@ $wgNamespacesWithSubpages = array(
     NS_HELP_TALK => true,
     NS_CATEGORY_TALK => true,
     NS_SPECIAL => true,
+    NS_WIDGET => true,
+    NS_WIDGET_TALK => true,
 );
 
 # FEEDS
@@ -202,6 +212,7 @@ require_once( "$IP/extensions/ProtectOwn/ProtectOwn.php" );
 # available restriction level/group via SetPermissions form
 # ($wgRestrictionLevels will be updated in order for theses level to be accessed via protect
 $wgProtectOwnGroups = array('', 'user', 'artist', 'owner');
+$wgGroupPermissions['bot'][PROTECTOWN_BYPASS] = true;
 
 # remove the 'move' restriction (so it does not appear in protectOwn)
 unset($wgRestrictionTypes[array_search('move', $wgRestrictionTypes)]);
@@ -380,8 +391,9 @@ require_once( "$IP/extensions/Nuke/Nuke.php" );
 require_once( "$IP/extensions/ParserFunctions/ParserFunctions.php");
 
 # =[Widgets \o/]=
-require_once("$IP/extensions/Widgets/Widgets.php");
-$wgGroupPermissions['sysop']['editwidgets'] = true;
+# Currently not in use, and will be removed soon
+#   require_once("$IP/extensions/Widgets/Widgets.php");
+#   $wgGroupPermissions['sysop']['editwidgets'] = true;
 
 # =[Poem]=
 require_once("$IP/extensions/Poem/Poem.php");
