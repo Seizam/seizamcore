@@ -212,7 +212,7 @@ require_once( "$IP/extensions/ProtectOwn/ProtectOwn.php" );
 # available restriction level/group via SetPermissions form
 # ($wgRestrictionLevels will be updated in order for theses level to be accessed via protect
 $wgProtectOwnGroups = array('', 'user', 'artist', 'owner');
-$wgGroupPermissions['bot'][PROTECTOWN_BYPASS];
+$wgGroupPermissions['bot'][PROTECTOWN_BYPASS] = true;
 
 # remove the 'move' restriction (so it does not appear in protectOwn)
 unset($wgRestrictionTypes[array_search('move', $wgRestrictionTypes)]);
