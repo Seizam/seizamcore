@@ -404,7 +404,7 @@ figure { margin: 0; }
    -------------------------------------------------------------------------- */
 
 /* Removing Content we do not want */
-#siteSub, #jump-to-nav, div#content .printfooter, #p-search h5, #hidden_footer {
+#siteSub, #jump-to-nav, div#content .printfooter, #p-search h5, #hidden_footer, .hidden {
     display: none;
 }
 
@@ -1178,7 +1178,7 @@ h1.firstHeading {
 
 h1.notWikiPlace {
     margin-top: 20px;
-    text-shadow: -1px 0 #686a6b, 0 1px #686a6b, 1px 0 #686a6b, 0 -1px #686a6b;.
+    text-shadow: -1px 0 #686a6b, 0 1px #686a6b, 1px 0 #686a6b, 0 -1px #686a6b;
 }
 
 
@@ -2798,7 +2798,7 @@ p.ms-wl-empty {
 }
 
 
-}
+
 
 /* -----------------------------------------------------------------------------
    ==  SLIDESHOW ON WELCOME PAGE

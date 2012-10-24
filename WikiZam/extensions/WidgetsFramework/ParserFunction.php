@@ -236,7 +236,7 @@ abstract class ParserFunction implements Widget {
         }
 
         if ($this->is_block) {
-            $output = '<div class="wfmkwidget">' . $output . "</div>";
+            $output = '<div class="hidden"></div>' . $output;
         }
 
         return $output;
