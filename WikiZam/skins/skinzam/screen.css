@@ -404,7 +404,7 @@ figure { margin: 0; }
    -------------------------------------------------------------------------- */
 
 /* Removing Content we do not want */
-#siteSub, #jump-to-nav, div#content .printfooter, #p-search h5 {
+#siteSub, #jump-to-nav, div#content .printfooter, #p-search h5, .hidden {
     display: none;
 }
 
