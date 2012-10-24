@@ -38,8 +38,9 @@ $wgExtensionMessagesFiles['OpenGraphMeta'] = $dir . '/OpenGraphMeta.i18n.php';
 
 /*
  * PATCH1, this behavior is broken
- * $wgHooks['ParserFirstCallInit'][] = 'efOpenGraphMetaParserInit';
- */
+ * 
+
+$wgHooks['ParserFirstCallInit'][] = 'efOpenGraphMetaParserInit';
 function efOpenGraphMetaParserInit( $parser ) {
 	$parser->setFunctionHook( 'setmainimage', 'efSetMainImagePF' );
 	return true;
@@ -60,6 +61,9 @@ $wgParserOutputHooks['setmainimage'] = 'efSetMainImagePH';
 function efSetMainImagePH( $out, $parserOutput, $data ) {
 	$out->mMainImage = wfFindFile( Title::newFromDBkey($data['dbkey'], NS_FILE) );
 }
+
+ *
+ */
 
 $wgHooks['BeforePageDisplay'][] = 'efOpenGraphMetaPageHook';
 function efOpenGraphMetaPageHook( &$out, &$sk ) {
