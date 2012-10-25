@@ -116,14 +116,14 @@ class Integer extends Parameter {
         $min = $this->getMin();
         if (!is_null($min)) {
             if ($value < $min) {
-                Tools::throwUserError(wfMessage('wfmk-req-integer-min', $min));
+                Tools::throwUserError(wfMessage('wfmk-validate', $this->getName(), $value, wfMessage('wfmk-req-integer-min', $min)));
             }
         }
 
         $max = $this->getMax();
         if (!is_null($max)) {
             if ($value > $max) {
-                Tools::throwUserError(wfMessage('wfmk-req-integer-max', $min));
+                Tools::throwUserError(wfMessage('wfmk-validate', $this->getName(), $value, wfMessage('wfmk-req-integer-max', $max)));
             }
         }
 

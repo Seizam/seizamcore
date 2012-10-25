@@ -161,7 +161,7 @@ to credit your account.',
 
 Seizam offers all artists an elegant and clean space to create and spread their work on the Internet. 
 
-$1 already joined our community and just offered you one of her/his invitation:
+$1 already joined our community and just offered you one of her/his invitations:
 {{int:$4}} - {{int:$4-desc}}
 
 Here is the attached message:
