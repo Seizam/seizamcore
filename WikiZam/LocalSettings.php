@@ -222,12 +222,16 @@ unset($wgRestrictionTypes[array_search('move', $wgRestrictionTypes)]);
 $wgGroupPermissions['*']['read'] = true; // ProtectOwn override this if protection set on page
 $wgGroupPermissions['*']['edit'] = true; // ProtectOwn override this if protection set on page
 
+# bot can edit all protected pages (to sysop level) without cascade protection enabled
+$wgGroupPermissions['bot']['editprotected'] = true;
+
 # define PROTECTED namespaces
 $wgNamespaceProtection[NS_PROJECT] = array('editprotectedns');
 $wgNamespaceProtection[NS_MEDIAWIKI] = array('editprotectedns');
 # who can edit theses PROTECTED namespaces ?
 $wgGroupPermissions['bureaucrat']['editprotectedns'] = true;
 $wgGroupPermissions['sysop']['editprotectedns'] = true;
+$wgGroupPermissions['bot']['editprotectedns'] = true;
 
 # define LIMITED namespaces
 $wgAvailableRights[] = 'editlimitedns';
