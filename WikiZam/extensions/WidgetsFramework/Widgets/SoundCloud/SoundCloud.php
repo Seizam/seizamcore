@@ -12,6 +12,8 @@ class SoundCloud extends ParserFunction {
     protected $comments;
     protected $playcount;
     protected $like;
+    protected $right;
+    protected $left;
 
     protected function declareParameters() {
 
@@ -55,6 +57,16 @@ class SoundCloud extends ParserFunction {
 
         $this->like = new Boolean('like');
         $this->addParameter($this->like);
+
+        $float = new XorParameter('float');
+
+        $this->right = new Option('right');
+        $float->addParameter($this->right);
+
+        $this->left = new Option('left');
+        $float->addParameter($this->left);
+
+        $this->addParameter($float);
     }
 
     protected function validate() {
@@ -64,6 +76,22 @@ class SoundCloud extends ParserFunction {
         if ($this->source->getParameter()->getName() == 'track') {
             $this->height->setDefaultValue(166);
         }
+    }
+    
+    public function getCSSClasses() {
+
+        $classes = array();
+
+        $classes[] = 'soundcloud';
+        $classes[] = 'wfmk_block';
+
+        if ($this->right->getValue()) {
+            $classes[] = 'wfmk_right';
+        } elseif ($this->left->getValue()) {
+            $classes[] = 'wfmk_left';
+        }
+
+        return Tools::arrayToCSSClasses($classes);
     }
 
     protected function getOutput() {
@@ -75,6 +103,7 @@ class SoundCloud extends ParserFunction {
         $source_id = $source->getOutput();
 
         return '<iframe
+                    class="' . $this->getCSSCLasses() . '"
                     width="' . $this->width->getOutput() . '"
                     height="' . $this->height->getOutput() . '"
                     scrolling="no"

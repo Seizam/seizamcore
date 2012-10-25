@@ -50,6 +50,7 @@ class AddThis extends ParserFunction {
     protected function getCSSClasses() {
 
         $classes = array();
+        $classes[] = 'wfmk_block';
         $classes[] = 'addthis_toolbox';
         $classes[] = 'addthis_default_style';
 
@@ -60,9 +61,9 @@ class AddThis extends ParserFunction {
         }
 
         if ($this->right->getValue()) {
-            $classes[] = 'right';
+            $classes[] = 'wfmk_right';
         } elseif ($this->left->getValue()) {
-            $classes[] = 'left';
+            $classes[] = 'wfmk_left';
         }
 
         if ($this->vertical->getValue()) {

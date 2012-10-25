@@ -56,11 +56,13 @@ class YouTube extends ParserFunction {
         $classes = array();
 
         $classes[] = 'youtube';
+        $classes[] = 'wfmk_block';
+        $classes[] = 'wfmk_frame';
 
         if ($this->right->getValue()) {
-            $classes[] = 'right';
+            $classes[] = 'wfmk_right';
         } elseif ($this->left->getValue()) {
-            $classes[] = 'left';
+            $classes[] = 'wfmk_left';
         }
 
         return Tools::arrayToCSSClasses($classes);
