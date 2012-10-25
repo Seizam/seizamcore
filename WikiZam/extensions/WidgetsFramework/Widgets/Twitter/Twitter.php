@@ -113,7 +113,7 @@ class Twitter extends ParserFunction {
         if ($this->right->getValue()) {
             $classes[] = 'wfmk_right';
         } elseif ($this->left->getValue()) {
-            $classes[] = 'wfmk_right';
+            $classes[] = 'wfmk_left';
         }
 
         return Tools::arrayToCSSClasses($classes);

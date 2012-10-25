@@ -32,7 +32,6 @@ class Audio extends ParserFunction {
 
         $classes[] = 'audio';
         $classes[] = 'wfmk_block';
-        $classes[] = 'wfmk_frame';
 
         if ($this->right->getValue()) {
             $classes[] = 'wfmk_right';

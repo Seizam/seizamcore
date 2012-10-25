@@ -58,6 +58,25 @@ class Facebook extends ParserFunction {
         $this->addParameter($float);
     }
 
+    protected function validate() {
+
+        parent::validate();
+
+        $faces = $this->faces->getValue();
+        $stream = $this->stream->getValue();
+
+        if ($faces && $stream) {
+            $this->height->setDefaultValue(556);
+        } elseif ($stream) { // && !$faces
+            $this->height->setDefaultValue(395);
+        } elseif ($faces) { // && !$stream
+            $this->height->setDefaultValue(258);
+        } else { // !$faces && !$stream
+            $this->height->setDefaultValue(63);
+        }
+        
+    }
+
     protected function getCSSCLasses() {
         $classes = array();
 
