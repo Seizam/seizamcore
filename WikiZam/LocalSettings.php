@@ -240,6 +240,7 @@ $wgNamespaceProtection[NS_USER] = array('editlimitedns');
 $wgNamespaceProtection[NS_TEMPLATE] = array('editlimitedns');
 $wgNamespaceProtection[NS_HELP] = array('editlimitedns');
 $wgNamespaceProtection[NS_CATEGORY] = array('editlimitedns');
+$wgNamespaceProtection[NS_WIDGET] = array('editlimitedns');
 # who can edit theses LIMITED namespaces ?
 $wgGroupPermissions['bureaucrat']['editlimitedns'] = true;
 $wgGroupPermissions['sysop']['editlimitedns'] = true;
