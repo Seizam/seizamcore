@@ -107,7 +107,7 @@ $wgSpecialPages['Skinzam'] = 'SpecialSkinzam';
 
 $wgSpecialPageGroups['Skinzam'] = 'other';*/
 
-# Special Welcome (Mainpage/Homepage
+# Special Welcome (Mainpage/Homepage)
 define('SZ_MAIN_PAGE', 'Welcome');
 
 $wgAutoloadClasses['SpecialMainpage'] = $dir . 'SpecialMainpage.php';

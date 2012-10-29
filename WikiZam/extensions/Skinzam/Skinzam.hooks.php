@@ -187,18 +187,18 @@ class SkinzamHooks {
 
         if (isset($personal_urls['logout'])) {
             // Add MySeizam
-            $href = Title::makeTitle(NS_SPECIAL, 'MySeizam')->getCanonicalURL();
+            $href = Title::makeTitle(NS_SPECIAL, SpecialMySeizam::TITLE_NAME)->getCanonicalURL();
             $middle['myseizam'] = array(
                 'text' => wfMsg('sz-myseizam'),
                 'href' => $href,
-                'active' => ( $title->getBaseText() == 'MySeizam' )
+                'active' => ( $title->getBaseText() == SpecialMySeizam::TITLE_NAME )
             );
             // Add MyWikiPlaces
-            $href = Title::makeTitle(NS_SPECIAL, 'Wikiplaces')->getCanonicalURL();
+            $href = Title::makeTitle(NS_SPECIAL, SpecialWikiplaces::TITLE_NAME)->getCanonicalURL();
             $middle['wikiplaces'] = array(
                 'text' => wfMsg('wikiplaces'),
                 'href' => $href,
-                'active' => ( $title->getBaseText() == 'WikiPlaces' )
+                'active' => ( $title->getBaseText() == SpecialWikiplaces::TITLE_NAME )
             );
             $personal_urls = array_merge($middle, $personal_urls);
         }
@@ -249,7 +249,7 @@ class SkinzamHooks {
     public static function onUserGetLanguageObject($user, &$code) {
         global $wgRequest, $wgTitle;
         
-        if ($wgTitle->getBaseText() !== SZ_MAIN_PAGE) {
+        if (!(is_object($wgTitle) && $wgTitle->getBaseText() == SZ_MAIN_PAGE)) {
             return true;
         }
         
