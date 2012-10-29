@@ -178,7 +178,7 @@ class SkinzamTemplate extends BaseTemplate {
                 $this->renderContentNS4();
                 break;
             case NS_SPECIAL :
-                if ($title->getDBkey() === SZ_MAIN_PAGE)
+                if ($title->getBaseText() === SZ_MAIN_PAGE)
                     $this->renderContentMainpage();
                 else
                     $this->renderContentNSSpecial();

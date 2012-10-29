@@ -235,5 +235,34 @@ class SkinzamHooks {
 
         return true;
     }
+    
+    /**
+     *
+     * Hacks LanguageSelector to take the special page parameter as language code.
+     * 
+     * @global WebRequest $wgRequest
+     * @global Title $wgTitle
+     * @param User $user
+     * @param string $code
+     * @return boolean 
+     */
+    public static function onUserGetLanguageObject($user, &$code) {
+        global $wgRequest, $wgTitle;
+        
+        if ($wgTitle->getBaseText() !== SZ_MAIN_PAGE) {
+            return true;
+        }
+        
+        if (!$wgRequest->getVal( 'setlang' )) {
+            // @todo FIXME: Redirects broken due to this call
+            $bits = explode( '/', $wgTitle->getDBkey(), 2 );
+            $name = $bits[0];
+            if ( isset( $bits[1] ) ) { // bug 2087
+                $wgRequest->setVal('setlang',$bits[1]);
+            }
+        }
+        
+        return true;
+    }
 
 }
