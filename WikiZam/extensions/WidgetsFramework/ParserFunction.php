@@ -4,15 +4,17 @@ namespace WidgetsFramework; // need to be declared at the very begining of the f
 
 abstract class ParserFunction implements Widget {
 
-    protected static $PARSER_MARKER = 1;
-    protected static $NAME = null;
-    protected static $FLAGS = SFH_NO_HASH;
     protected $parameters;
+    /** @var Parser */
     protected $parser;
+    /** @var PPFrame */
     protected $frame;
-    // output configuration
+    /** @var boolean  output stripping configuration */
     protected $is_html;
+    /** @var boolean  output configuration */
     protected $is_block;
+    /** @var int flags for parserfunction setup */
+    protected static $FLAGS = SFH_NO_HASH;
 
     public function __construct($parser, $frame) {
         $this->parser = $parser;

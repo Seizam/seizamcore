@@ -8,6 +8,7 @@ class AddThis extends ParserFunction {
     protected $big;
     protected $counter;
     protected $vertical;
+    protected $url;
     protected $pubid;
     protected $left;
     protected $right;
@@ -28,6 +29,10 @@ class AddThis extends ParserFunction {
 
         $this->vertical = new Boolean('vertical');
         $this->addParameter($this->vertical);
+        
+        $this->url = new URL('url');
+        $this->url->setDefaultValue($this->parser->getTitle()->getCanonicalURL());
+        $this->addParameter($this->url);
 
 
         $this->pubid = new String('pubid');
@@ -98,22 +103,67 @@ class AddThis extends ParserFunction {
         // else
         return '';
     }
+    
+    protected function getConfigurationJSVars() {
+        global $wgGAnalyticsPropertyID;
+        
+        $js = "";
+        
+        $vars = array();
+        
+        if (isset ($wgGAnalyticsPropertyID)) {
+            $vars[] = "data_ga_property:'$wgGAnalyticsPropertyID'";
+            $vars[] = "data_ga_social:true";
+        }
+        
+        /**
+         * @TODO Enable ConfigurationVars settings from parameter
+         */
+        $vars[] = "services_exclude:'print'";
+        $vars[] = "data_track_clickback:false";
+        
+        if (!empty($vars))
+            $js = "\n\tvar addthis_config={".  implode(", ", $vars)."};";
+        
+        return $js;
+    }
+    
+    protected function getShareJSVars() {
+        
+        $js = "";
+        
+        $vars = array();
+        
+        /**
+         * @TODO Enable ShareVars settings from parameter
+         */
+        $vars[] = "url:'".$this->url->getOutput()."'";
+        
+        if (!empty($vars))
+            $js = "\n\tvar addthis_share={".  implode(", ", $vars)."};";
+        
+        return $js;
+    }
+    
+    protected function getJSVars() {
+        $js = "";
+        $js .= $this->getConfigurationJSVars().$this->getShareJSVars();
+        if ($js != "")
+            $js = "\n<script type=\"text/javascript\">".$js."\n</script>";
+        return $js;
+    }
 
     protected function getOutput() {
+        
         global $wgGAnalyticsPropertyID;
-        if (!isset ($wgGAnalyticsPropertyID)) {
-            $wgGAnalyticsPropertyID = '';
-        }
 
         return '<div class="' . $this->getCSSClasses() . '">
                     ' . $this->getButtons() . '
                     <a class="addthis_button_compact"></a>
                     ' . $this->getExtraBubbleButton() . '
-                </div>
-                <script type="text/javascript">'
-                . "var addthis_config={data_ga_property:'$wgGAnalyticsPropertyID',data_ga_social:true,services_exclude:'print'};" . '
-                </script>
-                <script
+                </div>'
+                . $this->getJSVars()
+                .'<script
                     type="text/javascript"
                     src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=' . $this->pubid->getOutput() . '">
                 </script>';

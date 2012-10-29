@@ -4,9 +4,13 @@ namespace WidgetsFramework; // need to be declared at the very begining of the f
 
 abstract class Parameter {
 
+    /** @var string */
     protected $name;
+    /** @var mixed */
     protected $value;
+    /** @var mixed */
     protected $default_value;
+     /** @var boolean */
     protected $required;
 
     /**
