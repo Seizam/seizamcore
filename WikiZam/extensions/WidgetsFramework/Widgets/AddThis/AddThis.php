@@ -100,6 +100,10 @@ class AddThis extends ParserFunction {
     }
 
     protected function getOutput() {
+        global $wgGAnalyticsPropertyID;
+        if (!isset ($wgGAnalyticsPropertyID)) {
+            $wgGAnalyticsPropertyID = '';
+        }
 
         return '<div class="' . $this->getCSSClasses() . '">
                     ' . $this->getButtons() . '
@@ -107,7 +111,7 @@ class AddThis extends ParserFunction {
                     ' . $this->getExtraBubbleButton() . '
                 </div>
                 <script type="text/javascript">'
-                . "var addthis_config={data_ga_property:'UA-32666889-1',data_ga_social:true,services_exclude:'print'};" . '
+                . "var addthis_config={data_ga_property:'$wgGAnalyticsPropertyID',data_ga_social:true,services_exclude:'print'};" . '
                 </script>
                 <script
                     type="text/javascript"
