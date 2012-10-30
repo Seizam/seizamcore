@@ -34,15 +34,6 @@ class XorParameter extends Parameter {
     }
 
     /**
-     * Accepts everything
-     * @param mixed $value
-     * @return mixed
-     */
-    protected function validate($value) {
-        return $value;
-    }
-
-    /**
      * Set the subparameter used:
      * <ul>
      * <li>when a value without subparameter name found,</li>
@@ -77,7 +68,7 @@ class XorParameter extends Parameter {
      * @return boolean
      */
     public function hasBeenSet() {
-        return (!is_null($this->getParameter()) );
+        return ( !is_null($this->getSetParameter()) );
     }
 
     /**
@@ -90,9 +81,10 @@ class XorParameter extends Parameter {
 
     /**
      * Returns the parameter which is set, or null if none set.
+     * In most case, you should probably use getParameter() instead.
      * @return Parameter
      */
-    public function getParameter() {
+    public function getSetParameter() {
         foreach ($this->parameters as $parameter) {
             if ($parameter->hasBeenSet()) {
                 return $parameter;
@@ -101,25 +93,47 @@ class XorParameter extends Parameter {
         // no parameter set
         return null;
     }
-
+    
     /**
-     * If a default parameter has been set, returns its default value.
-     * Else, return empty string.
-     * @return mixed
+     * <ul>
+     * <li>When a parameter has been set, return it</li>
+     * <li>else, if a default parameter has been set, return it</li>
+     * <li>else, return null</li>
+     * </ul>
+     * @return Parameter can be null if no parameter set and no default parameter defined.
      */
-    public function getDefaultValue() {
-
-        if (!is_null($default_parameter = $this->getDefaultParameter())) {
-            return $default_parameter->getDefaultValue();
+    public function getParameter() {
+        if (!is_null($parameter = $this->getSetParameter())) {
+            return $parameter;
         } else {
-            return '';
+            return $this->getDefaultParameter();
         }
     }
 
     /**
-     * If a parameter has been set, return its value.
-     * Else, if a default parameter has been set, returns its default value.
-     * Else, return empty string.
+     * <ul>
+     * <li>If a default parameter has been set, returns its default value.</li>
+     * <li>Else, if a default value as been specified using setDefaultValue(), return it.</li>
+     * <li>else, return empty string.</li>
+     * </ul>
+     * @return mixed
+     */
+    public function getDefaultValue() {
+
+        if (!is_null($default_parameter = $this->getDefaultParameter())) { 
+            return $default_parameter->getDefaultValue();
+        } else {
+            return parent::getDefaultValue();
+        }
+    }
+
+    /**
+     * <ul>
+     * <li>when a parameter has been set, return its value</li>
+     * <li>else, if a default parameter as been set, return its value</li>
+     * <li>else, if a default value as been specified using setDefaultValue(), return it.</li>
+     * <li>else, return empty string.</li>
+     * </ul>
      * @return mixed The type depends on the final Parameter class
      */
     public function getValue() {
@@ -127,7 +141,7 @@ class XorParameter extends Parameter {
         if (!is_null($parameter = $this->getParameter())) {
             return $parameter->getValue();
         } else {
-            return $this->getDefaultValue();
+            return parent::getDefaultValue();
         }
     }
 
@@ -202,18 +216,27 @@ class XorParameter extends Parameter {
     }
 
     /**
-     * Set a default value to the default parameter
+     * When a default parameter has been set, set its default value (parsing according to $do_parse value).
+     * Else, store the default value without as it is (without any parse).
+     * @param mixed $default_value
+     * @param boolean $do_parse Default is true, forced to false when no default parameter set.
      */
-    public function setDefaultValue($default_value, $do_validate = true) {
+    public function setDefaultValue($default_value, $do_parse = true) {
 
         if (!is_null($default_parameter = $this->getDefaultParameter())) {
-            throw new \MWException('No default parameter defined. Use setDefaultParameter() before.');
+            $default_parameter->setDefaultValue($default_value, $do_parse);
         } else {
-            $default_parameter->setDefaultValue($default_value, $do_validate);
-        }
+            parent::setDefaultValue($default_value, false); // store as it is
+        } 
     }
 
     /**
+     * <ul>
+     * <li>When a parameter has been set, return its getOutput()</li>
+     * <li>Else, if a default parameter has been set, return its getOutput()</li>
+     * <li>Else, if a default value as been specified using setDefaultValue(), return it.</li>
+     * <li>Else, return empty string.</li>
+     * </ul>
      * Returs the getOutput() of the parameter that has been set.
      * If none set, returns the getOutput() of the default parameter.
      * If no default parameter set, return empty string.
@@ -223,19 +246,17 @@ class XorParameter extends Parameter {
 
         if (!is_null($parameter = $this->getParameter())) {
             return $parameter->getOutput();
-        } elseif (!is_null($default_parameter = $this->getDefaultParameter())) {
-            return $default_parameter->getOutput();
         } else {
-            return '';
+            return parent::getDefaultValue();
         }
     }
 
     /**
-     * <b>This method cannot be use on xorparameter object</b>
+     * <b>This method cannot be use on XorParameter instance</b>
      * @throws \MWException Everytime
      */
     protected function setValue($value) {
-        throw new \MWException('You cannot use the method setValue() of xorparameter "' . $this->getName() . '".');
+        throw new \MWException('You cannot use the method setValue() on the XorParameter "' . $this->getName() . '".');
     }
 
 }

@@ -53,15 +53,6 @@ class Boolean extends Parameter {
     }
 
     /**
-     * Accept avery parsed value
-     * @param mixed $value
-     * @return mixed
-     */
-    protected function validate($value) {
-        return $value;
-    }
-
-    /**
      * 
      * @return string "true" or "false" depending on the getValue() return.
      */

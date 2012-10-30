@@ -144,10 +144,14 @@ abstract class ParserFunction implements Widget {
         return $unused_arguments;
     }
 
+    /**
+     * Check all paramters requirements. (required, min, max, ... )
+     * @throws UserError if a parameter fails its validate.
+     */
     protected function validate() {
         $parameters = $this->getParameters();
         foreach ($parameters as $parameter) {
-            $parameter->validateAfterSet();
+            $parameter->validate();
         }
     }
 

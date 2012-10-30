@@ -19,8 +19,8 @@ class String extends Parameter {
      * <li>default value is empty string</li>
      * <li>parameter is not required</li>
      * <li>escape mode: <i>html</i></li>
-     * <li>minimal length: <i>1 character</i></li>
-     * <li>maximal length: <i>unlimited</i></li>
+     * <li><i>accept empty string</i> (minimal length is 0 character)</li>
+     * <li>maximal length: <i>1024 characters</i></li>
      * </ul>  
      * @param string $name The parameter name, case insensitive
      * @throws \MWException if $name not specified
@@ -29,8 +29,8 @@ class String extends Parameter {
         parent::__construct($name);
         $this->escape_mode = 'html';
         $this->validate_type = 'all';
-        $this->min_length = 1; // non-empty string
-        $this->max_length = 0; // unlimited length
+        $this->min_length = 0; // accept empty string
+        $this->max_length = 1024; 
     }
 
     /**
@@ -67,10 +67,10 @@ class String extends Parameter {
 
     /**
      * Defines a minimal length for this string value.
-     * @param int $min Default is 1.
+     * @param int $min Default is 0.
      * @throws \MWException
      */
-    public function setMinimalLength($min = 1) {
+    public function setMinimalLength($min = 0) {
         if (!is_int($min) || $min < 0) {
             throw new \MWException('Method setMinimalLength() requires an argument "$min" of type int, greater or equal than 0.');
         }
@@ -115,11 +115,14 @@ class String extends Parameter {
     /**
      * Throws UserError if the string is too short or too long, according setMinimalLength()
      * and setMinimalLength() previous calls.
-     * @param string $value
      * @throws UserError
      */
-    public function validate($value) {
+    public function validate() {
 
+        parent::validate();
+        
+        $value = $this->getValue();
+        
         $length = strlen($value);
 
         if ($length < $this->getMinimalLength()) {
@@ -129,8 +132,6 @@ class String extends Parameter {
         } elseif (!Tools::Validate($value, $this->validate_type)) {
             Tools::throwUserError(wfMessage('wfmk-validate', $this->getName(), $value, wfMessage('wfmk-req-string-validate', $this->validate_type)));
         }
-
-        return $value;
     }
 
     /**

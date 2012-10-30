@@ -77,7 +77,7 @@ class Facebook extends ParserFunction {
         
     }
 
-    protected function getCSSCLasses() {
+    protected function getCSSClasses() {
         $classes = array();
 
         $classes[] = 'facebook';
@@ -118,7 +118,7 @@ class Facebook extends ParserFunction {
 
     protected function getOutput() {
         return '<iframe
-                    class="' . $this->getCSSCLasses() . '"
+                    class="' . $this->getCSSClasses() . '"
                     src="' . $this->getIframeSrc() . '"
                     scrolling="no"
                     frameborder="0"

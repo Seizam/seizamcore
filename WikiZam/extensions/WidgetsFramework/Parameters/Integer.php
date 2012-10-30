@@ -105,13 +105,11 @@ class Integer extends Parameter {
         return $this->max;
     }
 
-    /**
-     * 
-     * @param int $value
-     * @return int The unchanged $value, for futur use
-     * @throws UserError If minimal/maximal value exceeded.
-     */
-    public function validate($value) {
+    public function validate() {
+        
+        parent::validate();
+        
+        $value = $this->getValue();
 
         $min = $this->getMin();
         if (!is_null($min)) {
@@ -127,7 +125,6 @@ class Integer extends Parameter {
             }
         }
 
-        return $value;
     }
 
     public function getOutput() {

@@ -103,7 +103,7 @@ class SoundCloud extends ParserFunction {
         $source_id = $source->getOutput();
 
         return '<iframe
-                    class="' . $this->getCSSCLasses() . '"
+                    class="' . $this->getCSSClasses() . '"
                     width="' . $this->width->getOutput() . '"
                     height="' . $this->height->getOutput() . '"
                     scrolling="no"

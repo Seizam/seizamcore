@@ -86,7 +86,7 @@ abstract class Parameter {
     /**
      * Set this parameter as required.
      * When a parameter is set as required, if it is not valuated during argument parsing,
-     * it will thrown a UserError exception during validateAfterSet().
+     * it will thrown a UserError exception during validate().
      * @param boolean $required If not specified, considered as true
      */
     public function setRequired($required = true) {
@@ -161,25 +161,12 @@ abstract class Parameter {
     abstract protected function parse($value);
 
     /**
-     * Ensure the given value is acceptable. (minimum, maximum, ...)
-     * If the value is not acceptable, a UserError exception is thrown with Tools::throwUserError().
-     * See Integer or String classes as good examples.
-     * @param mixed $value The type depends on the final class extending Parameter.
-     * In most cases, is should be a string.
-     * @return mixed The unchanged $value, type depends on the final class extending Parameter.
-     * In most cases, is should be a string.
-     * @throws UserError if $value cannot be validated
-     */
-    abstract protected function validate($value);
-
-    /**
      * Used when parsing wikitext.
      * Try to set the value if $argument is a named value for this parameter.
      * The name is case insensitive.
      * @param string $argument Raw argument, with no spaces at the begin or at the end
      * @return boolean True if set successfull, false is $argument is not a named value for this parameter.
-     * @throws UserError If $argument is a named value for this parameter, but the value cannot
-     * be parsed or validated.
+     * @throws UserError If $argument is a named value for this parameter, but the value cannot be parsed.
      */
     public function trySetByName($argument) {
 
@@ -195,9 +182,8 @@ abstract class Parameter {
         // $argument is a named value for this parameter, try to parse and validate
 
         $parsed = $this->parse($named_value); // can throw UserError Exception      
-        $validated = $this->validate($parsed); // can throw UserError Exception
         // value is ok :)
-        $this->setValue($validated);
+        $this->setValue($parsed);
         return true;
     }
 
@@ -206,8 +192,7 @@ abstract class Parameter {
      * Try to set the value.
      * @param string $argument Raw argument
      * @return boolean True if set successfull, false if $argument not read
-     * @throws UserError If the parameter has already read a value, or if $argument cannot be 
-     * parsed and validated.
+     * @throws UserError If the parameter has already read a value, or if $argument cannot be parsed.
      */
     public function trySet($argument) {
 
@@ -222,31 +207,24 @@ abstract class Parameter {
 
         // $argument should be the value, try to parse and validate
         $parsed = $this->parse($argument); // can throw UserError Exception
-        $validated = $this->validate($parsed); // can throw UserError Exception
         // value is ok :)
-        $this->setValue($validated);
+        $this->setValue($parsed);
         return true;
     }
 
     /**
      * Store the default value. 
-     * @param string|mixed $default_value As string (safer), will be parsed 
-     * (except if $do_validate is false)<br/>
-     * @param boolean $do_validate do validate the $default_value (default is true, safer) 
+     * @param string|mixed $default_value If a string type and $do_parse is true, will be parsed before storing it.
+     * @param boolean $do_parse do parse the $default_value when it is a string (default is true, safer) 
      * @return void
-     * @throws \MWException if $default_value cannot be parsed or validated
+     * @throws \MWException if $default_value cannot be parsed
      */
-    public function setDefaultValue($default_value, $do_validate = true) {
+    public function setDefaultValue($default_value, $do_parse = true) {
 
-        if ($do_validate) {
-
+        if ($do_parse && is_string($default_value)) {
             try {
+                $default_value = $this->parse($default_value); // can throw UserError Exception
 
-                if (is_string($default_value)) {
-                    $default_value = $this->parse($default_value); // can throw UserError Exception
-                }
-
-                $default_value = $this->validate($default_value); // can throw UserError Exception
             } catch (UserError $e) {
                 throw new \MWException($e->getMessage(), $e->getCode(), $e->getPrevious());
             }
@@ -255,12 +233,15 @@ abstract class Parameter {
         $this->default_value = $default_value;
     }
 
+    
     /**
-     * Check the parameter requirements.
+     * Check that if parameter is required, it has been valuated. Also ensure the value returned by 
+     * getValue() is acceptable. (minimum, maximum, ...)
+     * If requirement not satisifed or the value is not acceptable, a UserError exception is thrown.
      * @return void
-     * @throws UserError If this parameter is required and has not been set.
+     * @throws UserError
      */
-    public function validateAfterSet() {
+    public function validate() {
         if ($this->isRequired() && !$this->hasBeenSet()) {
             Tools::throwUserError(wfMessage('wfmk-req-parameter', $this->getName()));
         }

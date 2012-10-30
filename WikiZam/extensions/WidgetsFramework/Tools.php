@@ -3,28 +3,13 @@
 namespace WidgetsFramework;
 
 class Tools {
-    /*
-     * Smarty plugin
-     * -------------------------------------------------------------
-     * File:     modifier.validate.php
-     * Type:     modifier
-     * Name:     validate
-     * Purpose:  Validates parameter format ('url' by default).
-     *           Useful when you need to validate but not escape.
-     * -------------------------------------------------------------
-     */
 
     /**
      * This function is used to validate string.
-     * Originally in Smarty, function named smarty_modifier_validate.<br />
-     * Smarty modifier validate plugin
-     * 
-     * Type:     modifier<br />
-     * Name:     validate<br />
-     * Purpose:  Validates parameter format.<br />
-     *           Useful when you need to validate but not escape.
+     * Inspired from Smarty (function named smarty_modifier_validate).<br />
+     * Validates string format. Useful when you need to validate but not escape.
      * @param string $string
-     * @param all|url|int|boolean|float|email|ip $type Default = 'all' => validate everything
+     * @param all|url|int|boolean|float|email|ip|digits $type Default = 'all' => validate everything
      * @return boolean True if valid, false otherwise
      */
     public static function Validate($string, $type = 'all') {
@@ -43,8 +28,13 @@ class Tools {
             'ip' => FILTER_VALIDATE_IP
         );
 
-        if (array_key_exists($type, $filters) && filter_var($string, $filters[$type]) !== FALSE) {
-            return true;
+        if (array_key_exists($type, $filters)) {
+            return ( filter_var($string, $filters[$type]) !== FALSE );
+        } else {
+            switch ($type) {
+                case 'digits' :
+                    return ctype_digit($string);
+            }
         }
 
         // unless it matched some validation rule, it's not valid
