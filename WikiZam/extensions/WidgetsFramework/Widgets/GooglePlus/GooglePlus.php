@@ -150,15 +150,16 @@ class GooglePlus extends ParserFunction {
         return 'data-height="' . $this->height_value . '"'; // 69 or 131
     }
 
-    protected function getDataHrefOutput() {
-
-        $href = $this->source->getOutput();
-
+    protected function getSourceOutput() {
+        $source = $this->source->getOutput();
         if ($this->source->getParameter()->getName() == 'user') {
-            $href = "https://plus.google.com/" . $href;
+            $source = "https://plus.google.com/" . $source;
         }
-
-        return 'data-href="' . $href . '"';
+        return $source;
+    }
+    
+    protected function getDataHrefOutput() {
+        return 'data-href="' . $this->getSourceOutput() . '"';
     }
 
     /**
@@ -217,7 +218,7 @@ class GooglePlus extends ParserFunction {
         $this->setBlock(false);
         $icon_size = $this->getIconSize();
 
-        return '<a href="//plus.google.com/101486099226952210914?prsrc=3"
+        return '<a href="'.$this->getSourceOutput().'"
                    rel="publisher"
                    style="text-decoration:none;">
                        <img src="//ssl.gstatic.com/images/icons/gplus-' . $icon_size . '.png"
