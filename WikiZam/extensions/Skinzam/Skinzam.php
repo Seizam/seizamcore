@@ -62,6 +62,8 @@ $wgHooks['SkinTemplateOutputPageBeforeExec'][] = 'SkinzamHooks::skinTemplateOutp
 $wgHooks['PersonalUrls'][] = 'SkinzamHooks::PersonalUrls';
 // Cook the toolbox
 $wgHooks['BaseTemplateToolbox'][] = 'SkinzamHooks::BaseTemplateToolbox';
+// Select language from Special:Welcome/?? Parameter (must be before LanguageSelector.php include)
+$wgHooks['UserGetLanguageObject'][] = 'SkinzamHooks::onUserGetLanguageObject';
 
 
 
@@ -105,7 +107,7 @@ $wgSpecialPages['Skinzam'] = 'SpecialSkinzam';
 
 $wgSpecialPageGroups['Skinzam'] = 'other';*/
 
-# Special Welcome (Mainpage/Homepage
+# Special Welcome (Mainpage/Homepage)
 define('SZ_MAIN_PAGE', 'Welcome');
 
 $wgAutoloadClasses['SpecialMainpage'] = $dir . 'SpecialMainpage.php';

@@ -34,6 +34,8 @@ if (!defined('MEDIAWIKI'))
  */
 class SpecialMySeizam extends SpecialPage {
     
+    const TITLE_NAME = 'MySeizam';
+    
     private $msgType = null;
     private $msgKey = null;
     private $mode = 'user';

@@ -137,6 +137,7 @@ $wgVectorUseSimpleSearch = true;
 // Breaks on the absolute footer
 
 # UI Elements extension for Seizam's skin
+# MUST be declared before LanguageSelector due to hack on UserGetLanguageObject Hook.
 require_once( "$IP/extensions/Skinzam/Skinzam.php" );
 
 # For attaching licensing metadata to pages, and displaying an

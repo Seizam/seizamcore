@@ -187,18 +187,18 @@ class SkinzamHooks {
 
         if (isset($personal_urls['logout'])) {
             // Add MySeizam
-            $href = Title::makeTitle(NS_SPECIAL, 'MySeizam')->getCanonicalURL();
+            $href = Title::makeTitle(NS_SPECIAL, SpecialMySeizam::TITLE_NAME)->getCanonicalURL();
             $middle['myseizam'] = array(
                 'text' => wfMsg('sz-myseizam'),
                 'href' => $href,
-                'active' => ( $title->getBaseText() == 'MySeizam' )
+                'active' => ( $title->getBaseText() == SpecialMySeizam::TITLE_NAME )
             );
             // Add MyWikiPlaces
-            $href = Title::makeTitle(NS_SPECIAL, 'Wikiplaces')->getCanonicalURL();
+            $href = Title::makeTitle(NS_SPECIAL, SpecialWikiplaces::TITLE_NAME)->getCanonicalURL();
             $middle['wikiplaces'] = array(
                 'text' => wfMsg('wikiplaces'),
                 'href' => $href,
-                'active' => ( $title->getBaseText() == 'WikiPlaces' )
+                'active' => ( $title->getBaseText() == SpecialWikiplaces::TITLE_NAME )
             );
             $personal_urls = array_merge($middle, $personal_urls);
         }
@@ -233,6 +233,35 @@ class SkinzamHooks {
             'href' => $href
         );
 
+        return true;
+    }
+    
+    /**
+     *
+     * Hacks LanguageSelector to take the special page parameter as language code.
+     * 
+     * @global WebRequest $wgRequest
+     * @global Title $wgTitle
+     * @param User $user
+     * @param string $code
+     * @return boolean 
+     */
+    public static function onUserGetLanguageObject($user, &$code) {
+        global $wgRequest, $wgTitle;
+        
+        if (!(is_object($wgTitle) && $wgTitle->getBaseText() == SZ_MAIN_PAGE)) {
+            return true;
+        }
+        
+        if (!$wgRequest->getVal( 'setlang' )) {
+            // @todo FIXME: Redirects broken due to this call
+            $bits = explode( '/', $wgTitle->getDBkey(), 2 );
+            $name = $bits[0];
+            if ( isset( $bits[1] ) ) { // bug 2087
+                $wgRequest->setVal('setlang',$bits[1]);
+            }
+        }
+        
         return true;
     }
 

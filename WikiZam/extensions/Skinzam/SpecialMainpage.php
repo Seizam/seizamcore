@@ -34,6 +34,8 @@ if (!defined('MEDIAWIKI'))
  */
 class SpecialMainpage extends SpecialPage {
 
+	const TITLE_NAME = SZ_MAIN_PAGE;
+
     /**
      * Constructor : initialise object
      * Get data POSTed through the form and assign them to the object
