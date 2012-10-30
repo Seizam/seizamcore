@@ -33,7 +33,11 @@ class GooglePlus extends ParserFunction {
         $this->source->setDefaultParameter($url); // parse as "source = URL_VALUE" by default
         $this->addParameter($this->source);
 
+        
+        $this->icon = new Boolean('icon');
+        $this->addParameter($this->icon);
 
+        
         $this->size = new XorParameter('size');
 
 
@@ -70,11 +74,8 @@ class GooglePlus extends ParserFunction {
 
         $this->width = new IntegerInPixel('width'); // used for +1 with annotation=inline
         $this->width->setMax(784);
+        $this->width->setDefaultValue(300);
         $this->addParameter($this->width);
-
-
-        $this->icon = new Boolean('icon');
-        $this->addParameter($this->icon);
 
 
         $float = new XorParameter('float');
@@ -97,11 +98,9 @@ class GooglePlus extends ParserFunction {
             if ($this->annotation->getOutput() == 'inline') { // displaying a +1 button inline
                 // google documentation about width: min = 120, default (when unspecified) = 450
                 $this->width->setMin(120);
-                $this->width->setDefaultValue(450);
             }
         } else { // $this->source->getParameter()->getName() = 'user'
             if (!$this->icon->getValue()) { // displaying a badge, not just an icon
-                $this->width->setDefaultValue(300);
 
                 if ($this->size->getOutput() == 'small') {
                     $this->height_value = 69;
@@ -109,7 +108,6 @@ class GooglePlus extends ParserFunction {
                 } else {
                     $this->height_value = 131;
                     $this->width->setMin(100); // google documentation
-                    $this->width->setDefaultValue(300);
                 }
             }
         }
