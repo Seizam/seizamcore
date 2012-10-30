@@ -25,7 +25,7 @@ class GooglePlus extends ParserFunction {
         // a +1 take an url as value, the default is the current page
         $url = new String('url');
         $url->setValidateType('url');
-        $url->setEscapeMode('urlpathinfo');
+        $url->setEscapeMode('none');
 
         $this->source = new XorParameter('source');
         $this->source->addParameter($url);
@@ -54,14 +54,15 @@ class GooglePlus extends ParserFunction {
         $this->addParameter($this->size);
 
 
-        $inline = new Option('inline');
-        $bubble = new Option('bubble');
         $none = new Option('none');
+        $bubble = new Option('bubble');
+        $inline = new Option('inline');
 
         $this->annotation = new XorParameter('annotation'); // used for +1
-        $this->annotation->addParameter($inline);
-        $this->annotation->addParameter($bubble);
         $this->annotation->addParameter($none);
+        $this->annotation->addParameter($bubble);
+        $this->annotation->addParameter($inline);
+
         $this->annotation->setDefaultParameter($none); // size's default output is none's default output
         $none->setDefaultValue(true); // default value of none is true = none's default output is 'none'
         $this->addParameter($this->annotation);
@@ -74,8 +75,8 @@ class GooglePlus extends ParserFunction {
 
         $this->icon = new Boolean('icon');
         $this->addParameter($this->icon);
-        
-        
+
+
         $float = new XorParameter('float');
 
         $this->right = new Option('right');
@@ -88,7 +89,6 @@ class GooglePlus extends ParserFunction {
     }
 
     protected function validate() { // 100 - 180
-
         // set default url (default parameter is url)
         $this->source->setDefaultValue($this->parser->getTitle()->getCanonicalUrl());
 
@@ -101,17 +101,16 @@ class GooglePlus extends ParserFunction {
             }
         } else { // $this->source->getParameter()->getName() = 'user'
             if (!$this->icon->getValue()) { // displaying a badge, not just an icon
-                
                 $this->width->setDefaultValue(300);
-                
-                if ($this->size->getOutput() == 'small') {                  
+
+                if ($this->size->getOutput() == 'small') {
                     $this->height_value = 69;
                     $this->width->setMin(170); // google documentation             
-                } else {                 
+                } else {
                     $this->height_value = 131;
                     $this->width->setMin(100); // google documentation
-                    $this->width->setDefaultValue(300);          
-                } 
+                    $this->width->setDefaultValue(300);
+                }
             }
         }
 
@@ -138,7 +137,7 @@ class GooglePlus extends ParserFunction {
     }
 
     protected function getDataWidthOutput() {
-        if ( ( $this->source->getParameter()->getName() == 'user' ) || ( $this->annotation->getOutput() == 'inline' ) ) {
+        if (( $this->source->getParameter()->getName() == 'user' ) || ( $this->annotation->getOutput() == 'inline' )) {
             return 'data-width="' . $this->width->getOutput() . '"';
         }
         // else
@@ -156,7 +155,7 @@ class GooglePlus extends ParserFunction {
     protected function getDataHrefOutput() {
 
         $href = $this->source->getOutput();
-        
+
         if ($this->source->getParameter()->getName() == 'user') {
             $href = "https://plus.google.com/" . $href;
         }
@@ -205,7 +204,7 @@ class GooglePlus extends ParserFunction {
             return 'wfmk_left';
         }
     }
-    
+
     protected function getOutputAsPlusOneButton() {
         return '<div class="g-plusone"
                     ' . $this->getDataSizeOutput() . '
@@ -241,11 +240,12 @@ class GooglePlus extends ParserFunction {
     protected function wrapFloatDiv($content) {
         $class = $this->getFloatClass();
         if (!empty($class)) {
-            return '<div class="'.$class.'">'.$content.'</div>';
+            return '<div class="' . $class . '">' . $content . '</div>';
         }
         // else
         return $content;
     }
+
     /**
      * For the best performance, place this code immediately after the last +1 button tag or Google+ badge tag on the page.
      * @return string
@@ -269,7 +269,7 @@ class GooglePlus extends ParserFunction {
         } else {
             $content = $this->getOutputAsBadge();
         }
-        
+
         return $this->wrapFloatDiv($content);
     }
 

@@ -35,7 +35,7 @@ class String extends Parameter {
 
     /**
      * Set the output escape mode, default is "html".
-     * @param html|htmlall|url|urlpathinfo|quotes|hex|hexentity|decentity|javascript|mail|nonstd $escape_mode string
+     * @param none|html|htmlall|url|urlpathinfo|quotes|hex|hexentity|decentity|javascript|mail|nonstd $escape_mode string
      * @throws \MWException
      */
     public function setEscapeMode($escape_mode) {

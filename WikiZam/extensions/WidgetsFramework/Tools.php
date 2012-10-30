@@ -52,12 +52,14 @@ class Tools {
      *          escape (Smarty online manual)
      * @author   Monte Ohrt <monte at ohrt dot com>
      * @param string $value
-     * @param html|htmlall|url|urlpathinfo|quotes|hex|hexentity|decentity|javascript|mail|nonstd $esc_type
+     * @param none|html|htmlall|url|urlpathinfo|quotes|hex|hexentity|decentity|javascript|mail|nonstd $esc_type
      * @return string The escaped string
      */
     public static function Escape($string = '', $esc_type = 'html', $char_set = 'ISO-8859-1') {
 
         switch ($esc_type) {
+            case 'none':
+                return $string;
             case 'html':
                 return htmlspecialchars($string, ENT_QUOTES, $char_set);
 
@@ -120,7 +122,7 @@ class Tools {
 
             default: // from original code, changed from returning string unchanged to htmlall escaping (safer when wrong $esc_type)
                 return htmlentities($string, ENT_QUOTES, $char_set);
-            //return $string;
+                //return $string;
         }
     }
 
