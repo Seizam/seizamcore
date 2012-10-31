@@ -59,7 +59,7 @@ $messages['en'] = array(
     'wp-navigation-tip' => 'To install the [[Help:WikiPlace Navigation|navigation menu]], input a list of links on [[{{ns:Wikiplace}}:$1/'.WPNAVIGATIONKEY.']].',
     /* TablePage: Wikiplace */
     'wp-list-header' => '<span style="float:right">See : <b>[[Help:Wikiplaces|Help]]</b></span>Here are your WikiPlaces.',
-    'wp-list-footer' => '==={{int:statistics}}===
+    'wp-list-footer' => '<h3>{{int:statistics}}</h3>
 * Diskspace usage total: $1
 * Pages total: $2',
     'wp-consult-header' => '<span style="float:right">See : <b>[[Help:Wikiplaces|Help]]</b></span>Here are all the pages within <b>[[$1]]</b>.',
@@ -90,20 +90,20 @@ $messages['en'] = array(
     'wp-subpage-talk-default' => '{{Subst:Default_Talk}}',
     'wp-homepage-talk-default' => '{{Subst:Default_Talk}}',
     /* Disclaimer: Wikiplace */
-    'wp-create-wp-success' => '==Congratulations!==
+    'wp-create-wp-success' => '<h2>Congratulations!</h2>
 
 Your new WikiPlace <b>[[$1]]</b> has been successfully created! {{int:wp-url-tip|$1}} You can administrate it from <b>[[Special:WikiPlaces/Consult:$1|{{int:wikiplaces}}]]</b>.
 
-==={{int:tipsntricks}}===
+<h3>{{int:tipsntricks}}</h3>
 * {{int:wp-link-tip|$1}}
 * {{int:wp-linkalias-tip|$1|My Homepage!}}
 * {{int:wp-subpage-tip|$1}}
 * {{int:wp-action-tip}}',
-    'wp-create-sp-success' => '==Congratulations!==
+    'wp-create-sp-success' => '<h2>Congratulations!</h2>
 
 Your new Subpage <b>[[$1/$2|$2]]</b> has been successfully created in [[$1]]! {{int:wp-suburl-tip|$1|$2}} You can administrate [[$1]] from <b>[[Special:WikiPlaces/Consult:$1|{{int:wikiplaces}}]]</b>.
 
-==={{int:tipsntricks}}===
+<h3>{{int:tipsntricks}}</h3>
 * {{int:wp-sublink-tip|$1|$2}}
 * {{int:wp-sublinkalias-tip|$1|$2}}
 * {{int:wp-action-tip}}',
@@ -221,7 +221,7 @@ $messages['fr'] = array(
     'wp-navigation-tip' => 'Pour installer le [[Help:Navigation pour WikiPlace|menu de navigation]], saisissez une liste de liens sur [[{{ns:Wikiplace}}:$1/'.WPNAVIGATIONKEY.']].',
     /* TablePage: Wikiplace */
     'wp-list-header' => '<span style="float:right">Voir : <b>[[Help:Wikiplaces/fr|Aide]]</b></span>Voici vos WikiPlaces.',
-    'wp-list-footer' => '==={{int:statistics}}===
+    'wp-list-footer' => '<h3>{{int:statistics}}</h3>
 * Espace disque utilisé : $1
 * Total de pages : $2',
     'wp-consult-header' => '<span style="float:right">Voir : <b>[[Help:Wikiplaces/fr|Aide]]</b></span>Voici toutes les pages dans <b>[[$1]]</b>.',
@@ -244,20 +244,20 @@ $messages['fr'] = array(
     'wp-createpage-createtalk-help' => 'Cochez cette case si vous désirez ouvrir la Discussion pour votre page. Cette seconde page de discussion sera disponnible depuis <u>www.seizam.com/<b>Talk:</b>Parent/Nom</u>.',
     'wp-createtalk-help' => 'Cochez cette case si vous désirez ouvrir la Discussion pour votre page. Cette seconde page de discussion sera disponnible depuis <u>www.seizam.com/<b>Talk:</b>Nom</u>.',
     /* Disclaimer: Wikiplace */
-    'wp-create-wp-success' => '==Félicitations !==
+    'wp-create-wp-success' => '<h2>Félicitations !</h2>
 
 Votre nouvelle WikiPlace <b>[[$1]]</b> a été créée avec succès ! {{int:wp-url-tip|$1}} Vous pouvez l\'administrer depuis <b>[[Special:WikiPlaces/Consult:$1|{{int:wikiplaces}}]]</b>.
 
-==={{int:tipsntricks}}===
+<h3>{{int:tipsntricks}}</h3>
 * {{int:wp-link-tip|$1}}
 * {{int:wp-linkalias-tip|$1|My Homepage!}}
 * {{int:wp-subpage-tip|$1}}
 * {{int:wp-action-tip}}',
-    'wp-create-sp-success' => '==Félicitations !==
+    'wp-create-sp-success' => '<h2>Félicitations !</h2>
 
 Votre nouvelle sous-page <b>[[$1/$2|$2]]</b> a été créée avec succès dans [[$1]]! {{int:wp-suburl-tip|$1|$2}} Vous pouvez administrer [[$1]] depuis <b>[[Special:WikiPlaces/Consult:$1|{{int:wikiplaces}}]]</b>.
 
-==={{int:tipsntricks}}===
+<h3>{{int:tipsntricks}}</h3>
 * {{int:wp-sublink-tip|$1|$2}}
 * {{int:wp-sublinkalias-tip|$1|$2}}
 * {{int:wp-action-tip}}',

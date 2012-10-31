@@ -4,11 +4,11 @@ namespace WidgetsFramework;
 
 class GooglePlus extends ParserFunction {
 
-    protected $source;
+    protected $target;
     protected $size;
     protected $annotation; // used for +1
-    protected $width; // used for +1 with annotation=inline
     protected $icon;
+    protected $width; // used for +1 with annotation=inline
     protected $right;
     protected $left;
     // internal var computed during validate() and used during getOutput()
@@ -27,17 +27,13 @@ class GooglePlus extends ParserFunction {
         $url->setValidateType('url');
         $url->setEscapeMode('none');
 
-        $this->source = new XorParameter('source');
-        $this->source->addParameter($url);
-        $this->source->addParameter($user);
-        $this->source->setDefaultParameter($url); // parse as "source = URL_VALUE" by default
-        $this->addParameter($this->source);
+        $this->target = new XorParameter('target');
+        $this->target->addParameter($url);
+        $this->target->addParameter($user);
+        $this->target->setDefaultParameter($url); // parse as "target = URL_VALUE" by default
+        $this->addParameter($this->target);
 
-        
-        $this->icon = new Boolean('icon');
-        $this->addParameter($this->icon);
 
-        
         $this->size = new XorParameter('size');
 
 
@@ -72,6 +68,10 @@ class GooglePlus extends ParserFunction {
         $this->addParameter($this->annotation);
 
 
+        $this->icon = new Boolean('icon');
+        $this->addParameter($this->icon);
+
+
         $this->width = new IntegerInPixel('width'); // used for +1 with annotation=inline
         $this->width->setMax(784);
         $this->width->setDefaultValue(300);
@@ -91,17 +91,16 @@ class GooglePlus extends ParserFunction {
 
     protected function validate() { // 100 - 180
         // set default url (default parameter is url)
-        $this->source->setDefaultValue($this->parser->getTitle()->getCanonicalUrl());
+        $this->target->setDefaultValue($this->parser->getTitle()->getCanonicalUrl());
 
-        if ($this->source->getParameter()->getName() == 'url') {
+        if ($this->target->getParameter()->getName() == 'url') {
 
             if ($this->annotation->getOutput() == 'inline') { // displaying a +1 button inline
                 // google documentation about width: min = 120, default (when unspecified) = 450
                 $this->width->setMin(120);
             }
-        } else { // $this->source->getParameter()->getName() = 'user'
+        } else { // $this->target->getParameter()->getName() = 'user'
             if (!$this->icon->getValue()) { // displaying a badge, not just an icon
-
                 if ($this->size->getOutput() == 'small') {
                     $this->height_value = 69;
                     $this->width->setMin(170); // google documentation             
@@ -135,7 +134,7 @@ class GooglePlus extends ParserFunction {
     }
 
     protected function getDataWidthOutput() {
-        if (( $this->source->getParameter()->getName() == 'user' ) || ( $this->annotation->getOutput() == 'inline' )) {
+        if (( $this->target->getParameter()->getName() == 'user' ) || ( $this->annotation->getOutput() == 'inline' )) {
             return 'data-width="' . $this->width->getOutput() . '"';
         }
         // else
@@ -150,16 +149,16 @@ class GooglePlus extends ParserFunction {
         return 'data-height="' . $this->height_value . '"'; // 69 or 131
     }
 
-    protected function getSourceOutput() {
-        $source = $this->source->getOutput();
-        if ($this->source->getParameter()->getName() == 'user') {
-            $source = "https://plus.google.com/" . $source;
+    protected function getTargetOutput() {
+        $target = $this->target->getOutput();
+        if ($this->target->getParameter()->getName() == 'user') {
+            $target = "https://plus.google.com/" . $target;
         }
-        return $source;
+        return $target;
     }
-    
+
     protected function getDataHrefOutput() {
-        return 'data-href="' . $this->getSourceOutput() . '"';
+        return 'data-href="' . $this->getTargetOutput() . '"';
     }
 
     /**
@@ -218,7 +217,7 @@ class GooglePlus extends ParserFunction {
         $this->setBlock(false);
         $icon_size = $this->getIconSize();
 
-        return '<a href="'.$this->getSourceOutput().'"
+        return '<a href="' . $this->getTargetOutput() . '"
                    rel="publisher"
                    style="text-decoration:none;">
                        <img src="//ssl.gstatic.com/images/icons/gplus-' . $icon_size . '.png"
@@ -261,7 +260,7 @@ class GooglePlus extends ParserFunction {
 
     protected function getOutput() {
 
-        if ($this->source->getParameter()->getName() == 'url') {
+        if ($this->target->getParameter()->getName() == 'url') {
             $content = $this->getOutputAsPlusOneButton();
         } elseif ($this->icon->getValue()) {
             $content = $this->getOutputAsIcon();
