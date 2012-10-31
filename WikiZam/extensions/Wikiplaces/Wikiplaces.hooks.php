@@ -834,7 +834,7 @@ class WikiplacesHooks {
             return false;
         }
 
-        $patternForFile = '/^\[\[File:(.*)\|.*\]\]/m';
+        $patternForFile = '/^\[\[File:([^\]\|]+).*\]\]/m';
         $matchesForFile = array();
         if (preg_match($patternForFile, $backgroundText, $matchesForFile)) {
             $fileKey = $matchesForFile[1];
