@@ -11,10 +11,10 @@ class Flickr extends ParserFunction {
     protected $count;
     protected $random; // only when user all or user tag
     protected $size;
-    protected $right;
-    protected $left;
     protected $width;
     protected $height;
+    protected $right;
+    protected $left;
 
     protected function declareParameters() {
 
@@ -63,7 +63,7 @@ class Flickr extends ParserFunction {
         $this->size->setDefaultParameter($square); // size's default output is square's default output
         $square->setDefaultValue(true); // default value of square is true = square's default output is 's'
         $this->addParameter($this->size);
-        
+
 
         $this->width = new IntegerInPixel('width');
         $this->addParameter($this->width);
@@ -85,12 +85,12 @@ class Flickr extends ParserFunction {
 
     protected function validate() {
         parent::validate();
-        
+
         if ($this->size->getOutput() == 's') {
             $this->count->setDefaultValue(9);
         }
     }
-    
+
     protected function getSourceOutput() {
 
         $user_is_set = $this->user->hasBeenSet();
@@ -152,8 +152,8 @@ class Flickr extends ParserFunction {
         $style = 'style="';
 
         if ($this->width->hasBeenSet()) {
-            
-            if ( ($this->size->getOutput() == 's') && ($this->width->getValue() < 10) ){ 
+
+            if (($this->size->getOutput() == 's') && ($this->width->getValue() < 10)) {
                 // images are squares of 75x75px, and user wrote size in number of columns
                 $style .= 'width: ' . ( 12 + ( 85 * $this->width->getValue() ) ) . 'px;';
             } else {
