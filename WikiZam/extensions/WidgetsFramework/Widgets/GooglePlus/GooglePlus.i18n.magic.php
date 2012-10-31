@@ -6,6 +6,6 @@
 $magicWords = array();
  
 $magicWords['en'] = array(
-    'GooglePlus' => array( 0, 'googleplus' ),
+    'GooglePlus' => array( 0, 'google+' ),
 );
 
