@@ -834,7 +834,7 @@ class WikiplacesHooks {
             return false;
         }
 
-        $patternForFile = '/^\[\[File:(.*)\|.*\]\]$/m';
+        $patternForFile = '/^\[\[File:(.*)\|.*\]\]/m';
         $matchesForFile = array();
         if (preg_match($patternForFile, $backgroundText, $matchesForFile)) {
             $fileKey = $matchesForFile[1];
@@ -844,7 +844,7 @@ class WikiplacesHooks {
         }
 
         /** @todo Remove the background by url feature */
-        $patternForUrl = '/^(https?\:\/\/[\w\-%\.\/\?\&]*\.(jpe?g|png|gif))$/im';
+        $patternForUrl = '/^(https?\:\/\/[\w\-%\.\/\?\&]*\.(jpe?g|png|gif))/im';
         $matchesForUrl = array();
         if (preg_match($patternForUrl, $backgroundText, $matchesForUrl)) {
             return $matchesForUrl[1];
