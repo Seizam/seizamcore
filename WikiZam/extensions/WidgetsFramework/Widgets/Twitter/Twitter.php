@@ -5,8 +5,9 @@ namespace WidgetsFramework;
 class Twitter extends ParserFunction {
 
     protected $source; // xorparameter, contains "user" and "query"
-    protected $faves; // in xorparameter "select"
-    protected $list; // in xorparameter "select"
+    protected $faves; // in xorparameter "mode"
+    protected $list; // in xorparameter "mode"
+    protected $follow; // in xorparameter "mode"
     protected $title;
     protected $subject;
     protected $width;
@@ -40,10 +41,13 @@ class Twitter extends ParserFunction {
         $this->list = new String('list');
         $this->list->setEscapeMode('quotes');
 
-        $select = new XorParameter('select');
-        $select->addParameter($this->faves);
-        $select->addParameter($this->list);
-        $this->addParameter($select);
+        $this->follow = new Option('follow');
+
+        $mode = new XorParameter('mode');
+        $mode->addParameter($this->faves);
+        $mode->addParameter($this->list);
+        $mode->addParameter($this->follow);
+        $this->addParameter($mode);
 
 
         $this->title = new String('title');
@@ -130,6 +134,8 @@ class Twitter extends ParserFunction {
                 return 'faves';
             } elseif ($this->list->getValue()) {
                 return 'list';
+            } elseif ($this->follow->getValue()) {
+                return 'follow';
             } else {
                 return 'profile';
             }
@@ -156,11 +162,23 @@ class Twitter extends ParserFunction {
         }
     }
 
+    protected function getFollowButton() {
+        $user = $this->source->getOutput();
+        return '<a href="https://twitter.com/' . $user . '" class="twitter-follow-button" data-show-count="false" data-dnt="true">
+                    Follow @' . $user . '
+                </a>
+                <script>
+                    !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+                </script>';
+    }
+
     protected function getOutput() {
 
         $type = $this->getType();
 
-        if ($type == 'search') {
+        if ($type == 'follow') {
+            return $this->getFollowButton();
+        } elseif ($type == 'search') {
             $search = "search: '" . $this->source->getOutput() . "',"; // source = search
         } else {
             $search = "";
