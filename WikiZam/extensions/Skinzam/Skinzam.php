@@ -83,6 +83,7 @@ $wgResourceModules += array(
         ),
     'jquery.backstretch' => array(
          'scripts' => 'extensions/Skinzam/modules/jquery/jquery.backstretch.js',
+         'position' => 'top',
         ),
     'ext.skinzam.simpleSearch' => $skinzamResourceTemplate + array(
 		'scripts' => 'ext.skinzam.simpleSearch.js',
