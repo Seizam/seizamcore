@@ -194,7 +194,7 @@ class Flickr extends ParserFunction {
     protected function getOutput() {
 
         $show_name = $this->nolink->getValue() ? '' : 'show_name=1&'; // seems to be useless
-        $random_or_recent = $this->random->getValue() ? 'random' : 'recent';
+        $random_or_recent = $this->random->getValue() ? 'random' : 'latest';
 
         return '<!-- Start of Flickr Badge -->  
                 <style type="text/css">' . $this->getCSS() . '</style>
