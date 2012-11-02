@@ -191,6 +191,7 @@ $wgWikiEditorFeatures['toc']['user'] = false;
 $wgDefaultUserOptions['usebetatoolbar'] = 1;
 $wgDefaultUserOptions['usebetatoolbar-cgd'] = 1;
 $wgDefaultUserOptions['wikieditor-preview'] = 0;
+$wgDefaultUserOptions['rememberpassword'] = 1; // Remember my login on this browser for a maximum of X days
 
 # =================
 # RIGHTS & SECURITY
@@ -395,11 +396,6 @@ require_once( "$IP/extensions/Nuke/Nuke.php" );
 
 # =[Parser Functions]=
 require_once( "$IP/extensions/ParserFunctions/ParserFunctions.php");
-
-# =[Widgets \o/]=
-# Currently not in use, and will be removed soon
-#   require_once("$IP/extensions/Widgets/Widgets.php");
-#   $wgGroupPermissions['sysop']['editwidgets'] = true;
 
 # =[Poem]=
 require_once("$IP/extensions/Poem/Poem.php");
