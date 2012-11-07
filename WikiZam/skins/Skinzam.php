@@ -118,7 +118,7 @@ class SkinzamTemplate extends BaseTemplate {
         ?>
         <div id="mw-js-message" style="display:none;"<?php $this->html('userlangattributes') ?>></div>
         <!-- tagline -->
-        <div id="siteSub"><?php $this->msg('tagline') ?><img id="logo" height="200px" width="200px" alt="Seizam's Logo" src="<?php echo wfExpandUrl($this->data['logopath']) ?>"></div>
+        <div id="siteSub"><?php $this->msg('tagline') ?><img id="logo" height="200" width="200" alt="Seizam's Logo" src="<?php echo wfExpandUrl($this->data['logopath']) ?>"></div>
         <!-- /tagline -->
         <?php if ($this->data['showjumplinks']): ?>
             <!-- jumpto -->
@@ -218,10 +218,10 @@ class SkinzamTemplate extends BaseTemplate {
             <!-- /header -->
             <!-- bodyCcontent -->
             <!-- firstHeading -->
-            <?php if ($this->data['wp_headertitle']['content']): ?>
-                <h1 class="firstHeading"><?php echo $this->data['wp_headertitle']['content']; ?></h1>
+            <?php if ($this->data['sz_headertitle']['content']): ?>
+                <h1 class="firstHeading"><?php echo $this->data['sz_headertitle']['content']; ?></h1>
             <?php else: ?>
-                <h1 class="firstHeading notWikiPlace"><?php $this->html('title') ?></h1>
+                <h1 class="firstHeading"><?php $this->html('title') ?></h1>
             <?php endif; ?>
             <!-- /firstHeading -->
             <div id="bodyContent" class="block block_full block_flat " role="main"<?php $this->html('specialpageattributes') ?>> <!--<div id="main" role="main">-->

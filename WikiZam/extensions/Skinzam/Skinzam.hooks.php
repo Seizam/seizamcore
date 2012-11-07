@@ -77,7 +77,7 @@ class SkinzamHooks {
         }
         return true;
     }
-    
+
     /**
      * BeforePageDisplay hook
      * 
@@ -87,12 +87,12 @@ class SkinzamHooks {
      * @param Skin $sk
      * @return boolean 
      */
-    public static function setupDefaultDescription( &$out, &$sk ) {
-	if ( !isset($out->mDescription) ) // set by Description2 extension, install it if you want proper og:description support
-		$out->mDescription = wfMessage('sz-meta-desc')->text();
-	
-	return true;
-}
+    public static function setupDefaultDescription(&$out, &$sk) {
+        if (!isset($out->mDescription)) // set by Description2 extension, install it if you want proper og:description support
+            $out->mDescription = wfMessage('sz-meta-desc')->text();
+
+        return true;
+    }
 
     /**
      * parserClearState hook
@@ -107,6 +107,41 @@ class SkinzamHooks {
     }
 
     /**
+     *
+     * @global type $wgUseCombinedLoginLink
+     * @param SkinSkinzam $skin
+     * @param SkinzamTemplate $tpl
+     * @return type 
+     */
+    private static function getAbsoluteFooterUrls($skin, $tpl) {
+
+        $absoluteFooterUrls = array();
+
+        if ($skin->loggedin) {
+            $absoluteFooterUrls['myseizam'] = array(
+                'text' => wfMessage('sz-myseizam'),
+                'href' => Skin::makeSpecialUrl('MySeizam'),
+                'class' => false,
+                'active' => ( $skin->thispage == 'Special:MySeizam' )
+            );
+            $absoluteFooterUrls['logout'] = array(
+                'text' => wfMessage('logout'),
+                'href' => Skin::makeSpecialUrl('UserLogout', array('returnto' => $skin->getRelevantTitle())),
+                'active' => ( $skin->thispage == 'Special:AllPages' )
+            );
+            $szPrettyUserName = $skin->username;
+            $tpl->set('sz_pretty_username', $szPrettyUserName);
+        } else {
+            $absoluteFooterUrls['login'] = $tpl->data['personal_urls']['login'];
+            global $wgUseCombinedLoginLink;
+            if (!$wgUseCombinedLoginLink)
+                $absoluteFooterUrls['createaccount'] = $tpl->data['personal_urls']['createaccount'];
+        }
+
+        return $absoluteFooterUrls;
+    }
+
+    /**
      * skinTemplateOutputPageBeforeExec hook
      * 
      * Cooks the skin template Seizam-Style!
@@ -115,36 +150,12 @@ class SkinzamHooks {
      * @param SkinzamTemplate $tpl
      */
     public static function skinTemplateOutputPageBeforeExec(&$skin, &$tpl) {
+
         // The links on the absolute footer
-
-        $AbsoluteFooterUrls = array();
-
-        if ($skin->loggedin) {
-            $AbsoluteFooterUrls['myseizam'] = array(
-                'text' => wfMessage('sz-myseizam'),
-                'href' => Skin::makeSpecialUrl('MySeizam'),
-                'class' => false,
-                'active' => ( $skin->thispage == 'Special:MySeizam' )
-            );
-            $AbsoluteFooterUrls['logout'] = array(
-                'text' => wfMessage('logout'),
-                'href' => Skin::makeSpecialUrl('UserLogout',array('returnto'=>$skin->getRelevantTitle())),
-                'active' => ( $skin->thispage == 'Special:AllPages' )
-            );
-            $szPrettyUserName = $skin->username;
-            $tpl->set('sz_pretty_username', $szPrettyUserName);
-        } else {
-            $AbsoluteFooterUrls['login'] = $tpl->data['personal_urls']['login'];
-            global $wgUseCombinedLoginLink;
-            if (!$wgUseCombinedLoginLink)
-                $AbsoluteFooterUrls['createaccount'] = $tpl->data['personal_urls']['createaccount'];
-        }
-
-        $tpl->set('absolute_footer_urls', $AbsoluteFooterUrls);
+        $tpl->set('absolute_footer_urls', self::getAbsoluteFooterUrls($skin, $tpl));
 
 
         // The links on the content footer
-
         $tpl->set('footerlinks', array(
             'info' => array(
                 'lastmod',
@@ -154,6 +165,10 @@ class SkinzamHooks {
                 'copyright',
             )
         ));
+
+        // The page title H1 header formatted
+        $headerTitle['content'] = TitleExplosion::newFromTitle($skin->getTitle())->getHtml();
+        $tpl->set('sz_headertitle', $headerTitle);
 
 
         return true;
@@ -204,7 +219,7 @@ class SkinzamHooks {
         }
 
         $personal_urls = array_merge($beginning, $personal_urls);
-        
+
         if (isset($personal_urls['logout']))
             unset($personal_urls['logout']);
 
@@ -235,7 +250,7 @@ class SkinzamHooks {
 
         return true;
     }
-    
+
     /**
      *
      * Hacks LanguageSelector to take the special page parameter as language code.
@@ -248,20 +263,20 @@ class SkinzamHooks {
      */
     public static function onUserGetLanguageObject($user, &$code) {
         global $wgRequest, $wgTitle;
-        
+
         if (!(is_object($wgTitle) && $wgTitle->getBaseText() == SZ_MAIN_PAGE)) {
             return true;
         }
-        
-        if (!$wgRequest->getVal( 'setlang' )) {
+
+        if (!$wgRequest->getVal('setlang')) {
             // @todo FIXME: Redirects broken due to this call
-            $bits = explode( '/', $wgTitle->getDBkey(), 2 );
+            $bits = explode('/', $wgTitle->getDBkey(), 2);
             $name = $bits[0];
-            if ( isset( $bits[1] ) ) { // bug 2087
-                $wgRequest->setVal('setlang',$bits[1]);
+            if (isset($bits[1])) { // bug 2087
+                $wgRequest->setVal('setlang', $bits[1]);
             }
         }
-        
+
         return true;
     }
 

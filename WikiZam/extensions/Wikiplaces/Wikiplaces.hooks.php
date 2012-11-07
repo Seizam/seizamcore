@@ -803,9 +803,6 @@ class WikiplacesHooks {
             $explosion = WpWikiplace::explodeWikipageKey($title->getText(), $ns);
             $wikiplaceKey = $explosion[0];
 
-            // Wikiplace Title
-            $headerTitle['content'] = self::makeFirstHeading($explosion, $title);
-
             // Wikiplace Background?g|png|gif)$/i';
             $background['url'] = self::getBackgroundUrl($wikiplaceKey);
 
@@ -821,7 +818,6 @@ class WikiplacesHooks {
         }
         $tpl->set('wp_background', $background);
         $tpl->set('wp_navigation', $navigation);
-        $tpl->set('wp_headertitle', $headerTitle);
         return true;
     }
 
@@ -857,91 +853,7 @@ class WikiplacesHooks {
         return $extension == 'jpg' || $extension == 'png' || $extension == 'gif';
     }
 
-    /**
-     * Build pretty html FirstHeading from array of WikiPage Key elements
-     * 
-     * @param Array $explosion
-     * @param Title $title
-     */
-    private static function makeFirstHeading($explosion, $title) {
-
-
-        $excount = count($explosion);
-        $text = '';
-        $ns = $title->getNamespace();
-
-        // Pages not in main append namespace to title
-        if ($ns != NS_MAIN) {
-            $text .= '<span class="wpp-ns">' . $title->getNsText() . '</span>:';
-        }
-
-        // All pages except files
-        if ($ns != NS_FILE && $ns != NS_FILE_TALK) {
-            // We take the language variant off the explosion
-            if (strlen($explosion[$excount - 1]) == 2) {
-                $lang = $explosion[$excount - 1];
-                array_pop($explosion);
-                $excount--;
-            }
-
-            // First element of the array is the Homepage, we record it
-            $mother = $explosion[0];
-
-            // We print the Homepage
-            if ($excount == 1) {
-                $text .= Linker::linkKnown(Title::newFromText($mother, NS_MAIN), '<span class="wpp-hp">' . $mother . '</span>');
-            } else {
-                $text .= Linker::linkKnown(Title::newFromText($mother, NS_MAIN), '<span class="wpp-sp-hp">' . $mother . '</span>');
-            }
-
-            // We want to take care of the subpages now, we kick the homepage out.
-            array_shift($explosion);
-
-            // Foreach Subpages
-            foreach ($explosion as $atom) {
-                // The current element of the array is recorded
-                $mother .= '/' . $atom;
-
-                $text .= '/';
-                // We print its link
-                $text .= Linker::linkKnown(Title::newFromText($mother, NS_MAIN), '<span class="wpp-sp">' . $atom . '</span>');
-            }
-
-            // Appending Lang variant
-            if (isset($lang))
-                $text .= '/<span class="wpp-sp-lg">' . $lang . '</span>';
-            // Page is NS_FILE or NS_FILE_TALK
-        } else {
-            // We take the extension off the explosion
-            if (strlen($explosion[$excount - 1]) <= 4) {
-                $ext = $explosion[$excount - 1];
-                array_pop($explosion);
-                $excount--;
-            }
-            // We print the Homepage
-            $text .= Linker::linkKnown(Title::newFromText($explosion[0], NS_MAIN), '<span class="wpp-sp-hp">' . $explosion[0] . '</span>');
-            $text .= '.';
-
-            // We want to take care of the subpages now, we kick the homepage out.
-            array_shift($explosion);
-
-            $temp = '';
-            // Reconstructing Page title
-            foreach ($explosion as $atom)
-                $temp .= $atom . '.';
-            $temp = substr($temp, 0, -1);
-
-            $temp = '<span class="wpp-file">' . $temp . '</span>';
-
-            // Appending Ext
-            if (isset($ext))
-                $temp .= '.<span class="wpp-file-ext">' . $ext . '</span>';
-
-            $text .= Linker::linkKnown(Title::newFromText($title->getDBkey(), NS_FILE), $temp);
-        }
-
-        return $text;
-    }
+    
 
     /**
      *
