@@ -340,10 +340,6 @@ img {
 /* Correct overflow displayed oddly in IE9 */
 svg:not(:root) { overflow: hidden; }
 
-img {
-    max-width: 100%;
-}
-
 
 /* -----------------------------------------------------------------------------
    ==  WidgetsFramework
