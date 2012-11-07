@@ -1193,27 +1193,31 @@ div.license img {
 h1.firstHeading {
     z-index: 19;
     max-width: 822px;
-    margin: 6px 30px -5px  30px;
+    margin: 10px 30px 2px  30px;
     word-wrap: break-word;
     
     color: #4d4e4f;
     font-size: 16px;
     font-weight: normal;
     font-style: italic;
-    letter-spacing: 2px;
-    word-spacing: 5px;
+    letter-spacing: 1px;
+    word-spacing: 3px;
     line-height: 16px;
 }
 
 h1.firstHeading span,
 h1.firstHeading a.fh-language{
-    opacity: 0.2;
+    opacity: 0.3;
 }
 
 h1.firstHeading a {
     margin: 0 4px 0 4px;
     color: #4d4e4f;
-    opacity: 0.5;
+    opacity: 0.6;
+}
+
+h1.firstHeading a:first-child {
+    margin-left: 0;
 }
 
 h1.firstHeading a.fh-current {
@@ -1222,7 +1226,7 @@ h1.firstHeading a.fh-current {
 
 h1.firstHeading a:hover {
     color: #E22C2E;
-    opacity: 1;
+    opacity: 0.9;
     
 }
 
@@ -1312,7 +1316,7 @@ div#bodyContent div.inside #nav {
 
 #nav div.nav_artist {
     display: inline-block;
-    margin: 0 0 8px 0;
+    margin: 0 0 8px 16px;
     padding: 0;
 }
 
@@ -1938,19 +1942,23 @@ body.ns-6.action-view #bodyContent {
 h2#filehistory,
 h2#filelinks,
 h2#metadata{
-    color: white;
+    
+    z-index: 19;
     max-width: 822px;
-    text-shadow: -1px 0 #dad9d9, 0 1px #dad9d9, 1px 0 #dad9d9, 0 -1px #dad9d9;
-    margin: 0 0 0 6px;
-    text-align: left;
-    font-family: Georgia, Times, "Time New Roman", serif;
-    text-transform: none;
-    letter-spacing: 0;
-    word-spacing: 0;
-    line-height: inherit;
-    font-style: italic;
-    font-weight: normal;
+    margin: 10px 0 2px  0;
     word-wrap: break-word;
+    
+    text-align: left;
+    text-transform: none;
+    font-family: Georgia, Times, "Time New Roman", serif;
+    color: #4d4e4f;
+    font-size: 13px;
+    font-weight: normal;
+    font-style: italic;
+    letter-spacing: 1px;
+    word-spacing: 3px;
+    line-height: 16px;
+    opacity: 0.6;
 }
 
 table.mw_metadata {
