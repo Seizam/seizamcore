@@ -1189,7 +1189,7 @@ div.license img {
 h1.firstHeading {
     z-index: 19;
     max-width: 822px;
-    margin: 10px 30px 2px  30px;
+    margin: 3px 30px 15px 30px;
     word-wrap: break-word;
     
     color: #4d4e4f;
@@ -1312,7 +1312,7 @@ div#bodyContent div.inside #nav {
 
 #nav div.nav_artist {
     display: inline-block;
-    margin: 0 0 8px 16px;
+    margin: 0 0 16px 16px;
     padding: 0;
 }
 
@@ -1978,6 +1978,10 @@ div.editButtons {
 body.action-edit div.mw-warning-with-logexcerpt,
 body.action-submit div.mw-warning-with-logexcerpt {
     display: none;
+}
+
+form#editform {
+    clear: both;
 }
 
 
