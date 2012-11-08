@@ -3,7 +3,6 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	exit(1);
 }
 
-//@{
 /**
  * @file
  * @ingroup Extensions
@@ -32,5 +31,3 @@ $wgHooks['AbortNewAccount'][] = 'EmailBlacklistHooks::abortNewAccount';
 $wgHooks['AbortAutoAccount'][] = 'EmailBlacklistHooks::abortNewAccount';
 $wgHooks['EditFilter'][] = 'EmailBlacklistHooks::validateBlacklist';
 $wgHooks['ArticleSaveComplete'][] = 'EmailBlacklistHooks::clearBlacklist';
-
-//@}
