@@ -351,6 +351,10 @@ $wgTitleBlacklistSources = array(
 		'src' => 'MediaWiki:Titleblacklist'
 	)
 );
+
+# =[ EmailBlacklist ]=
+require_once( "{$IP}/extensions/EmailBlacklist/EmailBlacklist.php" );
+
 // Default bypass:
 //   $wgGroupPermissions['sysop']['tboverride'] = true;
 // Default caching params:
