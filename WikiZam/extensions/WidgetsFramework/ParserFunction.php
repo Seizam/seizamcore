@@ -258,6 +258,11 @@ abstract class ParserFunction implements Widget {
 
         wfDebugLog('WidgetsFramework', static::GetName() . '->execute(' . count($arguments) . ' argument(s))');
 
+        // if the limit has been exceeded, return error message (parser will also display a warning in edit mode)
+        if( ! $this->parser->incrementExpensiveFunctionCount() ) {
+            return 'Expensive function count error.';
+        }
+        
         // initialize
         $this->declareParameters();
 
