@@ -9,13 +9,12 @@ class OptionString extends String {
     /**
      * Default behavior:
      * <ul>
-     * <li>value not set</li>
-     * <li>default value is empty string</li>
+     * <li>default (OFF) value is empty string</li>
+     * <li>ON value is empty string</li>
      * <li>parameter is not required</li>
      * <li>escape mode: <i>html</i></li>
-     * <li>minimal length: <i>1 character</i></li>
-     * <li>maximal length: <i>unlimited</i></li>
-     * <li>option value is empty string</li>
+     * <li>minimal length: <i>0 character</i></li>
+     * <li>maximal length: <i>1024 chars</i></li>
      * </ul>  
      * @param string $name The parameter name, case insensitive
      * @throws \MWException if $name not specified
@@ -26,13 +25,13 @@ class OptionString extends String {
     }
     
     /**
-     * Set the value to use when parameter is set without value (as an option)
+     * Set the value when option is on (without value)
      * @param string $option_value Will be parsed, except if $do_parse is false<br/>
      * @param boolean $do_parse do parse the $option_value (default is true, safer) 
      * @return void
      * @throws \MWException if $default_value cannot be parsed
      */
-    public function setOptionValue($option_value, $do_parse = true) {
+    public function setONValue($option_value, $do_parse = true) {
 
         if ($do_parse && is_string($option_value)) {
             try {

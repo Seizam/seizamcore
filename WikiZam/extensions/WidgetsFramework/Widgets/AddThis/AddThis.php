@@ -4,6 +4,9 @@ namespace WidgetsFramework;
 
 class AddThis extends ParserFunction {
 
+    /**
+     * @var Option
+     */
     protected $long;
     protected $big;
     protected $counter;
@@ -17,7 +20,6 @@ class AddThis extends ParserFunction {
 
         $this->long = new Boolean('long');
         $this->addParameter($this->long);
-
 
         $this->big = new Boolean('big');
         $this->addParameter($this->big);
@@ -51,11 +53,14 @@ class AddThis extends ParserFunction {
 
         $this->addParameter($float);
     }
+    
+    protected function validate() {
+        parent::validate();
+    }
 
     protected function getCSSClasses() {
 
         $classes = array();
-        $classes[] = 'wfmk_block';
         $classes[] = 'addthis_toolbox';
         $classes[] = 'addthis_default_style';
 
@@ -64,6 +69,8 @@ class AddThis extends ParserFunction {
         } else {
             $classes[] = 'addthis_16x16_style';
         }
+        
+        $classes[] = 'wfmk_block';
 
         if ($this->right->getValue()) {
             $classes[] = 'wfmk_right';
@@ -86,10 +93,16 @@ class AddThis extends ParserFunction {
     }
 
     protected function getButtons() {
-        $buttons = '<a class="addthis_button_preferred_1"></a><a class="addthis_button_preferred_2"></a>';
-
+        $howmany = 2;
         if ($this->long->getValue()) {
-            $buttons .= '<a class="addthis_button_preferred_3"></a><a class="addthis_button_preferred_4"></a>';
+            $howmany = 4;
+        }
+        
+        $buttons = "";
+        $index = 1;
+        
+        for ($index; $index <= $howmany; $index++) {
+            $buttons .= "<a class=\"addthis_button_preferred_{$index}\"></a>\n";
         }
 
         return $buttons;
@@ -137,12 +150,24 @@ class AddThis extends ParserFunction {
         /**
          * @TODO Enable ShareVars settings from parameter
          */
-        $vars[] = "url:'".$this->url->getOutput()."'";
         
         if (!empty($vars))
             $js = "\n\tvar addthis_share={".  implode(", ", $vars)."};";
         
         return $js;
+    }
+    
+    protected function getHtmlShareVars() {
+        
+        $vars = array();
+        
+        /**
+         * @TODO Enable ShareVars settings from parameter
+         */
+        $vars[] = "addthis:url=\"{$this->url->getOutput()}\"";
+        
+        return implode(' ', $vars);
+        
     }
     
     protected function getJSVars() {
@@ -157,16 +182,14 @@ class AddThis extends ParserFunction {
         
         global $wgGAnalyticsPropertyID;
 
-        return '<div class="' . $this->getCSSClasses() . '">
-                    ' . $this->getButtons() . '
-                    <a class="addthis_button_compact"></a>
-                    ' . $this->getExtraBubbleButton() . '
-                </div>'
+        return "<div class=\"{$this->getCSSClasses()}\" {$this->getHtmlShareVars()}>"
+                    . $this->getButtons()
+                    . "<a class=\"addthis_button_compact\"></a>"
+                    . $this->getExtraBubbleButton()
+                . "</div>"
                 . $this->getJSVars()
-                .'<script
-                    type="text/javascript"
-                    src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=' . $this->pubid->getOutput() . '">
-                </script>';
+                . "<script type=\"text/javascript\" src=\"http://s7.addthis.com/js/250/addthis_widget.js#pubid={$this->pubid->getOutput()}\">
+                </script>";
     }
 
 }

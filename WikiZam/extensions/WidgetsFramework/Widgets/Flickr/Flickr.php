@@ -32,7 +32,7 @@ class Flickr extends ParserFunction {
 
 
         $this->photostream = new OptionString('photostream');
-        $this->photostream->setOptionValue('photostream...');
+        $this->photostream->setONValue('photostream...');
         $this->addParameter($this->photostream);
 
 
