@@ -43,7 +43,23 @@ $wgAutoloadClasses['WidgetsFramework\\ParserFunction'] = $_dir . '/ParserFunctio
 $wgAutoloadClasses['WidgetsFramework\\Tools'] = $_dir . '/Tools.php';
 $wgAutoloadClasses['WidgetsFramework\\UserError'] = $_dir . '/UserError.php';
 $wgAutoloadClasses['WidgetsFramework\\Widget'] = $_dir . '/Widget.php';
+$wgAutoloadClasses['WidgetsFramework\\Hooks'] = $_dir . '/Hooks.php';
 
+// Declare resources
+$widgetsFrameworkTpl = array(
+	'localBasePath' => $dir . '/Modules',
+	'remoteExtPath' => 'WidgetsFramework/Modules',
+	'group' => 'ext.widgetsFramework',
+);
+
+$wgResourceModules += array(
+	'ext.widgetsFramework.css' => $widgetsFrameworkTpl + array(
+		'styles' => 'WidgetsFramework.css',
+        'position' => 'top'
+	));
+
+// Load Resources
+$wgHooks['BeforePageDisplay'][] = 'WidgetsFramework\\Hooks::beforePageDisplay';
 
 
 // Automatic load of all parameters classes
@@ -67,7 +83,6 @@ foreach (glob($_dir . '/Widgets/*', GLOB_ONLYDIR) as $widget_dir) {
     $widget_name = $infos['filename'];
 
     $registered = false;
-    $has_magic_file = false;
 
     foreach (glob($widget_dir . '/*.php') as $widget_php_file) {
 
@@ -88,7 +103,6 @@ foreach (glob($_dir . '/Widgets/*', GLOB_ONLYDIR) as $widget_dir) {
             switch (substr($infos['filename'], $meta_start_pos + 1)) {
                 case 'magic': // MyWidget.magic.php or MyWidget.i18n.magic.php
                     $wgExtensionMessagesFiles['WidgetsFramework/' . $widget_name . 'Magic'] = $widget_php_file;
-                    $has_magic_file = true;
                     break;
                 case 'i18n':
                     $wgExtensionMessagesFiles['WidgetsFramework/' . $widget_name] = $widget_php_file;
@@ -96,16 +110,4 @@ foreach (glob($_dir . '/Widgets/*', GLOB_ONLYDIR) as $widget_dir) {
             }
         }
     }
-
-    if ($registered && !$has_magic_file) {
-        $wgWidgetsFrameworkNeedMagicWords[] = $widget_name;
-    }
 }
-
-
-
-// Magic words can be generated automatically
-//  /!\ THIS FUNCTIONALITY IS EXPERIMENTAL 
-// You may need to use   maintenance/rebuildLocalisationCache.php --force   just after installing a widgets
-// that doesn't have its own i18n.magic.php file (cache doesn't refresh when adding automatic magic words) 
-$wgExtensionMessagesFiles['WidgetsFrameworkMagic'] = $_dir . '/WidgetsFramework.i18n.magic.php';

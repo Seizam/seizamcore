@@ -136,16 +136,11 @@ class Tools {
     }
 
     public static function arrayToCSSClasses($array) {
-        $back = '';
-        foreach ($array as $class) {
-            if (!empty($class)) {
-                if (!empty($back)) {
-                    $back .= ' ';
-                }
-                $back .= $class;
-            }
-        }
-        return $back;
+        return implode(' ', $array);
+    }
+    
+    public static function arrayToCSSStyle($array) {
+        return implode(';', $array);
     }
 
 }

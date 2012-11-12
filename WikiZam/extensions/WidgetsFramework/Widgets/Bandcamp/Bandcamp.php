@@ -17,6 +17,9 @@ class Bandcamp extends ParserFunction {
         'short' => array(46, 23),
     );
     protected $source;
+    /**
+     * @var XorParamter 
+     */
     protected $size;
     protected $float;
 
@@ -63,19 +66,29 @@ class Bandcamp extends ParserFunction {
         } elseif ( $float == 'left') {
             $classes[] = 'wfmk_left';
         }
+        
+        if ($this->size->getOutput() != 'short') {
+            $classes[] = 'wfmk_frame';
+        }
 
         return Tools::arrayToCSSClasses($classes);
     }
     
-    protected function getCSSStyle($bg_col, $size) {
+    protected function getCSSStyle() {
+        
+        $styles = array();
+        
+        $size = $this->size->getOutput();
         
         list($width, $height) = self::$SIZES[$size];
         
-        $back = 'background-color: #'.$bg_col.'; width: ' . $width . 'px; height: ' . $height . 'px;';
+        $styles[] = "width:{$width}px";
+        $styles[] = "height:{$height}px";
+        
         if ($size != 'short') {
-            $back .= ' padding: 8px; border: 1px solid #dad9d9;';
+            $styles[] = "padding:8px";
         } 
-        return $back;
+        return Tools::arrayToCSSStyle($styles);
     }
     
     protected function getOutput() {
@@ -86,13 +99,11 @@ class Bandcamp extends ParserFunction {
         $source = $this->source->getParameter();
         $source_type = $source->getName();
         $source_id = $source->getValue();
-
-        $bg_col = self::$BACKGROUND_COLOR;
         $link_col = self::$LINK_COLOR;
 
         return '<iframe
             class="'.$this->getCSSClasses().'"
-            style="'.$this->getCSSStyle($bg_col, $size).'"
+            style="'.$this->getCSSStyle().'"
             width="' . $width . '"
             height="' . $height . '"
             src="http://bandcamp.com/EmbeddedPlayer/v=2/' . $source_type . '=' . $source_id . '/size=' . $size . '/linkcol=' . $link_col . '/transparent"

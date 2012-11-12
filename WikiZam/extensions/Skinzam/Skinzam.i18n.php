@@ -49,7 +49,7 @@ $messages['en'] = array(
     'sz-seizamonsocialnetworks' => 'Seizam on Social Networks',
     'sz-selectlang' => 'Select your Language',
     
-    'sz-tagline' => '[[Help:Wikiplace|<span class="fade">Wiki</span>Places]] for Art & Freedom',
+    'sz-tagline' => '[[Help:WikiPlaces|<span class="fade">Wiki</span>Places]] for Art & Freedom',
     
     'sz-htmlform-helpzonetitle' => 'Need Help?',
     'sz-htmlform-helpzonedefault' => 'This frame will display text to help you fill this form. Just fly over the "\'\'\'?\'\'\'" beside any field to obtain help or details! Visit [[Help:Contents|The Help Pages]] for more help.',
@@ -177,7 +177,7 @@ $messages['en'] = array(
 Congratulations and thank you! Your Seizam account has been successfully created.
 === What is next? ===
 #<b>Validate your email.</b> Go to your inbox and click the <u>confirmation link</u> we just sent to you.
-#Pick a [[Special:Plans|plan]] and [[Special:Subscriptions|subscribe]] to enable [[Help:Wikiplaces|WikiPlaces]].
+#Pick a [[Special:Plans|plan]] and [[Special:Subscriptions|subscribe]] to enable [[Help:WikiPlaces|WikiPlaces]].
 
 === What else? ===
 * Visit [[Special:MySeizam|My Seizam]], everything you need is there, and much more!
@@ -245,7 +245,7 @@ $messages['fr'] = array(
     'sz-seizamonsocialnetworks' => 'Seizam sur les réseaux sociaux',
     'sz-selectlang' => 'Selectionnez votre language',
     
-    'sz-tagline' => '[[Help:Wikiplace|<span class="fade">Wiki</span>Places]] d\'Art et de Liberté',
+    'sz-tagline' => '[[Help:WikiPlaces/fr|<span class="fade">Wiki</span>Places]] d\'Art et de Liberté',
     
     'sz-htmlform-helpzonetitle' => 'Besoin d\'aide ?',
     'sz-htmlform-helpzonedefault' => 'Ce cadre affichera un texte d\'aide pour le remplissage de ce formulaire. Il vous suffit de passer sur le "\'\'\'?\'\'\'" à côté d\'un champ pour obtenir de l\'aide ou des précisions ! Visitez [[Help:Contents/fr|Les Pages d\'Aide]] pour plus d\'aide.',
@@ -369,7 +369,7 @@ $messages['fr'] = array(
 Félicitations et merci ! Votre compte Seizam a été créé avec succès.
 === Que faire maintenant ? ===
 #<b>Validez votre adresse de courriel.</b> Allez dans votre boîte de réception et cliquez sur le <u>lien de confirmation</u> que nous vous avons envoyé.
-#Choisissez une [[Special:Plans|offre]] et [[Special:Subscriptions|abonnez-vous]] pour activer les [[Help:Wikiplaces/fr|WikiPlaces]].
+#Choisissez une [[Special:Plans|offre]] et [[Special:Subscriptions|abonnez-vous]] pour activer les [[Help:WikiPlaces/fr|WikiPlaces]].
 === Quoi d\'autre ? ===
 *Visitez [[Special:MySeizam|Mon Seizam]], tout ce dont vous avez besoin est là, et bien plus !
 *Vérifiez [[Special:Preferences|Mes Préférences]] pour les réglages avancés.
