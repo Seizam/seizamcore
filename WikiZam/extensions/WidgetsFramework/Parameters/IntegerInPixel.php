@@ -42,7 +42,7 @@ class IntegerInPixel extends Integer {
         try {
             $parsed = parent::parse($value);
         } catch (UserError $e) {
-            Tools::throwUserError(wfMessage('wfmk-validate', $this->getName(), $value, wfMessage('wfmk-req-integer-value')->text()));
+            Tools::throwUserError(wfMessage('wfmk-validation-error', $this->getName(), $value, wfMessage('wfmk-integer-syntax')->text()));
         }
 
         return $parsed;

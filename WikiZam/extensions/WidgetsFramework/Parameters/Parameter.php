@@ -243,7 +243,7 @@ abstract class Parameter {
      */
     public function validate() {
         if ($this->isRequired() && !$this->hasBeenSet()) {
-            Tools::throwUserError(wfMessage('wfmk-req-parameter', $this->getName()));
+            Tools::throwUserError(wfMessage('wfmk-parameter-required', $this->getName()));
         }
     }
 

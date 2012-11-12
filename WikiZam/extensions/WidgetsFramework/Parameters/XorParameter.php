@@ -68,7 +68,7 @@ class XorParameter extends Parameter {
      * @return boolean
      */
     public function hasBeenSet() {
-        return ( !is_null($this->getSetParameter()) );
+        return (!is_null($this->getSetParameter()) );
     }
 
     /**
@@ -93,7 +93,7 @@ class XorParameter extends Parameter {
         // no parameter set
         return null;
     }
-    
+
     /**
      * <ul>
      * <li>When a parameter has been set, return it</li>
@@ -120,7 +120,7 @@ class XorParameter extends Parameter {
      */
     public function getDefaultValue() {
 
-        if (!is_null($default_parameter = $this->getDefaultParameter())) { 
+        if (!is_null($default_parameter = $this->getDefaultParameter())) {
             return $default_parameter->getDefaultValue();
         } else {
             return parent::getDefaultValue();
@@ -187,7 +187,7 @@ class XorParameter extends Parameter {
             return $this->trySetParametersByName($argument);
         } elseif ($named_value === true) {
             // $argument is declared with no value
-            Tools::throwUserError(wfMessage('wfmk-req-value', $this->getName()));
+            Tools::throwUserError(wfMessage('wfmk-value-required', $this->getName()));
         } elseif ($this->trySetParametersByName($named_value)) {
             // $argument is named for this xorparameter and we matched a subparameter by name.
             return true;
@@ -198,7 +198,7 @@ class XorParameter extends Parameter {
             if ($default != null && $default->trySet($named_value)) {
                 return true;
             } else {
-                Tools::throwUserError(wfMessage('wfmk-req-xorparameter-value', $this->getName()));
+                Tools::throwUserError(wfMessage('wfmk-xorparameter-syntax', $this->getName()));
             }
         }
     }
@@ -227,7 +227,15 @@ class XorParameter extends Parameter {
             $default_parameter->setDefaultValue($default_value, $do_parse);
         } else {
             parent::setDefaultValue($default_value, false); // store as it is
-        } 
+        }
+    }
+
+    public function validate() {
+        parent::validate(); // Check that if parameter is required, it has been valuated. Throws UserError.
+        $parameter = $this->getParameter();
+        if (!is_null($parameter)) {
+            $parameter->validate();
+        }
     }
 
     /**

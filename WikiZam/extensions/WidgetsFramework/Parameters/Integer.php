@@ -43,7 +43,7 @@ class Integer extends Parameter {
 
         if ($value === true) {
             // parameter specified without value
-            Tools::throwUserError(wfMessage('wfmk-req-value', $this->getName()));
+            Tools::throwUserError(wfMessage('wfmk-value-required', $this->getName()));
         }
 
         // value is a string
@@ -52,14 +52,14 @@ class Integer extends Parameter {
 
         if (strlen($value) == 0) {
             // empty string
-            Tools::throwUserError(wfMessage('wfmk-validate', $this->getName(), $value, wfMessage('wfmk-req-integer-value')->text()));
+            Tools::throwUserError(wfMessage('wfmk-validation-error', $this->getName(), $value, wfMessage('wfmk-integer-syntax')->text()));
         }
 
         // remove the minus sign if present to not break ctype_digit()
         $ctype_test = $space_free[0] == '-' ? substr($space_free, 1) : $space_free;
 
         if (!ctype_digit($ctype_test)) {
-            Tools::throwUserError(wfMessage('wfmk-validate', $this->getName(), $value, wfMessage('wfmk-req-integer-value')->text()));
+            Tools::throwUserError(wfMessage('wfmk-validation-error', $this->getName(), $value, wfMessage('wfmk-integer-syntax')->text()));
         }
 
         return intval($space_free);
@@ -114,14 +114,14 @@ class Integer extends Parameter {
         $min = $this->getMin();
         if (!is_null($min)) {
             if ($value < $min) {
-                Tools::throwUserError(wfMessage('wfmk-validate', $this->getName(), $value, wfMessage('wfmk-req-integer-min', $min)));
+                Tools::throwUserError(wfMessage('wfmk-validation-error', $this->getName(), $value, wfMessage('wfmk-min-value', $min)));
             }
         }
 
         $max = $this->getMax();
         if (!is_null($max)) {
             if ($value > $max) {
-                Tools::throwUserError(wfMessage('wfmk-validate', $this->getName(), $value, wfMessage('wfmk-req-integer-max', $max)));
+                Tools::throwUserError(wfMessage('wfmk-validation-error', $this->getName(), $value, wfMessage('wfmk-max-value', $max)));
             }
         }
 

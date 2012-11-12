@@ -48,7 +48,7 @@ class Boolean extends Parameter {
         } elseif ($value == 'true') {
             return true;
         } else {
-            Tools::throwUserError(wfMessage('wfmk-validate', $this->getName(), $value, wfMessage('wfmk-req-boolean-value')));
+            Tools::throwUserError(wfMessage('wfmk-validation-error', $this->getName(), $value, wfMessage('wfmk-boolean-syntax')));
         }
     }
 

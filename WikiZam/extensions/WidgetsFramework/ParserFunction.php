@@ -298,7 +298,7 @@ abstract class ParserFunction implements Widget {
 
             $this->setHTML();
             $this->setBlock();
-            return $this->getOutputForParser(wfMessage('wfmk-error-in-widget', static::GetName(), $e->getText())->parse());
+            return $this->getOutputForParser(wfMessage('wfmk-widget-error', static::GetName(), $e->getText())->parse());
         }
     }
 

@@ -107,7 +107,7 @@ class String extends Parameter {
     public function parse($value) {
         if ($value === true) {
             // parameter specified without value
-            Tools::throwUserError(wfMessage('wfmk-req-value', $this->getName()));
+            Tools::throwUserError(wfMessage('wfmk-value-required', $this->getName()));
         }
         return $value;
     }
@@ -126,11 +126,11 @@ class String extends Parameter {
         $length = strlen($value);
 
         if ($length < $this->getMinimalLength()) {
-            Tools::throwUserError(wfMessage('wfmk-validate', $this->getName(), $value, wfMessage('wfmk-req-string-min-length', $this->getMinimalLength())));
+            Tools::throwUserError(wfMessage('wfmk-validation-error', $this->getName(), $value, wfMessage('wfmk-min-length', $this->getMinimalLength())));
         } elseif (($this->getMaximalLength() != 0) && ($length > $this->getMaximalLength())) {
-            Tools::throwUserError(wfMessage('wfmk-validate', $this->getName(), $value, wfMessage('wfmk-req-string-max-length', $this->getMaximalLength())));
+            Tools::throwUserError(wfMessage('wfmk-validation-error', $this->getName(), $value, wfMessage('wfmk-max-length', $this->getMaximalLength())));
         } elseif (!Tools::Validate($value, $this->validate_type)) {
-            Tools::throwUserError(wfMessage('wfmk-validate', $this->getName(), $value, wfMessage('wfmk-req-string-validate', $this->validate_type)));
+            Tools::throwUserError(wfMessage('wfmk-validation-error', $this->getName(), $value, wfMessage('wfmk-string-validate-type', $this->validate_type)));
         }
     }
 
