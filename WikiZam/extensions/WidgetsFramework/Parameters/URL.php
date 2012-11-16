@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Parameter of type URL for widgets.
+ * Parameter of type URL.
  * 
  * @file
  * @ingroup Extensions

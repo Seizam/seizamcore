@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Mother class of all widget parameters.
+ * Mother class of all parameters.
  * 
  * @file
  * @ingroup Extensions
@@ -100,7 +100,7 @@ abstract class Parameter {
     }
 
     /**
-     * Indicates whether this parameter needs to be set or not.
+     * Indicates whether this parameter has to be set or not.
      * 
      * @param boolean $required If not specified, considered as true.
      */
@@ -123,7 +123,7 @@ abstract class Parameter {
     }
 
     /**
-     * Analyses this argument, and look for this parameter name, case
+     * Analyses the argument, and look for this parameter name, case
      * insensitive.
      * 
      * @param string $argument The raw argument.
@@ -169,7 +169,7 @@ abstract class Parameter {
     }
 
     /**
-     * Parses the value from wikitext string.
+     * Transform the value from input string to correct type.
      * 
      * If it fails (bad characters), a UserError exception is thrown.
      * 
@@ -187,7 +187,7 @@ abstract class Parameter {
     abstract protected function parse($value);
 
     /**
-     * Tries to set the value by name from $argument.
+     * Sets the value by name from $argument or throws UserError.
      * 
      * @param string $argument Raw argument, without leading or ending spaces.
      * @return boolean <ul>
@@ -245,11 +245,10 @@ abstract class Parameter {
     }
 
     /**
-     * Store the default value.
+     * Stores the default value.
      * 
      * If $default_value is a string and $do_parse is true (default), the 
-     * $default_value will be parsed before storing it. It can raise 
-     * MWException exception.
+     * $default_value will be parsed before storing it.
      *  
      * @param string|mixed $default_value The value to set as default
      * @param boolean $do_parse Default is <i>true</i> 

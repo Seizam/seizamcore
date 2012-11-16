@@ -1,7 +1,8 @@
 <?php
 
 /**
- * XOR Parameter for widgets.
+ * Abstract Parameter which groups N parameters.
+ * Only one of these N parameters can be set. The XorParameter takes care of that.
  * 
  * @file
  * @ingroup Extensions

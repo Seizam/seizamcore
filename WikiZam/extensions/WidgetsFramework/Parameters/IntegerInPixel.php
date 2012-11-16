@@ -44,16 +44,10 @@ class IntegerInPixel extends Integer {
 
         // remove the px unit
         if (is_string($value)) {
-            $value = str_ireplace(array('px', 'p'), '', $value);
+            $value = str_ireplace(array('px', 'p', 'pt', 'pixel'), '', $value);
         }
 
-        try {
-            $parsed = parent::parse($value); // Converts from string to signed integer.
-        } catch (UserError $e) {
-            Tools::ThrowUserError(wfMessage('wfmk-validation-error', $this->getName(), $value, wfMessage('wfmk-integer-syntax')->text()));
-        }
-
-        return $parsed;
+        return parent::parse($value);
     }
 
 }

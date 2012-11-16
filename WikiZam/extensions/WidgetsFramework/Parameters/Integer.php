@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Parameter of type integer for widgets.
+ * Parameter of type integer.
  * 
  * @file
  * @ingroup Extensions
@@ -40,7 +40,7 @@ class Integer extends Parameter {
      * The minimum and maximum value depends on the system:
      * <ul>
      * <li>32 bit systems have a range of -2147483648 to 2147483647 and</li>
-     * <li>32 bit systems have a range of -9223372036854775807 to 9223372036854775807.</li>
+     * <li>64 bit systems have a range of -9223372036854775807 to 9223372036854775807.</li>
      * </ul>
      * 
      * Empty string is considered as 0.

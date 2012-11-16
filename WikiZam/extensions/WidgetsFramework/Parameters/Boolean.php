@@ -57,7 +57,6 @@ class Boolean extends Parameter {
     }
 
     /**
-     * 
      * @return string "true" or "false" depending on the getValue() return.
      */
     public function getOutput() {

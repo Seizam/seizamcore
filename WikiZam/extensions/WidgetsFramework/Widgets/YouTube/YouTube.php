@@ -4,13 +4,30 @@ namespace WidgetsFramework;
 
 class YouTube extends ParserFunction {
 
+    /** @var String */
     protected $id;
+    /** @var String */
     protected $playlist;
+    /** @var IntegerInPixel */
     protected $width;
+    /** @var IntegerInPixel */
     protected $height;
+    /** @var Option */
     protected $right;
+    /** @var Option */
     protected $left;
+    
 
+    /**
+     * Declares the widget's parameters:
+     * <ul>
+     * <li>instanciates Parameter objects,</li>
+     * <li>configures them and</li>
+     * <li>calls addParameter() for each of them.</li>
+     * </ul>
+     * 
+     * @return void
+     */
     protected function declareParameters() {
         
         global $wgWFMKMaxWidth;
@@ -53,6 +70,9 @@ class YouTube extends ParserFunction {
         $this->addParameter($float);
     }
 
+    /**
+     * @return string
+     */
     public function getCSSClasses() {
 
         $classes = array();
@@ -70,6 +90,9 @@ class YouTube extends ParserFunction {
         return Tools::ArrayToCSSClasses($classes);
     }
 
+    /**
+     * @return string 
+     */
     public function getIframeSrc() {
         $src = 'http://www.youtube.com/embed/';
 
@@ -84,6 +107,15 @@ class YouTube extends ParserFunction {
         return $src;
     }
 
+    
+
+    /**
+     * Called after arguments have been parsed, parameters are set and validated.
+     * 
+     * Returns the output.
+     * 
+     * @return string|array The output string, or an array containing output and MediaWiki parser flags.
+     */
     protected function getOutput() {
         return '<iframe
                     class="' . $this->getCSSClasses() . '"

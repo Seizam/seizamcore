@@ -1,7 +1,8 @@
 <?php
 
 /**
- * Parameter of type option in pixel for widgets.
+ * Parameter is an option with a string as default output that can be set.
+ * Can be see like a string that can be true.
  * 
  * @file
  * @ingroup Extensions

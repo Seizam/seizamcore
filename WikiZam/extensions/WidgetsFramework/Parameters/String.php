@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Parameter of type string for widgets.
+ * Parameter of type string.
  * 
  * @file
  * @ingroup Extensions
@@ -38,7 +38,7 @@ class String extends Parameter {
     }
 
     /**
-     * Sets the escape mode for output. default is "html".
+     * Sets the escape mode for output. Default is "html".
      * @param none|html|htmlall|url|urlpathinfo|quotes|hex|hexentity|decentity|javascript|mail|nonstd $escape_mode string
      * @throws \MWException
      */
@@ -72,8 +72,6 @@ class String extends Parameter {
     }
 
     /**
-     * Defines a minimal length for the value.
-     * 
      * @param int $min Default is 0.
      * @throws \MWException
      */
@@ -85,13 +83,14 @@ class String extends Parameter {
         $this->min_length = $min;
     }
 
+    /**
+     * @return int 
+     */
     public function getMinimalLength() {
         return $this->min_length;
     }
 
     /**
-     * Defines a maximal length for the value.
-     * 
      * @param int $max 0 means unlimited, default is 1024.
      * @throws \MWException
      */
@@ -103,6 +102,9 @@ class String extends Parameter {
         $this->max_length = $max;
     }
 
+    /**
+     * @return int 
+     */
     public function getMaximalLength() {
         return $this->max_length;
     }
