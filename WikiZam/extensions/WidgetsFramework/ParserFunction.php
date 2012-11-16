@@ -1,7 +1,8 @@
 <?php
 
 /**
- * Parser functions widgets.
+ * Parser functions widget.
+ * {{WidgetName:Par1|Par2...}}
  * 
  * @file
  * @ingroup Extensions
@@ -19,15 +20,19 @@ abstract class ParserFunction implements Widget {
     /** @var PPFrame */
     protected $frame;
 
-    /** @var boolean  output stripping configuration */
+    /** @var boolean  should output be stripped? */
     protected $is_html;
 
-    /** @var boolean  output configuration */
+    /** @var boolean should output be considered a block? */
     protected $is_block;
 
     /** @var int flags for parserfunction setup */
     protected static $FLAGS = SFH_NO_HASH;
 
+    /**
+     * @param Parser $parser
+     * @param PPFrame $frame
+     */
     public function __construct($parser, $frame) {
         $this->parser = $parser;
         $this->frame = $frame;
@@ -40,7 +45,7 @@ abstract class ParserFunction implements Widget {
     /**
      * Returns the name of the parser function (using Late Static Binding).
      * 
-     * @return string The widget name (ie the name of the child class)
+     * @return string The widget's name (ie the name of the child class)
      */
     public static function GetName() {
         return implode('', array_slice(explode('\\', get_called_class()), -1));
@@ -59,7 +64,7 @@ abstract class ParserFunction implements Widget {
     abstract protected function declareParameters();
 
     /**
-     * Adds a parameter.
+     * Adds a parameter to the widget
      * 
      * @param Parameter $new_parameter
      * @return void
@@ -88,7 +93,7 @@ abstract class ParserFunction implements Widget {
     }
 
     /**
-     * Tries to set parameters by name using $arguments.
+     * Tries to set parameters by name from $arguments.
      * 
      * @param array $arguments Array of strings
      * @return array Array of strings: arguments that have not been used.
@@ -138,7 +143,7 @@ abstract class ParserFunction implements Widget {
     }
 
     /**
-     * Tries to set parameters by order using $argument.
+     * Tries to set parameters by order from $argument.
      * 
      * @param array $arguments Array of string
      * @return array Array of string: arguments that have not been used.
@@ -162,9 +167,7 @@ abstract class ParserFunction implements Widget {
     }
 
     /**
-     * Checks parameters requirements (required, min, max,...). 
-     * 
-     * (it calls their validate() method)
+     * Checks parameters requirements (required, min, max,...).
      * 
      * @throws UserError When a parameter fails its validate.
      */
@@ -178,12 +181,12 @@ abstract class ParserFunction implements Widget {
     /**
      * Called after arguments have been parsed, parameters are set and validated.
      * 
-     * Returns the outputt.
+     * Returns the output.
      * 
      * <ul>
      * <li>When the returned value is a string: this widgets framework makes 
      * sure that the MediaWiki's parser correclty handles it. By default, it
-     * will be considered as raw HTML, but this behaviour can be changed using
+     * will be considered as raw HTML block, but this behaviour can be changed using
      * '''setBlock()''' and '''setHTML()''' methods.</li>
      * 
      * <li>When the returned value is an array: the framework cares no more
@@ -212,9 +215,11 @@ abstract class ParserFunction implements Widget {
     abstract protected function getOutput();
 
     /**
+     * Adds a nowiki strip item to the MediaWiki's parser.
+     * Makes sure the parser does not play with the output.
+     * 
      * Internal use.
      * 
-     * Adds a nowiki strip item to the MediaWiki's parser.
      * @param string $text The original text to strip
      * @return string The key of the "stripped" item 
      */
@@ -230,9 +235,9 @@ abstract class ParserFunction implements Widget {
      * (default) or as <i>wikitext</i>.
      * 
      * @param boolean $is_html <ul>
-     * <li><i>true</i> means no parser interpretation or modification of the output
+     * <li><i>true</i> parser should not interpretate or modify the output
      *  <b>(default behavior)</b></li>
-     * <li><i>false</i> MediaWiki's parser will interprete the output</li>
+     * <li><i>false</i> parser should interprete the output as wiki markup</li>
      * </ul>
      */
     protected function setHTML($is_html = true) {
@@ -241,12 +246,11 @@ abstract class ParserFunction implements Widget {
 
     /**
      * Defines how the parser will integrate the getOutput() returned value in
-     * the whole page.
+     * the page.
      * @param boolean $is_block <ul>
-     * <li><i>true</i> means the output is considered as a HTML block, and will 
-     * not be wrapped (default)</li>
-     * <li><i>false</i> means MediaWiki will ensure the output is wrapped
-     * inside an element. ( inside a &lt;p&gt; ?)</li>
+     * <li><i>true</i> the output is a block, and will 
+     * not put inside a paragraph (default)</li>
+     * <li><i>false</i> the output is inline and will be handled regularly by the parser</li>
      * </ul>
      */
     protected function setBlock($is_block = true) {
@@ -254,7 +258,7 @@ abstract class ParserFunction implements Widget {
     }
 
     /**
-     * Takes care that MediaWiki will handle the output properly.
+     * Prepares the output for the parser
      * 
      * @param string $output <i>OPTIONAL</i> If null (default), uses the
      * getOutput() returned value.
@@ -279,12 +283,15 @@ abstract class ParserFunction implements Widget {
         // else
 
         if ($this->is_html) {
-            // do nowiki strip
+            // strip (avoid parser)
             $output = $this->insertNoWikiStripItem($output);
         }
 
         if ($this->is_block) {
-            // add a hidden header div, so the parser will not wrap the output
+            /** 
+             *  the hidden div will ensure the parser won't add unwanted paragraph tags
+             *  @todo find something else than this ugly hack (either change the parser or use our own stripper)
+             */
             $output = '<div class="hidden"></div>' . $output;
         }
 
@@ -292,7 +299,7 @@ abstract class ParserFunction implements Widget {
     }
 
     /**
-     * Tries to execute the ParserFunction.
+     * Execute the ParserFunction and throws exceptions if needed
      * 
      * @param array $arguments Array of strings
      * @return string output for parser
@@ -329,15 +336,11 @@ abstract class ParserFunction implements Widget {
      * @return string output for parser
      * @throws \MWException Internal errors
      */
-    public function execute($arguments) {
-        
-        wfDebugLog('WidgetsFramework', 'ParserFunction ' . static::GetName() . ' is executed with ' . count($arguments) . ' arg(s)');      
+    public function execute($arguments) { 
 
         try {
             return $this->tryExecute($arguments);
         } catch (UserError $e) {
-
-            wfDebugLog('WidgetsFramework', 'ParserFunction ' . static::GetName() . ' raised a UserError exception: "' . $e->getMessage() . '"');
             $this->setHTML();
             $this->setBlock();
             return $this->getOutputForParser(wfMessage('wfmk-widget-error', static::GetName(), $e->getText())->parse());
@@ -370,8 +373,8 @@ abstract class ParserFunction implements Widget {
         // instanciate
         $child_class = get_called_class();
         $widget = new $child_class($parser, $frame);
-
-        // try to execute (catch UserError exceptions to display nice error message)
+        
+        // execute
         return $widget->execute($arguments);
     }
 
@@ -388,8 +391,6 @@ abstract class ParserFunction implements Widget {
         $flags = static::$FLAGS | SFH_OBJECT_ARGS; // ensure we will receive a PPFrame object and arguments as objects 
 
         $parser->setFunctionHook($name, $method, $flags);
-
-        wfDebugLog('WidgetsFramework', 'Parser function ' . $name . ' registered (flags=' . $flags . ')');
 
         return true;
     }

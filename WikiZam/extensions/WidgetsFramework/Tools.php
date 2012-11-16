@@ -136,10 +136,18 @@ class Tools {
         throw new UserError($message->text());
     }
 
+    /**
+     * @param String[] $array
+     * @return String 
+     */
     public static function ArrayToCSSClasses($array) {
         return implode(' ', $array);
     }
 
+    /**
+     * @param String[] $array
+     * @return String 
+     */
     public static function ArrayToCSSStyle($array) {
         return implode(';', $array);
     }

@@ -7,7 +7,7 @@ $messages = array();
  */
 $messages['en'] = array(
     // Framework
-    'widgetsframework-desc' => 'A framework to develop and integrate widgets to MediaWiki\'s parser.',
+    'widgetsframework-desc' => 'The WidgetsFramework extension provides a php base for widgets to be easily added to the parser.',
     'wfmk-widget-error' => '<div class="error"><b>Error in widget [[Widget:$1|$1]] ([[Widget:$1|see documentation]])</b><br />$2</div>',
     'wfmk-validation-error' => 'Parameter \'\'\'$1\'\'\' could not be validated. $3<br />Value given: <code><nowiki>$2</nowiki></code>',
     'wfmk-already-assigned' => 'Parameter \'\'\'$1\'\'\' is already assigned with \'\'$2\'\'. You cannot override it with \'\'$3\'\' ',
@@ -35,7 +35,7 @@ $messages['qqq'] = array(
  */
 $messages['fr'] = array(
     // Framework
-    'widgetsframework-desc' => 'Un framework pour développer et intégrer des widgets au parser MediaWiki.',
+    'widgetsframework-desc' => 'L\'extension WidgetsFramework procure une base php pour l\'ajout aisée de widgets au parseur.',
     'wfmk-widget-error' => '<div class="error"><b>Erreur dans le widget [[Widget:$1|$1]] ([[Widget:$1|voir l\'aide]])</b><br />$2</div>',
     'wfmk-validation-error' => 'Le paramètre \'\'\'$1\'\'\' n\'as pas pu être validé. $3<br />Valeur donnée : <code><nowiki>$2</nowiki></code>',
     'wfmk-already-assigned' => 'Le paramètre \'\'\'$1\'\'\' a déjà reçu la valeur \'\'$2\'\'. Vous ne pouvez pas le modifier avec \'\'$3\'\' ',

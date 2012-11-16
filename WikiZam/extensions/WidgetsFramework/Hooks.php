@@ -22,6 +22,7 @@ class Hooks {
      * 
      * @param OutputPage $out output page
      * @param Skin $skin current skin
+     * @return Boolean always true (unless we are very self-centered and want the resource loader to work just for us, what a waste it would be)
      */
     public static function beforePageDisplay($out, $skin) {
         $out->addModules('ext.widgetsFramework.css');

@@ -3,6 +3,11 @@
 /**
  * WidgetsFramework extension
  * 
+ * The WidgetsFramework extension provides a php base for widgets to be easily added to the parser.
+ * 
+ * @see http://www.mediawiki.org/wiki/Extension:WidgetsFramework
+ * @see http://www.seizam.com/Help:Widgets
+ * 
  * @file
  * @ingroup Extensions
  * 
@@ -66,7 +71,7 @@ foreach (glob($_dir . '/Parameters/*') as $parameter_file) {
     $wgAutoloadClasses['WidgetsFramework\\' . $infos['filename']] = $parameter_file;
 }
 
-// Automatic load of all widgets
+// Automatic load of all widgets classes
 foreach (glob($_dir . '/Widgets/*', GLOB_ONLYDIR) as $widget_dir) {
 
     $dir_infos = pathinfo($widget_dir);

@@ -3,7 +3,7 @@
 namespace WidgetsFramework;
 
 /**
- * Users errors when they use a widget.
+ * Exceptions to display syntax errors by wiki editors.
  * 
  * @ingroup Exception
  */
