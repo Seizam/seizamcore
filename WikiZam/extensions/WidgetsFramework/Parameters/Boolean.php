@@ -1,18 +1,23 @@
 <?php
 
+/**
+ * Parameter of type boolean for widgets.
+ * 
+ * @file
+ * @ingroup Extensions
+ */
+
 namespace WidgetsFramework;
 
 class Boolean extends Parameter {
 
     /**
-     * Default behavior:
      * <ul>
-     * <li>value not set</li>
-     * <li>default value is boolean false</li>
-     * <li>parameter is not required</li>
+     * <li>The default value is boolean <i>false</i></li>
+     * <li>The parameter is not required</li>
      * </ul>  
      * @param string $name The parameter name, case insensitive
-     * @throws \MWException if $name not specified
+     * @throws \MWException When $name not set
      */
     public function __construct($name) {
 
@@ -22,14 +27,13 @@ class Boolean extends Parameter {
     }
 
     /**
-     * Transforms from string to boolean.
-     * Analyse is case insensitive.
+     * Transforms from string to boolean, case insensitive.
      * <ul>
-     * <li>string "true" or boolean true (parameter declared without value) => returns boolean <b>true</b></li>
-     * <li>string "false" => returns boolean <b>false</b></li>
+     * <li>string "true" or boolean <i>true</i> (parameter name without value) => returns boolean <i>true</i></li>
+     * <li>string "false" => returns boolean <i>false</i></li>
      * <li>anything else => throws UserError exception
      * </ul>
-     * @param string|true $value The string value to transform, or true if parameter declared without value
+     * @param string|boolean $value A string or boolean <i>true</i>
      * @return boolean
      * @throws UserError
      */

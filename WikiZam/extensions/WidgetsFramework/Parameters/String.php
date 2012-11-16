@@ -1,10 +1,14 @@
 <?php
 
+/**
+ * Parameter of type string for widgets.
+ * 
+ * @file
+ * @ingroup Extensions
+ */
+
 namespace WidgetsFramework;
 
-/**
- * plop
- */
 class String extends Parameter {
 
     protected $escape_mode;
@@ -13,32 +17,32 @@ class String extends Parameter {
     protected $max_length;
 
     /**
-     * Default behavior:
      * <ul>
-     * <li>value not set</li>
-     * <li>default value is empty string</li>
-     * <li>parameter is not required</li>
-     * <li>escape mode: <i>html</i></li>
-     * <li><i>accept empty string</i> (minimal length is 0 character)</li>
-     * <li>maximal length: <i>1024 characters</i></li>
-     * </ul>  
+     * <li>The default value is the empty string</li>
+     * <li>HTML content is escaped for output.</li>
+     * <li>No validation of the content of the value</li>
+     * <li>Minimal length is 0 (accepts empty string)</li>
+     * <li>Maximal length is 1024</li>
+     * <li>The parameter is not required</li>
+     * </ul>
+     * 
      * @param string $name The parameter name, case insensitive
-     * @throws \MWException if $name not specified
+     * @throws \MWException When $name not set
      */
     public function __construct($name) {
         parent::__construct($name);
         $this->escape_mode = 'html';
-        $this->validate_type = 'all';
-        $this->min_length = 0; // accept empty string
-        $this->max_length = 1024; 
+        $this->validate_type = 'all'; // validates everything
+        $this->min_length = 0; // accepts empty string
+        $this->max_length = 1024;
     }
 
     /**
-     * Set the output escape mode, default is "html".
+     * Sets the escape mode for output. default is "html".
      * @param none|html|htmlall|url|urlpathinfo|quotes|hex|hexentity|decentity|javascript|mail|nonstd $escape_mode string
      * @throws \MWException
      */
-    public function setEscapeMode($escape_mode) {
+    public function setEscapeMode($escape_mode = 'html') {
         if (!is_string($escape_mode)) {
             throw new \MWException('Method setEscapeMode() requires an argument "$escape_mode" of type string.');
         }
@@ -50,8 +54,10 @@ class String extends Parameter {
     }
 
     /**
-     * Set the validating rule. Default is "all"
-     * @param all|url|int|boolean|float|email|ip $validate_type
+     * Sets the validating rule. Default is "all".
+     * 
+     * See Tools::Escape().
+     * @param all|url|int|boolean|float|email|ip $validate_type A string
      * @throws \MWException
      */
     public function setValidateType($validate_type) {
@@ -66,7 +72,8 @@ class String extends Parameter {
     }
 
     /**
-     * Defines a minimal length for this string value.
+     * Defines a minimal length for the value.
+     * 
      * @param int $min Default is 0.
      * @throws \MWException
      */
@@ -83,11 +90,12 @@ class String extends Parameter {
     }
 
     /**
-     * Defines a maximal length for the string value.
-     * @param int $max 0 means unlimited, this is the default.
+     * Defines a maximal length for the value.
+     * 
+     * @param int $max 0 means unlimited, default is 1024.
      * @throws \MWException
      */
-    public function setMaximalLength($max = 0) {
+    public function setMaximalLength($max = 1024) {
         if (!is_int($max) || $max < 0) {
             throw new \MWException('Method setMaximalLength() requires an argument "$max" of type int, greater or equal than 0.');
         }
@@ -100,8 +108,9 @@ class String extends Parameter {
     }
 
     /**
-     * Accept every string, reject parameter specified without value
-     * @param string|true $value The string value to transform, or true if parameter specified without value
+     * Accepts every string, except parameter name without value.
+     * 
+     * @param string|boolean $value The value
      * @return string
      */
     public function parse($value) {
@@ -113,16 +122,19 @@ class String extends Parameter {
     }
 
     /**
-     * Throws UserError if the string is too short or too long, according setMinimalLength()
-     * and setMinimalLength() previous calls.
-     * @throws UserError
+     * If the parameter is required, checks that it has been set.
+     * Checks the value complies with minimal and maximal length.
+     * Checks the value validates the rule sets with setValidateType().
+     * 
+     * @return void
+     * @throws UserError When the value doesn't comply with the requirements.
      */
     public function validate() {
 
-        parent::validate();
-        
+        parent::validate(); // When the parameter is required, checks that it has been set.
+
         $value = $this->getValue();
-        
+
         $length = strlen($value);
 
         if ($length < $this->getMinimalLength()) {
@@ -135,7 +147,7 @@ class String extends Parameter {
     }
 
     /**
-     * @return String The escaped value. Escaping mode can be defined using setEscapeMode().
+     * @return String The escaped value. See setEscapeMode().
      */
     public function getOutput() {
         return Tools::Escape($this->getValue(), $this->getEscapeMode());

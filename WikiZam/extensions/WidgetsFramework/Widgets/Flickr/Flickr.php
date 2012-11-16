@@ -48,13 +48,13 @@ class Flickr extends ParserFunction {
 
 
         $square = new Option('square');
-        $square->setOutputOnTrue('s');
+        $square->setONOutput('s');
 
         $thumbnail = new Option('thumbnail');
-        $thumbnail->setOutputOnTrue('t');
+        $thumbnail->setONOutput('t');
 
         $medium = new Option('medium');
-        $medium->setOutputOnTrue('m');
+        $medium->setONOutput('m');
 
         $this->size = new XorParameter('size');
         $this->size->addParameter($square);
