@@ -1,22 +1,28 @@
 <?php
 
+/**
+ * Parameter of type URL for widgets.
+ * 
+ * @file
+ * @ingroup Extensions
+ */
+
 namespace WidgetsFramework;
 
 class URL extends String {
     
     /**
-     * Default behavior:
      * <ul>
-     * <li>value not set</li>
-     * <li>default value is empty string</li>
-     * <li>parameter is not required</li>
-     * <li>escape mode: <i>url</i></li>
-     * <li>validate type: <i>url</i></li>
-     * <li>minimal length: <i>1 character</i></li>
-     * <li>maximal length: <i>1024 characters</i></li>
-     * </ul>  
+     * <li>The default value is the empty string</li>
+     * <li>URL content is escaped for output.</li>
+     * <li>Validates only URL values</li>
+     * <li>Minimal length is 0 (accepts empty string)</li>
+     * <li>Maximal length is 1024</li>
+     * <li>The parameter is not required</li>
+     * </ul>
+     * 
      * @param string $name The parameter name, case insensitive
-     * @throws \MWException if $name not specified
+     * @throws \MWException When $name not set
      */
     public function __construct($name) {
         parent::__construct($name);

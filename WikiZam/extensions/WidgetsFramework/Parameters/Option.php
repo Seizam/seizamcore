@@ -1,64 +1,82 @@
 <?php
 
+/**
+ * Parameter of type option in pixel for widgets.
+ * 
+ * @file
+ * @ingroup Extensions
+ */
+
 namespace WidgetsFramework;
 
-class Option extends Boolean {
+class Option extends Parameter {
 
-    protected $output_on_true;
-    protected $output_on_false;
+    protected $output_on;
+    protected $output_off;
 
     /**
-     * Default behavior:
      * <ul>
-     * <li>value not set</li>
-     * <li>default value is boolean false</li>
-     * <li>parameter is not required</li>
-     * <li>output on true is this parameter name</li>
-     * <li>output on false is empty string</li>
+     * <li>By default the option is <i>OFF</i></li>
+     * <li>The output when option is <i>ON</i> is this parameter name</li>
+     * <li>The output when option is <i>OFF</i> is empty string</li>
+     * <li>The parameter is not required</li>
      * </ul>  
      * @param string $name The parameter name, case insensitive
-     * @throws \MWException if $name not specified
+     * @throws \MWException When $name not set
      */
     public function __construct($name) {
 
         parent::__construct($name);
 
-        $this->output_on_true = $name;
-        $this->output_on_false = '';
+        $this->default_value = false;
+        $this->output_on = $name;
+        $this->output_off = '';
     }
 
     /**
+     * Sets the output when option is <i>ON</i>
      * 
-     * @param string $value The output string when value is true.
+     * @param string $value The output
      */
-    public function setOutputOnTrue($output) {
-        $this->output_on_true = $output;
-    }
-
-    public function getOutputOnTrue() {
-        return $this->output_on_true;
+    public function setONOutput($output) {
+        $this->output_on = $output;
     }
 
     /**
+     * Gets the output when option is <i>ON</i>
      * 
-     * @param string $value The output string when value is false. 
+     * @return string The output
      */
-    public function setOutputOnFalse($output) {
-        $this->output_on_false = $output;
-    }
-
-    public function getOutputOnFalse() {
-        return $this->output_on_false;
+    public function getONOutput() {
+        return $this->output_on;
     }
 
     /**
-     * Transforms from string to boolean.
-     * Analyse is case insensitive.
+     * Sets the output when option is <i>OFF</i>
+     * 
+     * @param string $value The output
+     */
+    public function setOFFOutput($output) {
+        $this->output_off = $output;
+    }
+
+    /**
+     * Gets the output when option is <i>OFF</i>
+     * 
+     * @return string The output
+     */
+    public function getOFFOutput() {
+        return $this->output_off;
+    }
+
+    /**
+     * Transforms from string to boolean, case insensitive.
      * <ul>
-     * <li>string "true" or boolean true (parameter declared without value) => returns boolean <b>true</b></li>
-     * <li>anything else => throws UserError exception
+     * <li>string "true" or boolean <i>true</i> (parameter name without value)
+     * => returns boolean <i>true</i> that means the option is <i>ON</i></li>
+     * <li>anything else (even string "false") => throws UserError exception
      * </ul>
-     * @param string|true $value The string value to transform, or true if parameter declared without value
+     * @param string|boolean $value A string or boolean <i>true</i>
      * @return boolean
      * @throws UserError
      */
@@ -69,8 +87,8 @@ class Option extends Boolean {
             return true;
         }
 
-        // value is a string
-        $value = strtolower($value); // case insensitive normalisation, and remove spaces before and after
+        // case insensitive normalisation
+        $value = strtolower($value);
 
         if ($value == 'true') {
             return true;
@@ -81,14 +99,14 @@ class Option extends Boolean {
 
     /**
      * 
-     * @return string Returns output according the value. See setOutputOnTrue() and setOutputOnFalse();
+     * @return string Returns output according the value. See setONOutput() and setOFFOutput();
      */
     public function getOutput() {
 
         if ($this->getValue()) {
-            return $this->getOutputOnTrue();
+            return $this->getONOutput();
         } else {
-            return $this->getOutputOnFalse();
+            return $this->getOFFOutput();
         }
     }
 
