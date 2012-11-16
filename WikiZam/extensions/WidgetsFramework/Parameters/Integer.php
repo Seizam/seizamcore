@@ -43,7 +43,7 @@ class Integer extends Parameter {
      * <li>64 bit systems have a range of -9223372036854775807 to 9223372036854775807.</li>
      * </ul>
      * 
-     * Empty string is considered as 0.
+     * Empty string throws an exception.
      * @param string|boolean $value A string or boolean <i>true</i>
      * @return int
      * @throws UserError When value is not a signed integer.

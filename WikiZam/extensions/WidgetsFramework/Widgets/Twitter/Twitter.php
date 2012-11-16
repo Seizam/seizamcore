@@ -4,22 +4,47 @@ namespace WidgetsFramework;
 
 class Twitter extends ParserFunction {
 
+    /** @var XorParameter */
     protected $source; // xorparameter, contains "user" and "query"
+    /** @var Option */
     protected $faves; // in xorparameter "mode"
+    /** @var String */
     protected $list; // in xorparameter "mode"
+    /** @var Option */
     protected $follow; // in xorparameter "mode"
+    /** @var String */
     protected $title;
+    /** @var String */
     protected $subject;
+    /** @var IntegerInPixel */
     protected $width;
+    /** @var IntegerInPixel */
     protected $height;
+    /** @var Integer */
     protected $count;
+    /** @var Boolean */
     protected $scrollbar;
+    /** @var Boolean */
     protected $live;
+    /** @var Boolean */
     protected $loop;
+    /** @var Boolean */
     protected $all;
+    /** @var Option */
     protected $right;
+    /** @var Option */
     protected $left;
 
+    /**
+     * Declares the widget's parameters:
+     * <ul>
+     * <li>instanciates Parameter objects,</li>
+     * <li>configures them and</li>
+     * <li>calls addParameter() for each of them.</li>
+     * </ul>
+     * 
+     * @return void
+     */
     protected function declareParameters() {
         
         global $wgWFMKMaxWidth;
@@ -109,6 +134,10 @@ class Twitter extends ParserFunction {
         $this->addParameter($float);
     }
 
+    /**
+     * 
+     * @return string
+     */
     public function getCSSClasses() {
 
         $classes = array();
@@ -125,6 +154,10 @@ class Twitter extends ParserFunction {
         return Tools::ArrayToCSSClasses($classes);
     }
 
+    /**
+     * 
+     * @return string
+     */
     protected function getType() {
 
         // "source" parameter is required ; at this point, source->getParameter() will return parameter "source" or "search'
@@ -164,6 +197,10 @@ class Twitter extends ParserFunction {
         }
     }
 
+    /**
+     * 
+     * @return string
+     */
     protected function getFollowButton() {
         $user = $this->source->getOutput();
         return '<a href="https://twitter.com/' . $user . '" class="twitter-follow-button" data-show-count="false" data-dnt="true">
@@ -174,6 +211,13 @@ class Twitter extends ParserFunction {
                 </script>';
     }
 
+    /**
+     * Called after arguments have been parsed, parameters are set and validated.
+     * 
+     * Returns the output as raw HTML.
+     * 
+     * @return string raw HTML
+     */
     protected function getOutput() {
 
         $type = $this->getType();

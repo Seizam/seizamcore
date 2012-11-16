@@ -4,16 +4,36 @@ namespace WidgetsFramework;
 
 class GooglePlus extends ParserFunction {
 
+    /** @var XorParameter */
     protected $target;
+    /** @var XorParameter */
     protected $size;
+    /** @var XorParameter */
     protected $annotation; // used for +1
+    /** @var Boolean */
     protected $icon;
+    /** @var IntegerInPixel */
     protected $width; // used for +1 with annotation=inline
+    /** @var Option */
     protected $right;
+    /** @var Option */
     protected $left;
-    // internal var computed during validate() and used during getOutput()
+    /**
+     * internal var computed during validate() and used during getOutput()
+     * @var int 
+     */
     protected $height_value;
 
+    /**
+     * Declares the widget's parameters:
+     * <ul>
+     * <li>instanciates Parameter objects,</li>
+     * <li>configures them and</li>
+     * <li>calls addParameter() for each of them.</li>
+     * </ul>
+     * 
+     * @return void
+     */
     protected function declareParameters() {
         
         global $wgWFMKMaxWidth;
@@ -91,6 +111,13 @@ class GooglePlus extends ParserFunction {
         $this->addParameter($float);
     }
 
+    /**
+     * Checks parameters requirements (required, min, max,...).
+     * Updates default values of some parameters according the other parameters
+     * values.
+     * 
+     * @throws UserError When a parameter fails its validate.
+     */
     protected function validate() { // 100 - 180
         // set default url (default parameter is url)
         $this->target->setDefaultValue($this->parser->getTitle()->getCanonicalUrl());
@@ -135,6 +162,10 @@ class GooglePlus extends ParserFunction {
         return '';
     }
 
+    /**
+     * 
+     * @return string
+     */
     protected function getDataWidthOutput() {
         if (( $this->target->getParameter()->getName() == 'user' ) || ( $this->annotation->getOutput() == 'inline' )) {
             return 'data-width="' . $this->width->getOutput() . '"';
@@ -151,6 +182,10 @@ class GooglePlus extends ParserFunction {
         return 'data-height="' . $this->height_value . '"'; // 69 or 131
     }
 
+    /**
+     * 
+     * @return string
+     */
     protected function getTargetOutput() {
         $target = $this->target->getOutput();
         if ($this->target->getParameter()->getName() == 'user') {
@@ -159,6 +194,10 @@ class GooglePlus extends ParserFunction {
         return $target;
     }
 
+    /**
+     * 
+     * @return string
+     */
     protected function getDataHrefOutput() {
         return 'data-href="' . $this->getTargetOutput() . '"';
     }
@@ -183,6 +222,8 @@ class GooglePlus extends ParserFunction {
 
     /**
      * Used when displaying an icon
+     * 
+     * @return string
      */
     protected function getIconSize() {
         $selected_size = $this->size->getOutput();
@@ -197,6 +238,10 @@ class GooglePlus extends ParserFunction {
         return '32'; // standard
     }
 
+    /**
+     * 
+     * @return string
+     */
     protected function getFloatClass() {
         if ($this->right->getValue()) {
             return 'wfmk_right';
@@ -205,6 +250,10 @@ class GooglePlus extends ParserFunction {
         }
     }
 
+    /**
+     * 
+     * @return string
+     */
     protected function getOutputAsPlusOneButton() {
         return '<div class="g-plusone"
                     ' . $this->getDataSizeOutput() . '
@@ -215,6 +264,10 @@ class GooglePlus extends ParserFunction {
                 ' . $this->getAsynchronousJavaScript();
     }
 
+    /**
+     * 
+     * @return string
+     */
     protected function getOutputAsIcon() {
         $this->setBlock(false);
         $icon_size = $this->getIconSize();
@@ -228,6 +281,10 @@ class GooglePlus extends ParserFunction {
                 </a>';
     }
 
+    /**
+     * 
+     * @return string
+     */
     protected function getOutputAsBadge() {
         return '<div class="g-plus"
                     ' . $this->getDataWidthOutput() . '
@@ -237,6 +294,11 @@ class GooglePlus extends ParserFunction {
                 ' . $this->getAsynchronousJavaScript();
     }
 
+    /**
+     * 
+     * @param string $content
+     * @return string
+     */
     protected function wrapFloatDiv($content) {
         $class = $this->getFloatClass();
         if (!empty($class)) {
@@ -260,6 +322,13 @@ class GooglePlus extends ParserFunction {
                 </script>";
     }
 
+    /**
+     * Called after arguments have been parsed, parameters are set and validated.
+     * 
+     * Returns the output as raw HTML.
+     * 
+     * @return string raw HTML
+     */
     protected function getOutput() {
 
         if ($this->target->getParameter()->getName() == 'url') {

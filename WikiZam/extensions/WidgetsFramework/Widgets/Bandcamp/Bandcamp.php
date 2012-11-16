@@ -4,8 +4,11 @@ namespace WidgetsFramework;
 
 class Bandcamp extends ParserFunction {
 
+    /** @var string */
     public static $BACKGROUND_COLOR = 'f2f2f2'; // without #
+    /** @var string */
     public static $LINK_COLOR = 'e22c2e'; // without #
+    /** @var array */
     public static $SIZES = array(
         // name => array( width, height)
         'venti' => array(400, 100),
@@ -16,13 +19,23 @@ class Bandcamp extends ParserFunction {
         'tall2' => array(150, 450),
         'short' => array(46, 23),
     );
+    /** @var XorParameter */
     protected $source;
-    /**
-     * @var XorParamter 
-     */
+    /** @var XorParamter */
     protected $size;
+    /** @var XorParameter */
     protected $float;
 
+    /**
+     * Declares the widget's parameters:
+     * <ul>
+     * <li>instanciates Parameter objects,</li>
+     * <li>configures them and</li>
+     * <li>calls addParameter() for each of them.</li>
+     * </ul>
+     * 
+     * @return void
+     */
     protected function declareParameters() {
 
         $track = new String('track');
@@ -53,6 +66,10 @@ class Bandcamp extends ParserFunction {
         $this->addParameter($this->float);
     }
     
+    /**
+     * 
+     * @return string
+     */
     public function getCSSClasses() {
 
         $classes = array();
@@ -74,6 +91,10 @@ class Bandcamp extends ParserFunction {
         return Tools::ArrayToCSSClasses($classes);
     }
     
+    /**
+     * 
+     * @return string
+     */
     protected function getCSSStyle() {
         
         $styles = array();
@@ -91,6 +112,13 @@ class Bandcamp extends ParserFunction {
         return Tools::ArrayToCSSStyle($styles);
     }
     
+    /**
+     * Called after arguments have been parsed, parameters are set and validated.
+     * 
+     * Returns the output as raw HTML.
+     * 
+     * @return string raw HTML
+     */
     protected function getOutput() {
 
         $size = $this->size->getOutput();

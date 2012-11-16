@@ -4,12 +4,27 @@ namespace WidgetsFramework;
 
 class Vimeo extends ParserFunction {
 
+    /** @var String */
     protected $id;
+    /** @var IntegerInPixel */
     protected $width;
+    /** @var IntegerInPixel */
     protected $height;
+    /** @var Option */
     protected $right;
+    /** @var Option */
     protected $left;
-
+    
+    /**
+     * Declares the widget's parameters:
+     * <ul>
+     * <li>instanciates Parameter objects,</li>
+     * <li>configures them and</li>
+     * <li>calls addParameter() for each of them.</li>
+     * </ul>
+     * 
+     * @return void
+     */
     protected function declareParameters() {
         
         global $wgWFMKMaxWidth;
@@ -44,6 +59,10 @@ class Vimeo extends ParserFunction {
         $this->addParameter($float);
     }
 
+    /**
+     * 
+     * @return string
+     */
     public function getCSSClasses() {
 
         $classes = array();
@@ -61,6 +80,13 @@ class Vimeo extends ParserFunction {
         return Tools::ArrayToCSSClasses($classes);
     }
 
+    /**
+     * Called after arguments have been parsed, parameters are set and validated.
+     * 
+     * Returns the output as raw HTML.
+     * 
+     * @return string Raw HTMl
+     */
     public function getOutput() {
 
         return '<iframe 
