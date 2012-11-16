@@ -1,6 +1,6 @@
 <?php
 
-namespace WidgetsFramework; // need to be declared at the very begining of the file
+namespace WidgetsFramework; 
 
 class Vimeo extends ParserFunction {
 
@@ -11,6 +11,8 @@ class Vimeo extends ParserFunction {
     protected $left;
 
     protected function declareParameters() {
+        
+        global $wgWFMKMaxWidth;
 
         $this->id = new String('id');
         $this->id->setRequired();
@@ -19,9 +21,9 @@ class Vimeo extends ParserFunction {
 
 
         $this->width = new IntegerInPixel('width');
-        $this->width->setDefaultValue(784);
+        $this->width->setDefaultValue($wgWFMKMaxWidth);
         $this->width->setMin(0);
-        $this->width->setMax(784);
+        $this->width->setMax($wgWFMKMaxWidth);
         $this->addParameter($this->width);
 
 
@@ -56,7 +58,7 @@ class Vimeo extends ParserFunction {
             $classes[] = 'wfmk_left';
         }
 
-        return Tools::arrayToCSSClasses($classes);
+        return Tools::ArrayToCSSClasses($classes);
     }
 
     public function getOutput() {
@@ -65,10 +67,10 @@ class Vimeo extends ParserFunction {
                     class="' . $this->getCSSClasses() . '"
                     allowfullscreen=""
                     frameborder="0"
+                    width="' . $this->width->getOutput() . 'px"
                     height="' . $this->height->getOutput() . 'px"
                     src="http://player.vimeo.com/video/' . $this->id->getOutput() . '?title=0&amp;byline=0&amp;portrait=0"
-                    webkitallowfullscreen=""
-                    width="' . $this->width->getOutput() . 'px">
+                    webkitallowfullscreen="">
                 </iframe>';
     }
 

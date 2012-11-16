@@ -198,7 +198,7 @@ abstract class Parameter {
 
         if ($this->hasBeenSet()) {
             // cannot read a value anymore
-            Tools::throwUserError(wfMessage('wfmk-already-assigned', $this->getName(), $this->getOutput(), $argument));
+            Tools::ThrowUserError(wfMessage('wfmk-already-assigned', $this->getName(), $this->getOutput(), $argument));
         }
 
         if (strlen($argument) == 0) {
@@ -243,7 +243,7 @@ abstract class Parameter {
      */
     public function validate() {
         if ($this->isRequired() && !$this->hasBeenSet()) {
-            Tools::throwUserError(wfMessage('wfmk-parameter-required', $this->getName()));
+            Tools::ThrowUserError(wfMessage('wfmk-parameter-required', $this->getName()));
         }
     }
 

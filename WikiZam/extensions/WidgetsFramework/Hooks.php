@@ -1,13 +1,14 @@
 <?php
 
-namespace WidgetsFramework; // need to be declared at the very begining of the file
-
 /**
  * Hooks for WidgetsFramework extension
  * 
  * @file
  * @ingroup Extensions
  */
+
+namespace WidgetsFramework;
+
 if (!defined('MEDIAWIKI')) {
     die(-1);
 }

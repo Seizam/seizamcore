@@ -16,6 +16,8 @@ class SoundCloud extends ParserFunction {
     protected $left;
 
     protected function declareParameters() {
+        
+        global $wgWFMKMaxWidth;
 
         $track = new Integer('track');
         $track->setMin(0);
@@ -35,8 +37,8 @@ class SoundCloud extends ParserFunction {
         $this->addParameter($this->source);
 
         $this->width = new IntegerInPixel('width');
-        $this->width->setDefaultValue(784);
-        $this->width->setMax(784);
+        $this->width->setDefaultValue($wgWFMKMaxWidth);
+        $this->width->setMax($wgWFMKMaxWidth);
         $this->addParameter($this->width);
 
         $this->height = new IntegerInPixel('height');
@@ -91,7 +93,7 @@ class SoundCloud extends ParserFunction {
             $classes[] = 'wfmk_left';
         }
 
-        return Tools::arrayToCSSClasses($classes);
+        return Tools::ArrayToCSSClasses($classes);
     }
 
     protected function getOutput() {

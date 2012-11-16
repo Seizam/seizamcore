@@ -5,7 +5,7 @@ namespace WidgetsFramework;
 class Tools {
 
     /**
-     * This function is used to validate string.
+     * This function is used to validate a string.
      * Inspired from Smarty (function named smarty_modifier_validate).<br />
      * Validates string format. Useful when you need to validate but not escape.
      * @param string $string
@@ -42,7 +42,7 @@ class Tools {
     }
 
     /**
-     * Returns the escaped value, originally in Smarty, function named smarty_modifier_escape.<br />
+     * Returns the escaped value, originally in Smarty (function named smarty_modifier_escape).<br />
      * Smarty escape modifier plugin
      *
      * Type:     modifier<br />
@@ -122,24 +122,25 @@ class Tools {
 
             default: // from original code, changed from returning string unchanged to htmlall escaping (safer when wrong $esc_type)
                 return htmlentities($string, ENT_QUOTES, $char_set);
-                //return $string;
+            //return $string;
         }
     }
 
     /**
-     * This function is used to generate an error about how the final users use the parameter
+     * Generates an exception about a misuse of a widget (bad parameter syntax, value > max, ...)
+     * 
      * @param Message $message
      * @throws UserError
      */
-    public static function throwUserError($message) {
+    public static function ThrowUserError($message) {
         throw new UserError($message->text());
     }
 
-    public static function arrayToCSSClasses($array) {
+    public static function ArrayToCSSClasses($array) {
         return implode(' ', $array);
     }
-    
-    public static function arrayToCSSStyle($array) {
+
+    public static function ArrayToCSSStyle($array) {
         return implode(';', $array);
     }
 

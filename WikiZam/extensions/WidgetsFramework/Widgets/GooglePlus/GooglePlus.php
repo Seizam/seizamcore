@@ -15,6 +15,8 @@ class GooglePlus extends ParserFunction {
     protected $height_value;
 
     protected function declareParameters() {
+        
+        global $wgWFMKMaxWidth;
 
         // the identifier is a numeric value, but very long
         // handling it as an Integer could break when MediaWiki runs on 32bits servers
@@ -73,7 +75,7 @@ class GooglePlus extends ParserFunction {
 
 
         $this->width = new IntegerInPixel('width'); // used for +1 with annotation=inline
-        $this->width->setMax(784);
+        $this->width->setMax($wgWFMKMaxWidth);
         $this->width->setDefaultValue(300);
         $this->addParameter($this->width);
 

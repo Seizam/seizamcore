@@ -1,13 +1,12 @@
 <?php
 
-namespace WidgetsFramework; // need to be declared at the very begining of the file
+namespace WidgetsFramework;
 
 /**
- * Exception class which takes an HTML error message, and does not
- * produce a backtrace. Replacement for OutputPage::fatalError().
+ * Users errors when they use a widget.
+ * 
  * @ingroup Exception
  */
-
 class UserError extends \MWException {
 
     function getHTML() {

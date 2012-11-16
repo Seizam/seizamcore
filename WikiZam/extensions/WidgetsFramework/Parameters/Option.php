@@ -75,7 +75,7 @@ class Option extends Boolean {
         if ($value == 'true') {
             return true;
         } else {
-            Tools::throwUserError(wfMessage('wfmk-validation-error', $this->getName(), $value, wfMessage('wfmk-boolean-syntax')));
+            Tools::ThrowUserError(wfMessage('wfmk-validation-error', $this->getName(), $value, wfMessage('wfmk-boolean-syntax')));
         }
     }
 

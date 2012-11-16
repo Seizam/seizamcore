@@ -11,6 +11,8 @@ class Video extends ParserFunction {
     protected $left;
 
     protected function declareParameters() {
+        
+        global $wgWFMKMaxWidth;
 
         $this->url = new String('url');
         $this->url->setValidateType('url');
@@ -18,8 +20,8 @@ class Video extends ParserFunction {
         $this->addParameter($this->url);
 
         $this->width = new IntegerInPixel('width');
-        $this->width->setDefaultValue(784);
-        $this->width->setMax(784);
+        $this->width->setDefaultValue($wgWFMKMaxWidth);
+        $this->width->setMax($wgWFMKMaxWidth);
         $this->addParameter($this->width);
 
         $this->height = new IntegerInPixel('height');
@@ -50,7 +52,7 @@ class Video extends ParserFunction {
             $classes[] = 'wfmk_left';
         }
 
-        return Tools::arrayToCSSClasses($classes);
+        return Tools::ArrayToCSSClasses($classes);
     }
 
     protected function getOutput() {

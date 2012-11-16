@@ -12,6 +12,8 @@ class YouTube extends ParserFunction {
     protected $left;
 
     protected function declareParameters() {
+        
+        global $wgWFMKMaxWidth;
 
         $this->id = new String('id');
         $this->id->setEscapeMode('urlpathinfo');
@@ -28,9 +30,9 @@ class YouTube extends ParserFunction {
 
 
         $this->width = new IntegerInPixel('width');
-        $this->width->setDefaultValue(784);
+        $this->width->setDefaultValue($wgWFMKMaxWidth);
         $this->width->setMin(0);
-        $this->width->setMax(784);
+        $this->width->setMax($wgWFMKMaxWidth);
         $this->addParameter($this->width);
 
 
@@ -65,7 +67,7 @@ class YouTube extends ParserFunction {
             $classes[] = 'wfmk_left';
         }
 
-        return Tools::arrayToCSSClasses($classes);
+        return Tools::ArrayToCSSClasses($classes);
     }
 
     public function getIframeSrc() {

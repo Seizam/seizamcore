@@ -15,15 +15,17 @@ class Facebook extends ParserFunction {
 
     protected function declareParameters() {
 
+        global $wgWFMKMaxWidth;
+        
         $this->profile = new String('profile');
         $this->profile->setRequired();
         $this->addParameter($this->profile);
 
 
         $this->width = new IntegerInPixel('width');
-        $this->width->setDefaultValue(784);
+        $this->width->setDefaultValue($wgWFMKMaxWidth);
         $this->width->setMin(0);
-        $this->width->setMax(784);
+        $this->width->setMax($wgWFMKMaxWidth);
         $this->addParameter($this->width);
 
 
@@ -90,7 +92,7 @@ class Facebook extends ParserFunction {
             $classes[] = 'wfmk_left';
         }
 
-        return Tools::arrayToCSSClasses($classes);
+        return Tools::ArrayToCSSClasses($classes);
     }
 
     protected function getIframeSrc() {

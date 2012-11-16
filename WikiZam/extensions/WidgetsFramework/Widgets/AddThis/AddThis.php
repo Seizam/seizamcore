@@ -89,7 +89,7 @@ class AddThis extends ParserFunction {
             }
         }
 
-        return Tools::arrayToCSSClasses($classes);
+        return Tools::ArrayToCSSClasses($classes);
     }
 
     protected function getButtons() {

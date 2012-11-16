@@ -21,6 +21,8 @@ class Twitter extends ParserFunction {
     protected $left;
 
     protected function declareParameters() {
+        
+        global $wgWFMKMaxWidth;
 
         $user = new String('user');
         $user->setEscapeMode('quotes');
@@ -61,9 +63,9 @@ class Twitter extends ParserFunction {
 
 
         $this->width = new IntegerInPixel('width');
-        $this->width->setDefaultValue(784);
+        $this->width->setDefaultValue($wgWFMKMaxWidth);
         $this->width->setMin(0);
-        $this->width->setMax(784);
+        $this->width->setMax($wgWFMKMaxWidth);
         $this->addParameter($this->width);
 
 
@@ -120,7 +122,7 @@ class Twitter extends ParserFunction {
             $classes[] = 'wfmk_left';
         }
 
-        return Tools::arrayToCSSClasses($classes);
+        return Tools::ArrayToCSSClasses($classes);
     }
 
     protected function getType() {

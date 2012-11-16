@@ -11,6 +11,8 @@ class Dailymotion extends ParserFunction {
     protected $left;
 
     protected function declareParameters() {
+        
+        global $wgWFMKMaxWidth;
 
         $this->id = new String('id');
         $this->id->setEscapeMode('urlpathinfo');
@@ -18,8 +20,8 @@ class Dailymotion extends ParserFunction {
         $this->addParameter($this->id);
 
         $this->width = new IntegerInPixel('width');
-        $this->width->setDefaultValue(784);
-        $this->width->setMax(784);
+        $this->width->setDefaultValue($wgWFMKMaxWidth);
+        $this->width->setMax($wgWFMKMaxWidth);
         $this->addParameter($this->width);
 
         $this->height = new IntegerInPixel('height');
@@ -51,7 +53,7 @@ class Dailymotion extends ParserFunction {
             $classes[] = 'wfmk_left';
         }
 
-        return Tools::arrayToCSSClasses($classes);
+        return Tools::ArrayToCSSClasses($classes);
     }
 
     protected function getOutput() {

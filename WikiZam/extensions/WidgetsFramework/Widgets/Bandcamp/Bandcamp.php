@@ -71,7 +71,7 @@ class Bandcamp extends ParserFunction {
             $classes[] = 'wfmk_frame';
         }
 
-        return Tools::arrayToCSSClasses($classes);
+        return Tools::ArrayToCSSClasses($classes);
     }
     
     protected function getCSSStyle() {
@@ -88,7 +88,7 @@ class Bandcamp extends ParserFunction {
         if ($size != 'short') {
             $styles[] = "padding:8px";
         } 
-        return Tools::arrayToCSSStyle($styles);
+        return Tools::ArrayToCSSStyle($styles);
     }
     
     protected function getOutput() {

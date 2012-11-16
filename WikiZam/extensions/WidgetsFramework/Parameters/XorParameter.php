@@ -187,7 +187,7 @@ class XorParameter extends Parameter {
             return $this->trySetParametersByName($argument);
         } elseif ($named_value === true) {
             // $argument is declared with no value
-            Tools::throwUserError(wfMessage('wfmk-value-required', $this->getName()));
+            Tools::ThrowUserError(wfMessage('wfmk-value-required', $this->getName()));
         } elseif ($this->trySetParametersByName($named_value)) {
             // $argument is named for this xorparameter and we matched a subparameter by name.
             return true;
@@ -198,7 +198,7 @@ class XorParameter extends Parameter {
             if ($default != null && $default->trySet($named_value)) {
                 return true;
             } else {
-                Tools::throwUserError(wfMessage('wfmk-xorparameter-syntax', $this->getName()));
+                Tools::ThrowUserError(wfMessage('wfmk-xorparameter-syntax', $this->getName()));
             }
         }
     }
