@@ -4,7 +4,7 @@
  *
  * Created on Feb 4, 2009
  *
- * Copyright © 2009 Roan Kattouw <Firstname>.<Lastname>@gmail.com
+ * Copyright © 2009 Roan Kattouw "<Firstname>.<Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiBase.php' );
-}
-
 /**
  * API module that imports an XML file like Special:Import does
  *
@@ -41,13 +36,12 @@ class ApiImport extends ApiBase {
 	}
 
 	public function execute() {
-		global $wgUser;
-
+		$user = $this->getUser();
 		$params = $this->extractRequestParams();
 
 		$isUpload = false;
 		if ( isset( $params['interwikisource'] ) ) {
-			if ( !$wgUser->isAllowed( 'import' ) ) {
+			if ( !$user->isAllowed( 'import' ) ) {
 				$this->dieUsageMsg( 'cantimport' );
 			}
 			if ( !isset( $params['interwikipage'] ) ) {
@@ -61,7 +55,7 @@ class ApiImport extends ApiBase {
 			);
 		} else {
 			$isUpload = true;
-			if ( !$wgUser->isAllowed( 'importupload' ) ) {
+			if ( !$user->isAllowed( 'importupload' ) ) {
 				$this->dieUsageMsg( 'cantimport-upload' );
 			}
 			$source = ImportStreamSource::newFromUpload( 'xml' );
@@ -73,6 +67,12 @@ class ApiImport extends ApiBase {
 		$importer = new WikiImporter( $source->value );
 		if ( isset( $params['namespace'] ) ) {
 			$importer->setTargetNamespace( $params['namespace'] );
+		}
+		if ( isset( $params['rootpage'] ) ) {
+			$statusRootPage = $importer->setTargetRootPage( $params['rootpage'] );
+			if( !$statusRootPage->isGood() ) {
+				$this->dieUsageMsg( $statusRootPage->getErrorsArray() );
+			}
 		}
 		$reporter = new ApiImportReporter(
 			$importer,
@@ -104,7 +104,10 @@ class ApiImport extends ApiBase {
 	public function getAllowedParams() {
 		global $wgImportSources;
 		return array(
-			'token' => null,
+			'token' => array(
+				ApiBase::PARAM_TYPE => 'string',
+				ApiBase::PARAM_REQUIRED => true
+			),
 			'summary' => null,
 			'xml' => null,
 			'interwikisource' => array(
@@ -115,7 +118,8 @@ class ApiImport extends ApiBase {
 			'templates' => false,
 			'namespace' => array(
 				ApiBase::PARAM_TYPE => 'namespace'
-			)
+			),
+			'rootpage' => null,
 		);
 	}
 
@@ -129,6 +133,18 @@ class ApiImport extends ApiBase {
 			'fullhistory' => 'For interwiki imports: import the full history, not just the current version',
 			'templates' => 'For interwiki imports: import all included templates as well',
 			'namespace' => 'For interwiki imports: import to this namespace',
+			'rootpage' => 'Import as subpage of this page',
+		);
+	}
+
+	public function getResultProperties() {
+		return array(
+			ApiBase::PROP_LIST => true,
+			'' => array(
+				'ns' => 'namespace',
+				'title' => 'string',
+				'revisions' => 'integer'
+			)
 		);
 	}
 
@@ -147,6 +163,8 @@ class ApiImport extends ApiBase {
 			array( 'cantimport-upload' ),
 			array( 'import-unknownerror', 'source' ),
 			array( 'import-unknownerror', 'result' ),
+			array( 'import-rootpage-nosubpage', 'namespace' ),
+			array( 'import-rootpage-invalid' ),
 		) );
 	}
 
@@ -158,10 +176,10 @@ class ApiImport extends ApiBase {
 		return '';
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
-			'Import [[meta:Help:Parserfunctions]] to namespace 100 with full history:',
-			'  api.php?action=import&interwikisource=meta&interwikipage=Help:ParserFunctions&namespace=100&fullhistory=&token=123ABC',
+			'api.php?action=import&interwikisource=meta&interwikipage=Help:ParserFunctions&namespace=100&fullhistory=&token=123ABC'
+				=> 'Import [[meta:Help:Parserfunctions]] to namespace 100 with full history',
 		);
 	}
 
@@ -192,8 +210,16 @@ class ApiImportReporter extends ImportReporter {
 	function reportPage( $title, $origTitle, $revisionCount, $successCount, $pageInfo ) {
 		// Add a result entry
 		$r = array();
-		ApiQueryBase::addTitleInfo( $r, $title );
-		$r['revisions'] = intval( $successCount );
+
+		if ( $title === null ) {
+			# Invalid or non-importable title
+			$r['title'] = $pageInfo['title'];
+			$r['invalid'] = '';
+		} else {
+			ApiQueryBase::addTitleInfo( $r, $title );
+			$r['revisions'] = intval( $successCount );
+		}
+
 		$this->mResultArr[] = $r;
 
 		// Piggyback on the parent to do the logging

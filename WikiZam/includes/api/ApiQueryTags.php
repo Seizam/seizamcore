@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiQueryBase.php' );
-}
-
 /**
  * Query module to enumerate change tags.
  *
@@ -64,7 +59,7 @@ class ApiQueryTags extends ApiQueryBase {
 		$this->addTables( 'change_tag' );
 		$this->addFields( 'ct_tag' );
 
-		$this->addFieldsIf( 'count(*) AS hitcount', $this->fld_hitcount );
+		$this->addFieldsIf( array( 'hitcount' => 'COUNT(*)' ), $this->fld_hitcount );
 
 		$this->addOption( 'LIMIT', $this->limit + 1 );
 		$this->addOption( 'GROUP BY', 'ct_tag' );
@@ -78,7 +73,7 @@ class ApiQueryTags extends ApiQueryBase {
 			if ( !$ok ) {
 				break;
 			}
-			$ok = $this->doTag( $row->ct_tag, $row->hitcount );
+			$ok = $this->doTag( $row->ct_tag, $this->fld_hitcount ? $row->hitcount : 0 );
 		}
 
 		// include tags with no hits yet
@@ -174,11 +169,28 @@ class ApiQueryTags extends ApiQueryBase {
 		);
 	}
 
+	public function getResultProperties() {
+		return array(
+			'' => array(
+				'name' => 'string'
+			),
+			'displayname' => array(
+				'displayname' => 'string'
+			),
+			'description' => array(
+				'description' => 'string'
+			),
+			'hitcount' => array(
+				'hitcount' => 'integer'
+			)
+		);
+	}
+
 	public function getDescription() {
 		return 'List change tags';
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=query&list=tags&tgprop=displayname|description|hitcount'
 		);

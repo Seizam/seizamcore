@@ -1,17 +1,37 @@
 <?php
 /**
- * File for magic words
+ * File for magic words.
  *
- * See docs/magicword.txt
+ * See docs/magicword.txt.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
  * @ingroup Parser
  */
 
 /**
- * This class encapsulates "magic words" such as #redirect, __NOTOC__, etc.
- * Usage:
- *     if (MagicWord::get( 'redirect' )->match( $text ) )
+ * This class encapsulates "magic words" such as "#redirect", __NOTOC__, etc.
+ *
+ * @par Usage:
+ * @code
+ *     if (MagicWord::get( 'redirect' )->match( $text ) ) {
+ *       // some code
+ *     }
+ * @endcode
  *
  * Possible future improvements:
  *   * Simultaneous searching for a number of magic words
@@ -20,8 +40,20 @@
  * Please avoid reading the data out of one of these objects and then writing
  * special case code. If possible, add another match()-like function here.
  *
- * To add magic words in an extension, use the LanguageGetMagic hook. For
- * magic words which are also Parser variables, add a MagicWordwgVariableIDs
+ * To add magic words in an extension, use $magicWords in a file listed in
+ * $wgExtensionMessagesFiles[].
+ *
+ * @par Example:
+ * @code
+ * $magicWords = array();
+ *
+ * $magicWords['en'] = array(
+ * 	'magicwordkey' => array( 0, 'case_insensitive_magic_word' ),
+ * 	'magicwordkey2' => array( 1, 'CASE_sensitive_magic_word2' ),
+ * );
+ * @endcode
+ *
+ * For magic words which are also Parser variables, add a MagicWordwgVariableIDs
  * hook. Use string keys.
  *
  * @ingroup Parser
@@ -67,6 +99,7 @@ class MagicWord {
 		'numberoffiles',
 		'numberofedits',
 		'articlepath',
+		'pageid',
 		'sitename',
 		'server',
 		'servername',
@@ -78,6 +111,7 @@ class MagicWord {
 		'fullpagenamee',
 		'namespace',
 		'namespacee',
+		'namespacenumber',
 		'currentweek',
 		'currentdow',
 		'localweek',
@@ -212,13 +246,6 @@ class MagicWord {
 	 */
 	static function getVariableIDs() {
 		if ( !self::$mVariableIDsInitialised ) {
-			# Deprecated constant definition hook, available for extensions that need it
-			$magicWords = array();
-			wfRunHooks( 'MagicWordMagicWords', array( &$magicWords ) );
-			foreach ( $magicWords as $word ) {
-				define( $word, $word );
-			}
-
 			# Get variable IDs
 			wfRunHooks( 'MagicWordwgVariableIDs', array( &self::$mVariableIDs ) );
 			self::$mVariableIDsInitialised = true;
@@ -228,17 +255,19 @@ class MagicWord {
 
 	/**
 	 * Get an array of parser substitution modifier IDs
+	 * @return array
 	 */
 	static function getSubstIDs() {
-		return self::$mSubstIDs; 
+		return self::$mSubstIDs;
 	}
 
 	/**
 	 * Allow external reads of TTL array
 	 *
+	 * @param $id int
 	 * @return array
 	 */
-	static function getCacheTTL($id) {
+	static function getCacheTTL( $id ) {
 		if ( array_key_exists( $id, self::$mCacheTTLs ) ) {
 			return self::$mCacheTTLs[$id];
 		} else {
@@ -270,6 +299,7 @@ class MagicWord {
 	 * Initialises this object with an ID
 	 *
 	 * @param $id
+	 * @throws MWException
 	 */
 	function load( $id ) {
 		global $wgContLang;
@@ -278,8 +308,8 @@ class MagicWord {
 		$wgContLang->getMagic( $this );
 		if ( !$this->mSynonyms ) {
 			$this->mSynonyms = array( 'dkjsagfjsgashfajsh' );
-			#throw new MWException( "Error: invalid magic word '$id'" );
-			wfDebugLog( 'exception', "Error: invalid magic word '$id'\n" );
+			throw new MWException( "Error: invalid magic word '$id'" );
+			#wfDebugLog( 'exception', "Error: invalid magic word '$id'\n" );
 		}
 		wfProfileOut( __METHOD__ );
 	}
@@ -309,8 +339,8 @@ class MagicWord {
 	}
 
 	/**
-	 * A comparison function that returns -1, 0 or 1 depending on whether the 
-	 * first string is longer, the same length or shorter than the second 
+	 * A comparison function that returns -1, 0 or 1 depending on whether the
+	 * first string is longer, the same length or shorter than the second
 	 * string.
 	 *
 	 * @param $s1 string
@@ -383,7 +413,7 @@ class MagicWord {
 	/**
 	 * Returns true if the text contains the word
 	 *
-	 * @paran $text string
+	 * @param $text string
 	 *
 	 * @return bool
 	 */
@@ -616,6 +646,9 @@ class MagicWordArray {
 	var $baseRegex, $regex;
 	var $matches;
 
+	/**
+	 * @param $names array
+	 */
 	function __construct( $names = array() ) {
 		$this->names = $names;
 	}
@@ -633,7 +666,7 @@ class MagicWordArray {
 	/**
 	 * Add a number of magic words by name
 	 *
-	 * $param $names array
+	 * @param $names array
 	 */
 	public function addArray( $names ) {
 		$this->names = array_merge( $this->names, array_values( $names ) );
@@ -712,7 +745,7 @@ class MagicWordArray {
 	/**
 	 * Get a regex anchored to the start of the string that does not match parameters
 	 *
-	 * @return string
+	 * @return array
 	 */
 	function getRegexStart() {
 		$base = $this->getBaseRegex();
@@ -721,7 +754,7 @@ class MagicWordArray {
 			$newRegex[0] = "/^(?:{$base[0]})/iuS";
 		}
 		if ( $base[1] !== '' ) {
-			$newRegex[1] = "/^(?:{$base[1]})/S"; 
+			$newRegex[1] = "/^(?:{$base[1]})/S";
 		}
 		return $newRegex;
 	}
@@ -729,7 +762,7 @@ class MagicWordArray {
 	/**
 	 * Get an anchored regex for matching variables with parameters
 	 *
-	 * @return string
+	 * @return array
 	 */
 	function getVariableStartToEndRegex() {
 		$base = $this->getBaseRegex();
@@ -744,12 +777,21 @@ class MagicWordArray {
 	}
 
 	/**
+	 * @since 1.20
+	 * @return array
+	 */
+	public function getNames() {
+		return $this->names;
+	}
+
+	/**
 	 * Parse a match array from preg_match
 	 * Returns array(magic word ID, parameter value)
 	 * If there is no parameter value, that element will be false.
 	 *
-	 * @param $m arrray
+	 * @param $m array
 	 *
+	 * @throws MWException
 	 * @return array
 	 */
 	function parseMatch( $m ) {
@@ -786,7 +828,7 @@ class MagicWordArray {
 		$regexes = $this->getVariableStartToEndRegex();
 		foreach ( $regexes as $regex ) {
 			if ( $regex !== '' ) {
-				$m = false;
+				$m = array();
 				if ( preg_match( $regex, $text, $m ) ) {
 					return $this->parseMatch( $m );
 				}
@@ -801,7 +843,7 @@ class MagicWordArray {
 	 *
 	 * @param $text string
 	 *
-	 * @return string|false
+	 * @return string|bool False on failure
 	 */
 	public function matchStartToEnd( $text ) {
 		$hash = $this->getHash();
@@ -849,7 +891,7 @@ class MagicWordArray {
 	 *
 	 * @param $text string
 	 *
-	 * @return int|false
+	 * @return int|bool False on failure
 	 */
 	public function matchStartAndRemove( &$text ) {
 		$regexes = $this->getRegexStart();

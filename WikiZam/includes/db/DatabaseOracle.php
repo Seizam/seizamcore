@@ -2,6 +2,21 @@
 /**
  * This is the Oracle database abstraction layer.
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup Database
  */
@@ -226,6 +241,7 @@ class DatabaseOracle extends DatabaseBase {
 
 	/**
 	 * Usually aborts on failure
+	 * @return DatabaseBase|null
 	 */
 	function open( $server, $user, $password, $dbName ) {
 		if ( !function_exists( 'oci_connect' ) ) {
@@ -285,17 +301,10 @@ class DatabaseOracle extends DatabaseBase {
 	/**
 	 * Closes a database connection, if it is open
 	 * Returns success, true if already closed
+	 * @return bool
 	 */
-	function close() {
-		$this->mOpened = false;
-		if ( $this->mConn ) {
-			if ( $this->mTrxLevel ) {
-				$this->commit();
-			}
-			return oci_close( $this->mConn );
-		} else {
-			return true;
-		}
+	protected function closeConnection() {
+		return oci_close( $this->mConn );
 	}
 
 	function execFlags() {
@@ -401,6 +410,7 @@ class DatabaseOracle extends DatabaseBase {
 
 	/**
 	 * This must be called after nextSequenceVal
+	 * @return null
 	 */
 	function insertId() {
 		return $this->mInsertId;
@@ -439,6 +449,7 @@ class DatabaseOracle extends DatabaseBase {
 	/**
 	 * Returns information about an index
 	 * If errors are explicitly ignored, returns NULL on failure
+	 * @return bool
 	 */
 	function indexInfo( $table, $index, $fname = 'DatabaseOracle::indexExists' ) {
 		return false;
@@ -548,8 +559,9 @@ class DatabaseOracle extends DatabaseBase {
 					$val = $val->fetch();
 				}
 
+				// backward compatibility
 				if ( preg_match( '/^timestamp.*/i', $col_type ) == 1 && strtolower( $val ) == 'infinity' ) {
-					$val = '31-12-2030 12:00:00.000000';
+					$val = $this->getInfinity();
 				}
 
 				$val = ( $wgContLang != null ) ? $wgContLang->checkTitleEncoding( $val ) : $val;
@@ -654,7 +666,7 @@ class DatabaseOracle extends DatabaseBase {
 		return $retval;
 	}
 
-	function tableName( $name, $quoted = true ) {
+	function tableName( $name, $format = 'quoted' ) {
 		/*
 		Replace reserved words with better ones
 		Using uppercase because that's the only way Oracle can handle
@@ -669,7 +681,7 @@ class DatabaseOracle extends DatabaseBase {
 				break;
 		}
 
-		return parent::tableName( strtoupper( $name ), $quoted );
+		return parent::tableName( strtoupper( $name ), $format );
 	}
 
 	function tableNameInternal( $name ) {
@@ -678,6 +690,7 @@ class DatabaseOracle extends DatabaseBase {
 	}
 	/**
 	 * Return the next in a sequence, save the value for retrieval via insertId()
+	 * @return null
 	 */
 	function nextSequenceValue( $seqName ) {
 		$res = $this->query( "SELECT $seqName.nextval FROM dual" );
@@ -688,6 +701,7 @@ class DatabaseOracle extends DatabaseBase {
 
 	/**
 	 * Return sequence_name if table has a sequence
+	 * @return bool
 	 */
 	private function getSequenceData( $table ) {
 		if ( $this->sequenceData == null ) {
@@ -768,9 +782,9 @@ class DatabaseOracle extends DatabaseBase {
 
 		// dirty code ... i know
 		$endArray = array();
-		$endArray[] = $prefix.'MWUSER';
-		$endArray[] = $prefix.'PAGE';
-		$endArray[] = $prefix.'IMAGE';
+		$endArray[] = strtoupper($prefix.'MWUSER');
+		$endArray[] = strtoupper($prefix.'PAGE');
+		$endArray[] = strtoupper($prefix.'IMAGE');
 		$fixedOrderTabs = $endArray;
 		while (($row = $result->fetchRow()) !== false) {
 			if (!in_array($row['table_name'], $fixedOrderTabs))
@@ -796,7 +810,7 @@ class DatabaseOracle extends DatabaseBase {
 	/**
 	 * Return aggregated value function call
 	 */
-	function aggregateValue ( $valuedata, $valuename = 'value' ) {
+	public function aggregateValue( $valuedata, $valuename = 'value' ) {
 		return $valuedata;
 	}
 
@@ -835,6 +849,7 @@ class DatabaseOracle extends DatabaseBase {
 
 	/**
 	 * Query whether a given index exists
+	 * @return bool
 	 */
 	function indexExists( $table, $index, $fname = 'DatabaseOracle::indexExists' ) {
 		$table = $this->tableName( $table );
@@ -854,8 +869,9 @@ class DatabaseOracle extends DatabaseBase {
 
 	/**
 	 * Query whether a given table exists (in the given schema, or the default mw one if not given)
+	 * @return int
 	 */
-	function tableExists( $table ) {
+	function tableExists( $table, $fname = __METHOD__ ) {
 		$table = $this->tableName( $table );
 		$table = $this->addQuotes( strtoupper( $this->removeIdentifierQuotes( $table ) ) );
 		$owner = $this->addQuotes( strtoupper( $this->mDBname ) );
@@ -939,12 +955,12 @@ class DatabaseOracle extends DatabaseBase {
 		return $this->fieldInfoMulti ($table, $field);
 	}
 
-	function begin( $fname = 'DatabaseOracle::begin' ) {
+	protected function doBegin( $fname = 'DatabaseOracle::begin' ) {
 		$this->mTrxLevel = 1;
 		$this->doQuery( 'SET CONSTRAINTS ALL DEFERRED' );
 	}
 
-	function commit( $fname = 'DatabaseOracle::commit' ) {
+	protected function doCommit( $fname = 'DatabaseOracle::commit' ) {
 		if ( $this->mTrxLevel ) {
 			$ret = oci_commit( $this->mConn );
 			if ( !$ret ) {
@@ -955,7 +971,7 @@ class DatabaseOracle extends DatabaseBase {
 		}
 	}
 
-	function rollback( $fname = 'DatabaseOracle::rollback' ) {
+	protected function doRollback( $fname = 'DatabaseOracle::rollback' ) {
 		if ( $this->mTrxLevel ) {
 			oci_rollback( $this->mConn );
 			$this->mTrxLevel = 0;
@@ -963,13 +979,9 @@ class DatabaseOracle extends DatabaseBase {
 		}
 	}
 
-	/* Not even sure why this is used in the main codebase... */
-	function limitResultForUpdate( $sql, $num ) {
-		return $sql;
-	}
-
 	/* defines must comply with ^define\s*([^\s=]*)\s*=\s?'\{\$([^\}]*)\}'; */
-	function sourceStream( $fp, $lineCallback = false, $resultCallback = false, $fname = 'DatabaseOracle::sourceStream' ) {
+	function sourceStream( $fp, $lineCallback = false, $resultCallback = false,
+		$fname = 'DatabaseOracle::sourceStream', $inputCallback = false ) {
 		$cmd = '';
 		$done = false;
 		$dollarquote = false;
@@ -1023,6 +1035,9 @@ class DatabaseOracle extends DatabaseBase {
 					}
 
 					$cmd = $this->replaceVars( $cmd );
+					if ( $inputCallback ) {
+						call_user_func( $inputCallback, $cmd );
+					}
 					$res = $this->doQuery( $cmd );
 					if ( $resultCallback ) {
 						call_user_func( $resultCallback, $res, $this );
@@ -1210,7 +1225,7 @@ class DatabaseOracle extends DatabaseBase {
 			$sql .= $sqlSet;
 		}
 
-		if ( $conds != '*' ) {
+		if ( $conds !== array() && $conds !== '*' ) {
 			$conds = $this->wrapConditionsForWhere( $table, $conds );
 			$sql .= ' WHERE ' . $this->makeList( $conds, LIST_AND );
 		}
@@ -1299,7 +1314,8 @@ class DatabaseOracle extends DatabaseBase {
 		return 'BITOR(' . $fieldLeft . ', ' . $fieldRight . ')';
 	}
 
-	function setFakeMaster( $enabled = true ) { }
+	function setFakeMaster( $enabled = true ) {
+	}
 
 	function getDBname() {
 		return $this->mDBname;
@@ -1312,4 +1328,9 @@ class DatabaseOracle extends DatabaseBase {
 	public function getSearchEngine() {
 		return 'SearchOracle';
 	}
+
+	public function getInfinity() {
+		return '31-12-2030 12:00:00.000000';
+	}
+
 } // end DatabaseOracle class

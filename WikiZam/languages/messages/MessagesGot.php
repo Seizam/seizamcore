@@ -10,8 +10,28 @@
  * @author Jocke Pirat
  * @author Michawiki
  * @author Node ue
+ * @author Sajasazi (on got.wikipedia.org)
  * @author Zylbath
  */
+
+$namespaceNames = array(
+	NS_USER             => '𐌽𐌹𐌿𐍄𐌰𐌽𐌳𐍃',
+	NS_USER_TALK        => '𐌽𐌹𐌿𐍄𐌰𐌽𐌳𐌹𐍃_𐌲𐌰𐍅𐌰𐌿𐍂𐌳𐌾𐌰',
+	NS_PROJECT_TALK     => '𐌸𐌹𐍃_$1_𐌲𐌰𐍅𐌰𐌿𐍂𐌳𐌾𐌰',
+	NS_FILE             => '𐍆𐌴𐌹𐌻𐌰',
+	NS_FILE_TALK        => '𐍆𐌴𐌹𐌻𐌹𐌽𐍃_𐌲𐌰𐍅𐌰𐌿𐍂𐌳𐌾𐌰',
+	NS_TEMPLATE         => '𐍆𐌰𐌿𐍂𐌰𐌼𐌴𐌻𐌴𐌹𐌽𐍃',
+	NS_TEMPLATE_TALK    => '𐍆𐌰𐌿𐍂𐌰𐌼𐌴𐌻𐌴𐌹𐌽𐌰𐌹𐍃_𐌲𐌰𐍅𐌰𐌿𐍂𐌳𐌾𐌰',
+	NS_HELP             => '𐌷𐌹𐌻𐍀𐌰',
+	NS_HELP_TALK        => '𐌷𐌹𐌻𐍀𐍉𐍃_𐌲𐌰𐍅𐌰𐌿𐍂𐌳𐌾𐌰',
+	NS_CATEGORY         => '𐌷𐌰𐌽𐍃𐌰',
+	NS_CATEGORY_TALK    => '𐌷𐌰𐌽𐍃𐍉𐍃_𐌲𐌰𐍅𐌰𐌿𐍂𐌳𐌾𐌰',
+);
+
+$specialPageAliases = array(
+	'Allpages'                  => array( '𐌰𐌻𐌻𐍃𐍃𐌴𐌹𐌳𐍉𐌽𐍃' ),
+	'Recentchanges'             => array( '𐌰𐍆𐍄𐌿𐌼𐌹𐍃𐍄𐍉𐍃𐌼𐌰𐌹𐌳𐌴𐌹𐌽𐌴𐌹𐍃' ),
+);
 
 $messages = array(
 'underline-always' => 'Sinteino',
@@ -178,8 +198,7 @@ $messages = array(
 'nstab-category' => '𐌺𐌿𐌽𐌾𐌰',
 
 # General errors
-'viewsource'    => '𐍃𐌰𐌹𐍈𐌰 𐌹𐌽𐌽𐌰𐌽𐌰',
-'viewsourcefor' => 'fáur $1',
+'viewsource' => '𐍃𐌰𐌹𐍈𐌰 𐌹𐌽𐌽𐌰𐌽𐌰',
 
 # Login and logout pages
 'yourname'                => '𐌽𐌹𐌿𐍄𐌰𐌽𐌳𐌹𐍃𐌽𐌰𐌼𐍉:',
@@ -389,7 +408,6 @@ $messages = array(
 'deletepage'            => '𐍄𐌰𐌹𐍂𐌰 𐍃𐌴𐌹𐌳𐍉',
 'delete-legend'         => '𐍄𐌰𐌹𐍂𐌰𐌽',
 'actioncomplete'        => '𐍅𐌰𐍃𐌿𐌷 𐌹𐍄𐌰 𐌲𐌰𐌿𐍃𐍄𐌹𐌿𐌷𐌰𐌽',
-'deletedarticle'        => '𐍄𐌰𐌹𐍂𐌹𐌸 "[[$1]]"',
 'dellogpage'            => '𐍄𐌰𐌹𐍂𐌰 𐌰𐌹𐍂𐍅𐌱𐍉𐌺𐌰',
 'deleteotherreason'     => '𐌰𐌽𐌸𐌰𐍂/𐌼𐌰𐌹𐍃 𐌼𐌹𐍄𐍉𐌽𐍃:',
 'deletereasonotherlist' => '𐌰𐌽𐌸𐌰𐍂 𐌼𐌹𐍄𐍉𐌽𐍃',
@@ -451,16 +469,14 @@ $messages = array(
 'blocklogentry'      => '𐌰𐍆𐌳𐍂𐌰𐌿𐍃𐌹𐌸 [[$1]] 𐍆𐌰𐌿𐍂 $2 $3',
 
 # Move page
-'movearticle'     => '𐍃𐌺𐌹𐌿𐌱𐌰 𐍃𐌴𐌹𐌳𐍉:',
-'newtitle'        => '𐌳𐌿 𐌽𐌹𐌿𐌾𐌹𐍃 𐌽𐌰𐌼𐍉𐍃:',
-'move-watch'      => '𐍅𐌹𐍄𐌰𐌽 𐍃𐍉 𐍃𐌴𐌹𐌳𐍉',
-'movepagebtn'     => '𐍃𐌺𐌹𐌿𐌱𐌰 𐍃𐌴𐌹𐌳𐍉',
-'movedto'         => 'skiubiþ du',
-'1movedto2'       => '[[$1]] 𐍃𐌺𐌹𐌿𐌱𐌹𐌸 𐌳𐌿 [[$2]]',
-'1movedto2_redir' => '[[$1]] 𐍃𐌺𐌹𐌿𐌱𐌹𐌸 𐌳𐌿 [[$2]] 𐌿𐍆𐌰𐍂 𐍄𐌰𐌹𐌺𐌾𐌰𐌽𐌱𐌰𐌽𐌳𐌹',
-'movelogpage'     => 'Log af skiubans',
-'movereason'      => '𐍆𐌰𐌹𐍂𐌹𐌽𐌰:',
-'revertmove'      => 'ráidjan',
+'movearticle' => '𐍃𐌺𐌹𐌿𐌱𐌰 𐍃𐌴𐌹𐌳𐍉:',
+'newtitle'    => '𐌳𐌿 𐌽𐌹𐌿𐌾𐌹𐍃 𐌽𐌰𐌼𐍉𐍃:',
+'move-watch'  => '𐍅𐌹𐍄𐌰𐌽 𐍃𐍉 𐍃𐌴𐌹𐌳𐍉',
+'movepagebtn' => '𐍃𐌺𐌹𐌿𐌱𐌰 𐍃𐌴𐌹𐌳𐍉',
+'movedto'     => 'skiubiþ du',
+'movelogpage' => 'Log af skiubans',
+'movereason'  => '𐍆𐌰𐌹𐍂𐌹𐌽𐌰:',
+'revertmove'  => 'ráidjan',
 
 # Thumbnails
 'thumbnail-more' => 'Biáuknan',

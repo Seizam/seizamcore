@@ -1,4 +1,25 @@
 <?php
+/**
+ * Batch query to determine page existence.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup Cache
+ */
 
 /**
  * Class representing a list of titles
@@ -45,6 +66,11 @@ class LinkBatch {
 		}
 	}
 
+	/**
+	 * @param $ns int
+	 * @param $dbkey string
+	 * @return mixed
+	 */
 	public function add( $ns, $dbkey ) {
 		if ( $ns < 0 ) {
 			return;
@@ -86,7 +112,8 @@ class LinkBatch {
 
 	/**
 	 * Do the query and add the results to the LinkCache object
-	 * Return an array mapping PDBK to ID
+	 *
+	 * @return Array mapping PDBK to ID
 	 */
 	public function execute() {
 		$linkCache = LinkCache::singleton();
@@ -96,12 +123,15 @@ class LinkBatch {
 	/**
 	 * Do the query and add the results to a given LinkCache object
 	 * Return an array mapping PDBK to ID
+	 *
+	 * @param $cache LinkCache
+	 * @return Array remaining IDs
 	 */
 	protected function executeInto( &$cache ) {
 		wfProfileIn( __METHOD__ );
 		$res = $this->doQuery();
-		$ids = $this->addResultToCache( $cache, $res );
 		$this->doGenderQuery();
+		$ids = $this->addResultToCache( $cache, $res );
 		wfProfileOut( __METHOD__ );
 		return $ids;
 	}
@@ -112,8 +142,9 @@ class LinkBatch {
 	 * This function *also* stores extra fields of the title used for link
 	 * parsing to avoid extra DB queries.
 	 *
-	 * @param $cache
+	 * @param $cache LinkCache
 	 * @param $res
+	 * @return Array of remaining titles
 	 */
 	public function addResultToCache( $cache, $res ) {
 		if ( !$res ) {
@@ -126,7 +157,7 @@ class LinkBatch {
 		$remaining = $this->data;
 		foreach ( $res as $row ) {
 			$title = Title::makeTitle( $row->page_namespace, $row->page_title );
-			$cache->addGoodLinkObj( $row->page_id, $title, $row->page_len, $row->page_is_redirect, $row->page_latest );
+			$cache->addGoodLinkObjFromRow( $title, $row );
 			$ids[$title->getPrefixedDBkey()] = $row->page_id;
 			unset( $remaining[$row->page_namespace][$row->page_title] );
 		}
@@ -144,6 +175,7 @@ class LinkBatch {
 
 	/**
 	 * Perform the existence test query, return a ResultWrapper with page_id fields
+	 * @return Bool|ResultWrapper
 	 */
 	public function doQuery() {
 		if ( $this->isEmpty() ) {
@@ -168,6 +200,11 @@ class LinkBatch {
 		return $res;
 	}
 
+	/**
+	 * Do (and cache) {{GENDER:...}} information for userpages in this LinkBatch
+	 *
+	 * @return bool whether the query was successful
+	 */
 	public function doGenderQuery() {
 		if ( $this->isEmpty() ) {
 			return false;
@@ -179,7 +216,8 @@ class LinkBatch {
 		}
 
 		$genderCache = GenderCache::singleton();
-		$genderCache->dolinkBatch( $this->data, $this->caller );
+		$genderCache->doLinkBatch( $this->data, $this->caller );
+		return true;
 	}
 
 	/**

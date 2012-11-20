@@ -6,7 +6,7 @@
  *
  * Copyright © 2010 Sam Reed
  * Copyright © 2008 Vasiliev Victor vasilvv@gmail.com,
- * based on ApiQueryAllpages.php
+ * based on ApiQueryAllPages.php
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,11 +26,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiQueryBase.php' );
-}
-
 /**
  * Query module to enumerate all deleted files.
  *
@@ -43,9 +38,9 @@ class ApiQueryFilearchive extends ApiQueryBase {
 	}
 
 	public function execute() {
-		global $wgUser;
+		$user = $this->getUser();
 		// Before doing anything at all, let's check permissions
-		if ( !$wgUser->isAllowed( 'deletedhistory' ) ) {
+		if ( !$user->isAllowed( 'deletedhistory' ) ) {
 			$this->dieUsage( 'You don\'t have permission to view deleted file information', 'permissiondenied' );
 		}
 
@@ -61,8 +56,10 @@ class ApiQueryFilearchive extends ApiQueryBase {
 		$fld_dimensions = isset( $prop['dimensions'] );
 		$fld_description = isset( $prop['description'] ) || isset( $prop['parseddescription'] );
 		$fld_mime = isset( $prop['mime'] );
+		$fld_mediatype = isset( $prop['mediatype'] );
 		$fld_metadata = isset( $prop['metadata'] );
 		$fld_bitdepth = isset( $prop['bitdepth'] );
+		$fld_archivename = isset( $prop['archivename'] );
 
 		$this->addTables( 'filearchive' );
 
@@ -73,12 +70,28 @@ class ApiQueryFilearchive extends ApiQueryBase {
 		$this->addFieldsIf( array( 'fa_height', 'fa_width', 'fa_size' ), $fld_dimensions || $fld_size );
 		$this->addFieldsIf( 'fa_description', $fld_description );
 		$this->addFieldsIf( array( 'fa_major_mime', 'fa_minor_mime' ), $fld_mime );
+		$this->addFieldsIf( 'fa_media_type', $fld_mediatype );
 		$this->addFieldsIf( 'fa_metadata', $fld_metadata );
 		$this->addFieldsIf( 'fa_bits', $fld_bitdepth );
+		$this->addFieldsIf( 'fa_archive_name', $fld_archivename );
+
+		if ( !is_null( $params['continue'] ) ) {
+			$cont = explode( '|', $params['continue'] );
+			if ( count( $cont ) != 1 ) {
+				$this->dieUsage( "Invalid continue param. You should pass the " .
+					"original value returned by the previous query", "_badcontinue" );
+			}
+			$op = $params['dir'] == 'descending' ? '<' : '>';
+			$cont_from = $db->addQuotes( $cont[0] );
+			$this->addWhere( "fa_name $op= $cont_from" );
+		}
 
 		// Image filters
 		$dir = ( $params['dir'] == 'descending' ? 'older' : 'newer' );
 		$from = ( is_null( $params['from'] ) ? null : $this->titlePartToKey( $params['from'] ) );
+		if ( !is_null( $params['continue'] ) ) {
+			$from = $params['continue'];
+		}
 		$to = ( is_null( $params['to'] ) ? null : $this->titlePartToKey( $params['to'] ) );
 		$this->addWhereRange( 'fa_name', $dir, $from, $to );
 		if ( isset( $params['prefix'] ) ) {
@@ -110,7 +123,7 @@ class ApiQueryFilearchive extends ApiQueryBase {
 			}
 		}
 
-		if ( !$wgUser->isAllowed( 'suppressrevision' ) ) {
+		if ( !$user->isAllowed( 'suppressrevision' ) ) {
 			// Filter out revisions that the user is not allowed to see. There
 			// is no way to indicate that we have skipped stuff because the
 			// continuation parameter is fa_name
@@ -122,8 +135,8 @@ class ApiQueryFilearchive extends ApiQueryBase {
 
 		$limit = $params['limit'];
 		$this->addOption( 'LIMIT', $limit + 1 );
-		$this->addOption( 'ORDER BY', 'fa_name' .
-						( $params['dir'] == 'descending' ? ' DESC' : '' ) );
+		$sort = ( $params['dir'] == 'descending' ? ' DESC' : '' );
+		$this->addOption( 'ORDER BY', 'fa_name' . $sort );
 
 		$res = $this->select( __METHOD__ );
 
@@ -132,8 +145,7 @@ class ApiQueryFilearchive extends ApiQueryBase {
 		foreach ( $res as $row ) {
 			if ( ++$count > $limit ) {
 				// We've reached the one extra which shows that there are additional pages to be had. Stop here...
-				// TODO: Security issue - if the user has no right to view next title, it will still be shown
-				$this->setContinueEnumParameter( 'from', $this->keyToTitle( $row->fa_name ) );
+				$this->setContinueEnumParameter( 'continue', $row->fa_name );
 				break;
 			}
 
@@ -166,9 +178,12 @@ class ApiQueryFilearchive extends ApiQueryBase {
 			if ( $fld_description ) {
 				$file['description'] = $row->fa_description;
 				if ( isset( $prop['parseddescription'] ) ) {
-					$file['parseddescription'] = $wgUser->getSkin()->formatComment(
+					$file['parseddescription'] = Linker::formatComment(
 						$row->fa_description, $title );
 				}
+			}
+			if ( $fld_mediatype ) {
+				$file['mediatype'] = $row->fa_media_type;
 			}
 			if ( $fld_metadata ) {
 				$file['metadata'] = $row->fa_metadata
@@ -180,6 +195,9 @@ class ApiQueryFilearchive extends ApiQueryBase {
 			}
 			if ( $fld_mime ) {
 				$file['mime'] = "$row->fa_major_mime/$row->fa_minor_mime";
+			}
+			if ( $fld_archivename && !is_null( $row->fa_archive_name ) ) {
+				$file['archivename'] = $row->fa_archive_name;
 			}
 
 			if ( $row->fa_deleted & File::DELETED_FILE ) {
@@ -199,7 +217,7 @@ class ApiQueryFilearchive extends ApiQueryBase {
 
 			$fit = $result->addValue( array( 'query', $this->getModuleName() ), null, $file );
 			if ( !$fit ) {
-				$this->setContinueEnumParameter( 'from', $this->keyToTitle( $row->fa_name ) );
+				$this->setContinueEnumParameter( 'continue', $row->fa_name );
 				break;
 			}
 		}
@@ -210,6 +228,7 @@ class ApiQueryFilearchive extends ApiQueryBase {
 	public function getAllowedParams() {
 		return array (
 			'from' => null,
+			'continue' => null,
 			'to' => null,
 			'prefix' => null,
 			'limit' => array(
@@ -240,8 +259,10 @@ class ApiQueryFilearchive extends ApiQueryBase {
 					'description',
 					'parseddescription',
 					'mime',
+					'mediatype',
 					'metadata',
-					'bitdepth'
+					'bitdepth',
+					'archivename',
 				),
 			),
 		);
@@ -250,6 +271,7 @@ class ApiQueryFilearchive extends ApiQueryBase {
 	public function getParamDescription() {
 		return array(
 			'from' => 'The image title to start enumerating from',
+			'continue' => 'When more results are available, use this to continue',
 			'to' => 'The image title to stop enumerating at',
 			'prefix' => 'Search for all image titles that begin with this value',
 			'dir' => 'The direction in which to list',
@@ -266,9 +288,75 @@ class ApiQueryFilearchive extends ApiQueryBase {
 				' description       - Adds description the image version',
 				' parseddescription - Parse the description on the version',
 				' mime              - Adds MIME of the image',
+				' mediatype         - Adds the media type of the image',
 				' metadata          - Lists EXIF metadata for the version of the image',
 				' bitdepth          - Adds the bit depth of the version',
-            ),
+				' archivename       - Adds the file name of the archive version for non-latest versions'
+			),
+		);
+	}
+
+	public function getResultProperties() {
+		return array(
+			'' => array(
+				'name' => 'string',
+				'ns' => 'namespace',
+				'title' => 'string',
+				'filehidden' => 'boolean',
+				'commenthidden' => 'boolean',
+				'userhidden' => 'boolean',
+				'suppressed' => 'boolean'
+			),
+			'sha1' => array(
+				'sha1' => 'string'
+			),
+			'timestamp' => array(
+				'timestamp' => 'timestamp'
+			),
+			'user' => array(
+				'userid' => 'integer',
+				'user' => 'string'
+			),
+			'size' => array(
+				'size' => 'integer',
+				'pagecount' => array(
+					ApiBase::PROP_TYPE => 'integer',
+					ApiBase::PROP_NULLABLE => true
+				),
+				'height' => 'integer',
+				'width' => 'integer'
+			),
+			'dimensions' => array(
+				'size' => 'integer',
+				'pagecount' => array(
+					ApiBase::PROP_TYPE => 'integer',
+					ApiBase::PROP_NULLABLE => true
+				),
+				'height' => 'integer',
+				'width' => 'integer'
+			),
+			'description' => array(
+				'description' => 'string'
+			),
+			'parseddescription' => array(
+				'description' => 'string',
+				'parseddescription' => 'string'
+			),
+			'metadata' => array(
+				'metadata' => 'string'
+			),
+			'bitdepth' => array(
+				'bitdepth' => 'integer'
+			),
+			'mime' => array(
+				'mime' => 'string'
+			),
+			'mediatype' => array(
+				'mediatype' => 'string'
+			),
+			'archivename' => array(
+				'archivename' => 'string'
+			),
 		);
 	}
 
@@ -282,14 +370,16 @@ class ApiQueryFilearchive extends ApiQueryBase {
 			array( 'code' => 'hashsearchdisabled', 'info' => 'Search by hash disabled in Miser Mode' ),
 			array( 'code' => 'invalidsha1hash', 'info' => 'The SHA1 hash provided is not valid' ),
 			array( 'code' => 'invalidsha1base36hash', 'info' => 'The SHA1Base36 hash provided is not valid' ),
+			array( 'code' => '_badcontinue', 'info' => 'Invalid continue param. You should pass the original value returned by the previous query' ),
 		) );
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
-			'Simple Use',
-			' Show a list of all deleted files',
-			'  api.php?action=query&list=filearchive',
+			'api.php?action=query&list=filearchive' => array(
+				'Simple Use',
+				'Show a list of all deleted files',
+			),
 		);
 	}
 

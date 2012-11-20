@@ -1,6 +1,6 @@
 <?php
 /**
- * Show statistics from the cache
+ * Show statistics from the cache.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,11 +17,17 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  *
+ * @file
  * @ingroup Maintenance
  */
 
-require_once( dirname( __FILE__ ) . '/Maintenance.php' );
+require_once( __DIR__ . '/Maintenance.php' );
 
+/**
+ * Maintenance script that shows statistics from the cache.
+ *
+ * @ingroup Maintenance
+ */
 class CacheStats extends Maintenance {
 
 	public function __construct() {
@@ -54,14 +60,12 @@ class CacheStats extends Maintenance {
 
 		$this->output( "\nParser cache\n" );
 		$hits = intval( $wgMemc->get( wfMemcKey( 'stats', 'pcache_hit' ) ) );
-		$invalid = intval( $wgMemc->get( wfMemcKey( 'stats', 'pcache_miss_invalid' ) ) );
 		$expired = intval( $wgMemc->get( wfMemcKey( 'stats', 'pcache_miss_expired' ) ) );
 		$absent = intval( $wgMemc->get( wfMemcKey( 'stats', 'pcache_miss_absent' ) ) );
 		$stub = intval( $wgMemc->get( wfMemcKey( 'stats', 'pcache_miss_stub' ) ) );
-		$total = $hits + $invalid + $expired + $absent + $stub;
+		$total = $hits + $expired + $absent + $stub;
 		if ( $total ) {
 			$this->output( sprintf( "hits:              %-10d %6.2f%%\n", $hits, $hits / $total * 100 ) );
-			$this->output( sprintf( "invalid:           %-10d %6.2f%%\n", $invalid, $invalid / $total * 100 ) );
 			$this->output( sprintf( "expired:           %-10d %6.2f%%\n", $expired, $expired / $total * 100 ) );
 			$this->output( sprintf( "absent:            %-10d %6.2f%%\n", $absent, $absent / $total * 100 ) );
 			$this->output( sprintf( "stub threshold:    %-10d %6.2f%%\n", $stub, $stub / $total * 100 ) );

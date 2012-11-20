@@ -1,6 +1,29 @@
 <?php
 /**
- * SpecialPage: handling special pages and lists thereof.
+ * Factory for handling the special page list and generating SpecialPage objects.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup SpecialPage
+ * @defgroup SpecialPage SpecialPage
+ */
+
+/**
+ * Factory for handling the special page list and generating SpecialPage objects.
  *
  * To add a special page in an extension, add to $wgSpecialPages either
  * an object instance or an array containing the name and constructor
@@ -17,13 +40,6 @@
  * SpecialPage::$mList. To remove a core static special page at runtime, use
  * a SpecialPage_initList hook.
  *
- * @file
- * @ingroup SpecialPage
- * @defgroup SpecialPage SpecialPage
- */
-
-/**
- * Factory for handling the special page list and generating SpecialPage objects
  * @ingroup SpecialPage
  * @since 1.17
  */
@@ -118,6 +134,7 @@ class SpecialPageFactory {
 		// High use pages
 		'Mostlinkedcategories'      => 'MostlinkedCategoriesPage',
 		'Mostimages'                => 'MostimagesPage',
+		'Mostinterwikis'            => 'MostinterwikisPage',
 		'Mostlinked'                => 'MostlinkedPage',
 		'Mostlinkedtemplates'       => 'MostlinkedTemplatesPage',
 		'Mostcategories'            => 'MostcategoriesPage',
@@ -138,6 +155,7 @@ class SpecialPageFactory {
 		'Blankpage'                 => 'SpecialBlankpage',
 		'Blockme'                   => 'SpecialBlockme',
 		'Emailuser'                 => 'SpecialEmailUser',
+		'JavaScriptTest'            => 'SpecialJavaScriptTest',
 		'Movepage'                  => 'MovePageForm',
 		'Mycontributions'           => 'SpecialMycontributions',
 		'Mypage'                    => 'SpecialMypage',
@@ -160,6 +178,7 @@ class SpecialPageFactory {
 	static function getList() {
 		global $wgSpecialPages;
 		global $wgDisableCounters, $wgDisableInternalSearch, $wgEmailAuthentication;
+		global $wgEnableEmail;
 
 		if ( !is_object( self::$mList ) ) {
 			wfProfileIn( __METHOD__ );
@@ -175,6 +194,10 @@ class SpecialPageFactory {
 			if ( $wgEmailAuthentication ) {
 				self::$mList['Confirmemail'] = 'EmailConfirmation';
 				self::$mList['Invalidateemail'] = 'EmailInvalidation';
+			}
+
+			if ( $wgEnableEmail ) {
+				self::$mList['ChangeEmail'] = 'SpecialChangeEmail';
 			}
 
 			// Add extension special pages
@@ -262,7 +285,7 @@ class SpecialPageFactory {
 	 */
 	public static function setGroup( $page, $group ) {
 		global $wgSpecialPageGroups;
-		$name = is_object( $page ) ? $page->mName : $page;
+		$name = is_object( $page ) ? $page->getName() : $page;
 		$wgSpecialPageGroups[$name] = $group;
 	}
 
@@ -270,25 +293,28 @@ class SpecialPageFactory {
 	 * Get the group that the special page belongs in on Special:SpecialPage
 	 *
 	 * @param $page SpecialPage
+	 * @return String
 	 */
 	public static function getGroup( &$page ) {
+		$name = $page->getName();
+
 		global $wgSpecialPageGroups;
 		static $specialPageGroupsCache = array();
-		if ( isset( $specialPageGroupsCache[$page->mName] ) ) {
-			return $specialPageGroupsCache[$page->mName];
+		if ( isset( $specialPageGroupsCache[$name] ) ) {
+			return $specialPageGroupsCache[$name];
 		}
-		$msg = wfMessage( 'specialpages-specialpagegroup-' . strtolower( $page->mName ) );
+		$msg = wfMessage( 'specialpages-specialpagegroup-' . strtolower( $name ) );
 		if ( !$msg->isBlank() ) {
 			$group = $msg->text();
 		} else {
-			$group = isset( $wgSpecialPageGroups[$page->mName] )
-				? $wgSpecialPageGroups[$page->mName]
+			$group = isset( $wgSpecialPageGroups[$name] )
+				? $wgSpecialPageGroups[$name]
 				: '-';
 		}
 		if ( $group == '-' ) {
 			$group = 'other';
 		}
-		$specialPageGroupsCache[$page->mName] = $group;
+		$specialPageGroupsCache[$name] = $group;
 		return $group;
 	}
 
@@ -332,16 +358,21 @@ class SpecialPageFactory {
 	 * Return categorised listable special pages which are available
 	 * for the current user, and everyone.
 	 *
+	 * @param $user User object to check permissions, $wgUser will be used
+	 *              if not provided
 	 * @return Array( String => Specialpage )
 	 */
-	public static function getUsablePages() {
-		global $wgUser;
+	public static function getUsablePages( User $user = null ) {
 		$pages = array();
+		if ( $user === null ) {
+			global $wgUser;
+			$user = $wgUser;
+		}
 		foreach ( self::getList() as $name => $rec ) {
 			$page = self::getPage( $name );
 			if ( $page // not null
 				&& $page->isListed()
-				&& ( !$page->isRestricted() || $page->userCanExecute( $wgUser ) )
+				&& ( !$page->isRestricted() || $page->userCanExecute( $user ) )
 			) {
 				$pages[$name] = $page;
 			}
@@ -417,7 +448,12 @@ class SpecialPageFactory {
 		if ( !$page ) {
 			$context->getOutput()->setArticleRelated( false );
 			$context->getOutput()->setRobotPolicy( 'noindex,nofollow' );
-			$context->getOutput()->setStatusCode( 404 );
+
+			global $wgSend404Code;
+			if ( $wgSend404Code ) {
+				$context->getOutput()->setStatusCode( 404 );
+			}
+
 			$context->getOutput()->showErrorPage( 'nosuchspecialpage', 'nospecialpagetext' );
 			wfProfileOut( __METHOD__ );
 			return false;
@@ -455,47 +491,54 @@ class SpecialPageFactory {
 		// Execute special page
 		$profName = 'Special:' . $page->getName();
 		wfProfileIn( $profName );
-		$page->execute( $par );
+		$page->run( $par );
 		wfProfileOut( $profName );
 		wfProfileOut( __METHOD__ );
 		return true;
 	}
 
 	/**
-	 * Just like executePath() except it returns the HTML instead of outputting it
-	 * Returns false if there was no such special page, or a title object if it was
-	 * a redirect.
+	 * Just like executePath() but will override global variables and execute
+	 * the page in "inclusion" mode. Returns true if the execution was
+	 * successful or false if there was no such special page, or a title object
+	 * if it was a redirect.
 	 *
-	 * Also saves the current $wgTitle, $wgOut, and $wgRequest variables so that
-	 * the special page will get the context it'd expect on a normal request,
-	 * and then restores them to their previous values after.
+	 * Also saves the current $wgTitle, $wgOut, $wgRequest, $wgUser and $wgLang
+	 * variables so that the special page will get the context it'd expect on a
+	 * normal request, and then restores them to their previous values after.
 	 *
 	 * @param $title Title
+	 * @param $context IContextSource
 	 *
 	 * @return String: HTML fragment
 	 */
-	static function capturePath( &$title ) {
-		global $wgOut, $wgTitle, $wgRequest;
+	static function capturePath( Title $title, IContextSource $context ) {
+		global $wgOut, $wgTitle, $wgRequest, $wgUser, $wgLang;
 
+		// Save current globals
 		$oldTitle = $wgTitle;
 		$oldOut = $wgOut;
 		$oldRequest = $wgRequest;
+		$oldUser = $wgUser;
+		$oldLang = $wgLang;
 
-		// Don't want special pages interpreting ?feed=atom parameters.
-		$wgRequest = new FauxRequest( array() );
-
-		$context = new RequestContext;
-		$context->setTitle( $title );
-		$context->setRequest( $wgRequest );
+		// Set the globals to the current context
+		$wgTitle = $title;
 		$wgOut = $context->getOutput();
+		$wgRequest = $context->getRequest();
+		$wgUser = $context->getUser();
+		$wgLang = $context->getLanguage();
 
+		// The useful part
 		$ret = self::executePath( $title, $context, true );
-		if ( $ret === true ) {
-			$ret = $wgOut->getHTML();
-		}
+
+		// And restore the old globals
 		$wgTitle = $oldTitle;
 		$wgOut = $oldOut;
 		$wgRequest = $oldRequest;
+		$wgUser = $oldUser;
+		$wgLang = $oldLang;
+
 		return $ret;
 	}
 
@@ -510,7 +553,7 @@ class SpecialPageFactory {
 	static function getLocalNameFor( $name, $subpage = false ) {
 		global $wgContLang;
 		$aliases = $wgContLang->getSpecialPageAliases();
-		
+
 		if ( isset( $aliases[$name][0] ) ) {
 			$name = $aliases[$name][0];
 		} else {

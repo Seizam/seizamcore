@@ -4,7 +4,7 @@
  *
  * Created on Sep 24, 2006
  *
- * Copyright © 2006 Yuri Astrakhan <Firstname><Lastname>@gmail.com
+ * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +23,6 @@
  *
  * @file
  */
-
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiQueryBase.php' );
-}
 
 /**
  * This class contains a list of pages that the client has requested.
@@ -57,7 +52,7 @@ class ApiPageSet extends ApiQueryBase {
 
 	/**
 	 * Constructor
-	 * @param $query ApiQuery
+	 * @param $query ApiBase
 	 * @param $resolveRedirects bool Whether redirects should be resolved
 	 * @param $convertTitles bool
 	 */
@@ -271,8 +266,8 @@ class ApiPageSet extends ApiQueryBase {
 	}
 
 	/**
-	 * Returns the number of revisions (requested with revids= parameter)\
-	 * @return int
+	 * Returns the number of revisions (requested with revids= parameter).
+	 * @return int Number of revisions.
 	 */
 	public function getRevisionCount() {
 		return count( $this->getRevisionIDs() );
@@ -347,7 +342,7 @@ class ApiPageSet extends ApiQueryBase {
 
 	/**
 	 * Populate this PageSet from a rowset returned from the database
-	 * @param $db Database object
+	 * @param $db DatabaseBase object
 	 * @param $queryResult ResultWrapper Query result object
 	 */
 	public function populateFromQueryResult( $db, $queryResult ) {
@@ -372,7 +367,7 @@ class ApiPageSet extends ApiQueryBase {
 	 */
 	public function processDbRow( $row ) {
 		// Store Title object in various data structures
-		$title = Title::makeTitle( $row->page_namespace, $row->page_title );
+		$title = Title::newFromRow( $row );
 
 		$pageId = intval( $row->page_id );
 		$this->mAllPages[$row->page_namespace][$row->page_title] = $pageId;
@@ -464,7 +459,7 @@ class ApiPageSet extends ApiQueryBase {
 						__METHOD__ );
 			$this->profileDBOut();
 		}
-		
+
 		$this->initFromQueryResult( $res, $remaining, false );	// process PageIDs
 
 		// Resolve any found redirects
@@ -486,6 +481,7 @@ class ApiPageSet extends ApiQueryBase {
 			ApiBase::dieDebug( __METHOD__, 'Missing $processTitles parameter when $remaining is provided' );
 		}
 
+		$usernames = array();
 		if ( $res ) {
 			foreach ( $res as $row ) {
 				$pageId = intval( $row->page_id );
@@ -501,6 +497,11 @@ class ApiPageSet extends ApiQueryBase {
 
 				// Store any extra fields requested by modules
 				$this->processDbRow( $row );
+
+				// Need gender information
+				if( MWNamespace::hasGenderDistinction( $row->page_namespace ) ) {
+					$usernames[] = $row->page_title;
+				}
 			}
 		}
 
@@ -515,6 +516,11 @@ class ApiPageSet extends ApiQueryBase {
 						$this->mMissingTitles[$this->mFakePageId] = $title;
 						$this->mFakePageId--;
 						$this->mTitles[] = $title;
+
+						// need gender information
+						if( MWNamespace::hasGenderDistinction( $ns ) ) {
+							$usernames[] = $dbkey;
+						}
 					}
 				}
 			} else {
@@ -526,6 +532,10 @@ class ApiPageSet extends ApiQueryBase {
 				}
 			}
 		}
+
+		// Get gender information
+		$genderCache = GenderCache::singleton();
+		$genderCache->doQuery( $usernames, __METHOD__ );
 	}
 
 	/**
@@ -645,8 +655,8 @@ class ApiPageSet extends ApiQueryBase {
 			// We found pages that aren't in the redirect table
 			// Add them
 			foreach ( $this->mPendingRedirectIDs as $id => $title ) {
-				$article = new Article( $title );
-				$rt = $article->insertRedirect();
+				$page = WikiPage::factory( $title );
+				$rt = $page->insertRedirect();
 				if ( !$rt ) {
 					// What the hell. Let's just ignore this
 					continue;
@@ -669,6 +679,9 @@ class ApiPageSet extends ApiQueryBase {
 	 * @return LinkBatch
 	 */
 	private function processTitlesArray( $titles ) {
+		$genderCache = GenderCache::singleton();
+		$genderCache->doTitlesArray( $titles, __METHOD__ );
+
 		$linkBatch = new LinkBatch();
 
 		foreach ( $titles as $title ) {
@@ -743,7 +756,7 @@ class ApiPageSet extends ApiQueryBase {
 		return $array;
 	}
 
-	protected function getAllowedParams() {
+	public function getAllowedParams() {
 		return array(
 			'titles' => array(
 				ApiBase::PARAM_ISMULTI => true
@@ -759,7 +772,7 @@ class ApiPageSet extends ApiQueryBase {
 		);
 	}
 
-	protected function getParamDescription() {
+	public function getParamDescription() {
 		return array(
 			'titles' => 'A list of titles to work on',
 			'pageids' => 'A list of page IDs to work on',

@@ -18,9 +18,12 @@ class SkinStandard extends SkinLegacy {
 	var $skinname = 'standard', $stylename = 'standard',
 		$template = 'StandardTemplate';
 
+	/**
+	 * @param $out OutputPage
+	 */
 	function setupSkinUserCss( OutputPage $out ){
 		parent::setupSkinUserCss( $out );
-		$out->AddModuleStyles( 'skins.standard' );
+		$out->addModuleStyles( 'skins.standard' );
 
 		$qb = $this->qbSetting();
 		$rules = array();
@@ -37,12 +40,12 @@ class SkinStandard extends SkinLegacy {
 				$rules[] = "/* @noflip */#quickbar { position: fixed; padding: 4px; }";
 			}
 		} elseif ( 4 == $qb ) {
-			$rules[] = "/* @noflip */#quickbar { position: fixed; right: 0px; top: 0px; padding: 4px;}";
+			$rules[] = "/* @noflip */#quickbar { position: fixed; right: 0; top: 0; padding: 4px; }";
 			$rules[] = "/* @noflip */#quickbar { border-right: 1px solid gray; }";
 			$rules[] = "/* @noflip */#article, #mw-data-after-content { margin-right: 152px; margin-left: 4px; }";
 			$rules[] = "/* @noflip */#topbar, #footer { margin-right: 152px; }";
 		}
- 		$style = implode( "\n", $rules );
+		$style = implode( "\n", $rules );
 		$out->addInlineStyle( $style, 'flip' );
 	}
 
@@ -50,22 +53,24 @@ class SkinStandard extends SkinLegacy {
 
 class StandardTemplate extends LegacyTemplate {
 
+	/**
+	 * @return string
+	 */
 	function doAfterContent() {
-		global $wgContLang, $wgLang;
 		wfProfileIn( __METHOD__ );
 		wfProfileIn( __METHOD__ . '-1' );
 
 		$s = "\n</div><br style=\"clear:both\" />\n";
 		$s .= "\n<div id='footer'>";
-		$s .= '<table border="0" cellspacing="0"><tr>';
+		$s .= '<table cellspacing="0"><tr>';
 
 		wfProfileOut( __METHOD__ . '-1' );
 		wfProfileIn( __METHOD__ . '-2' );
-		$l = $this->getSkin()->getLang()->alignStart();
-		$s .= "<td class='bottom' align='$l' valign='top'>";
+		$l = $this->getSkin()->getLanguage()->alignStart();
+		$s .= "<td class='bottom' style='text-align: $l; vertical-align: top;'>";
 
 		$s .= $this->bottomLinks();
-		$s .= "\n<br />" . $wgLang->pipeList( array(
+		$s .= "\n<br />" . $this->getSkin()->getLanguage()->pipeList( array(
 			$this->getSkin()->mainPageLink(),
 			$this->getSkin()->aboutLink(),
 			Linker::specialLink( 'Recentchanges' ),
@@ -85,14 +90,18 @@ class StandardTemplate extends LegacyTemplate {
 		return $s;
 	}
 
+	/**
+	 * @return string
+	 */
 	function quickBar() {
-		global $wgOut, $wgUser, $wgRequest, $wgContLang;
+		global $wgContLang;
 
 		wfProfileIn( __METHOD__ );
 
-		$action = $wgRequest->getText( 'action' );
-		$wpPreview = $wgRequest->getBool( 'wpPreview' );
-		$tns = $this->getSkin()->getTitle()->getNamespace();
+		$action = $this->getSkin()->getRequest()->getText( 'action' );
+		$wpPreview = $this->getSkin()->getRequest()->getBool( 'wpPreview' );
+		$title = $this->getSkin()->getTitle();
+		$tns = $title->getNamespace();
 
 		$s = "\n<div id='quickbar'>";
 		$s .= "\n" . $this->getSkin()->logoText() . "\n<hr class='sep' />";
@@ -120,13 +129,13 @@ class StandardTemplate extends LegacyTemplate {
 			}
 			if ( $barnumber == 1 ) {
 				// only show watchlist link if logged in
-				if( $wgUser->isLoggedIn() ) {
+				if( $this->data['loggedin'] ) {
 					$s.= Linker::specialLink( 'Watchlist' ) ;
 					$s .= $sep . Linker::linkKnown(
 						SpecialPage::getTitleFor( 'Contributions' ),
-						wfMsg( 'mycontris' ),
+						wfMessage( 'mycontris' )->escaped(),
 						array(),
-						array( 'target' => $wgUser->getName() )
+						array( 'target' => $this->data['username'] )
 					);
 				}
 			}
@@ -134,9 +143,9 @@ class StandardTemplate extends LegacyTemplate {
 		}
 
 		$s .= "\n<hr class='sep' />";
-		$articleExists = $this->getSkin()->getTitle()->getArticleId();
-		if ( $wgOut->isArticle() || $action == 'edit' || $action == 'history' || $wpPreview ) {
-			if( $wgOut->isArticle() ) {
+		$articleExists = $title->getArticleID();
+		if ( $this->data['isarticle'] || $action == 'edit' || $action == 'history' || $wpPreview ) {
+			if( $this->data['isarticle'] ) {
 				$s .= '<strong>' . $this->editThisPage() . '</strong>';
 			} else { # backlink to the article in edit or history mode
 				if( $articleExists ){ # no backlink if no article
@@ -149,77 +158,76 @@ class StandardTemplate extends LegacyTemplate {
 						case NS_TEMPLATE_TALK:
 						case NS_HELP_TALK:
 						case NS_CATEGORY_TALK:
-							$text = wfMsg('viewtalkpage');
+							$text = wfMessage('viewtalkpage');
 							break;
 						case NS_MAIN:
-							$text = wfMsg( 'articlepage' );
+							$text = wfMessage( 'articlepage' );
 							break;
 						case NS_USER:
-							$text = wfMsg( 'userpage' );
+							$text = wfMessage( 'userpage' );
 							break;
 						case NS_PROJECT:
-							$text = wfMsg( 'projectpage' );
+							$text = wfMessage( 'projectpage' );
 							break;
 						case NS_FILE:
-							$text = wfMsg( 'imagepage' );
+							$text = wfMessage( 'imagepage' );
 							break;
 						case NS_MEDIAWIKI:
-							$text = wfMsg( 'mediawikipage' );
+							$text = wfMessage( 'mediawikipage' );
 							break;
 						case NS_TEMPLATE:
-							$text = wfMsg( 'templatepage' );
+							$text = wfMessage( 'templatepage' );
 							break;
 						case NS_HELP:
-							$text = wfMsg( 'viewhelppage' );
+							$text = wfMessage( 'viewhelppage' );
 							break;
 						case NS_CATEGORY:
-							$text = wfMsg( 'categorypage' );
+							$text = wfMessage( 'categorypage' );
 							break;
 						default:
-							$text = wfMsg( 'articlepage' );
+							$text = wfMessage( 'articlepage' );
 					}
 
-					$link = $this->getSkin()->getTitle()->getText();
+					$link = $title->getText();
 					$nstext = $wgContLang->getNsText( $tns );
 					if( $nstext ) { # add namespace if necessary
 						$link = $nstext . ':' . $link;
 					}
 
-					$s .= Linker::link( Title::newFromText( $link ), $text );
-				} elseif( $this->getSkin()->getTitle()->getNamespace() != NS_SPECIAL ) {
+					$s .= Linker::link( Title::newFromText( $link ), $text->escaped() );
+				} elseif( $title->getNamespace() != NS_SPECIAL ) {
 					# we just throw in a "New page" text to tell the user that he's in edit mode,
 					# and to avoid messing with the separator that is prepended to the next item
-					$s .= '<strong>' . wfMsg( 'newpage' ) . '</strong>';
+					$s .= '<strong>' . wfMessage( 'newpage' )->escaped() . '</strong>';
 				}
 			}
 
 			# "Post a comment" link
-			if( ( $this->getSkin()->getTitle()->isTalkPage() || $wgOut->showNewSectionLink() ) && $action != 'edit' && !$wpPreview )
-				$s .= '<br />' . $this->getSkin()->link(
-					$this->getSkin()->getTitle(),
-					wfMsg( 'postcomment' ),
+			if( ( $title->isTalkPage() || $this->getSkin()->getOutput()->showNewSectionLink() ) && $action != 'edit' && !$wpPreview )
+				$s .= '<br />' . Linker::link(
+					$title,
+					wfMessage( 'postcomment' )->escaped(),
 					array(),
 					array(
 						'action' => 'edit',
 						'section' => 'new'
-					),
-					array( 'known', 'noclasses' )
+					)
 				);
 
-			/*
-			watching could cause problems in edit mode:
-			if user edits article, then loads "watch this article" in background and then saves
-			article with "Watch this article" checkbox disabled, the article is transparently
-			unwatched. Therefore we do not show the "Watch this page" link in edit mode
-			*/
-			if ( $wgUser->isLoggedIn() && $articleExists ) {
+			/**
+			 * Watching could cause problems in edit mode:
+			 * if user edits article, then loads "watch this article" in background and then saves
+			 * article with "Watch this article" checkbox disabled, the article is transparently
+			 * unwatched. Therefore we do not show the "Watch this page" link in edit mode.
+			 */
+			if ( $this->data['loggedin'] && $articleExists ) {
 				if( $action != 'edit' && $action != 'submit' ) {
 					$s .= $sep . $this->watchThisPage();
 				}
-				if ( $this->getSkin()->getTitle()->userCan( 'edit' ) )
+				if ( $title->userCan( 'edit' ) )
 					$s .= $sep . $this->moveThisPage();
 			}
-			if ( $wgUser->isAllowed( 'delete' ) && $articleExists ) {
+			if ( $this->getSkin()->getUser()->isAllowed( 'delete' ) && $articleExists ) {
 				$s .= $sep . $this->deleteThisPage() .
 				$sep . $this->protectThisPage();
 			}
@@ -229,17 +237,17 @@ class StandardTemplate extends LegacyTemplate {
 			}
 			$s .= $sep . $this->whatLinksHere();
 
-			if( $wgOut->isArticleRelated() ) {
+			if( $this->getSkin()->getOutput()->isArticleRelated() ) {
 				$s .= $sep . $this->watchPageLinksLink();
 			}
 
 			if (
-				NS_USER == $this->getSkin()->getTitle()->getNamespace() ||
-				$this->getSkin()->getTitle()->getNamespace() == NS_USER_TALK
+				NS_USER == $title->getNamespace() ||
+				$title->getNamespace() == NS_USER_TALK
 			) {
 
-				$id = User::idFromName( $this->getSkin()->getTitle()->getText() );
-				$ip = User::isIP( $this->getSkin()->getTitle()->getText() );
+				$id = User::idFromName( $title->getText() );
+				$ip = User::isIP( $title->getText() );
 
 				if( $id || $ip ){
 					$s .= $sep . $this->userContribsLink();
@@ -251,7 +259,7 @@ class StandardTemplate extends LegacyTemplate {
 			$s .= "\n<br /><hr class='sep' />";
 		}
 
-		if( UploadBase::isEnabled() && UploadBase::isAllowed( $wgUser ) === true ) {
+		if( UploadBase::isEnabled() && UploadBase::isAllowed( $this->getSkin()->getUser() ) === true ) {
 			$s .= $this->getUploadLink() . $sep;
 		}
 
@@ -260,12 +268,11 @@ class StandardTemplate extends LegacyTemplate {
 		global $wgSiteSupportPage;
 		if( $wgSiteSupportPage ) {
 			$s .= "\n<br /><a href=\"" . htmlspecialchars( $wgSiteSupportPage ) .
-			  '" class="internal">' . wfMsg( 'sitesupport' ) . '</a>';
+			'" class="internal">' . wfMessage( 'sitesupport' )->escaped() . '</a>';
 		}
 
 		$s .= "\n<br /></div>\n";
 		wfProfileOut( __METHOD__ );
 		return $s;
 	}
-
 }

@@ -1,11 +1,33 @@
 <?php
+/**
+ * Russian (русский язык) specific code.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup Language
+ */
 
-/** Russian (русский язык)
-  *
-  * You can contact Alexander Sigachov (alexander.sigachov at Googgle Mail)
-  *
-  * @ingroup Language
-  */
+/**
+ * Russian (русский язык)
+ *
+ * You can contact Alexander Sigachov (alexander.sigachov at Googgle Mail)
+ *
+ * @ingroup Language
+ */
 class LanguageRu extends Language {
 
 	/**
@@ -72,8 +94,10 @@ class LanguageRu extends Language {
 	 * Examples:
 	 *   message with number
 	 *     "Сделано $1 {{PLURAL:$1|изменение|изменения|изменений}}"
+	 *     ("$1 change[s] were made)
 	 *   message without number
 	 *     "Действие не может быть выполнено по {{PLURAL:$1|следующей причине|следующим причинам}}:"
+	 *     ("The action cannot be performed for the following reason[s]")
 	 * @param $count int
 	 * @param $forms array
 	 *
@@ -82,7 +106,10 @@ class LanguageRu extends Language {
 	function convertPlural( $count, $forms ) {
 		if ( !count( $forms ) ) { return ''; }
 
-		// if no number with word, then use $form[0] for singular and $form[1] for plural or zero
+		// If the actual number is not mentioned in the expression, then just two forms are enough:
+		// singular for $count == 1
+		// plural   for $count != 1
+		// For example, "This user belongs to {{PLURAL:$1|one group|several groups}}."
 		if ( count( $forms ) === 2 ) return $count == 1 ? $forms[0] : $forms[1];
 
 		// @todo FIXME: CLDR defines 4 plural forms. Form with decimals missing.

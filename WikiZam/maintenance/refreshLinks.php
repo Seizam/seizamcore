@@ -17,11 +17,17 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  *
+ * @file
  * @ingroup Maintenance
  */
 
-require_once( dirname( __FILE__ ) . '/Maintenance.php' );
+require_once( __DIR__ . '/Maintenance.php' );
 
+/**
+ * Maintenance script to refresh link tables.
+ *
+ * @ingroup Maintenance
+ */
 class RefreshLinks extends Maintenance {
 	public function __construct() {
 		parent::__construct();
@@ -174,27 +180,24 @@ class RefreshLinks extends Maintenance {
 	 * @param $id int The page_id of the redirect
 	 */
 	private function fixRedirect( $id ) {
-		$title = Title::newFromID( $id );
+		$page = WikiPage::newFromID( $id );
 		$dbw = wfGetDB( DB_MASTER );
 
-		if ( is_null( $title ) ) {
+		if ( $page === null ) {
 			// This page doesn't exist (any more)
 			// Delete any redirect table entry for it
 			$dbw->delete( 'redirect', array( 'rd_from' => $id ),
 				__METHOD__ );
 			return;
 		}
-		$article = new Article( $title );
 
-		$rt = $article->followRedirect();
+		$rt = $page->getRedirectTarget();
 
-		if ( !$rt || !is_object( $rt ) ) {
-			// $title is not a redirect
+		if ( $rt === null ) {
+			// The page is not a redirect
 			// Delete any redirect table entry for it
 			$dbw->delete( 'redirect', array( 'rd_from' => $id ),
 				__METHOD__ );
-		} else {
-			$article->updateRedirectOn( $dbw, $rt );
 		}
 	}
 
@@ -203,36 +206,38 @@ class RefreshLinks extends Maintenance {
 	 * @param $id int The page_id
 	 */
 	public static function fixLinksFromArticle( $id ) {
-		global $wgParser;
+		global $wgParser, $wgContLang;
 
-		$title = Title::newFromID( $id );
-		$dbw = wfGetDB( DB_MASTER );
+		$page = WikiPage::newFromID( $id );
 
 		LinkCache::singleton()->clear();
 
-		if ( is_null( $title ) ) {
-			return;
-		}
-		$dbw->begin();
-
-		$revision = Revision::newFromTitle( $title );
-		if ( !$revision ) {
+		if ( $page === null ) {
 			return;
 		}
 
-		$options = new ParserOptions;
-		$parserOutput = $wgParser->parse( $revision->getText(), $title, $options, true, true, $revision->getId() );
-		$update = new LinksUpdate( $title, $parserOutput, false );
+		$text = $page->getRawText();
+		if ( $text === false ) {
+			return;
+		}
+
+		$dbw = wfGetDB( DB_MASTER );
+		$dbw->begin( __METHOD__ );
+
+		$options = ParserOptions::newFromUserAndLang( new User, $wgContLang );
+		$parserOutput = $wgParser->parse( $text, $page->getTitle(), $options, true, true, $page->getLatest() );
+		$update = new LinksUpdate( $page->getTitle(), $parserOutput, false );
 		$update->doUpdate();
-		$dbw->commit();
+
+		$dbw->commit( __METHOD__ );
 	}
 
 	/**
 	 * Removes non-existing links from pages from pagelinks, imagelinks,
-	 * categorylinks, templatelinks and externallinks tables.
+	 * categorylinks, templatelinks, externallinks, interwikilinks, langlinks and redirect tables.
 	 *
-	 * @param $maxLag
-	 * @param $batchSize The size of deletion batches
+	 * @param $maxLag int
+	 * @param $batchSize int The size of deletion batches
 	 *
 	 * @author Merlijn van Deen <valhallasw@arctus.nl>
 	 */
@@ -254,6 +259,7 @@ class RefreshLinks extends Maintenance {
 			'iwlinks' => 'iwl_from',
 			'langlinks' => 'll_from',
 			'redirect' => 'rd_from',
+			'page_props' => 'pp_page',
 		);
 
 		foreach ( $linksTables as $table => $field ) {
@@ -271,7 +277,6 @@ class RefreshLinks extends Maintenance {
 			$counter = 0;
 			$list = array();
 			$this->output( "0.." );
-
 			foreach ( $results as $row ) {
 				$counter++;
 				$list[] = $row->$field;
@@ -288,6 +293,7 @@ class RefreshLinks extends Maintenance {
 				$dbw->delete( $table, array( $field => $list ), __METHOD__ );
 			}
 			$this->output( "\n" );
+			wfWaitForSlaves();
 		}
 		$lb->closeAll();
 	}

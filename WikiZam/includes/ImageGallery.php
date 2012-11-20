@@ -1,6 +1,24 @@
 <?php
-if ( ! defined( 'MEDIAWIKI' ) )
-	die( 1 );
+/**
+ * Image gallery.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ */
 
 /**
  * Image gallery
@@ -28,9 +46,9 @@ class ImageGallery {
 	 * Contextual title, used when images are being screened
 	 * against the bad image list
 	 */
-	private $contextTitle = false;
+	protected $contextTitle = false;
 
-	private $mAttribs = array();
+	protected $mAttribs = array();
 
 	/**
 	 * Fixed margins
@@ -75,7 +93,7 @@ class ImageGallery {
 	/**
 	 * Set the caption (as plain text)
 	 *
-	 * @param $caption Caption
+	 * @param $caption string Caption
 	 */
 	function setCaption( $caption ) {
 		$this->mCaption = htmlspecialchars( $caption );
@@ -131,7 +149,7 @@ class ImageGallery {
 	 * @deprecated since 1.18 Not used anymore
 	 */
 	function useSkin( $skin ) {
-		wfDeprecated( __METHOD__ );
+		wfDeprecated( __METHOD__, '1.18' );
 		/* no op */
 	}
 
@@ -141,23 +159,24 @@ class ImageGallery {
 	 * @param $title Title object of the image that is added to the gallery
 	 * @param $html  String: Additional HTML text to be shown. The name and size of the image are always shown.
 	 * @param $alt   String: Alt text for the image
+	 * @param $link  String: Override image link (optional)
 	 */
-	function add( $title, $html = '', $alt = '' ) {
+	function add( $title, $html = '', $alt = '', $link = '') {
 		if ( $title instanceof File ) {
 			// Old calling convention
 			$title = $title->getTitle();
 		}
-		$this->mImages[] = array( $title, $html, $alt );
+		$this->mImages[] = array( $title, $html, $alt, $link );
 		wfDebug( 'ImageGallery::add ' . $title->getText() . "\n" );
 	}
 
 	/**
-	* Add an image at the beginning of the gallery.
-	*
-	* @param $title Title object of the image that is added to the gallery
-	* @param $html  String: Additional HTML text to be shown. The name and size of the image are always shown.
-	* @param $alt   String: Alt text for the image
-	*/
+	 * Add an image at the beginning of the gallery.
+	 *
+	 * @param $title Title object of the image that is added to the gallery
+	 * @param $html  String: Additional HTML text to be shown. The name and size of the image are always shown.
+	 * @param $alt   String: Alt text for the image
+	 */
 	function insert( $title, $html = '', $alt = '' ) {
 		if ( $title instanceof File ) {
 			// Old calling convention
@@ -168,6 +187,7 @@ class ImageGallery {
 
 	/**
 	 * isEmpty() returns true if the gallery contains no images
+	 * @return bool
 	 */
 	function isEmpty() {
 		return empty( $this->mImages );
@@ -215,6 +235,7 @@ class ImageGallery {
 	 * - the additional text provided when adding the image
 	 * - the size of the image
 	 *
+	 * @return string
 	 */
 	function toHTML() {
 		global $wgLang;
@@ -243,17 +264,18 @@ class ImageGallery {
 			$nt = $pair[0];
 			$text = $pair[1]; # "text" means "caption" here
 			$alt = $pair[2];
+			$link = $pair[3];
 
 			$descQuery = false;
 			if ( $nt->getNamespace() == NS_FILE ) {
 				# Get the file...
 				if ( $this->mParser instanceof Parser ) {
 					# Give extensions a chance to select the file revision for us
-					$time = $sha1 = false;
+					$options = array();
 					wfRunHooks( 'BeforeParserFetchFileAndTitle',
-						array( $this->mParser, $nt, &$time, &$sha1, &$descQuery ) );
+						array( $this->mParser, $nt, &$options, &$descQuery ) );
 					# Fetch and register the file (file title may be different via hooks)
-					list( $img, $nt ) = $this->mParser->fetchFileAndTitle( $nt, $time, $sha1 );
+					list( $img, $nt ) = $this->mParser->fetchFileAndTitle( $nt, $options );
 				} else {
 					$img = wfFindFile( $nt );
 				}
@@ -287,6 +309,7 @@ class ImageGallery {
 					'desc-link' => true,
 					'desc-query' => $descQuery,
 					'alt' => $alt,
+					'custom-url-link' => $link
 				);
 				# In the absence of both alt text and caption, fall back on providing screen readers with the filename as alt text
 				if ( $alt == '' && $text == '' ) {
@@ -314,10 +337,9 @@ class ImageGallery {
 
 			if( $this->mShowBytes ) {
 				if( $img ) {
-					$fileSize = wfMsgExt( 'nbytes', array( 'parsemag', 'escape'),
-						$wgLang->formatNum( $img->getSize() ) );
+					$fileSize = htmlspecialchars( $wgLang->formatSize( $img->getSize() ) );
 				} else {
-					$fileSize = wfMsgHtml( 'filemissing' );
+					$fileSize = wfMessage( 'filemissing' )->escaped();
 				}
 				$fileSize = "$fileSize<br />\n";
 			} else {
@@ -345,9 +367,9 @@ class ImageGallery {
 					. '<div style="width: ' . ( $this->mWidths + self::THUMB_PADDING + self::GB_PADDING ) . 'px">'
 					. $thumbhtml
 					. "\n\t\t\t" . '<div class="gallerytext">' . "\n"
-						. $textlink . $text . $fileSize
+					. $textlink . $text . $fileSize
 					. "\n\t\t\t</div>"
-				. "\n\t\t</div></li>";
+					. "\n\t\t</div></li>";
 		}
 		$output .= "\n</ul>";
 
@@ -377,8 +399,8 @@ class ImageGallery {
 	 */
 	public function getContextTitle() {
 		return is_object( $this->contextTitle ) && $this->contextTitle instanceof Title
-				? $this->contextTitle
-				: false;
+			? $this->contextTitle
+			: false;
 	}
 
 } //class

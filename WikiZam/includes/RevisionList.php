@@ -1,16 +1,33 @@
 <?php
 /**
+ * Holders of revision list for a single page
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ */
+
+/**
  * List for revision table items for a single page
  */
-abstract class Rev_List {
+abstract class RevisionListBase extends ContextSource {
 	/**
 	 * @var Title
 	 */
 	var $title;
-	/**
-	 * @var IContextSource
-	 */
-	var $context;
 
 	var $ids, $res, $current;
 
@@ -20,7 +37,7 @@ abstract class Rev_List {
 	 * @param $title Title
 	 */
 	function __construct( IContextSource $context, Title $title ) {
-		$this->context = $context;
+		$this->setContext( $context );
 		$this->title = $title;
 	}
 
@@ -35,6 +52,7 @@ abstract class Rev_List {
 	/**
 	 * Get the internal type name of this list. Equal to the table name.
 	 * Override this function.
+	 * @return null
 	 */
 	public function getType() {
 		return null;
@@ -84,6 +102,7 @@ abstract class Rev_List {
 
 	/**
 	 * Get the number of items in the list.
+	 * @return int
 	 */
 	public function length() {
 		if( !$this->res ) {
@@ -104,38 +123,20 @@ abstract class Rev_List {
 	 * @param $row stdclass
 	 */
 	abstract public function newItem( $row );
-
-	/**
-	 * Get the language of the user doing the action
-	 *
-	 * @return Language object
-	 */
-	public function getLang() {
-		return $this->context->getLang();
-	}
-
-	/**
-	 * Get the user doing the action
-	 *
-	 * @return User object
-	 */
-	public function getUser() {
-		return $this->context->getUser();
-	}
 }
 
 /**
  * Abstract base class for revision items
  */
-abstract class Rev_Item {
-	/** The parent Rev_List */
+abstract class RevisionItemBase {
+	/** The parent RevisionListBase */
 	var $list;
 
 	/** The DB result row */
 	var $row;
 
 	/**
-	 * @param $list Rev_List
+	 * @param $list RevisionListBase
 	 * @param $row DB result row
 	 */
 	public function __construct( $list, $row ) {
@@ -146,6 +147,7 @@ abstract class Rev_Item {
 	/**
 	 * Get the DB field name associated with the ID list.
 	 * Override this function.
+	 * @return null
 	 */
 	public function getIdField() {
 		return null;
@@ -154,6 +156,7 @@ abstract class Rev_Item {
 	/**
 	 * Get the DB field name storing timestamps.
 	 * Override this function.
+	 * @return bool
 	 */
 	public function getTimestampField() {
 		return false;
@@ -162,6 +165,7 @@ abstract class Rev_Item {
 	/**
 	 * Get the DB field name storing user ids.
 	 * Override this function.
+	 * @return bool
 	 */
 	public function getAuthorIdField() {
 		return false;
@@ -170,6 +174,7 @@ abstract class Rev_Item {
 	/**
 	 * Get the DB field name storing user names.
 	 * Override this function.
+	 * @return bool
 	 */
 	public function getAuthorNameField() {
 		return false;
@@ -177,6 +182,7 @@ abstract class Rev_Item {
 
 	/**
 	 * Get the ID, as it would appear in the ids URL parameter
+	 * @return
 	 */
 	public function getId() {
 		$field = $this->getIdField();
@@ -184,23 +190,26 @@ abstract class Rev_Item {
 	}
 
 	/**
-	 * Get the date, formatted with $wgLang
+	 * Get the date, formatted in user's languae
+	 * @return String
 	 */
 	public function formatDate() {
-		global $wgLang;
-		return $wgLang->date( $this->getTimestamp() );
+		return $this->list->getLanguage()->userDate( $this->getTimestamp(),
+			$this->list->getUser() );
 	}
 
 	/**
-	 * Get the time, formatted with $wgLang
+	 * Get the time, formatted in user's languae
+	 * @return String
 	 */
 	public function formatTime() {
-		global $wgLang;
-		return $wgLang->time( $this->getTimestamp() );
+		return $this->list->getLanguage()->userTime( $this->getTimestamp(),
+			$this->list->getUser() );
 	}
 
 	/**
 	 * Get the timestamp in MW 14-char form
+	 * @return Mixed
 	 */
 	public function getTimestamp() {
 		$field = $this->getTimestampField();
@@ -209,6 +218,7 @@ abstract class Rev_Item {
 
 	/**
 	 * Get the author user ID
+	 * @return int
 	 */
 	public function getAuthorId() {
 		$field = $this->getAuthorIdField();
@@ -217,6 +227,7 @@ abstract class Rev_Item {
 
 	/**
 	 * Get the author user name
+	 * @return string
 	 */
 	public function getAuthorName() {
 		$field = $this->getAuthorNameField();
@@ -234,13 +245,13 @@ abstract class Rev_Item {
 	abstract public function canViewContent();
 
 	/**
-	 * Get the HTML of the list item. Should be include <li></li> tags.
+	 * Get the HTML of the list item. Should be include "<li></li>" tags.
 	 * This is used to show the list in HTML form, by the special page.
 	 */
 	abstract public function getHTML();
 }
 
-class RevisionList extends Rev_List {
+class RevisionList extends RevisionListBase {
 	public function getType() {
 		return 'revision';
 	}
@@ -250,19 +261,19 @@ class RevisionList extends Rev_List {
 	 * @return mixed
 	 */
 	public function doQuery( $db ) {
-		$conds = array(
-			'rev_page' => $this->title->getArticleID(),
-			'rev_page = page_id'
-		);
+		$conds = array( 'rev_page' => $this->title->getArticleID() );
 		if ( $this->ids !== null ) {
 			$conds['rev_id'] = array_map( 'intval', $this->ids );
 		}
 		return $db->select(
-			array( 'revision', 'page' ),
-			'*',
+			array( 'revision', 'page', 'user' ),
+			array_merge( Revision::selectFields(), Revision::selectUserFields() ),
 			$conds,
 			__METHOD__,
-			array( 'ORDER BY' => 'rev_id DESC' )
+			array( 'ORDER BY' => 'rev_id DESC' ),
+			array(
+				'page' => Revision::pageJoinCond(),
+				'user' => Revision::userJoinCond() )
 		);
 	}
 
@@ -274,13 +285,13 @@ class RevisionList extends Rev_List {
 /**
  * Item class for a live revision table row
  */
-class RevisionItem extends Rev_Item {
+class RevisionItem extends RevisionItemBase {
 	var $revision, $context;
 
 	public function __construct( $list, $row ) {
 		parent::__construct( $list, $row );
 		$this->revision = new Revision( $row );
-		$this->context = $list->context;
+		$this->context = $list->getContext();
 	}
 
 	public function getIdField() {
@@ -296,15 +307,15 @@ class RevisionItem extends Rev_Item {
 	}
 
 	public function getAuthorNameField() {
-		return 'rev_user_text';
+		return 'user_name'; // see Revision::selectUserFields()
 	}
 
 	public function canView() {
-		return $this->revision->userCan( Revision::DELETED_RESTRICTED );
+		return $this->revision->userCan( Revision::DELETED_RESTRICTED, $this->context->getUser() );
 	}
 
 	public function canViewContent() {
-		return $this->revision->userCan( Revision::DELETED_TEXT );
+		return $this->revision->userCan( Revision::DELETED_TEXT, $this->context->getUser() );
 	}
 
 	public function isDeleted() {
@@ -314,9 +325,10 @@ class RevisionItem extends Rev_Item {
 	/**
 	 * Get the HTML link to the revision text.
 	 * Overridden by RevDel_ArchiveItem.
+	 * @return string
 	 */
 	protected function getRevisionLink() {
-		$date = $this->list->getLang()->timeanddate( $this->revision->getTimestamp(), true );
+		$date = $this->list->getLanguage()->timeanddate( $this->revision->getTimestamp(), true );
 		if ( $this->isDeleted() && !$this->canViewContent() ) {
 			return $date;
 		}
@@ -334,15 +346,16 @@ class RevisionItem extends Rev_Item {
 	/**
 	 * Get the HTML link to the diff.
 	 * Overridden by RevDel_ArchiveItem
+	 * @return string
 	 */
 	protected function getDiffLink() {
 		if ( $this->isDeleted() && !$this->canViewContent() ) {
-			return wfMsgHtml('diff');
+			return $this->context->msg( 'diff' )->escaped();
 		} else {
 			return
 				Linker::link(
 					$this->list->title,
-					wfMsgHtml('diff'),
+					$this->context->msg( 'diff' )->escaped(),
 					array(),
 					array(
 						'diff' => $this->revision->getId(),
@@ -358,13 +371,14 @@ class RevisionItem extends Rev_Item {
 	}
 
 	public function getHTML() {
-		$difflink = $this->getDiffLink();
+		$difflink = $this->context->msg( 'parentheses' )
+			->rawParams( $this->getDiffLink() )->escaped();
 		$revlink = $this->getRevisionLink();
 		$userlink = Linker::revUserLink( $this->revision );
 		$comment = Linker::revComment( $this->revision );
 		if ( $this->isDeleted() ) {
 			$revlink = "<span class=\"history-deleted\">$revlink</span>";
 		}
-		return "<li>($difflink) $revlink $userlink $comment</li>";
+		return "<li>$difflink $revlink $userlink $comment</li>";
 	}
 }

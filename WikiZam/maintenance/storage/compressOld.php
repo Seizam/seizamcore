@@ -17,8 +17,9 @@
  *  -c <chunk-size>     maximum number of revisions in a concat chunk
  *  -b <begin-date>     earliest date to check for uncompressed revisions
  *  -e <end-date>       latest revision date to compress
- *  -s <startid>        the old_id to start from
- *  -n <endid>          the old_id to stop at
+ *  -s <startid>        the id to start from (referring to the text table for
+ *                      type gzip, and to the page table for type concat)
+ *  -n <endid>          the page_id to stop at (only when using concat compression type)
  *  --extdb <cluster>   store specified revisions in an external cluster (untested)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,7 +41,7 @@
  * @ingroup Maintenance ExternalStorage
  */
 
-require_once( dirname( __FILE__ ) . '/../Maintenance.php' );
+require_once( __DIR__ . '/../Maintenance.php' );
 
 class CompressOld extends Maintenance {
 	/**
@@ -56,9 +57,9 @@ class CompressOld extends Maintenance {
 		$this->addOption( 'chunksize', 'Maximum number of revisions in a concat chunk', false, true, 'c' );
 		$this->addOption( 'begin-date', 'Earliest date to check for uncompressed revisions', false, true, 'b' );
 		$this->addOption( 'end-date', 'Latest revision date to compress', false, true, 'e' );
-		$this->addOption( 'startid', 'The old_id to start from', false, true, 's' );
+		$this->addOption( 'startid', 'The id to start from (gzip -> text table, concat -> page table)', false, true, 's' );
 		$this->addOption( 'extdb', 'Store specified revisions in an external cluster (untested)', false, true );
-		$this->addOption( 'endid', 'Stop at this old_id', false, true, 'n' );
+		$this->addOption( 'endid', 'The page_id to stop at (only when using concat compression type)', false, true, 'n' );
 	}
 
 	public function execute() {
@@ -70,7 +71,7 @@ class CompressOld extends Maintenance {
 
 		$type = $this->getOption( 'type', 'concat' );
 		$chunkSize = $this->getOption( 'chunksize', 20 );
-		$startId = $this->getOption( 'start-id', 0 );
+		$startId = $this->getOption( 'startid', 0 );
 		$beginDate = $this->getOption( 'begin-date', '' );
 		$endDate = $this->getOption( 'end-date', '' );
 		$extDB = $this->getOption( 'extdb', '' );
@@ -123,7 +124,12 @@ class CompressOld extends Maintenance {
 		} while( true );
 	}
 
-	/** @todo document */
+	/**
+	 * @todo document
+	 * @param $row
+	 * @param $extdb
+	 * @return bool
+	 */
 	private function compressPage( $row, $extdb ) {
 		if ( false !== strpos( $row->old_flags, 'gzip' ) || false !== strpos( $row->old_flags, 'object' ) ) {
 			#print "Already compressed row {$row->old_id}\n";
@@ -156,7 +162,15 @@ class CompressOld extends Maintenance {
 		return true;
 	}
 
-	/** @todo document */
+	/**
+	 * @param $startId
+	 * @param $maxChunkSize
+	 * @param $beginDate
+	 * @param $endDate
+	 * @param $extdb string
+	 * @param $maxPageId bool|int
+	 * @return bool
+	 */
 	private function compressWithConcat( $startId, $maxChunkSize, $beginDate,
 		$endDate, $extdb = "", $maxPageId = false )
 	{
@@ -280,7 +294,7 @@ class CompressOld extends Maintenance {
 
 				$chunk = new ConcatenatedGzipHistoryBlob();
 				$stubs = array();
-				$dbw->begin();
+				$dbw->begin( __METHOD__ );
 				$usedChunk = false;
 				$primaryOldid = $revs[$i]->rev_text_id;
 
@@ -380,7 +394,7 @@ class CompressOld extends Maintenance {
 				}
 				# Done, next
 				$this->output( "/" );
-				$dbw->commit();
+				$dbw->commit( __METHOD__ );
 				$i += $thisChunkSize;
 				wfWaitForSlaves();
 			}

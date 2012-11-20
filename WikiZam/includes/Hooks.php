@@ -86,7 +86,7 @@ class Hooks {
 	 *
 	 * @param $event String: event name
 	 * @param $args Array: parameters passed to hook functions
-	 * @return Boolean
+	 * @return Boolean True if no handler aborted the hook
 	 */
 	public static function run( $event, $args = array() ) {
 		global $wgHooks;
@@ -222,9 +222,7 @@ class Hooks {
 
 			/* String return is an error; false return means stop processing. */
 			if ( is_string( $retval ) ) {
-				global $wgOut;
-				$wgOut->showFatalError( $retval );
-				return false;
+				throw new FatalError( $retval );
 			} elseif( $retval === null ) {
 				if ( $closure ) {
 					$prettyFunc = "$event closure";
@@ -261,7 +259,7 @@ class Hooks {
 	/**
 	 * This REALLY should be protected... but it's public for compatibility
 	 *
-	 * @param $errno Unused
+	 * @param $errno int Unused
 	 * @param $errstr String: error message
 	 * @return Boolean: false
 	 */

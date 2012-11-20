@@ -4,7 +4,7 @@
  *
  * Created on July 7, 2007
  *
- * Copyright © 2006 Yuri Astrakhan <Firstname><Lastname>@gmail.com
+ * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +23,6 @@
  *
  * @file
  */
-
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiQueryBase.php' );
-}
 
 /**
  * @ingroup API
@@ -237,6 +232,21 @@ class ApiQueryExtLinksUsage extends ApiQueryGeneratorBase {
 		return $desc;
 	}
 
+	public function getResultProperties() {
+		return array(
+			'ids' => array(
+				'pageid' => 'integer'
+			),
+			'title' => array(
+				'ns' => 'namespace',
+				'title' => 'string'
+			),
+			'url' => array(
+				'url' => 'string'
+			)
+		);
+	}
+
 	public function getDescription() {
 		return 'Enumerate pages that contain a given URL';
 	}
@@ -247,7 +257,7 @@ class ApiQueryExtLinksUsage extends ApiQueryGeneratorBase {
 		) );
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=query&list=exturlusage&euquery=www.mediawiki.org'
 		);

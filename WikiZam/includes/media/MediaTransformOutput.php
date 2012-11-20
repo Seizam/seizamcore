@@ -2,6 +2,21 @@
 /**
  * Base class for the output of file transformation methods.
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup Media
  */
@@ -18,33 +33,51 @@ abstract class MediaTransformOutput {
 	var $file;
 
 	var $width, $height, $url, $page, $path;
+	protected $storagePath = false;
 
 	/**
-	 * Get the width of the output box
+	 * @return integer Width of the output box
 	 */
-	function getWidth() {
+	public function getWidth() {
 		return $this->width;
 	}
 
 	/**
-	 * Get the height of the output box
+	 * @return integer Height of the output box
 	 */
-	function getHeight() {
+	public function getHeight() {
 		return $this->height;
 	}
 
 	/**
-	 * @return string The thumbnail URL
+	 * Get the final extension of the thumbnail.
+	 * Returns false for scripted transformations.
+	 * @return string|false
 	 */
-	function getUrl() {
+	public function getExtension() {
+		return $this->path ? FileBackend::extensionFromPath( $this->path ) : false;
+	}
+
+	/**
+	 * @return string|false The thumbnail URL
+	 */
+	public function getUrl() {
 		return $this->url;
 	}
 
 	/**
-	 * @return String: destination file path (local filesystem)
+	 * @return string|bool The permanent thumbnail storage path
 	 */
-	function getPath() {
-		return $this->path;
+	public function getStoragePath() {
+		return $this->storagePath;
+	}
+
+	/**
+	 * @param $storagePath string The permanent storage path
+	 * @return void
+	 */
+	public function setStoragePath( $storagePath ) {
+		$this->storagePath = $storagePath;
 	}
 
 	/**
@@ -60,20 +93,78 @@ abstract class MediaTransformOutput {
 	 *     custom-url-link    Custom URL to link to
 	 *     custom-title-link  Custom Title object to link to
 	 *     valign       vertical-align property, if the output is an inline element
-	 *     img-class    Class applied to the <img> tag, if there is such a tag
+	 *     img-class    Class applied to the "<img>" tag, if there is such a tag
 	 *
 	 * For images, desc-link and file-link are implemented as a click-through. For
 	 * sounds and videos, they may be displayed in other ways.
 	 *
 	 * @return string
 	 */
-	abstract function toHtml( $options = array() );
+	abstract public function toHtml( $options = array() );
 
 	/**
 	 * This will be overridden to return true in error classes
+	 * @return bool
 	 */
-	function isError() {
+	public function isError() {
 		return false;
+	}
+
+	/**
+	 * Check if an output thumbnail file actually exists.
+	 * This will return false if there was an error, the
+	 * thumbnail is to be handled client-side only, or if
+	 * transformation was deferred via TRANSFORM_LATER.
+	 *
+	 * @return Bool
+	 */
+	public function hasFile() {
+		// If TRANSFORM_LATER, $this->path will be false.
+		// Note: a null path means "use the source file".
+		return ( !$this->isError() && ( $this->path || $this->path === null ) );
+	}
+
+	/**
+	 * Check if the output thumbnail is the same as the source.
+	 * This can occur if the requested width was bigger than the source.
+	 *
+	 * @return Bool
+	 */
+	public function fileIsSource() {
+		return ( !$this->isError() && $this->path === null );
+	}
+
+	/**
+	 * Get the path of a file system copy of the thumbnail.
+	 * Callers should never write to this path.
+	 *
+	 * @return string|bool Returns false if there isn't one
+	 */
+	public function getLocalCopyPath() {
+		if ( $this->isError() ) {
+			return false;
+		} elseif ( $this->path === null ) {
+			return $this->file->getLocalRefPath();
+		} else {
+			return $this->path; // may return false
+		}
+	}
+
+	/**
+	 * Stream the file if there were no errors
+	 *
+	 * @param $headers Array Additional HTTP headers to send on success
+	 * @return Bool success
+	 */
+	public function streamFile( $headers = array() ) {
+		if ( !$this->path ) {
+			return false;
+		} elseif ( FileBackend::isStoragePath( $this->path ) ) {
+			$be = $this->file->getRepo()->getBackend();
+			return $be->streamFile( array( 'src' => $this->path, 'headers' => $headers ) )->isOK();
+		} else { // FS-file
+			return StreamFile::stream( $this->getLocalCopyPath(), $headers );
+		}
 	}
 
 	/**
@@ -97,7 +188,7 @@ abstract class MediaTransformOutput {
 	 * @param $params array
 	 * @return array
 	 */
-	function getDescLinkAttribs( $title = null, $params = '' ) {
+	public function getDescLinkAttribs( $title = null, $params = '' ) {
 		$query = $this->page ? ( 'page=' . urlencode( $this->page ) ) : '';
 		if( $params ) {
 			$query .= $query ? '&'.$params : $params;
@@ -119,26 +210,50 @@ abstract class MediaTransformOutput {
  * @ingroup Media
  */
 class ThumbnailImage extends MediaTransformOutput {
-
 	/**
+	 * Get a thumbnail object from a file and parameters.
+	 * If $path is set to null, the output file is treated as a source copy.
+	 * If $path is set to false, no output file will be created.
+	 * $parameters should include, as a minimum, (file) 'width' and 'height'.
+	 * It may also include a 'page' parameter for multipage files.
+	 *
 	 * @param $file File object
 	 * @param $url String: URL path to the thumb
-	 * @param $width Integer: file's width
-	 * @param $height Integer: file's height
-	 * @param $path String: filesystem path to the thumb
-	 * @param $page Integer: page number, for multipage files
+	 * @param $path String|bool|null: filesystem path to the thumb
+	 * @param $parameters Array: Associative array of parameters
 	 * @private
 	 */
-	function __construct( $file, $url, $width, $height, $path = false, $page = false ) {
+	function __construct( $file, $url, $path = false, $parameters = array() ) {
+		# Previous parameters:
+		#   $file, $url, $width, $height, $path = false, $page = false
+
+		if( is_array( $parameters ) ){
+			$defaults = array(
+				'page' => false
+			);
+			$actualParams = $parameters + $defaults;
+		} else {
+			# Using old format, should convert. Later a warning could be added here.
+			$numArgs = func_num_args();
+			$actualParams = array(
+				'width' => $path,
+				'height' => $parameters,
+				'page' => ( $numArgs > 5 ) ? func_get_arg( 5 ) : false
+			);
+			$path = ( $numArgs > 4 ) ? func_get_arg( 4 ) : false;
+		}
+
 		$this->file = $file;
 		$this->url = $url;
+		$this->path = $path;
+
 		# These should be integers when they get here.
 		# If not, there's a bug somewhere.  But let's at
 		# least produce valid HTML code regardless.
-		$this->width = round( $width );
-		$this->height = round( $height );
-		$this->path = $path;
-		$this->page = $page;
+		$this->width = round( $actualParams['width'] );
+		$this->height = round( $actualParams['height'] );
+
+		$this->page = $actualParams['page'];
 	}
 
 	/**
@@ -159,6 +274,9 @@ class ThumbnailImage extends MediaTransformOutput {
 	 *     custom-url-link    Custom URL to link to
 	 *     custom-title-link  Custom Title object to link to
 	 *     custom target-link Value of the target attribute, for custom-target-link
+	 *     parser-extlink-*   Attributes added by parser for external links:
+	 *          parser-extlink-rel: add rel="nofollow"
+	 *          parser-extlink-target: link target, but overridden by custom-target-link
 	 *
 	 * For images, desc-link and file-link are implemented as a click-through. For
 	 * sounds and videos, they may be displayed in other ways.
@@ -181,11 +299,16 @@ class ThumbnailImage extends MediaTransformOutput {
 			}
 			if ( !empty( $options['custom-target-link'] ) ) {
 				$linkAttribs['target'] = $options['custom-target-link'];
+			} elseif ( !empty( $options['parser-extlink-target'] ) ) {
+				$linkAttribs['target'] = $options['parser-extlink-target'];
+			}
+			if ( !empty( $options['parser-extlink-rel'] ) ) {
+				$linkAttribs['rel'] = $options['parser-extlink-rel'];
 			}
 		} elseif ( !empty( $options['custom-title-link'] ) ) {
 			$title = $options['custom-title-link'];
 			$linkAttribs = array(
-				'href' => $title->getLinkUrl(),
+				'href' => $title->getLinkURL(),
 				'title' => empty( $options['title'] ) ? $title->getFullText() : $options['title']
 			);
 		} elseif ( !empty( $options['desc-link'] ) ) {
@@ -264,6 +387,6 @@ class TransformParameterError extends MediaTransformError {
 		parent::__construct( 'thumbnail_error',
 			max( isset( $params['width']  ) ? $params['width']  : 0, 120 ),
 			max( isset( $params['height'] ) ? $params['height'] : 0, 120 ),
-			wfMsg( 'thumbnail_invalid_params' ) );
+			wfMessage( 'thumbnail_invalid_params' )->text() );
 	}
 }

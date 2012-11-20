@@ -42,9 +42,9 @@ class UnusedtemplatesPage extends QueryPage {
 	function getQueryInfo() {
 		return array (
 			'tables' => array ( 'page', 'templatelinks' ),
-			'fields' => array ( 'page_namespace AS namespace',
-					'page_title AS title',
-					'page_title AS value' ),
+			'fields' => array ( 'namespace' => 'page_namespace',
+					'title' => 'page_title',
+					'value' => 'page_title' ),
 			'conds' => array ( 'page_namespace' => NS_TEMPLATE,
 					'tl_from IS NULL',
 					'page_is_redirect' => 0 ),
@@ -61,24 +61,20 @@ class UnusedtemplatesPage extends QueryPage {
 	 */
 	function formatResult( $skin, $result ) {
 		$title = Title::makeTitle( NS_TEMPLATE, $result->title );
-		$pageLink = $skin->linkKnown(
+		$pageLink = Linker::linkKnown(
 			$title,
 			null,
 			array(),
 			array( 'redirect' => 'no' )
 		);
-		$wlhLink = $skin->linkKnown(
-			SpecialPage::getTitleFor( 'Whatlinkshere' ),
-			wfMsgHtml( 'unusedtemplateswlh' ),
-			array(),
-			array( 'target' => $title->getPrefixedText() )
+		$wlhLink = Linker::linkKnown(
+			SpecialPage::getTitleFor( 'Whatlinkshere', $title->getPrefixedText() ),
+			$this->msg( 'unusedtemplateswlh' )->escaped()
 		);
-		return wfSpecialList( $pageLink, $wlhLink );
+		return $this->getLanguage()->specialList( $pageLink, $wlhLink );
 	}
 
 	function getPageHeader() {
-		return wfMsgExt( 'unusedtemplatestext', array( 'parse' ) );
+		return $this->msg( 'unusedtemplatestext' )->parseAsBlock();
 	}
-
 }
-

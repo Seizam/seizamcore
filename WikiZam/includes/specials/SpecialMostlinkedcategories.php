@@ -25,7 +25,7 @@
  */
 
 /**
- * A querypage to show categories ordered in descending order by the pages  in them
+ * A querypage to show categories ordered in descending order by the pages in them
  *
  * @ingroup SpecialPage
  */
@@ -35,16 +35,14 @@ class MostlinkedCategoriesPage extends QueryPage {
 		parent::__construct( $name );
 	}
 
-	function isExpensive() { return true; }
 	function isSyndicated() { return false; }
 
 	function getQueryInfo() {
 		return array (
-			'tables' => array ( 'categorylinks' ),
-			'fields' => array ( 'cl_to AS title',
-					NS_CATEGORY . ' AS namespace',
-					'COUNT(*) AS value' ),
-			'options' => array ( 'GROUP BY' => 'cl_to' )
+			'tables' => array ( 'category' ),
+			'fields' => array ( 'title' => 'cat_title',
+					'namespace' => NS_CATEGORY,
+					'value' => 'cat_pages' ),
 		);
 	}
 
@@ -57,6 +55,10 @@ class MostlinkedCategoriesPage extends QueryPage {
 	 * @param $res DatabaseResult
 	 */
 	function preprocessResults( $db, $res ) {
+		if ( !$res->numRows() ) {
+			return;
+		}
+
 		$batch = new LinkBatch;
 		foreach ( $res as $row ) {
 			$batch->add( NS_CATEGORY, $row->title );
@@ -64,10 +66,7 @@ class MostlinkedCategoriesPage extends QueryPage {
 		$batch->execute();
 
 		// Back to start for display
-		if ( $db->numRows( $res ) > 0 ) {
-			// If there are no rows we get an error seeking.
-			$db->dataSeek( $res, 0 );
-		}
+		$res->seek( 0 );
 	}
 
 	/**
@@ -76,15 +75,19 @@ class MostlinkedCategoriesPage extends QueryPage {
 	 * @return string
 	 */
 	function formatResult( $skin, $result ) {
-		global $wgLang, $wgContLang;
+		global $wgContLang;
 
-		$nt = Title::makeTitle( NS_CATEGORY, $result->title );
+		$nt = Title::makeTitleSafe( NS_CATEGORY, $result->title );
+		if ( !$nt ) {
+			return Html::element( 'span', array( 'class' => 'mw-invalidtitle' ),
+				Linker::getInvalidTitleDescription( $this->getContext(), NS_CATEGORY, $result->title ) );
+		}
+
 		$text = $wgContLang->convert( $nt->getText() );
 
-		$plink = $skin->link( $nt, htmlspecialchars( $text ) );
+		$plink = Linker::link( $nt, htmlspecialchars( $text ) );
 
-		$nlinks = wfMsgExt( 'nmembers', array( 'parsemag', 'escape' ),
-			$wgLang->formatNum( $result->value ) );
-		return wfSpecialList( $plink, $nlinks );
+		$nlinks = $this->msg( 'nmembers' )->numParams( $result->value )->escaped();
+		return $this->getLanguage()->specialList( $plink, $nlinks );
 	}
 }

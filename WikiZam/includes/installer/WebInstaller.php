@@ -2,6 +2,21 @@
 /**
  * Core installer web interface.
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup Deployment
  */
@@ -146,7 +161,7 @@ class WebInstaller extends Installer {
 				'Content-Disposition: attachment; filename="LocalSettings.php"'
 			);
 
-			$ls = new LocalSettingsGenerator( $this );
+			$ls = InstallerOverrides::getLocalSettingsGenerator( $this );
 			$rightsProfile = $this->rightsProfiles[$this->getVar( '_RightsProfile' )];
 			foreach( $rightsProfile as $group => $rightsArr ) {
 				$ls->setGroupRights( $group, $rightsArr );
@@ -347,25 +362,28 @@ class WebInstaller extends Installer {
 			$url = $m[1];
 		}
 		return md5( serialize( array(
-			'local path' => dirname( dirname( __FILE__ ) ),
+			'local path' => dirname( __DIR__ ),
 			'url' => $url,
 			'version' => $GLOBALS['wgVersion']
 		) ) );
 	}
 
 	/**
-	 * Show an error message in a box. Parameters are like wfMsg().
+	 * Show an error message in a box. Parameters are like wfMessage().
+	 * @param $msg
 	 */
 	public function showError( $msg /*...*/ ) {
 		$args = func_get_args();
 		array_shift( $args );
 		$args = array_map( 'htmlspecialchars', $args );
-		$msg = wfMsgReal( $msg, $args, false, false, false );
+		$msg = wfMessage( $msg, $args )->useDatabase( false )->plain();
 		$this->output->addHTML( $this->getErrorBox( $msg ) );
 	}
 
 	/**
 	 * Temporary error handler for session start debugging.
+	 * @param $errno
+	 * @param $errstr string
 	 */
 	public function errorHandler( $errno, $errstr ) {
 		$this->phpErrors[] = $errstr;
@@ -430,6 +448,7 @@ class WebInstaller extends Installer {
 	 *
 	 * @param $name String
 	 * @param $default
+	 * @return null
 	 */
 	public function getSession( $name, $default = null ) {
 		if ( !isset( $this->session[$name] ) ) {
@@ -469,7 +488,6 @@ class WebInstaller extends Installer {
 			$this->setVar( '_UserLang', $wgLanguageCode );
 		} else {
 			$wgLanguageCode = $this->getVar( 'wgLanguageCode' );
-			$wgLang = Language::factory( $this->getVar( '_UserLang' ) );
 			$wgContLang = Language::factory( $wgLanguageCode );
 		}
 	}
@@ -482,7 +500,7 @@ class WebInstaller extends Installer {
 	public function getAcceptLanguage() {
 		global $wgLanguageCode, $wgRequest;
 
-		$mwLanguages = Language::getLanguageNames();
+		$mwLanguages = Language::fetchLanguageNames();
 		$headerLanguages = array_keys( $wgRequest->getAcceptLang() );
 
 		foreach ( $headerLanguages as $lang ) {
@@ -522,7 +540,7 @@ class WebInstaller extends Installer {
 		$s .= $this->getPageListItem( 'Restart', true, $currentPageName );
 		$s .= "</ul></div>\n"; // end list pane
 		$s .= Html::element( 'h2', array(),
-				wfMsg( 'config-page-' . strtolower( $currentPageName ) ) );
+			wfMessage( 'config-page-' . strtolower( $currentPageName ) )->text() );
 
 		$this->output->addHTMLNoFlush( $s );
 	}
@@ -538,7 +556,7 @@ class WebInstaller extends Installer {
 	 */
 	private function getPageListItem( $pageName, $enabled, $currentPageName ) {
 		$s = "<li class=\"config-page-list-item\">";
-		$name = wfMsg( 'config-page-' . strtolower( $pageName ) );
+		$name = wfMessage( 'config-page-' . strtolower( $pageName ) )->text();
 
 		if ( $enabled ) {
 			$query = array( 'page' => $pageName );
@@ -591,7 +609,7 @@ class WebInstaller extends Installer {
 	/**
 	 * Get HTML for an error box with an icon.
 	 *
-	 * @param $text String: wikitext, get this with wfMsgNoTrans()
+	 * @param $text String: wikitext, get this with wfMessage()->plain()
 	 *
 	 * @return string
 	 */
@@ -602,7 +620,7 @@ class WebInstaller extends Installer {
 	/**
 	 * Get HTML for a warning box with an icon.
 	 *
-	 * @param $text String: wikitext, get this with wfMsgNoTrans()
+	 * @param $text String: wikitext, get this with wfMessage()->plain()
 	 *
 	 * @return string
 	 */
@@ -613,7 +631,7 @@ class WebInstaller extends Installer {
 	/**
 	 * Get HTML for an info box with an icon.
 	 *
-	 * @param $text String: wikitext, get this with wfMsgNoTrans()
+	 * @param $text String: wikitext, get this with wfMessage()->plain()
 	 * @param $icon String: icon name, file in skins/common/images
 	 * @param $class String: additional class name to add to the wrapper div
 	 *
@@ -622,33 +640,34 @@ class WebInstaller extends Installer {
 	public function getInfoBox( $text, $icon = false, $class = false ) {
 		$text = $this->parse( $text, true );
 		$icon = ( $icon == false ) ? '../skins/common/images/info-32.png' : '../skins/common/images/'.$icon;
-		$alt = wfMsg( 'config-information' );
+		$alt = wfMessage( 'config-information' )->text();
 		return Html::infoBox( $text, $icon, $alt, $class, false );
 	}
 
 	/**
 	 * Get small text indented help for a preceding form field.
-	 * Parameters like wfMsg().
+	 * Parameters like wfMessage().
 	 *
+	 * @param $msg
 	 * @return string
 	 */
 	public function getHelpBox( $msg /*, ... */ ) {
 		$args = func_get_args();
 		array_shift( $args );
 		$args = array_map( 'htmlspecialchars', $args );
-		$text = wfMsgReal( $msg, $args, false, false, false );
-		$html = htmlspecialchars( $text );
+		$text = wfMessage( $msg, $args )->useDatabase( false )->plain();
 		$html = $this->parse( $text, true );
 
 		return "<div class=\"mw-help-field-container\">\n" .
-			   "<span class=\"mw-help-field-hint\">" . wfMsgHtml( 'config-help' ) . "</span>\n" .
-			   "<span class=\"mw-help-field-data\">" . $html . "</span>\n" .
-			   "</div>\n";
+			"<span class=\"mw-help-field-hint\">" . wfMessage( 'config-help' )->escaped() .
+			"</span>\n" .
+			"<span class=\"mw-help-field-data\">" . $html . "</span>\n" .
+			"</div>\n";
 	}
 
 	/**
 	 * Output a help box.
-	 * @param $msg String key for wfMsg()
+	 * @param $msg String key for wfMessage()
 	 */
 	public function showHelpBox( $msg /*, ... */ ) {
 		$args = func_get_args();
@@ -666,7 +685,7 @@ class WebInstaller extends Installer {
 		$args = func_get_args();
 		array_shift( $args );
 		$html = '<div class="config-message">' .
-			$this->parse( wfMsgReal( $msg, $args, false, false, false ) ) .
+		$this->parse( wfMessage( $msg, $args )->useDatabase( false )->plain() ) .
 			"</div>\n";
 		$this->output->addHTML( $html );
 	}
@@ -675,25 +694,27 @@ class WebInstaller extends Installer {
 	 * @param $status Status
 	 */
 	public function showStatusMessage( Status $status ) {
-		$text = $status->getWikiText();
-		$this->output->addWikiText(
-			"<div class=\"config-message\">\n" .
-			$text .
-			"</div>"
-		);
+		$errors = array_merge( $status->getErrorsArray(), $status->getWarningsArray() );
+		foreach ( $errors as $error ) {
+			call_user_func_array( array( $this, 'showMessage' ), $error );
+		}
 	}
 
 	/**
 	 * Label a control by wrapping a config-input div around it and putting a
 	 * label before it.
 	 *
+	 * @param $msg
+	 * @param $forId
+	 * @param $contents
+	 * @param $helpData string
 	 * @return string
 	 */
 	public function label( $msg, $forId, $contents, $helpData = "" ) {
 		if ( strval( $msg ) == '' ) {
 			$labelText = '&#160;';
 		} else {
-			$labelText = wfMsgHtml( $msg );
+			$labelText = wfMessage( $msg )->escaped();
 		}
 
 		$attributes = array( 'class' => 'config-label' );
@@ -873,7 +894,7 @@ class WebInstaller extends Installer {
 		if( isset( $params['rawtext'] ) ) {
 			$labelText = $params['rawtext'];
 		} else {
-			$labelText = $this->parse( wfMsg( $params['label'] ) );
+			$labelText = $this->parse( wfMessage( $params['label'] )->text() );
 		}
 
 		return
@@ -949,7 +970,7 @@ class WebInstaller extends Installer {
 				Xml::radio( $params['controlName'], $value, $checked, $itemAttribs ) .
 				'&#160;' .
 				Xml::tags( 'label', array( 'for' => $id ), $this->parse(
-					wfMsgNoTrans( $params['itemLabelPrefix'] . strtolower( $value ) )
+					wfMessage( $params['itemLabelPrefix'] . strtolower( $value ) )->plain()
 				) ) .
 				"</li>\n";
 		}
@@ -1013,6 +1034,7 @@ class WebInstaller extends Installer {
 	/**
 	 * Helper for Installer::docLink()
 	 *
+	 * @param $page
 	 * @return string
 	 */
 	protected function getDocUrl( $page ) {
@@ -1028,6 +1050,9 @@ class WebInstaller extends Installer {
 	/**
 	 * Extension tag hook for a documentation link.
 	 *
+	 * @param $linkText
+	 * @param $attribs
+	 * @param $parser
 	 * @return string
 	 */
 	public function docLink( $linkText, $attribs, $parser ) {
@@ -1040,6 +1065,9 @@ class WebInstaller extends Installer {
 	/**
 	 * Helper for "Download LocalSettings" link on WebInstall_Complete
 	 *
+	 * @param $text
+	 * @param $attribs
+	 * @param $parser
 	 * @return String Html for download link
 	 */
 	public function downloadLinkHook( $text, $attribs, $parser  ) {
@@ -1050,10 +1078,13 @@ class WebInstaller extends Installer {
 		) );
 		$anchor = Html::rawElement( 'a',
 			array( 'href' => $this->getURL( array( 'localsettings' => 1 ) ) ),
-			$img . ' ' . wfMsgHtml( 'config-download-localsettings' ) );
+			$img . ' ' . wfMessage( 'config-download-localsettings' )->escaped() );
 		return Html::rawElement( 'div', array( 'class' => 'config-download-link' ), $anchor );
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function envCheckPath( ) {
 		// PHP_SELF isn't available sometimes, such as when PHP is CGI but
 		// cgi.fix_pathinfo is disabled. In that case, fall back to SCRIPT_NAME
@@ -1071,9 +1102,10 @@ class WebInstaller extends Installer {
 			$this->showError( 'config-no-uri' );
 			return false;
 		}
-
-
 		return parent::envCheckPath();
 	}
 
+	protected function envGetDefaultServer() {
+		return WebRequest::detectServer();
+	}
 }

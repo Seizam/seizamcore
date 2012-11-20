@@ -1,4 +1,24 @@
 <?php
+/**
+ * Some functions that are useful during startup.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ */
 
 /**
  * Some functions that are useful during startup.
@@ -23,7 +43,7 @@ class MWInit {
 	}
 
 	/**
-	 * Returns true if we are running under HipHop, whether in compiled or 
+	 * Returns true if we are running under HipHop, whether in compiled or
 	 * interpreted mode.
 	 *
 	 * @return bool
@@ -47,10 +67,10 @@ class MWInit {
 	}
 
 	/**
-	 * If we are running code compiled by HipHop, this will pass through the 
-	 * input path, assumed to be relative to $IP. If the code is interpreted, 
-	 * it will converted to a fully qualified path. It is necessary to use a 
-	 * path which is relative to $IP in order to make HipHop use its compiled 
+	 * If we are running code compiled by HipHop, this will pass through the
+	 * input path, assumed to be relative to $IP. If the code is interpreted,
+	 * it will converted to a fully qualified path. It is necessary to use a
+	 * path which is relative to $IP in order to make HipHop use its compiled
 	 * code.
 	 *
 	 * @param $file string
@@ -94,7 +114,7 @@ class MWInit {
 	}
 
 	/**
-	 * Register an extension setup file and return its path for compiled 
+	 * Register an extension setup file and return its path for compiled
 	 * inclusion. Use this function in LocalSettings.php to add extensions
 	 * to the build. For example:
 	 *
@@ -130,13 +150,13 @@ class MWInit {
 	/**
 	 * Determine whether a class exists, using a method which works under HipHop.
 	 *
-	 * Note that it's not possible to implement this with any variant of 
-	 * class_exists(), because class_exists() returns false for classes which 
-	 * are compiled in. 
+	 * Note that it's not possible to implement this with any variant of
+	 * class_exists(), because class_exists() returns false for classes which
+	 * are compiled in.
 	 *
-	 * Calling class_exists() on a literal string causes the class to be made 
-	 * "volatile", which means (as of March 2011) that the class is broken and 
-	 * can't be used at all. So don't do that. See 
+	 * Calling class_exists() on a literal string causes the class to be made
+	 * "volatile", which means (as of March 2011) that the class is broken and
+	 * can't be used at all. So don't do that. See
 	 * https://github.com/facebook/hiphop-php/issues/314
 	 *
 	 * @param $class string
@@ -153,11 +173,32 @@ class MWInit {
 	}
 
 	/**
-	 * Determine whether a function exists, using a method which works under 
+	 * Determine wether a method exists within a class, using a method which works
+	 * under HipHop.
+	 *
+	 * Note that under HipHop when method_exists is given a string for it's class
+	 * such as to test for a static method has the same issues as class_exists does.
+	 *
+	 * @param $class string
+	 * @param $method string
+	 *
+	 * @return bool
+	 */
+	static function methodExists( $class, $method ) {
+		try {
+			$r = new ReflectionMethod( $class, $method );
+		} catch( ReflectionException $r ) {
+			$r = false;
+		}
+		return $r !== false;
+	}
+
+	/**
+	 * Determine whether a function exists, using a method which works under
 	 * HipHop.
 	 *
 	 * @param $function string
-	 * 
+	 *
 	 * @return bool
 	 */
 	static function functionExists( $function ) {
@@ -176,6 +217,7 @@ class MWInit {
 	 * @param $methodName string
 	 * @param $args array
 	 *
+	 * @return mixed
 	 */
 	static function callStaticMethod( $className, $methodName, $args ) {
 		$r = new ReflectionMethod( $className, $methodName );

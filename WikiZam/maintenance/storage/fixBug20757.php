@@ -21,7 +21,7 @@
  * @ingroup Maintenance ExternalStorage
  */
 
-require_once( dirname( __FILE__ ) . '/../Maintenance.php' );
+require_once( __DIR__ . '/../Maintenance.php' );
 
 class FixBug20757 extends Maintenance {
 	var $batchSize = 10000;
@@ -213,7 +213,7 @@ class FixBug20757 extends Maintenance {
 
 				if ( !$dryRun ) {
 					// Reset the text row to point to the original copy
-					$dbw->begin();
+					$dbw->begin( __METHOD__ );
 					$dbw->update(
 						'text',
 						// SET
@@ -241,7 +241,7 @@ class FixBug20757 extends Maintenance {
 						),
 						__METHOD__
 					);
-					$dbw->commit();
+					$dbw->commit( __METHOD__ );
 					$this->waitForSlaves();
 				}
 
@@ -302,6 +302,9 @@ class FixBug20757 extends Maintenance {
 	/**
 	 * This is based on part of HistoryBlobStub::getText().
 	 * Determine if the text can be retrieved from the row in the normal way.
+	 * @param $stub
+	 * @param $secondaryRow
+	 * @return bool
 	 */
 	function isUnbrokenStub( $stub, $secondaryRow ) {
 		$flags = explode( ',', $secondaryRow->old_flags );

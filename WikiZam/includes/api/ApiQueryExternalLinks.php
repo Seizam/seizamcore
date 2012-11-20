@@ -4,7 +4,7 @@
  *
  * Created on May 13, 2007
  *
- * Copyright © 2006 Yuri Astrakhan <Firstname><Lastname>@gmail.com
+ * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +23,6 @@
  *
  * @file
  */
-
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( "ApiQueryBase.php" );
-}
 
 /**
  * A query module to list all external URLs found on a given set of pages.
@@ -138,6 +133,14 @@ class ApiQueryExternalLinks extends ApiQueryBase {
 		);
 	}
 
+	public function getResultProperties() {
+		return array(
+			'' => array(
+				'*' => 'string'
+			)
+		);
+	}
+
 	public function getDescription() {
 		return 'Returns all external urls (not interwikies) from the given page(s)';
 	}
@@ -148,10 +151,9 @@ class ApiQueryExternalLinks extends ApiQueryBase {
 		) );
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
-			'Get a list of external links on the [[Main Page]]:',
-			'  api.php?action=query&prop=extlinks&titles=Main%20Page',
+			'api.php?action=query&prop=extlinks&titles=Main%20Page' => 'Get a list of external links on the [[Main Page]]',
 		);
 	}
 

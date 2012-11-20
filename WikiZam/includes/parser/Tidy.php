@@ -2,7 +2,23 @@
 /**
  * HTML validation and correction
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
+ * @ingroup Parser
  */
 
 /**
@@ -11,9 +27,11 @@
  * we may create a real postprocessor or something that will replace this.
  * It's called wrapper because for now it basically takes over MWTidy::tidy's task
  * of wrapping the text in a xhtml block
- * 
+ *
  * This re-uses some of the parser's UNIQ tricks, though some of it is private so it's
  * duplicated. Perhaps we should create an abstract marker hiding class.
+ *
+ * @ingroup Parser
  */
 class MWTidyWrapper {
 
@@ -40,7 +58,7 @@ class MWTidyWrapper {
 		$this->mUniqPrefix = "\x7fUNIQ" .
 			dechex( mt_rand( 0, 0x7fffffff ) ) . dechex( mt_rand( 0, 0x7fffffff ) );
 		$this->mMarkerIndex = 0;
-	
+
 		$wrappedtext = preg_replace_callback( ParserOutput::EDITSECTION_REGEX,
 			array( &$this, 'replaceEditSectionLinksCallback' ), $text );
 
@@ -126,7 +144,7 @@ class MWTidy {
 	 */
 	public static function checkErrors( $text, &$errorStr = null ) {
 		global $wgTidyInternal;
-		
+
 		$retval = 0;
 		if( $wgTidyInternal ) {
 			$errorStr = self::execInternalTidy( $text, true, $retval );
@@ -143,7 +161,7 @@ class MWTidy {
 	 *
 	 * @param $text String: HTML to check
 	 * @param $stderr Boolean: Whether to read result from STDERR rather than STDOUT
-	 * @param &$retval Exit code (-1 on internal error)
+	 * @param &$retval int Exit code (-1 on internal error)
 	 * @return mixed String or null
 	 */
 	private static function execExternalTidy( $text, $stderr = false, &$retval = null ) {
@@ -166,7 +184,7 @@ class MWTidy {
 				2 => array( 'file', wfGetNull(), 'a' )
 			);
 		}
-		
+
 		$readpipe = $stderr ? 2 : 1;
 		$pipes = array();
 
@@ -207,7 +225,7 @@ class MWTidy {
 	 *
 	 * @param $text String: HTML to check
 	 * @param $stderr Boolean: Whether to read result from error status instead of output
-	 * @param &$retval Exit code (-1 on internal error)
+	 * @param &$retval int Exit code (-1 on internal error)
 	 * @return mixed String or null
 	 */
 	private static function execInternalTidy( $text, $stderr = false, &$retval = null ) {
@@ -217,7 +235,7 @@ class MWTidy {
 		if ( !MWInit::classExists( 'tidy' ) ) {
 			wfWarn( "Unable to load internal tidy class." );
 			$retval = -1;
-			
+
 			wfProfileOut( __METHOD__ );
 			return null;
 		}
@@ -245,7 +263,7 @@ class MWTidy {
 						"\n-->";
 				}
 			}
-	
+
 			wfProfileOut( __METHOD__ );
 			return $cleansource;
 		}

@@ -1,6 +1,6 @@
 <?php
 /**
- * Squid purge benchmark script
+ * Benchmark for Squid purge.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,16 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Maintenance
+ * @ingroup Benchmark
  */
 
-require_once( dirname( __FILE__ ) . '/Benchmarker.php' );
+require_once( __DIR__ . '/Benchmarker.php' );
 
+/**
+ * Maintenance script that benchmarks Squid purge.
+ *
+ * @ingroup Benchmark
+ */
 class BenchmarkPurge extends Benchmarker {
 
 	public function __construct() {
@@ -54,13 +59,14 @@ class BenchmarkPurge extends Benchmarker {
 	 * to benchmark Squid response times.
 	 * @param $urls array A bunch of URLs to purge
 	 * @param $trials int How many times to run the test?
+	 * @return string
 	 */
 	private function benchSquid( $urls, $trials = 1 ) {
-		$start = wfTime();
+		$start = microtime( true );
 		for ( $i = 0; $i < $trials; $i++ ) {
 			SquidUpdate::purge( $urls );
 		}
-		$delta = wfTime() - $start;
+		$delta = microtime( true ) - $start;
 		$pertrial = $delta / $trials;
 		$pertitle = $pertrial / count( $urls );
 		return sprintf( "%4d titles in %6.2fms (%6.2fms each)",
@@ -70,6 +76,7 @@ class BenchmarkPurge extends Benchmarker {
 	/**
 	 * Get an array of randomUrl()'s.
 	 * @param $length int How many urls to add to the array
+	 * @return array
 	 */
 	private function randomUrlList( $length ) {
 		$list = array();
@@ -82,6 +89,7 @@ class BenchmarkPurge extends Benchmarker {
 	/**
 	 * Return a random URL of the wiki. Not necessarily an actual title in the
 	 * database, but at least a URL that looks like one.
+	 * @return string
 	 */
 	private function randomUrl() {
 		global $wgServer, $wgArticlePath;
@@ -91,6 +99,7 @@ class BenchmarkPurge extends Benchmarker {
 	/**
 	 * Create a random title string (not necessarily a Title object).
 	 * For use with randomUrl().
+	 * @return string
 	 */
 	private function randomTitle() {
 		$str = '';

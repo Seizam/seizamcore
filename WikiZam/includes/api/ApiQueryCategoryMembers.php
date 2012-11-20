@@ -4,7 +4,7 @@
  *
  * Created on June 14, 2007
  *
- * Copyright © 2006 Yuri Astrakhan <Firstname><Lastname>@gmail.com
+ * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +23,6 @@
  *
  * @file
  */
-
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( "ApiQueryBase.php" );
-}
 
 /**
  * A query module to enumerate pages that belong to a category.
@@ -59,22 +54,9 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 	private function run( $resultPageSet = null ) {
 		$params = $this->extractRequestParams();
 
-		$this->requireOnlyOneParameter( $params, 'title', 'pageid' );
-
-		if ( isset( $params['title'] ) ) {
-			$categoryTitle = Title::newFromText( $params['title'] );
-
-			if ( is_null( $categoryTitle ) || $categoryTitle->getNamespace() != NS_CATEGORY ) {
-				$this->dieUsage( 'The category name you entered is not valid', 'invalidcategory' );
-			}
-		} elseif( isset( $params['pageid'] ) ) {
-			$categoryTitle = Title::newFromID( $params['pageid'] );
-
-			if ( !$categoryTitle ) {
-				$this->dieUsageMsg( array( 'nosuchpageid', $params['pageid'] ) );
-			} elseif ( $categoryTitle->getNamespace() != NS_CATEGORY ) {
-				$this->dieUsage( 'The category name you entered is not valid', 'invalidcategory' );
-			}
+		$categoryTitle = $this->getTitleOrPageId( $params )->getTitle();
+		if ( $categoryTitle->getNamespace() != NS_CATEGORY ) {
+			$this->dieUsage( 'The category name you entered is not valid', 'invalidcategory' );
 		}
 
 		$prop = array_flip( $params['prop'] );
@@ -112,10 +94,10 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 			$this->addWhereFld( 'page_namespace', $params['namespace'] );
 		}
 
-		$dir = $params['dir'] == 'asc' ? 'newer' : 'older';
+		$dir = in_array( $params['dir'], array( 'asc', 'ascending', 'newer' ) ) ? 'newer' : 'older';
 
 		if ( $params['sort'] == 'timestamp' ) {
-			$this->addWhereRange( 'cl_timestamp',
+			$this->addTimestampWhereRange( 'cl_timestamp',
 				$dir,
 				$params['start'],
 				$params['end'] );
@@ -153,7 +135,7 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 				$endsortkey = $params['endsortkeyprefix'] !== null ?
 					Collation::singleton()->getSortkey( $params['endsortkeyprefix'] ) :
 					$params['endsortkey'];
-				
+
 				// The below produces ORDER BY cl_sortkey, cl_from, possibly with DESC added to each of them
 				$this->addWhereRange( 'cl_sortkey',
 					$dir,
@@ -318,10 +300,15 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 				)
 			),
 			'dir' => array(
-				ApiBase::PARAM_DFLT => 'asc',
+				ApiBase::PARAM_DFLT => 'ascending',
 				ApiBase::PARAM_TYPE => array(
 					'asc',
-					'desc'
+					'desc',
+					// Normalising with other modules
+					'ascending',
+					'descending',
+					'newer',
+					'older',
 				)
 			),
 			'start' => array(
@@ -362,7 +349,7 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 			'endsortkey' => "Sortkey to end listing at. Must be given in binary format. Can only be used with {$p}sort=sortkey",
 			'startsortkeyprefix' => "Sortkey prefix to start listing from. Can only be used with {$p}sort=sortkey. Overrides {$p}startsortkey",
 			'endsortkeyprefix' => "Sortkey prefix to end listing BEFORE (not at, if this value occurs it will not be included!). Can only be used with {$p}sort=sortkey. Overrides {$p}endsortkey",
-			'continue' => 'For large categories, give the value retured from previous query',
+			'continue' => 'For large categories, give the value returned from previous query',
 			'limit' => 'The maximum number of pages to return.',
 		);
 
@@ -377,27 +364,54 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 		return $desc;
 	}
 
+	public function getResultProperties() {
+		return array(
+			'ids' => array(
+				'pageid' => 'integer'
+			),
+			'title' => array(
+				'ns' => 'namespace',
+				'title' => 'string'
+			),
+			'sortkey' => array(
+				'sortkey' => 'string'
+			),
+			'sortkeyprefix' => array(
+				'sortkeyprefix' => 'string'
+			),
+			'type' => array(
+				'type' => array(
+					ApiBase::PROP_TYPE => array(
+						'page',
+						'subcat',
+						'file'
+					)
+				)
+			),
+			'timestamp' => array(
+				'timestamp' => 'timestamp'
+			)
+		);
+	}
+
 	public function getDescription() {
 		return 'List all pages in a given category';
 	}
 
 	public function getPossibleErrors() {
 		return array_merge( parent::getPossibleErrors(),
-			$this->getRequireOnlyOneParameterErrorMessages( array( 'title', 'pageid' ) ),
+			$this->getTitleOrPageIdErrorMessage(),
 			array(
 				array( 'code' => 'invalidcategory', 'info' => 'The category name you entered is not valid' ),
 				array( 'code' => 'badcontinue', 'info' => 'Invalid continue param. You should pass the original value returned by the previous query' ),
-				array( 'nosuchpageid', 'pageid' ),
 			)
 		);
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
-			'Get first 10 pages in [[Category:Physics]]:',
-			'  api.php?action=query&list=categorymembers&cmtitle=Category:Physics',
-			'Get page info about first 10 pages in [[Category:Physics]]:',
-			'  api.php?action=query&generator=categorymembers&gcmtitle=Category:Physics&prop=info',
+			'api.php?action=query&list=categorymembers&cmtitle=Category:Physics' => 'Get first 10 pages in [[Category:Physics]]',
+			'api.php?action=query&generator=categorymembers&gcmtitle=Category:Physics&prop=info' => 'Get page info about first 10 pages in [[Category:Physics]]',
 		);
 	}
 

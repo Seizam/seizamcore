@@ -1,5 +1,27 @@
 <?php
 /**
+ * This file contains database-related utiliy classes.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup Database
+ */
+
+/**
  * Utility class.
  * @ingroup Database
  */
@@ -10,6 +32,9 @@ class DBObject {
 		$this->mData = $data;
 	}
 
+	/**
+	 * @return bool
+	 */
 	function isLOB() {
 		return false;
 	}
@@ -155,6 +180,9 @@ class ResultWrapper implements Iterator {
 		$this->currentRow = null;
 	}
 
+	/**
+	 * @return int
+	 */
 	function current() {
 		if ( is_null( $this->currentRow ) ) {
 			$this->next();
@@ -162,16 +190,25 @@ class ResultWrapper implements Iterator {
 		return $this->currentRow;
 	}
 
+	/**
+	 * @return int
+	 */
 	function key() {
 		return $this->pos;
 	}
 
+	/**
+	 * @return int
+	 */
 	function next() {
 		$this->pos++;
 		$this->currentRow = $this->fetchObject();
 		return $this->currentRow;
 	}
 
+	/**
+	 * @return bool
+	 */
 	function valid() {
 		return $this->current() !== false;
 	}
@@ -205,7 +242,11 @@ class FakeResultWrapper extends ResultWrapper {
 			$this->currentRow = false;
 		}
 		$this->pos++;
-		return $this->currentRow;
+		if ( is_object( $this->currentRow ) ) {
+			return get_object_vars( $this->currentRow );
+		} else {
+			return $this->currentRow;
+		}
 	}
 
 	function seek( $row ) {

@@ -1,10 +1,34 @@
 <?php
 /**
-* Class for reading jpegs and extracting metadata.
-* see also BitmapMetadataHandler.
-*
-* Based somewhat on GIFMetadataExtrator.
-*/
+ * Extraction of JPEG image metadata.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup Media
+ */
+
+/**
+ * Class for reading jpegs and extracting metadata.
+ * see also BitmapMetadataHandler.
+ *
+ * Based somewhat on GIFMetadataExtrator.
+ *
+ * @ingroup Media
+ */
 class JpegMetadataExtractor {
 
 	const MAX_JPEG_SEGMENTS = 200;
@@ -31,6 +55,7 @@ class JpegMetadataExtractor {
 		$segments = array(
 			'XMP_ext' => array(),
 			'COM' => array(),
+			'PSIR' => array(),
 		);
 
 		if ( !$filename ) {
@@ -122,7 +147,7 @@ class JpegMetadataExtractor {
 				// APP13 - PSIR. IPTC and some photoshop stuff
 				$temp = self::jpegExtractMarker( $fh );
 				if ( substr( $temp, 0, 14 ) === "Photoshop 3.0\x00" ) {
-					$segments["PSIR"] = $temp;
+					$segments["PSIR"][] = $temp;
 				}
 			} elseif ( $buffer === "\xD9" || $buffer === "\xDA" ) {
 				// EOI - end of image or SOS - start of scan. either way we're past any interesting segments
@@ -142,13 +167,17 @@ class JpegMetadataExtractor {
 	/**
 	* Helper function for jpegSegmentSplitter
 	* @param &$fh FileHandle for jpeg file
-	* @return data content of segment.
+	* @return string data content of segment.
 	*/
 	private static function jpegExtractMarker( &$fh ) {
 		$size = wfUnpack( "nint", fread( $fh, 2 ), 2 );
-		if ( $size['int'] <= 2 ) throw new MWException( "invalid marker size in jpeg" );
+		if ( $size['int'] <= 2 ) {
+			throw new MWException( "invalid marker size in jpeg" );
+		}
 		$segment = fread( $fh, $size['int'] - 2 );
-		if ( strlen( $segment ) !== $size['int'] - 2 ) throw new MWException( "Segment shorter than expected" );
+		if ( strlen( $segment ) !== $size['int'] - 2 ) {
+			throw new MWException( "Segment shorter than expected" );
+		}
 		return $segment;
 	}
 
@@ -162,11 +191,12 @@ class JpegMetadataExtractor {
 	* This should generally be called by BitmapMetadataHandler::doApp13()
 	*
 	* @param String $app13 photoshop psir app13 block from jpg.
+	* @throws MWException (It gets caught next level up though)
 	* @return String if the iptc hash is good or not.
 	*/
 	public static function doPSIR ( $app13 ) {
 		if ( !$app13 ) {
-			return;
+			throw new MWException( "No App13 segment given" );
 		}
 		// First compare hash with real thing
 		// 0x404 contains IPTC, 0x425 has hash
@@ -218,8 +248,8 @@ class JpegMetadataExtractor {
 
 			// this should not happen, but check.
 			if ( $lenData['len'] + $offset > $appLen ) {
-				wfDebug( __METHOD__ . " PSIR data too long.\n" );
-				return 'iptc-no-hash';
+				throw new MWException( "PSIR data too long. (item length=" . $lenData['len']
+					. "; offset=$offset; total length=$appLen)" );
 			}
 
 			if ( $valid ) {

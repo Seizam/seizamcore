@@ -36,21 +36,23 @@
  * @file
  */
 
-// Bail on old versions of PHP.  Pretty much every other file in the codebase
-// has structures (try/catch, foo()->bar(), etc etc) which throw parse errors in PHP 4.
-// Setup.php and ObjectCache.php have structures invalid in PHP 5.0 and 5.1, respectively.
-if ( !function_exists( 'version_compare' ) || version_compare( phpversion(), '5.2.3' ) < 0 ) {
+# Bail on old versions of PHP.  Pretty much every other file in the codebase
+# has structures (try/catch, foo()->bar(), etc etc) which throw parse errors in
+# PHP 4. Setup.php and ObjectCache.php have structures invalid in PHP 5.0 and
+# 5.1, respectively.
+if ( !function_exists( 'version_compare' ) || version_compare( phpversion(), '5.3.2' ) < 0 ) {
+	// We need to use dirname( __FILE__ ) here cause __DIR__ is PHP5.3+
 	require( dirname( __FILE__ ) . '/includes/PHPVersionError.php' );
 	wfPHPVersionError( 'index.php' );
 }
 
-# Initialise common code.  This gives us access to GlobalFunctions, the AutoLoader, and
-# the globals $wgRequest, $wgOut, $wgUser, $wgLang and $wgContLang, amongst others; it
-# does *not* load $wgTitle
+# Initialise common code.  This gives us access to GlobalFunctions, the
+# AutoLoader, and the globals $wgRequest, $wgOut, $wgUser, $wgLang and
+# $wgContLang, amongst others; it does *not* load $wgTitle
 if ( isset( $_SERVER['MW_COMPILED'] ) ) {
 	require ( 'phase3/includes/WebStart.php' );
 } else {
-	require ( dirname( __FILE__ ) . '/includes/WebStart.php' );
+	require ( __DIR__ . '/includes/WebStart.php' );
 }
 
 $mediaWiki = new MediaWiki();

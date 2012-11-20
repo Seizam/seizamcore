@@ -2,7 +2,23 @@
 /**
  * Cache for outputs of the PHP parser
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
+ * @ingroup Cache Parser
  */
 
 /**
@@ -15,6 +31,8 @@ class ParserCache {
 
 	/**
 	 * Get an instance of this object
+	 *
+	 * @return ParserCache
 	 */
 	public static function singleton() {
 		static $instance;
@@ -75,10 +93,11 @@ class ParserCache {
 	 *
 	 * @param $article Article
 	 * @param $popts ParserOptions
+	 * @return string
 	 */
 	function getETag( $article, $popts ) {
 		return 'W/"' . $this->getParserOutputKey( $article,
-			$popts->optionsHash( ParserOptions::legacyOptions() ) ) .
+			$popts->optionsHash( ParserOptions::legacyOptions(), $article->getTitle() ) ) .
 				"--" . $article->getTouched() . '"';
 	}
 
@@ -86,7 +105,7 @@ class ParserCache {
 	 * Retrieve the ParserOutput from ParserCache, even if it's outdated.
 	 * @param $article Article
 	 * @param $popts ParserOptions
-	 * @return ParserOutput|false
+	 * @return ParserOutput|bool False on failure
 	 */
 	public function getDirty( $article, $popts ) {
 		$value = $this->get( $article, $popts, true );
@@ -98,8 +117,12 @@ class ParserCache {
 	 * It would be preferable to have this code in get()
 	 * instead of having Article looking in our internals.
 	 *
-	 * @param $article Article
-	 * @param $popts ParserOptions
+	 * @todo Document parameter $useOutdated
+	 *
+	 * @param $article     Article
+	 * @param $popts       ParserOptions
+	 * @param $useOutdated Boolean (default true)
+	 * @return bool|mixed|string
 	 */
 	public function getKey( $article, $popts, $useOutdated = true ) {
 		global $wgCacheEpoch;
@@ -128,18 +151,18 @@ class ParserCache {
 			$usedOptions = ParserOptions::legacyOptions();
 		}
 
-		return $this->getParserOutputKey( $article, $popts->optionsHash( $usedOptions ) );
+		return $this->getParserOutputKey( $article, $popts->optionsHash( $usedOptions, $article->getTitle() ) );
 	}
 
 	/**
 	 * Retrieve the ParserOutput from ParserCache.
 	 * false if not found or outdated.
 	 *
-	 * @param $article Article
-	 * @param $popts ParserOptions
-	 * @param $useOutdated
+	 * @param $article     Article
+	 * @param $popts       ParserOptions
+	 * @param $useOutdated Boolean (default false)
 	 *
-	 * @return ParserOutput|false
+	 * @return ParserOutput|bool False on failure
 	 */
 	public function get( $article, $popts, $useOutdated = false ) {
 		global $wgCacheEpoch;
@@ -156,6 +179,7 @@ class ParserCache {
 
 		$parserOutputKey = $this->getKey( $article, $popts, $useOutdated );
 		if ( $parserOutputKey === false ) {
+			wfIncrStats( 'pcache_miss_absent' );
 			wfProfileOut( __METHOD__ );
 			return false;
 		}
@@ -163,18 +187,19 @@ class ParserCache {
 		$value = $this->mMemc->get( $parserOutputKey );
 		if ( self::try116cache && !$value && strpos( $value, '*' ) !== -1 ) {
 			wfDebug( "New format parser cache miss.\n" );
-			$parserOutputKey = $this->getParserOutputKey( $article, $popts->optionsHash( ParserOptions::legacyOptions() ) );
+			$parserOutputKey = $this->getParserOutputKey( $article,
+				$popts->optionsHash( ParserOptions::legacyOptions(), $article->getTitle() ) );
 			$value = $this->mMemc->get( $parserOutputKey );
 		}
 		if ( !$value ) {
-			wfDebug( "Parser cache miss.\n" );
+			wfDebug( "ParserOutput cache miss.\n" );
 			wfIncrStats( "pcache_miss_absent" );
 			wfProfileOut( __METHOD__ );
 			return false;
 		}
 
-		wfDebug( "Found.\n" );
-		
+		wfDebug( "ParserOutput cache found.\n" );
+
 		// The edit section preference may not be the appropiate one in 
 		// the ParserOutput, as we are not storing it in the parsercache 
 		// key. Force it here. See bug 31445.
@@ -197,7 +222,6 @@ class ParserCache {
 	 * @param $parserOutput ParserOutput
 	 * @param $article Article
 	 * @param $popts ParserOptions
-	 * @return void
 	 */
 	public function save( $parserOutput, $article, $popts ) {
 		$expire = $parserOutput->getCacheExpiry();
@@ -215,10 +239,10 @@ class ParserCache {
 			$optionsKey->setContainsOldMagic( $parserOutput->containsOldMagic() );
 
 			$parserOutputKey = $this->getParserOutputKey( $article,
-				$popts->optionsHash( $optionsKey->mUsedOptions ) );
+				$popts->optionsHash( $optionsKey->mUsedOptions, $article->getTitle() ) );
 
 			// Save the timestamp so that we don't have to load the revision row on view
-			$parserOutput->mTimestamp = $article->getTimestamp();
+			$parserOutput->setTimestamp( $article->getTimestamp() );
 
 			$parserOutput->mText .= "\n<!-- Saved in parser cache with key $parserOutputKey and timestamp $now -->\n";
 			wfDebug( "Saved in parser cache with key $parserOutputKey and timestamp $now\n" );

@@ -4,7 +4,7 @@
  *
  * Created on Oct 16, 2006
  *
- * Copyright © 2006 Yuri Astrakhan <Firstname><Lastname>@gmail.com
+ * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +23,6 @@
  *
  * @file
  */
-
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiQueryBase.php' );
-}
 
 /**
  * Query action to List the log events, with optional filtering by various parameters.
@@ -200,28 +195,47 @@ class ApiQueryLogEvents extends ApiQueryBase {
 	 * @param $type string
 	 * @param $action string
 	 * @param $ts
+	 * @param $legacy bool
 	 * @return array
 	 */
-	public static function addLogParams( $result, &$vals, $params, $type, $action, $ts ) {
-		$params = explode( "\n", $params );
+	public static function addLogParams( $result, &$vals, $params, $type, $action, $ts, $legacy = false ) {
 		switch ( $type ) {
 			case 'move':
-				if ( isset( $params[0] ) ) {
-					$title = Title::newFromText( $params[0] );
+				if ( $legacy ){
+					$targetKey = 0;
+					$noredirKey = 1;
+				} else {
+					$targetKey = '4::target';
+					$noredirKey = '5::noredir';
+				}
+
+				if ( isset( $params[ $targetKey ] ) ) {
+					$title = Title::newFromText( $params[ $targetKey ] );
 					if ( $title ) {
 						$vals2 = array();
 						ApiQueryBase::addTitleInfo( $vals2, $title, 'new_' );
 						$vals[$type] = $vals2;
 					}
 				}
-				if ( isset( $params[1] ) && $params[1] ) {
+				if ( isset( $params[ $noredirKey ] ) && $params[ $noredirKey ] ) {
 					$vals[$type]['suppressedredirect'] = '';
 				}
 				$params = null;
 				break;
 			case 'patrol':
+				if ( $legacy ){
+					$cur = 0;
+					$prev = 1;
+					$auto = 2;
+				} else {
+					$cur = '4::curid';
+					$prev = '5::previd';
+					$auto = '6::auto';
+				}
 				$vals2 = array();
-				list( $vals2['cur'], $vals2['prev'], $vals2['auto'] ) = $params;
+				$vals2['cur'] = $params[$cur];
+				$vals2['prev'] = $params[$prev];
+				$vals2['auto'] = $params[$auto];
 				$vals[$type] = $vals2;
 				$params = null;
 				break;
@@ -249,12 +263,14 @@ class ApiQueryLogEvents extends ApiQueryBase {
 		}
 		if ( !is_null( $params ) ) {
 			$result->setIndexedTagName( $params, 'param' );
+			$result->setIndexedTagName_recursive( $params, 'param' );
 			$vals = array_merge( $vals, $params );
 		}
 		return $vals;
 	}
 
 	private function extractRowInfo( $row ) {
+		$logEntry = DatabaseLogEntry::newFromRow( $row );
 		$vals = array();
 
 		if ( $this->fld_ids ) {
@@ -286,10 +302,11 @@ class ApiQueryLogEvents extends ApiQueryBase {
 				self::addLogParams(
 					$this->getResult(),
 					$vals,
-					$row->log_params,
-					$row->log_type,
-					$row->log_action,
-					$row->log_timestamp
+					$logEntry->getParameters(),
+					$logEntry->getType(),
+					$logEntry->getSubtype(),
+					$logEntry->getTimestamp(),
+					$logEntry->isLegacy()
 				);
 			}
 		}
@@ -323,8 +340,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 				}
 
 				if ( $this->fld_parsedcomment ) {
-					global $wgUser;
-					$vals['parsedcomment'] = $wgUser->getSkin()->formatComment( $row->log_comment, $title );
+					$vals['parsedcomment'] = Linker::formatComment( $row->log_comment, $title );
 				}
 			}
 		}
@@ -344,7 +360,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 
 	public function getCacheMode( $params ) {
 		if ( !is_null( $params['prop'] ) && in_array( 'parsedcomment', $params['prop'] ) ) {
-			// formatComment() calls wfMsg() among other things
+			// formatComment() calls wfMessage() among other things
 			return 'anon-public-user-private';
 		} else {
 			return 'public';
@@ -352,7 +368,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 	}
 
 	public function getAllowedParams() {
-		global $wgLogTypes, $wgLogActions;
+		global $wgLogTypes, $wgLogActions, $wgLogActionsHandlers;
 		return array(
 			'prop' => array(
 				ApiBase::PARAM_ISMULTI => true,
@@ -374,7 +390,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 				ApiBase::PARAM_TYPE => $wgLogTypes
 			),
 			'action' => array(
-				ApiBase::PARAM_TYPE => array_keys( $wgLogActions )
+				ApiBase::PARAM_TYPE => array_keys( array_merge( $wgLogActions, $wgLogActionsHandlers ) )
 			),
 			'start' => array(
 				ApiBase::PARAM_TYPE => 'timestamp'
@@ -432,6 +448,62 @@ class ApiQueryLogEvents extends ApiQueryBase {
 		);
 	}
 
+	public function getResultProperties() {
+		global $wgLogTypes;
+		return array(
+			'ids' => array(
+				'logid' => 'integer',
+				'pageid' => 'integer'
+			),
+			'title' => array(
+				'ns' => 'namespace',
+				'title' => 'string'
+			),
+			'type' => array(
+				'type' => array(
+					ApiBase::PROP_TYPE => $wgLogTypes
+				),
+				'action' => 'string'
+			),
+			'details' => array(
+				'actionhidden' => 'boolean'
+			),
+			'user' => array(
+				'userhidden' => 'boolean',
+				'user' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				),
+				'anon' => 'boolean'
+			),
+			'userid' => array(
+				'userhidden' => 'boolean',
+				'userid' => array(
+					ApiBase::PROP_TYPE => 'integer',
+					ApiBase::PROP_NULLABLE => true
+				),
+				'anon' => 'boolean'
+			),
+			'timestamp' => array(
+				'timestamp' => 'timestamp'
+			),
+			'comment' => array(
+				'commenthidden' => 'boolean',
+				'comment' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				)
+			),
+			'parsedcomment' => array(
+				'commenthidden' => 'boolean',
+				'parsedcomment' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				)
+			)
+		);
+	}
+
 	public function getDescription() {
 		return 'Get events from logs';
 	}
@@ -445,7 +517,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 		) );
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=query&list=logevents'
 		);

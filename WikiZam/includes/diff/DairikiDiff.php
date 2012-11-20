@@ -24,10 +24,16 @@ class _DiffOp {
 		trigger_error( 'pure virtual', E_USER_ERROR );
 	}
 
+	/**
+	 * @return int
+	 */
 	function norig() {
 		return $this->orig ? sizeof( $this->orig ) : 0;
 	}
 
+	/**
+	 * @return int
+	 */
 	function nclosing() {
 		return $this->closing ? sizeof( $this->closing ) : 0;
 	}
@@ -49,6 +55,9 @@ class _DiffOp_Copy extends _DiffOp {
 		$this->closing = $closing;
 	}
 
+	/**
+	 * @return _DiffOp_Copy
+	 */
 	function reverse() {
 		return new _DiffOp_Copy( $this->closing, $this->orig );
 	}
@@ -67,6 +76,9 @@ class _DiffOp_Delete extends _DiffOp {
 		$this->closing = false;
 	}
 
+	/**
+	 * @return _DiffOp_Add
+	 */
 	function reverse() {
 		return new _DiffOp_Add( $this->orig );
 	}
@@ -85,6 +97,9 @@ class _DiffOp_Add extends _DiffOp {
 		$this->orig = false;
 	}
 
+	/**
+	 * @return _DiffOp_Delete
+	 */
 	function reverse() {
 		return new _DiffOp_Delete( $this->closing );
 	}
@@ -103,6 +118,9 @@ class _DiffOp_Change extends _DiffOp {
 		$this->closing = $closing;
 	}
 
+	/**
+	 * @return _DiffOp_Change
+	 */
 	function reverse() {
 		return new _DiffOp_Change( $this->closing, $this->orig );
 	}
@@ -145,6 +163,11 @@ class _DiffEngine {
 
 	protected $lcs = 0;
 
+	/**
+	 * @param $from_lines
+	 * @param $to_lines
+	 * @return array
+	 */
 	function diff ( $from_lines, $to_lines ) {
 		wfProfileIn( __METHOD__ );
 
@@ -162,8 +185,8 @@ class _DiffEngine {
 		$edits = array();
 		$xi = $yi = 0;
 		while ( $xi < $n_from || $yi < $n_to ) {
-			assert( $yi < $n_to || $this->xchanged[$xi] );
-			assert( $xi < $n_from || $this->ychanged[$yi] );
+			assert( '$yi < $n_to || $this->xchanged[$xi]' );
+			assert( '$xi < $n_from || $this->ychanged[$yi]' );
 
 			// Skip matching "snake".
 			$copy = array();
@@ -199,6 +222,10 @@ class _DiffEngine {
 		return $edits;
 	}
 
+	/**
+	 * @param $from_lines
+	 * @param $to_lines
+	 */
 	function diff_local ( $from_lines, $to_lines ) {
 		global $wgExternalDiffEngine;
 		wfProfileIn( __METHOD__ );
@@ -268,6 +295,8 @@ class _DiffEngine {
 
 	/**
 	 * Returns the whole line if it's small enough, or the MD5 hash otherwise
+	 * @param $line string
+	 * @return string
 	 */
 	function _line_hash( $line ) {
 		if ( strlen( $line ) > self::MAX_XREF_LENGTH ) {
@@ -293,6 +322,12 @@ class _DiffEngine {
 	 * of the two files do not match, and likewise that the last lines do not
 	 * match.  The caller must trim matching lines from the beginning and end
 	 * of the portions it is going to specify.
+	 * @param $xoff
+	 * @param $xlim
+	 * @param $yoff
+	 * @param $ylim
+	 * @param $nchunks
+	 * @return array
 	 */
 	function _diag( $xoff, $xlim, $yoff, $ylim, $nchunks ) {
 		$flip = false;
@@ -339,14 +374,14 @@ class _DiffEngine {
 				while ( list( , $y ) = each( $matches ) ) {
 					if ( empty( $this->in_seq[$y] ) ) {
 						$k = $this->_lcs_pos( $y );
-						assert( $k > 0 );
+						assert( '$k > 0' );
 						$ymids[$k] = $ymids[$k -1];
 						break;
 					}
 				}
 				while ( list ( , $y ) = each( $matches ) ) {
 					if ( $y > $this->seq[$k -1] ) {
-						assert( $y < $this->seq[$k] );
+						assert( '$y < $this->seq[$k]' );
 						// Optimization: this is a common case:
 						//	next match is just replacing previous match.
 						$this->in_seq[$this->seq[$k]] = false;
@@ -354,7 +389,7 @@ class _DiffEngine {
 						$this->in_seq[$y] = 1;
 					} elseif ( empty( $this->in_seq[$y] ) ) {
 						$k = $this->_lcs_pos( $y );
-						assert( $k > 0 );
+						assert( '$k > 0' );
 						$ymids[$k] = $ymids[$k -1];
 					}
 				}
@@ -373,6 +408,10 @@ class _DiffEngine {
 		return array( $this->lcs, $seps );
 	}
 
+	/**
+	 * @param $ypos
+	 * @return int
+	 */
 	function _lcs_pos( $ypos ) {
 		$end = $this->lcs;
 		if ( $end == 0 || $ypos > $this->seq[$end] ) {
@@ -391,7 +430,7 @@ class _DiffEngine {
 			}
 		}
 
-		assert( $ypos != $this->seq[$end] );
+		assert( '$ypos != $this->seq[$end]' );
 
 		$this->in_seq[$this->seq[$end]] = false;
 		$this->seq[$end] = $ypos;
@@ -410,6 +449,10 @@ class _DiffEngine {
 	 *
 	 * Note that XLIM, YLIM are exclusive bounds.
 	 * All line numbers are origin-0 and discarded lines are not counted.
+	 * @param $xoff
+	 * @param $xlim
+	 * @param $yoff
+	 * @param $ylim
 	 */
 	function _compareseq ( $xoff, $xlim, $yoff, $ylim ) {
 		// Slide down the bottom initial diagonal.
@@ -618,7 +661,7 @@ class Diff {
 	 *
 	 *	$diff = new Diff($lines1, $lines2);
 	 *	$rev = $diff->reverse();
-	 * @return object A Diff object representing the inverse of the
+	 * @return Object A Diff object representing the inverse of the
 	 *				  original diff.
 	 */
 	function reverse() {
@@ -703,6 +746,8 @@ class Diff {
 	 * Check a Diff for validity.
 	 *
 	 * This is here only for debugging purposes.
+	 * @param $from_lines
+	 * @param $to_lines
 	 */
 	function _check( $from_lines, $to_lines ) {
 		wfProfileIn( __METHOD__ );
@@ -769,8 +814,8 @@ class MappedDiff extends Diff {
 		$mapped_from_lines, $mapped_to_lines ) {
 		wfProfileIn( __METHOD__ );
 
-		assert( sizeof( $from_lines ) == sizeof( $mapped_from_lines ) );
-		assert( sizeof( $to_lines ) == sizeof( $mapped_to_lines ) );
+		assert( 'sizeof( $from_lines ) == sizeof( $mapped_from_lines )' );
+		assert( 'sizeof( $to_lines ) == sizeof( $mapped_to_lines )' );
 
 		parent::__construct( $mapped_from_lines, $mapped_to_lines );
 
@@ -886,6 +931,13 @@ class DiffFormatter {
 		return $end;
 	}
 
+	/**
+	 * @param $xbeg
+	 * @param $xlen
+	 * @param $ybeg
+	 * @param $ylen
+	 * @param $edits
+	 */
 	function _block( $xbeg, $xlen, $ybeg, $ylen, &$edits ) {
 		wfProfileIn( __METHOD__ );
 		$this->_start_block( $this->_block_header( $xbeg, $xlen, $ybeg, $ylen ) );
@@ -910,12 +962,22 @@ class DiffFormatter {
 		ob_start();
 	}
 
+	/**
+	 * @return string
+	 */
 	function _end_diff() {
 		$val = ob_get_contents();
 		ob_end_clean();
 		return $val;
 	}
 
+	/**
+	 * @param $xbeg
+	 * @param $xlen
+	 * @param $ybeg
+	 * @param $ylen
+	 * @return string
+	 */
 	function _block_header( $xbeg, $xlen, $ybeg, $ylen ) {
 		if ( $xlen > 1 ) {
 			$xbeg .= ',' . ( $xbeg + $xlen - 1 );
@@ -934,23 +996,41 @@ class DiffFormatter {
 	function _end_block() {
 	}
 
+	/**
+	 * @param $lines
+	 * @param $prefix string
+	 */
 	function _lines( $lines, $prefix = ' ' ) {
 		foreach ( $lines as $line ) {
 			echo "$prefix $line\n";
 		}
 	}
 
+	/**
+	 * @param $lines
+	 */
 	function _context( $lines ) {
 		$this->_lines( $lines );
 	}
 
+	/**
+	 * @param $lines
+	 */
 	function _added( $lines ) {
 		$this->_lines( $lines, '>' );
 	}
+
+	/**
+	 * @param $lines
+	 */
 	function _deleted( $lines ) {
 		$this->_lines( $lines, '<' );
 	}
 
+	/**
+	 * @param $orig
+	 * @param $closing
+	 */
 	function _changed( $orig, $closing ) {
 		$this->_deleted( $orig );
 		echo "---\n";
@@ -966,16 +1046,36 @@ class UnifiedDiffFormatter extends DiffFormatter {
 	var $leading_context_lines = 2;
 	var $trailing_context_lines = 2;
 
+	/**
+	 * @param $lines
+	 */
 	function _added( $lines ) {
 		$this->_lines( $lines, '+' );
 	}
+
+	/**
+	 * @param $lines
+	 */
 	function _deleted( $lines ) {
 		$this->_lines( $lines, '-' );
 	}
+
+	/**
+	 * @param $orig
+	 * @param $closing
+	 */
 	function _changed( $orig, $closing ) {
 		$this->_deleted( $orig );
 		$this->_added( $closing );
 	}
+
+	/**
+	 * @param $xbeg
+	 * @param $xlen
+	 * @param $ybeg
+	 * @param $ylen
+	 * @return string
+	 */
 	function _block_header( $xbeg, $xlen, $ybeg, $ylen ) {
 		return "@@ -$xbeg,$xlen +$ybeg,$ylen @@";
 	}
@@ -986,6 +1086,11 @@ class UnifiedDiffFormatter extends DiffFormatter {
  * @ingroup DifferenceEngine
  */
 class ArrayDiffFormatter extends DiffFormatter {
+
+	/**
+	 * @param $diff
+	 * @return array
+	 */
 	function format( $diff ) {
 		$oldline = 1;
 		$newline = 1;
@@ -1049,6 +1154,9 @@ class _HWLDF_WordAccumulator {
 		$this->_tag = '';
 	}
 
+	/**
+	 * @param $new_tag
+	 */
 	function _flushGroup( $new_tag ) {
 		if ( $this->_group !== '' ) {
 			if ( $this->_tag == 'ins' ) {
@@ -1065,6 +1173,9 @@ class _HWLDF_WordAccumulator {
 		$this->_tag = $new_tag;
 	}
 
+	/**
+	 * @param $new_tag
+	 */
 	function _flushLine( $new_tag ) {
 		$this->_flushGroup( $new_tag );
 		if ( $this->_line != '' ) {
@@ -1076,6 +1187,10 @@ class _HWLDF_WordAccumulator {
 		$this->_line = '';
 	}
 
+	/**
+	 * @param $words
+	 * @param $tag string
+	 */
 	function addWords ( $words, $tag = '' ) {
 		if ( $tag != $this->_tag ) {
 			$this->_flushGroup( $tag );
@@ -1090,11 +1205,14 @@ class _HWLDF_WordAccumulator {
 				$this->_flushLine( $tag );
 				$word = substr( $word, 1 );
 			}
-			assert( !strstr( $word, "\n" ) );
+			assert( '!strstr( $word, "\n" )' );
 			$this->_group .= $word;
 		}
 	}
 
+	/**
+	 * @return array
+	 */
 	function getLines() {
 		$this->_flushLine( '~done' );
 		return $this->_lines;
@@ -1109,6 +1227,10 @@ class _HWLDF_WordAccumulator {
 class WordLevelDiff extends MappedDiff {
 	const MAX_LINE_LENGTH = 10000;
 
+	/**
+	 * @param $orig_lines
+	 * @param $closing_lines
+	 */
 	function __construct ( $orig_lines, $closing_lines ) {
 		wfProfileIn( __METHOD__ );
 
@@ -1120,6 +1242,10 @@ class WordLevelDiff extends MappedDiff {
 		wfProfileOut( __METHOD__ );
 	}
 
+	/**
+	 * @param $lines
+	 * @return array
+	 */
 	function _split( $lines ) {
 		wfProfileIn( __METHOD__ );
 
@@ -1152,6 +1278,9 @@ class WordLevelDiff extends MappedDiff {
 		return array( $words, $stripped );
 	}
 
+	/**
+	 * @return array
+	 */
 	function orig() {
 		wfProfileIn( __METHOD__ );
 		$orig = new _HWLDF_WordAccumulator;
@@ -1168,6 +1297,9 @@ class WordLevelDiff extends MappedDiff {
 		return $lines;
 	}
 
+	/**
+	 * @return array
+	 */
 	function closing() {
 		wfProfileIn( __METHOD__ );
 		$closing = new _HWLDF_WordAccumulator;
@@ -1197,6 +1329,11 @@ class TableDiffFormatter extends DiffFormatter {
 		$this->trailing_context_lines = 2;
 	}
 
+	/**
+	 * @static
+	 * @param $msg
+	 * @return mixed
+	 */
 	public static function escapeWhiteSpace( $msg ) {
 		$msg = preg_replace( '/^ /m', '&#160; ', $msg );
 		$msg = preg_replace( '/ $/m', ' &#160;', $msg );
@@ -1204,12 +1341,22 @@ class TableDiffFormatter extends DiffFormatter {
 		return $msg;
 	}
 
+	/**
+	 * @param $xbeg
+	 * @param $xlen
+	 * @param $ybeg
+	 * @param $ylen
+	 * @return string
+	 */
 	function _block_header( $xbeg, $xlen, $ybeg, $ylen ) {
 		$r = '<tr><td colspan="2" class="diff-lineno"><!--LINE ' . $xbeg . "--></td>\n" .
 		  '<td colspan="2" class="diff-lineno"><!--LINE ' . $ybeg . "--></td></tr>\n";
 		return $r;
 	}
 
+	/**
+	 * @param $header
+	 */
 	function _start_block( $header ) {
 		echo $header;
 	}
@@ -1220,21 +1367,39 @@ class TableDiffFormatter extends DiffFormatter {
 	function _lines( $lines, $prefix = ' ', $color = 'white' ) {
 	}
 
-	# HTML-escape parameter before calling this
+	/**
+	 * HTML-escape parameter before calling this
+	 * @param $line
+	 * @return string
+	 */
 	function addedLine( $line ) {
 		return $this->wrapLine( '+', 'diff-addedline', $line );
 	}
 
-	# HTML-escape parameter before calling this
+	/**
+	 * HTML-escape parameter before calling this
+	 * @param $line
+	 * @return string
+	 */
 	function deletedLine( $line ) {
 		return $this->wrapLine( '−', 'diff-deletedline', $line );
 	}
 
-	# HTML-escape parameter before calling this
+	/**
+	 * HTML-escape parameter before calling this
+	 * @param $line
+	 * @return string
+	 */
 	function contextLine( $line ) {
 		return $this->wrapLine( '&#160;', 'diff-context', $line );
 	}
 
+	/**
+	 * @param $marker
+	 * @param $class
+	 * @param $line
+	 * @return string
+	 */
 	private function wrapLine( $marker, $class, $line ) {
 		if ( $line !== '' ) {
 			// The <div> wrapper is needed for 'overflow: auto' style to scroll properly
@@ -1243,10 +1408,16 @@ class TableDiffFormatter extends DiffFormatter {
 		return "<td class='diff-marker'>$marker</td><td class='$class'>$line</td>";
 	}
 
+	/**
+	 * @return string
+	 */
 	function emptyLine() {
 		return '<td colspan="2">&#160;</td>';
 	}
 
+	/**
+	 * @param $lines array
+	 */
 	function _added( $lines ) {
 		foreach ( $lines as $line ) {
 			echo '<tr>' . $this->emptyLine() .
@@ -1255,6 +1426,9 @@ class TableDiffFormatter extends DiffFormatter {
 		}
 	}
 
+	/**
+	 * @param $lines
+	 */
 	function _deleted( $lines ) {
 		foreach ( $lines as $line ) {
 			echo '<tr>' . $this->deletedLine( '<del class="diffchange">' .
@@ -1263,6 +1437,9 @@ class TableDiffFormatter extends DiffFormatter {
 		}
 	}
 
+	/**
+	 * @param $lines
+	 */
 	function _context( $lines ) {
 		foreach ( $lines as $line ) {
 			echo '<tr>' .
@@ -1271,6 +1448,10 @@ class TableDiffFormatter extends DiffFormatter {
 		}
 	}
 
+	/**
+	 * @param $orig
+	 * @param $closing
+	 */
 	function _changed( $orig, $closing ) {
 		wfProfileIn( __METHOD__ );
 

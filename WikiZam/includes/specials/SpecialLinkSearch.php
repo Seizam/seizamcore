@@ -56,7 +56,6 @@ class LinkSearchPage extends QueryPage {
 		$namespace = $request->getIntorNull( 'namespace', null );
 
 		$protocols_list = array();
-
 		foreach( $wgUrlProtocols as $prot ) {
 			if ( $prot !== '//' ) {
 				$protocols_list[] = $prot;
@@ -85,18 +84,26 @@ class LinkSearchPage extends QueryPage {
 			$protocol = '';
 		}
 
-		$out->addWikiMsg( 'linksearch-text', '<nowiki>' . $this->getLang()->commaList( $wgUrlProtocols ) . '</nowiki>' );
-
+		$out->addWikiMsg( 'linksearch-text', '<nowiki>' . $this->getLanguage()->commaList( $protocols_list ) . '</nowiki>' );
 		$s = Xml::openElement( 'form', array( 'id' => 'mw-linksearch-form', 'method' => 'get', 'action' => $GLOBALS['wgScript'] ) ) .
 			Html::hidden( 'title', $this->getTitle()->getPrefixedDbKey() ) .
 			'<fieldset>' .
-			Xml::element( 'legend', array(), wfMsg( 'linksearch' ) ) .
-			Xml::inputLabel( wfMsg( 'linksearch-pat' ), 'target', 'target', 50, $target ) . ' ';
+			Xml::element( 'legend', array(), $this->msg( 'linksearch' )->text() ) .
+			Xml::inputLabel( $this->msg( 'linksearch-pat' )->text(), 'target', 'target', 50, $target ) . ' ';
 		if ( !$wgMiserMode ) {
-			$s .= Xml::label( wfMsg( 'linksearch-ns' ), 'namespace' ) . ' ' .
-				Xml::namespaceSelector( $namespace, '' );
+			$s .= Html::namespaceSelector(
+				array(
+					'selected' => $namespace,
+					'all' => '',
+					'label' => $this->msg( 'linksearch-ns' )->text()
+				), array(
+					'name'  => 'namespace',
+					'id'    => 'namespace',
+					'class' => 'namespaceselector',
+				)
+			);
 		}
-		$s .=	Xml::submitButton( wfMsg( 'linksearch-ok' ) ) .
+		$s .=	Xml::submitButton( $this->msg( 'linksearch-ok' )->text() ) .
 			'</fieldset>' .
 			Xml::closeElement( 'form' );
 		$out->addHTML( $s );
@@ -114,6 +121,7 @@ class LinkSearchPage extends QueryPage {
 
 	/**
 	 * Disable RSS/Atom feeds
+	 * @return bool
 	 */
 	function isSyndicated() {
 		return false;
@@ -163,9 +171,9 @@ class LinkSearchPage extends QueryPage {
 		$like = $dbr->buildLike( $stripped );
 		$retval = array (
 			'tables' => array ( 'page', 'externallinks' ),
-			'fields' => array ( 'page_namespace AS namespace',
-					'page_title AS title',
-					'el_index AS value', 'el_to AS url' ),
+			'fields' => array ( 'namespace' => 'page_namespace',
+					'title' => 'page_title',
+					'value' => 'el_index', 'url' => 'el_to' ),
 			'conds' => array ( 'page_id = el_from',
 					"$clause $like" ),
 			'options' => array( 'USE INDEX' => $clause )
@@ -182,7 +190,7 @@ class LinkSearchPage extends QueryPage {
 		$pageLink = Linker::linkKnown( $title );
 		$urlLink = Linker::makeExternalLink( $url, $url );
 
-		return wfMsgHtml( 'linksearch-line', $urlLink, $pageLink );
+		return $this->msg( 'linksearch-line' )->rawParams( $urlLink, $pageLink )->escaped();
 	}
 
 	/**
@@ -205,6 +213,7 @@ class LinkSearchPage extends QueryPage {
 	 * We do a truncated index search, so the optimizer won't trust
 	 * it as good enough for optimizing sort. The implicit ordering
 	 * from the scan will usually do well enough for our needs.
+	 * @return array
 	 */
 	function getOrderFields() {
 		return array();

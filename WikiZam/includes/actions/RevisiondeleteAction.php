@@ -29,10 +29,6 @@ class RevisiondeleteAction extends FormlessAction {
 		return 'revisiondelete';
 	}
 
-	public function getRestriction() {
-		return null;
-	}
-
 	public function requiresUnblock() {
 		return false;
 	}
@@ -48,6 +44,6 @@ class RevisiondeleteAction extends FormlessAction {
 	public function show() {
 		$special = SpecialPageFactory::getPage( 'Revisiondelete' );
 		$special->setContext( $this->getContext() );
-		$special->execute( '' );
+		$special->run( '' );
 	}
 }

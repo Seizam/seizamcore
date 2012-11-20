@@ -1,5 +1,22 @@
 <?php
 /**
+ * Handler for bitmap images with exif metadata.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup Media
  */
@@ -34,8 +51,8 @@ class ExifBitmapHandler extends BitmapHandler {
 
 		// Treat Software as a special case because in can contain
 		// an array of (SoftwareName, Version).
-		if (isset( $metadata['Software'] ) 
-			&& is_array( $metadata['Software'] ) 
+		if (isset( $metadata['Software'] )
+			&& is_array( $metadata['Software'] )
 			&& is_array( $metadata['Software'][0])
 			&& isset( $metadata['Software'][0][0] )
 			&& isset( $metadata['Software'][0][1])
@@ -136,8 +153,8 @@ class ExifBitmapHandler extends BitmapHandler {
 	function getImageSize( $image, $path ) {
 		global $wgEnableAutoRotation;
 		$gis = parent::getImageSize( $image, $path );
-		
-		// Don't just call $image->getMetadata(); File::getPropsFromPath() calls us with a bogus object.
+
+		// Don't just call $image->getMetadata(); FSFile::getPropsFromPath() calls us with a bogus object.
 		// This may mean we read EXIF data twice on initial upload.
 		if ( $wgEnableAutoRotation ) {
 			$meta = $this->getMetadata( $image, $path );
@@ -171,7 +188,7 @@ class ExifBitmapHandler extends BitmapHandler {
 		if ( !$wgEnableAutoRotation ) {
 			return 0;
 		}
-		
+
 		$data = $file->getMetadata();
 		return $this->getRotationForExif( $data );
 	}
@@ -182,7 +199,8 @@ class ExifBitmapHandler extends BitmapHandler {
 	 *
 	 * @param string $data
 	 * @return int 0, 90, 180 or 270
-	 * @fixme orientation can include flipping as well; see if this is an issue!
+	 * @todo FIXME orientation can include flipping as well; see if this is an
+	 * issue!
 	 */
 	protected function getRotationForExif( $data ) {
 		if ( !$data ) {

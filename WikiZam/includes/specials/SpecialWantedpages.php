@@ -27,9 +27,10 @@
  * @ingroup SpecialPage
  */
 class WantedPagesPage extends WantedQueryPage {
+	
 	function __construct( $name = 'Wantedpages' ) {
 		parent::__construct( $name );
-		$this->includable( true );
+		$this->mIncludable = true;
 	}
 
 	function execute( $par ) {
@@ -39,12 +40,12 @@ class WantedPagesPage extends WantedQueryPage {
 			$parts = explode( '/', $par, 2 );
 			$this->limit = (int)$parts[0];
 			// @todo FIXME: nlinks is ignored
-			$nlinks = isset( $parts[1] ) && $parts[1] === 'nlinks';
+			//$nlinks = isset( $parts[1] ) && $parts[1] === 'nlinks';
 			$this->offset = 0;
 		} else {
-			$nlinks = true;
+			//$nlinks = true;
 		}
-		$this->setListOutput( $inc );
+		$this->setListoutput( $inc );
 		$this->shownavigation = !$inc;
 		parent::execute( $par );
 	}
@@ -59,9 +60,9 @@ class WantedPagesPage extends WantedQueryPage {
 				'pg2' => 'page'
 			),
 			'fields' => array(
-				'pl_namespace AS namespace',
-				'pl_title AS title',
-				'COUNT(*) AS value'
+				'namespace' => 'pl_namespace',
+				'title' => 'pl_title',
+				'value' => 'COUNT(*)'
 			),
 			'conds' => array(
 				'pg1.page_namespace IS NULL',
@@ -71,7 +72,7 @@ class WantedPagesPage extends WantedQueryPage {
 			),
 			'options' => array(
 				'HAVING' => "COUNT(*) > $count",
-				'GROUP BY' => 'pl_namespace, pl_title'
+				'GROUP BY' => array( 'pl_namespace', 'pl_title' )
 			),
 			'join_conds' => array(
 				'pg1' => array(

@@ -4,7 +4,7 @@
  *
  * Created on Jul 2, 2007
  *
- * Copyright © 2007 Roan Kattouw <Firstname>.<Lastname>@gmail.com
+ * Copyright © 2007 Roan Kattouw "<Firstname>.<Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiQueryBase.php' );
-}
-
 /**
  * Query module to enumerate all deleted revisions.
  *
@@ -41,9 +36,9 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 	}
 
 	public function execute() {
-		global $wgUser;
+		$user = $this->getUser();
 		// Before doing anything at all, let's check permissions
-		if ( !$wgUser->isAllowed( 'deletedhistory' ) ) {
+		if ( !$user->isAllowed( 'deletedhistory' ) ) {
 			$this->dieUsage( 'You don\'t have permission to view deleted revision information', 'permissiondenied' );
 		}
 
@@ -58,6 +53,7 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 		$fld_parsedcomment = isset ( $prop['parsedcomment'] );
 		$fld_minor = isset( $prop['minor'] );
 		$fld_len = isset( $prop['len'] );
+		$fld_sha1 = isset( $prop['sha1'] );
 		$fld_content = isset( $prop['content'] );
 		$fld_token = isset( $prop['token'] );
 
@@ -106,6 +102,7 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 		$this->addFieldsIf( 'ar_comment', $fld_comment || $fld_parsedcomment );
 		$this->addFieldsIf( 'ar_minor_edit', $fld_minor );
 		$this->addFieldsIf( 'ar_len', $fld_len );
+		$this->addFieldsIf( 'ar_sha1', $fld_sha1 );
 
 		if ( $fld_content ) {
 			$this->addTables( 'text' );
@@ -113,7 +110,7 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 			$this->addWhere( 'ar_text_id = old_id' );
 
 			// This also means stricter restrictions
-			if ( !$wgUser->isAllowed( 'undelete' ) ) {
+			if ( !$user->isAllowed( 'undelete' ) ) {
 				$this->dieUsage( 'You don\'t have permission to view deleted revision content', 'permissiondenied' );
 			}
 		}
@@ -132,7 +129,7 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 
 		if ( $fld_token ) {
 			// Undelete tokens are identical for all pages, so we cache one here
-			$token = $wgUser->editToken( '', $this->getMain()->getRequest() );
+			$token = $user->getEditToken( '', $this->getMain()->getRequest() );
 		}
 
 		$dir = $params['dir'];
@@ -158,7 +155,7 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 			$this->addWhereFld( 'ar_user_text', $params['user'] );
 		} elseif ( !is_null( $params['excludeuser'] ) ) {
 			$this->addWhere( 'ar_user_text != ' .
-				$this->getDB()->addQuotes( $params['excludeuser'] ) );
+				$db->addQuotes( $params['excludeuser'] ) );
 		}
 
 		if ( !is_null( $params['continue'] ) && ( $mode == 'all' || $mode == 'revs' ) ) {
@@ -167,14 +164,14 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 				$this->dieUsage( 'Invalid continue param. You should pass the original value returned by the previous query', 'badcontinue' );
 			}
 			$ns = intval( $cont[0] );
-			$title = $this->getDB()->strencode( $this->titleToKey( $cont[1] ) );
-			$ts = $this->getDB()->strencode( $cont[2] );
+			$title = $db->addQuotes( $cont[1] );
+			$ts = $db->addQuotes( $db->timestamp( $cont[2] ) );
 			$op = ( $dir == 'newer' ? '>' : '<' );
 			$this->addWhere( "ar_namespace $op $ns OR " .
 					"(ar_namespace = $ns AND " .
-					"(ar_title $op '$title' OR " .
-					"(ar_title = '$title' AND " .
-					"ar_timestamp $op= '$ts')))" );
+					"(ar_title $op $title OR " .
+					"(ar_title = $title AND " .
+					"ar_timestamp $op= $ts)))" );
 		}
 
 		$this->addOption( 'LIMIT', $limit + 1 );
@@ -183,7 +180,11 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 			if ( $params['unique'] ) {
 				$this->addOption( 'GROUP BY', 'ar_title' );
 			} else {
-				$this->addOption( 'ORDER BY', 'ar_title, ar_timestamp' );
+				$sort = ( $dir == 'newer' ? '' : ' DESC' );
+				$this->addOption( 'ORDER BY', array(
+					'ar_title' . $sort,
+					'ar_timestamp' . $sort
+				));
 			}
 		} else {
 			if ( $mode == 'revs' ) {
@@ -202,7 +203,7 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 				// We've had enough
 				if ( $mode == 'all' || $mode == 'revs' ) {
 					$this->setContinueEnumParameter( 'continue', intval( $row->ar_namespace ) . '|' .
-						$this->keyToTitle( $row->ar_title ) . '|' . $row->ar_timestamp );
+						$row->ar_title . '|' . $row->ar_timestamp );
 				} else {
 					$this->setContinueEnumParameter( 'start', wfTimestamp( TS_ISO_8601, $row->ar_timestamp ) );
 				}
@@ -214,7 +215,7 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 			if ( $fld_revid ) {
 				$rev['revid'] = intval( $row->ar_rev_id );
 			}
-			if ( $fld_parentid ) {
+			if ( $fld_parentid && !is_null( $row->ar_parent_id ) ) {
 				$rev['parentid'] = intval( $row->ar_parent_id );
 			}
 			if ( $fld_user ) {
@@ -230,13 +231,20 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 			$title = Title::makeTitle( $row->ar_namespace, $row->ar_title );
 
 			if ( $fld_parsedcomment ) {
-				$rev['parsedcomment'] = $wgUser->getSkin()->formatComment( $row->ar_comment, $title );
+				$rev['parsedcomment'] = Linker::formatComment( $row->ar_comment, $title );
 			}
 			if ( $fld_minor && $row->ar_minor_edit == 1 ) {
 				$rev['minor'] = '';
 			}
 			if ( $fld_len ) {
 				$rev['len'] = $row->ar_len;
+			}
+			if ( $fld_sha1 ) {
+				if ( $row->ar_sha1 != '' ) {
+					$rev['sha1'] = wfBaseConvert( $row->ar_sha1, 36, 16, 40 );
+				} else {
+					$rev['sha1'] = '';
+				}
 			}
 			if ( $fld_content ) {
 				ApiResult::setContent( $rev, Revision::getRevisionText( $row ) );
@@ -261,7 +269,7 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 			if ( !$fit ) {
 				if ( $mode == 'all' || $mode == 'revs' ) {
 					$this->setContinueEnumParameter( 'continue', intval( $row->ar_namespace ) . '|' .
-						$this->keyToTitle( $row->ar_title ) . '|' . $row->ar_timestamp );
+						$row->ar_title . '|' . $row->ar_timestamp );
 				} else {
 					$this->setContinueEnumParameter( 'start', wfTimestamp( TS_ISO_8601, $row->ar_timestamp ) );
 				}
@@ -319,6 +327,7 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 					'parsedcomment',
 					'minor',
 					'len',
+					'sha1',
 					'content',
 					'token'
 				),
@@ -329,8 +338,8 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 
 	public function getParamDescription() {
 		return array(
-			'start' => 'The timestamp to start enumerating from (1,2)',
-			'end' => 'The timestamp to stop enumerating at (1,2)',
+			'start' => 'The timestamp to start enumerating from (1, 2)',
+			'end' => 'The timestamp to stop enumerating at (1, 2)',
 			'dir' => $this->getDirectionDescription( $this->getModulePrefix(), ' (1, 3)' ),
 			'from' => 'Start listing at this title (3)',
 			'to' => 'Stop listing at this title (3)',
@@ -345,7 +354,8 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 				' comment        - Adds the comment of the revision',
 				' parsedcomment  - Adds the parsed comment of the revision',
 				' minor          - Tags if the revision is minor',
-				' len            - Adds the length of the revision',
+				' len            - Adds the length (bytes) of the revision',
+				' sha1           - Adds the SHA-1 (base 16) of the revision',
 				' content        - Adds the content of the revision',
 				' token          - Gives the edit token',
 			),
@@ -354,6 +364,18 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 			'excludeuser' => 'Don\'t list revisions by this user',
 			'continue' => 'When more results are available, use this to continue (3)',
 			'unique' => 'List only one revision for each page (3)',
+		);
+	}
+
+	public function getResultProperties() {
+		return array(
+			'' => array(
+				'ns' => 'namespace',
+				'title' => 'string'
+			),
+			'token' => array(
+				'token' => 'string'
+			)
 		);
 	}
 
@@ -385,16 +407,16 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 		) );
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
-			'List the last deleted revisions of Main Page and Talk:Main Page, with content (mode 1):',
-			'  api.php?action=query&list=deletedrevs&titles=Main%20Page|Talk:Main%20Page&drprop=user|comment|content',
-			'List the last 50 deleted contributions by Bob (mode 2):',
-			'  api.php?action=query&list=deletedrevs&druser=Bob&drlimit=50',
-			'List the first 50 deleted revisions in the main namespace (mode 3):',
-			'  api.php?action=query&list=deletedrevs&drdir=newer&drlimit=50',
-			'List the first 50 deleted pages in the Talk namespace (mode 3):',
-			'  api.php?action=query&list=deletedrevs&drdir=newer&drlimit=50&drnamespace=1&drunique=',
+			'api.php?action=query&list=deletedrevs&titles=Main%20Page|Talk:Main%20Page&drprop=user|comment|content'
+				=> 'List the last deleted revisions of Main Page and Talk:Main Page, with content (mode 1)',
+			'api.php?action=query&list=deletedrevs&druser=Bob&drlimit=50'
+				=> 'List the last 50 deleted contributions by Bob (mode 2)',
+			'api.php?action=query&list=deletedrevs&drdir=newer&drlimit=50'
+				=> 'List the first 50 deleted revisions in the main namespace (mode 3)',
+			'api.php?action=query&list=deletedrevs&drdir=newer&drlimit=50&drnamespace=1&drunique='
+				=> 'List the first 50 deleted pages in the Talk namespace (mode 3):',
 		);
 	}
 

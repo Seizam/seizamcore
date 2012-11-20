@@ -1,5 +1,3 @@
-2008-11-11
-
 For system requirements, installation and upgrade details, see the files 
 RELEASE-NOTES, INSTALL, and UPGRADE.
 
@@ -8,8 +6,8 @@ RELEASE-NOTES, INSTALL, and UPGRADE.
 MediaWiki is the software used for Wikipedia [http://www.wikipedia.org/] and the
 other Wikimedia Foundation websites. Compared to other wikis, it has an
 excellent range of features and support for high-traffic websites using
-multiple servers (Wikimedia sites peak in the 60000+ requests per second range
-as of November 2008).
+multiple servers (Wikimedia sites peak in the 100K+ requests per second range
+as of January 2012).
 
 While quite usable on smaller sites, you may find you have to "roll your own"
 local documentation, and some aspects of configuration may seem overcomplicated
@@ -26,7 +24,7 @@ The MediaWiki software was written by:
 * Erik Moeller
 * Tim Starling
 * Gabriel Wicke
-* Ashar Voultoiz
+* Antoine Musso
 * Evan Prodromou
 * Ævar Arnfjörð Bjarmason
 * Niklas Laxström
@@ -45,7 +43,10 @@ The MediaWiki software was written by:
 * Trevor Pascal
 * Bryan Tong Minh
 * Sam Reed
-* Several others (view CREDITS for a more complete list)
+* Victor Vasiliev
+* Rotem Liss
+* Platonides
+* Many others (view CREDITS for a more complete list)
 
 The contributors hold the copyright to this work, and it is licensed under the
 terms of the GNU General Public License, version 2 or later (see
@@ -84,8 +85,8 @@ The official website for MediaWiki is located at:
 
 	http://www.mediawiki.org/
 
-The code is currently maintained in a Subversion repository at
-svn.wikimedia.org. See http://www.mediawiki.org/wiki/Subversion for details.
+The code is currently maintained in a Git repository at
+gerrit.wikimedia.org. See http://www.mediawiki.org/wiki/Git for details.
 
 Please report bugs and make feature requests in our Bugzilla system:
 

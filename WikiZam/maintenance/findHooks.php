@@ -12,7 +12,7 @@
  *
  * Any instance of wfRunHooks that doesn't meet these parameters will be noted.
  *
- * Copyright © Ashar Voultoiz
+ * Copyright © Antoine Musso
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,11 +31,16 @@
  *
  * @file
  * @ingroup Maintenance
- * @author Ashar Voultoiz <hashar at free dot fr>
+ * @author Antoine Musso <hashar at free dot fr>
  */
 
-require_once( dirname( __FILE__ ) . '/Maintenance.php' );
+require_once( __DIR__ . '/Maintenance.php' );
 
+/**
+ * Maintenance script that compares documented and actually present mismatches.
+ *
+ * @ingroup Maintenance
+ */
 class FindHooks extends Maintenance {
 	public function __construct() {
 		parent::__construct();
@@ -59,11 +64,14 @@ class FindHooks extends Maintenance {
 			$IP . '/includes/actions/',
 			$IP . '/includes/api/',
 			$IP . '/includes/cache/',
+			$IP . '/includes/context/',
 			$IP . '/includes/db/',
 			$IP . '/includes/diff/',
 			$IP . '/includes/filerepo/',
+			$IP . '/includes/filerepo/file/',
 			$IP . '/includes/installer/',
 			$IP . '/includes/interwiki/',
+			$IP . '/includes/logging/',
 			$IP . '/includes/media/',
 			$IP . '/includes/parser/',
 			$IP . '/includes/resourceloader/',
@@ -106,6 +114,29 @@ class FindHooks extends Maintenance {
 	 */
 	private function getHooksFromDoc( $doc ) {
 		if ( $this->hasOption( 'online' ) ) {
+			return $this->getHooksFromOnlineDoc( );
+		} else {
+			return $this->getHooksFromLocalDoc( $doc );
+		}
+	}
+
+	/**
+	 * Get hooks from a local file (for example docs/hooks.txt)
+	 * @param $doc string: filename to look in
+	 * @return array of documented hooks
+	 */
+	private function getHooksFromLocalDoc( $doc ) {
+			$m = array();
+			$content = file_get_contents( $doc );
+			preg_match_all( "/\n'(.*?)'/", $content, $m );
+			return array_unique( $m[1] );
+	}
+
+	/**
+	 * Get hooks from www.mediawiki.org using the API
+	 * @return array of documented hooks
+	 */
+	private function getHooksFromOnlineDoc( ) {
 			// All hooks
 			$allhookdata = Http::get( 'http://www.mediawiki.org/w/api.php?action=query&list=categorymembers&cmtitle=Category:MediaWiki_hooks&cmlimit=500&format=php' );
 			$allhookdata = unserialize( $allhookdata );
@@ -129,17 +160,11 @@ class FindHooks extends Maintenance {
 				}
 			}
 			return array_diff( $allhooks, $removed );
-		} else {
-			$m = array();
-			$content = file_get_contents( $doc );
-			preg_match_all( "/\n'(.*?)'/", $content, $m );
-			return array_unique( $m[1] );
-		}
 	}
 
 	/**
 	 * Get hooks from a PHP file
-	 * @param $file Full filename to the PHP file.
+	 * @param $file string Full filename to the PHP file.
 	 * @return array of hooks found.
 	 */
 	private function getHooksFromFile( $file ) {
@@ -170,7 +195,7 @@ class FindHooks extends Maintenance {
 
 	/**
 	 * Get bad hooks (where the hook name could not be determined) from a PHP file
-	 * @param $file Full filename to the PHP file.
+	 * @param $file string Full filename to the PHP file.
 	 * @return array of bad wfRunHooks() lines
 	 */
 	private function getBadHooksFromFile( $file ) {

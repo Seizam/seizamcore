@@ -1,4 +1,25 @@
 <?php
+/**
+ * HTML cache invalidation of all pages linking to a given title.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup Cache
+ */
 
 /**
  * Class to invalidate the HTML cache of all the pages linking to a given title.
@@ -23,8 +44,7 @@
  *
  * @ingroup Cache
  */
-class HTMLCacheUpdate
-{
+class HTMLCacheUpdate implements DeferrableUpdate {
 	/**
 	 * @var Title
 	 */
@@ -33,6 +53,12 @@ class HTMLCacheUpdate
 	public $mTable, $mPrefix, $mStart, $mEnd;
 	public $mRowsPerJob, $mRowsPerQuery;
 
+	/**
+	 * @param $titleTo
+	 * @param $table
+	 * @param $start bool
+	 * @param $end bool
+	 */
 	function __construct( $titleTo, $table, $start = false, $end = false ) {
 		global $wgUpdateRowsPerJob, $wgUpdateRowsPerQuery;
 
@@ -138,6 +164,9 @@ class HTMLCacheUpdate
 		Job::batchInsert( $jobs );
 	}
 
+	/**
+	 * @return mixed
+	 */
 	protected function insertJobs() {
 		$batches = $this->mCache->partition( $this->mTable, $this->mRowsPerJob );
 		if ( !$batches ) {
@@ -157,6 +186,7 @@ class HTMLCacheUpdate
 
 	/**
 	 * Invalidate an array (or iterator) of Title objects, right now
+	 * @param $titleArray array
 	 */
 	protected function invalidateTitles( $titleArray ) {
 		global $wgUseFileCache, $wgUseSquid;
@@ -179,7 +209,7 @@ class HTMLCacheUpdate
 		foreach ( $batches as $batch ) {
 			$dbw->update( 'page',
 				array( 'page_touched' => $timestamp ),
-				array( 'page_id IN (' . $dbw->makeList( $batch ) . ')' ),
+				array( 'page_id' => $batch ),
 				__METHOD__
 			);
 		}
@@ -197,8 +227,8 @@ class HTMLCacheUpdate
 			}
 		}
 	}
-
 }
+
 
 /**
  * Job wrapper for HTMLCacheUpdate. Gets run whenever a related

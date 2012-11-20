@@ -4,7 +4,7 @@
  *
  * Created on Oct 31, 2007
  *
- * Copyright © 2007 Roan Kattouw <Firstname>.<Lastname>@gmail.com
+ * Copyright © 2007 Roan Kattouw "<Firstname>.<Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( "ApiBase.php" );
-}
-
 /**
  * API Module to move pages
  * @ingroup API
@@ -40,11 +35,8 @@ class ApiMove extends ApiBase {
 	}
 
 	public function execute() {
-		global $wgUser;
+		$user = $this->getUser();
 		$params = $this->extractRequestParams();
-		if ( is_null( $params['reason'] ) ) {
-			$params['reason'] = '';
-		}
 
 		$this->requireOnlyOneParameter( $params, 'from', 'fromid' );
 
@@ -75,30 +67,38 @@ class ApiMove extends ApiBase {
 			&& !RepoGroup::singleton()->getLocalRepo()->findFile( $toTitle )
 			&& wfFindFile( $toTitle ) )
 		{
-			if ( !$params['ignorewarnings'] && $wgUser->isAllowed( 'reupload-shared' ) ) {
+			if ( !$params['ignorewarnings'] && $user->isAllowed( 'reupload-shared' ) ) {
 				$this->dieUsageMsg( 'sharedfile-exists' );
-			} elseif ( !$wgUser->isAllowed( 'reupload-shared' ) ) {
+			} elseif ( !$user->isAllowed( 'reupload-shared' ) ) {
 				$this->dieUsageMsg( 'cantoverwrite-sharedfile' );
 			}
 		}
 
 		// Move the page
+		$toTitleExists = $toTitle->exists();
 		$retval = $fromTitle->moveTo( $toTitle, true, $params['reason'], !$params['noredirect'] );
 		if ( $retval !== true ) {
 			$this->dieUsageMsg( reset( $retval ) );
 		}
 
 		$r = array( 'from' => $fromTitle->getPrefixedText(), 'to' => $toTitle->getPrefixedText(), 'reason' => $params['reason'] );
-		if ( !$params['noredirect'] || !$wgUser->isAllowed( 'suppressredirect' ) ) {
+		if ( !$params['noredirect'] || !$user->isAllowed( 'suppressredirect' ) ) {
 			$r['redirectcreated'] = '';
+		}
+		if( $toTitleExists ) {
+			$r['moveoverredirect'] = '';
 		}
 
 		// Move the talk page
 		if ( $params['movetalk'] && $fromTalk->exists() && !$fromTitle->isTalkPage() ) {
+			$toTalkExists = $toTalk->exists();
 			$retval = $fromTalk->moveTo( $toTalk, true, $params['reason'], !$params['noredirect'] );
 			if ( $retval === true ) {
 				$r['talkfrom'] = $fromTalk->getPrefixedText();
 				$r['talkto'] = $toTalk->getPrefixedText();
+				if( $toTalkExists ) {
+					$r['talkmoveoverredirect'] = '';
+				}
 			} else {
 				// We're not gonna dieUsage() on failure, since we already changed something
 				$parsed = $this->parseMsg( reset( $retval ) );
@@ -185,8 +185,11 @@ class ApiMove extends ApiBase {
 				ApiBase::PARAM_TYPE => 'string',
 				ApiBase::PARAM_REQUIRED => true
 			),
-			'token' => null,
-			'reason' => null,
+			'token' => array(
+				ApiBase::PARAM_TYPE => 'string',
+				ApiBase::PARAM_REQUIRED => true
+			),
+			'reason' => '',
 			'movetalk' => false,
 			'movesubpages' => false,
 			'noredirect' => false,
@@ -218,7 +221,7 @@ class ApiMove extends ApiBase {
 			'fromid' => "Page ID of the page you want to move. Cannot be used together with {$p}from",
 			'to' => 'Title you want to rename the page to',
 			'token' => 'A move token previously retrieved through prop=info',
-			'reason' => 'Reason for the move (optional)',
+			'reason' => 'Reason for the move',
 			'movetalk' => 'Move the talk page, if it exists',
 			'movesubpages' => 'Move subpages, if applicable',
 			'noredirect' => 'Don\'t create a redirect',
@@ -226,6 +229,35 @@ class ApiMove extends ApiBase {
 			'unwatch' => 'Remove the page and the redirect from your watchlist',
 			'watchlist' => 'Unconditionally add or remove the page from your watchlist, use preferences or do not change watch',
 			'ignorewarnings' => 'Ignore any warnings'
+		);
+	}
+
+	public function getResultProperties() {
+		return array(
+			'' => array(
+				'from' => 'string',
+				'to' => 'string',
+				'reason' => 'string',
+				'redirectcreated' => 'boolean',
+				'moveoverredirect' => 'boolean',
+				'talkfrom' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				),
+				'talkto' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				),
+				'talkmoveoverredirect' => 'boolean',
+				'talkmove-error-code' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				),
+				'talkmove-error-info' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				)
+			)
 		);
 	}
 
@@ -254,7 +286,7 @@ class ApiMove extends ApiBase {
 		return '';
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=move&from=Exampel&to=Example&token=123ABC&reason=Misspelled%20title&movetalk=&noredirect='
 		);

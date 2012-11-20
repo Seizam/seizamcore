@@ -1,6 +1,6 @@
 <?php
 /**
- * Script to populate category table.
+ * Populate the category table.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,11 +22,13 @@
  * @author Simetrical
  */
 
-$optionsWithArgs = array( 'begin', 'max-slave-lag', 'throttle' );
+require_once( __DIR__ . '/Maintenance.php' );
 
-require_once( dirname( __FILE__ ) . '/Maintenance.php' );
-
-
+/**
+ * Mainteance script to populate the category table.
+ *
+ * @ingroup Maintenance
+ */
 class PopulateCategory extends Maintenance {
 
 	const REPORTING_INTERVAL = 1000;

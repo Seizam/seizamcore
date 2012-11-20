@@ -1,4 +1,25 @@
 <?php
+/**
+ * This file contains database error classes.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup Database
+ */
 
 /**
  * Database error base class
@@ -82,11 +103,19 @@ class DBConnectionError extends DBError {
 		parent::__construct( $db, $msg );
 	}
 
+	/**
+	 * @return bool
+	 */
 	function useOutputPage() {
 		// Not likely to work
 		return false;
 	}
 
+	/**
+	 * @param $key
+	 * @param $fallback
+	 * @return string
+	 */
 	function msg( $key, $fallback /*[, params...] */ ) {
 		global $wgLang;
 
@@ -100,6 +129,9 @@ class DBConnectionError extends DBError {
 		return wfMsgReplaceArgs( $message, $args );
 	}
 
+	/**
+	 * @return bool
+	 */
 	function getLogMessage() {
 		# Don't send to the exception log
 		return false;
@@ -171,14 +203,14 @@ class DBConnectionError extends DBError {
 		}
 
 		# We can't, cough and die in the usual fashion
-		return parent::reportHTML();
+		parent::reportHTML();
 	}
 
 	/**
 	 * @return string
 	 */
 	function searchForm() {
-		global $wgSitename, $wgServer, $wgRequest;
+		global $wgSitename, $wgCanonicalServer, $wgRequest;
 
 		$usegoogle = htmlspecialchars( $this->msg( 'dberr-usegoogle', 'You can try searching via Google in the meantime.' ) );
 		$outofdate = htmlspecialchars( $this->msg( 'dberr-outofdate', 'Note that their indexes of our content may be out of date.' ) );
@@ -186,14 +218,14 @@ class DBConnectionError extends DBError {
 
 		$search = htmlspecialchars( $wgRequest->getVal( 'search' ) );
 
-		$server = htmlspecialchars( $wgServer );
+		$server = htmlspecialchars( $wgCanonicalServer );
 		$sitename = htmlspecialchars( $wgSitename );
 
 		$trygoogle = <<<EOT
 <div style="margin: 1.5em">$usegoogle<br />
 <small>$outofdate</small></div>
 <!-- SiteSearch Google -->
-<form method="get" action="http://www.google.com/search" id="googlesearch">
+<form method="get" action="//www.google.com/search" id="googlesearch">
 	<input type="hidden" name="domains" value="$server" />
 	<input type="hidden" name="num" value="50" />
 	<input type="hidden" name="ie" value="UTF-8" />
@@ -215,21 +247,28 @@ EOT;
 	 * @return string
 	 */
 	private function fileCachedPage() {
-		global $wgTitle, $wgOut;
+		global $wgTitle, $wgOut, $wgRequest;
 
 		if ( $wgOut->isDisabled() ) {
-			return; // Done already?
+			return ''; // Done already?
 		}
 
-		if ( $wgTitle ) {
-			$t =& $wgTitle;
+		if ( $wgTitle ) { // use $wgTitle if we managed to set it
+			$t = $wgTitle->getPrefixedDBkey();
 		} else {
-			$t = Title::newFromText( $this->msg( 'mainpage', 'Main Page' ) );
+			# Fallback to the raw title URL param. We can't use the Title
+			# class is it may hit the interwiki table and give a DB error.
+			# We may get a cache miss due to not sanitizing the title though.
+			$t = str_replace( ' ', '_', $wgRequest->getVal( 'title' ) );
+			if ( $t == '' ) { // fallback to main page
+				$t = Title::newFromText(
+					$this->msg( 'mainpage', 'Main Page' ) )->getPrefixedDBkey();
+			}
 		}
 
-		$cache = new HTMLFileCache( $t );
-		if ( $cache->isFileCached() ) {
-			return $cache->fetchPageText();
+		$cache = HTMLFileCache::newFromTitle( $t, 'view' );
+		if ( $cache->isCached() ) {
+			return $cache->fetchText();
 		} else {
 			return '';
 		}
@@ -242,15 +281,18 @@ EOT;
 class DBQueryError extends DBError {
 	public $error, $errno, $sql, $fname;
 
+	/**
+	 * @param $db DatabaseBase
+	 * @param $error string
+	 * @param $errno int|string
+	 * @param $sql string
+	 * @param $fname string
+	 */
 	function __construct( DatabaseBase &$db, $error, $errno, $sql, $fname ) {
-		$message = "A database error has occurred.  Did you forget to run maintenance/update.php after upgrading?  See: http://www.mediawiki.org/wiki/Manual:Upgrading#Run_the_update_script\n" .
+		$message = "A database error has occurred.  Did you forget to run maintenance/update.php after upgrading?  See: https://www.mediawiki.org/wiki/Manual:Upgrading#Run_the_update_script\n" .
 		  "Query: $sql\n" .
 		  "Function: $fname\n" .
 		  "Error: $errno $error\n";
-		global $wgShowDBErrorBacktrace;
-		if( $wgShowDBErrorBacktrace ) {
-			$message .= $this->getTraceAsString();
-		}
 		parent::__construct( $db, $message );
 
 		$this->error = $error;
@@ -276,7 +318,7 @@ class DBQueryError extends DBError {
 				$fname = $this->fname;
 				$error = $this->error;
 			}
-			return wfMsg( $msg, $sql, $fname, $this->errno, $error );
+			return wfMessage( $msg )->rawParams( $sql, $fname, $this->errno, $error )->text();
 		} else {
 			return parent::getContentMessage( $html );
 		}
@@ -295,6 +337,9 @@ class DBQueryError extends DBError {
 		}
 	}
 
+	/**
+	 * @return bool
+	 */
 	function getLogMessage() {
 		# Don't send to the exception log
 		return false;

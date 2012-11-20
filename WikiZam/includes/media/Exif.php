@@ -1,5 +1,7 @@
 <?php
 /**
+ * Extraction and validation of image metadata.
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -101,6 +103,7 @@ class Exif {
 	 * Constructor
 	 *
 	 * @param $file String: filename.
+	 * @param $byteOrder String Type of byte ordering either 'BE' (Big Endian) or 'LE' (Little Endian). Default ''.
 	 * @todo FIXME: The following are broke:
 	 * SubjectArea. Need to test the more obscure tags.
 	 *
@@ -367,6 +370,12 @@ class Exif {
 		$this->exifGPStoNumber( 'GPSDestLongitude' );
 
 		if ( isset( $this->mFilteredExifData['GPSAltitude'] ) && isset( $this->mFilteredExifData['GPSAltitudeRef'] ) ) {
+
+			// We know altitude data is a <num>/<denom> from the validation functions ran earlier.
+			// But multiplying such a string by -1 doesn't work well, so convert.
+			list( $num, $denom ) = explode( '/', $this->mFilteredExifData['GPSAltitude'] );
+			$this->mFilteredExifData['GPSAltitude'] = $num / $denom;
+
 			if ( $this->mFilteredExifData['GPSAltitudeRef'] === "\1" ) {
 				$this->mFilteredExifData['GPSAltitude'] *= - 1;
 			}
@@ -537,7 +546,7 @@ class Exif {
 	 * @deprecated since 1.18
 	 */
 	function makeFormattedData( ) {
-		wfDeprecated( __METHOD__ );
+		wfDeprecated( __METHOD__, '1.18' );
 		$this->mFormattedExifData = FormatMetadata::getFormattedData(
 			$this->mFilteredExifData );
 	}
@@ -548,6 +557,7 @@ class Exif {
 	 */
 	/**
 	 * Get $this->mRawExifData
+	 * @return array
 	 */
 	function getData() {
 		return $this->mRawExifData;
@@ -569,7 +579,7 @@ class Exif {
 	 * @deprecated since 1.18
 	 */
 	function getFormattedData() {
-		wfDeprecated( __METHOD__ );
+		wfDeprecated( __METHOD__, '1.18' );
 		if (!$this->mFormattedExifData) {
 			$this->makeFormattedData();
 		}

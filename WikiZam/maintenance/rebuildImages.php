@@ -1,6 +1,6 @@
 <?php
 /**
- * Script to update image metadata records
+ * Update image metadata records.
  *
  * Usage: php rebuildImages.php [--missing] [--dry-run]
  * Options:
@@ -27,11 +27,16 @@
  *
  * @file
  * @author Brion Vibber <brion at pobox.com>
- * @ingroup maintenance
+ * @ingroup Maintenance
  */
 
-require_once( dirname( __FILE__ ) . '/Maintenance.php' );
+require_once( __DIR__ . '/Maintenance.php' );
 
+/**
+ * Maintenance script to update image metadata records.
+ *
+ * @ingroup Maintenance
+ */
 class ImageBuilder extends Maintenance {
 
 	/**
@@ -86,7 +91,7 @@ class ImageBuilder extends Maintenance {
 		$this->processed = 0;
 		$this->updated = 0;
 		$this->count = $count;
-		$this->startTime = wfTime();
+		$this->startTime = microtime( true );
 		$this->table = $table;
 	}
 
@@ -99,7 +104,7 @@ class ImageBuilder extends Maintenance {
 		$portion = $this->processed / $this->count;
 		$updateRate = $this->updated / $this->processed;
 
-		$now = wfTime();
+		$now = microtime( true );
 		$delta = $now - $this->startTime;
 		$estimatedTotalTime = $delta / $portion;
 		$eta = $this->startTime + $estimatedTotalTime;
@@ -148,8 +153,7 @@ class ImageBuilder extends Maintenance {
 	}
 
 	function buildOldImage() {
-		$this->buildTable( 'oldimage', 'oi_archive_name',
-			array( $this, 'oldimageCallback' ) );
+		$this->buildTable( 'oldimage', 'oi_archive_name', array( $this, 'oldimageCallback' ) );
 	}
 
 	function oldimageCallback( $row, $copy ) {
@@ -164,42 +168,33 @@ class ImageBuilder extends Maintenance {
 	}
 
 	function crawlMissing() {
-		$repo = RepoGroup::singleton()->getLocalRepo();
-		$repo->enumFilesInFS( array( $this, 'checkMissingImage' ) );
+		$this->getRepo()->enumFiles( array( $this, 'checkMissingImage' ) );
 	}
 
 	function checkMissingImage( $fullpath ) {
 		$filename = wfBaseName( $fullpath );
-		if ( is_dir( $fullpath ) ) {
-			return;
-		}
-		if ( is_link( $fullpath ) ) {
-			$this->output( "skipping symlink at $fullpath\n" );
-			return;
-		}
 		$row = $this->dbw->selectRow( 'image',
 			array( 'img_name' ),
 			array( 'img_name' => $filename ),
 			__METHOD__ );
 
-		if ( $row ) {
-			// already known, move on
-			return;
-		} else {
+		if ( !$row ) { // file not registered
 			$this->addMissingImage( $filename, $fullpath );
 		}
 	}
 
 	function addMissingImage( $filename, $fullpath ) {
-		$timestamp = $this->dbw->timestamp( filemtime( $fullpath ) );
-
 		global $wgContLang;
+
+		$timestamp = $this->dbw->timestamp( $this->getRepo()->getFileTimestamp( $fullpath ) );
+
 		$altname = $wgContLang->checkTitleEncoding( $filename );
 		if ( $altname != $filename ) {
 			if ( $this->dryrun ) {
 				$filename = $altname;
 				$this->output( "Estimating transcoding... $altname\n" );
 			} else {
+				# @todo FIXME: create renameFile()
 				$filename = $this->renameFile( $filename );
 			}
 		}

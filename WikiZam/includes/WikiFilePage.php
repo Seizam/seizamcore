@@ -1,16 +1,40 @@
 <?php
 /**
+ * Special handling for file pages.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ */
+
+/**
  * Special handling for file pages
  *
  * @ingroup Media
  */
 class WikiFilePage extends WikiPage {
+	/**
+	 * @var File
+	 */
 	protected $mFile = false; 				// !< File object
 	protected $mRepo = null;			    // !<
 	protected $mFileLoaded = false;		    // !<
 	protected $mDupes = null;				// !<
 
-	function __construct( $title ) {
+	public function __construct( $title ) {
 		parent::__construct( $title );
 		$this->mDupes = null;
 		$this->mRepo = null;
@@ -22,29 +46,32 @@ class WikiFilePage extends WikiPage {
 
 	/**
 	 * @param $file File:
-	 * @return void
 	 */
 	public function setFile( $file ) {
 		$this->mFile = $file;
 		$this->mFileLoaded = true;
 	}
 
+	/**
+	 * @return bool
+	 */
 	protected function loadFile() {
 		if ( $this->mFileLoaded ) {
 			return true;
 		}
 		$this->mFileLoaded = true;
 
-		$this->mFile = false;
+		$this->mFile = wfFindFile( $this->mTitle );
 		if ( !$this->mFile ) {
-			$this->mFile = wfFindFile( $this->mTitle );
-			if ( !$this->mFile ) {
-				$this->mFile = wfLocalFile( $this->mTitle ); // always a File
-			}
+			$this->mFile = wfLocalFile( $this->mTitle ); // always a File
 		}
 		$this->mRepo = $this->mFile->getRepo();
+		return true;
 	}
 
+	/**
+	 * @return mixed|null|Title
+	 */
 	public function getRedirectTarget() {
 		$this->loadFile();
 		if ( $this->mFile->isLocal() ) {
@@ -59,6 +86,9 @@ class WikiFilePage extends WikiPage {
 		return $this->mRedirectTarget = Title::makeTitle( NS_FILE, $to );
 	}
 
+	/**
+	 * @return bool|mixed|Title
+	 */
 	public function followRedirect() {
 		$this->loadFile();
 		if ( $this->mFile->isLocal() ) {
@@ -72,25 +102,38 @@ class WikiFilePage extends WikiPage {
 		return Title::makeTitle( NS_FILE, $to );
 	}
 
+	/**
+	 * @param bool $text
+	 * @return bool
+	 */
 	public function isRedirect( $text = false ) {
 		$this->loadFile();
 		if ( $this->mFile->isLocal() ) {
 			return parent::isRedirect( $text );
 		}
-			
+
 		return (bool)$this->mFile->getRedirected();
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function isLocal() {
 		$this->loadFile();
 		return $this->mFile->isLocal();
 	}
 
+	/**
+	 * @return bool|File
+	 */
 	public function getFile() {
 		$this->loadFile();
 		return $this->mFile;
 	}
 
+	/**
+	 * @return array|null
+	 */
 	public function getDuplicates() {
 		$this->loadFile();
 		if ( !is_null( $this->mDupes ) ) {
@@ -104,6 +147,10 @@ class WikiFilePage extends WikiPage {
 		// Remove duplicates with self and non matching file sizes
 		$self = $this->mFile->getRepoName() . ':' . $this->mFile->getName();
 		$size = $this->mFile->getSize();
+
+		/**
+		 * @var $file File
+		 */
 		foreach ( $dupes as $index => $file ) {
 			$key = $file->getRepoName() . ':' . $file->getName();
 			if ( $key == $self ) {
@@ -119,6 +166,7 @@ class WikiFilePage extends WikiPage {
 
 	/**
 	 * Override handling of action=purge
+	 * @return bool
 	 */
 	public function doPurge() {
 		$this->loadFile();
@@ -127,13 +175,13 @@ class WikiFilePage extends WikiPage {
 			$update = new HTMLCacheUpdate( $this->mTitle, 'imagelinks' );
 			$update->doUpdate();
 			$this->mFile->upgradeRow();
-			$this->mFile->purgeCache();
+			$this->mFile->purgeCache( array( 'forThumbRefresh' => true ) );
 		} else {
 			wfDebug( 'ImagePage::doPurge no image for ' . $this->mFile->getName() . "; limiting purge to cache only\n" );
 			// even if the file supposedly doesn't exist, force any cached information
 			// to be updated (in case the cached information is wrong)
-			$this->mFile->purgeCache();
+			$this->mFile->purgeCache( array( 'forThumbRefresh' => true ) );
 		}
-		parent::doPurge();
+		return parent::doPurge();
 	}
 }

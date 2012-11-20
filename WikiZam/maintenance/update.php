@@ -25,15 +25,20 @@
  * @ingroup Maintenance
  */
 
-if ( !function_exists( 'version_compare' ) || ( version_compare( phpversion(), '5.2.3' ) < 0 ) ) {
-	echo "You are using PHP version " . phpversion() . " but MediaWiki needs PHP 5.2.3 or higher. ABORTING.\n" .
+if ( !function_exists( 'version_compare' ) || ( version_compare( phpversion(), '5.3.2' ) < 0 ) ) {
+	echo "You are using PHP version " . phpversion() . " but MediaWiki needs PHP 5.3.2 or higher. ABORTING.\n" .
 	"Check if you have a newer php executable with a different name, such as php5.\n";
 	die( 1 );
 }
 
 $wgUseMasterForMaintenance = true;
-require_once( dirname( __FILE__ ) . '/Maintenance.php' );
+require_once( __DIR__ . '/Maintenance.php' );
 
+/**
+ * Maintenance script to run database schema updates.
+ *
+ * @ingroup Maintenance
+ */
 class UpdateMediaWiki extends Maintenance {
 
 	function __construct() {
@@ -89,6 +94,8 @@ class UpdateMediaWiki extends Maintenance {
 
 		$this->output( "MediaWiki {$wgVersion} Updater\n\n" );
 
+		wfWaitForSlaves( 5 ); // let's not kill databases, shall we? ;) --tor
+
 		if ( !$this->hasOption( 'skip-compat-checks' ) ) {
 			$this->compatChecks();
 		} else {
@@ -119,8 +126,12 @@ class UpdateMediaWiki extends Maintenance {
 		$updater->doUpdates( $updates );
 
 		foreach( $updater->getPostDatabaseUpdateMaintenance() as $maint ) {
+			if ( $updater->updateRowExists( $maint ) ) {
+				continue;
+			}
 			$child = $this->runChild( $maint );
 			$child->execute();
+			$updater->insertUpdateRow( $maint );
 		}
 
 		$this->output( "\nDone.\n" );

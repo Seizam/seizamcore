@@ -124,7 +124,7 @@ class SearchOracle extends SearchEngine {
 	/**
 	 * Return a LIMIT clause to limit results on the query.
 	 *
-	 * @param string
+	 * @param $sql string
 	 *
 	 * @return String
 	 */
@@ -147,6 +147,7 @@ class SearchOracle extends SearchEngine {
 	 * The guts shoulds be constructed in queryMain()
 	 * @param $filteredTerm String
 	 * @param $fulltext Boolean
+	 * @return String
 	 */
 	function getQuery( $filteredTerm, $fulltext ) {
 		return $this->queryLimit($this->queryMain($filteredTerm, $fulltext) . ' ' .
@@ -184,6 +185,7 @@ class SearchOracle extends SearchEngine {
 	/**
 	 * Parse a user input search string, and return an SQL fragment to be used
 	 * as part of a WHERE clause
+	 * @return string
 	 */
 	function parseQuery($filteredText, $fulltext) {
 		global $wgContLang;
@@ -257,9 +259,9 @@ class SearchOracle extends SearchEngine {
 		//     ALTER SESSION SET CURRENT_SCHEMA = ...
 		// was used.
 		$dbw->query( "CALL ctx_ddl.sync_index(" . 
-			$dbw->addQuotes( $dbw->getDBname() . '.' . $dbw->tableName( 'si_text_idx', false ) ) . ")" );
+			$dbw->addQuotes( $dbw->getDBname() . '.' . $dbw->tableName( 'si_text_idx', 'raw' ) ) . ")" );
 		$dbw->query( "CALL ctx_ddl.sync_index(" . 
-			$dbw->addQuotes( $dbw->getDBname() . '.' . $dbw->tableName( 'si_title_idx', false ) ) . ")" );
+			$dbw->addQuotes( $dbw->getDBname() . '.' . $dbw->tableName( 'si_title_idx', 'raw' ) ) . ")" );
 	}
 
 	/**

@@ -30,6 +30,10 @@ if (!defined('MEDIAWIKI')) {
 # Include of ServerSetting.php where Server Side settings are stored
 require_once("$IP/ServerSettings.php");
 
+# Specific MW 1.20 ServerSettings
+# Should be merged with ServerSettings.php once migration ready
+require_once("$IP/ServerSettings120.php");
+
 # ===============================
 # SHOULD BE IN SERVERSETTINGS.PHP
 # ===============================

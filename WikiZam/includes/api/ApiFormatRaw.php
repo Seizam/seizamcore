@@ -4,7 +4,7 @@
  *
  * Created on Feb 2, 2009
  *
- * Copyright © 2009 Roan Kattouw <Firstname>.<Lastname>@gmail.com
+ * Copyright © 2009 Roan Kattouw "<Firstname>.<Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +23,6 @@
  *
  * @file
  */
-
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiFormatBase.php' );
-}
 
 /**
  * Formatter that spits out anything you like with any desired MIME type

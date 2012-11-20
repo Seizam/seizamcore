@@ -4,7 +4,7 @@
  *
  * Created on Oct 13, 2006
  *
- * Copyright © 2006 Yuri Astrakhan <Firstname><Lastname>@gmail.com
+ * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +23,6 @@
  *
  * @file
  */
-
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( "ApiBase.php" );
-}
 
 /**
  * @ingroup API
@@ -50,7 +45,7 @@ class ApiOpenSearch extends ApiBase {
 		$namespaces = $params['namespace'];
 		$suggest = $params['suggest'];
 
-		// MWSuggest or similar hit
+		// Some script that was loaded regardless of wgEnableOpenSearchSuggest, likely cached.
 		if ( $suggest && !$wgEnableOpenSearchSuggest ) {
 			$searches = array();
 		} else {
@@ -116,10 +111,10 @@ class ApiOpenSearch extends ApiBase {
 	}
 
 	public function getDescription() {
-		return 'Searches the wiki using the OpenSearch protocol';
+		return 'Search the wiki using the OpenSearch protocol';
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=opensearch&search=Te'
 		);

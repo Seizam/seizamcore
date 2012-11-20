@@ -1,11 +1,32 @@
 <?php
 /**
+ * Data caching with dependencies.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup Cache
+ */
+
+/**
  * This class stores an arbitrary value along with its dependencies.
  * Users should typically only use DependencyWrapper::getValueFromCache(),
  * rather than instantiating one of these objects directly.
  * @ingroup Cache
  */
-
 class DependencyWrapper {
 	var $value;
 	var $deps;
@@ -28,6 +49,8 @@ class DependencyWrapper {
 
 	/**
 	 * Returns true if any of the dependencies have expired
+	 *
+	 * @return bool
 	 */
 	function isExpired() {
 		foreach ( $this->deps as $dep ) {
@@ -51,6 +74,7 @@ class DependencyWrapper {
 
 	/**
 	 * Get the user-defined value
+	 * @return bool|\Mixed
 	 */
 	function getValue() {
 		return $this->value;
@@ -143,6 +167,9 @@ class FileDependency extends CacheDependency {
 		$this->timestamp = $timestamp;
 	}
 
+	/**
+	 * @return array
+	 */
 	function __sleep() {
 		$this->loadDependencyValues();
 		return array( 'filename', 'timestamp' );
@@ -265,11 +292,15 @@ class TitleListDependency extends CacheDependency {
 
 	/**
 	 * Construct a dependency on a list of titles
+	 * @param $linkBatch LinkBatch
 	 */
 	function __construct( LinkBatch $linkBatch ) {
 		$this->linkBatch = $linkBatch;
 	}
 
+	/**
+	 * @return array
+	 */
 	function calculateTimestamps() {
 		# Initialise values to false
 		$timestamps = array();
@@ -314,6 +345,9 @@ class TitleListDependency extends CacheDependency {
 		return array( 'timestamps' );
 	}
 
+	/**
+	 * @return LinkBatch
+	 */
 	function getLinkBatch() {
 		if ( !isset( $this->linkBatch ) ) {
 			$this->linkBatch = new LinkBatch;
@@ -370,6 +404,9 @@ class GlobalDependency extends CacheDependency {
 	 * @return bool
 	 */
 	function isExpired() {
+		if( !isset($GLOBALS[$this->name]) ) {
+			return true;
+		}
 		return $GLOBALS[$this->name] != $this->value;
 	}
 }

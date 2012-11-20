@@ -4,7 +4,7 @@
  *
  * Created on Sep 4, 2006
  *
- * Copyright © 2006 Yuri Astrakhan <Firstname><Lastname>@gmail.com
+ * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +23,6 @@
  *
  * @file
  */
-
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiBase.php' );
-}
 
 /**
  * This class represents the result of the API operations.
@@ -170,7 +165,7 @@ class ApiResult extends ApiBase {
 	 * @param $value Mixed
 	 * @param $subElemName string when present, content element is created
 	 *  as a sub item of $arr. Use this parameter to create elements in
-	 *  format <elem>text</elem> without attributes
+	 *  format "<elem>text</elem>" without attributes.
 	 */
 	public static function setContent( &$arr, $value, $subElemName = null ) {
 		if ( is_array( $value ) ) {
@@ -246,11 +241,12 @@ class ApiResult extends ApiBase {
 
 	/**
 	 * Add value to the output data at the given path.
-	 * Path is an indexed array, each element specifying the branch at which to add the new value
-	 * Setting $path to array('a','b','c') is equivalent to data['a']['b']['c'] = $value
-	 * If $name is empty, the $value is added as a next list element data[] = $value
+	 * Path can be an indexed array, each element specifying the branch at which to add the new
+	 * value. Setting $path to array('a','b','c') is equivalent to data['a']['b']['c'] = $value.
+	 * If $path is null, the value will be inserted at the data root.
+	 * If $name is empty, the $value is added as a next list element data[] = $value.
 	 *
-	 * @param $path
+	 * @param $path array|string|null
 	 * @param $name string
 	 * @param $value mixed
 	 * @param $overwrite bool
@@ -259,6 +255,7 @@ class ApiResult extends ApiBase {
 	 */
 	public function addValue( $path, $name, $value, $overwrite = false ) {
 		global $wgAPIMaxResultSize;
+
 		$data = &$this->mData;
 		if ( $this->mCheckingSize ) {
 			$newsize = $this->mSize + self::size( $value );

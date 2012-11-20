@@ -2,6 +2,21 @@
 /**
  * Basic search engine
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup Search
  */
@@ -65,8 +80,10 @@ class SearchEngine {
 	/**
 	 * If this search backend can list/unlist redirects
 	 * @deprecated since 1.18 Call supports( 'list-redirects' );
+	 * @return bool
 	 */
 	function acceptListRedirects() {
+		wfDeprecated( __METHOD__, '1.18' );
 		return $this->supports( 'list-redirects' );
 	}
 
@@ -90,7 +107,7 @@ class SearchEngine {
 	 * @since 1.18
 	 * @param $feature String
 	 * @param $data Mixed
-	 * @return Noolean
+	 * @return bool
 	 */
 	public function setFeatureData( $feature, $data ) {
 		$this->features[$feature] = $data;
@@ -146,9 +163,10 @@ class SearchEngine {
 
 	/**
 	 * Really find the title match.
+	 * @return null|\Title
 	 */
 	private static function getNearMatchInternal( $searchterm ) {
-		global $wgContLang;
+		global $wgContLang, $wgEnableSearchContributorsByIP;
 
 		$allSearchTerms = array( $searchterm );
 
@@ -161,8 +179,6 @@ class SearchEngine {
 			return $titleResult;
 		}
 
-		$context = new RequestContext;
-
 		foreach ( $allSearchTerms as $term ) {
 
 			# Exact match? No need to look further.
@@ -171,14 +187,13 @@ class SearchEngine {
 				return null;
 			}
 
-			if ( $title->getNamespace() == NS_SPECIAL || $title->isExternal() || $title->exists() ) {
+			if ( $title->isSpecialPage() || $title->isExternal() || $title->exists() ) {
 				return $title;
 			}
 
 			# See if it still otherwise has content is some sane sense
-			$context->setTitle( $title );
-			$article = Article::newFromTitle( $title, $context );
-			if ( $article->hasViewableContent() ) {
+			$page = WikiPage::factory( $title );
+			if ( $page->hasViewableContent() ) {
 				return $title;
 			}
 
@@ -218,10 +233,13 @@ class SearchEngine {
 
 		$title = Title::newFromText( $searchterm );
 
+
 		# Entering an IP address goes to the contributions page
-		if ( ( $title->getNamespace() == NS_USER && User::isIP( $title->getText() ) )
-			|| User::isIP( trim( $searchterm ) ) ) {
-			return SpecialPage::getTitleFor( 'Contributions', $title->getDBkey() );
+		if ( $wgEnableSearchContributorsByIP ) {
+			if ( ( $title->getNamespace() == NS_USER && User::isIP( $title->getText() ) )
+				|| User::isIP( trim( $searchterm ) ) ) {
+				return SpecialPage::getTitleFor( 'Contributions', $title->getDBkey() );
+			}
 		}
 
 
@@ -286,6 +304,7 @@ class SearchEngine {
 	 * or namespace names
 	 *
 	 * @param $query String
+	 * @return string
 	 */
 	function replacePrefixes( $query ) {
 		global $wgContLang;
@@ -296,7 +315,7 @@ class SearchEngine {
 			return $parsed;
 		}
 
-		$allkeyword = wfMsgForContent( 'searchall' ) . ":";
+		$allkeyword = wfMessage( 'searchall' )->inContentLanguage()->text() . ":";
 		if ( strncmp( $query, $allkeyword, strlen( $allkeyword ) ) == 0 ) {
 			$this->namespaces = null;
 			$parsed = substr( $query, strlen( $allkeyword ) );
@@ -343,20 +362,22 @@ class SearchEngine {
 	public static function userNamespaces( $user ) {
 		global $wgSearchEverythingOnlyLoggedIn;
 
-		// get search everything preference, that can be set to be read for logged-in users
-		$searcheverything = false;
-		if ( ( $wgSearchEverythingOnlyLoggedIn && $user->isLoggedIn() )
-		    || !$wgSearchEverythingOnlyLoggedIn )
-			$searcheverything = $user->getOption( 'searcheverything' );
-
-		// searcheverything overrides other options
-		if ( $searcheverything )
-			return array_keys( SearchEngine::searchableNamespaces() );
-
-		$arr = Preferences::loadOldSearchNs( $user );
 		$searchableNamespaces = SearchEngine::searchableNamespaces();
 
-		$arr = array_intersect( $arr, array_keys( $searchableNamespaces ) ); // Filter
+		// get search everything preference, that can be set to be read for logged-in users
+		// it overrides other options
+		if ( !$wgSearchEverythingOnlyLoggedIn || $user->isLoggedIn() ) {
+			if ( $user->getOption( 'searcheverything' ) ) {
+				return array_keys( $searchableNamespaces );
+			}
+		}
+
+		$arr = array();
+		foreach ( $searchableNamespaces as $ns => $name ) {
+			if ( $user->getOption( 'searchNs' . $ns ) ) {
+				$arr[] = $ns;
+			}
+		}
 
 		return $arr;
 	}
@@ -388,6 +409,7 @@ class SearchEngine {
 	 * and preferences
 	 *
 	 * @param $namespaces Array
+	 * @return array
 	 */
 	public static function namespacesAsText( $namespaces ) {
 		global $wgContLang;
@@ -395,7 +417,7 @@ class SearchEngine {
 		$formatted = array_map( array( $wgContLang, 'getFormattedNsText' ), $namespaces );
 		foreach ( $formatted as $key => $ns ) {
 			if ( empty( $ns ) )
-				$formatted[$key] = wfMsg( 'blanknamespace' );
+				$formatted[$key] = wfMessage( 'blanknamespace' )->text();
 		}
 		return $formatted;
 	}
@@ -482,19 +504,6 @@ class SearchEngine {
 			}
 			return $wgCanonicalServer . wfScript( 'api' ) . '?action=opensearch&search={searchTerms}&namespace=' . $ns;
 		}
-	}
-
-	/**
-	 * Get internal MediaWiki Suggest template
-	 *
-	 * @return String
-	 */
-	public static function getMWSuggestTemplate() {
-		global $wgMWSuggestTemplate, $wgServer;
-		if ( $wgMWSuggestTemplate )
-			return $wgMWSuggestTemplate;
-		else
-			return $wgServer . wfScript( 'api' ) . '?action=opensearch&search={searchTerms}&namespace={namespaces}&suggest';
 	}
 }
 
@@ -734,7 +743,10 @@ class SearchResult {
 	protected function initFromTitle( $title ) {
 		$this->mTitle = $title;
 		if ( !is_null( $this->mTitle ) ) {
-			$this->mRevision = Revision::newFromTitle( $this->mTitle );
+			$id = false;
+			wfRunHooks( 'SearchResultInitFromTitle', array( $title, &$id ) );
+			$this->mRevision = Revision::newFromTitle(
+				$this->mTitle, $id, Revision::READ_NORMAL );
 			if ( $this->mTitle->getNamespace() === NS_FILE )
 				$this->mImage = wfFindFile( $this->mTitle );
 		}
@@ -768,7 +780,7 @@ class SearchResult {
 	}
 
 	/**
-	 * @return Double or null if not supported
+	 * @return float|null if not supported
 	 */
 	function getScore() {
 		return null;
@@ -1098,7 +1110,7 @@ class SearchHighlighter {
 		} else {
 			// if begin of the article contains the whole phrase, show only that !!
 			if ( array_key_exists( $first, $snippets ) && preg_match( $pat1, $snippets[$first] )
-			    && $offsets[$first] < $contextchars * 2 ) {
+				&& $offsets[$first] < $contextchars * 2 ) {
 				$snippets = array ( $first => $snippets[$first] );
 			}
 
@@ -1119,10 +1131,10 @@ class SearchHighlighter {
 				// add more lines
 				$add = $index + 1;
 				while ( $len < $targetchars - 20
-				       && array_key_exists( $add, $all )
-				       && !array_key_exists( $add, $snippets ) ) {
-				    $offsets[$add] = 0;
-				    $tt = "\n" . $this->extract( $all[$add], 0, $targetchars - $len, $offsets[$add] );
+					   && array_key_exists( $add, $all )
+					   && !array_key_exists( $add, $snippets ) ) {
+					$offsets[$add] = 0;
+					$tt = "\n" . $this->extract( $all[$add], 0, $targetchars - $len, $offsets[$add] );
 					$extended[$add] = $tt;
 					$len += strlen( $tt );
 					$add++;
@@ -1152,7 +1164,7 @@ class SearchHighlighter {
 			if ( ! isset( $processed[$term] ) ) {
 				$pat3 = "/$patPre(" . $term . ")$patPost/ui"; // highlight word
 				$extract = preg_replace( $pat3,
-			  		"\\1<span class='searchmatch'>\\2</span>\\3", $extract );
+					"\\1<span class='searchmatch'>\\2</span>\\3", $extract );
 				$processed[$term] = true;
 			}
 		}
@@ -1182,13 +1194,15 @@ class SearchHighlighter {
 	 * Do manual case conversion for non-ascii chars
 	 *
 	 * @param $matches Array
+	 * @return string
 	 */
 	function caseCallback( $matches ) {
 		global $wgContLang;
 		if ( strlen( $matches[0] ) > 1 ) {
 			return '[' . $wgContLang->lc( $matches[0] ) . $wgContLang->uc( $matches[0] ) . ']';
-		} else
+		} else {
 			return $matches[0];
+		}
 	}
 
 	/**
@@ -1202,22 +1216,27 @@ class SearchHighlighter {
 	 * @return String
 	 */
 	function extract( $text, $start, $end, &$posStart = null, &$posEnd = null ) {
-		if ( $start != 0 )
+		if ( $start != 0 ) {
 			$start = $this->position( $text, $start, 1 );
-		if ( $end >= strlen( $text ) )
+		}
+		if ( $end >= strlen( $text ) ) {
 			$end = strlen( $text );
-		else
+		} else {
 			$end = $this->position( $text, $end );
+		}
 
-		if ( !is_null( $posStart ) )
+		if ( !is_null( $posStart ) ) {
 			$posStart = $start;
-		if ( !is_null( $posEnd ) )
+		}
+		if ( !is_null( $posEnd ) ) {
 			$posEnd = $end;
+		}
 
-		if ( $end > $start )
+		if ( $end > $start )  {
 			return substr( $text, $start, $end - $start );
-		else
+		} else {
 			return '';
+		}
 	}
 
 	/**
@@ -1296,6 +1315,7 @@ class SearchHighlighter {
 	/**
 	 * Basic wikitext removal
 	 * @protected
+	 * @return mixed
 	 */
 	function removeWiki( $text ) {
 		$fname = __METHOD__;
@@ -1342,61 +1362,61 @@ class SearchHighlighter {
 	}
 
 	/**
-     * Simple & fast snippet extraction, but gives completely unrelevant
-     * snippets
-     *
-     * @param $text String
-     * @param $terms Array
-     * @param $contextlines Integer
-     * @param $contextchars Integer
-     * @return String
-     */
-    public function highlightSimple( $text, $terms, $contextlines, $contextchars ) {
-        global $wgContLang;
-        $fname = __METHOD__;
+	 * Simple & fast snippet extraction, but gives completely unrelevant
+	 * snippets
+	 *
+	 * @param $text String
+	 * @param $terms Array
+	 * @param $contextlines Integer
+	 * @param $contextchars Integer
+	 * @return String
+	 */
+	public function highlightSimple( $text, $terms, $contextlines, $contextchars ) {
+		global $wgContLang;
+		$fname = __METHOD__;
 
-        $lines = explode( "\n", $text );
+		$lines = explode( "\n", $text );
 
-        $terms = implode( '|', $terms );
-        $max = intval( $contextchars ) + 1;
-        $pat1 = "/(.*)($terms)(.{0,$max})/i";
+		$terms = implode( '|', $terms );
+		$max = intval( $contextchars ) + 1;
+		$pat1 = "/(.*)($terms)(.{0,$max})/i";
 
-        $lineno = 0;
+		$lineno = 0;
 
-        $extract = "";
-        wfProfileIn( "$fname-extract" );
-        foreach ( $lines as $line ) {
-            if ( 0 == $contextlines ) {
-                break;
-            }
-            ++$lineno;
-            $m = array();
-            if ( ! preg_match( $pat1, $line, $m ) ) {
-                continue;
-            }
-            --$contextlines;
-            // truncate function changes ... to relevant i18n message.
-            $pre = $wgContLang->truncate( $m[1], - $contextchars, '...', false );
+		$extract = "";
+		wfProfileIn( "$fname-extract" );
+		foreach ( $lines as $line ) {
+			if ( 0 == $contextlines ) {
+				break;
+			}
+			++$lineno;
+			$m = array();
+			if ( ! preg_match( $pat1, $line, $m ) ) {
+				continue;
+			}
+			--$contextlines;
+			// truncate function changes ... to relevant i18n message.
+			$pre = $wgContLang->truncate( $m[1], - $contextchars, '...', false );
 
-            if ( count( $m ) < 3 ) {
-                $post = '';
-            } else {
-                $post = $wgContLang->truncate( $m[3], $contextchars, '...', false );
-            }
+			if ( count( $m ) < 3 ) {
+				$post = '';
+			} else {
+				$post = $wgContLang->truncate( $m[3], $contextchars, '...', false );
+			}
 
-            $found = $m[2];
+			$found = $m[2];
 
-            $line = htmlspecialchars( $pre . $found . $post );
-            $pat2 = '/(' . $terms . ")/i";
-            $line = preg_replace( $pat2,
-              "<span class='searchmatch'>\\1</span>", $line );
+			$line = htmlspecialchars( $pre . $found . $post );
+			$pat2 = '/(' . $terms . ")/i";
+			$line = preg_replace( $pat2,
+			  "<span class='searchmatch'>\\1</span>", $line );
 
-            $extract .= "${line}\n";
-        }
-        wfProfileOut( "$fname-extract" );
+			$extract .= "${line}\n";
+		}
+		wfProfileOut( "$fname-extract" );
 
-        return $extract;
-    }
+		return $extract;
+	}
 
 }
 

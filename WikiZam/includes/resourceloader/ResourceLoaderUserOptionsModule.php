@@ -1,5 +1,7 @@
 <?php
 /**
+ * Resource loader module for user preference customizations.
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -44,7 +46,6 @@ class ResourceLoaderUserOptionsModule extends ResourceLoaderModule {
 		}
 
 		global $wgUser;
-
 		return $this->modifiedTime[$hash] = wfTimestamp( TS_UNIX, $wgUser->getTouched() );
 	}
 
@@ -54,56 +55,15 @@ class ResourceLoaderUserOptionsModule extends ResourceLoaderModule {
 	 */
 	public function getScript( ResourceLoaderContext $context ) {
 		global $wgUser;
-		return Xml::encodeJsCall( 'mw.user.options.set', 
+		return Xml::encodeJsCall( 'mw.user.options.set',
 			array( $wgUser->getOptions() ) );
 	}
 
 	/**
-	 * @param $context ResourceLoaderContext
-	 * @return array
+	 * @return bool
 	 */
-	public function getStyles( ResourceLoaderContext $context ) {
-		global $wgAllowUserCssPrefs, $wgUser;
-
-		if ( $wgAllowUserCssPrefs ) {
-			$options = $wgUser->getOptions();
-
-			// Build CSS rules
-			$rules = array();
-			if ( $options['underline'] < 2 ) {
-				$rules[] = "a { text-decoration: " . 
-					( $options['underline'] ? 'underline' : 'none' ) . "; }";
-			} else {
-				# The scripts of these languages are very hard to read with underlines
-				$rules[] = 'a:lang(ar), a:lang(ckb), a:lang(fa),a:lang(kk-arab), ' .
-				'a:lang(mzn), a:lang(ps), a:lang(ur) { text-decoration: none; }';
-			}
-			if ( $options['highlightbroken'] ) {
-				$rules[] = "a.new, #quickbar a.new { color: #E22C2E; }\n";
-			} else {
-				$rules[] = "a.new, #quickbar a.new, a.stub, #quickbar a.stub { color: inherit; }";
-				$rules[] = "a.new:after, #quickbar a.new:after { content: '?'; color: #E22C2E; }";
-				$rules[] = "a.stub:after, #quickbar a.stub:after { content: '!'; color: #E22C2E; }";
-			}
-			if ( $options['justify'] ) {
-				$rules[] = "#article, #bodyContent, #mw_content { text-align: justify; }\n";
-			}
-			if ( !$options['showtoc'] ) {
-				$rules[] = "#toc { display: none; }\n";
-			}
-			if ( !$options['editsection'] ) {
-				$rules[] = ".editsection { display: none; }\n";
-			}
-			if ( $options['editfont'] !== 'default' ) {
-				$rules[] = "textarea { font-family: {$options['editfont']}; }\n";
-			}
-			$style = implode( "\n", $rules );
-			if ( $this->getFlip( $context ) ) {
-				$style = CSSJanus::transform( $style, true, false );
-			}
-			return array( 'all' => $style );
-		}
-		return array();
+	public function supportsURLLoading() {
+		return false;
 	}
 
 	/**

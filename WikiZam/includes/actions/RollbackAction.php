@@ -17,13 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  *
  * @file
- * @ingroup Action
+ * @ingroup Actions
  */
 
 /**
  * User interface for the rollback action
  *
- * @ingroup Action
+ * @ingroup Actions
  */
 class RollbackAction extends FormlessAction {
 
@@ -54,7 +54,7 @@ class RollbackAction extends FormlessAction {
 		}
 
 		if ( isset( $result[0][0] ) && ( $result[0][0] == 'alreadyrolled' || $result[0][0] == 'cantrollback' ) ) {
-			$this->getOutput()->setPageTitle( wfMsg( 'rollbackfailed' ) );
+			$this->getOutput()->setPageTitle( $this->msg( 'rollbackfailed' ) );
 			$errArray = $result[0];
 			$errMsg = array_shift( $errArray );
 			$this->getOutput()->addWikiMsgArray( $errMsg, $errArray );
@@ -63,7 +63,7 @@ class RollbackAction extends FormlessAction {
 				$current = $details['current'];
 
 				if ( $current->getComment() != '' ) {
-					$this->getOutput()->addHTML( wfMessage( 'editcomment' )->rawParams(
+					$this->getOutput()->addHTML( $this->msg( 'editcomment' )->rawParams(
 						Linker::formatComment( $current->getComment() ) )->parse() );
 				}
 			}
@@ -83,9 +83,7 @@ class RollbackAction extends FormlessAction {
 					$out [] = $error;
 				}
 			}
-			$this->getOutput()->showPermissionsErrorPage( $out );
-
-			return;
+			throw new PermissionsError( 'rollback', $out );
 		}
 
 		if ( $result == array( array( 'readonlytext' ) ) ) {
@@ -95,11 +93,11 @@ class RollbackAction extends FormlessAction {
 		$current = $details['current'];
 		$target = $details['target'];
 		$newId = $details['newid'];
-		$this->getOutput()->setPageTitle( wfMsg( 'actioncomplete' ) );
+		$this->getOutput()->setPageTitle( $this->msg( 'actioncomplete' ) );
 		$this->getOutput()->setRobotPolicy( 'noindex,nofollow' );
 
 		if ( $current->getUserText() === '' ) {
-			$old = wfMsg( 'rev-deleted-user' );
+			$old = $this->msg( 'rev-deleted-user' )->escaped();
 		} else {
 			$old = Linker::userLink( $current->getUser(), $current->getUserText() )
 				. Linker::userToolLinks( $current->getUser(), $current->getUserText() );
@@ -107,11 +105,11 @@ class RollbackAction extends FormlessAction {
 
 		$new = Linker::userLink( $target->getUser(), $target->getUserText() )
 			. Linker::userToolLinks( $target->getUser(), $target->getUserText() );
-		$this->getOutput()->addHTML( wfMsgExt( 'rollback-success', array( 'parse', 'replaceafter' ), $old, $new ) );
+		$this->getOutput()->addHTML( $this->msg( 'rollback-success' )->rawParams( $old, $new )->parseAsBlock() );
 		$this->getOutput()->returnToMain( false, $this->getTitle() );
 
 		if ( !$request->getBool( 'hidediff', false ) && !$this->getUser()->getBoolOption( 'norollbackdiff', false ) ) {
-			$de = new DifferenceEngine( $this->getTitle(), $current->getId(), $newId, false, true );
+			$de = new DifferenceEngine( $this->getContext(), $current->getId(), $newId, false, true );
 			$de->showDiff( '', '' );
 		}
 	}

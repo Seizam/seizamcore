@@ -1,5 +1,27 @@
 <?php
 /**
+ * Definitions for XMPReader class.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup Media
+ */
+
+/**
 * This class is just a container for a big array
 * used by XMPReader to determine which XMP items to
 * extract.
@@ -631,12 +653,23 @@ class XMPInfo {
 				'validate'  => 'validateClosed',
 				'choices'   => array( '1' => true, '2' => true ),
 			),
-			'YCbCrSubSampling'  => array(
-				'map_group' => 'exif',
-				'mode'      => XMPReader::MODE_SEQ,
-				'validate'  => 'validateClosed',
-				'choices'   => array( '1' => true, '2' => true ),
-			),
+			/********
+			 * Disable extracting this property (bug 31944)
+			 * Several files have a string instead of a Seq
+			 * for this property. XMPReader doesn't handle
+			 * mismatched types very gracefully (it marks
+			 * the entire file as invalid, instead of just
+			 * the relavent prop). Since this prop
+			 * doesn't communicate all that useful information
+			 * just disable this prop for now, until such
+			 * XMPReader is more graceful (bug 32172)
+			 * 'YCbCrSubSampling'  => array(
+			 *	'map_group' => 'exif',
+			 *	'mode'      => XMPReader::MODE_SEQ,
+			 *	'validate'  => 'validateClosed',
+			 *	'choices'   => array( '1' => true, '2' => true ),
+			 * ),
+			 */ 
 		),
 		'http://ns.adobe.com/exif/1.0/aux/' => array(
 			'Lens'              => array(

@@ -2,6 +2,21 @@
 /**
  * Sqlite-specific installer.
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup Deployment
  */
@@ -13,6 +28,7 @@
  * @since 1.17
  */
 class SqliteInstaller extends DatabaseInstaller {
+	const MINIMUM_VERSION = '3.3.7';
 
 	/**
 	 * @var DatabaseSqlite
@@ -30,6 +46,24 @@ class SqliteInstaller extends DatabaseInstaller {
 
 	public function isCompiled() {
 		return self::checkExtension( 'pdo_sqlite' );
+	}
+
+	/**
+	 *
+	 * @return Status:
+	 */
+	public function checkPrerequisites() {
+		$result = Status::newGood();
+		// Bail out if SQLite is too old
+		$db = new DatabaseSqliteStandalone( ':memory:' );
+		if ( version_compare( $db->getServerVersion(), self::MINIMUM_VERSION, '<' ) ) {
+			$result->fatal( 'config-outdated-sqlite', $db->getServerVersion(), self::MINIMUM_VERSION );
+		}
+		// Check for FTS3 full-text search module
+		if( DatabaseSqlite::getFulltextSearchModule() != 'FTS3' ) {
+			$result->warning( 'config-no-fts3' );
+		}
+		return $result;
 	}
 
 	public function getGlobalDefaults() {
@@ -102,7 +136,7 @@ class SqliteInstaller extends DatabaseInstaller {
 			# if it's still writable
 			if ( $create ) {
 				wfSuppressWarnings();
-				$ok = wfMkdirParents( $dir, 0700 );
+				$ok = wfMkdirParents( $dir, 0700, __METHOD__ );
 				wfRestoreWarnings();
 				if ( !$ok ) {
 					return Status::newFatal( 'config-sqlite-mkdir-error', $dir );
@@ -188,7 +222,7 @@ class SqliteInstaller extends DatabaseInstaller {
 	}
 
 	/**
-	 * @return Staus
+	 * @return Status
 	 */
 	public function createTables() {
 		$status = parent::createTables();

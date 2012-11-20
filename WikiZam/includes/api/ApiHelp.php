@@ -4,7 +4,7 @@
  *
  * Created on Sep 6, 2006
  *
- * Copyright © 2006 Yuri Astrakhan <Firstname><Lastname>@gmail.com
+ * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +23,6 @@
  *
  * @file
  */
-
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiBase.php' );
-}
 
 /**
  * This is a simple class to handle action=help
@@ -139,18 +134,13 @@ class ApiHelp extends ApiBase {
 		return 'Display this help screen. Or the help screen for the specified module';
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
-			'Whole help page:',
-			'  api.php?action=help',
-			'Module (action) help page:',
-			'  api.php?action=help&modules=protect',
-			'Query (list) modules help page:',
-			'  api.php?action=help&querymodules=categorymembers',
-			'Query (prop) modules help page:',
-			'  api.php?action=help&querymodules=info',
-			'Query (meta) modules help page:',
-			'  api.php?action=help&querymodules=siteinfo',
+			'api.php?action=help' => 'Whole help page',
+			'api.php?action=help&modules=protect' => 'Module (action) help page',
+			'api.php?action=help&querymodules=categorymembers' => 'Query (list) modules help page',
+			'api.php?action=help&querymodules=info' => 'Query (prop) modules help page',
+			'api.php?action=help&querymodules=siteinfo' => 'Query (meta) modules help page',
 		);
 	}
 

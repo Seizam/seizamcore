@@ -28,7 +28,7 @@
  * @ingroup Maintenance
  */
 
-require_once( dirname( __FILE__ ) . '/Maintenance.php' );
+require_once( __DIR__ . '/Maintenance.php' );
 
 define( 'MW_UPGRADE_COPY',     false );
 define( 'MW_UPGRADE_ENCODE',   true  );
@@ -39,6 +39,12 @@ define( 'MW_UPGRADE_CALLBACK', null  ); // for self-documentation only
  * @ingroup Maintenance
  */
 class FiveUpgrade extends Maintenance {
+
+	/**
+	 * @var DatabaseBase
+	 */
+	protected $db;
+
 	function __construct() {
 		parent::__construct();
 
@@ -110,7 +116,7 @@ class FiveUpgrade extends Maintenance {
 
 	/**
 	 * Open a connection to the master server with the admin rights.
-	 * @return Database
+	 * @return DatabaseBase
 	 * @access private
 	 */
 	function newConnection() {
@@ -135,7 +141,7 @@ class FiveUpgrade extends Maintenance {
 	 * Open a second connection to the master server, with buffering off.
 	 * This will let us stream large datasets in and write in chunks on the
 	 * other end.
-	 * @return Database
+	 * @return DatabaseBase
 	 * @access private
 	 */
 	function streamConnection() {
@@ -246,7 +252,7 @@ class FiveUpgrade extends Maintenance {
 		$this->chunkSize  = $chunksize;
 		$this->chunkFinal = $final;
 		$this->chunkCount = 0;
-		$this->chunkStartTime = wfTime();
+		$this->chunkStartTime = microtime( true );
 		$this->chunkOptions = array( 'IGNORE' );
 		$this->chunkTable = $table;
 		$this->chunkFunction = $fname;
@@ -267,7 +273,7 @@ class FiveUpgrade extends Maintenance {
 			$this->insertChunk( $chunk );
 
 			$this->chunkCount += count( $chunk );
-			$now = wfTime();
+			$now = microtime( true );
 			$delta = $now - $this->chunkStartTime;
 			$rate = $this->chunkCount / $delta;
 
@@ -321,6 +327,8 @@ class FiveUpgrade extends Maintenance {
 
 	/**
 	 * Helper function for copyTable array_filter
+	 * @param $x
+	 * @return bool
 	 */
 	static private function notUpgradeNull( $x ) {
 		return $x !== MW_UPGRADE_NULL;
@@ -334,7 +342,7 @@ class FiveUpgrade extends Maintenance {
 	 *              MW_UPGRADE_COPY   - straight copy
 	 *              MW_UPGRADE_ENCODE - for old Latin1 wikis, conv to UTF-8
 	 *              MW_UPGRADE_NULL   - just put NULL
-	 * @param callable $callback An optional callback to modify the data
+	 * @param $callback callback An optional callback to modify the data
 	 *                           or perform other processing. Func should be
 	 *                           ( object $row, array $copy ) and return $copy
 	 * @access private
@@ -800,8 +808,10 @@ END;
 	 * Rename a given image or archived image file to the converted filename,
 	 * leaving a symlink for URL compatibility.
 	 *
-	 * @param string $oldname pre-conversion filename
-	 * @param string $basename pre-conversion base filename for dir hashing, if an archive
+	 * @param $oldname string pre-conversion filename
+	 * @param $subdirCallback string
+	 * @param $basename string pre-conversion base filename for dir hashing, if an archive
+	 * @return bool|string
 	 * @access private
 	 */
 	function renameFile( $oldname, $subdirCallback = 'wfImageDir', $basename = null ) {

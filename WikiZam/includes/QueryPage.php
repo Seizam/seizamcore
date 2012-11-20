@@ -1,8 +1,24 @@
 <?php
 /**
- * Contain a class for special pages
+ * Base code for "query" special pages.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
- * @ingroup SpecialPages
+ * @ingroup SpecialPage
  */
 
 /**
@@ -29,6 +45,7 @@ $wgQueryPages = array(
 	array( 'MIMEsearchPage',                'MIMEsearch'                    ),
 	array( 'MostcategoriesPage',            'Mostcategories'                ),
 	array( 'MostimagesPage',                'Mostimages'                    ),
+	array( 'MostinterwikisPage',            'Mostinterwikis'                ),
 	array( 'MostlinkedCategoriesPage',      'Mostlinkedcategories'          ),
 	array( 'MostlinkedtemplatesPage',       'Mostlinkedtemplates'           ),
 	array( 'MostlinkedPage',                'Mostlinked'                    ),
@@ -259,6 +276,7 @@ abstract class QueryPage extends SpecialPage {
 	 * Setting this to return true will ensure formatResult() is called
 	 * one more time to make sure that the very last result is formatted
 	 * as well.
+	 * @return bool
 	 */
 	function tryLastResult() {
 		return false;
@@ -269,6 +287,7 @@ abstract class QueryPage extends SpecialPage {
 	 *
 	 * @param $limit Integer: limit for SQL statement
 	 * @param $ignoreErrors Boolean: whether to ignore database errors
+	 * @return bool|int
 	 */
 	function recache( $limit, $ignoreErrors = true ) {
 		if ( !$this->isCacheable() ) {
@@ -293,7 +312,7 @@ abstract class QueryPage extends SpecialPage {
 		$res = $this->reallyDoQuery( $limit, false );
 		$num = false;
 		if ( $res ) {
-			$num = $dbr->numRows( $res );
+			$num = $res->numRows();
 			# Fetch results
 			$vals = array();
 			while ( $res && $row = $dbr->fetchObject( $res ) ) {
@@ -358,7 +377,7 @@ abstract class QueryPage extends SpecialPage {
 			$options = isset( $query['options'] ) ? (array)$query['options'] : array();
 			$join_conds = isset( $query['join_conds'] ) ? (array)$query['join_conds'] : array();
 			if ( count( $order ) ) {
-				$options['ORDER BY'] = implode( ', ', $order );
+				$options['ORDER BY'] = $order;
 			}
 			if ( $limit !== false ) {
 				$options['LIMIT'] = intval( $limit );
@@ -382,6 +401,7 @@ abstract class QueryPage extends SpecialPage {
 
 	/**
 	 * Somewhat deprecated, you probably want to be using execute()
+	 * @return ResultWrapper
 	 */
 	function doQuery( $offset = false, $limit = false ) {
 		if ( $this->isCached() && $this->isCacheable() ) {
@@ -413,9 +433,9 @@ abstract class QueryPage extends SpecialPage {
 			$options['ORDER BY'] = 'qc_value ASC';
 		}
 		$res = $dbr->select( 'querycache', array( 'qc_type',
-				'qc_namespace AS namespace',
-				'qc_title AS title',
-				'qc_value AS value' ),
+				'namespace' => 'qc_namespace',
+				'title' => 'qc_title',
+				'value' => 'qc_value' ),
 				array( 'qc_type' => $this->getName() ),
 				__METHOD__, $options
 		);
@@ -435,84 +455,89 @@ abstract class QueryPage extends SpecialPage {
 	/**
 	 * This is the actual workhorse. It does everything needed to make a
 	 * real, honest-to-gosh query page.
+	 * @return int
 	 */
 	function execute( $par ) {
-		global $wgUser, $wgOut, $wgLang, $wgRequest;
+		global $wgQueryCacheLimit, $wgDisableQueryPageUpdate;
 
-		if ( !$this->userCanExecute( $wgUser ) ) {
+		$user = $this->getUser();
+		if ( !$this->userCanExecute( $user ) ) {
 			$this->displayRestrictionError();
 			return;
 		}
 
-		if ( $this->limit == 0 && $this->offset == 0 ) {
-			list( $this->limit, $this->offset ) = $wgRequest->getLimitOffset();
-		}
-		$dbr = wfGetDB( DB_SLAVE );
-
 		$this->setHeaders();
-		$wgOut->setSyndicated( $this->isSyndicated() );
+		$this->outputHeader();
+
+		$out = $this->getOutput();
 
 		if ( $this->isCached() && !$this->isCacheable() ) {
-			$wgOut->setSyndicated( false );
-			$wgOut->addWikiMsg( 'querypage-disabled' );
+			$out->addWikiMsg( 'querypage-disabled' );
 			return 0;
 		}
 
+		$out->setSyndicated( $this->isSyndicated() );
+
+		if ( $this->limit == 0 && $this->offset == 0 ) {
+			list( $this->limit, $this->offset ) = $this->getRequest()->getLimitOffset();
+		}
+
 		// TODO: Use doQuery()
-		// $res = null;
 		if ( !$this->isCached() ) {
-			$res = $this->reallyDoQuery( $this->limit, $this->offset );
+			# select one extra row for navigation
+			$res = $this->reallyDoQuery( $this->limit + 1, $this->offset );
 		} else {
-			# Get the cached result
-			$res = $this->fetchFromCache( $this->limit, $this->offset );
+			# Get the cached result, select one extra row for navigation
+			$res = $this->fetchFromCache( $this->limit + 1, $this->offset );
 			if ( !$this->listoutput ) {
 
 				# Fetch the timestamp of this update
 				$ts = $this->getCachedTimestamp();
+				$lang = $this->getLanguage();
+				$maxResults = $lang->formatNum( $wgQueryCacheLimit );
 
 				if ( $ts ) {
-					$updated = $wgLang->timeanddate( $ts, true, true );
-					$updateddate = $wgLang->date( $ts, true, true );
-					$updatedtime = $wgLang->time( $ts, true, true );
-					$wgOut->addMeta( 'Data-Cache-Time', $ts );
-					$wgOut->addInlineScript( "var dataCacheTime = '$ts';" );
-					$wgOut->addWikiMsg( 'perfcachedts', $updated, $updateddate, $updatedtime );
+					$updated = $lang->userTimeAndDate( $ts, $user );
+					$updateddate = $lang->userDate( $ts, $user );
+					$updatedtime = $lang->userTime( $ts, $user );
+					$out->addMeta( 'Data-Cache-Time', $ts );
+					$out->addJsConfigVars( 'dataCacheTime', $ts );
+					$out->addWikiMsg( 'perfcachedts', $updated, $updateddate, $updatedtime, $maxResults );
 				} else {
-					$wgOut->addWikiMsg( 'perfcached' );
+					$out->addWikiMsg( 'perfcached', $maxResults );
 				}
 
 				# If updates on this page have been disabled, let the user know
 				# that the data set won't be refreshed for now
-				global $wgDisableQueryPageUpdate;
 				if ( is_array( $wgDisableQueryPageUpdate ) && in_array( $this->getName(), $wgDisableQueryPageUpdate ) ) {
-					$wgOut->addWikiMsg( 'querypage-no-updates' );
+					$out->wrapWikiMsg( "<div class=\"mw-querypage-no-updates\">\n$1\n</div>", 'querypage-no-updates' );
 				}
-
 			}
-
 		}
 
-		$this->numRows = $dbr->numRows( $res );
+		$this->numRows = $res->numRows();
 
+		$dbr = wfGetDB( DB_SLAVE );
 		$this->preprocessResults( $dbr, $res );
 
-		$wgOut->addHTML( Xml::openElement( 'div', array( 'class' => 'mw-spcontent' ) ) );
+		$out->addHTML( Xml::openElement( 'div', array( 'class' => 'mw-spcontent' ) ) );
 
 		# Top header and navigation
 		if ( $this->shownavigation ) {
-			$wgOut->addHTML( $this->getPageHeader() );
+			$out->addHTML( $this->getPageHeader() );
 			if ( $this->numRows > 0 ) {
-				$wgOut->addHTML( '<p>' . wfShowingResults( $this->offset, $this->numRows ) . '</p>' );
+				$out->addHTML( $this->msg( 'showingresults' )->numParams(
+					min( $this->numRows, $this->limit ), # do not show the one extra row, if exist
+					$this->offset + 1 )->parseAsBlock() );
 				# Disable the "next" link when we reach the end
-				$paging = wfViewPrevNext( $this->offset, $this->limit,
-					$this->getTitle( $par ),
-					wfArrayToCGI( $this->linkParameters() ), ( $this->numRows < $this->limit ) );
-				$wgOut->addHTML( '<p>' . $paging . '</p>' );
+				$paging = $this->getLanguage()->viewPrevNext( $this->getTitle( $par ), $this->offset,
+					$this->limit, $this->linkParameters(), ( $this->numRows <= $this->limit ) );
+				$out->addHTML( '<p>' . $paging . '</p>' );
 			} else {
 				# No results to show, so don't bother with "showing X of Y" etc.
 				# -- just let the user know and give up now
-				$wgOut->addHTML( '<p>' . wfMsgHtml( 'specialpage-empty' ) . '</p>' );
-				$wgOut->addHTML( Xml::closeElement( 'div' ) );
+				$out->addWikiMsg( 'specialpage-empty' );
+				$out->addHTML( Xml::closeElement( 'div' ) );
 				return;
 			}
 		}
@@ -520,21 +545,21 @@ abstract class QueryPage extends SpecialPage {
 		# The actual results; specialist subclasses will want to handle this
 		# with more than a straight list, so we hand them the info, plus
 		# an OutputPage, and let them get on with it
-		$this->outputResults( $wgOut,
+		$this->outputResults( $out,
 			$this->getSkin(),
 			$dbr, # Should use a ResultWrapper for this
 			$res,
-			$this->numRows,
+			min( $this->numRows, $this->limit ), # do not format the one extra row, if exist
 			$this->offset );
 
 		# Repeat the paging links at the bottom
 		if ( $this->shownavigation ) {
-			$wgOut->addHTML( '<p>' . $paging . '</p>' );
+			$out->addHTML( '<p>' . $paging . '</p>' );
 		}
 
-		$wgOut->addHTML( Xml::closeElement( 'div' ) );
+		$out->addHTML( Xml::closeElement( 'div' ) );
 
-		return $this->numRows;
+		return min( $this->numRows, $this->limit ); # do not return the one extra row, if exist
 	}
 
 	/**
@@ -597,10 +622,17 @@ abstract class QueryPage extends SpecialPage {
 		}
 	}
 
+	/**
+	 * @param $offset
+	 * @return string
+	 */
 	function openList( $offset ) {
 		return "\n<ol start='" . ( $offset + 1 ) . "' class='special'>\n";
 	}
 
+	/**
+	 * @return string
+	 */
 	function closeList() {
 		return "</ol>\n";
 	}
@@ -612,13 +644,13 @@ abstract class QueryPage extends SpecialPage {
 
 	/**
 	 * Similar to above, but packaging in a syndicated feed instead of a web page
+	 * @return bool
 	 */
 	function doFeed( $class = '', $limit = 50 ) {
 		global $wgFeed, $wgFeedClasses;
 
 		if ( !$wgFeed ) {
-			global $wgOut;
-			$wgOut->addWikiMsg( 'feed-unavailable' );
+			$this->getOutput()->addWikiMsg( 'feed-unavailable' );
 			return;
 		}
 
@@ -652,12 +684,13 @@ abstract class QueryPage extends SpecialPage {
 	/**
 	 * Override for custom handling. If the titles/links are ok, just do
 	 * feedItemDesc()
+	 * @return FeedItem|null
 	 */
 	function feedResult( $row ) {
 		if ( !isset( $row->title ) ) {
 			return null;
 		}
-		$title = Title::MakeTitle( intval( $row->namespace ), $row->title );
+		$title = Title::makeTitle( intval( $row->namespace ), $row->title );
 		if ( $title ) {
 			$date = isset( $row->timestamp ) ? $row->timestamp : '';
 			$comments = '';
@@ -693,7 +726,7 @@ abstract class QueryPage extends SpecialPage {
 	}
 
 	function feedDesc() {
-		return wfMsgExt( 'tagline', 'parsemag' );
+		return $this->msg( 'tagline' )->text();
 	}
 
 	function feedUrl() {
@@ -719,6 +752,10 @@ abstract class WantedQueryPage extends QueryPage {
 	 * Cache page existence for performance
 	 */
 	function preprocessResults( $db, $res ) {
+		if ( !$res->numRows() ) {
+			return;
+		}
+
 		$batch = new LinkBatch;
 		foreach ( $res as $row ) {
 			$batch->add( $row->namespace, $row->title );
@@ -726,9 +763,7 @@ abstract class WantedQueryPage extends QueryPage {
 		$batch->execute();
 
 		// Back to start for display
-		if ( $db->numRows( $res ) > 0 )
-			// If there are no rows we get an error seeking.
-			$db->dataSeek( $res, 0 );
+		$res->seek( 0 );
 	}
 
 	/**
@@ -737,6 +772,7 @@ abstract class WantedQueryPage extends QueryPage {
 	 * kluge for Special:WantedFiles, which may contain false
 	 * positives for files that exist e.g. in a shared repo (bug
 	 * 6220).
+	 * @return bool
 	 */
 	function forceExistenceCheck() {
 		return false;
@@ -754,8 +790,8 @@ abstract class WantedQueryPage extends QueryPage {
 		if ( $title instanceof Title ) {
 			if ( $this->isCached() || $this->forceExistenceCheck() ) {
 				$pageLink = $title->isKnown()
-					? '<del>' . $skin->link( $title ) . '</del>'
-					: $skin->link(
+					? '<del>' . Linker::link( $title ) . '</del>'
+					: Linker::link(
 						$title,
 						null,
 						array(),
@@ -763,7 +799,7 @@ abstract class WantedQueryPage extends QueryPage {
 						array( 'broken' )
 					);
 			} else {
-				$pageLink = $skin->link(
+				$pageLink = Linker::link(
 					$title,
 					null,
 					array(),
@@ -771,10 +807,9 @@ abstract class WantedQueryPage extends QueryPage {
 					array( 'broken' )
 				);
 			}
-			return wfSpecialList( $pageLink, $this->makeWlhLink( $title, $skin, $result ) );
+			return $this->getLanguage()->specialList( $pageLink, $this->makeWlhLink( $title, $result ) );
 		} else {
-			$tsafe = htmlspecialchars( $result->title );
-			return wfMsgHtml( 'wantedpages-badtitle', $tsafe );
+			return $this->msg( 'wantedpages-badtitle', $result->title )->escaped();
 		}
 	}
 
@@ -782,15 +817,12 @@ abstract class WantedQueryPage extends QueryPage {
 	 * Make a "what links here" link for a given title
 	 *
 	 * @param $title Title to make the link for
-	 * @param $skin Skin object to use
 	 * @param $result Object: result row
 	 * @return string
 	 */
-	private function makeWlhLink( $title, $skin, $result ) {
-		global $wgLang;
-		$wlh = SpecialPage::getTitleFor( 'Whatlinkshere' );
-		$label = wfMsgExt( 'nlinks', array( 'parsemag', 'escape' ),
-		$wgLang->formatNum( $result->value ) );
-		return $skin->link( $wlh, $label, array(), array( 'target' => $title->getPrefixedText() ) );
+	private function makeWlhLink( $title, $result ) {
+		$wlh = SpecialPage::getTitleFor( 'Whatlinkshere', $title->getPrefixedText() );
+		$label = $this->msg( 'nlinks' )->numParams( $result->value )->escaped();
+		return Linker::link( $wlh, $label );
 	}
 }

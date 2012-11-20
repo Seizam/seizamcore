@@ -5,7 +5,7 @@
  * Created on May 14, 2010
  *
  * Copyright © 2010 Sam Reed
- * Copyright © 2006 Yuri Astrakhan <Firstname><Lastname>@gmail.com
+ * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,11 +24,6 @@
  *
  * @file
  */
-
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( "ApiQueryBase.php" );
-}
 
 /**
  * A query module to list all interwiki links on a page
@@ -67,32 +62,41 @@ class ApiQueryIWLinks extends ApiQueryBase {
 				$this->dieUsage( 'Invalid continue param. You should pass the ' .
 					'original value returned by the previous query', '_badcontinue' );
 			}
+			$op = $params['dir'] == 'descending' ? '<' : '>';
+			$db = $this->getDB();
 			$iwlfrom = intval( $cont[0] );
-			$iwlprefix = $this->getDB()->strencode( $cont[1] );
-			$iwltitle = $this->getDB()->strencode( $this->titleToKey( $cont[2] ) );
+			$iwlprefix = $db->addQuotes( $cont[1] );
+			$iwltitle = $db->addQuotes( $cont[2] );
 			$this->addWhere(
-				"iwl_from > $iwlfrom OR " .
+				"iwl_from $op $iwlfrom OR " .
 				"(iwl_from = $iwlfrom AND " .
-				"(iwl_prefix > '$iwlprefix' OR " .
-				"(iwl_prefix = '$iwlprefix' AND " .
-				"iwl_title >= '$iwltitle')))"
+				"(iwl_prefix $op $iwlprefix OR " .
+				"(iwl_prefix = $iwlprefix AND " .
+				"iwl_title $op= $iwltitle)))"
 			);
 		}
 
+		$sort = ( $params['dir'] == 'descending' ? ' DESC' : '' );
 		if ( isset( $params['prefix'] ) ) {
 			$this->addWhereFld( 'iwl_prefix', $params['prefix'] );
 			if ( isset( $params['title'] ) ) {
 				$this->addWhereFld( 'iwl_title', $params['title'] );
-				$this->addOption( 'ORDER BY', 'iwl_from' );
+				$this->addOption( 'ORDER BY', 'iwl_from' . $sort );
 			} else {
-				$this->addOption( 'ORDER BY', 'iwl_title, iwl_from' );
+				$this->addOption( 'ORDER BY', array(
+						'iwl_title' . $sort,
+						'iwl_from' . $sort
+				));
 			}
 		} else {
 			// Don't order by iwl_from if it's constant in the WHERE clause
 			if ( count( $this->getPageSet()->getGoodTitles() ) == 1 ) {
-				$this->addOption( 'ORDER BY', 'iwl_prefix' );
+				$this->addOption( 'ORDER BY', 'iwl_prefix' . $sort );
 			} else {
-				$this->addOption( 'ORDER BY', 'iwl_from, iwl_prefix' );
+				$this->addOption( 'ORDER BY', array (
+						'iwl_from' . $sort,
+						'iwl_prefix' . $sort
+				));
 			}
 		}
 
@@ -109,7 +113,7 @@ class ApiQueryIWLinks extends ApiQueryBase {
 			}
 			$entry = array( 'prefix' => $row->iwl_prefix );
 
-			if ( !is_null( $params['url'] ) ) {
+			if ( $params['url'] ) {
 				$title = Title::newFromText( "{$row->iwl_prefix}:{$row->iwl_title}" );
 				if ( $title ) {
 					$entry['url'] = wfExpandUrl( $title->getFullURL(), PROTO_CURRENT );
@@ -131,7 +135,7 @@ class ApiQueryIWLinks extends ApiQueryBase {
 
 	public function getAllowedParams() {
 		return array(
-			'url' => null,
+			'url' => false,
 			'limit' => array(
 				ApiBase::PARAM_DFLT => 10,
 				ApiBase::PARAM_TYPE => 'limit',
@@ -142,6 +146,13 @@ class ApiQueryIWLinks extends ApiQueryBase {
 			'continue' => null,
 			'prefix' => null,
 			'title' => null,
+			'dir' => array(
+				ApiBase::PARAM_DFLT => 'ascending',
+				ApiBase::PARAM_TYPE => array(
+					'ascending',
+					'descending'
+				)
+			),
 		);
 	}
 
@@ -152,6 +163,20 @@ class ApiQueryIWLinks extends ApiQueryBase {
 			'continue' => 'When more results are available, use this to continue',
 			'prefix' => 'Prefix for the interwiki',
 			'title' => "Interwiki link to search for. Must be used with {$this->getModulePrefix()}prefix",
+			'dir' => 'The direction in which to list',
+		);
+	}
+
+	public function getResultProperties() {
+		return array(
+			'' => array(
+				'prefix' => 'string',
+				'url' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				),
+				'*' => 'string'
+			)
 		);
 	}
 
@@ -166,10 +191,9 @@ class ApiQueryIWLinks extends ApiQueryBase {
 		) );
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
-			'Get interwiki links from the [[Main Page]]:',
-			'  api.php?action=query&prop=iwlinks&titles=Main%20Page',
+			'api.php?action=query&prop=iwlinks&titles=Main%20Page' => 'Get interwiki links from the [[Main Page]]',
 		);
 	}
 

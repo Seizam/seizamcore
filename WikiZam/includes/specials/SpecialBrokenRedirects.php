@@ -22,12 +22,12 @@
  */
 
 /**
- * A special page listing redirects tonon existent page. Those should be
+ * A special page listing redirects to non existent page. Those should be
  * fixed to point to an existing page.
  *
  * @ingroup SpecialPage
  */
-class BrokenRedirectsPage extends PageQueryPage {
+class BrokenRedirectsPage extends QueryPage {
 
 	function __construct( $name = 'BrokenRedirects' ) {
 		parent::__construct( $name );
@@ -38,15 +38,16 @@ class BrokenRedirectsPage extends PageQueryPage {
 	function sortDescending() { return false; }
 
 	function getPageHeader() {
-		return wfMsgExt( 'brokenredirectstext', array( 'parse' ) );
+		return $this->msg( 'brokenredirectstext' )->parseAsBlock();
 	}
 
 	function getQueryInfo() {
 		return array(
 			'tables' => array( 'redirect', 'p1' => 'page',
 					'p2' => 'page' ),
-			'fields' => array( 'p1.page_namespace AS namespace',
-					'p1.page_title AS title',
+			'fields' => array( 'namespace' => 'p1.page_namespace',
+					'title' => 'p1.page_title',
+					'value' => 'p1.page_title',
 					'rd_namespace',
 					'rd_title'
 			),
@@ -77,8 +78,6 @@ class BrokenRedirectsPage extends PageQueryPage {
 	 * @return String
 	 */
 	function formatResult( $skin, $result ) {
-		global $wgUser, $wgLang;
-
 		$fromObj = Title::makeTitle( $result->namespace, $result->title );
 		if ( isset( $result->rd_title ) ) {
 			$toObj = Title::makeTitle( $result->rd_namespace, $result->rd_title );
@@ -93,43 +92,43 @@ class BrokenRedirectsPage extends PageQueryPage {
 
 		// $toObj may very easily be false if the $result list is cached
 		if ( !is_object( $toObj ) ) {
-			return '<del>' . $skin->link( $fromObj ) . '</del>';
+			return '<del>' . Linker::link( $fromObj ) . '</del>';
 		}
 
-		$from = $skin->linkKnown(
+		$from = Linker::linkKnown(
 			$fromObj,
 			null,
 			array(),
 			array( 'redirect' => 'no' )
 		);
 		$links = array();
-		$links[] = $skin->linkKnown(
+		$links[] = Linker::linkKnown(
 			$fromObj,
-			wfMsgHtml( 'brokenredirects-edit' ),
+			$this->msg( 'brokenredirects-edit' )->escaped(),
 			array(),
 			array( 'action' => 'edit' )
 		);
-		$to = $skin->link(
+		$to = Linker::link(
 			$toObj,
 			null,
 			array(),
 			array(),
 			array( 'broken' )
 		);
-		$arr = $wgLang->getArrow();
+		$arr = $this->getLanguage()->getArrow();
 
-		$out = $from . wfMsg( 'word-separator' );
+		$out = $from . $this->msg( 'word-separator' )->escaped();
 
-		if( $wgUser->isAllowed( 'delete' ) ) {
-			$links[] = $skin->linkKnown(
+		if( $this->getUser()->isAllowed( 'delete' ) ) {
+			$links[] = Linker::linkKnown(
 				$fromObj,
-				wfMsgHtml( 'brokenredirects-delete' ),
+				$this->msg( 'brokenredirects-delete' )->escaped(),
 				array(),
 				array( 'action' => 'delete' )
 			);
 		}
 
-		$out .= wfMsg( 'parentheses', $wgLang->pipeList( $links ) );
+		$out .= $this->msg( 'parentheses' )->rawParams( $this->getLanguage()->pipeList( $links ) )->escaped();
 		$out .= " {$arr} {$to}";
 		return $out;
 	}

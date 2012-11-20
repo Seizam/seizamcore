@@ -2,12 +2,29 @@
 /**
  * Revision/log/file deletion backend
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
+ * @ingroup RevisionDelete
  */
 
 /**
  * Temporary b/c interface, collection of static functions.
  * @ingroup SpecialPage
+ * @ingroup RevisionDelete
  */
 class RevisionDeleter {
 	/**
@@ -28,18 +45,24 @@ class RevisionDeleter {
 	}
 
 	/**
-	 * Gets an array of message keys describing the changes made to the visibility
-	 * of the revision. If the resulting array is $arr, then $arr[0] will contain an
-	 * array of strings describing the items that were hidden, $arr[2] will contain
-	 * an array of strings describing the items that were unhidden, and $arr[3] will
-	 * contain an array with a single string, which can be one of "applied
-	 * restrictions to sysops", "removed restrictions from sysops", or null.
+	 * Gets an array of message keys describing the changes made to the
+	 * visibility of the revision.
+	 *
+	 * If the resulting array is $arr, then $arr[0] will contain an array of
+	 * keys describing the items that were hidden, $arr[1] will contain
+	 * an array of keys describing the items that were unhidden, and $arr[2]
+	 * will contain an array with a single message key, which can be one of
+	 * "revdelete-restricted", "revdelete-unrestricted" indicating (un)suppression
+	 * or null to indicate nothing in particular.
+	 * You can turn the keys in $arr[0] and $arr[1] into message keys by
+	 * appending -hid and and -unhid to the keys respectively.
 	 *
 	 * @param $n Integer: the new bitfield.
 	 * @param $o Integer: the old bitfield.
-	 * @return An array as described above.
+	 * @return array An array as described above.
+	 * @since 1.19 public
 	 */
-	protected static function getChanges( $n, $o ) {
+	public static function getChanges( $n, $o ) {
 		$diff = $n ^ $o;
 		$ret = array( 0 => array(), 1 => array(), 2 => array() );
 		// Build bitfield changes in language
@@ -59,51 +82,11 @@ class RevisionDeleter {
 		return $ret;
 	}
 
-	/**
-	 * Gets a log message to describe the given revision visibility change. This
-	 * message will be of the form "[hid {content, edit summary, username}];
-	 * [unhid {...}][applied restrictions to sysops] for $count revisions: $comment".
-	 *
-	 * @param $count Integer: The number of effected revisions.
-	 * @param $nbitfield Integer: The new bitfield for the revision.
-	 * @param $obitfield Integer: The old bitfield for the revision.
-	 * @param $language Language object to use
-	 * @param $isForLog Boolean
+	/** Get DB field name for URL param...
+	 * Future code for other things may also track
+	 * other types of revision-specific changes.
+	 * @return string One of log_id/rev_id/fa_id/ar_timestamp/oi_archive_name
 	 */
-	public static function getLogMessage( $count, $nbitfield, $obitfield, $language, $isForLog = false ) {
-		$changes = self::getChanges( $nbitfield, $obitfield );
-		array_walk( $changes, array( __CLASS__, 'expandMessageArray' ), $language );
-
-		$changesText = array();
-
-		if( count( $changes[0] ) ) {
-			$changesText[] = wfMsgExt( 'revdelete-hid', array( 'parsemag', 'language' => $language ), $language->commaList( $changes[0] ) );
-		}
-		if( count( $changes[1] ) ) {
-			$changesText[] = wfMsgExt( 'revdelete-unhid', array( 'parsemag', 'language' => $language ), $language->commaList( $changes[1] ) );
-		}
-
-		$s = $language->semicolonList( $changesText );
-		if( count( $changes[2] ) ) {
-			$s .= $s ? ' (' . $changes[2][0] . ')' : ' ' . $changes[2][0];
-		}
-
-		$msg = $isForLog ? 'logdelete-log-message' : 'revdelete-log-message';
-		return wfMsgExt( $msg, array( 'parsemag', 'language' => $language ), $s, $language->formatNum($count) );
-	}
-
-	private static function expandMessageArray( &$msg, $key, $language ) {
-		if ( is_array ( $msg ) ) {
-			array_walk( $msg, array( __CLASS__, 'expandMessageArray' ), $language );
-		} else {
-			$msg = wfMsgExt( $msg, array( 'parsemag', 'language' => $language ) );
-		}
-	}
-
-	// Get DB field name for URL param...
-	// Future code for other things may also track
-	// other types of revision-specific changes.
-	// @returns string One of log_id/rev_id/fa_id/ar_timestamp/oi_archive_name
 	public static function getRelationType( $typeName ) {
 		if ( isset( SpecialRevisionDelete::$deprecatedTypeMap[$typeName] ) ) {
 			$typeName = SpecialRevisionDelete::$deprecatedTypeMap[$typeName];
@@ -140,74 +123,5 @@ class RevisionDeleter {
 					'ar_rev_id' => $revid ), __METHOD__ );
 
 		return $timestamp;
-	}
-
-	/**
-	 * Creates utility links for log entries.
-	 *
-	 * @param $title Title
-	 * @param $paramArray Array
-	 * @param $skin Skin
-	 * @param $messages
-	 * @return String
-	 */
-	public static function getLogLinks( $title, $paramArray, $skin, $messages ) {
-		global $wgLang;
-
-		if ( count( $paramArray ) >= 2 ) {
-			// Different revision types use different URL params...
-			$originalKey = $key = $paramArray[0];
-			// $paramArray[1] is a CSV of the IDs
-			$Ids = explode( ',', $paramArray[1] );
-
-			$revert = array();
-
-			// Diff link for single rev deletions
-			if ( count( $Ids ) == 1 ) {
-				// Live revision diffs...
-				if ( in_array( $key, array( 'oldid', 'revision' ) ) ) {
-					$revert[] = $skin->link(
-						$title,
-						$messages['diff'],
-						array(),
-						array(
-							'diff' => intval( $Ids[0] ),
-							'unhide' => 1
-						),
-						array( 'known', 'noclasses' )
-					);
-				// Deleted revision diffs...
-				} elseif ( in_array( $key, array( 'artimestamp','archive' ) ) ) {
-					$revert[] = $skin->link(
-						SpecialPage::getTitleFor( 'Undelete' ),
-						$messages['diff'],
-						array(),
-						array(
-							'target'    => $title->getPrefixedDBKey(),
-							'diff'      => 'prev',
-							'timestamp' => $Ids[0]
-						),
-						array( 'known', 'noclasses' )
-					);
-				}
-			}
-
-			// View/modify link...
-			$revert[] = $skin->link(
-				SpecialPage::getTitleFor( 'Revisiondelete' ),
-				$messages['revdel-restore'],
-				array(),
-				array(
-					'target' => $title->getPrefixedText(),
-					'type' => $key,
-					'ids' => implode(',', $Ids),
-				),
-				array( 'known', 'noclasses' )
-			);
-
-			// Pipe links
-			return wfMsg( 'parentheses', $wgLang->pipeList( $revert ) );
-		}
-		return '';
 	}
 }

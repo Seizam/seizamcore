@@ -1,8 +1,29 @@
 <?php
+/**
+ * Serbian (Српски / Srpski) specific code.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup Language
+ */
 
-require_once( dirname( __FILE__ ) . '/../LanguageConverter.php' );
-require_once( dirname( __FILE__ ) . '/LanguageSr_ec.php' );
-require_once( dirname( __FILE__ ) . '/LanguageSr_el.php' );
+require_once( __DIR__ . '/../LanguageConverter.php' );
+require_once( __DIR__ . '/LanguageSr_ec.php' );
+require_once( __DIR__ . '/LanguageSr_el.php' );
 
 /**
  * There are two levels of conversion for Serbian: the script level
@@ -147,6 +168,7 @@ class SrConverter extends LanguageConverter {
 	 * @param $text string
 	 * @param $toVariant string
 	 *
+	 * @throws MWException
 	 * @return string
 	 */
 	function translate( $text, $toVariant ) {
@@ -173,6 +195,32 @@ class SrConverter extends LanguageConverter {
 
 		return $ret;
 	}
+
+	/**
+	 * Guess if a text is written in Cyrillic or Latin.
+	 * Overrides LanguageConverter::guessVariant()
+	 *
+	 * @param string  $text The text to be checked
+	 * @param string  $variant Language code of the variant to be checked for
+	 * @return bool  true if $text appears to be written in $variant
+	 *
+	 * @author Nikola Smolenski <smolensk@eunet.rs>
+	 * @since 1.19
+	 */
+	public function guessVariant( $text, $variant ) {
+		$numCyrillic = preg_match_all("/[шђчћжШЂЧЋЖ]/u", $text, $dummy);
+		$numLatin = preg_match_all("/[šđčćžŠĐČĆŽ]/u", $text, $dummy);
+
+		if( $variant == 'sr-ec' ) {
+			return (boolean) ($numCyrillic > $numLatin);
+		} elseif( $variant == 'sr-el' ) {
+			return (boolean) ($numLatin > $numCyrillic);
+		} else {
+			return false;
+		}
+
+	}
+
 }
 
 /**
@@ -212,7 +260,10 @@ class LanguageSr extends LanguageSr_ec {
 			return '';
 		}
 
-		// if no number with word, then use $form[0] for singular and $form[1] for plural or zero
+		// If the actual number is not mentioned in the expression, then just two forms are enough:
+		// singular for $count == 1
+		// plural   for $count != 1
+		// For example, "This user belongs to {{PLURAL:$1|one group|several groups}}."
 		if ( count( $forms ) === 2 ) {
 			return $count == 1 ? $forms[0] : $forms[1];
 		}

@@ -26,7 +26,7 @@
 # Protect against register_globals
 # This must be done before any globals are set by the code
 if ( ini_get( 'register_globals' ) ) {
-	if ( isset( $_REQUEST['GLOBALS'] ) ) {
+	if ( isset( $_REQUEST['GLOBALS'] ) || isset( $_FILES['GLOBALS'] ) ) {
 		die( '<a href="http://www.hardened-php.net/globals-problem">$GLOBALS overwrite vulnerability</a>');
 	}
 	$verboten = array(
@@ -81,7 +81,7 @@ define( 'MEDIAWIKI', true );
 # Full path to working directory.
 # Makes it possible to for example to have effective exclude path in apc.
 # Also doesn't break installations using symlinked includes, like
-# dirname( __FILE__ ) would do.
+# __DIR__ would do.
 $IP = getenv( 'MW_INSTALL_PATH' );
 if ( $IP === false ) {
 	$IP = realpath( '.' );

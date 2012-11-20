@@ -4,7 +4,7 @@
  *
  * Created on Jul 3, 2007
  *
- * Copyright © 2007 Roan Kattouw <Firstname>.<Lastname>@gmail.com
+ * Copyright © 2007 Roan Kattouw "<Firstname>.<Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,11 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( "ApiBase.php" );
-}
-
 /**
  * @ingroup API
  */
@@ -39,14 +34,13 @@ class ApiUndelete extends ApiBase {
 	}
 
 	public function execute() {
-		global $wgUser;
 		$params = $this->extractRequestParams();
 
-		if ( !$wgUser->isAllowed( 'undelete' ) ) {
+		if ( !$this->getUser()->isAllowed( 'undelete' ) ) {
 			$this->dieUsageMsg( 'permdenied-undelete' );
 		}
 
-		if ( $wgUser->isBlocked() ) {
+		if ( $this->getUser()->isBlocked() ) {
 			$this->dieUsageMsg( 'blockedtext' );
 		}
 
@@ -74,7 +68,7 @@ class ApiUndelete extends ApiBase {
 
 		if ( $retval[1] ) {
 			wfRunHooks( 'FileUndeleteComplete',
-				array( $titleObj, array(), $wgUser, $params['reason'] ) );
+				array( $titleObj, array(), $this->getUser(), $params['reason'] ) );
 		}
 
 		$this->setWatch( $params['watchlist'], $titleObj );
@@ -82,7 +76,7 @@ class ApiUndelete extends ApiBase {
 		$info['title'] = $titleObj->getPrefixedText();
 		$info['revisions'] = intval( $retval[0] );
 		$info['fileversions'] = intval( $retval[1] );
-		$info['reason'] = intval( $retval[2] );
+		$info['reason'] = $retval[2];
 		$this->getResult()->addValue( null, $this->getModuleName(), $info );
 	}
 
@@ -100,7 +94,10 @@ class ApiUndelete extends ApiBase {
 				ApiBase::PARAM_TYPE => 'string',
 				ApiBase::PARAM_REQUIRED => true
 			),
-			'token' => null,
+			'token' => array(
+				ApiBase::PARAM_TYPE => 'string',
+				ApiBase::PARAM_REQUIRED => true
+			),
 			'reason' => '',
 			'timestamps' => array(
 				ApiBase::PARAM_TYPE => 'timestamp',
@@ -122,9 +119,20 @@ class ApiUndelete extends ApiBase {
 		return array(
 			'title' => 'Title of the page you want to restore',
 			'token' => 'An undelete token previously retrieved through list=deletedrevs',
-			'reason' => 'Reason for restoring (optional)',
+			'reason' => 'Reason for restoring',
 			'timestamps' => 'Timestamps of the revisions to restore. If not set, all revisions will be restored.',
 			'watchlist' => 'Unconditionally add or remove the page from your watchlist, use preferences or do not change watch',
+		);
+	}
+
+	public function getResultProperties() {
+		return array(
+			'' => array(
+				'title' => 'string',
+				'revisions' => 'integer',
+				'filerevisions' => 'integer',
+				'reason' => 'string'
+			)
 		);
 	}
 
@@ -152,7 +160,7 @@ class ApiUndelete extends ApiBase {
 		return '';
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=undelete&title=Main%20Page&token=123ABC&reason=Restoring%20main%20page',
 			'api.php?action=undelete&title=Main%20Page&token=123ABC&timestamps=20070703220045|20070702194856'

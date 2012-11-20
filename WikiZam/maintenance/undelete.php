@@ -21,7 +21,7 @@
  * @ingroup Maintenance
  */
 
-require_once( dirname( __FILE__ ) . '/Maintenance.php' );
+require_once( __DIR__ . '/Maintenance.php' );
 
 class Undelete extends Maintenance {
 	public function __construct() {
@@ -44,6 +44,9 @@ class Undelete extends Maintenance {
 			$this->error( "Invalid title", true );
 		}
 		$wgUser = User::newFromName( $user );
+		if ( !$wgUser ) {
+			$this->error( "Invalid username", true );
+		}
 		$archive = new PageArchive( $title );
 		$this->output( "Undeleting " . $title->getPrefixedDBkey() . '...' );
 		$archive->undelete( array(), $reason );

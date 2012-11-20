@@ -23,6 +23,8 @@
  * @author לערי ריינהארט
  */
 
+$fallback = 'zh-hant, zh-hans';
+
 $specialPageAliases = array(
 	'Ancientpages'              => array( '最舊頁面' ),
 	'Block'                     => array( '查封用戶' ),
@@ -43,8 +45,6 @@ $specialPageAliases = array(
 	'Userrights'                => array( '用戶權限' ),
 	'Withoutinterwiki'          => array( '沒有跨語言鏈接的頁面' ),
 );
-
-$fallback = 'zh-hant';
 
 $namespaceNames = array(
 	NS_USER             => '使用者',
@@ -106,7 +106,6 @@ $dateFormats = array(
 $messages = array(
 # User preference toggles
 'tog-underline'            => '連結標注底線',
-'tog-highlightbroken'      => '損毀連結格式為<a href="" class="new">這樣</a>（否則：像這樣<a href="" class="internal">?</a>）',
 'tog-justify'              => '段落對齊',
 'tog-hideminor'            => '近期變動中隱藏細微修改',
 'tog-usenewrc'             => '使用強化的近期變動 (需要JavaScript)',
@@ -326,7 +325,6 @@ $messages = array(
 <span class="plainlinks">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} 搜索有關日誌]，
 或[{{fullurl:{{FULLPAGENAME}}|action=edit}} 編輯此頁]</span>。',
 'userpage-userdoesnotexist'  => '使用者帳號「<nowiki>$1</nowiki>」未曾建立。請在建立／編輯這個頁面前先檢查一下。',
-'clearyourcache'             => "'''注意:''' 在儲存以後, 您必須清除瀏覽器的快取才能看到所作出的改變。 '''Mozilla / Firefox / Safari:''' 按著 ''Shift'' 再點擊''重新整理''(或按下''Ctrl-Shift-R''，在蘋果Mac上按下''Cmd-Shift-R'')；'''IE:''' 按著 ''Ctrl'' 再點擊 ''重新整理''，或按下 ''Ctrl-F5''；'''Konqueror:''' 只需點擊 ''重新整理''；'''Opera:''' 使用者需要在 ''工具-設定'' 中完整地清除它們的快取。",
 'usercsspreview'             => "'''注意您只是在預覽您的個人 CSS, 還沒有儲存﹗'''",
 'userjspreview'              => "'''注意您只是在測試／預覽您的個人 JavaScript，還沒有儲存﹗'''",
 'previewnote'                => "'''請記住這只是預覽，內容尚未儲存！'''",
@@ -395,7 +393,6 @@ $messages = array(
 'revdelete-hide-restricted'   => '將此限制同樣應用於管理員',
 'revdelete-suppress'          => '同時壓制由操作員以及其他使用者的資料',
 'revdelete-unsuppress'        => '在已復原的修訂中移除限制',
-'revdelete-logentry'          => '已更改「[[$1]]」之修訂可見度',
 'revdelete-success'           => '修訂的可見性已經成功設定。',
 'logdelete-success'           => '事件的可見性已經成功設定。',
 
@@ -646,7 +643,6 @@ $NEWPAGE
 請確定您要進行此項操作，並且了解其後果，同時您的行為符合[[{{MediaWiki:Policy-url}}]]。',
 'deletedtext'       => '「$1」已經被刪除。
 最近刪除的紀錄請參見$2。',
-'deletedarticle'    => '已刪除「[[$1]]」',
 'dellogpagetext'    => '以下是最近刪除的紀錄列表。
 所有的時間都是使用伺服器時間。',
 'reverted'          => '復原到早期版本',
@@ -691,7 +687,6 @@ $NEWPAGE
 'undelete-revision'            => '刪除$1時由$3（在$2）所編寫的修訂版本:',
 'undeleterevision-missing'     => '此版本的內容不正確或已經遺失。可能連結錯誤、被移除或已經被復原。',
 'undeletebtn'                  => '復原',
-'undeletedarticle'             => '已經復原「$1」',
 'undeletedrevisions'           => '$1個修訂版本已經復原',
 'undeletedrevisions-files'     => '$1 個版本和 $2 個檔案被復原',
 'undeletedfiles'               => '$1 個檔案被復原',
@@ -858,7 +853,6 @@ $NEWPAGE
 
 # Patrol log
 'patrol-log-page' => '巡查記錄',
-'patrol-log-line' => '已經標示$1/$2版做已巡查的$3',
 
 # Browsing diffs
 'previousdiff' => '←上一個',
@@ -866,7 +860,7 @@ $NEWPAGE
 
 # Media information
 'imagemaxsize'   => '在圖片描述頁對圖片大小限制為:',
-'file-nohires'   => '<small>無更高解析度可提供。</small>',
+'file-nohires'   => '無更高解析度可提供。',
 'show-big-image' => '完整解析度',
 
 # Special:NewFiles

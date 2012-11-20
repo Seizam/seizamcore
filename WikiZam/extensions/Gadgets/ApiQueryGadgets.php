@@ -76,6 +76,9 @@ class ApiQueryGadgets extends ApiQueryBase {
 		$data = array();
 		$result = $this->getResult();
 
+		/**
+		 * @var $g Gadget
+		 */
 		foreach ( $gadgets as $g ) {
 			$row = array();
 			if ( isset( $this->props['id'] ) ) {
@@ -104,11 +107,11 @@ class ApiQueryGadgets extends ApiQueryBase {
 	 * @return bool
 	 */
 	private function isNeeded( Gadget $gadget ) {
-		global $wgUser;
+		$user = $this->getUser();
 
 		return ( $this->neededIds === false || isset( $this->neededIds[$gadget->getName()] ) )
-			&& ( !$this->listAllowed || $gadget->isAllowed( $wgUser ) )
-			&& ( !$this->listEnabled || $gadget->isEnabled( $wgUser ) );
+			&& ( !$this->listAllowed || $gadget->isAllowed( $user ) )
+			&& ( !$this->listEnabled || $gadget->isEnabled( $user ) );
 	}
 
 	/**
@@ -217,6 +220,6 @@ class ApiQueryGadgets extends ApiQueryBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiQueryGadgets.php 100509 2011-10-22 19:09:25Z liangent $';
+		return __CLASS__ . ': $Id$';
 	}
 }

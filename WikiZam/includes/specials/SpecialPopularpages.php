@@ -36,14 +36,15 @@ class PopularPagesPage extends QueryPage {
 		# page_counter is not indexed
 		return true;
 	}
+
 	function isSyndicated() { return false; }
 
 	function getQueryInfo() {
 		return array (
 			'tables' => array( 'page' ),
-			'fields' => array( 'page_namespace AS namespace',
-					'page_title AS title',
-					'page_counter AS value'),
+			'fields' => array( 'namespace' => 'page_namespace',
+					'title' => 'page_title',
+					'value' => 'page_counter'),
 			'conds' => array( 'page_is_redirect' => 0,
 					'page_namespace' => MWNamespace::getContentNamespaces() ) );
 	}
@@ -54,17 +55,19 @@ class PopularPagesPage extends QueryPage {
 	 * @return string
 	 */
 	function formatResult( $skin, $result ) {
-		global $wgLang, $wgContLang;
-		$title = Title::makeTitle( $result->namespace, $result->title );
-		$link = $skin->linkKnown(
+		global $wgContLang;
+
+		$title = Title::makeTitleSafe( $result->namespace, $result->title );
+		if( !$title ) {
+			return Html::element( 'span', array( 'class' => 'mw-invalidtitle' ),
+				Linker::getInvalidTitleDescription( $this->getContext(), $result->namespace, $result->title ) );
+		}
+
+		$link = Linker::linkKnown(
 			$title,
 			htmlspecialchars( $wgContLang->convert( $title->getPrefixedText() ) )
 		);
-		$nv = wfMsgExt(
-			'nviews',
-			array( 'parsemag', 'escape'),
-			$wgLang->formatNum( $result->value )
-		);
-		return wfSpecialList($link, $nv);
+		$nv = $this->msg( 'nviews' )->numParams( $result->value )->escaped();
+		return $this->getLanguage()->specialList( $link, $nv );
 	}
 }

@@ -26,16 +26,12 @@ class WatchAction extends FormAction {
 		return 'watch';
 	}
 
-	public function getRestriction() {
-		return 'read';
-	}
-
 	public function requiresUnblock() {
 		return false;
 	}
 
 	protected function getDescription() {
-		return wfMsg( 'addwatch' );
+		return $this->msg( 'addwatch' )->escaped();
 	}
 
 	/**
@@ -87,7 +83,7 @@ class WatchAction extends FormAction {
 	}
 
 	public static function doWatch( Title $title, User $user  ) {
-		$page = new Article( $title, 0 );
+		$page = WikiPage::factory( $title );
 
 		if ( wfRunHooks( 'WatchArticle', array( &$user, &$page ) ) ) {
 			$user->addWatch( $title );
@@ -97,7 +93,7 @@ class WatchAction extends FormAction {
 	}
 
 	public static function doUnwatch( Title $title, User $user  ) {
-		$page = new Article( $title, 0 );
+		$page = WikiPage::factory( $title );
 
 		if ( wfRunHooks( 'UnwatchArticle', array( &$user, &$page ) ) ) {
 			$user->removeWatch( $title );
@@ -110,7 +106,7 @@ class WatchAction extends FormAction {
 	 * Get token to watch (or unwatch) a page for a user
 	 *
 	 * @param Title $title Title object of page to watch
-	 * @param User $title User for whom the action is going to be performed
+	 * @param User $user User for whom the action is going to be performed
 	 * @param string $action Optionally override the action to 'unwatch'
 	 * @return string Token
 	 * @since 1.18
@@ -123,14 +119,14 @@ class WatchAction extends FormAction {
 
 		// This token stronger salted and not compatible with ApiWatch
 		// It's title/action specific because index.php is GET and API is POST
-		return $user->editToken( $salt );
+		return $user->getEditToken( $salt );
 	}
 
 	/**
 	 * Get token to unwatch (or watch) a page for a user
 	 *
 	 * @param Title $title Title object of page to unwatch
-	 * @param User $title User for whom the action is going to be performed
+	 * @param User $user User for whom the action is going to be performed
 	 * @param string $action Optionally override the action to 'watch'
 	 * @return string Token
 	 * @since 1.18
@@ -140,11 +136,11 @@ class WatchAction extends FormAction {
 	}
 
 	protected function alterForm( HTMLForm $form ) {
-		$form->setSubmitText( wfMsg( 'confirm-watch-button' ) );
+		$form->setSubmitTextMsg( 'confirm-watch-button' );
 	}
 
 	protected function preText() {
-		return wfMessage( 'confirm-watch-top' )->parse();
+		return $this->msg( 'confirm-watch-top' )->parse();
 	}
 
 	public function onSuccess() {
@@ -159,7 +155,7 @@ class UnwatchAction extends WatchAction {
 	}
 
 	protected function getDescription() {
-		return wfMsg( 'removewatch' );
+		return $this->msg( 'removewatch' )->escaped();
 	}
 
 	public function onSubmit( $data ) {
@@ -170,11 +166,11 @@ class UnwatchAction extends WatchAction {
 	}
 
 	protected function alterForm( HTMLForm $form ) {
-		$form->setSubmitText( wfMsg( 'confirm-unwatch-button' ) );
+		$form->setSubmitTextMsg( 'confirm-unwatch-button' );
 	}
 
 	protected function preText() {
-		return wfMessage( 'confirm-unwatch-top' )->parse();
+		return $this->msg( 'confirm-unwatch-top' )->parse();
 	}
 
 	public function onSuccess() {

@@ -38,23 +38,27 @@ class SpecialPrefixindex extends SpecialAllpages {
 	 * @param $par String: becomes "FOO" when called like Special:Prefixindex/FOO (default null)
 	 */
 	function execute( $par ) {
-		global $wgRequest, $wgOut, $wgContLang;
+		global $wgContLang;
 
 		$this->setHeaders();
 		$this->outputHeader();
-		$wgOut->addModuleStyles( 'mediawiki.special' );
+
+		$out = $this->getOutput();
+		$out->addModuleStyles( 'mediawiki.special' );
 
 		# GET values
-		$from = $wgRequest->getVal( 'from', '' );
-		$prefix = $wgRequest->getVal( 'prefix', '' );
-		$ns = $wgRequest->getIntOrNull( 'namespace' );
+		$request = $this->getRequest();
+		$from = $request->getVal( 'from', '' );
+		$prefix = $request->getVal( 'prefix', '' );
+		$ns = $request->getIntOrNull( 'namespace' );
 		$namespace = (int)$ns; // if no namespace given, use 0 (NS_MAIN).
+		$hideredirects = $request->getBool( 'hideredirects', false );
 
 		$namespaces = $wgContLang->getNamespaces();
-		$wgOut->setPagetitle(
+		$out->setPageTitle(
 			( $namespace > 0 && in_array( $namespace, array_keys( $namespaces ) ) )
-				? wfMsg( 'allinnamespace', str_replace( '_', ' ', $namespaces[$namespace] ) )
-				: wfMsg( 'prefixindex' )
+				? $this->msg( 'prefixindex-namespace', str_replace( '_', ' ', $namespaces[$namespace] ) )
+				: $this->msg( 'prefixindex' )
 		);
 
 		$showme = '';
@@ -62,37 +66,39 @@ class SpecialPrefixindex extends SpecialAllpages {
 			$showme = $par;
 		} elseif( $prefix != '' ) {
 			$showme = $prefix;
-		} elseif( $from != '' ) {
+		} elseif( $from != '' && $ns === null ) {
 			// For back-compat with Special:Allpages
+			// Don't do this if namespace is passed, so paging works when doing NS views.
 			$showme = $from;
 		}
 
 		// Bug 27864: if transcluded, show all pages instead of the form.
 		if ( $this->including() || $showme != '' || $ns !== null ) {
-			$this->showPrefixChunk( $namespace, $showme, $from );
+			$this->showPrefixChunk( $namespace, $showme, $from, $hideredirects );
 		} else {
-			$wgOut->addHTML( $this->namespacePrefixForm( $namespace, null ) );
+			$out->addHTML( $this->namespacePrefixForm( $namespace, null, $hideredirects ) );
 		}
 	}
 
 	/**
-	* HTML for the top form
-	* @param $namespace Integer: a namespace constant (default NS_MAIN).
-	* @param $from String: dbKey we are starting listing at.
-	*/
-	function namespacePrefixForm( $namespace = NS_MAIN, $from = '' ) {
+	 * HTML for the top form
+	 * @param $namespace Integer: a namespace constant (default NS_MAIN).
+	 * @param $from String: dbKey we are starting listing at.
+	 * @param $hideredirects Bool: hide redirects (default FALSE)
+	 * @return string
+	 */
+	function namespacePrefixForm( $namespace = NS_MAIN, $from = '', $hideredirects = false ) {
 		global $wgScript;
-		$t = $this->getTitle();
 
 		$out  = Xml::openElement( 'div', array( 'class' => 'namespaceoptions' ) );
 		$out .= Xml::openElement( 'form', array( 'method' => 'get', 'action' => $wgScript ) );
-		$out .= Html::hidden( 'title', $t->getPrefixedText() );
+		$out .= Html::hidden( 'title', $this->getTitle()->getPrefixedText() );
 		$out .= Xml::openElement( 'fieldset' );
-		$out .= Xml::element( 'legend', null, wfMsg( 'allpages' ) );
+		$out .= Xml::element( 'legend', null, $this->msg( 'allpages' )->text() );
 		$out .= Xml::openElement( 'table', array( 'id' => 'nsselect', 'class' => 'allpages' ) );
 		$out .= "<tr>
 				<td class='mw-label'>" .
-				Xml::label( wfMsg( 'allpagesprefix' ), 'nsfrom' ) .
+				Xml::label( $this->msg( 'allpagesprefix' )->text(), 'nsfrom' ) .
 				"</td>
 				<td class='mw-input'>" .
 					Xml::input( 'prefix', 30, str_replace('_',' ',$from), array( 'id' => 'nsfrom' ) ) .
@@ -100,13 +106,25 @@ class SpecialPrefixindex extends SpecialAllpages {
 			</tr>
 			<tr>
 				<td class='mw-label'>" .
-					Xml::label( wfMsg( 'namespace' ), 'namespace' ) .
+					Xml::label( $this->msg( 'namespace' )->text(), 'namespace' ) .
 				"</td>
 				<td class='mw-input'>" .
-					Xml::namespaceSelector( $namespace, null ) . ' ' .
-					Xml::submitButton( wfMsg( 'allpagessubmit' ) ) .
+				Html::namespaceSelector( array(
+						'selected' => $namespace,
+					), array(
+						'name'  => 'namespace',
+						'id'    => 'namespace',
+						'class' => 'namespaceselector',
+				) ) .
+				Xml::checkLabel(
+					$this->msg( 'allpages-hide-redirects' )->text(),
+					'hideredirects',
+					'hideredirects',
+					$hideredirects
+				) . ' ' .
+				Xml::submitButton( $this->msg( 'allpagessubmit' )->text() ) .
 				"</td>
-				</tr>";
+			</tr>";
 		$out .= Xml::closeElement( 'table' );
 		$out .= Xml::closeElement( 'fieldset' );
 		$out .= Xml::closeElement( 'form' );
@@ -118,23 +136,24 @@ class SpecialPrefixindex extends SpecialAllpages {
 	 * @param $namespace Integer, default NS_MAIN
 	 * @param $prefix String
 	 * @param $from String: list all pages from this name (default FALSE)
+	 * @param $hideredirects Bool: hide redirects (default FALSE)
 	 */
-	function showPrefixChunk( $namespace = NS_MAIN, $prefix, $from = null ) {
-		global $wgOut, $wgContLang, $wgLang;
+	function showPrefixChunk( $namespace = NS_MAIN, $prefix, $from = null, $hideredirects = false ) {
+		global $wgContLang;
 
-		$sk = $this->getSkin();
-
-		if (!isset($from)) $from = $prefix;
+		if ( $from === null ) {
+			$from = $prefix;
+		}
 
 		$fromList = $this->getNamespaceKeyAndText($namespace, $from);
 		$prefixList = $this->getNamespaceKeyAndText($namespace, $prefix);
 		$namespaces = $wgContLang->getNamespaces();
 
 		if ( !$prefixList || !$fromList ) {
-			$out = wfMsgExt( 'allpagesbadtitle', 'parse' );
+			$out = $this->msg( 'allpagesbadtitle' )->parseAsBlock();
 		} elseif ( !in_array( $namespace, array_keys( $namespaces ) ) ) {
 			// Show errormessage and reset to NS_MAIN
-			$out = wfMsgExt( 'allpages-bad-ns', array( 'parseinline' ), $namespace );
+			$out = $this->msg( 'allpages-bad-ns', $namespace )->parse();
 			$namespace = NS_MAIN;
 		} else {
 			list( $namespace, $prefixKey, $prefix ) = $prefixList;
@@ -144,13 +163,19 @@ class SpecialPrefixindex extends SpecialAllpages {
 
 			$dbr = wfGetDB( DB_SLAVE );
 
+			$conds = array(
+				'page_namespace' => $namespace,
+				'page_title' . $dbr->buildLike( $prefixKey, $dbr->anyString() ),
+				'page_title >= ' . $dbr->addQuotes( $fromKey ),
+			);
+
+			if ( $hideredirects ) {
+				$conds['page_is_redirect'] = 0;
+			}
+
 			$res = $dbr->select( 'page',
 				array( 'page_namespace', 'page_title', 'page_is_redirect' ),
-				array(
-					'page_namespace' => $namespace,
-					'page_title' . $dbr->buildLike( $prefixKey, $dbr->anyString() ),
-					'page_title >= ' . $dbr->addQuotes( $fromKey ),
-				),
+				$conds,
 				__METHOD__,
 				array(
 					'ORDER BY'  => 'page_title',
@@ -163,15 +188,16 @@ class SpecialPrefixindex extends SpecialAllpages {
 
 			$n = 0;
 			if( $res->numRows() > 0 ) {
-				$out = Xml::openElement( 'table', array( 'border' => '0', 'id' => 'mw-prefixindex-list-table' ) );
+				$out = Xml::openElement( 'table', array( 'id' => 'mw-prefixindex-list-table' ) );
 
 				while( ( $n < $this->maxPerPage ) && ( $s = $res->fetchObject() ) ) {
 					$t = Title::makeTitle( $s->page_namespace, $s->page_title );
 					if( $t ) {
 						$link = ($s->page_is_redirect ? '<div class="allpagesredirect">' : '' ) .
-							$sk->linkKnown(
+							Linker::linkKnown(
 								$t,
-								htmlspecialchars( $t->getText() )
+								htmlspecialchars( $t->getText() ),
+								$s->page_is_redirect ? array( 'class' => 'mw-redirect' ) : array()
 							) .
 							($s->page_is_redirect ? '</div>' : '' );
 					} else {
@@ -199,9 +225,9 @@ class SpecialPrefixindex extends SpecialAllpages {
 		if ( $this->including() ) {
 			$out2 = '';
 		} else {
-			$nsForm = $this->namespacePrefixForm( $namespace, $prefix );
+			$nsForm = $this->namespacePrefixForm( $namespace, $prefix, $hideredirects );
 			$self = $this->getTitle();
-			$out2 = Xml::openElement( 'table', array( 'border' => '0', 'id' => 'mw-prefixindex-nav-table' ) )  .
+			$out2 = Xml::openElement( 'table', array( 'id' => 'mw-prefixindex-nav-table' ) )  .
 				'<tr>
 					<td>' .
 						$nsForm .
@@ -211,16 +237,18 @@ class SpecialPrefixindex extends SpecialAllpages {
 			if( isset( $res ) && $res && ( $n == $this->maxPerPage ) && ( $s = $res->fetchObject() ) ) {
 				$query = array(
 					'from' => $s->page_title,
-					'prefix' => $prefix
+					'prefix' => $prefix,
+					'hideredirects' => $hideredirects,
 				);
 
-				if( $namespace ) {
+				if( $namespace || ($prefix == '')) {
+					// Keep the namespace even if it's 0 for empty prefixes.
+					// This tells us we're not just a holdover from old links.
 					$query['namespace'] = $namespace;
 				}
-
 				$nextLink = Linker::linkKnown(
 						$self,
-						wfMsgHtml( 'nextpage', str_replace( '_',' ', htmlspecialchars( $s->page_title ) ) ),
+						$this->msg( 'nextpage', str_replace( '_',' ', $s->page_title ) )->escaped(),
 						array(),
 						$query
 					);

@@ -1,6 +1,6 @@
 <?php
 /**
- * Script to refresh image metadata fields. See also rebuildImages.php
+ * Refresh image metadata fields. See also rebuildImages.php
  *
  * Usage: php refreshImageMetadata.php
  *
@@ -24,11 +24,16 @@
  *
  * @file
  * @author Brian Wolff
- * @ingroup maintenance
+ * @ingroup Maintenance
  */
 
-require_once( dirname( __FILE__ ) . '/Maintenance.php' );
+require_once( __DIR__ . '/Maintenance.php' );
 
+/**
+ * Maintenance script to refresh image metadata fields.
+ *
+ * @ingroup Maintenance
+ */
 class RefreshImageMetadata extends Maintenance {
 
 	/**
@@ -156,6 +161,10 @@ class RefreshImageMetadata extends Maintenance {
 		}
 	}
 
+	/**
+	 * @param $dbw DatabaseBase
+	 * @return array
+	 */
 	function getConditions( $dbw ) {
 		$conds = array();
 
@@ -179,8 +188,12 @@ class RefreshImageMetadata extends Maintenance {
 		return $conds;
 	}
 
+	/**
+	 * @param $force bool
+	 * @param $brokenOnly bool
+	 */
 	function setupParameters( $force, $brokenOnly ) {
-		global $wgUpdateCompatibleMetadata, $wgReadOnly;
+		global $wgUpdateCompatibleMetadata;
 
 		if ( $brokenOnly ) {
 			$wgUpdateCompatibleMetadata = false;

@@ -41,9 +41,9 @@ class AncientPagesPage extends QueryPage {
 	function getQueryInfo() {
 		return array(
 			'tables' => array( 'page', 'revision' ),
-			'fields' => array( 'page_namespace AS namespace',
-					'page_title AS title',
-					'rev_timestamp AS value' ),
+			'fields' => array( 'namespace' => 'page_namespace',
+					'title' => 'page_title',
+					'value' => 'rev_timestamp' ),
 			'conds' => array( 'page_namespace' => MWNamespace::getContentNamespaces(),
 					'page_is_redirect' => 0,
 					'page_latest=rev_id' )
@@ -59,14 +59,14 @@ class AncientPagesPage extends QueryPage {
 	}
 
 	function formatResult( $skin, $result ) {
-		global $wgLang, $wgContLang;
+		global $wgContLang;
 
-		$d = $wgLang->timeanddate( wfTimestamp( TS_MW, $result->value ), true );
+		$d = $this->getLanguage()->userTimeAndDate( $result->value, $this->getUser() );
 		$title = Title::makeTitle( $result->namespace, $result->title );
-		$link = $skin->linkKnown(
+		$link = Linker::linkKnown(
 			$title,
 			htmlspecialchars( $wgContLang->convert( $title->getPrefixedText() ) )
 		);
-		return wfSpecialList( $link, htmlspecialchars($d) );
+		return $this->getLanguage()->specialList( $link, htmlspecialchars( $d ) );
 	}
 }

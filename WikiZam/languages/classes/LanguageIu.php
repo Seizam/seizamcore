@@ -1,26 +1,43 @@
 <?php
 /**
-  * @addtogroup Language
-  */
+ * Inuktitut specific code.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup Language
+ */
 
-/*
-* Conversion script between Latin and Syllabics for Inuktitut.
-* - Syllabics -> lowercase Latin
-* - lowercase/uppercase Latin -> Syllabics
-* 
-*
-* Based on:
-*   - http://commons.wikimedia.org/wiki/Image:Inuktitut.png
-*   - LanguageSr.php
-*
-* @ingroup Language
-*/
-require_once( dirname( __FILE__ ) . '/../LanguageConverter.php' );
+require_once( __DIR__ . '/../LanguageConverter.php' );
 
 /**
+ * Conversion script between Latin and Syllabics for Inuktitut.
+ * - Syllabics -> lowercase Latin
+ * - lowercase/uppercase Latin -> Syllabics
  *
+ *
+ * Based on:
+ *   - http://commons.wikimedia.org/wiki/Image:Inuktitut.png
+ *   - LanguageSr.php
+ *
+ * @ingroup Language
  */
 class IuConverter extends LanguageConverter {
+
+	protected $mDoContentConvert;
 	var $mToLatin = array(
 		'ᐦ' => 'h',   'ᐃ' => 'i',    'ᐄ' => 'ii',    'ᐅ' => 'u',    'ᐆ' => 'uu',    'ᐊ' => 'a',    'ᐋ' => 'aa',
 		'ᑉ' => 'p',   'ᐱ' => 'pi',   'ᐲ' => 'pii',   'ᐳ' => 'pu',   'ᐴ' => 'puu',   'ᐸ' => 'pa',   'ᐹ' => 'paa',
@@ -111,10 +128,7 @@ class IuConverter extends LanguageConverter {
 	 * @return string
 	 */
 	function parserConvert( $text, &$parser ) {
-		if ( is_object( $parser->getTitle() ) && $parser->getTitle()->isTalkPage() )
-			$this->mDoContentConvert = false;
-		else
-			$this->mDoContentConvert = true;
+		$this->mDoContentConvert = !( is_object( $parser->getTitle() ) && $parser->getTitle()->isTalkPage() );
 
 		return parent::parserConvert( $text, $parser );
 	}

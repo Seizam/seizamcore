@@ -17,12 +17,18 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  *
+ * @file
  * @todo Make this work on PostgreSQL and maybe other database servers
  * @ingroup Maintenance
  */
 
-require_once( dirname( __FILE__ ) . '/Maintenance.php' );
+require_once( __DIR__ . '/Maintenance.php' );
 
+/**
+ * Maintenance script that picks a database that has pending jobs.
+ *
+ * @ingroup Maintenance
+ */
 class nextJobDB extends Maintenance {
 	public function __construct() {
 		parent::__construct();
@@ -37,7 +43,7 @@ class nextJobDB extends Maintenance {
 		$memcKey = 'jobqueue:dbs:v2';
 		$pendingDBs = $wgMemc->get( $memcKey );
 
-		// If the cache entry wasn't present, or in 1% of cases otherwise, 
+		// If the cache entry wasn't present, or in 1% of cases otherwise,
 		// regenerate the cache.
 		if ( !$pendingDBs || mt_rand( 0, 100 ) == 0 ) {
 			$pendingDBs = $this->getPendingDbs();
@@ -65,7 +71,7 @@ class nextJobDB extends Maintenance {
 			$candidates = array_values( $candidates );
 			$db = $candidates[ mt_rand( 0, count( $candidates ) - 1 ) ];
 			if ( !$this->checkJob( $type, $db ) ) {
-				// This job is not available in the current database. Remove it from 
+				// This job is not available in the current database. Remove it from
 				// the cache.
 				if ( $type === false ) {
 					foreach ( $pendingDBs as $type2 => $dbs ) {
@@ -85,16 +91,20 @@ class nextJobDB extends Maintenance {
 
 	/**
 	 * Check if the specified database has a job of the specified type in it.
-	 * The type may be false to indicate "all". 
+	 * The type may be false to indicate "all".
+	 * @param $type string
+	 * @param $dbName string
+	 * @return bool
 	 */
 	function checkJob( $type, $dbName ) {
 		$lb = wfGetLB( $dbName );
 		$db = $lb->getConnection( DB_MASTER, array(), $dbName );
 		if ( $type === false ) {
-			$conds = array();
+			$conds = Job::defaultQueueConditions( );
 		} else {
 			$conds = array( 'job_cmd' => $type );
 		}
+
 
 		$exists = (bool) $db->selectField( 'job', '1', $conds, __METHOD__ );
 		$lb->reuseConnection( $db );
@@ -103,7 +113,6 @@ class nextJobDB extends Maintenance {
 
 	/**
 	 * Get all databases that have a pending job
-	 * @param $type String Job type
 	 * @return array
 	 */
 	private function getPendingDbs() {

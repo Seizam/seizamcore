@@ -24,10 +24,6 @@
  * @file
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	require_once ( 'ApiBase.php' );
-}
-
 /**
  * Allows user to patrol pages
  * @ingroup API
@@ -42,15 +38,13 @@ class ApiPatrol extends ApiBase {
 	 * Patrols the article or provides the reason the patrol failed.
 	 */
 	public function execute() {
-		global $wgUser;
-
 		$params = $this->extractRequestParams();
 
 		$rc = RecentChange::newFromID( $params['rcid'] );
 		if ( !$rc instanceof RecentChange ) {
 			$this->dieUsageMsg( array( 'nosuchrcid', $params['rcid'] ) );
 		}
-		$retval = $rc->doMarkPatrolled( $wgUser );
+		$retval = $rc->doMarkPatrolled( $this->getUser() );
 
 		if ( $retval ) {
 			$this->dieUsageMsg( reset( $retval ) );
@@ -71,7 +65,10 @@ class ApiPatrol extends ApiBase {
 
 	public function getAllowedParams() {
 		return array(
-			'token' => null,
+			'token' => array(
+				ApiBase::PARAM_TYPE => 'string',
+				ApiBase::PARAM_REQUIRED => true
+			),
 			'rcid' => array(
 				ApiBase::PARAM_TYPE => 'integer',
 				ApiBase::PARAM_REQUIRED => true
@@ -83,6 +80,16 @@ class ApiPatrol extends ApiBase {
 		return array(
 			'token' => 'Patrol token obtained from list=recentchanges',
 			'rcid' => 'Recentchanges ID to patrol',
+		);
+	}
+
+	public function getResultProperties() {
+		return array(
+			'' => array(
+				'rcid' => 'integer',
+				'ns' => 'namespace',
+				'title' => 'string'
+			)
 		);
 	}
 
@@ -104,7 +111,7 @@ class ApiPatrol extends ApiBase {
 		return 'patrol';
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=patrol&token=123abc&rcid=230672766'
 		);

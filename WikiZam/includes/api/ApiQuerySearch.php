@@ -4,7 +4,7 @@
  *
  * Created on July 30, 2007
  *
- * Copyright © 2007 Yuri Astrakhan <Firstname><Lastname>@gmail.com
+ * Copyright © 2007 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +23,6 @@
  *
  * @file
  */
-
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiQueryBase.php' );
-}
 
 /**
  * Query module to perform full text search within wiki titles and content
@@ -68,6 +63,9 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 		$search->setLimitOffset( $limit + 1, $params['offset'] );
 		$search->setNamespaces( $params['namespace'] );
 		$search->showRedirects = $params['redirects'];
+
+		$query = $search->transformSearchTerm( $query );
+		$query = $search->replacePrefixes( $query );
 
 		// Perform the actual search
 		if ( $what == 'text' ) {
@@ -282,6 +280,63 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 		);
 	}
 
+	public function getResultProperties() {
+		return array(
+			'' => array(
+				'ns' => 'namespace',
+				'title' => 'string'
+			),
+			'snippet' => array(
+				'snippet' => 'string'
+			),
+			'size' => array(
+				'size' => 'integer'
+			),
+			'wordcount' => array(
+				'wordcount' => 'integer'
+			),
+			'timestamp' => array(
+				'timestamp' => 'timestamp'
+			),
+			'score' => array(
+				'score' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				)
+			),
+			'titlesnippet' => array(
+				'titlesnippet' => 'string'
+			),
+			'redirecttitle' => array(
+				'redirecttitle' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				)
+			),
+			'redirectsnippet' => array(
+				'redirectsnippet' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				)
+			),
+			'sectiontitle' => array(
+				'sectiontitle' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				)
+			),
+			'sectionsnippet' => array(
+				'sectionsnippet' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				)
+			),
+			'hasrelated' => array(
+				'hasrelated' => 'boolean'
+			)
+		);
+	}
+
 	public function getDescription() {
 		return 'Perform a full text search';
 	}
@@ -293,7 +348,7 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 		) );
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=query&list=search&srsearch=meaning',
 			'api.php?action=query&list=search&srwhat=text&srsearch=meaning',

@@ -1,5 +1,7 @@
 <?php
 /**
+ * Abstraction for resource loader modules.
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -52,11 +54,11 @@ abstract class ResourceLoaderModule {
 	# limit the types of scripts and styles we allow to load on, say, sensitive special
 	# pages like Special:UserLogin and Special:Preferences
 	protected $origin = self::ORIGIN_CORE_SITEWIDE;
-	
+
 	/* Protected Members */
 
 	protected $name = null;
-	
+
 	// In-object cache for file dependencies
 	protected $fileDeps = array();
 	// In-object cache for message blob mtime
@@ -126,35 +128,36 @@ abstract class ResourceLoaderModule {
 		// Stub, override expected
 		return '';
 	}
-	
+
 	/**
 	 * Get the URL or URLs to load for this module's JS in debug mode.
 	 * The default behavior is to return a load.php?only=scripts URL for
 	 * the module, but file-based modules will want to override this to
 	 * load the files directly.
-	 * 
+	 *
 	 * This function is called only when 1) we're in debug mode, 2) there
 	 * is no only= parameter and 3) supportsURLLoading() returns true.
 	 * #2 is important to prevent an infinite loop, therefore this function
 	 * MUST return either an only= URL or a non-load.php URL.
-	 * 
+	 *
 	 * @param $context ResourceLoaderContext: Context object
 	 * @return Array of URLs
 	 */
 	public function getScriptURLsForDebug( ResourceLoaderContext $context ) {
-		global $wgLoadScript; // TODO factor out to ResourceLoader static method and deduplicate from makeResourceLoaderLink()
-		$query = array(
-			'modules' => $this->getName(),
-			'only' => 'scripts',
-			'skin' => $context->getSkin(),
-			'user' => $context->getUser(),
-			'debug' => 'true',
-			'version' => $context->getVersion()
+		$url = ResourceLoader::makeLoaderURL(
+			array( $this->getName() ),
+			$context->getLanguage(),
+			$context->getSkin(),
+			$context->getUser(),
+			$context->getVersion(),
+			true, // debug
+			'scripts', // only
+			$context->getRequest()->getBool( 'printable' ),
+			$context->getRequest()->getBool( 'handheld' )
 		);
-		ksort( $query );
-		return array( wfAppendQuery( $wgLoadScript, $query ) . '&*' );
+		return array( $url );
 	}
-	
+
 	/**
 	 * Whether this module supports URL loading. If this function returns false,
 	 * getScript() will be used even in cases (debug mode, no only param) where
@@ -169,34 +172,37 @@ abstract class ResourceLoaderModule {
 	 * Get all CSS for this module for a given skin.
 	 *
 	 * @param $context ResourceLoaderContext: Context object
-	 * @return Array: List of CSS strings keyed by media type
+	 * @return Array: List of CSS strings or array of CSS strings keyed by media type.
+	 *  like array( 'screen' => '.foo { width: 0 }' );
+	 *  or array( 'screen' => array( '.foo { width: 0 }' ) );
 	 */
 	public function getStyles( ResourceLoaderContext $context ) {
 		// Stub, override expected
 		return array();
 	}
-	
+
 	/**
 	 * Get the URL or URLs to load for this module's CSS in debug mode.
 	 * The default behavior is to return a load.php?only=styles URL for
 	 * the module, but file-based modules will want to override this to
 	 * load the files directly. See also getScriptURLsForDebug()
-	 * 
+	 *
 	 * @param $context ResourceLoaderContext: Context object
 	 * @return Array: array( mediaType => array( URL1, URL2, ... ), ... )
 	 */
 	public function getStyleURLsForDebug( ResourceLoaderContext $context ) {
-		global $wgLoadScript; // TODO factor out to ResourceLoader static method and deduplicate from makeResourceLoaderLink()
-		$query = array(
-			'modules' => $this->getName(),
-			'only' => 'styles',
-			'skin' => $context->getSkin(),
-			'user' => $context->getUser(),
-			'debug' => 'true',
-			'version' => $context->getVersion()
+		$url = ResourceLoader::makeLoaderURL(
+			array( $this->getName() ),
+			$context->getLanguage(),
+			$context->getSkin(),
+			$context->getUser(),
+			$context->getVersion(),
+			true, // debug
+			'styles', // only
+			$context->getRequest()->getBool( 'printable' ),
+			$context->getRequest()->getBool( 'handheld' )
 		);
-		ksort( $query );
-		return array( 'all' => array( wfAppendQuery( $wgLoadScript, $query ) . '&*' ) );
+		return array( 'all' => array( $url ) );
 	}
 
 	/**
@@ -210,26 +216,47 @@ abstract class ResourceLoaderModule {
 		// Stub, override expected
 		return array();
 	}
-	
+
 	/**
 	 * Get the group this module is in.
-	 * 
+	 *
 	 * @return String: Group name
 	 */
 	public function getGroup() {
 		// Stub, override expected
 		return null;
 	}
-	
+
+	/**
+	 * Get the origin of this module. Should only be overridden for foreign modules.
+	 *
+	 * @return String: Origin name, 'local' for local modules
+	 */
+	public function getSource() {
+		// Stub, override expected
+		return 'local';
+	}
+
 	/**
 	 * Where on the HTML page should this module's JS be loaded?
-	 * 'top': in the <head>
-	 * 'bottom': at the bottom of the <body>
+	 *  - 'top': in the "<head>"
+	 *  - 'bottom': at the bottom of the "<body>"
 	 *
 	 * @return string
 	 */
 	public function getPosition() {
 		return 'bottom';
+	}
+
+	/**
+	 * Whether this module's JS expects to work without the client-side ResourceLoader module.
+	 * Returning true from this function will prevent mw.loader.state() call from being
+	 * appended to the bottom of the script.
+	 *
+	 * @return bool
+	 */
+	public function isRaw() {
+		return false;
 	}
 
 	/**
@@ -261,7 +288,7 @@ abstract class ResourceLoaderModule {
 		// Stub, override expected
 		return array();
 	}
-	
+
 	/**
 	 * Get the files this module depends on indirectly for a given skin.
 	 * Currently these are only image files referenced by the module's CSS.
@@ -288,7 +315,7 @@ abstract class ResourceLoaderModule {
 		}
 		return $this->fileDeps[$skin];
 	}
-	
+
 	/**
 	 * Set preloaded file dependency information. Used so we can load this
 	 * information for all modules at once.
@@ -298,7 +325,7 @@ abstract class ResourceLoaderModule {
 	public function setFileDependencies( $skin, $deps ) {
 		$this->fileDeps[$skin] = $deps;
 	}
-	
+
 	/**
 	 * Get the last modification timestamp of the message blob for this
 	 * module in a given language.
@@ -309,7 +336,7 @@ abstract class ResourceLoaderModule {
 		if ( !isset( $this->msgBlobMtime[$lang] ) ) {
 			if ( !count( $this->getMessages() ) )
 				return 0;
-			
+
 			$dbr = wfGetDB( DB_SLAVE );
 			$msgBlobMtime = $dbr->selectField( 'msg_resource', 'mr_timestamp', array(
 					'mr_resource' => $this->getName(),
@@ -325,7 +352,7 @@ abstract class ResourceLoaderModule {
 		}
 		return $this->msgBlobMtime[$lang];
 	}
-	
+
 	/**
 	 * Set a preloaded message blob last modification timestamp. Used so we
 	 * can load this information for all modules at once.
@@ -335,9 +362,9 @@ abstract class ResourceLoaderModule {
 	public function setMsgBlobMtime( $lang, $mtime ) {
 		$this->msgBlobMtime[$lang] = $mtime;
 	}
-	
+
 	/* Abstract Methods */
-	
+
 	/**
 	 * Get this module's last modification timestamp for a given
 	 * combination of language, skin and debug mode flag. This is typically
@@ -345,6 +372,10 @@ abstract class ResourceLoaderModule {
 	 * timestamps. Whenever anything happens that changes the module's
 	 * contents for these parameters, the mtime should increase.
 	 *
+	 * NOTE: The mtime of the module's messages is NOT automatically included.
+	 * If you want this to happen, you'll need to call getMsgBlobMtime()
+	 * yourself and take its result into consideration.
+	 * 
 	 * @param $context ResourceLoaderContext: Context object
 	 * @return Integer: UNIX timestamp
 	 */
@@ -352,7 +383,7 @@ abstract class ResourceLoaderModule {
 		// 0 would mean now
 		return 1;
 	}
-	
+
 	/**
 	 * Check whether this module is known to be empty. If a child class
 	 * has an easy and cheap way to determine that this module is
@@ -400,7 +431,7 @@ abstract class ResourceLoaderModule {
 				$err = $e->getMessage();
 				$result = "throw new Error(" . Xml::encodeJsVar("JavaScript parse error: $err") . ");";
 			}
-			
+
 			$cache->set( $key, $result );
 			return $result;
 		} else {
@@ -408,6 +439,9 @@ abstract class ResourceLoaderModule {
 		}
 	}
 
+	/**
+	 * @return JSParser
+	 */
 	protected static function javaScriptParser() {
 		if ( !self::$jsParser ) {
 			self::$jsParser = new JSParser();

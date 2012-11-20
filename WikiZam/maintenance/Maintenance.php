@@ -20,17 +20,23 @@
  * @defgroup Maintenance Maintenance
  */
 
-// Define this so scripts can easily find doMaintenance.php
-define( 'RUN_MAINTENANCE_IF_MAIN', dirname( __FILE__ ) . '/doMaintenance.php' );
-define( 'DO_MAINTENANCE', RUN_MAINTENANCE_IF_MAIN ); // original name, harmless
-
-$maintClass = false;
-
-// Make sure we're on PHP5 or better
-if ( !function_exists( 'version_compare' ) || version_compare( PHP_VERSION, '5.2.3' ) < 0 ) {
+// Make sure we're on PHP5.3.2 or better
+if ( !function_exists( 'version_compare' ) || version_compare( PHP_VERSION, '5.3.2' ) < 0 ) {
+	// We need to use dirname( __FILE__ ) here cause __DIR__ is PHP5.3+
 	require_once( dirname( __FILE__ ) . '/../includes/PHPVersionError.php' );
 	wfPHPVersionError( 'cli' );
 }
+
+/**
+ * @defgroup MaintenanceArchive Maintenance archives
+ * @ingroup Maintenance
+ */
+
+// Define this so scripts can easily find doMaintenance.php
+define( 'RUN_MAINTENANCE_IF_MAIN', __DIR__ . '/doMaintenance.php' );
+define( 'DO_MAINTENANCE', RUN_MAINTENANCE_IF_MAIN ); // original name, harmless
+
+$maintClass = false;
 
 /**
  * Abstract maintenance class for quickly writing and churning out
@@ -96,7 +102,10 @@ abstract class Maintenance {
 	// Generic options which might or not be supported by the script
 	private $mDependantParameters = array();
 
-	// Used by getDD() / setDB()
+	/**
+	 * Used by getDD() / setDB()
+	 * @var DatabaseBase
+	 */
 	private $mDb = null;
 
 	/**
@@ -115,7 +124,7 @@ abstract class Maintenance {
 		global $IP;
 		$IP = strval( getenv( 'MW_INSTALL_PATH' ) ) !== ''
 			? getenv( 'MW_INSTALL_PATH' )
-			: realpath( dirname( __FILE__ ) . '/..' );
+			: realpath( __DIR__ . '/..' );
 
 		$this->addDefaultParams();
 		register_shutdown_function( array( $this, 'outputChanneled' ), false );
@@ -130,14 +139,15 @@ abstract class Maintenance {
 	 */
 	public static function shouldExecute() {
 		$bt = debug_backtrace();
-		if ( count( $bt ) < 2 ) {
+		$count = count( $bt );
+		if ( $count < 2 ) {
 			return false; // sanity
 		}
 		if ( $bt[0]['class'] !== 'Maintenance' || $bt[0]['function'] !== 'shouldExecute' ) {
 			return false; // last call should be to this function
 		}
-		$includeFuncs = array( 'require_once', 'require', 'include' );
-		for( $i=1; $i < count( $bt ); $i++ ) {
+		$includeFuncs = array( 'require_once', 'require', 'include', 'include_once' );
+		for( $i=1; $i < $count; $i++ ) {
 			if ( !in_array( $bt[$i]['function'], $includeFuncs ) ) {
 				return false; // previous calls should all be "requires"
 			}
@@ -247,6 +257,20 @@ abstract class Maintenance {
 	 */
 	protected function setBatchSize( $s = 0 ) {
 		$this->mBatchSize = $s;
+
+		// If we support $mBatchSize, show the option.
+		// Used to be in addDefaultParams, but in order for that to
+		// work, subclasses would have to call this function in the constructor
+		// before they called parent::__construct which is just weird
+		// (and really wasn't done).
+		if ( $this->mBatchSize ) {
+			$this->addOption( 'batch-size', 'Run this many operations ' .
+				'per batch, default: ' . $this->mBatchSize, false, true );
+			if ( isset( $this->mParams['batch-size'] ) ) {
+				// This seems a little ugly...
+				$this->mDependantParameters['batch-size'] = $this->mParams['batch-size'];
+			}
+		}
 	}
 
 	/**
@@ -277,6 +301,9 @@ abstract class Maintenance {
 		return rtrim( $input );
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function isQuiet() {
 		return $this->mQuiet;
 	}
@@ -294,13 +321,8 @@ abstract class Maintenance {
 		}
 		if ( $channel === null ) {
 			$this->cleanupChanneled();
-			if( php_sapi_name() == 'cli' ) {
-				fwrite( STDOUT, $out );
-			} else {
-				print( $out );
-			}
-		}
-		else {
+			print( $out );
+		} else {
 			$out = preg_replace( '/\n\z/', '', $out );
 			$this->outputChanneled( $out, $channel );
 		}
@@ -333,11 +355,7 @@ abstract class Maintenance {
 	 */
 	public function cleanupChanneled() {
 		if ( !$this->atLineStart ) {
-			if( php_sapi_name() == 'cli' ) {
-				fwrite( STDOUT, "\n" );
-			} else {
-				print "\n";
-			}
+			print "\n";
 			$this->atLineStart = true;
 		}
 	}
@@ -347,7 +365,7 @@ abstract class Maintenance {
 	 * same channel are concatenated, but any intervening messages in another
 	 * channel start a new line.
 	 * @param $msg String: the message without trailing newline
-	 * @param $channel Channel identifier or null for no
+	 * @param $channel string Channel identifier or null for no
 	 *     channel. Channel comparison uses ===.
 	 */
 	public function outputChanneled( $msg, $channel = null ) {
@@ -356,31 +374,17 @@ abstract class Maintenance {
 			return;
 		}
 
-		$cli = php_sapi_name() == 'cli';
-
 		// End the current line if necessary
 		if ( !$this->atLineStart && $channel !== $this->lastChannel ) {
-			if( $cli ) {
-				fwrite( STDOUT, "\n" );
-			} else {
-				print "\n";
-			}
+			print "\n";
 		}
 
-		if( $cli ) {
-			fwrite( STDOUT, $msg );
-		} else {
-			print $msg;
-		}
+		print $msg;
 
 		$this->atLineStart = false;
 		if ( $channel === null ) {
 			// For unchanneled messages, output trailing newline immediately
-			if( $cli ) {
-				fwrite( STDOUT, "\n" );
-			} else {
-				print "\n";
-			}
+			print "\n";
 			$this->atLineStart = true;
 		}
 		$this->lastChannel = $channel;
@@ -427,11 +431,7 @@ abstract class Maintenance {
 			$this->addOption( 'dbuser', 'The DB user to use for this script', false, true );
 			$this->addOption( 'dbpass', 'The password to use for this script', false, true );
 		}
-		// If we support $mBatchSize, show the option
-		if ( $this->mBatchSize ) {
-			$this->addOption( 'batch-size', 'Run this many operations ' .
-				'per batch, default: ' . $this->mBatchSize, false, true );
-		}
+
 		# Save additional script dependant options to display
 		# them separately in help
 		$this->mDependantParameters = array_diff_key( $this->mParams, $this->mGenericParameters );
@@ -455,6 +455,9 @@ abstract class Maintenance {
 			}
 		}
 
+		/**
+		 * @var $child Maintenance
+		 */
 		$child = new $maintClass();
 		$child->loadParamsAndArgs( $this->mSelf, $this->mOptions, $this->mArgs );
 		if ( !is_null( $this->mDb ) ) {
@@ -525,6 +528,7 @@ abstract class Maintenance {
 	 * to allow sysadmins to explicitly set one if they'd prefer to override
 	 * defaults (or for people using Suhosin which yells at you for trying
 	 * to disable the limits)
+	 * @return string
 	 */
 	public function memoryLimit() {
 		$limit = $this->getOption( 'memory-limit', 'max' );
@@ -851,6 +855,9 @@ abstract class Maintenance {
 			$wgDBpassword = $wgDBadminpassword;
 
 			if ( $wgDBservers ) {
+				/**
+				 * @var $wgDBservers array
+				 */
 				foreach ( $wgDBservers as $i => $server ) {
 					$wgDBservers[$i]['user'] = $wgDBuser;
 					$wgDBservers[$i]['password'] = $wgDBpassword;
@@ -886,57 +893,6 @@ abstract class Maintenance {
 	public function globals() {
 		if ( $this->hasOption( 'globals' ) ) {
 			print_r( $GLOBALS );
-		}
-	}
-
-	/**
-	 * Do setup specific to WMF
-	 */
-	public function loadWikimediaSettings() {
-		global $IP, $wgNoDBParam, $wgUseNormalUser, $wgConf, $site, $lang;
-
-		if ( empty( $wgNoDBParam ) ) {
-			# Check if we were passed a db name
-			if ( isset( $this->mOptions['wiki'] ) ) {
-				$db = $this->mOptions['wiki'];
-			} else {
-				$db = array_shift( $this->mArgs );
-			}
-			list( $site, $lang ) = $wgConf->siteFromDB( $db );
-
-			# If not, work out the language and site the old way
-			if ( is_null( $site ) || is_null( $lang ) ) {
-				if ( !$db ) {
-					$lang = 'aa';
-				} else {
-					$lang = $db;
-				}
-				if ( isset( $this->mArgs[0] ) ) {
-					$site = array_shift( $this->mArgs );
-				} else {
-					$site = 'wikipedia';
-				}
-			}
-		} else {
-			$lang = 'aa';
-			$site = 'wikipedia';
-		}
-
-		# This is for the IRC scripts, which now run as the apache user
-		# The apache user doesn't have access to the wikiadmin_pass command
-		if ( $_ENV['USER'] == 'apache' ) {
-		# if ( posix_geteuid() == 48 ) {
-			$wgUseNormalUser = true;
-		}
-
-		putenv( 'wikilang=' . $lang );
-
-		ini_set( 'include_path', ".:$IP:$IP/includes:$IP/languages:$IP/maintenance" );
-
-		if ( $lang == 'test' && $site == 'wikipedia' ) {
-			if ( !defined( 'TESTWIKI' ) ) {
-				define( 'TESTWIKI', 1 );
-			}
 		}
 	}
 
@@ -980,7 +936,7 @@ abstract class Maintenance {
 	public function purgeRedundantText( $delete = true ) {
 		# Data should come off the master, wrapped in a transaction
 		$dbw = $this->getDB( DB_MASTER );
-		$dbw->begin();
+		$dbw->begin( __METHOD__ );
 
 		$tbl_arc = $dbw->tableName( 'archive' );
 		$tbl_rev = $dbw->tableName( 'revision' );
@@ -1025,14 +981,15 @@ abstract class Maintenance {
 		}
 
 		# Done
-		$dbw->commit();
+		$dbw->commit( __METHOD__ );
 	}
 
 	/**
 	 * Get the maintenance directory.
+	 * @return string
 	 */
 	protected function getDir() {
-		return dirname( __FILE__ );
+		return __DIR__;
 	}
 
 	/**
@@ -1053,10 +1010,9 @@ abstract class Maintenance {
 	protected static function getCoreScripts() {
 		if ( !self::$mCoreScripts ) {
 			$paths = array(
-				dirname( __FILE__ ),
-				dirname( __FILE__ ) . '/gearman',
-				dirname( __FILE__ ) . '/language',
-				dirname( __FILE__ ) . '/storage',
+				__DIR__,
+				__DIR__ . '/language',
+				__DIR__ . '/storage',
 			);
 			self::$mCoreScripts = array();
 			foreach ( $paths as $p ) {
@@ -1108,7 +1064,7 @@ abstract class Maintenance {
 
 	/**
 	 * Lock the search index
-	 * @param &$db Database object
+	 * @param &$db DatabaseBase object
 	 */
 	private function lockSearchindex( &$db ) {
 		$write = array( 'searchindex' );
@@ -1118,7 +1074,7 @@ abstract class Maintenance {
 
 	/**
 	 * Unlock the tables
-	 * @param &$db Database object
+	 * @param &$db DatabaseBase object
 	 */
 	private function unlockSearchindex( &$db ) {
 		$db->unlockTables(  __CLASS__ . '::' . __METHOD__ );
@@ -1127,7 +1083,7 @@ abstract class Maintenance {
 	/**
 	 * Unlock and lock again
 	 * Since the lock is low-priority, queued reads will be able to complete
-	 * @param &$db Database object
+	 * @param &$db DatabaseBase object
 	 */
 	private function relockSearchindex( &$db ) {
 		$this->unlockSearchindex( $db );
@@ -1175,8 +1131,9 @@ abstract class Maintenance {
 
 	/**
 	 * Update the searchindex table for a given pageid
-	 * @param $dbw Database: a database write handle
+	 * @param $dbw DatabaseBase a database write handle
 	 * @param $pageId Integer: the page ID to update.
+	 * @return null|string
 	 */
 	public function updateSearchIndexForPage( $dbw, $pageId ) {
 		// Get current revision
@@ -1208,7 +1165,7 @@ abstract class Maintenance {
 		} else {
 			return posix_isatty( $fd );
 		}
-}
+	}
 
 	/**
 	 * Prompt the console for input
@@ -1274,6 +1231,9 @@ abstract class Maintenance {
 	}
 }
 
+/**
+ * Fake maintenance wrapper, mostly used for the web installer/updater
+ */
 class FakeMaintenance extends Maintenance {
 	protected $mSelf = "FakeMaintenanceScript";
 	public function execute() {

@@ -1,9 +1,30 @@
 <?php
 /**
+ * Automatic user rights promotion based on conditions specified
+ * in $wgAutopromote.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ */
+
+/**
  * This class checks if user can get extra rights
  * because of conditions specified in $wgAutopromote
  */
-
 class Autopromote {
 	/**
 	 * Get the groups for the given user based on $wgAutopromote.
@@ -32,7 +53,7 @@ class Autopromote {
 	 *
 	 * Does not return groups the user already belongs to or has once belonged.
 	 *
-	 * @param $user The user to get the groups for
+	 * @param $user User The user to get the groups for
 	 * @param $event String key in $wgAutopromoteOnce (each one has groups/criteria)
 	 *
 	 * @return array Groups the user should be promoted to.
@@ -166,9 +187,9 @@ class Autopromote {
 				$groups = array_slice( $cond, 1 );
 				return count( array_intersect( $groups, $user->getGroups() ) ) == count( $groups );
 			case APCOND_ISIP:
-				return $cond[1] == wfGetIP();
+				return $cond[1] == $user->getRequest()->getIP();
 			case APCOND_IPINRANGE:
-				return IP::isInRange( wfGetIP(), $cond[1] );
+				return IP::isInRange( $user->getRequest()->getIP(), $cond[1] );
 			case APCOND_BLOCKED:
 				return $user->isBlocked();
 			case APCOND_ISBOT:

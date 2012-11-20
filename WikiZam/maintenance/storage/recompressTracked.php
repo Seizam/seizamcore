@@ -23,7 +23,7 @@
  */
 
 $optionsWithArgs = RecompressTracked::getOptionsWithArgs();
-require( dirname( __FILE__ ) . '/../commandLine.inc' );
+require( __DIR__ . '/../commandLine.inc' );
 
 if ( count( $args ) < 1 ) {
 	echo "Usage: php recompressTracked.php [options] <cluster> [... <cluster>...]
@@ -169,6 +169,7 @@ class RecompressTracked {
 
 	/**
 	 * Make sure the tracking table exists and isn't empty
+	 * @return bool
 	 */
 	function checkTrackingTable() {
 		$dbr = wfGetDB( DB_SLAVE );
@@ -527,7 +528,7 @@ class RecompressTracked {
 			exit( 1 );
 		}
 		$dbw = wfGetDB( DB_MASTER );
-		$dbw->begin();
+		$dbw->begin( __METHOD__ );
 		$dbw->update( 'text',
 			array( // set
 				'old_text' => $url,
@@ -543,7 +544,7 @@ class RecompressTracked {
 			array( 'bt_text_id' => $textId ),
 			__METHOD__
 		);
-		$dbw->commit();
+		$dbw->commit( __METHOD__ );
 	}
 
 	/**
@@ -588,6 +589,7 @@ class RecompressTracked {
 
 	/**
 	 * Returns the name of the next target cluster
+	 * @return string
 	 */
 	function getTargetCluster() {
 		$cluster = next( $this->destClusters );
@@ -599,6 +601,8 @@ class RecompressTracked {
 
 	/**
 	 * Gets a DB master connection for the given external cluster name
+	 * @param $cluster string
+	 * @return DatabaseBase
 	 */
 	function getExtDB( $cluster ) {
 		$lb = wfGetLBFactory()->getExternalLB( $cluster );
@@ -684,6 +688,9 @@ class CgzCopyTransaction {
 	/**
 	 * Add text.
 	 * Returns false if it's ready to commit.
+	 * @param $text string
+	 * @param $textId
+	 * @return bool
 	 */
 	function addItem( $text, $textId ) {
 		if ( !$this->cgz ) {
@@ -732,7 +739,7 @@ class CgzCopyTransaction {
 		//
 		// We do a locking read to prevent closer-run race conditions.
 		$dbw = wfGetDB( DB_MASTER );
-		$dbw->begin();
+		$dbw->begin( __METHOD__ );
 		$res = $dbw->select( 'blob_tracking',
 			array( 'bt_text_id', 'bt_moved' ),
 			array( 'bt_text_id' => array_keys( $this->referrers ) ),
@@ -766,7 +773,7 @@ class CgzCopyTransaction {
 		$store = $this->parent->store;
 		$targetDB = $store->getMaster( $targetCluster );
 		$targetDB->clearFlag( DBO_TRX ); // we manage the transactions
-		$targetDB->begin();
+		$targetDB->begin( __METHOD__ );
 		$baseUrl = $this->parent->store->store( $targetCluster, serialize( $this->cgz ) );
 
 		// Write the new URLs to the blob_tracking table
@@ -782,10 +789,10 @@ class CgzCopyTransaction {
 			);
 		}
 
-		$targetDB->commit();
+		$targetDB->commit( __METHOD__ );
 		// Critical section here: interruption at this point causes blob duplication
 		// Reversing the order of the commits would cause data loss instead
-		$dbw->commit();
+		$dbw->commit( __METHOD__ );
 
 		// Write the new URLs to the text table and set the moved flag
 		if ( !$this->parent->copyOnly ) {

@@ -4,7 +4,7 @@
  *
  * Created on Oct 05, 2007
  *
- * Copyright © 2007 Yuri Astrakhan <Firstname><Lastname>@gmail.com
+ * Copyright © 2007 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +23,6 @@
  *
  * @file
  */
-
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( "ApiBase.php" );
-}
 
 /**
  * API module that functions as a shortcut to the wikitext preprocessor. Expands
@@ -52,14 +47,14 @@ class ApiExpandTemplates extends ApiBase {
 		// Create title for parser
 		$title_obj = Title::newFromText( $params['title'] );
 		if ( !$title_obj ) {
-			$title_obj = Title::newFromText( 'API' ); // default
+			$this->dieUsageMsg( array( 'invalidtitle', $params['title'] ) );
 		}
 
 		$result = $this->getResult();
 
 		// Parse text
 		global $wgParser;
-		$options = new ParserOptions();
+		$options = ParserOptions::newFromContext( $this->getContext() );
 
 		if ( $params['includecomments'] ) {
 			$options->setRemoveComments( false );
@@ -108,11 +103,25 @@ class ApiExpandTemplates extends ApiBase {
 		);
 	}
 
+	public function getResultProperties() {
+		return array(
+			'' => array(
+				'*' => 'string'
+			)
+		);
+	}
+
 	public function getDescription() {
 		return 'Expands all templates in wikitext';
 	}
 
-	protected function getExamples() {
+	public function getPossibleErrors() {
+		return array_merge( parent::getPossibleErrors(), array(
+			array( 'invalidtitle', 'title' ),
+		) );
+	}
+
+	public function getExamples() {
 		return array(
 			'api.php?action=expandtemplates&text={{Project:Sandbox}}'
 		);

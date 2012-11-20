@@ -1,5 +1,27 @@
 <?php
 /**
+ * Temporary storage for uploaded files.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup Upload
+ */
+
+/**
  * UploadStash is intended to accomplish a few things:
  *   - enable applications to temporarily stash files without publishing them to the wiki.
  *      - Several parts of MediaWiki do this in similar ways: UploadBase, UploadWizard, and FirefoggChunkedExtension
@@ -16,6 +38,8 @@
  * UploadStash represents the entire stash of temporary files.
  * UploadStashFile is a filestore for the actual physical disk files.
  * UploadFromStash extends UploadBase, and represents a single stashed file as it is moved from the stash to the regular file repository
+ *
+ * @ingroup Upload
  */
 class UploadStash {
 
@@ -44,11 +68,13 @@ class UploadStash {
 
 	/**
 	 * Represents a temporary filestore, with metadata in the database.
-	 * Designed to be compatible with the session stashing code in UploadBase (should replace it eventually)
+	 * Designed to be compatible with the session stashing code in UploadBase
+	 * (should replace it eventually).
 	 *
 	 * @param $repo FileRepo
+	 * @param $user User (default null)
 	 */
-	public function __construct( $repo, $user = null ) {
+	public function __construct( FileRepo $repo, $user = null ) {
 		// this might change based on wiki's configuration.
 		$this->repo = $repo;
 
@@ -106,10 +132,7 @@ class UploadStash {
 
 			// fetch fileprops
 			$path = $this->fileMetadata[$key]['us_path'];
-			if ( $this->repo->isVirtualUrl( $path ) ) {
-				$path = $this->repo->resolveVirtualUrl( $path );
-			}
-			$this->fileProps[$key] = File::getPropsFromPath( $path );
+			$this->fileProps[$key] = $this->repo->getFileProps( $path );
 		}
 
 		if ( ! $this->files[$key]->exists() ) {
@@ -163,7 +186,7 @@ class UploadStash {
 			wfDebug( __METHOD__ . " tried to stash file at '$path', but it doesn't exist\n" );
 			throw new UploadStashBadPathException( "path doesn't exist" );
 		}
-		$fileProps = File::getPropsFromPath( $path );
+		$fileProps = FSFile::getPropsFromPath( $path );
 		wfDebug( __METHOD__ . " stashing file at '$path'\n" );
 
 		// we will be initializing from some tmpnam files that don't have extensions.
@@ -215,9 +238,14 @@ class UploadStash {
 					$error = array( 'unknown', 'no error recorded' );
 				}
 			}
-			throw new UploadStashFileException( "error storing file in '$path': " . implode( '; ', $error ) );
+			// at this point, $error should contain the single "most important" error, plus any parameters.
+			$errorMsg = array_shift( $error );
+			throw new UploadStashFileException( "Error storing file in '$path': " . wfMessage( $errorMsg, $error )->text() );
 		}
 		$stashPath = $storeStatus->value;
+
+		// we have renamed the file so we have to cleanup once done
+		unlink($path);
 
 		// fetch the current user ID
 		if ( !$this->isLoggedIn ) {
@@ -233,7 +261,7 @@ class UploadStash {
 			'us_user' => $this->userId,
 			'us_key' => $key,
 			'us_orig_path' => $path,
-			'us_path' => $stashPath,
+			'us_path' => $stashPath, // virtual URL
 			'us_size' => $fileProps['size'],
 			'us_sha1' => $fileProps['sha1'],
 			'us_mime' => $fileProps['mime'],
@@ -334,13 +362,13 @@ class UploadStash {
 		$dbw = $this->repo->getMasterDb();
 
 		// this gets its own transaction since it's called serially by the cleanupUploadStash maintenance script
-		$dbw->begin();
+		$dbw->begin( __METHOD__ );
 		$dbw->delete(
 			'uploadstash',
 			array( 'us_key' => $key ),
 			__METHOD__
 		);
-		$dbw->commit();
+		$dbw->commit( __METHOD__ );
 
 		// TODO: look into UnregisteredLocalFile and find out why the rv here is sometimes wrong (false when file was removed)
 		// for now, ignore.
@@ -391,6 +419,7 @@ class UploadStash {
 	 * with an extension.
 	 * XXX this is somewhat redundant with the checks that ApiUpload.php does with incoming
 	 * uploads versus the desired filename. Maybe we can get that passed to us...
+	 * @return string
 	 */
 	public static function getExtensionForPath( $path ) {
 		// Does this have an extension?
@@ -419,6 +448,7 @@ class UploadStash {
 	 * Helper function: do the actual database query to fetch file metadata.
 	 *
 	 * @param $key String: key
+	 * @param $readFromDB: constant (default: DB_SLAVE)
 	 * @return boolean
 	 */
 	protected function fetchFileMetadata( $key, $readFromDB = DB_SLAVE ) {
@@ -451,7 +481,6 @@ class UploadStash {
 	/**
 	 * Helper function: Initialize the UploadStashFile for a given file.
 	 *
-	 * @param $path String: path to file
 	 * @param $key String: key under which to store the object
 	 * @throws UploadStashZeroLengthFileException
 	 * @return bool
@@ -475,7 +504,7 @@ class UploadStashFile extends UnregisteredLocalFile {
 	 * A LocalFile wrapper around a file that has been temporarily stashed, so we can do things like create thumbnails for it
 	 * Arguably UnregisteredLocalFile should be handling its own file repo but that class is a bit retarded currently
 	 *
-	 * @param $repo FSRepo: repository where we should find the path
+	 * @param $repo FileRepo: repository where we should find the path
 	 * @param $path String: path to file
 	 * @param $key String: key to store the path and any stashed data under
 	 * @throws UploadStashBadPathException
@@ -498,7 +527,7 @@ class UploadStashFile extends UnregisteredLocalFile {
 			}
 
 			// check if path exists! and is a plain file.
-			if ( ! $repo->fileExists( $path, FileRepo::FILES_ONLY ) ) {
+			if ( ! $repo->fileExists( $path ) ) {
 				wfDebug( "UploadStash: tried to construct an UploadStashFile from a file that should already exist at '$path', but path is not found\n" );
 				throw new UploadStashFileNotFoundException( 'cannot find path, or not a plain file' );
 			}
@@ -543,16 +572,17 @@ class UploadStashFile extends UnregisteredLocalFile {
 	 * ugly file name.
 	 *
 	 * @param $params Array: handler-specific parameters
+	 * @param $flags integer Bitfield that supports THUMB_* constants
 	 * @return String: base name for URL, like '120px-12345.jpg', or null if there is no handler
 	 */
-	function thumbName( $params ) {
+	function thumbName( $params, $flags = 0 ) {
 		return $this->generateThumbName( $this->getUrlName(), $params );
 	}
 
 	/**
 	 * Helper function -- given a 'subpage', return the local URL e.g. /wiki/Special:UploadStash/subpage
-	 * @param {String} $subPage
-	 * @return {String} local URL for this subpage in the Special:UploadStash space.
+	 * @param $subPage String
+	 * @return String: local URL for this subpage in the Special:UploadStash space.
 	 */
 	private function getSpecialUrl( $subPage ) {
 		return SpecialPage::getTitleFor( 'UploadStash', $subPage )->getLocalURL();
@@ -622,7 +652,7 @@ class UploadStashFile extends UnregisteredLocalFile {
 	 * @return Status: success
 	 */
 	public function remove() {
-		if ( !$this->repo->fileExists( $this->path, FileRepo::FILES_ONLY ) ) {
+		if ( !$this->repo->fileExists( $this->path ) ) {
 			// Maybe the file's already been removed? This could totally happen in UploadBase.
 			return true;
 		}
@@ -631,7 +661,7 @@ class UploadStashFile extends UnregisteredLocalFile {
 	}
 
 	public function exists() {
-		return $this->repo->fileExists( $this->path, FileRepo::FILES_ONLY );
+		return $this->repo->fileExists( $this->path );
 	}
 
 }

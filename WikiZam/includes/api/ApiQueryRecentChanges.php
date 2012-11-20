@@ -4,7 +4,7 @@
  *
  * Created on Oct 19, 2006
  *
- * Copyright © 2006 Yuri Astrakhan <Firstname><Lastname>@gmail.com
+ * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +23,6 @@
  *
  * @file
  */
-
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// Eclipse helper - will be ignored in production
-	require_once( 'ApiQueryBase.php' );
-}
 
 /**
  * A query action to enumerate the recent changes that were done to the wiki.
@@ -52,7 +47,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 	 * Get an array mapping token names to their handler functions.
 	 * The prototype for a token function is func($pageid, $title, $rc)
 	 * it should return a token or false (permission denied)
-	 * @return array(tokenname => function)
+	 * @return array array(tokenname => function)
 	 */
 	protected function getTokenFunctions() {
 		// Don't call the hooks twice
@@ -75,24 +70,37 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 	/**
 	 * @param  $pageid
 	 * @param  $title
-	 * @param $rc RecentChange
+	 * @param $rc RecentChange (optional)
 	 * @return bool|String
 	 */
-	public static function getPatrolToken( $pageid, $title, $rc ) {
+	public static function getPatrolToken( $pageid, $title, $rc = null ) {
 		global $wgUser;
-		if ( !$wgUser->useRCPatrol() && ( !$wgUser->useNPPatrol() ||
-				$rc->getAttribute( 'rc_type' ) != RC_NEW ) )
-		{
+
+		$validTokenUser = false;
+
+		if ( $rc ) {
+			if ( ( $wgUser->useRCPatrol() && $rc->getAttribute( 'rc_type' ) == RC_EDIT ) ||
+				( $wgUser->useNPPatrol() && $rc->getAttribute( 'rc_type' ) == RC_NEW ) )
+			{
+				$validTokenUser = true;
+			}
+		} else {
+			if ( $wgUser->useRCPatrol() || $wgUser->useNPPatrol() ) {
+				$validTokenUser = true;
+			}
+		}
+
+		if ( $validTokenUser ) {
+			// The patrol token is always the same, let's exploit that
+			static $cachedPatrolToken = null;
+			if ( is_null( $cachedPatrolToken ) ) {
+				$cachedPatrolToken = $wgUser->getEditToken( 'patrol' );
+			}
+			return $cachedPatrolToken;
+		} else {
 			return false;
 		}
 
-		// The patrol token is always the same, let's exploit that
-		static $cachedPatrolToken = null;
-		if ( is_null( $cachedPatrolToken ) ) {
-			$cachedPatrolToken = $wgUser->editToken( 'patrol' );
-		}
-
-		return $cachedPatrolToken;
 	}
 
 	/**
@@ -129,14 +137,14 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 	 * @param $resultPageSet ApiPageSet
 	 */
 	public function run( $resultPageSet = null ) {
-		global $wgUser;
+		$user = $this->getUser();
 		/* Get the parameters of the request. */
 		$params = $this->extractRequestParams();
 
 		/* Build our basic query. Namely, something along the lines of:
 		 * SELECT * FROM recentchanges WHERE rc_timestamp > $start
 		 * 		AND rc_timestamp < $end AND rc_namespace = $namespace
-		 * 		AND rc_deleted = '0'
+		 * 		AND rc_deleted = 0
 		 */
 		$this->addTables( 'recentchanges' );
 		$index = array( 'recentchanges' => 'rc_timestamp' ); // May change
@@ -163,7 +171,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 
 			// Check permissions
 			if ( isset( $show['patrolled'] ) || isset( $show['!patrolled'] ) ) {
-				if ( !$wgUser->useRCPatrol() && !$wgUser->useNPPatrol() ) {
+				if ( !$user->useRCPatrol() && !$user->useNPPatrol() ) {
 					$this->dieUsage( 'You need the patrol right to request the patrolled flag', 'permissiondenied' );
 				}
 			}
@@ -219,7 +227,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 			/* Set up internal members based upon params. */
 			$this->initProperties( $prop );
 
-			if ( $this->fld_patrolled && !$wgUser->useRCPatrol() && !$wgUser->useNPPatrol() ) {
+			if ( $this->fld_patrolled && !$user->useRCPatrol() && !$user->useNPPatrol() ) {
 				$this->dieUsage( 'You need the patrol right to request the patrolled flag', 'permissiondenied' );
 			}
 
@@ -228,7 +236,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 			$this->addFieldsIf( 'rc_comment', $this->fld_comment || $this->fld_parsedcomment );
 			$this->addFieldsIf( 'rc_user', $this->fld_user );
 			$this->addFieldsIf( 'rc_user_text', $this->fld_user || $this->fld_userid );
-			$this->addFieldsIf( array( 'rc_minor', 'rc_new', 'rc_bot' ) , $this->fld_flags );
+			$this->addFieldsIf( array( 'rc_minor', 'rc_type', 'rc_bot' ) , $this->fld_flags );
 			$this->addFieldsIf( array( 'rc_old_len', 'rc_new_len' ), $this->fld_sizes );
 			$this->addFieldsIf( 'rc_patrolled', $this->fld_patrolled );
 			$this->addFieldsIf( array( 'rc_logid', 'rc_log_type', 'rc_log_action', 'rc_params' ), $this->fld_loginfo );
@@ -309,7 +317,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 	 * Extracts from a single sql row the data needed to describe one recent change.
 	 *
 	 * @param $row The row from which to extract the data.
-	 * @return An array mapping strings (descriptors) to their respective string values.
+	 * @return array An array mapping strings (descriptors) to their respective string values.
 	 * @access public
 	 */
 	public function extractRowInfo( $row ) {
@@ -385,7 +393,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 			if ( $row->rc_bot ) {
 				$vals['bot'] = '';
 			}
-			if ( $row->rc_new ) {
+			if ( $row->rc_type == RC_NEW ) {
 				$vals['new'] = '';
 			}
 			if ( $row->rc_minor ) {
@@ -410,8 +418,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 		}
 
 		if ( $this->fld_parsedcomment && isset( $row->rc_comment ) ) {
-			global $wgUser;
-			$vals['parsedcomment'] = $wgUser->getSkin()->formatComment( $row->rc_comment, $title );
+			$vals['parsedcomment'] = Linker::formatComment( $row->rc_comment, $title );
 		}
 
 		if ( $this->fld_redirect ) {
@@ -429,13 +436,14 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 			$vals['logid'] = intval( $row->rc_logid );
 			$vals['logtype'] = $row->rc_log_type;
 			$vals['logaction'] = $row->rc_log_action;
+			$logEntry = DatabaseLogEntry::newFromRow( (array)$row );
 			ApiQueryLogEvents::addLogParams(
 				$this->getResult(),
 				$vals,
-				$row->rc_params,
-				$row->rc_log_action,
-				$row->rc_log_type,
-				$row->rc_timestamp
+				$logEntry->getParameters(),
+				$logEntry->getType(),
+				$logEntry->getSubtype(),
+				$logEntry->getTimestamp()
 			);
 		}
 
@@ -495,7 +503,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 			return 'private';
 		}
 		if ( !is_null( $params['prop'] ) && in_array( 'parsedcomment', $params['prop'] ) ) {
-			// formatComment() calls wfMsg() among other things
+			// formatComment() calls wfMessage() among other things
 			return 'anon-public-user-private';
 		}
 		return 'public';
@@ -621,6 +629,97 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 		);
 	}
 
+	public function getResultProperties() {
+		global $wgLogTypes;
+		$props = array(
+			'' => array(
+				'type' => array(
+					ApiBase::PROP_TYPE => array(
+						'edit',
+						'new',
+						'move',
+						'log',
+						'move over redirect'
+					)
+				)
+			),
+			'title' => array(
+				'ns' => 'namespace',
+				'title' => 'string',
+				'new_ns' => array(
+					ApiBase::PROP_TYPE => 'namespace',
+					ApiBase::PROP_NULLABLE => true
+				),
+				'new_title' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				)
+			),
+			'ids' => array(
+				'rcid' => 'integer',
+				'pageid' => 'integer',
+				'revid' => 'integer',
+				'old_revid' => 'integer'
+			),
+			'user' => array(
+				'user' => 'string',
+				'anon' => 'boolean'
+			),
+			'userid' => array(
+				'userid' => 'integer',
+				'anon' => 'boolean'
+			),
+			'flags' => array(
+				'bot' => 'boolean',
+				'new' => 'boolean',
+				'minor' => 'boolean'
+			),
+			'sizes' => array(
+				'oldlen' => 'integer',
+				'newlen' => 'integer'
+			),
+			'timestamp' => array(
+				'timestamp' => 'timestamp'
+			),
+			'comment' => array(
+				'comment' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				)
+			),
+			'parsedcomment' => array(
+				'parsedcomment' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				)
+			),
+			'redirect' => array(
+				'redirect' => 'boolean'
+			),
+			'patrolled' => array(
+				'patrolled' => 'boolean'
+			),
+			'loginfo' => array(
+				'logid' => array(
+					ApiBase::PROP_TYPE => 'integer',
+					ApiBase::PROP_NULLABLE => true
+				),
+				'logtype' => array(
+					ApiBase::PROP_TYPE => $wgLogTypes,
+					ApiBase::PROP_NULLABLE => true
+				),
+				'logaction' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				)
+			)
+		);
+
+		self::addTokenProperties( $props, $this->getTokenFunctions() );
+
+		return $props;
+	}
+
 	public function getDescription() {
 		return 'Enumerate recent changes';
 	}
@@ -633,7 +732,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 		) );
 	}
 
-	protected function getExamples() {
+	public function getExamples() {
 		return array(
 			'api.php?action=query&list=recentchanges'
 		);

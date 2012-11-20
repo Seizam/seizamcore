@@ -46,7 +46,7 @@ class SpecialBookSources extends SpecialPage {
 	/**
 	 * Show the special page
 	 *
-	 * @param $isbn ISBN passed as a subpage parameter
+	 * @param $isbn string ISBN passed as a subpage parameter
 	 */
 	public function execute( $isbn ) {
 		$this->setHeaders();
@@ -63,7 +63,8 @@ class SpecialBookSources extends SpecialPage {
 
 	/**
 	 * Returns whether a given ISBN (10 or 13) is valid.  True indicates validity.
-	 * @param isbn ISBN passed for check
+	 * @param isbn string ISBN passed for check
+	 * @return bool
 	 */
 	public static function isValidISBN( $isbn ) {
 		$isbn = self::cleanIsbn( $isbn );
@@ -100,7 +101,7 @@ class SpecialBookSources extends SpecialPage {
 	/**
 	 * Trim ISBN and remove characters which aren't required
 	 *
-	 * @param $isbn Unclean ISBN
+	 * @param $isbn string Unclean ISBN
 	 * @return string
 	 */
 	private static function cleanIsbn( $isbn ) {
@@ -115,11 +116,11 @@ class SpecialBookSources extends SpecialPage {
 	private function makeForm() {
 		global $wgScript;
 
-		$form  = '<fieldset><legend>' . wfMsgHtml( 'booksources-search-legend' ) . '</legend>';
+		$form  = '<fieldset><legend>' . $this->msg( 'booksources-search-legend' )->escaped() . '</legend>';
 		$form .= Xml::openElement( 'form', array( 'method' => 'get', 'action' => $wgScript ) );
 		$form .= Html::hidden( 'title', $this->getTitle()->getPrefixedText() );
-		$form .= '<p>' . Xml::inputLabel( wfMsg( 'booksources-isbn' ), 'isbn', 'isbn', 20, $this->isbn );
-		$form .= '&#160;' . Xml::submitButton( wfMsg( 'booksources-go' ) ) . '</p>';
+		$form .= '<p>' . Xml::inputLabel( $this->msg( 'booksources-isbn' )->text(), 'isbn', 'isbn', 20, $this->isbn );
+		$form .= '&#160;' . Xml::submitButton( $this->msg( 'booksources-go' )->text() ) . '</p>';
 		$form .= Xml::closeElement( 'form' );
 		$form .= '</fieldset>';
 		return $form;
@@ -139,9 +140,10 @@ class SpecialBookSources extends SpecialPage {
 		wfRunHooks( 'BookInformation', array( $this->isbn, $this->getOutput() ) );
 
 		# Check for a local page such as Project:Book_sources and use that if available
-		$title = Title::makeTitleSafe( NS_PROJECT, wfMsgForContent( 'booksources' ) ); # Show list in content language
+		$page = $this->msg( 'booksources' )->inContentLanguage()->text();
+		$title = Title::makeTitleSafe( NS_PROJECT, $page ); # Show list in content language
 		if( is_object( $title ) && $title->exists() ) {
-			$rev = Revision::newFromTitle( $title );
+			$rev = Revision::newFromTitle( $title, false, Revision::READ_NORMAL );
 			$this->getOutput()->addWikiText( str_replace( 'MAGICNUMBER', $this->isbn, $rev->getText() ) );
 			return true;
 		}
@@ -159,8 +161,8 @@ class SpecialBookSources extends SpecialPage {
 	/**
 	 * Format a book source list item
 	 *
-	 * @param $label Book source label
-	 * @param $url Book source URL
+	 * @param $label string Book source label
+	 * @param $url string Book source URL
 	 * @return string
 	 */
 	private function makeListItem( $label, $url ) {
