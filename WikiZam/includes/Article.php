@@ -1819,7 +1819,6 @@ class Article extends Page {
 			#wfWarn( "Call to " . __CLASS__ . "::$fname; please use WikiPage instead" );
 			return call_user_func_array( array( $this->mPage, $fname ), $args );
 		}
-        print_r(wfBacktrace());
 		trigger_error( 'Inaccessible function via __call(): ' . $fname, E_USER_ERROR );
 	}
 
