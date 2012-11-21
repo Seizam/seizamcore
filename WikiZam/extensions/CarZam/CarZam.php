@@ -38,7 +38,7 @@ $wgExtensionMessagesFiles['CarZam'] = $dir . 'CarZam.i18n.php';
 // JS Resources Declaration
 $carZamResourceTemplate = array(
     'localBasePath' => $dir . 'modules',
-    'remoteExtPath' => 'ParserExtensions/CarZam/modules',
+    'remoteExtPath' => 'CarZam/modules',
     'group' => 'ext.carzam'
 );
 
