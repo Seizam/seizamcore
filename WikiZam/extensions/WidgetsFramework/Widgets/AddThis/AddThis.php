@@ -47,7 +47,7 @@ class AddThis extends ParserFunction {
         $this->vertical = new Boolean('vertical');
         $this->addParameter($this->vertical);
         
-        $this->url = new URL('url');
+        $this->url = new String('url');
         $this->url->setDefaultValue($this->parser->getTitle()->getCanonicalURL());
         $this->addParameter($this->url);
 
