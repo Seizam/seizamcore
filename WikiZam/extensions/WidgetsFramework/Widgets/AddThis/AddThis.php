@@ -12,7 +12,7 @@ class AddThis extends ParserFunction {
     protected $counter;    
     /** @var Boolean */
     protected $vertical;
-    /** @var URL */
+    /** @var String */
     protected $url;    
     /** @var String */    
     protected $pubid;
