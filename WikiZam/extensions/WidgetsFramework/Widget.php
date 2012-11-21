@@ -1,15 +1,25 @@
 <?php
 
-namespace WidgetsFramework; // need to be declared at the very begining of the file
+/**
+ * Widgets mother class.
+ * 
+ * @file
+ * @ingroup Extensions
+ */
+
+namespace WidgetsFramework;
 
 interface Widget {
 
     /**
-     * Called by MediaWiki hook ParserFirstCallInit.
-     * Should be used to register the widget to the parser.
-     * @param Parser $parser
-     * @return boolean true to continue hook processing
-     * (or false to abort this parser hook, but will probably breaks other extensions)
+     * hook ParserFirstCallInit of MediaWiki: called when the parser 
+     * initialises for the first time.
+     * 
+     * Registers the widget to MediaWiki's parser.
+     * 
+     * @param Parser $parser Parser object
+     * @return boolean Should always returns <i>true</i> (to continue hook
+     * processing)
      */
     public static function Register($parser);
 }

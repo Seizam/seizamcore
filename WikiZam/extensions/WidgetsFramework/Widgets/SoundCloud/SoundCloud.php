@@ -4,18 +4,40 @@ namespace WidgetsFramework;
 
 class SoundCloud extends ParserFunction {
 
+    /** @var XorParameter */
     protected $source;
+    /** @var IntegerInPixel */
     protected $width;
+    /** @var IntegerInPixel */
     protected $height;
+    /** @var Boolean */
     protected $autoplay;
+    /** @var Boolean */
     protected $artwork;
+    /** @var Boolean */
     protected $comments;
+    /** @var Boolean */
     protected $playcount;
+    /** @var Boolean */
     protected $like;
+    /** @var Option */
     protected $right;
+    /** @var Option */
     protected $left;
 
+    /**
+     * Declares the widget's parameters:
+     * <ul>
+     * <li>instanciates Parameter objects,</li>
+     * <li>configures them and</li>
+     * <li>calls addParameter() for each of them.</li>
+     * </ul>
+     * 
+     * @return void
+     */
     protected function declareParameters() {
+        
+        global $wgWFMKMaxWidth;
 
         $track = new Integer('track');
         $track->setMin(0);
@@ -35,8 +57,8 @@ class SoundCloud extends ParserFunction {
         $this->addParameter($this->source);
 
         $this->width = new IntegerInPixel('width');
-        $this->width->setDefaultValue(784);
-        $this->width->setMax(784);
+        $this->width->setDefaultValue($wgWFMKMaxWidth);
+        $this->width->setMax($wgWFMKMaxWidth);
         $this->addParameter($this->width);
 
         $this->height = new IntegerInPixel('height');
@@ -69,6 +91,13 @@ class SoundCloud extends ParserFunction {
         $this->addParameter($float);
     }
 
+    /**
+     * Checks parameters requirements (required, min, max,...).
+     * Updates default values of some parameters according the other parameters
+     * values.
+     * 
+     * @throws UserError When a parameter fails its validate.
+     */
     protected function validate() {
 
         parent::validate();
@@ -78,6 +107,10 @@ class SoundCloud extends ParserFunction {
         }
     }
     
+    /**
+     * 
+     * @return string
+     */
     public function getCSSClasses() {
 
         $classes = array();
@@ -91,9 +124,16 @@ class SoundCloud extends ParserFunction {
             $classes[] = 'wfmk_left';
         }
 
-        return Tools::arrayToCSSClasses($classes);
+        return Tools::ArrayToCSSClasses($classes);
     }
 
+    /**
+     * Called after arguments have been parsed, parameters are set and validated.
+     * 
+     * Returns the output as raw HTML.
+     * 
+     * @return string raw HTML
+     */
     protected function getOutput() {
 
         // source is required, at this point, we are sure that one of the subparameters has been set

@@ -4,13 +4,30 @@ namespace WidgetsFramework;
 
 class Video extends ParserFunction {
 
+    /** @var String */
     protected $url;
+    /** @var IntegerInPixel */
     protected $width;
+    /** @var IntegerInPixel */
     protected $height;
+    /** @var Option */
     protected $right;
+    /** @var Option */
     protected $left;
 
+    /**
+     * Declares the widget's parameters:
+     * <ul>
+     * <li>instanciates Parameter objects,</li>
+     * <li>configures them and</li>
+     * <li>calls addParameter() for each of them.</li>
+     * </ul>
+     * 
+     * @return void
+     */
     protected function declareParameters() {
+        
+        global $wgWFMKMaxWidth;
 
         $this->url = new String('url');
         $this->url->setValidateType('url');
@@ -18,8 +35,8 @@ class Video extends ParserFunction {
         $this->addParameter($this->url);
 
         $this->width = new IntegerInPixel('width');
-        $this->width->setDefaultValue(784);
-        $this->width->setMax(784);
+        $this->width->setDefaultValue($wgWFMKMaxWidth);
+        $this->width->setMax($wgWFMKMaxWidth);
         $this->addParameter($this->width);
 
         $this->height = new IntegerInPixel('height');
@@ -36,6 +53,10 @@ class Video extends ParserFunction {
         $this->addParameter($float);
     }
 
+    /**
+     * 
+     * @return string
+     */
     public function getCSSClasses() {
 
         $classes = array();
@@ -50,9 +71,17 @@ class Video extends ParserFunction {
             $classes[] = 'wfmk_left';
         }
 
-        return Tools::arrayToCSSClasses($classes);
+        return Tools::ArrayToCSSClasses($classes);
     }
 
+    /**
+     * Called after arguments have been parsed, parameters are set and validated.
+     * 
+     * Returns the output as raw HTML.
+     * 
+     * @return string raw HTML
+     * 
+     */
     protected function getOutput() {
         return '<video
                     class="' . $this->getCSSClasses() . '"

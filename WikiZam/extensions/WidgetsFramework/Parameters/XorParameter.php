@@ -1,21 +1,35 @@
 <?php
 
-namespace WidgetsFramework; // need to be declared at the very begining of the file
+/**
+ * Abstract Parameter which groups N parameters.
+ * Only one of these N parameters can be set. The XorParameter takes care of that.
+ * 
+ * @file
+ * @ingroup Extensions
+ */
+
+namespace WidgetsFramework;
 
 class XorParameter extends Parameter {
 
     protected $parameters;
     protected $default_parameter;
 
-    /** Default behavior:
+    /**
+     * This parameter is a container for several sub-parameters.
+     * Only one of these can be set by user (the XOR condition)
+     * 
+     * Typical usage is for a "float" parameter, that contains options
+     * "right" and "left". See Vimeo widget for example.
+     * 
      * <ul>
-     * <li>value not set</li>
-     * <li>default value is empty string</li>
-     * <li>parameter is not required</li>
-     * <li>no default parameter</li>
-     * </ul>  
+     * <li>The default value is the empty string</li>
+     * <li>No default sub-parameter</li>
+     * <li>The parameter is not required</li>
+     * </ul>
+     * 
      * @param string $name The parameter name, case insensitive
-     * @throws \MWException if $name not specified or $default_parameter not a Parameter
+     * @throws \MWException If $name not set
      */
     public function __construct($name) {
         parent::__construct($name);
@@ -25,21 +39,22 @@ class XorParameter extends Parameter {
     }
 
     /**
-     * Accepts everything.
-     * @param mixed $value
-     * @return mixed
+     * Keep the value unchanged.
+     * 
+     * @param string|boolean $value String, or boolean <i>true</i>
+     * @return string|boolean The unchanged $value.
      */
     protected function parse($value) {
         return $value;
     }
 
     /**
-     * Set the subparameter used:
+     * Set the sub-parameter to use when:
      * <ul>
-     * <li>when a value without subparameter name found,</li>
-     * <li>when getOutput() is called and xorparameter has not been set</li>
+     * <li>a value without subparameter name is found or</li>
+     * <li>getOutput() is called but no sub-parameter has been set.</li>
      * </ul>
-     * @param \WidgetsFramework\Parameter $default_parameter
+     * @param Parameter $default_parameter
      * @throws \MWException
      */
     public function setDefaultParameter($default_parameter) {
@@ -52,7 +67,8 @@ class XorParameter extends Parameter {
     }
 
     /**
-     * Add a parameter to the XOR list.
+     * Add a sub-parameter.
+     * 
      * @param \WidgetsFramework\Parameter $parameter
      * @throws \MWException
      */
@@ -64,14 +80,16 @@ class XorParameter extends Parameter {
     }
 
     /**
-     * Returns true if one subparameter has been set or xorparameter has a value.
+     * Returns true if a sub-parameter has been set.
+     * 
      * @return boolean
      */
     public function hasBeenSet() {
-        return ( !is_null($this->getSetParameter()) );
+        return (!is_null($this->getSetParameter()) );
     }
 
     /**
+     * Returns the default sub-parameter, or null if none.
      * 
      * @return Parameter
      */
@@ -80,8 +98,9 @@ class XorParameter extends Parameter {
     }
 
     /**
-     * Returns the parameter which is set, or null if none set.
+     * Returns the sub-parameter which is set, or null if none.
      * In most case, you should probably use getParameter() instead.
+     * 
      * @return Parameter
      */
     public function getSetParameter() {
@@ -93,14 +112,15 @@ class XorParameter extends Parameter {
         // no parameter set
         return null;
     }
-    
+
     /**
      * <ul>
-     * <li>When a parameter has been set, return it</li>
-     * <li>else, if a default parameter has been set, return it</li>
-     * <li>else, return null</li>
+     * <li>If a sub-parameter has been set, returns it,</li>
+     * <li>else, if a default parameter has been set, returns it,</li>
+     * <li>else returns null.</li>
      * </ul>
-     * @return Parameter can be null if no parameter set and no default parameter defined.
+     * 
+     * @return Parameter Can be null
      */
     public function getParameter() {
         if (!is_null($parameter = $this->getSetParameter())) {
@@ -113,14 +133,15 @@ class XorParameter extends Parameter {
     /**
      * <ul>
      * <li>If a default parameter has been set, returns its default value.</li>
-     * <li>Else, if a default value as been specified using setDefaultValue(), return it.</li>
-     * <li>else, return empty string.</li>
+     * <li>else, if a default value as been specified using setDefaultValue(), returns it,</li>
+     * <li>else return empty string.</li>
      * </ul>
+     * 
      * @return mixed
      */
     public function getDefaultValue() {
 
-        if (!is_null($default_parameter = $this->getDefaultParameter())) { 
+        if (!is_null($default_parameter = $this->getDefaultParameter())) {
             return $default_parameter->getDefaultValue();
         } else {
             return parent::getDefaultValue();
@@ -129,11 +150,12 @@ class XorParameter extends Parameter {
 
     /**
      * <ul>
-     * <li>when a parameter has been set, return its value</li>
-     * <li>else, if a default parameter as been set, return its value</li>
-     * <li>else, if a default value as been specified using setDefaultValue(), return it.</li>
-     * <li>else, return empty string.</li>
+     * <li>If a sub-parameter has been set, returns its value,</li>
+     * <li>else, if a default parameter has been set, return its value,</li>
+     * <li>else, if a default value as been specified using setDefaultValue(), returns it,</li>
+     * <li>else returns empty string.</li>
      * </ul>
+     * 
      * @return mixed The type depends on the final Parameter class
      */
     public function getValue() {
@@ -146,32 +168,25 @@ class XorParameter extends Parameter {
     }
 
     /**
-     * Try to set by name all of the sub parameter with this $argument. 
-     * @param string $argument Raw argument, with no spaces at the begin or at the end
-     * @return boolean True if set successfull, false is $argument is not a named value for this parameter.
-     * @throws UserError If $argument is a named value for this parameter, but the value cannot
-     * be parsed or validated.
+     * Tries to set by name all of the sub-parameters with this $argument. 
+     * 
+     * @param string $argument Raw argument, with no leading or ending spaces.
+     * @return boolean <i>true</i> if set successfull
+     * @throws UserError 
      */
     protected function trySetParametersByName($argument) {
 
-        // check it $argument is a named value of a sub parameter
+        // checks if $argument is a named value of a sub-parameter
         foreach ($this->parameters as $parameter) {
             if ($parameter->trySetByName($argument)) {
-                // a parameter as identified itsef, parsed and validated succesfully
+                // a sub-parameter has been set by name
                 return true;
             }
         }
-        // no sub parameter name
+
         return false;
     }
 
-    /**
-     * Used when parsing wikitext.
-     * @param string $argument Raw argument
-     * @return boolean True if set successfull
-     * @throws UserError 
-     * @todo use identifyByName
-     */
     public function trySetByName($argument) {
 
         if ($this->hasBeenSet()) {
@@ -182,31 +197,49 @@ class XorParameter extends Parameter {
         $named_value = $this->identifyByName($argument);
 
         if ($named_value === false) {
-            // $argument is not named for this xorparameter,
-            // let's try the subparameters
+            // $argument doesn't contain the name if this xor parameter
+            // try with the sub-parameters
             return $this->trySetParametersByName($argument);
         } elseif ($named_value === true) {
-            // $argument is declared with no value
-            Tools::throwUserError(wfMessage('wfmk-req-value', $this->getName()));
+            // this xor parameter has been used as an option (without value)
+            Tools::ThrowUserError(wfMessage('wfmk-value-required', $this->getName()));
         } elseif ($this->trySetParametersByName($named_value)) {
-            // $argument is named for this xorparameter and we matched a subparameter by name.
+            // $argument contains the name of this xor parameter with a value
+            // and the value contains the name of a sub-parameter
             return true;
         } else {
-            // $argument did not match any subparameter by name, try force the default parameter.
-            $default = $this->getDefaultParameter();
-
-            if ($default != null && $default->trySet($named_value)) {
+            // $argument contains the name of this xor parameter with a value
+            // but the value doesn't contain the name of a sub-parameter
+            // try force the default parameter.
+            if (($default = $this->getDefaultParameter()) != null && $default->trySet($named_value)) {
                 return true;
             } else {
-                Tools::throwUserError(wfMessage('wfmk-req-xorparameter-value', $this->getName()));
+                Tools::ThrowUserError(wfMessage('wfmk-xorparameter-syntax', $this->getName()));
             }
         }
     }
 
     /**
-     * Call the trySetByOrder() method of the default parameter if set
+     * Tries to set the value to $argument.
+     * 
+     * @param string $argument Raw argument
+     * @return boolean <ul>
+     * <li><i>true</i> if set successfull,</li>
+     * <li><i>false</i> if $argument is empty of no default parameter set</li>
+     * </ul>
+     * @throws UserError When the parameter has already read a value, or when
+     * $argument cannot be parsed.
      */
     public function trySet($argument) {
+
+        if ($this->hasBeenSet()) {
+            // cannot read a value anymore
+            Tools::ThrowUserError(wfMessage('wfmk-already-assigned', $this->getName(), $this->getOutput(), $argument));
+        }
+
+        if (strlen($argument) == 0) {
+            return false; // nothing to read
+        }
 
         if ($this->getDefaultParameter() == null) {
             return false;
@@ -216,10 +249,14 @@ class XorParameter extends Parameter {
     }
 
     /**
-     * When a default parameter has been set, set its default value (parsing according to $do_parse value).
-     * Else, store the default value without as it is (without any parse).
+     * <ul>
+     * <li>If a default parameter has been set, set its default value (parsing
+     * according to $do_parse value).</li>
+     * <li>Else, store the default value without as it is (without any parse).</li>
+     * </ul>
      * @param mixed $default_value
-     * @param boolean $do_parse Default is true, forced to false when no default parameter set.
+     * @param boolean $do_parse Default is <i>true</i>, forced to false when no 
+     * default parameter set.
      */
     public function setDefaultValue($default_value, $do_parse = true) {
 
@@ -227,19 +264,34 @@ class XorParameter extends Parameter {
             $default_parameter->setDefaultValue($default_value, $do_parse);
         } else {
             parent::setDefaultValue($default_value, false); // store as it is
-        } 
+        }
+    }
+
+    /**
+     * If the xor-parameter is required, checks that a sub-parameter
+     * has been set.
+     * 
+     * If a sub-parameter has been set, calls its validate() method.
+     * 
+     * @return void
+     * @throws UserError
+     */
+    public function validate() {
+        parent::validate(); // If the parameter is required, checks that it has been set.
+        $parameter = $this->getParameter();
+        if (!is_null($parameter)) {
+            $parameter->validate();
+        }
     }
 
     /**
      * <ul>
-     * <li>When a parameter has been set, return its getOutput()</li>
-     * <li>Else, if a default parameter has been set, return its getOutput()</li>
-     * <li>Else, if a default value as been specified using setDefaultValue(), return it.</li>
-     * <li>Else, return empty string.</li>
+     * <li>If a sub-parameter has been set, returns its getOutput()</li>
+     * <li>Else, if a default parameter has been set, returns its getOutput()</li>
+     * <li>Else, if a default value as been set using setDefaultValue(), returns it.</li>
+     * <li>Else, returns empty string.</li>
      * </ul>
-     * Returs the getOutput() of the parameter that has been set.
-     * If none set, returns the getOutput() of the default parameter.
-     * If no default parameter set, return empty string.
+     * 
      * @return string
      */
     public function getOutput() {

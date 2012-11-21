@@ -4,13 +4,30 @@ namespace WidgetsFramework;
 
 class Dailymotion extends ParserFunction {
 
+    /** @var String */
     protected $id;
+    /** @var IntegerInPixel */
     protected $width;
+    /** @var IntegerInPixel */
     protected $height;
+    /** @var Option */
     protected $right;
+    /** @var Option */
     protected $left;
 
+    /**
+     * Declares the widget's parameters:
+     * <ul>
+     * <li>instanciates Parameter objects,</li>
+     * <li>configures them and</li>
+     * <li>calls addParameter() for each of them.</li>
+     * </ul>
+     * 
+     * @return void
+     */
     protected function declareParameters() {
+        
+        global $wgWFMKMaxWidth;
 
         $this->id = new String('id');
         $this->id->setEscapeMode('urlpathinfo');
@@ -18,8 +35,8 @@ class Dailymotion extends ParserFunction {
         $this->addParameter($this->id);
 
         $this->width = new IntegerInPixel('width');
-        $this->width->setDefaultValue(784);
-        $this->width->setMax(784);
+        $this->width->setDefaultValue($wgWFMKMaxWidth);
+        $this->width->setMax($wgWFMKMaxWidth);
         $this->addParameter($this->width);
 
         $this->height = new IntegerInPixel('height');
@@ -37,6 +54,10 @@ class Dailymotion extends ParserFunction {
         $this->addParameter($float);
     }
 
+    /**
+     * 
+     * @return string
+     */
     public function getCSSClasses() {
 
         $classes = array();
@@ -51,9 +72,16 @@ class Dailymotion extends ParserFunction {
             $classes[] = 'wfmk_left';
         }
 
-        return Tools::arrayToCSSClasses($classes);
+        return Tools::ArrayToCSSClasses($classes);
     }
 
+    /**
+     * Called after arguments have been parsed, parameters are set and validated.
+     * 
+     * Returns the output as raw HTML.
+     * 
+     * @return string raw HTML
+     */
     protected function getOutput() {
         return '<iframe
                     class="' . $this->getCSSClasses() . '"

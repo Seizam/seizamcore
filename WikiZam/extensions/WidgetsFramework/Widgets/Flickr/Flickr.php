@@ -4,18 +4,39 @@ namespace WidgetsFramework;
 
 class Flickr extends ParserFunction {
 
+    /** @var String */
     protected $user;
+    /** @var String */
     protected $tag;
+    /** @var Boolean */
     protected $nolink;
+    /** @var OptionString */
     protected $photostream;
+    /** @var Integer */
     protected $count;
+    /** @var Boolean */
     protected $random; // only when user all or user tag
+    /** @var XorParameter */
     protected $size;
+    /** @var IntegerInPixel */
     protected $width;
+    /** @var IntegerInPixel */
     protected $height;
+    /** @var Option */
     protected $right;
+    /** @var Option */
     protected $left;
 
+    /**
+     * Declares the widget's parameters:
+     * <ul>
+     * <li>instanciates Parameter objects,</li>
+     * <li>configures them and</li>
+     * <li>calls addParameter() for each of them.</li>
+     * </ul>
+     * 
+     * @return void
+     */
     protected function declareParameters() {
 
         $this->user = new String('user');
@@ -48,13 +69,13 @@ class Flickr extends ParserFunction {
 
 
         $square = new Option('square');
-        $square->setOutputOnTrue('s');
+        $square->setONOutput('s');
 
         $thumbnail = new Option('thumbnail');
-        $thumbnail->setOutputOnTrue('t');
+        $thumbnail->setONOutput('t');
 
         $medium = new Option('medium');
-        $medium->setOutputOnTrue('m');
+        $medium->setONOutput('m');
 
         $this->size = new XorParameter('size');
         $this->size->addParameter($square);
@@ -83,6 +104,13 @@ class Flickr extends ParserFunction {
         $this->addParameter($float);
     }
 
+    /**
+     * Checks parameters requirements (required, min, max,...).
+     * Updates default values of some parameters according the other parameters
+     * values.
+     * 
+     * @throws UserError When a parameter fails its validate.
+     */
     protected function validate() {
         parent::validate();
 
@@ -91,6 +119,10 @@ class Flickr extends ParserFunction {
         }
     }
 
+    /**
+     * 
+     * @return string
+     */
     protected function getSourceOutput() {
 
         $user_is_set = $this->user->hasBeenSet();
@@ -107,6 +139,10 @@ class Flickr extends ParserFunction {
         }
     }
 
+    /**
+     * 
+     * @return string
+     */
     protected function getFlickrLinkOutput() {
 
         if ($this->nolink->getValue()) {
@@ -121,6 +157,10 @@ class Flickr extends ParserFunction {
         }
     }
 
+    /**
+     * 
+     * @return string
+     */
     protected function getPhotostreamOutput() {
 
         if (!$this->photostream->hasBeenSet()) {
@@ -147,6 +187,10 @@ class Flickr extends ParserFunction {
         return $back;
     }
 
+    /**
+     * 
+     * @return string
+     */
     protected function getWidthStyleOutput() {
 
         $style = 'style="';
@@ -168,6 +212,10 @@ class Flickr extends ParserFunction {
         return $style . '"';
     }
 
+    /**
+     * 
+     * @return string
+     */
     protected function getCSS() {
         return '.flickr_badge_wrapper { display: inline-block; } 
                 .flickr_badge_container { border: 1px solid #d8d7d7; padding: 10px 0 0 10px; }
@@ -176,6 +224,10 @@ class Flickr extends ParserFunction {
                 .flickr_www, .flickr_photostream{ display: block; text-align:center;  color:#3993ff; }';
     }
 
+    /**
+     * 
+     * @return string
+     */
     protected function getCSSClasses() {
 
         $classes = array();
@@ -188,9 +240,16 @@ class Flickr extends ParserFunction {
             $classes[] = 'wfmk_left';
         }
 
-        return Tools::arrayToCSSClasses($classes);
+        return Tools::ArrayToCSSClasses($classes);
     }
-
+    
+    /**
+     * Called after arguments have been parsed, parameters are set and validated.
+     * 
+     * Returns the output as raw HTML.
+     * 
+     * @return string raw HTML
+     */
     protected function getOutput() {
 
         $show_name = $this->nolink->getValue() ? '' : 'show_name=1&'; // seems to be useless

@@ -4,18 +4,33 @@ namespace WidgetsFramework;
 
 class AddThis extends ParserFunction {
 
-    /**
-     * @var Option
-     */
+    /** @var Boolean */
     protected $long;
+    /** @var Boolean */
     protected $big;
-    protected $counter;
+    /** @var Boolean */
+    protected $counter;    
+    /** @var Boolean */
     protected $vertical;
-    protected $url;
+    /** @var URL */
+    protected $url;    
+    /** @var String */    
     protected $pubid;
+    /** @var Option */
     protected $left;
+    /** @var Option */
     protected $right;
-
+    
+    /**
+     * Declares the widget's parameters:
+     * <ul>
+     * <li>instanciates Parameter objects,</li>
+     * <li>configures them and</li>
+     * <li>calls addParameter() for each of them.</li>
+     * </ul>
+     * 
+     * @return void
+     */
     protected function declareParameters() {
 
         $this->long = new Boolean('long');
@@ -53,11 +68,11 @@ class AddThis extends ParserFunction {
 
         $this->addParameter($float);
     }
-    
-    protected function validate() {
-        parent::validate();
-    }
 
+    /**
+     * 
+     * @return string
+     */
     protected function getCSSClasses() {
 
         $classes = array();
@@ -89,9 +104,13 @@ class AddThis extends ParserFunction {
             }
         }
 
-        return Tools::arrayToCSSClasses($classes);
+        return Tools::ArrayToCSSClasses($classes);
     }
 
+    /**
+     * 
+     * @return string
+     */
     protected function getButtons() {
         $howmany = 2;
         if ($this->long->getValue()) {
@@ -107,7 +126,11 @@ class AddThis extends ParserFunction {
 
         return $buttons;
     }
-
+    
+    /**
+     * 
+     * @return string
+     */
     protected function getExtraBubbleButton() {
 
         if ($this->counter->getValue() && !$this->vertical->getValue()) {
@@ -117,6 +140,11 @@ class AddThis extends ParserFunction {
         return '';
     }
     
+    /**
+     * 
+     * @global string $wgGAnalyticsPropertyID
+     * @return string
+     */
     protected function getConfigurationJSVars() {
         global $wgGAnalyticsPropertyID;
         
@@ -141,6 +169,10 @@ class AddThis extends ParserFunction {
         return $js;
     }
     
+    /**
+     * 
+     * @return string
+     */
     protected function getShareJSVars() {
         
         $js = "";
@@ -157,6 +189,10 @@ class AddThis extends ParserFunction {
         return $js;
     }
     
+    /**
+     * 
+     * @return type
+     */
     protected function getHtmlShareVars() {
         
         $vars = array();
@@ -170,6 +206,10 @@ class AddThis extends ParserFunction {
         
     }
     
+    /**
+     * 
+     * @return string
+     */
     protected function getJSVars() {
         $js = "";
         $js .= $this->getConfigurationJSVars().$this->getShareJSVars();
@@ -178,9 +218,14 @@ class AddThis extends ParserFunction {
         return $js;
     }
 
+    /**
+     * Called after arguments have been parsed, parameters are set and validated.
+     * 
+     * Returns the output as raw HTML.
+     * 
+     * @return string raw HTML
+     */
     protected function getOutput() {
-        
-        global $wgGAnalyticsPropertyID;
 
         return "<div class=\"{$this->getCSSClasses()}\" {$this->getHtmlShareVars()}>"
                     . $this->getButtons()

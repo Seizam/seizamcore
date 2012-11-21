@@ -4,26 +4,46 @@ namespace WidgetsFramework;
 
 class Facebook extends ParserFunction {
 
+    /** @var String */
     protected $profile;
+    /** @var IntegerInPixel */
     protected $width;
+    /** @var IntegerInPixel */
     protected $height;
+    /** @var Boolean */
     protected $faces;
+    /** @var Boolean */
     protected $stream;
+    /** @var Boolean */
     protected $force_wall;
+    /** @var Option */
     protected $right;
+    /** @var Option */
     protected $left;
-
+    
+    /**
+     * Declares the widget's parameters:
+     * <ul>
+     * <li>instanciates Parameter objects,</li>
+     * <li>configures them and</li>
+     * <li>calls addParameter() for each of them.</li>
+     * </ul>
+     * 
+     * @return void
+     */
     protected function declareParameters() {
 
+        global $wgWFMKMaxWidth;
+        
         $this->profile = new String('profile');
         $this->profile->setRequired();
         $this->addParameter($this->profile);
 
 
         $this->width = new IntegerInPixel('width');
-        $this->width->setDefaultValue(784);
+        $this->width->setDefaultValue($wgWFMKMaxWidth);
         $this->width->setMin(0);
-        $this->width->setMax(784);
+        $this->width->setMax($wgWFMKMaxWidth);
         $this->addParameter($this->width);
 
 
@@ -58,9 +78,16 @@ class Facebook extends ParserFunction {
         $this->addParameter($float);
     }
 
+    /**
+     * Checks parameters requirements (required, min, max,...).
+     * Updates default values of some parameters according the other parameters
+     * values.
+     * 
+     * @throws UserError When a parameter fails its validate.
+     */
     protected function validate() {
 
-        parent::validate();
+        parent::validate(); // Checks parameters requirements (required, min, max,...).
 
         $faces = $this->faces->getValue();
         $stream = $this->stream->getValue();
@@ -77,6 +104,10 @@ class Facebook extends ParserFunction {
         
     }
 
+    /**
+     * 
+     * @return string
+     */
     protected function getCSSClasses() {
         $classes = array();
 
@@ -90,9 +121,13 @@ class Facebook extends ParserFunction {
             $classes[] = 'wfmk_left';
         }
 
-        return Tools::arrayToCSSClasses($classes);
+        return Tools::ArrayToCSSClasses($classes);
     }
 
+    /**
+     * 
+     * @return string
+     */
     protected function getIframeSrc() {
 
         $src = 'http://www.facebook.com/plugins/likebox.php?href=';
@@ -116,6 +151,13 @@ class Facebook extends ParserFunction {
         return $src;
     }
 
+    /**
+     * Called after arguments have been parsed, parameters are set and validated.
+     * 
+     * Returns the output as raw HTML.
+     * 
+     * @return string raw HTML
+     */
     protected function getOutput() {
         return '<iframe
                     class="' . $this->getCSSClasses() . '"
