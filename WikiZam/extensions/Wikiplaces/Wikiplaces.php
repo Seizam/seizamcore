@@ -102,6 +102,7 @@ $wgWpSubscribersExtraRights = array(
 	'movefile',
 	'suppressredirect',
 	'delete',
+    'autopatrol'
 );
 foreach ( $wgWpSubscribersExtraRights as $right ) {
 	$wgGroupPermissions[WP_SUBSCRIBERS_USER_GROUP][$right] = true;

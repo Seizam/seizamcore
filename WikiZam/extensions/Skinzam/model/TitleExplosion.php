@@ -105,7 +105,7 @@ class TitleExplosion {
         $html = '';
         $position = 0;
         foreach ($this->titles as $title) {
-            $html .= Linker::linkKnown($title, $title->getSubpageText(), array('class' => $this->getDefaultLinkClasses($position)));
+            $html .= Linker::linkKnown($title, $title->getSubpageText(), array('class' => $this->getDefaultLinkClasses($position)), array('redirect'=>'no'));
             $html .= self::getHtmlSeparator('/');
             $position++;
         }

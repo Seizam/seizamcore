@@ -61,6 +61,7 @@ class WikiplacesHooks {
         if (!WpPage::isInWikiplaceNamespaces($namespace)) {
 
             // some actions have to be forbidden when not in wikiplaces
+            /** @todo $wgWpSubscribersExtraRights is not the best name */
             global $wgWpSubscribersExtraRights;
             if (!$user->isAllowed(WP_ADMIN_RIGHT) && in_array($action, $wgWpSubscribersExtraRights)) {
 
@@ -100,6 +101,7 @@ class WikiplacesHooks {
                 break;
             case 'move':
             case 'delete':
+            case 'autopatrol':
                 $do = $action;
                 break;
         }
@@ -130,8 +132,11 @@ class WikiplacesHooks {
                 case 'delete':
                     $result = self::wikiplaceUserCanDelete($title, $user);
                     break;
+                case 'autopatrol':
+                    $result = self::wikiplaceUserCanAutopatrol($title, $user);
+                    break;
             }
-            wfDebugLog('wikiplaces-debug', "$do($action) " . (empty($result) ? 'ALLOWED' : 'DENIED') .
+            wfDebugLog('wikiplaces', "$do($action) " . (empty($result) ? 'ALLOWED' : 'DENIED') .
                     " on {$title->getPrefixedDBkey()}($article_id) " . ($title->isKnown() ? '(title known)' : '(new title)') .
                     " for user {$user->getName()}($user_id)");
         }
@@ -363,6 +368,24 @@ class WikiplacesHooks {
         return $back;
     }
 
+    /**
+     * For title in wikiplace namespace, checks if the current user can autopatrol the edit.
+     * @param type $title
+     * @param type $user 
+     * @return array Empty array = can, array containing i18n key + args = cannot 
+     */
+    private static function wikiplaceUserCanAutopatrol($title, $user) {
+        $back = array();
+        
+        if (!$user->isAllowed(WP_ADMIN_RIGHT) && !WpPage::isOwner($title->getArticleID(), $user)) {
+            $back[] = 'wp-not-owner';
+        }
+        
+        wfDebugLog('devbedhed', 'wikiplaceUserCanAutopatrol:'.print_r($back, true));
+        
+        return $back;
+    }
+    
     /**
      * Called when creating a new article, but after onArticleSave
      * @param WikiPage $wikipage the Article or WikiPage (object) saved. Article for MW < 1.18, WikiPage for MW >= 1.18
