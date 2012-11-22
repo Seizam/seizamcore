@@ -235,11 +235,13 @@ class CarZamCarrousel {
     private function thumbToHTML($img, $nt, $text = '', $alt = '', $descQuery = '') {
         if (self::imgIsVertical($img)) {
             $params = array(
-                'width' => $this->mThumbHeight,
+                'height' => $this->mPhotoHeight, #no contraint on height
+                'width' => $this->mThumbHeight, 
             );
         } else {
             $params = array(
                 'height' => $this->mThumbHeight,
+                'width' => $this->mPhotoWidth, #no constraint on width
             );
         }
 
