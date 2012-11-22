@@ -47,7 +47,7 @@ class WpWikiplacesTablePager extends SkinzamTablePager {
 
             case 'page_title':
                 $title = Title::makeTitle($this->mCurrentRow->page_namespace, $value);
-                return Linker::linkKnown($title);
+                return Linker::linkKnown($title, null, array(), array('redirect'=>'no'));
             case 'count':
                 $html = '<b>'.$value.'</b> '.  wfMessage('wp-items');
                 $html .= '<ul>';
