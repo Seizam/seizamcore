@@ -189,3 +189,11 @@ function wfEchoResultWrapper($resultWrapper, $comment = 'wfEchoResultWrapper', $
         echo $html;
 }
 
+/**
+ * Replaces underscores '_' by spaces ' '.
+ * @param string $text 
+ */
+function wfUnUnderscore($text) {
+    return str_replace('_', ' ', $text);
+}
+

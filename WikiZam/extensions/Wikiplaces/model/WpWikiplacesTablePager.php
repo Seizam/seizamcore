@@ -24,7 +24,7 @@ class WpWikiplacesTablePager extends SkinzamTablePager {
         'wpw_date_expires');
     protected $selectOptions = array('GROUP BY' => 'wp_wikiplace.wpw_id');
     protected $defaultSort = 'page_title';
-    public $forceDefaultLimit = 10;
+    public $forceDefaultLimit = 3;
     public $mDefaultDirection = false; // true = DESC
     protected $tableClasses = array('WpWikiplace'); # Array
     protected $messagesPrefix = 'wp-';
@@ -47,12 +47,12 @@ class WpWikiplacesTablePager extends SkinzamTablePager {
 
             case 'page_title':
                 $title = Title::makeTitle($this->mCurrentRow->page_namespace, $value);
-                return Linker::linkKnown($title, $title->getPrefixedText(), array(), array('redirect'=>'no'));
+                return Linker::linkKnown($title);
             case 'count':
                 $html = '<b>'.$value.'</b> '.  wfMessage('wp-items');
                 $html .= '<ul>';
                 $html .= '<li><b>'
-						. SpecialWikiplaces::getLinkConsultWikiplace( $this->mCurrentRow->page_title )
+                        . SpecialWikiplaces::getLinkConsultWikiplace($this->mCurrentRow->page_title)
                         . '</b></li>';
                 $html .= '<li>'
                         . SpecialWikiplaces::getLinkCreateSubpage( $this->mCurrentRow->page_title )

@@ -27,7 +27,7 @@ class WpPagesTablePager extends SkinzamTablePager {
     protected $selectOptions = array('ORDER BY' => 'subpage.page_title');
     protected $defaultSort = 'page_touched';
     public $mDefaultDirection = true; // true = DESC
-    public $forceDefaultLimit = 20;
+    public $forceDefaultLimit = 10;
     protected $tableClasses = array('WpPage'); # Array
     protected $messagesPrefix = 'wp-';
     protected $wpName = '';
@@ -63,7 +63,7 @@ class WpPagesTablePager extends SkinzamTablePager {
     function formatPageTitle($value) {
         $title = Title::makeTitle($this->mCurrentRow->page_namespace, $value);
         $ns = $title->getNamespace();
-        $explosion = WpWikiplace::explodeWikipageKey($title->getDBkey(), $ns);
+        $explosion = WpWikiplace::explodeWikipageKey($title->getText(), $ns);
         $excount = count($explosion);
         $text = '';
         // Page is in NS_MAIN

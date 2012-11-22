@@ -46,6 +46,8 @@ $messages['en'] = array(
     'wp-subscribe-change' => 'Change subscription',
     'wp-subscribe-renew' => 'Renew',
     'wp-create' => 'Create!',
+    'wp-create-page' => 'New page',
+    'wp-create-wikiplace' => 'Create a new WikiPlace',
     /* Tips */
     'wp-url-tip' => 'Your WikiPlace is available at [[$1|<u>http://www.<b>seizam.com/$1</b></u>]].',
     'wp-suburl-tip' => 'Your Page is available at [[$1/$2|<u>http://www.<b>seizam.com/$1/$2</b></u>]].',
@@ -208,6 +210,8 @@ $messages['fr'] = array(
     'wp-subscribe-change' => 'Changer d\'Abonnement',
     'wp-subscribe-renew' => 'Renouveler',
     'wp-create' => 'Créer !',
+    'wp-create-page' => 'Nouvelle page',
+    'wp-create-wikiplace' => 'Créer une nouvelle WikiPlace',
     /* Tips */
     'wp-url-tip' => 'Votre WikiPlace est disponnible depuis [[$1|<u>http://www.<b>seizam.com/$1</b></u>]].',
     'wp-suburl-tip' => 'Votre page est disponnible depuis [[$1/$2|<u>http://www.<b>seizam.com/$1/$2</b></u>]].',

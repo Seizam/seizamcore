@@ -406,8 +406,8 @@ class SpecialWikiplaces extends SpecialPage {
 		$tp->setSelectConds(array(
 			'wpw_owner_user_id' => $this->getUser()->getID(),
 			'homepage.page_title' => $this->name));
-		$tp->setHeader(wfMessage('wp-consult-header', $this->name)->parse());
-		$tp->setFooter(wfMessage('wp-consult-footer', $this->name)->parse());
+		$tp->setHeader(wfMessage('wp-consult-header', wfUnUnderscore($this->name))->parse());
+		$tp->setFooter(wfMessage('wp-consult-footer', wfUnUnderscore($this->name))->parse());
 		$this->getOutput()->addHTML($tp->getWholeHtml());
 	}
 
@@ -418,12 +418,13 @@ class SpecialWikiplaces extends SpecialPage {
 
 	/**
 	 * Generate a link to consult a listing of a wikiplace all items.
-	 * @param String $homepage_title_name should be $homepageTitle->getText()
+	 * @param string $homepage_title_name should be $homepageTitle->getText()
 	 * @return string a HTML link
 	 */
-	public static function getLinkConsultWikiplace($homepage_title_name) {
+	public static function getLinkConsultWikiplace($homepage_title_name, $displayName = false) {
+        $message = $displayName ? wfUnUnderscore($homepage_title_name) : wfMessage('details')->text();
 		return Linker::linkKnown(
-						self::getTitleFor(self::TITLE_NAME, self::ACTION_CONSULT_WIKIPLACE . ':' . $homepage_title_name), wfMessage('show')->text());
+						self::getTitleFor(self::TITLE_NAME, self::ACTION_CONSULT_WIKIPLACE . ':' . $homepage_title_name), $message);
 	}
 
 	/**
@@ -431,12 +432,12 @@ class SpecialWikiplaces extends SpecialPage {
 	 * @param String $homepage_title_name should be $homepageTitle->getText()
 	 * @return string a HTML link
 	 */
-	public static function getLinkCreateSubpage($homepage_title_name = null, $i18n_key = 'create') {
+	public static function getLinkCreateSubpage($homepage_title_name = null, $i18n_key = 'wp-create-page') {
 		return Linker::linkKnown(
 						self::getTitleFor(self::TITLE_NAME, self::ACTION_CREATE_SUBPAGE . ':' . $homepage_title_name), wfMessage($i18n_key)->text());
 	}
 
-	public static function getLinkCreateWikiplace($i18n_key = 'create') {
+	public static function getLinkCreateWikiplace($i18n_key = 'wp-create-wikiplace') {
 		return Linker::linkKnown(
 						self::getTitleFor(self::TITLE_NAME, self::ACTION_CREATE_WIKIPLACE), wfMessage($i18n_key)->text());
 	}
