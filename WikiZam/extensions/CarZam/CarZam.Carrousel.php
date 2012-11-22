@@ -152,7 +152,7 @@ class CarZamCarrousel {
 
         $attribs = Sanitizer::mergeAttributes(
                         array('id' => 'carrousel'), $this->mAttribs);
-        
+
         $output = Html::rawElement('div', $attribs, $car_photos . $car_slider);
 
         return $output;
@@ -211,11 +211,37 @@ class CarZamCarrousel {
         return $html;
     }
 
+    /**
+     * @param File $img 
+     */
+    private static function imgIsVertical($img) {
+        $height = $img->getHeight();
+        $width = $img->getWidth();
+        if (!$height || !$width) {
+            return false;
+        }
+        return $height > $width;
+    }
+
+    /**
+     *
+     * @param File $img
+     * @param Title $nt
+     * @param string $text
+     * @param string $alt
+     * @param type $descQuery
+     * @return string 
+     */
     private function thumbToHTML($img, $nt, $text = '', $alt = '', $descQuery = '') {
-        $params = array(
-            'height' => $this->mThumbHeight,
-            'width' => $this->mPhotoWidth //We don't want to constraint width.
-        );
+        if (self::imgIsVertical($img)) {
+            $params = array(
+                'width' => $this->mThumbHeight,
+            );
+        } else {
+            $params = array(
+                'height' => $this->mThumbHeight,
+            );
+        }
 
         if (!$img) {
             $html = '<a class="CarError" style="height: ' . $params['height'] . 'px; width: ' . $this->mThumbWidth . 'px;">'
@@ -246,7 +272,6 @@ class CarZamCarrousel {
         return $html;
     }
 
-    
     /**
      * @return Integer: number of images in the gallery
      */

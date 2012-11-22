@@ -38,6 +38,7 @@ class CarZamHooks {
 
     /**
      * Takes a line and parse it into title, titleLink, alt & caption parameters
+     * @todo Make arguments to paremeters parsing less ugly & more flexible, with widgetsFramework for example.
      * 
      * @param string $line
      * @param Parser $parser
@@ -53,6 +54,8 @@ class CarZamHooks {
         $parameters['alt'] = ''; #html alternative text
         $parameters['caption'] = ''; #html caption
 
+        #arguments are parsed by position... :,-(
+        
         #first arg is file title
         $titleText = array_shift($explosion);
 
@@ -104,7 +107,7 @@ class CarZamHooks {
             array_shift($explosion);
         }
 
-        #the rest is the caption
+        #the rest is the caption, we can reconstruct the WikiText broken by explode('|').
         $captionText = implode('|', $explosion);
 
         $parameters['caption'] = $parser->recursiveTagParse($captionText, $frame);
