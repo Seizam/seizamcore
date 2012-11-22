@@ -78,8 +78,11 @@ class CarZamHooks {
 			if ( isset( $matches[2] ) ) {
 				$label = $parser->recursiveTagParse(substr(trim($matches[2]), 1));
 			}
+            
+            $tag = '';
+            $titleLink = null;
 
-			$c->add( $title, $label);
+			$c->add($title, $label, $tag, $titleLink);
 		}
 		return $c->toHTML();
     }

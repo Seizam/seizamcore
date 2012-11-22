@@ -72,9 +72,10 @@ class CarZamCarrousel {
      * @param $title Title object of the image that is added to the gallery
      * @param $html  String: Additional HTML text to be shown. The name and size of the image are always shown.
      * @param $alt   String: Alt text for the image
+     * @param $titleLink Title object of the page the image links too.
      */
-    public function add($title, $html = '', $alt = '') {
-        $this->mImages[] = array($title, $html, $alt);
+    public function add($title, $html = '', $alt = '', $titleLink = null) {
+        $this->mImages[] = array($title, $html, $alt, $titleLink);
     }
 
     /**
@@ -98,7 +99,7 @@ class CarZamCarrousel {
     }
 
     /**
-     * Return a HTML representation of the image gallery
+     * Return a HTML representation of the image Carrousel
      *
      * For each image in the gallery, display
      * - a thumbnail
@@ -118,6 +119,7 @@ class CarZamCarrousel {
             $nt = $pair[0];
             $text = $pair[1]; # "text" means "caption" here
             $alt = $pair[2];
+            $titleLink = $pair[3];
 
             // Searching the image
             $descQuery = false;
@@ -136,7 +138,7 @@ class CarZamCarrousel {
                 $img = false;
             }
 
-            $car_photos .= Html::rawElement('li', array(), $this->photoToHTML($img, $nt, $text, $alt, $descQuery));
+            $car_photos .= Html::rawElement('li', array(), $this->photoToHTML($img, $nt, $text, $alt, $titleLink, $descQuery));
             $car_slider .= Html::rawElement('li', array(), $this->thumbToHTML($img, $nt, $text, $alt, $descQuery));
         }
 
@@ -156,7 +158,17 @@ class CarZamCarrousel {
         return $output;
     }
 
-    private function photoToHTML($img, $nt, $text = '', $alt = '', $descQuery = '') {
+    /**
+     *
+     * @param File $img
+     * @param Title $nt
+     * @param String $text
+     * @param String $alt
+     * @param Title $titleLink
+     * @param type $descQuery
+     * @return String 
+     */
+    private function photoToHTML($img, $nt, $text = '', $alt = '', $titleLink = null, $descQuery = '') {
         $params = array(
             'width' => $this->mPhotoWidth,
             'height' => $this->mPhotoHeight
@@ -179,6 +191,7 @@ class CarZamCarrousel {
                 'desc-link' => true,
                 'desc-query' => $descQuery,
                 'alt' => $alt,
+                'custom-title-link' => $titleLink
             );
 
             # In the absence of both alt text and caption, fall back on providing screen readers with the filename as alt text
