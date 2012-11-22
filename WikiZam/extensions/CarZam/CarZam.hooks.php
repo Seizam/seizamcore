@@ -80,7 +80,7 @@ class CarZamHooks {
 			}
             
             $tag = '';
-            $titleLink = null;
+            $titleLink = Title::newFromText('Help:Slideshow');
 
 			$c->add($title, $label, $tag, $titleLink);
 		}
