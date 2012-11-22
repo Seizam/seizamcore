@@ -2427,7 +2427,6 @@ table.WpWikiplace td ul li {
 table.WpWikiplace td.count {
     word-wrap: normal;
     display: block;
-    text-align: left;
 }
 
 /* WpPage */
