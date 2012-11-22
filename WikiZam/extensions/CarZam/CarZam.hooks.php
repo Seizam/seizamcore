@@ -227,6 +227,9 @@ class CarZamHooks {
         /** @todo make less ugly */
         $lines = StringUtils::explode("\n", $in);
         foreach ($lines as $line) {
+            
+            $parameters = self::parseLine($line, $parser, $frame);
+            
             if ($parameters === false)
                 continue;
             else {
