@@ -90,8 +90,8 @@ class CarZamSlideshow {
      * @param $html  String: Additional HTML text to be shown. The name and size of the image are always shown.
      * @param $alt   String: Alt text for the image
      */
-    public function add($title, $html = '', $alt = '') {
-        $this->mImages[] = array($title, $html, $alt);
+    public function add($title, $html = '', $alt = '', $linkTitle = null) {
+        $this->mImages[] = array($title, $html, $alt, $linkTitle);
     }
 
     /**
@@ -133,6 +133,7 @@ class CarZamSlideshow {
             $nt = $pair[0];
             $text = $pair[1]; # "text" means "caption" here
             $alt = $pair[2];
+            $titleLink = $pair[3];
 
             // Searching the image
             $descQuery = false;
@@ -151,7 +152,7 @@ class CarZamSlideshow {
                 $img = false;
             }
 
-            $slides .= Html::rawElement('li', array(), $this->photoToHTML($img, $nt, $text, $alt, $descQuery));
+            $slides .= Html::rawElement('li', array(), $this->photoToHTML($img, $nt, $text, $alt, $titleLink, $descQuery));
         }
 
         $slides = Html::rawElement('ul', array(), $slides);
@@ -166,7 +167,7 @@ class CarZamSlideshow {
         return $output;
     }
 
-    private function photoToHTML($img, $nt, $text = '', $alt = '', $descQuery = '') {
+    private function photoToHTML($img, $nt, $text = '', $alt = '', $titleLink = null, $descQuery = '') {
 
 
         //Some ugly alignment logic used later
@@ -196,6 +197,7 @@ class CarZamSlideshow {
                     'desc-link' => true,
                     'desc-query' => $descQuery,
                     'alt' => $alt,
+                    'custom-title-link' => $titleLink
                 );
 
                 # In the absence of both alt text and caption, fall back on providing screen readers with the filename as alt text

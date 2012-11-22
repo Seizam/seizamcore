@@ -37,88 +37,6 @@ class CarZamHooks {
     }
 
     /**
-     * @param  $in
-     * @param array $param
-     * @param Parser $parser
-     * @param bool $frame
-     * @return string
-     */
-    public static function renderCarrouselTag($in, $param=array(), $parser=null, $frame=false) {
-
-        $c = new CarZamCarrousel();
-        $c->setParser($parser);
-        $c->setContextTitle($parser->getTitle());
-        $c->setHideBadImages();
-        if (isset($param['height'])) {
-            $explosion = explode('px', strtolower($param['height']));
-            $c->setPhotoHeight($explosion[0]);
-        }
-
-        $lines = StringUtils::explode("\n", $in);
-        foreach ($lines as $line) {
-            $explosion = explode('|', $line);
-
-            $titleLink = null; #Title to link to
-            $alt = ''; #html alternative text
-            $caption = ''; #html caption
-
-            $titleText = array_shift($explosion);
-
-            if (is_null($titleText)) {
-                # Empty line or something went wrong
-                continue;
-            }
-
-            if (strpos($titleText, '%') !== false) {
-                #fix possible url encoding of title
-                $titleText = rawurldecode($titleText);
-            }
-
-            $title = Title::newFromText($titleText, NS_FILE);
-            if (is_null($title)) {
-                # Bogus title. Ignore these so we don't bomb out later.
-                continue;
-            }
-
-            #first arg could be link
-            $titleLinkText = count($explosion) > 0 ? self::identifyByName('link', $explosion[0]) : false;
-
-            if ($titleLinkText === false) {
-                #title link is not set
-            } else {
-                if ($titleLinkText === true || $titleLinkText == '') {
-                    #title link is set to empty (no linking)
-                } else {
-                    #title link is set
-                    $titleLink = Title::newFromText($titleLinkText);
-                }
-                array_shift($explosion);
-            }
-            
-            #second arg could be alt
-            $altText = count($explosion) > 0 ? self::identifyByname('alt',$explosion[0]) : false;
-            
-            if ($altText === false) {
-                #alt is not set
-            } else {
-                $alt = htmlspecialchars($altText);
-                array_shift($explosion);
-            }
-            
-            #the rest is the caption
-            $captionText = implode('|', $explosion);
-            
-            $caption = $parser->recursiveTagParse($captionText, $frame);
-            
-            //wfDebugLog('devbedhed', "Title=$title \nCaption=$caption \nAlt=$alt \nLink=$titleLink");
-
-            $c->add($title, $caption, $alt, $titleLink);
-        }
-
-        return $c->toHTML();
-    }
-
-    /**
      * Analyses the argument, and look for this parameter name, case
      * insensitive.
      * 
@@ -167,6 +85,97 @@ class CarZamHooks {
     }
 
     /**
+     * @todo better argument parsing within the tag.
+     * 
+     * @param  $in
+     * @param array $param
+     * @param Parser $parser
+     * @param bool $frame
+     * @return string
+     */
+    public static function renderCarrouselTag($in, $param=array(), $parser=null, $frame=false) {
+
+        $c = new CarZamCarrousel();
+        $c->setParser($parser);
+        $c->setContextTitle($parser->getTitle());
+        $c->setHideBadImages();
+        if (isset($param['height'])) {
+            $explosion = explode('px', strtolower($param['height']));
+            $c->setPhotoHeight($explosion[0]);
+        }
+
+        # Reading inside the tag, right now takes arguments by order
+        /** @todo make less ugly */
+        $lines = StringUtils::explode("\n", $in);
+        foreach ($lines as $line) {
+            $explosion = explode('|', $line);
+
+            $titleLink = null; #Title to link to
+            $alt = ''; #html alternative text
+            $caption = ''; #html caption
+
+            $titleText = array_shift($explosion);
+
+            if (is_null($titleText)) {
+                # Empty line or something went wrong
+                continue;
+            }
+
+            if (strpos($titleText, '%') !== false) {
+                #fix possible url encoding of title
+                $titleText = rawurldecode($titleText);
+            }
+
+            $title = Title::newFromText($titleText, NS_FILE);
+            if (is_null($title)) {
+                # Bogus title. Ignore these so we don't bomb out later.
+                continue;
+            }
+
+            #first arg could be link
+            $titleLinkText = count($explosion) > 0 ? self::identifyByName('link', $explosion[0]) : false;
+
+            if ($titleLinkText === false) {
+                #title link is not set
+            } else {
+                if ($titleLinkText === true || $titleLinkText == '') {
+                    #title link is set to empty (no linking)
+                } else {
+                    #title link is set
+                    $titleLink = Title::newFromText($titleLinkText);
+                    if ($titleLink->isKnown()) {
+                        #isKnown, register to the output for the link table
+                        $parser->getOutput()->addLink($titleLinkText);
+                    } else {
+                        #!isKnown, rollback to no link.
+                        $titleLink = null;
+                    }
+                }
+                array_shift($explosion);
+            }
+
+            #second arg could be alt
+            $altText = count($explosion) > 0 ? self::identifyByname('alt', $explosion[0]) : false;
+
+            if ($altText === false) {
+                #alt is not set
+            } else {
+                $alt = htmlspecialchars($altText);
+                array_shift($explosion);
+            }
+
+            #the rest is the caption
+            $captionText = implode('|', $explosion);
+
+            $caption = $parser->recursiveTagParse($captionText, $frame);
+
+            $c->add($title, $caption, $alt, $titleLink);
+        }
+
+        return $c->toHTML();
+    }
+
+    /**
      * @param  $in
      * @param array $param
      * @param Parser $parser
@@ -193,32 +202,76 @@ class CarZamHooks {
             $s->setFloat($param['float']);
 
         $lines = StringUtils::explode("\n", $in);
-        foreach ($lines as $line) {
+        
 
-            $matches = array();
-            preg_match("/^([^|]+)(.*)?$/", $line, $matches);
-            # Skip empty lines
-            if (count($matches) == 0) {
+        # Reading inside the tag, right now takes arguments by order
+        /** @todo make less ugly */
+        $lines = StringUtils::explode("\n", $in);
+        foreach ($lines as $line) {
+            $explosion = explode('|', $line);
+
+            $titleLink = null; #Title to link to
+            $alt = ''; #html alternative text
+            $caption = ''; #html caption
+
+            $titleText = array_shift($explosion);
+
+            if (is_null($titleText)) {
+                # Empty line or something went wrong
                 continue;
             }
 
-            if (strpos($matches[0], '%') !== false) {
-                $matches[1] = rawurldecode($matches[1]);
+            if (strpos($titleText, '%') !== false) {
+                #fix possible url encoding of title
+                $titleText = rawurldecode($titleText);
             }
 
-            $title = Title::newFromText($matches[1], NS_FILE);
+            $title = Title::newFromText($titleText, NS_FILE);
             if (is_null($title)) {
                 # Bogus title. Ignore these so we don't bomb out later.
                 continue;
             }
 
-            $label = '';
-            if (isset($matches[2])) {
-                $label = $parser->recursiveTagParse(substr(trim($matches[2]), 1));
+            #first arg could be link
+            $titleLinkText = count($explosion) > 0 ? self::identifyByName('link', $explosion[0]) : false;
+
+            if ($titleLinkText === false) {
+                #title link is not set
+            } else {
+                if ($titleLinkText === true || $titleLinkText == '') {
+                    #title link is set to empty (no linking)
+                } else {
+                    #title link is set
+                    $titleLink = Title::newFromText($titleLinkText);
+                    if ($titleLink->isKnown()) {
+                        #isKnown, register to the output for the link table
+                        $parser->getOutput()->addLink($titleLinkText);
+                    } else {
+                        #!isKnown, rollback to no link.
+                        $titleLink = null;
+                    }
+                }
+                array_shift($explosion);
             }
 
-            $s->add($title, $label);
+            #second arg could be alt
+            $altText = count($explosion) > 0 ? self::identifyByname('alt', $explosion[0]) : false;
+
+            if ($altText === false) {
+                #alt is not set
+            } else {
+                $alt = htmlspecialchars($altText);
+                array_shift($explosion);
+            }
+
+            #the rest is the caption
+            $captionText = implode('|', $explosion);
+
+            $caption = $parser->recursiveTagParse($captionText, $frame);
+
+            $s->add($title, $caption, $alt, $titleLink);
         }
+        
         return $s->toHTML();
     }
 

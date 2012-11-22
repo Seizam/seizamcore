@@ -196,11 +196,7 @@ class CarZamCarrousel {
 
             # In the absence of both alt text and caption, fall back on providing screen readers with the filename as alt text
             if ($alt == '') {
-                if ($text == '')
-                    $imageParameters['alt'] = $nt->getText();
-                else {
-                    $imageParameters['alt'] = htmlspecialchars($text);
-                }
+                $imageParameters['alt'] = $nt->getText();
             }
 
             $html = $thumb->toHtml($imageParameters);
