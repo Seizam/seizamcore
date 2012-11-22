@@ -145,7 +145,7 @@ class CarZamHooks {
                     $titleLink = Title::newFromText($titleLinkText);
                     if ($titleLink->isKnown()) {
                         #isKnown, register to the output for the link table
-                        $parser->getOutput()->addLink($titleLinkText);
+                        $parser->getOutput()->addLink($titleLink);
                     } else {
                         #!isKnown, rollback to no link.
                         $titleLink = null;
@@ -245,7 +245,7 @@ class CarZamHooks {
                     $titleLink = Title::newFromText($titleLinkText);
                     if ($titleLink->isKnown()) {
                         #isKnown, register to the output for the link table
-                        $parser->getOutput()->addLink($titleLinkText);
+                        $parser->getOutput()->addLink($titleLink);
                     } else {
                         #!isKnown, rollback to no link.
                         $titleLink = null;
