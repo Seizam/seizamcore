@@ -381,8 +381,6 @@ class WikiplacesHooks {
             $back[] = 'wp-not-owner';
         }
         
-        wfDebugLog('devbedhed', 'wikiplaceUserCanAutopatrol:'.print_r($back, true));
-        
         return $back;
     }
     
