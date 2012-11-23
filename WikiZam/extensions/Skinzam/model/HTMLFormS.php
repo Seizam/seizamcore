@@ -54,7 +54,7 @@
  *
  * TODO: Document 'section' / 'subsection' stuff
  */
-class HTMLFormS {
+class HTMLFormS extends ContextSource {
     # A mapping of 'type' inputs onto standard HTMLFormField subclasses
 
     static $typeMappings = array(
@@ -837,6 +837,28 @@ abstract class HTMLFormField {
      * @return String valid HTML.
      */
     abstract function getInputHTML($value);
+    
+    /**
+	 * Get a translated interface message
+	 *
+	 * This is a wrapper arround $this->mParent->msg() if $this->mParent is set
+	 * and wfMessage() otherwise.
+	 *
+	 * Parameters are the same as wfMessage().
+	 *
+	 * @return Message object
+	 */
+	function msg() {
+		$args = func_get_args();
+
+		if ( $this->mParent ) {
+			$callback = array( $this->mParent, 'msg' );
+		} else {
+			$callback = 'wfMessage';
+		}
+
+		return call_user_func_array( $callback, $args );
+	}
 
     /**
      * Override this function to add specific validation checks on the

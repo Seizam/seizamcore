@@ -85,7 +85,7 @@ abstract class HtmlTemplateField extends HTMLFormField {
 		foreach ( $tagset as $key => $val )
 			if ( is_array( $val ) ) {
 				$this->html .= $this->outputOption(
-					$this->msg( $key ), '',
+					$this->internalMsg( $key ), '',
 					array(
 						'disabled' => 'disabled',
 						'style' => 'color: GrayText', // for MSIE
@@ -95,7 +95,7 @@ abstract class HtmlTemplateField extends HTMLFormField {
 				$this->makeHtml( $val, $depth + 1 );
 			} else {
 				$this->html .= $this->outputOption(
-					$this->msg( $val->text ), $val->template,
+					$this->internalMsg( $val->text ), $val->template,
 					array( 'title' => '{{' . $val->template . '}}' ),
 					$depth
 				);
@@ -117,7 +117,7 @@ abstract class HtmlTemplateField extends HTMLFormField {
 		return str_repeat( "\t", $depth ) . Xml::element( 'option', $attribs, $val ) . "\n";
 	}
 
-	protected function msg( $str ) {
+	protected function internalMsg( $str ) {
 		$msg = wfMessage( $str );
 		return $msg->exists() ? $msg->text() : $str;
 	}
