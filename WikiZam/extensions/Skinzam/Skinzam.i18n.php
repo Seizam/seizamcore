@@ -305,13 +305,13 @@ $messages['fr'] = array(
     'sz-slideshow9-href' => '{{canonicalurl:Project:Modèle du libre}}',
     
     'sz-slideshow0-body' => 'Publiez votre art en ligne, quelles que soient vos disciplines, quelle que soit votre vision.',
-    'sz-slideshow7-body' => 'Partagez votre créativité avec le monde, profitez de sa créativité en retour.',
-    'sz-slideshow4-body' => 'Pas de publicité, pas de spam. Ici, votre travail ne sera jamais pollué.',
+    'sz-slideshow1-body' => 'Partagez votre créativité avec le monde, profitez de sa créativité en retour.',
+    'sz-slideshow2-body' => 'Pas de publicité, pas de spam. Ici, votre travail ne sera jamais pollué.',
     'sz-slideshow3-body' => 'De Vimeo à Twitter, insérez et combinez vos services favoris dans vos pages.',
-    'sz-slideshow5-body' => 'Soyez l\'architecte de votre site Internet. Gardez vos pages courtes et poignantes.',
-    'sz-slideshow1-body' => 'Concevez l\'apparence de vos pages avec précision grâce à la technologie de Wikipédia.',
+    'sz-slideshow4-body' => 'Soyez l\'architecte de votre site Internet. Gardez vos pages courtes et poignantes.',
+    'sz-slideshow5-body' => 'Concevez l\'apparence de vos pages avec précision grâce à la technologie de Wikipédia.',
     'sz-slideshow6-body' => 'Écrivez et traduisez votre contenu dans n\'importe quelle langue.',
-    'sz-slideshow2-body' => 'Hébergez et partagez vos fichiers. Suivez l\'évolution de vos projets avec l\'historique.',
+    'sz-slideshow7-body' => 'Hébergez et partagez vos fichiers. Suivez l\'évolution de vos projets avec l\'historique.',
     'sz-slideshow8-body' => 'Libre ou propriétaire ? Vous êtes le maître de votre propriété intellectuelle.',
     'sz-slideshow9-body' => 'Rejoignez une communauté inspirée et étayée par des projets libres de pointe.',
     
