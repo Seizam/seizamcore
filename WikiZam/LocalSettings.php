@@ -224,6 +224,9 @@ unset($wgRestrictionTypes[array_search('move', $wgRestrictionTypes)]);
 $wgGroupPermissions['*']['read'] = true; // ProtectOwn override this if protection set on page
 $wgGroupPermissions['*']['edit'] = true; // ProtectOwn override this if protection set on page
 
+# bureaucrat cannot grant rights
+$wgGroupPermissions['bureaucrat']['userrights'] = false;
+
 # define PROTECTED namespaces
 $wgNamespaceProtection[NS_PROJECT] = array('editprojectns');
 $wgGroupPermissions['bureaucrat']['editprojectns'] = true;
