@@ -196,9 +196,7 @@ class WikiplaceMaintenance extends Maintenance {
                         $this->error( "error while updating outdated wikiplace usages", true );
                     }
                     $this->output(" > fixed\n");
-                } else {
-                    
-                }
+                } 
             }
 
         }
