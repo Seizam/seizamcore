@@ -9,9 +9,9 @@ class WikiplaceMaintenance extends Maintenance {
 	public function __construct() {
 		
 		parent::__construct();
-		$this->addOption( "fix_wpw_date_expires",             "Fix database records pre v1.2.4.", false, false );
-        $this->addOption( "fix_wpou_monthly_page_hits",       "Fix database records pre v1.2.4.", false, false );
-        $this->addOption( "fix_wpw_previous_total_page_hits", "Fix database records pre v1.2.4.", false, false );
+		$this->addOption( "fix_wpw_date_expires",             "Fix database records pre v1.2.4 (1/3)", false, false );
+        $this->addOption( "fix_wpou_monthly_page_hits",       "Fix database records pre v1.2.4 (2/3)", false, false );
+        $this->addOption( "fix_wpw_previous_total_page_hits", "Fix database records pre v1.2.4 (3/3)", false, false );
         $this->addOption( "test_only",                        "Do not update database.",          false, false );
 		$this->mDescription = "Maintenance script of Wikiplaces extension.";
 		
@@ -146,40 +146,68 @@ class WikiplaceMaintenance extends Maintenance {
                 }
                 $this->output(" ok\n");
             }
-            
-            $dbw->commit();
                     
             $this->output("fixed :)\n");
         }
         
+        $dbw->commit();
+        
     }
     
     public function execute_fix_wpw_previous_total_page_hits() {
+                     
+        $dbw = wfGetDB(DB_MASTER);
+        $dbw->begin(); 
         
-        $updated = 0;
+        $this->output("checking...\n");
         
-        if (!$this->isTest()) {
-            $dbw = wfGetDB(DB_MASTER);
-            $dbw->begin(); 
+        $sql = "
+            SELECT DISTINCT *
+            FROM wp_wikiplace
+            WHERE 1
+            ORDER BY wpw_id ASC ;";
+        $results = $dbw->query($sql, __METHOD__);
+
+        foreach ( $results as $row ) {
+            
+            $wpw_id = $row->wpw_id;
+            $previous_total_page_hits = intval($row->wpw_previous_total_page_hits);
+            
             $sql = "
-                UPDATE wp_wikiplace
-                SET wpw_previous_total_page_hits = (
-                    SELECT sum(wpou_monthly_page_hits)
-                    FROM wp_old_usage
-                    WHERE wpou_wpw_id = wpw_id )
-                WHERE 1 ;";
+                SELECT sum(wpou_monthly_page_hits) as hits
+                FROM wp_old_usage
+                WHERE wpou_wpw_id = $wpw_id ;";
             $result = $dbw->query($sql, __METHOD__);
-            if ($result !== true) {
-                $this->error( "error while updating outdated wikiplace usages", true );
+            $result = $dbw->fetchObject( $result );
+            $should_be = intval($result->hits);
+
+            $this->output("wpw_id=$wpw_id\tprevious_total_page_hits=$previous_total_page_hits\n");
+            if ( $should_be != $previous_total_page_hits) {
+                $this->output(" > should be $should_be\n");
+                
+                if (!$this->isTest()) {
+                    $this->output(" > fixing...\n");
+                    $sql = "
+                        UPDATE wp_wikiplace
+                        SET wpw_previous_total_page_hits = $should_be
+                        WHERE wpw_id = $wpw_id ;";
+                    $result = $dbw->query($sql, __METHOD__);
+                    if ($result !== true) {
+                        $this->error( "error while updating outdated wikiplace usages", true );
+                    }
+                    $this->output(" > fixed\n");
+                } else {
+                    
+                }
             }
 
-            $updated = $dbw->affectedRows();
-            $dbw->commit();
-            $this->output($updated." wikiplace records updated\n");
-            
-        } else {
+        }
+        
+        if ($this->isTest()) {
             $this->output("no modification done (test_only option)\n");
         }
+        
+        $dbw->commit();
         
     }
     
