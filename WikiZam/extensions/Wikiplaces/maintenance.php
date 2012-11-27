@@ -52,8 +52,9 @@ class WikiplaceMaintenance extends Maintenance {
             $subscription = WpSubscription::newFromId($wikiplace->getSubscriptionId());       
             $should_ends = WpWikiplace::calculateNextDateExpiresFromSubscription($subscription);
             
-            
-            if ($wikiplace->getDateExpires() != $should_ends) {
+            if ( ($subscription->isActive()) && 
+                    ($subscription->getTmrStatus() == 'OK') && 
+                    ($wikiplace->getDateExpires() != $should_ends) ) {
                 $this->output( "wpw_id=".$wikiplace->getId()."\tupdated=".$wikiplace->getReportUpdated()."\texpires=".$wikiplace->getDateExpires()."\n" );
                 $this->output(" > wps\t\tstarts=".$subscription->getStart()."\tends=".$subscription->getEnd()."\n");
                 $this->output(" > should expire $should_ends\n");
