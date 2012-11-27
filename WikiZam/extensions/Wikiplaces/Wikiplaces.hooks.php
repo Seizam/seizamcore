@@ -494,7 +494,7 @@ class WikiplacesHooks {
             return null;
         }
 
-        if (!$wikiplace->forceArchiveAndResetUsage(WpSubscription::now())) {
+        if (!$wikiplace->forceArchiveAndResetUsage()) {
             wfDebugLog('wikiplaces', 'doCreateWikiplace() ERROR while initialization of wikiplace usage, user=' . $user_id . ' article_id=' . $homepage_article_id);
             return null;
         }

@@ -8,7 +8,7 @@ class WpWikiplace {
 			$wpw_wps_id,
 			$wpw_previous_total_page_hits,
 			$wpw_monthly_page_hits,
-			$wpw_previous_total_bandwidth,
+			$wpw_previous_total_bandwidth, // deprecated
 			$wpw_monthly_bandwidth,
 			$wpw_report_updated,
 			$wpw_date_expires;
@@ -57,72 +57,45 @@ class WpWikiplace {
 		}
 		return $this->name;
 	}
+    
+    /**
+     * Returns the date when the usage report was updated.
+     * @return string
+     */
+    public function getReportUpdated() {
+        return $this->wpw_report_updated;
+    }
+    
+    
+    /**
+     * Returns the date when the current report ends.
+     * @return string
+     */
+    public function getDateExpires() {
+        return $this->wpw_date_expires;
+    }
+    
+    /**
+     * 
+     * @return int
+     */
+    public function getSubscriptionId() {
+        return $this->wpw_wps_id;
+    }
 	
 	
-
 	/**
-	 * For now, updates only the page hits. In futur release, it will also update the bandwith usage.
-	 */
-	public function updateUsage() {
-	
-		$dbw = wfGetDB(DB_MASTER);
-		$dbw->begin();
-		
-		// mysql computes the new value because it can be larger than PHP_INT_MAX, and we handle the result as string
-		
-		$result = $dbr->selectRow( 
-				array( 'wp_page' , 'page' ),
-				array( '( SUM(page_counter) - '.$this->wpw_previous_total_page_hits.') AS hits'),
-				array( 'wppa_wpw_id' => $this->wpw_id ),
-				__METHOD__,
-				array(),
-				array( 'page' => array('INNER JOIN','wppa_page_id = page_id') ) );
-		
-		if ( $result === false ) {
-			throw new MWException('Error while computing page_hits.');
-		}
-		
-		$hits = $result->hits; // handle as string because it can be larger than PHP_INT_MAX
-		
-		/** @todo compute bandwidth usage */ 
-
-		$now = WpSubscription::now();
-		
-		wfDebugLog( 'wikiplaces-debug', "WpWikiplace[$this->wpw_id]->updateUsage(): updating from $this->wpw_report_updated($this->wpw_monthly_page_hits) to $now($hits)");
-
-		$success = $dbw->update(
-				'wp_wikiplace',
-				array(
-					'wpw_monthly_page_hits' => $hits,
-					'wpw_report_updated' => $now,
-				),
-				array( 'wpw_id' => $this->wpw_id) );
-
-		$dbw->commit();
-
-		if ( !$success ) {	
-			throw new MWException('Error while updating wikiplace usages to database.');
-		}
-		
-		$this->wpw_monthly_page_hits = $hits;
-		$this->wpw_report_updated = $now;
-	}
-	
-		/**
 	 * Force archiving current usage, then reset, even if 'expires_date' is not outdated.
-	 * It uses $now as end date in archives table. <b>Doesn't update 'wpw_expires_date'</b>
+	 * It uses NOW as end date in archives table. <b>Doesn't update 'wpw_expires_date'</b>
 	 * @param string $now DATETIME Sql timestamp. If null, WpSubscription::getNow() is used.
 	 * @return boolean true if OK, false if db error occured
 	 */
-	public function forceArchiveAndResetUsage( $now = null ) {
+	public function forceArchiveAndResetUsage() {
 			
 		$dbw = wfGetDB(DB_MASTER);
 		$dbw->begin();
-
-		if ( $now == null) {
-			$now =  WpSubscription::now();
-		} 
-		$now =  $dbw->addQuotes( $now );
+		
+        $now =  WpSubscription::now();
 
 		// archiving current usages
 
@@ -146,11 +119,9 @@ class WpWikiplace {
 		$success = $dbw->update(
 				'wp_wikiplace',
 				array(
-					'wpw_date_expires = DATE_ADD(wpw_date_expires,INTERVAL 1 MONTH)',
 					'wpw_monthly_page_hits' => 0,
 					'wpw_monthly_bandwidth' => 0,
-					'wpw_previous_total_page_hits' => '( wpw_monthly_page_hits + wpw_previous_total_page_hits)',
-					'wpw_previous_total_bandwidth' => '( wpw_monthly_bandwidth + wpw_previous_total_bandwidth)',
+					'wpw_previous_total_page_hits = ( wpw_monthly_page_hits + wpw_previous_total_page_hits)',
 				),
 				array( 'wpw_id' => $this->wpw_id ) );
 
@@ -256,9 +227,9 @@ class WpWikiplace {
 	 * array( 'page_title' =>  $name )
 	 * array( 'wpw_owner_user_id' =>  $user_id )
 	 * @param boolean $multiple Return an array of Wikiplace or a single Wikiplace object
-	 * @return WpWikiplace 
+	 * @return array|WpWikiplace 
 	 */
-	private static function search($conds, $multiple = false) {
+	public static function search($conds, $multiple = false) {
 		
 		$dbr = wfGetDB(DB_SLAVE);
 		//todo
@@ -551,10 +522,9 @@ WHERE wpw_report_updated < $outdated ;" ;
 					'wp_wikiplace',
 					array(
 						'wpw_date_expires = DATE_ADD(wpw_date_expires,INTERVAL 1 MONTH)',
+                        'wpw_previous_total_page_hits = (wpw_monthly_page_hits + wpw_previous_total_page_hits)',
 						'wpw_monthly_page_hits' => 0,
 						'wpw_monthly_bandwidth' => 0,
-						'wpw_previous_total_page_hits' => '( wpw_monthly_page_hits + wpw_previous_total_page_hits)',
-						'wpw_previous_total_bandwidth' => '( wpw_monthly_bandwidth + wpw_previous_total_bandwidth)',
 					),
 					array( 'wpw_date_expires < '.$now ) );
 				
