@@ -138,7 +138,7 @@ class WikiplaceMaintenance extends Maintenance {
                 $this->output("fixing wpou_id={$wpou_id}\thits={$hits}\n...");
                 $sql = "
                     UPDATE wp_old_usage
-                    SET wpou_monthly_page_hits = {$hits},
+                    SET wpou_monthly_page_hits = {$hits}
                     WHERE wpou_id = {$wpou_id} ; ";
                 $result = $dbw->query($sql, __METHOD__);
                 if ($result !== true) {
