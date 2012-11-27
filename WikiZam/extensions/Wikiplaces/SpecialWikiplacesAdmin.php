@@ -5,6 +5,7 @@ class SpecialWikiplacesAdmin extends SpecialPage {
 
 
     const ACTION_CANCEL_SUBSCRIPTION = 'Cancel';
+    const ACTION_GET_INFOS = 'Infos';
     const ACTION_TEST = 'Test';
 
 
@@ -40,6 +41,9 @@ class SpecialWikiplacesAdmin extends SpecialPage {
             case strtolower(self::ACTION_CANCEL_SUBSCRIPTION) :
                 $this->cancelSubscription($request->getText('name', null), $request->getBool('confirm'));
                 break;
+            case strtolower(self::ACTION_GET_INFOS) :
+                $this->getInfos($request->getText('wpw_id', null));
+                break;
             case strtolower(self::ACTION_TEST) :
                 $this->test($request->getText('arg1', null),$request->getText('arg2', null),$request->getText('arg3', null));
                 break;
@@ -47,6 +51,7 @@ class SpecialWikiplacesAdmin extends SpecialPage {
                 $output->addWikiText("=== ERROR: Wrong action ===");
                 $output->addWikiText("====Available actions:====");
                 $output->addWikiText(self::ACTION_CANCEL_SUBSCRIPTION . "(string '''name''', boolean '''confirm''')");
+                $output->addWikiText(self::ACTION_GET_INFOS . "(int '''wpw_id''')");
                 $output->addWikiText(self::ACTION_TEST . "(string '''arg1''', string '''arg2''', string '''arg3''')");
                 break;
         }
@@ -131,6 +136,75 @@ class SpecialWikiplacesAdmin extends SpecialPage {
         }
     }
 
+    private function getInfos($wpw_id=null) {
+        
+        $output = $this->getOutput();
+        $output->addWikiText("=== Infos (wpw_id) ===");
+        
+        $wikiplace = $owner = $subscription = null;
+        
+        if ($wpw_id != null) {
+            $wpw_id = intval($wpw_id);
+            $output->addWikiText("Search by wikiplace id <code><nowiki>$wpw_id</nowiki></code>");
+            $wikiplace = WpWikiplace::getById($wpw_id);
+            $owner = User::newFromId($wikiplace->getOwnerUserId());
+            $subscription = WpSubscription::newFromId($wikiplace->getSubscriptionId());
+        }
+        
+        if ($wikiplace != null) {
+            
+            $id = $wikiplace->getId();
+            $name = $wikiplace->getName();   
+            $report_expires = $wikiplace->getDateExpires();
+            $report_updated = $wikiplace->getReportUpdated();
+            
+            $output->addWikiText("=== Wikiplace ==="); 
+
+            $output->addWikiText("id = <code><nowiki>{$id}</nowiki></code>");
+            $output->addWikiText("name = <code><nowiki>{$name}</nowiki></code>");
+            $output->addWikiText("report expires = <code><nowiki>{$report_expires}</nowiki></code>");
+            $output->addWikiText("report updated = <code><nowiki>{$report_updated}</nowiki></code>");
+            
+        } else {
+            $output->addWikiText("=== no Wikiplace ===");
+        }
+        
+        if ( ($owner != null) && ($owner->getId()) ) {
+            
+            $id = $owner->getId();
+            $username = $owner->getName();
+            $email = $owner->getEmail(); 
+            
+            $output->addWikiText("=== Owner ===");
+            
+            $output->addWikiText("id = <code><nowiki>{$id}</nowiki></code>");
+            $output->addWikiText("username = <code><nowiki>{$username}</nowiki></code>");
+            $output->addWikiText("email = <code><nowiki>{$email}</nowiki></code>");
+             
+        } else {
+            $output->addWikiText("=== no owner ===");
+        }
+        
+        if ($subscription != null) {
+        
+            $output->addWikiText("=== Subscription ===");
+            $output->addWikiText("wps_id = " . $subscription->getId());
+            $output->addWikiText("wps_start_date = " . $subscription->getStart());
+            $output->addWikiText("wps_end_date = " . $subscription->getEnd());
+            $output->addWikiText("wps_active = " . ($subscription->isActive() ? "true" : "false"));
+            $output->addWikiText("wps_renewal_notified = " . ($subscription->isRenewalNotified() ? "true" : "false"));
+            $output->addWikiText("==== Plan ====");
+            $output->addWikiText("wps_wpp_id = " . $subscription->getPlanId());
+            $output->addWikiText("wps_renew_wpp_id = " . $subscription->getRenewalPlanId());
+            $output->addWikiText("==== TMR ====");
+            $output->addWikiText("wps_tmr_id = " . $subscription->getTmrId());
+            $output->addWikiText("wps_tmr_status = " . $subscription->getTmrStatus());
+            
+        } else {
+            $output->addWikiText("=== no subscription ===");
+        }
+    }
+    
     private function test($arg1='null', $arg2='null', $arg3='null') {
         $plan=WpPlan::newFromId($arg1);
         $price = $plan->getLocalizedPrice($this->getUser());

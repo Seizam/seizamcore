@@ -83,6 +83,13 @@ class WpWikiplace {
         return $this->wpw_wps_id;
     }
 	
+    /**
+     * 
+     * @return int
+     */
+    public function getOwnerUserId() {
+        return $this->wpw_owner_user_id;
+    }
 	
 	/**
 	 * Force archiving current usage, then reset, even if 'expires_date' is not outdated.
