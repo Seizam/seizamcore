@@ -10,7 +10,7 @@ class WikiplaceMaintenance extends Maintenance {
 		
 		parent::__construct();
 		$this->addOption( "fix_wpw_date_expires",             "Fix database records pre v1.2.4.", false, false );
-        $this->addOption( "fix_wpou_monthly",                 "Fix database records pre v1.2.4.", false, false );
+        $this->addOption( "fix_wpou_monthly_page_hits",       "Fix database records pre v1.2.4.", false, false );
         $this->addOption( "fix_wpw_previous_total_page_hits", "Fix database records pre v1.2.4.", false, false );
         $this->addOption( "test_only",                        "Do not update database.",          false, false );
 		$this->mDescription = "Maintenance script of Wikiplaces extension.";
@@ -27,8 +27,8 @@ class WikiplaceMaintenance extends Maintenance {
 
 		if ( $this->hasOption( 'fix_wpw_date_expires' ) ) {
             $this->execute_fix_wpw_date_expires();
-        } elseif ( $this->hasOption( 'fix_wpou_monthly' ) ) {
-            $this->execute_fix_wpou_monthly();
+        } elseif ( $this->hasOption( 'fix_wpou_monthly_page_hits' ) ) {
+            $this->execute_fix_wpou_monthly_page_hits();
         } elseif ( $this->hasOption( 'fix_wpw_previous_total_page_hits' ) ) {
             $this->execute_fix_wpw_previous_total_page_hits();
         } else {
@@ -77,7 +77,7 @@ class WikiplaceMaintenance extends Maintenance {
         $dbw->commit();
     }
     
-    public function execute_fix_wpou_monthly() {
+    public function execute_fix_wpou_monthly_page_hits() {
         
         $dbw = wfGetDB(DB_MASTER);
         $dbw->begin(); 
@@ -106,23 +106,18 @@ class WikiplaceMaintenance extends Maintenance {
                 ORDER BY wp_old_usage.wpou_end_date ASC ;";
             $results = $dbw->query($sql, __METHOD__);
             $hits = 0;
-            $bandwidth = 0;
             foreach ( $results as $row ) {
-                $this->output(" > wpou_end_date={$row->wpou_end_date}\tpagehits={$row->wpou_monthly_page_hits}\tbandwidth={$row->wpou_monthly_bandwidth}\n");
-                if ( ( intval($row->wpou_monthly_page_hits) < $hits) || 
-                        ( intval($row->wpou_monthly_bandwidth) < $bandwidth) ) {
+                $this->output(" > wpou_end_date={$row->wpou_end_date}\tpagehits={$row->wpou_monthly_page_hits}\n");
+                if ( intval($row->wpou_monthly_page_hits) < $hits ) {
                     $this->output(" > this has been recorded with a fixed version of Wikizam, no fix possible\n");
                     $need_fix = false;
                     break;
                 }
                 
-                $should_be[$row->wpou_id] = array ( // curr - pre
-                    'hits'      => intval($row->wpou_monthly_page_hits) - $hits,         
-                    'bandwidth' => intval($row->wpou_monthly_bandwidth) - $bandwidth ) ;
-                $this->output("\t\t\tshould be\t\t{$should_be[$row->wpou_id]['hits']}\t\t{$should_be[$row->wpou_id]['bandwidth']}\n");
+                $should_be[$row->wpou_id] = intval($row->wpou_monthly_page_hits) - $hits;
+                $this->output("\t\t\tshould be\t\t{$should_be[$row->wpou_id]}\n");
                 
                 $hits = intval($row->wpou_monthly_page_hits);
-                $bandwidth = intval($row->wpou_monthly_bandwidth);
             }
             if (!$need_fix) {
                 break;
@@ -138,12 +133,11 @@ class WikiplaceMaintenance extends Maintenance {
         } else {
             // do fix
             $this->output("fixing...\n");
-            foreach($should_be as $wpou_id => $values) {
-                $this->output("fixing {$wpou_id}\thits={$values['hits']}\tbandwidth={$values['bandwidth']}\n...");
+            foreach($should_be as $wpou_id => $hits) {
+                $this->output("fixing wpou_id={$wpou_id}\thits={$hits}\n...");
                 $sql = "
                     UPDATE wp_old_usage
-                    SET wpou_monthly_page_hits = {$values['hits']},
-                    wpou_monthly_bandwidth = {$values['bandwidth']}
+                    SET wpou_monthly_page_hits = {$hits},
                     WHERE wpou_id = {$wpou_id} ; ";
                 $result = $dbw->query($sql, __METHOD__);
                 if ($result !== true) {
