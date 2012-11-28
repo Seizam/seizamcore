@@ -16,9 +16,15 @@ $wgExtensionMessagesFiles['GAnalytics'] = dirname(__FILE__) . '/GAnalytics.i18n.
 
 $wgHooks['BeforePageDisplay'][]  = 'efGAnalyticsHookText';
 
-$wgGAnalyticsPropertyID = "";
-$wgGAnalyticsIgnoreSysops = true;
-$wgGAnalyticsIgnoreBots = true;
+if (!isset($wgGAnalyticsPropertyID)) {
+    $wgGAnalyticsPropertyID = "";
+}
+if (!isset($wgGAnalyticsIgnoreSysops)) {
+    $wgGAnalyticsIgnoreSysops = true;
+}
+if (!isset($wgGAnalyticsIgnoreBots)) {
+    $wgGAnalyticsIgnoreBots = true;
+}
 /**
  *
  * @param OutputPage $out

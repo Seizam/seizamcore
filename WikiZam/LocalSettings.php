@@ -455,7 +455,7 @@ $wgCapitalLinks = false;
 
 # GAnalytics
 require_once( "$IP/extensions/GAnalytics/GAnalytics.php" );
-$wgGAnalyticsPropertyID = "UA-32666889-1";
+// $wgGAnalyticsPropertyID is defined in ServerSettings.php
 
 
 
