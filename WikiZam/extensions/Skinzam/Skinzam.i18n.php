@@ -179,7 +179,7 @@ $messages['en'] = array(
 Congratulations and thank you! Your Seizam account has been successfully created.
 === What is next? ===
 #<b>Validate your email.</b> Go to your inbox and click the <u>confirmation link</u> we just sent to you.
-#Pick a [[Special:Plans|plan]] and [[Special:Subscriptions|subscribe]] to enable [[Help:WikiPlaces|WikiPlaces]].
+#Pick a [[Project:Plans|plan]] and [[Special:Subscriptions|subscribe]] to enable [[Help:WikiPlaces|WikiPlaces]].
 
 === What else? ===
 * Visit [[Special:MySeizam|My Seizam]], everything you need is there, and much more!
@@ -373,7 +373,7 @@ $messages['fr'] = array(
 Félicitations et merci ! Votre compte Seizam a été créé avec succès.
 === Que faire maintenant ? ===
 #<b>Validez votre adresse de courriel.</b> Allez dans votre boîte de réception et cliquez sur le <u>lien de confirmation</u> que nous vous avons envoyé.
-#Choisissez une [[Special:Plans|offre]] et [[Special:Subscriptions|abonnez-vous]] pour activer les [[Help:WikiPlaces/fr|WikiPlaces]].
+#Choisissez une [[Project:Plans|offre]] et [[Special:Subscriptions|abonnez-vous]] pour activer les [[Help:WikiPlaces/fr|WikiPlaces]].
 === Quoi d\'autre ? ===
 *Visitez [[Special:MySeizam|Mon Seizam]], tout ce dont vous avez besoin est là, et bien plus !
 *Vérifiez [[Special:Preferences|Mes Préférences]] pour les réglages avancés.
