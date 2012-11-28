@@ -79,3 +79,30 @@ div.addthis_toolbox.addthis_32x32_style.long.counter{
 div.addthis_toolbox.addthis_32x32_style.vertical{
     width:32px
 }
+
+
+/* Button */
+a.wfmk_button {
+    display: inline-block;
+    background: #f0373a;
+    border: 1px solid black;
+    color: #FFFFFF;
+    padding: 8px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+a.wfmk_button:hover,
+a.wfmk_button:focus {
+    background: #7C2122;
+}
+
+a.wfmk_button_grey {
+    background: #686a6b;
+    color: #FFFFFF;
+}
+
+a.wfmk_button_grey:hover,
+a.wfmk_button_grey:focus {
+    background: #232020;
+}

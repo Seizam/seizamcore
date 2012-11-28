@@ -84,6 +84,14 @@ abstract class ParserFunction implements Widget {
     }
 
     /**
+     * 
+     * @return Parser
+     */
+    public function getParser() {
+        return $this->parser;
+    }
+
+    /**
      * Get all parameters.
      * 
      * @return array Array of Parameter objects

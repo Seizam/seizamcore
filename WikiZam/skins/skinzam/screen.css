@@ -2181,8 +2181,7 @@ body.ns--1 div#bodyContent div.inside ul.gallery li {
     text-align: justify;
 }
 
-input[type="submit"],
-a.redbutton {
+input[type="submit"] {
     float: right;
     background: #f0373a;
     border: 1px solid #393535;
@@ -2201,10 +2200,8 @@ div#languageselector-box-1 input[type="submit"] {
 }
 
 input[type="submit"]:hover,
-input[type="submit"]:focus,
-a.redbutton {
+input[type="submit"]:focus {
     background: #7C2122;
-
 }
 
 div.form_header, div.table_header, div#contentSub {
