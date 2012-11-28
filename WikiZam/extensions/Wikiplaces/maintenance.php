@@ -9,10 +9,11 @@ class WikiplaceMaintenance extends Maintenance {
 	public function __construct() {
 		
 		parent::__construct();
-		$this->addOption( "fix_wpw_date_expires",             "Fix database records pre v1.2.4 (1/3)", false, false );
-        $this->addOption( "fix_wpou_monthly_page_hits",       "Fix database records pre v1.2.4 (2/3)", false, false );
-        $this->addOption( "fix_wpw_previous_total_page_hits", "Fix database records pre v1.2.4 (3/3)", false, false );
-        $this->addOption( "test_only",                        "Do not update database.",          false, false );
+		$this->addOption( "fix_1"     , "Fix wpw_date_expires field records (<v1.2.4)", false, false );
+        $this->addOption( "fix_2"     , "Fix wpou_monthly_page_hits field records (<v1.2.4)", false, false );
+        $this->addOption( "fix_3"     , "Fix wpw_previous_total_page_hits field records (<v1.2.4)", false, false );
+        $this->addOption( "fix_4"     , "Fix wpou_end_date field records (<v1.2.4)", false, false );
+        $this->addOption( "test_only" , "Do not update database.",          false, false );
 		$this->mDescription = "Maintenance script of Wikiplaces extension.";
 		
 	}
@@ -25,12 +26,14 @@ class WikiplaceMaintenance extends Maintenance {
         
         $this->test_only = $this->hasOption( 'test_only' );
 
-		if ( $this->hasOption( 'fix_wpw_date_expires' ) ) {
+		if ( $this->hasOption( 'fix_1' ) ) {
             $this->execute_fix_wpw_date_expires();
-        } elseif ( $this->hasOption( 'fix_wpou_monthly_page_hits' ) ) {
+        } elseif ( $this->hasOption( 'fix_2' ) ) {
             $this->execute_fix_wpou_monthly_page_hits();
-        } elseif ( $this->hasOption( 'fix_wpw_previous_total_page_hits' ) ) {
+        } elseif ( $this->hasOption( 'fix_3' ) ) {
             $this->execute_fix_wpw_previous_total_page_hits();
+        } elseif ( $this->hasOption( 'fix_4' ) ) {
+            $this->execute_fix_wpou_end_date();
         } else {
             $this->error( "missing option.", true );
         }
@@ -207,6 +210,57 @@ class WikiplaceMaintenance extends Maintenance {
         
         $dbw->commit();
         
+    }
+    
+    public function execute_fix_wpou_end_date() {
+        
+        $dbw = wfGetDB(DB_MASTER);
+        $dbw->begin(); 
+        
+        $date_zero = $dbw->addQuotes("0000-00-00 00:00:00");
+        
+        $sql = "
+            SELECT *, min(revision.rev_timestamp)
+            FROM wp_old_usage, wp_wikiplace, revision
+            WHERE wp_old_usage.wpou_end_date = $date_zero
+            AND wp_wikiplace.wpw_id = wp_old_usage.wpou_wpw_id
+            AND revision.rev_page = wp_wikiplace.wpw_home_page_id
+            GROUP BY wp_wikiplace.wpw_home_page_id
+            ORDER BY wpou_wpw_id ASC ;";
+        $results = $dbw->query($sql, __METHOD__);
+
+        foreach ( $results as $row ) {
+            $wpou_id = $row->wpou_id;
+            $wpw_id = $row->wpw_id;
+            $wpou_end_date = $row->wpou_end_date;
+            $home_page_created_timestamp = $row->rev_timestamp;
+            $this->output("wpw_id=$wpw_id\twpou_id=$wpou_id\twpou_end_date=$wpou_end_date\t\n");
+            $new_wpou_end_date = $dbw->addQuotes(wfTimestamp(TS_DB,$home_page_created_timestamp));
+            $this->output(" > $wpw_id\thome_page_created_timestamp=$home_page_created_timestamp\n");
+            $this->output(" > wpou_end_date should be $new_wpou_end_date\n");
+            
+            if (!$this->isTest()) {
+
+                $this->output(" > fixing...\n");
+                $sql = "
+                    UPDATE wp_old_usage
+                    SET wpou_end_date = $new_wpou_end_date
+                    WHERE wpou_id = $wpou_id ;";
+                $result = $dbw->query($sql, __METHOD__);
+                if ($result !== true) {
+                    $this->error( "error while updating old usage $wpou_id", true );
+                }
+                $this->output(" > fixed\n");
+   
+            }
+            
+        }
+        
+        if ($this->isTest()) {
+            $this->output("no modification done (test_only option)\n");
+        }
+        
+        $dbw->commit();
     }
     
 }
