@@ -193,6 +193,17 @@ Regards,
 
 [[Project:Team|The Team]]',
 	'uploadtext' => "Use the form below to upload files. See [[Help:Files]] and [[Help:Images]].",
+    'confirmemail_loggedin' => '<div class="success"><b>Your e-mail address has now been confirmed.</b></div>
+{{int:confirmemail_footer}}',
+    'confirmemail_success'      => '<div class="success"><b>Your e-mail address has been confirmed.
+You may now [[Special:UserLogin|log in]].</b></div>
+{{int:confirmemail_footer}}',
+    'confirmemail_footer' => '
+<div style="border:1px solid #dad9d9; border-bottom: none; padding: 18px; padding-bottom: 4px;margin-top: 18px;">
+===== Quick navigation: Pick a [[Project:Plans|plan]] and [[Special:Subscriptions|subscribe]] to Seizam  | Go to [[Special:MySeizam|My Seizam]]=====
+----
+=====Need help? The team is here to answer your every questions. [[Project:Contact|Click here to contact us]]!=====
+</div>',
 );
 
 /** 
@@ -385,4 +396,14 @@ Cordialement,
 
 [[Project:Team|L\'équipe]]',
 	'uploadtext' => "Utilisez ce formulaire pour importer des fichiers sur le serveur. Voir [[Help:Fichiers|Aide:Fichiers]] et [[Help:Images/fr|Aide:Images]].",
+    'confirmemail_loggedin' => '<div class="success"><b>Votre adresse de courriel est maintenant confirmée.</b></div>
+{{int:confirmemail_footer}}',
+    'confirmemail_success'      => '<div class="success"><b>Votre adresse de courriel a été confirmée.
+Vous pouvez maintenant vous [[Special:UserLogin|connecter]].</b></div>
+{{int:confirmemail_footer}}',
+    'confirmemail_footer' => '<div style="border:1px solid #dad9d9; border-bottom: none; padding: 18px; padding-bottom: 4px;margin-top: 18px;">
+=====Navigation rapide : Choissisez une [[Project:Plans|offre]] et [[Special:Subscriptions|abonnez-vous]] à Seizam | Allez dans [[Special:MySeizam|Mon Seizam]]=====
+----
+=====Besoin d\'aide ? L\'équipe est là pour répondre à vos questions. [[Project:Contact/fr|Cliquez ici pour nous contacter]] !=====
+</div>',
 );
