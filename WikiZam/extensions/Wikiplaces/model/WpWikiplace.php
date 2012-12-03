@@ -145,8 +145,44 @@ class WpWikiplace {
 	public function isOwner($user_id) {
 		return ( $this->wpw_owner_user_id == $user_id );
 	}
-	
-	/**
+    
+    /**
+     * 
+     * @param Title $fileTitle
+     * @param User $user
+     * @return array|boolean True on success, or an array containing error message + arg if error occured 
+     * @throws MWException
+     */
+    public function setBackground($fileTitle, $user) {
+
+        if (!$user instanceof User) {
+            throw new MWException('Invalid user argument');
+        }
+
+        if (!self::isTitleValidForBackground($fileTitle)) {
+            throw new MWException('Invalid file title argument');
+        }
+
+        $configTitle = $this->getBackgroundConfigurationTitle();
+
+        // as seen in EditPage->getEditPermissionErrors() ( called by EditPage->edit() )
+        $permErrors = $configTitle->getUserPermissionsErrors('edit', $user);
+        $permErrors = array_merge($permErrors, wfArrayDiff2($configTitle->getUserPermissionsErrors('create', $user), $permErrors));
+        if ($permErrors) {
+            return $permErrors[0]; // strange, but only key 0 seems to be used by MW when reads errors
+        }
+
+        $article = new Article($configTitle);
+        $status = $article->doEdit('[[' . $fileTitle->getPrefixedText() . ']]', '');
+
+        if (!$status->isOk()) { // isOk() == warning ignored, ie when the new content is the same as previous
+            return array('sz-internal-error');
+        }
+
+        return true;
+    }
+
+    /**
 	 * Fetch the Wikiplace name, using given data is available or read from DB if none given
 	 * @param StdClass/WikiPage/Title $data
 	 */
@@ -715,6 +751,36 @@ WHERE wpw_report_updated < $outdated ;" ;
 		return self::newFromName($name);
 		
 	}
+    
+    /**
+     * 
+     * @param string $extension
+     * @return boolean
+     */
+    public static function isExtensionValidForBackground($extension) {
+        return $extension == 'jpg' || $extension == 'png' || $extension == 'gif';
+    }
 
+    /**
+     * 
+     * @param Title $title
+     */
+    public static function isTitleValidForBackground($title) {
+        return ( $title instanceof Title &&
+                $title->isKnown() &&
+                $title->isLocal() &&
+                $title->getNamespace() == NS_FILE &&
+                ($file = wfLocalFile($title)) != null &&
+                $file->exists() &&
+                self::isExtensionValidForBackground($file->getExtension()) );
+    }
+
+    /**
+     * 
+     * @return Title
+     */
+    public function getBackgroundConfigurationTitle() {
+        return Title::makeTitle(NS_WIKIPLACE, $this->getName() . '/' . WPBACKGROUNDKEY);
+    }
 
 }

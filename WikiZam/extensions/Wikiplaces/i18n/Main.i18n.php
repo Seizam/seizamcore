@@ -157,7 +157,21 @@ You are also promising us that you wrote this yourself, or copied it from a publ
 	'wp-insufficient-quota' => 'Insufficient quota (this plan is too small for your usage).',
 	'wp-plan-not-available-renewal' => 'Plan not available (we do not offer it anymore).',
     
-    'forbidden-admin-action' => 'The action you are attempting is reserverd to administrators only. {{int:sz-report}}'
+    'forbidden-admin-action' => 'The action you are attempting is reserverd to administrators only. {{int:sz-report}}',
+    
+    /* Background action */
+    'wp-background-action' => 'Set as background',
+    'wp-file-pagename' => 'File pagename:',
+    'wp-setbackground' => 'Save',
+    'wp-invalid-background' => 'Invalid file pagename or file extension not compatible with background.',
+    'wp-setbackground-header' => 'Each Wikiplace can have its own background. This form lets you easily configure it.
+        
+Make sure the file doesn\'t have read protection. Otherwise, the background may not be visible to all your visitors.',
+    'wp-setbackground-section' => 'Set the background image of a Wikiplace',
+    'wp-setbackground-success' => '<div class="success"><b>Your Wikiplace background has been set!</b></div>
+<div style="border:1px solid #dad9d9; border-bottom: none; padding: 18px; padding-bottom: 4px;margin-top: 18px;">
+===== Quick navigation: Go to the [[$1|Wikiplace homepage]] | Administrate it from [[Special:WikiPlaces/Consult:$1|{{int:wikiplaces}}]] | Go to [[Special:MySeizam|My Seizam]]=====
+</div>',
     
 );
 

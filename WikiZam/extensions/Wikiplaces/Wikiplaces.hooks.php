@@ -728,11 +728,13 @@ class WikiplacesHooks {
     }
 
     /**
-     * Hook to correct the action menu that displays "delete" a bit too much.
+     * Hook to <ul>
+     * <li>correct the action menu that displays "delete" a bit too much.
      * A direct correction would be to change the logic directly in SkinTemplate::buildContentNavigationUrls.
      * The menu builder now uses if( $wgUser->isAllowed( 'delete' ) ) ...
-     * A better builder would use if( $$title->quickUserCan( 'delete' ) ) ...
-     * 
+     * A better builder would use if( $$title->quickUserCan( 'delete' ) ) ...</li>
+     * <li>add a "Set as background" action for files</li>
+     * </ul>
      * @param SkinTemplate $skinTemplate
      * @param Array $content_navigation
      * @return Boolean True (=continue hook)
@@ -740,11 +742,26 @@ class WikiplacesHooks {
      */
     public static function SkinTemplateNavigation(&$skinTemplate, &$content_navigation) {
         $title = $skinTemplate->getRelevantTitle();
-        if (isset($content_navigation['actions']['delete']) && !$title->quickUserCan('delete'))
+
+        // removes "delete" action if necessary
+        if (isset($content_navigation['actions']['delete']) && !$title->quickUserCan('delete')) {
             unset($content_navigation['actions']['delete']);
+        }
+
+        // adds a "Set as background" action for files
+        global $wgUser;
+
+        if (WpWikiplace::isTitleValidForBackground($title) &&
+                count(WpWikiplace::factoryAllOwnedByUserId($wgUser->getId())) != 0) {
+            $content_navigation['actions']['background'] = array(
+                'class' => false,
+                'text' => wfMessage('wp-background-action')->text(),
+                'href' => SpecialWikiplaces::getLocalUrlForSetAsBackground($title->getPrefixedDBkey()));
+        }
+
         return true;
     }
-
+    
     /**
      * If the page is in a Wikiplace namespace, search the owner and answer.
      * If the page is in a Wikiplace namespace but cannot be found, state only 
@@ -856,7 +873,7 @@ class WikiplacesHooks {
         if (preg_match($patternForFile, $backgroundText, $matchesForFile)) {
             $fileKey = $matchesForFile[1];
             $file = wfFindFile($fileKey);
-            if ($file && self::isExtensionValidForBackground($file->getExtension()))
+            if ($file && WpWikiplace::isExtensionValidForBackground($file->getExtension()))
                 return $file->getFullUrl();
         }
 
@@ -868,10 +885,6 @@ class WikiplacesHooks {
         }
 
         return false;
-    }
-    
-    private static function isExtensionValidForBackground($extension) {
-        return $extension == 'jpg' || $extension == 'png' || $extension == 'gif';
     }
 
     

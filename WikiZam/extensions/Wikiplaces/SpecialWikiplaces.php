@@ -7,13 +7,15 @@ class SpecialWikiplaces extends SpecialPage {
 	const ACTION_CREATE_SUBPAGE = 'CreatePage';
 	const ACTION_LIST_WIKIPLACES = 'List';
 	const ACTION_CONSULT_WIKIPLACE = 'Consult';
+    const ACTION_SET_BACKGROUND = 'SetBackground';
     
     
-
+    
     private $action = self::ACTION_LIST_WIKIPLACES;
     private $name = null;
     private $msgType = null;
     private $msgKey = null;
+    private $filename = null;
 
 	private $homepageString;
 	private $subpageString;
@@ -64,6 +66,7 @@ class SpecialWikiplaces extends SpecialPage {
 		}
         $this->msgType = $request->getText('msgtype', $this->msgType);
         $this->msgKey = $request->getText('msgkey', $this->msgKey);
+        $this->filename = $this->getRequest()->getText('filename', null);
         
         $this->display();
 		
@@ -98,6 +101,10 @@ class SpecialWikiplaces extends SpecialPage {
 				$this->displayCreateWikiplace();
 				break;
 
+            case strtolower(self::ACTION_SET_BACKGROUND):
+				$this->displaySetBackground();
+				break;
+            
 			case strtolower(self::ACTION_LIST_WIKIPLACES):
 			default:
 				$this->displayList();
@@ -398,9 +405,93 @@ class SpecialWikiplaces extends SpecialPage {
 		}
 
 		return true; // all ok :)
-	}
+    }
 
-	public function displayConsultWikiplace() {
+    public function displaySetBackground() {
+
+        $wikiplaces = WpWikiplace::factoryAllOwnedByUserId($this->getUser()->getId());
+        if (count($wikiplaces) == 0) {
+            $this->action = self::ACTION_LIST_WIKIPLACES;
+            $this->msgKey = 'wp-create-wp-first';
+            $this->msgType = 'error';
+            $this->display();
+            return;
+        }
+
+        $formDescriptor = array(
+            'WpId' => array(
+                'type' => 'select',
+                'label-message' => 'wp-wikiplace-field',
+                'section' => 'setbackground-section',
+                'help-message' => 'wp-setbackground-wikiplace-help',
+                'validation-callback' => array($this, 'validateUserWikiplaceID'),
+                'options' => array(),
+            ),
+            'File' => array(
+                'type' => 'text',
+                'label-message' => 'wp-file-pagename',
+                'section' => 'setbackground-section',
+                'help-message' => 'wp-setbackground-filename-help',
+                'validation-callback' => array($this, 'validateBackgroundFile'),
+                'size' => 60,
+                'default' => $this->filename,
+            )
+        );
+
+        foreach ($wikiplaces as $wikiplace) {
+            $wpw_name = $wikiplace->getName();
+            $formDescriptor['WpId']['options'][$wpw_name] = $wikiplace->getId();
+            if ($this->name == $wpw_name) {
+                $formDescriptor['WpId']['default'] = $wikiplace->getId();
+            }
+        }
+
+        $htmlForm = new HTMLFormS($formDescriptor);
+        $htmlForm->addHeaderText(wfMessage('wp-setbackground-header')->parse());
+        $htmlForm->setMessagePrefix('wp');
+        $htmlForm->setTitle($this->getTitle(self::ACTION_SET_BACKGROUND));
+        $htmlForm->setSubmitCallback(array($this, 'processSetBackground'));
+        $htmlForm->setSubmitText(wfMessage('wp-setbackground')->text());
+        if ($htmlForm->show()) {
+            $this->getOutput()->addHTML(wfMessage('wp-setbackground-success', $this->homepageString)->parse());
+        }
+    }
+
+    public function validateBackgroundFile($name, $allData) {
+
+        if ($name == null) {
+            return false;
+        }
+
+        $title = Title::newFromText($name);
+
+        if (!$title->isKnown() || !$title->isLocal() || $title->getNamespace() != NS_FILE) {
+            return wfMessage('wp-invalid-background')->text();
+        }
+
+        return true; // all ok
+    }
+
+    public function processSetBackground($formData) {
+
+        if (!isset($formData['WpId']) || !isset($formData['File'])) {
+            throw new MWException('Cannot set background, no data.');
+        }
+
+        $wikiplace = WpWikiplace::getById(intval($formData['WpId']));
+        if (!$wikiplace instanceof WpWikiplace) {
+            return wfMessage('wp-invalid-name')->text();
+        }
+
+        $this->homepageString = $wikiplace->getName();
+        global $wgUser;
+        $file = Title::newFromText($formData['File']);
+        $ok = $wikiplace->setBackground($file, $wgUser);
+
+        return $ok;
+    }
+
+    public function displayConsultWikiplace() {
 		$tp = new WpPagesTablePager();
 		$tp->setWPName($this->name);
 		$tp->setSelectConds(array(
@@ -441,47 +532,17 @@ class SpecialWikiplaces extends SpecialPage {
 		return Linker::linkKnown(
 						self::getTitleFor(self::TITLE_NAME, self::ACTION_CREATE_WIKIPLACE), wfMessage($i18n_key)->text());
 	}
+    
+    /**
+     * Get the url to set the $file_name as background for a wikiplace
+     * @param string $file_name
+     * @return Title
+     */
+    public static function getLocalUrlForSetAsBackground($file_name) {
+        $title = self::getTitleFor(self::TITLE_NAME);
+        return $title->getLocalURL(array(
+                    'action' => self::ACTION_SET_BACKGROUND,
+                    'filename' => $file_name));
+    }
 
-	/*
-	  public static function getWikiplaceTemplates() {
-	  return self::getTitleLinkedFromTitle( wfMessage( 'wp-templates-for-homepage' )->plain() );
-	  }
-
-	  public static function getSubpageTemplates() {
-	  return self::getTitleLinkedFromTitle( wfMessage( 'wp-templates-for-subpage') ->plain() );
-	  }
-	 */
-
-	/**
-	 *
-	 * @return array Array of titles 
-	 *//*
-	  private static function getTitleLinkedFromTitle( $title ) {
-
-	  // code found from SpecialDisambiguations.php
-
-	  $dbr = wfGetDB( DB_SLAVE );
-
-	  // Get the template list page for the current user language
-	  $templates_list = Title::newFromText( $title );
-
-	  // Don't give fatal errors if the message is broken
-	  if ( ! $templates_list instanceof Title ) {
-	  return array(); // no templates list
-	  }
-
-	  $res = $dbr->select(
-	  array('pagelinks'),
-	  array('pl_title', 'pl_namespace'),
-	  array('pl_from' => $templates_list->getArticleID()),
-	  __METHOD__ );
-
-	  $back = array();
-
-	  foreach ( $res as $row ) {
-	  $back[] = Title::makeTitle( $row->pl_namespace, $row->pl_title );
-	  }
-
-	  return $back;
-	  } */
 }
