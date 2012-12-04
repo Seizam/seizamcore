@@ -338,7 +338,7 @@ Vous nous promettez aussi que vous avez écrit ceci vous-même, ou que vous l’
     'wp-setbackground-header' => 'Chaque Wikiplace peut avoir un arrière-plan. Ce formulaire permet de facilement les configurer.
         
 Assurez-vous que le fichier image n\'est pas protégé en lecture, sinon l\'arrière-plan pourrait ne pas être visible par tous vos visiteurs.',
-    'wp-setbackground-section' => 'Définir l\'arrière-plan d\'unea Wikiplace',
+    'wp-setbackground-section' => 'Définir l\'arrière-plan d\'une Wikiplace',
     'wp-setbackground-success' => '<div class="success"><b>L\'arrière-plan de votre Wikiplace a bien été défini !</b></div>
 <div style="border:1px solid #dad9d9; border-bottom: none; padding: 18px; padding-bottom: 4px;margin-top: 18px;">
 ===== Navigation rapide : Allez sur la [[$1|Wikiplace]] | Administrez la depuis [[Special:WikiPlaces/Consult:$1|{{int:wikiplaces}}]] | Allez dans [[Special:MySeizam|Mon Seizam]] =====
