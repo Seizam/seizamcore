@@ -751,7 +751,8 @@ class WikiplacesHooks {
         // adds a "Set as background" action for files
         global $wgUser;
 
-        if (WpWikiplace::isTitleValidForBackground($title) &&
+        if (in_array(WP_SUBSCRIBERS_USER_GROUP, $wgUser->getGroups()) &&
+                WpWikiplace::isTitleValidForBackground($title) &&
                 count(WpWikiplace::factoryAllOwnedByUserId($wgUser->getId())) != 0) {
             $content_navigation['actions']['background'] = array(
                 'class' => false,

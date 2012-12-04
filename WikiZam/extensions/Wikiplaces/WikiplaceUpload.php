@@ -164,7 +164,7 @@ class WikiplaceUpload {
 			'type' => 'select',
 			'section' => 'description',
 			'id' => 'wpDestFilePrefix',
-			'label-message' => 'wp-wikiplace-field',
+			'label-message' => 'wp-parent-wikiplace-field',
 			'validation-callback' => array(__CLASS__, 'validateFilePrefix'),
 			'options' => array(),
 		);

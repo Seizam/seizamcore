@@ -80,7 +80,7 @@ $messages['en'] = array(
     'wp-create-name-help' => 'Type here the Name of your new WikiPlace. It will be available at <u>www.seizam.com/<b>Name</b></u> and its Subpages will be at <u>www.seizam.com/<b>Name</b>/Subpage</u>. <b>Advice:</b> Make it short, easy to remember and easy to type!',
     'wp-createpage-header' => 'Please fill the form below to create a new page within one of your WikiPlaces.',
     'wp-createpage-section' => 'Create a Page',
-    'wp-wikiplace-field' => 'Parent WikiPlace:',
+    'wp-parent-wikiplace-field' => 'Parent WikiPlace:',
     'wp-createtalk-field' => 'Also create and open the associated Talk for this page.',
     'wp-createpage-wikiplace-help' => 'Select here the parent WikiPlace. Your Page will be available at <u>www.seizam.com/<b>Parent</b>/Name</u>.',
     'wp-createpage-name-help' => 'Type here the Name of your Page. It will be available at <u>www.seizam.com/Parent/<b>Name</b></u>. <b>Advice:</b> Make it short, easy to remember and easy to type!',
@@ -160,18 +160,16 @@ You are also promising us that you wrote this yourself, or copied it from a publ
     'forbidden-admin-action' => 'The action you are attempting is reserverd to administrators only. {{int:sz-report}}',
     
     /* Background action */
-    'wp-background-action' => 'Set as background',
-    'wp-file-pagename' => 'File pagename:',
-    'wp-setbackground-go' => 'Save',
-    'wp-invalid-background' => 'Invalid file pagename or file extension not compatible with background.',
-    'wp-setbackground-header' => 'Each Wikiplace can have its own background. This form lets you easily configure it.
-        
-Make sure the file doesn\'t have read protection. Otherwise, the background may not be visible to all your visitors.',
-    'wp-setbackground-section' => 'Set the background image of a Wikiplace',
-    'wp-setbackground-success' => '<div class="success"><b>Your Wikiplace background has been set!</b></div>
-<div style="border:1px solid #dad9d9; border-bottom: none; padding: 18px; padding-bottom: 4px;margin-top: 18px;">
-===== Quick navigation: Go to the [[$1|Wikiplace homepage]] | Administrate it from [[Special:WikiPlaces/Consult:$1|{{int:wikiplaces}}]] | Go to [[Special:MySeizam|My Seizam]]=====
-</div>',
+    'wp-background-action' => 'Background',
+    'wp-wikiplace-field' => 'WikiPlace:',
+    'wp-file-page-name-field' => 'File page name:',
+    'wp-setbackground-wikiplace-help' => 'Select here the WikiPlace.',
+    'wp-setbackground-file-page-name-help' => 'Type here the Name of a [[Help:Files|file]] Page. Make sure it doesn\'t have [[Help:Protection|"read" protection]]. Otherwise, the background may not be visible to all your visitors.',
+    'wp-setbackground-go' => 'Setup',
+    'wp-invalid-background' => 'This file is not compatible with background.',
+    'wp-setbackground-header' => '<span style="float:right">See : <b>[[Help:Background|Help]]</b></span>Please fill the form below to setup a background for one of your WikiPlaces.',
+    'wp-setbackground-section' => 'Setup a background',
+    'wp-setbackground-success' => 'Your WikiPlace background has been set!',
     
 );
 
@@ -254,7 +252,7 @@ $messages['fr'] = array(
     'wp-create-name-help' => 'Saisissez ici le nom de votre nouvelle WikiPlace. Il sera disponnible depuis <u>www.seizam.com/<b>Nom</b></u> et toutes ses sous-pages seront depuis <u>www.seizam.com/<b>Name</b>/Subpage</u>. <b>Conseil :</b> Choisissez un nom court, facile à retenir et facile à saisir !',
     'wp-createpage-header' => 'Merci de remplir ce formulaire pour créer une nouvelle page dans l\'une de vos WikiPlaces',
     'wp-createpage-section' => 'Créer une page',
-    'wp-wikiplace-field' => 'WikiPlace parente :',
+    'wp-parent-wikiplace-field' => 'WikiPlace parente :',
     'wp-createpage-wikiplace-help' => 'Sélectionnez ici la WikiPlace parente. Votre page sera disponnible depuis <u>www.seizam.com/<b>Parent</b>/Nom</u>.',
     'wp-createpage-name-help' => 'Saisissez ici le nom de votre page. Elle sera disponnible depuis <u>www.seizam.com/Parent/<b>Nom</b></u>. <b>Conseil :</b> Choisissez un nom court, facile à retenir et facile à saisir !',
     'wp-createtalk-field' => 'Créer et ouvrir la page de discussion associée.',
@@ -331,17 +329,15 @@ Vous nous promettez aussi que vous avez écrit ceci vous-même, ou que vous l’
     'forbidden-admin-action' => 'L\'action que vous tentez est réservé aux administrateurs. {{int:sz-report}}',
     
     /* Background action */
-    'wp-background-action' => 'Utiliser comme arrière-plan',
-    'wp-file-pagename' => 'Nom de page du fichier :',
-    'wp-setbackground-go' => 'Enregistrer',
-    'wp-invalid-background' => 'Nom de page invalide ou extension du fichier incompatible avec les arrière-plans.',
-    'wp-setbackground-header' => 'Chaque Wikiplace peut avoir un arrière-plan. Ce formulaire permet de facilement les configurer.
-        
-Assurez-vous que le fichier image n\'est pas protégé en lecture, sinon l\'arrière-plan pourrait ne pas être visible par tous vos visiteurs.',
-    'wp-setbackground-section' => 'Définir l\'arrière-plan d\'une Wikiplace',
-    'wp-setbackground-success' => '<div class="success"><b>L\'arrière-plan de votre Wikiplace a bien été défini !</b></div>
-<div style="border:1px solid #dad9d9; border-bottom: none; padding: 18px; padding-bottom: 4px;margin-top: 18px;">
-===== Navigation rapide : Allez sur la [[$1|Wikiplace]] | Administrez la depuis [[Special:WikiPlaces/Consult:$1|{{int:wikiplaces}}]] | Allez dans [[Special:MySeizam|Mon Seizam]] =====
-</div>',
+    'wp-background-action' => 'Arrière-plan',
+    'wp-wikiplace-field' => 'WikiPlace :',
+    'wp-file-page-name-field' => 'Nom de page du fichier :',
+    'wp-setbackground-wikiplace-help' => 'Sélectionnez ici la WikiPlace.',
+    'wp-setbackground-file-page-name-help' => 'Saisissez ici le nom de page du [[Help:Fichiers|fichier]]. Assurez-vous que le fichier image n\'est pas [[Help:Protection/fr|protégé en "lecture"]], sinon l\'arrière-plan pourrait ne pas être visible par tous vos visiteurs.',
+    'wp-setbackground-go' => 'Installer',
+    'wp-invalid-background' => 'Ce fichier ne peut pas être utilisé comme arrière-plan.',
+    'wp-setbackground-header' => '<span style="float:right">Voir : <b>[[Help:Arrière-plan|Aide]]</b></span>Merci de remplir ce formulaire pour installer un arrière-plan à l\'un de vos WikiPlaces.',
+    'wp-setbackground-section' => 'Installer un arrière-plan',
+    'wp-setbackground-success' => 'Votre arrière-plan a été installé !',
     
 );

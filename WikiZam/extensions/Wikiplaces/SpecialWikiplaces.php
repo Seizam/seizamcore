@@ -15,7 +15,7 @@ class SpecialWikiplaces extends SpecialPage {
     private $name = null;
     private $msgType = null;
     private $msgKey = null;
-    private $filename = null;
+    private $filePageName = null;
 
 	private $homepageString;
 	private $subpageString;
@@ -66,7 +66,7 @@ class SpecialWikiplaces extends SpecialPage {
 		}
         $this->msgType = $request->getText('msgtype', $this->msgType);
         $this->msgKey = $request->getText('msgkey', $this->msgKey);
-        $this->filename = $this->getRequest()->getText('filename', null);
+        $this->filePageName = $this->getRequest()->getText('filePageName', null);
         
         $this->display();
 		
@@ -272,7 +272,7 @@ class SpecialWikiplaces extends SpecialPage {
 		$formDescriptor = array(
 			'WpId' => array(
 				'type' => 'select',
-				'label-message' => 'wp-wikiplace-field',
+				'label-message' => 'wp-parent-wikiplace-field',
 				'section' => 'createpage-section',
 				'help-message' => 'wp-createpage-wikiplace-help',
 				'validation-callback' => array($this, 'validateUserWikiplaceID'),
@@ -427,14 +427,14 @@ class SpecialWikiplaces extends SpecialPage {
                 'validation-callback' => array($this, 'validateUserWikiplaceID'),
                 'options' => array(),
             ),
-            'File' => array(
+            'FilePageName' => array(
                 'type' => 'text',
-                'label-message' => 'wp-file-pagename',
+                'label-message' => 'wp-file-page-name-field',
                 'section' => 'setbackground-section',
-                'help-message' => 'wp-setbackground-filename-help',
-                'validation-callback' => array($this, 'validateBackgroundFile'),
+                'help-message' => 'wp-setbackground-file-page-name-help',
+                'validation-callback' => array($this, 'validateBackgroundFilePageName'),
                 'size' => 60,
-                'default' => $this->filename,
+                'default' => $this->filePageName,
             )
         );
 
@@ -453,19 +453,27 @@ class SpecialWikiplaces extends SpecialPage {
         $htmlForm->setSubmitCallback(array($this, 'processSetBackground'));
         $htmlForm->setSubmitText(wfMessage('wp-setbackground-go')->text());
         if ($htmlForm->show()) {
-            $this->getOutput()->addHTML(wfMessage('wp-setbackground-success', $this->homepageString)->parse());
+            $this->action = self::ACTION_CONSULT_WIKIPLACE;
+            $this->msgKey = 'wp-setbackground-success';
+            $this->msgType = 'success';
+            $this->display();
+            return;
         }
     }
 
-    public function validateBackgroundFile($name, $allData) {
+    public function validateBackgroundFilePageName($page_name, $allData) {
 
-        if ($name == null) {
+        if ($page_name == null) {
             return false;
         }
 
-        $title = Title::newFromText($name);
+        $file_title = Title::newFromText($page_name);
+        
+        if (!$file_title->isKnown()) {
+            return wfMessage('filepage-nofile');            
+        }
 
-        if (!$title->isKnown() || !$title->isLocal() || $title->getNamespace() != NS_FILE) {
+        if (!WpWikiplace::isTitleValidForBackground($file_title)) {
             return wfMessage('wp-invalid-background')->text();
         }
 
@@ -474,7 +482,7 @@ class SpecialWikiplaces extends SpecialPage {
 
     public function processSetBackground($formData) {
 
-        if (!isset($formData['WpId']) || !isset($formData['File'])) {
+        if (!isset($formData['WpId']) || !isset($formData['FilePageName'])) {
             throw new MWException('Cannot set background, no data.');
         }
 
@@ -483,10 +491,11 @@ class SpecialWikiplaces extends SpecialPage {
             return wfMessage('wp-invalid-name')->text();
         }
 
-        $this->homepageString = $wikiplace->getName();
+        $this->name = $wikiplace->getName();
+        
         global $wgUser;
-        $file = Title::newFromText($formData['File']);
-        $ok = $wikiplace->setBackground($file, $wgUser);
+        $fileTitle = Title::newFromText($formData['FilePageName']);
+        $ok = $wikiplace->setBackground($fileTitle, $wgUser);
 
         return $ok;
     }
@@ -535,14 +544,14 @@ class SpecialWikiplaces extends SpecialPage {
     
     /**
      * Get the url to set the $file_name as background for a wikiplace
-     * @param string $file_name
+     * @param string $file_page_name
      * @return Title
      */
-    public static function getLocalUrlForSetAsBackground($file_name) {
+    public static function getLocalUrlForSetAsBackground($file_page_name) {
         $title = self::getTitleFor(self::TITLE_NAME);
         return $title->getLocalURL(array(
                     'action' => self::ACTION_SET_BACKGROUND,
-                    'filename' => $file_name));
+                    'filePageName' => $file_page_name));
     }
 
 }
