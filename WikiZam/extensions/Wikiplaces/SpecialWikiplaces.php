@@ -451,7 +451,7 @@ class SpecialWikiplaces extends SpecialPage {
         $htmlForm->setMessagePrefix('wp');
         $htmlForm->setTitle($this->getTitle(self::ACTION_SET_BACKGROUND));
         $htmlForm->setSubmitCallback(array($this, 'processSetBackground'));
-        $htmlForm->setSubmitText(wfMessage('wp-setbackground')->text());
+        $htmlForm->setSubmitText(wfMessage('wp-setbackground-go')->text());
         if ($htmlForm->show()) {
             $this->getOutput()->addHTML(wfMessage('wp-setbackground-success', $this->homepageString)->parse());
         }

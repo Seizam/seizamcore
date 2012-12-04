@@ -162,7 +162,7 @@ You are also promising us that you wrote this yourself, or copied it from a publ
     /* Background action */
     'wp-background-action' => 'Set as background',
     'wp-file-pagename' => 'File pagename:',
-    'wp-setbackground' => 'Save',
+    'wp-setbackground-go' => 'Save',
     'wp-invalid-background' => 'Invalid file pagename or file extension not compatible with background.',
     'wp-setbackground-header' => 'Each Wikiplace can have its own background. This form lets you easily configure it.
         
@@ -328,5 +328,20 @@ Vous nous promettez aussi que vous avez écrit ceci vous-même, ou que vous l’
 	'wp-plan-not-available-renewal' => 'Offre indisponnible (cette offre n\'est plus proposée).',
     
     
-    'forbidden-admin-action' => 'L\'action que vous tentez est réservé aux administrateurs. {{int:sz-report}}'
+    'forbidden-admin-action' => 'L\'action que vous tentez est réservé aux administrateurs. {{int:sz-report}}',
+    
+    /* Background action */
+    'wp-background-action' => 'Utiliser comme arrière-plan',
+    'wp-file-pagename' => 'Nom de page du fichier :',
+    'wp-setbackground-go' => 'Enregistrer',
+    'wp-invalid-background' => 'Nom de page invalide ou extension du fichier incompatible avec les arrière-plans.',
+    'wp-setbackground-header' => 'Chaque Wikiplace peut avoir un arrière-plan. Ce formulaire permet de facilement les configurer.
+        
+Assurez-vous que le fichier image n\'est pas protégé en lecture, sinon l\'arrière-plan pourrait ne pas être visible par tous vos visiteurs.',
+    'wp-setbackground-section' => 'Définir l\'arrière-plan d\'unea Wikiplace',
+    'wp-setbackground-success' => '<div class="success"><b>L\'arrière-plan de votre Wikiplace a bien été défini !</b></div>
+<div style="border:1px solid #dad9d9; border-bottom: none; padding: 18px; padding-bottom: 4px;margin-top: 18px;">
+===== Navigation rapide : Allez sur la [[$1|Wikiplace]] | Administrez la depuis [[Special:WikiPlaces/Consult:$1|{{int:wikiplaces}}]] | Allez dans [[Special:MySeizam|Mon Seizam]] =====
+</div>',
+    
 );
