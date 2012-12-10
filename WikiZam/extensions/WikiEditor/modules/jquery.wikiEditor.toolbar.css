@@ -1,4 +1,4 @@
-/*
+/**
  * CSS for WikiEditor Toolbar jQuery plugin
  */
 
@@ -18,7 +18,7 @@
 	float: left;
 	width: 100%;
 	border-top: solid 1px #DDDDDD;
-	background-color: #f2e3e4;
+	background-color: #E0EEf7;
 }
 .wikiEditor-ui-toolbar {
 	/* @embed */
@@ -97,7 +97,7 @@
 	padding-right: 12px;
 	height: 26px;
 	cursor: pointer;
-	color: #e22c2e;
+	color: #0645ad;
 	/* @embed */
 	background-image: url(images/toolbar/arrow-ltr.png);
 	background-position: left center;
@@ -119,7 +119,7 @@
 /* Toolbar */
 .wikiEditor-ui-toolbar .group .label {
 	float: left;
-	border: 0px;
+	border: 0;
 	height: 22px;
 	line-height: 22px;
 	margin: 2px;
@@ -130,7 +130,7 @@
 }
 .wikiEditor-ui-toolbar .group img.tool {
 	float: left;
-	border: 0px;
+	border: 0;
 	height: 22px;
 	width: 22px;
 	padding: 2px;
@@ -177,7 +177,7 @@
 	white-space: nowrap;
 }
 .wikiEditor-ui-toolbar .group .tool-select .options .option:hover {
-	background-color: #f2e3e4;
+	background-color: #E0EEf7;
 }
 .wikiEditor-ui-toolbar .group .tool-select .options .option[rel=heading-2] {
 	font-size: 150%;
@@ -206,7 +206,7 @@
 	padding: 4px;
 	padding-left: 6px;
 	cursor: pointer;
-	color: #e22c2e;
+	color: #0645ad;
 }
 .wikiEditor-ui-toolbar .booklet .index .current {
 	background-color: #FAFAFA;
@@ -237,7 +237,7 @@
 .wikiEditor-ui-toolbar .page-table td {
 	text-align: left;
 	padding: 5px;
-	margin: 0px;
+	margin: 0;
 }
 .wikiEditor-ui-toolbar .section-help .page-table td.cell-syntax,
 .wikiEditor-ui-toolbar .section-help .page-table td.syntax {
@@ -271,7 +271,7 @@
 	font-size: 1.25em;
 }
 .wikiEditor-ui-toolbar .page-characters div[dir=rtl] span {
-	direction: rtl;
+	/* @noflip */ direction: rtl;
 }
 .wikiEditor-ui-toolbar .page-characters div span:hover {
 	background-color: white;
@@ -279,7 +279,7 @@
 	border-color: #a8d7f9;
 }
 .ui-widget table td.wikieditor-toolbar-table-preview-wrapper span {
-	padding: 4px 6px 0px;
+	padding: 4px 6px 0;
 	display: block;
 }
 .ui-widget table .wikieditor-toolbar-table-preview-frame {

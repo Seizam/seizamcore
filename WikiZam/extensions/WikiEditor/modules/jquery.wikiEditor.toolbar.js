@@ -1,7 +1,7 @@
 /**
  * Toolbar module for wikiEditor
  */
-( function( $ ) { $.wikiEditor.modules.toolbar = {
+( function ( mw, $ ) { $.wikiEditor.modules.toolbar = {
 
 /**
  * API accessible functions
@@ -157,7 +157,7 @@ api : {
 					// Save for later checking if empty
 					group = target;
 					// Tool
-					target += ' span[rel="' + data.tool + '"].tool';
+					target += ' a[rel="' + data.tool + '"].tool';
 				}
 			} else if ( typeof data.page == 'string' ) {
 				// Booklet page
@@ -238,7 +238,7 @@ fn: {
 	doAction : function( context, action, source ) {
 		// Verify that this has been called from a source that's within the toolbar
 		// 'trackAction' defined in click tracking
-		if ( $.trackAction !== undefined && source.closest( '.wikiEditor-ui-toolbar' ).size() ) {
+		if ( mw.config.get( 'wgWikiEditorToolbarClickTracking' ) && $.trackAction !== undefined && source.closest( '.wikiEditor-ui-toolbar' ).size() ) {
 			// Build a unique id for this action by tracking the parent rel attributes up to the toolbar level
 			var rels = [];
 			var step = source;
@@ -337,8 +337,9 @@ fn: {
 						$.wikiEditor.imgPath + 'toolbar/'
 					);
 					if ( typeof offsetOrIcon == 'object' ) {
-						$button = $( '<span/>' )
+						$button = $( '<a/>' )
 							.attr( {
+								'href' : '#',
 								'alt' : label,
 								'title' : label,
 								'rel' : id,
@@ -461,7 +462,7 @@ fn: {
 					{ expires: 30, path: '/' }
 				);
 				// Click tracking
-				if ( $.trackAction !== undefined){
+				if ( mw.config.get( 'wgWikiEditorToolbarClickTracking' ) && $.trackAction !== undefined ) {
 					$.trackAction(section + '.' + $(this).attr('rel'));
 				}
 				context.fn.restoreCursorAndScrollTop();
@@ -500,6 +501,11 @@ fn: {
 				}
 				if ( 'direction' in page ) {
 					$characters.attr( 'dir', page.direction );
+				} else {
+					// By default it should be explicit ltr for all scripts.
+					// Without this some conjoined ltr characters look
+					// weird in rtl wikis.
+					$characters.attr( 'dir', 'ltr' );
 				}
 				if ( 'characters' in page ) {
 					html = '';
@@ -557,6 +563,8 @@ fn: {
 					}
 				}
 			};
+		// In some cases the label for the character isn't the same as the
+		// character that gets inserted (e.g. Hebrew vowels)
 		} else if ( character && 0 in character && 1 in character ) {
 			character = {
 				'label' : character[0],
@@ -571,7 +579,15 @@ fn: {
 		}
 		if ( character && 'action' in character && 'label' in character ) {
 			actions[character.label] = character.action;
-			return '<span rel="' + character.label + '">' + character.label + '</span>';
+			if ( character.titleMsg !== undefined ) {
+				return mw.html.element(
+					'span',
+					{ 'rel': character.label, 'title': mw.msg( character.titleMsg ) },
+					character.label
+				);
+			} else {
+				return mw.html.element( 'span', { 'rel': character.label }, character.label );
+			}
 		}
 		mw.log( "A character for the toolbar was undefined. This is not supposed to happen. Double check the config." );
 		return ""; // bug 31673; also an additional fix for bug 24208...
@@ -640,7 +656,7 @@ fn: {
 							} );
 					}
 					// Click tracking
-					if ( $.trackAction !== undefined ) {
+					if ( mw.config.get( 'wgWikiEditorToolbarClickTracking' ) && $.trackAction !== undefined ) {
 						$.trackAction( $section.attr('rel') + '.' + ( show ? 'show': 'hide' )  );
 					}
 					// Save the currently visible section
@@ -774,4 +790,4 @@ fn: {
 	}
 }
 
-}; } )( jQuery );
+}; } )( mediaWiki, jQuery );
