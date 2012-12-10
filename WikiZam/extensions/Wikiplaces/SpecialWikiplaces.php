@@ -502,12 +502,14 @@ class SpecialWikiplaces extends SpecialPage {
 
     public function displayConsultWikiplace() {
 		$tp = new WpPagesTablePager();
-		$tp->setWPName($this->name);
+		$title = Title::newFromText($this->name);
+		$titleText = $title->getText();
+		$tp->setWPName($titleText);
 		$tp->setSelectConds(array(
 			'wpw_owner_user_id' => $this->getUser()->getID(),
-			'homepage.page_title' => $this->name));
-		$tp->setHeader(wfMessage('wp-consult-header', wfUnUnderscore($this->name))->parse());
-		$tp->setFooter(wfMessage('wp-consult-footer', wfUnUnderscore($this->name))->parse());
+			'homepage.page_title' => $title->getDBkey()));
+		$tp->setHeader(wfMessage('wp-consult-header', $titleText)->parse());
+		$tp->setFooter(wfMessage('wp-consult-footer', $titleText)->parse());
 		$this->getOutput()->addHTML($tp->getWholeHtml());
 	}
 

@@ -48,8 +48,8 @@ class WpWikiplace {
 	}
 	
 	/**
-	 * Returns the wikiplace name, in db_key form
-	 * @return type 
+	 * Returns the text form (spaces not underscores) of the wikiplace name (main part of the title)
+	 * @return string 
 	 */
 	public function getName() {
 		if ($this->name === null) {
@@ -183,7 +183,8 @@ class WpWikiplace {
     }
 
     /**
-	 * Fetch the Wikiplace name, using given data is available or read from DB if none given
+	 * Fetch the Wikiplace name, using given data is available or read from DB if none given.
+	 * Get the text form (spaces not underscores).
 	 * @param StdClass/WikiPage/Title $data
 	 */
 	private function loadName($data = null) {
