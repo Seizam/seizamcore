@@ -62,6 +62,7 @@ $wgExtensionCredits['other'][] = array(
 );
 $wgAutoloadClasses['WikiEditorHooks'] = dirname( __FILE__ ) . '/WikiEditor.hooks.php';
 $wgExtensionMessagesFiles['WikiEditor'] = dirname( __FILE__ ) . '/WikiEditor.i18n.php';
+$wgExtensionMessagesFiles['WikiEditor.skinzam'] = dirname( __FILE__ ) . '/WikiEditor.skinzam.i18n.php';
 $wgHooks['EditPage::showEditForm:initial'][] = 'WikiEditorHooks::editPageShowEditFormInitial';
 $wgHooks['GetPreferences'][] = 'WikiEditorHooks::getPreferences';
 $wgHooks['ResourceLoaderGetConfigVars'][] = 'WikiEditorHooks::resourceLoaderGetConfigVars';
@@ -413,9 +414,24 @@ $wgResourceModules += array(
 			'wikieditor-toolbar-help-content-indent-description',
 			'wikieditor-toolbar-help-content-indent-syntax',
 			'wikieditor-toolbar-help-content-indent-result',
+ 			/* Help Section - Widget */           
+			'wikieditor-toolbar-help-page-widget',
+			'wikieditor-toolbar-help-heading-help',
+			'wikieditor-toolbar-help-content-widget1-description',
+			'wikieditor-toolbar-help-content-widget1-syntax',
+			'wikieditor-toolbar-help-content-widget1-help',
+			'wikieditor-toolbar-help-content-widget2-description',
+			'wikieditor-toolbar-help-content-widget2-syntax',
+			'wikieditor-toolbar-help-content-widget2-help',
+			'wikieditor-toolbar-help-content-widget3-description',
+			'wikieditor-toolbar-help-content-widget3-syntax',
+			'wikieditor-toolbar-help-content-widget3-help',
+			'wikieditor-toolbar-help-content-widget4-description',
+			'wikieditor-toolbar-help-content-widget4-syntax',
+			'wikieditor-toolbar-help-content-widget4-help',
 		),
 	),
-
+    
 	/* WikiEditor Resources */
 
 	'ext.wikiEditor' => $wikiEditorTpl + array(

@@ -1240,6 +1240,37 @@ getDefaultConfig: function() {
 						}
 					]
 				},
+				'widget': {
+					'labelMsg': 'wikieditor-toolbar-help-page-widget',
+					'layout': 'table',
+					'headings': [
+						{ 'textMsg': 'wikieditor-toolbar-help-heading-description' },
+						{ 'textMsg': 'wikieditor-toolbar-help-heading-syntax' },
+						{ 'textMsg': 'wikieditor-toolbar-help-heading-help' }
+					],
+					'rows': [
+						{
+							'description': { 'htmlMsg': 'wikieditor-toolbar-help-content-widget1-description' },
+							'syntax': { 'htmlMsg': 'wikieditor-toolbar-help-content-widget1-syntax' },
+							'result': { 'htmlMsg': 'wikieditor-toolbar-help-content-widget1-help' }
+						},
+						{
+							'description': { 'htmlMsg': 'wikieditor-toolbar-help-content-widget2-description' },
+							'syntax': { 'htmlMsg': 'wikieditor-toolbar-help-content-widget2-syntax' },
+							'result': { 'htmlMsg': 'wikieditor-toolbar-help-content-widget2-help' }
+						},
+						{
+							'description': { 'htmlMsg': 'wikieditor-toolbar-help-content-widget3-description' },
+							'syntax': { 'htmlMsg': 'wikieditor-toolbar-help-content-widget3-syntax' },
+							'result': { 'htmlMsg': 'wikieditor-toolbar-help-content-widget3-help' }
+						},
+						{
+							'description': { 'htmlMsg': 'wikieditor-toolbar-help-content-widget4-description' },
+							'syntax': { 'htmlMsg': 'wikieditor-toolbar-help-content-widget4-syntax' },
+							'result': { 'htmlMsg': 'wikieditor-toolbar-help-content-widget4-help' }
+						}
+					]
+				},
 				'heading': {
 					'labelMsg': 'wikieditor-toolbar-help-page-heading',
 					'layout': 'table',
@@ -1305,32 +1336,6 @@ getDefaultConfig: function() {
 							'description': { 'htmlMsg': 'wikieditor-toolbar-help-content-file-description' },
 							'syntax': { 'htmlMsg': [ 'wikieditor-toolbar-help-content-file-syntax', fileNamespace ] },
 							'result': { 'htmlMsg': [ 'wikieditor-toolbar-help-content-file-result', mw.config.get( 'stylepath' ), mw.config.get( 'wgExtensionAssetsPath' ) ] }
-						}
-					]
-				},
-				'reference': {
-					'labelMsg': 'wikieditor-toolbar-help-page-reference',
-					'layout': 'table',
-					'headings': [
-						{ 'textMsg': 'wikieditor-toolbar-help-heading-description' },
-						{ 'textMsg': 'wikieditor-toolbar-help-heading-syntax' },
-						{ 'textMsg': 'wikieditor-toolbar-help-heading-result' }
-					],
-					'rows': [
-						{
-							'description': { 'htmlMsg': 'wikieditor-toolbar-help-content-reference-description' },
-							'syntax': { 'htmlMsg': 'wikieditor-toolbar-help-content-reference-syntax' },
-							'result': { 'htmlMsg': 'wikieditor-toolbar-help-content-reference-result' }
-						},
-						{
-							'description': { 'htmlMsg': 'wikieditor-toolbar-help-content-rereference-description' },
-							'syntax': { 'htmlMsg': 'wikieditor-toolbar-help-content-rereference-syntax' },
-							'result': { 'htmlMsg': 'wikieditor-toolbar-help-content-rereference-result' }
-						},
-						{
-							'description': { 'htmlMsg': 'wikieditor-toolbar-help-content-showreferences-description' },
-							'syntax': { 'htmlMsg': 'wikieditor-toolbar-help-content-showreferences-syntax' },
-							'result': { 'htmlMsg': 'wikieditor-toolbar-help-content-showreferences-result' }
 						}
 					]
 				},
