@@ -723,7 +723,7 @@ $.wikiEditor.modules.dialogs.config = {
 					<fieldset>\
 						<div class="wikieditor-toolbar-field-wrapper">\
 							<label for="wikieditor-toolbar-file-target" rel="wikieditor-toolbar-file-target" id="wikieditor-toolbar-tool-file-target-label"></label>\
-							<input type="text" id="wikieditor-toolbar-file-target"/>\
+							<input type="text" id="wikieditor-toolbar-file-target" value="File:"/>\
 						</div>\
 						<div class="wikieditor-toolbar-field-wrapper">\
 							<label for="wikieditor-toolbar-file-caption" rel="wikieditor-toolbar-file-caption"></label>\
@@ -776,6 +776,41 @@ $.wikiEditor.modules.dialogs.config = {
 							})
 							.removeAttr( 'rel' )
 							.end();
+					// Title suggestions
+					$( '#wikieditor-toolbar-file-target' ).data( 'suggcache', {} ).suggestions( {
+						fetch: function ( query ) {
+							var that = this;
+							var title = $(this).val();
+
+							var cache = $(this).data( 'suggcache' );
+							if ( typeof cache[title] !== 'undefined' ) {
+								$(this).suggestions( 'suggestions', cache[title] );
+								return;
+							}
+
+							var request = $.ajax( {
+								url: mw.util.wikiScript( 'api' ),
+								data: {
+									action: 'opensearch',
+									search: title,
+									namespace: 6,
+									suggest: '',
+									format: 'json'
+								},
+								dataType: 'json',
+								success: function ( data ) {
+									cache[title] = data[1];
+									$(that).suggestions( 'suggestions', data[1] );
+								}
+							});
+							$(this).data( 'request', request );
+						},
+						cancel: function () {
+							var request = $(this).data( 'request' );
+							if ( request )
+								request.abort();
+						}
+					});
 				},
 				dialog: {
 					resizable: false,
