@@ -160,6 +160,11 @@ return array(
 	'jquery.suggestions' => array(
 		'scripts' => 'resources/jquery/jquery.suggestions.js',
 		'styles' => 'resources/jquery/jquery.suggestions.css',
+		'skinStyles' => array(
+			'skinzam' => array(
+				'resources/jquery/themes/skinzam/jquery.suggestions.css',
+			),
+		),
 		'dependencies' => 'jquery.autoEllipsis',
 	),
 	'jquery.tabIndex' => array(

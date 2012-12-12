@@ -1,0 +1,14 @@
+/*
+    Document   : jquery.suggestions
+    Created on : Dec 12, 2012, 3:27:44 PM
+    Author     : yannouk
+    Description:
+        Amends the  resources/jquery/jquery.suggestions.css
+*/
+
+.suggestions-results {
+	font-size: 1.2em;
+}
+.suggestions-result-current {
+	background-color: #f2f2f2;
+}

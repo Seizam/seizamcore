@@ -3,7 +3,7 @@
     Created on : Dec 12, 2012, 10:49:02 AM
     Author     : yannouk
     Description:
-        Amends the  default/jquery.ui.theme.css
+        Amends the  resources/jquery.ui/themes/default/jquery.ui.theme.css
 */
 
 .ui-widget {
@@ -13,3 +13,6 @@
     font-family: Georgia, Times, "Time New Roman", serif;
     font-size: 1.2em;
 }
+/* Overlays */
+.ui-widget-overlay { background: #000000; opacity: .40;filter:Alpha(Opacity=40); }
+.ui-widget-shadow { margin: -7px 0 0 -7px; padding: 7px; /* @embed */ background: #000000 url(images/ui-bg_flat_70_000000_40x100.png) 50% 50% repeat-x; opacity: .20;filter:Alpha(Opacity=20); -moz-border-radius: 8px; -webkit-border-radius: 8px; border-radius: 8px; }
