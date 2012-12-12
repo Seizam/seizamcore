@@ -37,7 +37,7 @@ $messages['en'] = array(
     'wikieditor-toolbar-widget-insert' => 'Insert widget',
     'wikieditor-toolbar-widget-cancel' => 'Cancel',
     'wikieditor-toolbar-widget-help' => 'See help at <b><a target="_blank" href="/Widget:$1">Widget:$1</a></b>',
-    'wikieditor-toolbar-widget-list' => '<nowiki>
+/*  'wikieditor-toolbar-widget-list' => '<nowiki>
 {{:Media widgets}}
 {{Vimeo:id = 43347454
 | width = 392px
@@ -51,7 +51,7 @@ $messages['en'] = array(
 | scrollbar
 | live
 | right}}
-</nowiki>',
+</nowiki>', */
 );
 
 /** English
