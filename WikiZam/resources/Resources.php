@@ -192,6 +192,11 @@ return array(
 				'resources/jquery.ui/themes/vector/jquery.ui.core.css',
 				'resources/jquery.ui/themes/vector/jquery.ui.theme.css',
 			),
+			'skinzam' => array(
+				'resources/jquery.ui/themes/default/jquery.ui.core.css',
+                'resources/jquery.ui/themes/default/jquery.ui.theme.css',
+				'resources/jquery.ui/themes/skinzam/jquery.ui.theme.css',
+			),
 		),
 		'dependencies' => 'jquery',
 		'group' => 'jquery.ui',

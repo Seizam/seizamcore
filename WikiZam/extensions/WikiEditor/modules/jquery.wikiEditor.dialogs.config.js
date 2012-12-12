@@ -10,7 +10,7 @@ $.wikiEditor.modules.dialogs.config = {
 			.wikiEditor( 'removeFromToolbar', { section: 'main', group: 'insert', tool: 'xlink' } )
 			.wikiEditor( 'removeFromToolbar', { section: 'main', group: 'insert', tool: 'ilink' } )
 			.wikiEditor( 'removeFromToolbar', { section: 'main', group: 'insert', tool: 'file' } )
-			.wikiEditor( 'removeFromToolbar', { section: 'main', group: 'insert', tool: 'reference' } )
+			.wikiEditor( 'removeFromToolbar', { section: 'main', group: 'insert', tool: 'widget' } )
 			.wikiEditor( 'removeFromToolbar', { section: 'advanced', group: 'insert', tool: 'table' } )
 			.wikiEditor( 'addToToolbar', {
 				section: 'main',
@@ -36,15 +36,15 @@ $.wikiEditor.modules.dialogs.config = {
 							module: 'insert-file'
 						}
 					},
-					'reference': {
-						labelMsg: 'wikieditor-toolbar-tool-reference',
+					'widget': {
+						labelMsg: 'wikieditor-toolbar-tool-widget',
 						filters: [ 'body.ns-subject' ],
 						type: 'button',
-						icon: 'insert-reference.png',
-						offset: [2, -1798],
+						icon: 'insert-xlink.png',
+						offset: [-70, 2],
 						action: {
 							type: 'dialog',
-							module: 'insert-reference'
+							module: 'insert-widget'
 						}
 					}
 				}
@@ -619,17 +619,21 @@ $.wikiEditor.modules.dialogs.config = {
 					}
 				}
 			},
-			'insert-reference': {
-				titleMsg: 'wikieditor-toolbar-tool-reference-title',
-				id: 'wikieditor-toolbar-reference-dialog',
+			'insert-widget': {
+				titleMsg: 'wikieditor-toolbar-tool-widget-title',
+				id: 'wikieditor-toolbar-widget-dialog',
 				html: '\
 				<div class="wikieditor-toolbar-dialog-wrapper">\
 				<fieldset><div class="wikieditor-toolbar-table-form">\
 					<div class="wikieditor-toolbar-field-wrapper">\
-						<label for="wikieditor-toolbar-reference-text"\
-							rel="wikieditor-toolbar-tool-reference-text"></label>\
-						<input type="text" id="wikieditor-toolbar-reference-text"/>\
-					</div>\
+                        <label for="wikieditor-toolbar-widget-select" rel="wikieditor-toolbar-widget-select"></label><br/>\
+                        <div class="ui-widget-help" id="wikieditor-toolbar-widget-help"></div>\
+                        <select type="text" id="wikieditor-toolbar-widget-select"></select>\
+                    </div>\
+                    <div class="wikieditor-toolbar-field-wrapper">\
+                        <label for="wikieditor-toolbar-widget-arguments" rel="wikieditor-toolbar-widget-arguments"></label><br/>\
+                        <textarea rows="9" id="wikieditor-toolbar-widget-arguments"></textarea>\
+                    </div>\
 				</div></fieldset>\
 				</div>',
 				init: function () {
@@ -637,16 +641,51 @@ $.wikiEditor.modules.dialogs.config = {
 					$( this ).find( '[rel]' ).each( function () {
 						$( this ).text( mw.msg( $( this ).attr( 'rel' ) ) );
 					} );
-
+					// Init selectbox
+					$( '#wikieditor-toolbar-widget-select' ).empty();
+					$( '#wikieditor-toolbar-widget-select' ).append($('<option></option>')
+						.attr("selected", "selected")
+						.attr("value", "")
+						.text("Please select a widget"));
+					// Parse, setup and store widget list
+					var widgets = mw.msg( 'wikieditor-toolbar-widget-list' );
+					widgets = widgets.replace("<nowiki>\n{{", "", "gi");
+					widgets = widgets.replace("}}\n</nowiki>", "", "gi");
+					widgets = widgets.split('}}\n{{');
+					$.each(widgets, function(key, widget) {
+						var name = widget.split(":", 1)[0];
+						var text = widget.substr(name.length + 1);
+						if ( name == '' ) {
+							$( '#wikieditor-toolbar-widget-select' ).append($('<option></option>')
+								.attr("value", " ")
+								.attr("disabled", "disabled")
+								.text(text));
+						} else {
+							$( '#wikieditor-toolbar-widget-select' ).append($('<option></option>')
+								.attr("value", name)
+								.text("  " + name));
+							$( '#wikieditor-toolbar-widget-dialog' ).data( 'widget-' + name, text );
+						}
+					});
+					// Add event handler
+					$( '#wikieditor-toolbar-widget-select' ).bind( 'change', function () {
+						var selected = $( this ).val();
+						if ( selected !== '' ) {
+							$( '#wikieditor-toolbar-widget-arguments' ).val( $( '#wikieditor-toolbar-widget-dialog' ).data( 'widget-' + selected ) ) ;
+							$( '#wikieditor-toolbar-widget-help' ).html( mw.msg('wikieditor-toolbar-widget-help', selected));
+						}
+					});                  
 				},
 				dialog: {
 					dialogClass: 'wikiEditor-toolbar-dialog',
 					width: 590,
 					buttons: {
-						'wikieditor-toolbar-tool-reference-insert': function () {
-							var insertText = $( '#wikieditor-toolbar-reference-text' ).val();
-							var whitespace = $( '#wikieditor-toolbar-reference-dialog' ).data( 'whitespace' );
-							var attributes = $( '#wikieditor-toolbar-reference-dialog' ).data( 'attributes' );
+						'wikieditor-toolbar-widget-insert': function () {
+							var widget = $( '#wikieditor-toolbar-widget-select' ).val();
+							if ( widget !== '' ) {
+								widget = widget + ':';
+							}
+							var arguments = $( '#wikieditor-toolbar-widget-arguments' ).val();                        
 							// Close the dialog
 							$( this ).dialog( 'close' );
 							$.wikiEditor.modules.toolbar.fn.doAction(
@@ -654,17 +693,17 @@ $.wikiEditor.modules.dialogs.config = {
 								{
 									type: 'replace',
 									options: {
-										pre: whitespace[0] + '<ref' + attributes + '>',
-										peri: insertText,
-										post: '</ref>' + whitespace[1]
+										pre: '{{' + widget + arguments + '}}'
 									}
 								},
 								$( this )
-							);
+								);
 							// Restore form state
-							$( '#wikieditor-toolbar-reference-text' ).val( '' );
+							$( '#wikieditor-toolbar-widget-select' ).val( '' );
+							$( '#wikieditor-toolbar-widget-arguments' ).val( '' );
+							$( '#wikieditor-toolbar-widget-help' ).html( '' );
 						},
-						'wikieditor-toolbar-tool-reference-cancel': function () {
+						'wikieditor-toolbar-widget-cancel': function () {
 							// Clear any saved selection state
 							var context = $( this ).data( 'context' );
 							context.fn.restoreCursorAndScrollTop();
@@ -672,47 +711,18 @@ $.wikiEditor.modules.dialogs.config = {
 						}
 					},
 					open: function () {
-						// Pre-fill the text fields based on the current selection
 						var context = $(this).data( 'context' );
 						// Restore and immediately save selection state, needed for inserting stuff later
 						context.fn.restoreCursorAndScrollTop();
 						context.fn.saveCursorAndScrollTop();
+						// Pre-fill based on the current selection
 						var selection = context.$textarea.textSelection( 'getSelection' );
-						// set focus
-						$( '#wikieditor-toolbar-reference-text' ).focus();
-						$( '#wikieditor-toolbar-reference-dialog' )
-							.data( 'whitespace', [ '', '' ] )
-							.data( 'attributes', '' );
 						if ( selection !== '' ) {
-							var matches, text;
-							if ( ( matches = selection.match( /^(\s*)<ref([^\>]*)>([^<]*)<\/ref\>(\s*)$/ ) ) ) {
-								text = matches[3];
-								// Preserve whitespace when replacing
-								$( '#wikieditor-toolbar-reference-dialog' )
-									.data( 'whitespace', [ matches[1], matches[4] ] );
-								$( '#wikieditor-toolbar-reference-dialog' ).data( 'attributes', matches[2] );
-							} else {
-								text = selection;
-							}
-							$( '#wikieditor-toolbar-reference-text' ).val( text );
+							selection = selection.replace(/^\s*{{\s*/, '').replace(/\s*}}\s*$/, '');
+							$( '#wikieditor-toolbar-widget-arguments' ).val( selection );
 						}
-						if ( !( $( this ).data( 'dialogkeypressset' ) ) ) {
-							$( this ).data( 'dialogkeypressset', true );
-							// Execute the action associated with the first button
-							// when the user presses Enter
-							$( this ).closest( '.ui-dialog' ).keypress( function ( e ) {
-								if ( ( e.keyCode || e.which ) == 13 ) {
-									var button = $( this ).data( 'dialogaction' ) || $( this ).find( 'button:first' );
-									button.click();
-									e.preventDefault();
-								}
-							} );
-							// Make tabbing to a button and pressing
-							// Enter do what people expect
-							$( this ).closest( '.ui-dialog' ).find( 'button' ).focus( function () {
-								$( this ).closest( '.ui-dialog' ).data( 'dialogaction', this );
-							} );
-						}
+						// set focus
+						$( '#wikieditor-toolbar-widget-arguments' ).focus();
 					}
 				}
 			},

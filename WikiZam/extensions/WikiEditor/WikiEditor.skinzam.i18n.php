@@ -27,4 +27,29 @@ $messages['en'] = array(
     'wikieditor-toolbar-help-content-widget4-description' => '',
     'wikieditor-toolbar-help-content-widget4-syntax' => '<a href="/Widget:Google%2B" title="Widget:Google+">Google+</a>, <a href="/Widget:AddThis" title="Widget:AddThis">AddThis</a>, <a href="/Widget:Facebook" title="Widget:Facebook">Facebook</a> ...',
     'wikieditor-toolbar-help-content-widget4-help' => '<a href="/Category:Media_Widgets" title="Category:Media Widgets">List of social widgets</a>',
+    /* Toolbar - Widget */
+    'wikieditor-toolbar-tool-widget' => 'Widget',
+    'wikieditor-toolbar-tool-widget-example' => 'Twitter:user=seizam',
+    'wikieditor-toolbar-tool-widget-title' => 'Insert widget',
+    'wikieditor-toolbar-widget-default' => 'Select a widget',
+    'wikieditor-toolbar-widget-select' => 'Widget:',
+    'wikieditor-toolbar-widget-arguments' => 'Arguments:',
+    'wikieditor-toolbar-widget-insert' => 'Insert',
+    'wikieditor-toolbar-widget-cancel' => 'Cancel',
+    'wikieditor-toolbar-widget-help' => 'See help at <b><a target="_blank" href="/Widget:$1">Widget:$1</a></b>',
+    'wikieditor-toolbar-widget-list' => '<nowiki>
+{{:Media widgets}}
+{{Vimeo:id = 43347454
+| width = 392px
+| height = 220px
+| right}}
+{{:Social widgets}}
+{{Twitter:user = TechCrunch
+| list = realtime-web
+| width = 220
+| height = 180
+| scrollbar
+| live
+| right}}
+</nowiki>',
 );

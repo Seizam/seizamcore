@@ -1,0 +1,15 @@
+/*
+    Document   : jquery.ui.theme
+    Created on : Dec 12, 2012, 10:49:02 AM
+    Author     : yannouk
+    Description:
+        Amends the  default/jquery.ui.theme.css
+*/
+
+.ui-widget {
+    font-family: Georgia, Times, "Time New Roman", serif;
+}
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button, .ui-widget-help {
+    font-family: Georgia, Times, "Time New Roman", serif;
+    font-size: 1.2em;
+}

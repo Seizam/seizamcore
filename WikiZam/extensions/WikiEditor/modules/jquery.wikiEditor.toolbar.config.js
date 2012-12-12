@@ -153,18 +153,18 @@ getDefaultConfig: function() {
 								}
 							}
 						},
-						'reference': {
-							'labelMsg': 'wikieditor-toolbar-tool-reference',
+						'widget': {
+							'labelMsg': 'wikieditor-toolbar-tool-widget',
 							'filters': [ 'body.ns-subject' ],
 							'type': 'button',
-							'offset': [2, -1798],
-							'icon': 'insert-reference.png',
+							'offset': [-70, 2],
+							'icon': 'insert-xlink.png',
 							'action': {
 								'type': 'encapsulate',
 								'options': {
-									'pre': "<ref>",
-									'periMsg': 'wikieditor-toolbar-tool-reference-example',
-									'post': "</ref>"
+									'pre': "{{",
+									'periMsg': 'wikieditor-toolbar-tool-widget-example',
+									'post': "}}"
 								}
 							}
 						},

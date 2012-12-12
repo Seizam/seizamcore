@@ -429,6 +429,17 @@ $wgResourceModules += array(
 			'wikieditor-toolbar-help-content-widget4-description',
 			'wikieditor-toolbar-help-content-widget4-syntax',
 			'wikieditor-toolbar-help-content-widget4-help',
+			/* Tool widget */
+			'wikieditor-toolbar-tool-widget',
+			'wikieditor-toolbar-tool-widget-example',
+			'wikieditor-toolbar-tool-widget-title',
+			'wikieditor-toolbar-widget-default',
+			'wikieditor-toolbar-widget-select',
+			'wikieditor-toolbar-widget-list',
+			'wikieditor-toolbar-widget-arguments',
+			'wikieditor-toolbar-widget-insert',
+			'wikieditor-toolbar-widget-cancel',
+			'wikieditor-toolbar-widget-help',
 		),
 	),
     
