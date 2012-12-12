@@ -44,8 +44,8 @@ body, button, input, select, textarea {
     color: #4d4e4f;
 }
 
-::-moz-selection { background: #ee383a; color: #fff; text-shadow: none; }
-::selection { background: #ee383a; color: #fff; text-shadow: none; }
+::-moz-selection { background: #e22c2e; color: #fff; text-shadow: none; }
+::selection { background: #e22c2e; color: #fff; text-shadow: none; }
 
 
 /* -----------------------------------------------------------------------------
