@@ -61,9 +61,9 @@ a:hover, a:active, a.stub:hover, a.new:hover { outline:0; color:#7C2122;}
 div#content a.external,
 div#content a.external[href ^="gopher://"],
 div#content a.extiw {
-	/* @embed */
-	background: url(images/external-link-ltr-icon.png) center right no-repeat;
-	padding-right: 13px;
+    /* @embed */
+    background: url(images/external-link-ltr-icon.png) center right no-repeat;
+    padding-right: 13px;
 }
 div#content div.nav_artist a.external {
     background: none;
@@ -72,28 +72,28 @@ div#content div.nav_artist a.external {
 
 div#content a.external[href ^="mailto:"],
 .link-mailto {
-	/* @embed */
-	background: url(images/mail-icon.png) center right no-repeat;
-	padding-right: 13px;
+    /* @embed */
+    background: url(images/mail-icon.png) center right no-repeat;
+    padding-right: 13px;
 }
 div#content a.external[href ^="news://"] {
-	/* @embed */
-	background: url(images/news-icon.png) center right no-repeat;
-	padding-right: 13px;
+    /* @embed */
+    background: url(images/news-icon.png) center right no-repeat;
+    padding-right: 13px;
 }
 div#content a.external[href ^="ftp://"],
 div#content a.external[href $=".zip"], div#content a.external[href $=".ZIP"],
 .link-ftp {
-	/* @embed */
-	background: url(images/file-icon.png) center right no-repeat;
-	padding-right: 13px;
+    /* @embed */
+    background: url(images/file-icon.png) center right no-repeat;
+    padding-right: 13px;
 }
 div#content a.external[href ^="irc://"],
 div#content a.external[href ^="ircs://"],
 .link-irc {
-	/* @embed */
-	background: url(images/talk-icon.png) center right no-repeat;
-	padding-right: 13px;
+    /* @embed */
+    background: url(images/talk-icon.png) center right no-repeat;
+    padding-right: 13px;
 }
 div#content a.external[href $=".jpg"], div#content a.external[href $=".JPG"],
 div#content a.external[href $=".jpeg"], div#content a.external[href $=".jpeg"],
@@ -102,9 +102,9 @@ div#content a.external[href $=".gif"], div#content a.external[href $=".GIF"],
 div#content a.external[href $=".xcf"], div#content a.external[href $=".XCF"],
 div#content a.external[href $=".svg"], div#content a.external[href $=".SVG"],
 .link-audio {
-	/* @embed */
-	background: url("images/image-icon.png?2") center right no-repeat;
-	padding-right: 13px;
+    /* @embed */
+    background: url("images/image-icon.png?2") center right no-repeat;
+    padding-right: 13px;
 }
 div#content a.external[href $=".ogg"], div#content a.external[href $=".OGG"],
 div#content a.external[href $=".mid"], div#content a.external[href $=".MID"],
@@ -113,9 +113,9 @@ div#content a.external[href $=".mp3"], div#content a.external[href $=".MP3"],
 div#content a.external[href $=".wav"], div#content a.external[href $=".WAV"],
 div#content a.external[href $=".wma"], div#content a.external[href $=".WMA"],
 .link-audio {
-	/* @embed */
-	background: url("images/audio-icon.png?2") center right no-repeat;
-	padding-right: 13px;
+    /* @embed */
+    background: url("images/audio-icon.png?2") center right no-repeat;
+    padding-right: 13px;
 }
 div#content a.external[href $=".ogm"], div#content a.external[href $=".OGM"],
 div#content a.external[href $=".ogv"], div#content a.external[href $=".OGV"],
@@ -123,18 +123,18 @@ div#content a.external[href $=".avi"], div#content a.external[href $=".AVI"],
 div#content a.external[href $=".mpeg"], div#content a.external[href $=".MPEG"],
 div#content a.external[href $=".mpg"], div#content a.external[href $=".MPG"],
 .link-video {
-	/* @embed */
-	background: url("images/video-icon.png?2") center right no-repeat;
-	padding-right: 13px;
+    /* @embed */
+    background: url("images/video-icon.png?2") center right no-repeat;
+    padding-right: 13px;
 }
 div#content a.external[href $=".pdf"], div#content a.external[href $=".PDF"],
 div#content a.external[href *=".pdf#"], div#content a.external[href *=".PDF#"],
 div#content a.external[href *=".pdf?"], div#content a.external[href *=".PDF?"],
 div#content a.external[href *=".djvu"], div#content a.external[href *=".DJVU"],
 .link-document {
-	/* @embed */
-	background: url("images/document-icon.png?2") center right no-repeat;
-	padding-right: 13px;
+    /* @embed */
+    background: url("images/document-icon.png?2") center right no-repeat;
+    padding-right: 13px;
 }
 
 
@@ -282,7 +282,7 @@ ul > li {
     padding: 0 0 6px 0;
     list-style-type: square;
     list-style-position: inside;
-    
+
 }
 
 ol > li  {
@@ -1076,6 +1076,12 @@ div.license img {
     padding: 16px 20px 12px;
 }
 
+#header.project .inside {
+    -webkit-border-top-right-radius: 110px;
+    -moz-border-radius-topright: 110px;
+    border-top-right-radius: 110px;
+}
+
 #header.project .hgroup {
     position:relative;
 }
@@ -1125,7 +1131,7 @@ h1.firstHeading {
     max-width: 822px;
     margin: 3px 30px 15px 30px;
     word-wrap: break-word;
-    
+
     color: #4d4e4f;
     font-size: 16px;
     font-weight: normal;
@@ -1157,7 +1163,7 @@ h1.firstHeading a.fh-current {
 h1.firstHeading a:hover {
     color: #E22C2E;
     opacity: 0.9;
-    
+
 }
 
 /* ----------------------------------------
@@ -1872,12 +1878,12 @@ body.ns-6.action-view #bodyContent {
 h2#filehistory,
 h2#filelinks,
 h2#metadata{
-    
+
     z-index: 19;
     max-width: 822px;
     margin: 10px 0 2px  0;
     word-wrap: break-word;
-    
+
     text-align: left;
     text-transform: none;
     font-family: Georgia, Times, "Time New Roman", serif;
@@ -2879,12 +2885,22 @@ p.ms-wl-empty {
 /* Message notification div */
 
 div.usermessage, 
-div.patrollink {
+div.patrollink,
+div#mw-dismissable-notice {
     position: fixed;
-    top: 24px;
+    top: 54px;
     left: 0;
-    max-width: 150px;
+    z-index: 200;
+    max-width: 160px;
     padding: 8px 8px 8px 24px;
+
+    -webkit-border-top-right-radius: 8px;
+    -webkit-border-bottom-right-radius: 8px;
+    -moz-border-radius-topright: 8px;
+    -moz-border-radius-bottomright: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+
     border: 1px solid #dad9d9;
     border-left: none;
     /* @embed */
@@ -2892,10 +2908,16 @@ div.patrollink {
     background-color: transparent;
     background-position: 0 0;
     background-repeat: repeat;
-    text-align: justify;
-    font-size: 11px;
-    z-index: 200;
 }
+
+div.mw-dismissable-notice-close {
+    border-top: 1px solid #dad9d9;
+    padding-top: 6px;
+    margin-top: 6px;
+    text-align: center;
+}
+
+
 
 /* fixes for Special:Upload */
 

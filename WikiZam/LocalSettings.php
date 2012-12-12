@@ -186,6 +186,13 @@ $wgWikiEditorFeatures['preview']['user'] = false;
 $wgWikiEditorFeatures['publish']['user'] = false;
 $wgWikiEditorFeatures['toc']['user'] = false;
 
+# =[ Sitenotice ]=
+require_once( "$IP/extensions/DismissableSiteNotice/DismissableSiteNotice.php");
+$wgSiteNoticeNoDismissalforAnon = false;
+
+# =[ i18n tricks ]=
+$wgForceUIMsgAsContentMsg = array('sitenotice','anonnotice');
+
 
 # =[ MediaWiki & SkinZam ]=
 $wgDefaultUserOptions['usebetatoolbar'] = 1;

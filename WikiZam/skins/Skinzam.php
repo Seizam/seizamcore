@@ -120,6 +120,11 @@ class SkinzamTemplate extends BaseTemplate {
         <!-- tagline -->
         <div id="siteSub"><?php $this->msg('tagline') ?><img id="logo" height="200" width="200" alt="Seizam's Logo" src="<?php echo wfExpandUrl($this->data['logopath']) ?>"></div>
         <!-- /tagline -->
+        <?php if ($this->data['sitenotice']): ?>
+            <!-- sitenotice -->
+            <div id="siteNotice"><?php $this->html('sitenotice') ?></div>
+            <!-- /sitenotice -->
+        <?php endif; ?>
         <?php if ($this->data['showjumplinks']): ?>
             <!-- jumpto -->
             <div id="jump-to-nav">
@@ -135,7 +140,7 @@ class SkinzamTemplate extends BaseTemplate {
         <?php endif; ?>
         <!-- content -->
         <div id="heightwrapper">
-        <?php $this->renderContent() ?>
+            <?php $this->renderContent() ?>
         </div>
         <!-- contentFooter -->
         <!-- footer -->
@@ -452,24 +457,24 @@ class SkinzamTemplate extends BaseTemplate {
         foreach ($this->getFooterLinks() as $category => $links):
             ?>
             <ul id="footer-<?php echo $category ?>">
-            <?php foreach ($links as $link): ?>
+                <?php foreach ($links as $link): ?>
                     <li id="footer-<?php echo $category ?>-<?php echo $link ?>"><?php $this->html($link) ?></li>
                 <?php endforeach; ?>
             </ul>
-                <?php
-            endforeach;
-        }
+            <?php
+        endforeach;
+    }
 
-        /**
-         * Render the footer (main menu)
-         */
-        private function renderFooter() {
-            ?>
+    /**
+     * Render the footer (main menu)
+     */
+    private function renderFooter() {
+        ?>
         <!-- regular footer -->
         <div id="footer"  class="noprint">
             <div class="inside">
                 <div class="content">
-        <?php $this->renderMore(); ?>
+                    <?php $this->renderMore(); ?>
                 </div>
             </div>
         </div>
@@ -479,18 +484,18 @@ class SkinzamTemplate extends BaseTemplate {
         <div id="absoluteFooter"  class="noprint">
             <div class="inside">
                 <div class="content">
-        <?php if (isset($this->data['sz_pretty_username'])): ?>
+                    <?php if (isset($this->data['sz_pretty_username'])): ?>
                         <span id="prettyUserName"><?php $this->text('sz_pretty_username') ?></span>
                     <?php endif; ?>
                     <!-- logo -->
                     <a id="logo_mini" href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href']); ?>"></a>
                     <!-- /logo -->
                     <!-- search -->
-        <?php $this->renderNavigation(array('SEARCH')); ?>
+                    <?php $this->renderNavigation(array('SEARCH')); ?>
                     <!-- /search -->
                     <!-- quicklinks -->
                     <ul>
-        <?php $this->renderNavigation(array('SZ-FOOTER')); ?>
+                        <?php $this->renderNavigation(array('SZ-FOOTER')); ?>
                         <li class="more">
                             <a href="#">
                                 <span class="show_footer"><?php echo wfMessage('moredotdotdot')->text(); ?></span>
@@ -545,7 +550,7 @@ class SkinzamTemplate extends BaseTemplate {
 
         <div class="section">
             <p class="sread"><?php echo wfMessage('sz-selectlang')->text() ?></p>
-        <?php echo wfLanguageSelectorHTML($this->skin->getTitle(), null, 'selectLang'); ?>
+            <?php echo wfLanguageSelectorHTML($this->skin->getTitle(), null, 'selectLang'); ?>
             <p class="sread"><?php echo wfMessage('sz-seizamonsocialnetworks')->text() ?></p>
             <ul class="socials">
                 <li class="tumblr"><a href="http://www.davidcanwin.com">Tumblr</a></li>
@@ -553,43 +558,43 @@ class SkinzamTemplate extends BaseTemplate {
                 <li class="fcbk"><a href="http://facebook.seizam.com">Facebook</a></li>
                 <li class="linkedin"><a href="http://www.linkedin.com/company/seizam">LinkedIn</a></li>
             </ul>
-        <?php $footericons = $this->getFooterIcons("icononly");
-        if (count($footericons) > 0): ?>
+            <?php $footericons = $this->getFooterIcons("icononly");
+            if (count($footericons) > 0): ?>
                 <ul id="footer-icons">
-                <?php foreach ($footericons as $blockName => $footerIcons): ?>
+                    <?php foreach ($footericons as $blockName => $footerIcons): ?>
                         <li id="footer-<?php echo htmlspecialchars($blockName); ?>ico">
-                        <?php foreach ($footerIcons as $icon): ?>
+                            <?php foreach ($footerIcons as $icon): ?>
                                 <?php echo $this->skin->makeFooterIcon($icon); ?>
 
                             <?php endforeach; ?>
                         </li>
-                        <?php endforeach; ?>
+                    <?php endforeach; ?>
                 </ul>
-                <?php endif; ?>
+            <?php endif; ?>
         </div>
-            <?php
+        <?php
+    }
+
+    /**
+     * Render one or more navigations elements by name, automatically reveresed
+     * when UI is in RTL mode
+     */
+    private function renderNavigation($elements) {
+
+        global $wgVectorUseSimpleSearch, $wgVectorShowVariantName, $wgUser;
+
+        // If only one element was given, wrap it in an array, allowing more
+        // flexible arguments
+        if (!is_array($elements)) {
+            $elements = array($elements);
+            // If there's a series of elements, reverse them when in RTL mode
         }
-
-        /**
-         * Render one or more navigations elements by name, automatically reveresed
-         * when UI is in RTL mode
-         */
-        private function renderNavigation($elements) {
-
-            global $wgVectorUseSimpleSearch, $wgVectorShowVariantName, $wgUser;
-
-            // If only one element was given, wrap it in an array, allowing more
-            // flexible arguments
-            if (!is_array($elements)) {
-                $elements = array($elements);
-                // If there's a series of elements, reverse them when in RTL mode
-            }
-            // Render elements
-            foreach ($elements as $name => $element) {
-                switch ($element) {
-                    case 'NAMESPACES':
-                        foreach ($this->data['namespace_urls'] as $link):
-                            ?>
+        // Render elements
+        foreach ($elements as $name => $element) {
+            switch ($element) {
+                case 'NAMESPACES':
+                    foreach ($this->data['namespace_urls'] as $link):
+                        ?>
                         <li <?php echo $link['attributes'] ?>><a href="<?php echo htmlspecialchars($link['href']) ?>" <?php echo $link['key'] ?>><?php echo htmlspecialchars($link['text']) ?></a></li>
                         <?php
                     endforeach;
@@ -634,9 +639,9 @@ class SkinzamTemplate extends BaseTemplate {
                         <h5<?php $this->html('userlangattributes') ?>><label for="searchInput"><?php $this->msg('search') ?></label></h5>
                         <form action="<?php $this->text('wgScript') ?>" id="searchform">
                             <input type='hidden' name="title" value="<?php $this->text('searchtitle') ?>"/>
-                    <?php if ($wgVectorUseSimpleSearch && $wgUser->getOption('vector-simplesearch')): ?>
+                            <?php if ($wgVectorUseSimpleSearch && $wgUser->getOption('vector-simplesearch')): ?>
                                 <div id="simpleSearch">
-                                <?php if ($this->data['rtl']): ?>
+                                    <?php if ($this->data['rtl']): ?>
                                         <?php echo $this->makeSearchButton('image', array('id' => 'searchButton', 'src' => $this->skin->getSkinStylePath('images/search-rtl.png'))); ?>
                                     <?php endif; ?>
                                     <?php echo $this->makeSearchInput(array('id' => 'searchInput', 'type' => 'text', 'placeholder' => wfMessage('search')->text())); ?>
@@ -644,7 +649,7 @@ class SkinzamTemplate extends BaseTemplate {
                                         <?php echo $this->makeSearchButton('image', array('id' => 'searchButton', 'src' => $this->skin->getSkinStylePath('images/search-ltr.png'))); ?>
                                     <?php endif; ?>
                                 </div>
-                                <?php else: ?>
+                            <?php else: ?>
                                 <?php echo $this->makeSearchInput(array('id' => 'searchInput', 'placeholder' => wfMessage('search')->text())); ?>
                                 <?php echo $this->makeSearchButton('go', array('id' => 'searchGoButton', 'class' => 'searchButton')); ?>
                                 <?php echo $this->makeSearchButton('fulltext', array('id' => 'mw-searchButton', 'class' => 'searchButton')); ?>
