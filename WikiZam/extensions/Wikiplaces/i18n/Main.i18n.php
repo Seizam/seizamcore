@@ -57,20 +57,20 @@ $messages['en'] = array(
     'wp-sublinkalias-tip' => 'Type <b><nowiki>[[$1/$2|$2]]</nowiki></b> to make a [[Help:Links|link]] like: [[$1/$2|$2]].',
     'wp-action-tip' => 'Do not forget to checkout the <b>actions menu</b> (top right of every page) to find settings  like <b>Protect</b> or <b>Watch</b>.',
     'wp-subpage-tip' => 'To create a subpage, click [[Special:WikiPlaces/CreatePage:$1|here]] or visit [[$1/SubpageName|<u>www.seizam.com/<b>$1/SubpageName</b></u>]].',
-    'wp-background-tip' => 'To install the [[Help:Background|background image]], input the web address of an image on [[{{ns:Wikiplace}}:$1/'.WPBACKGROUNDKEY.']].',
+    'wp-background-tip' => 'To install a [[Help:Background|background image]], input the link to the image on [[{{ns:Wikiplace}}:$1/'.WPBACKGROUNDKEY.']].',
     'wp-navigation-tip' => 'To install the [[Help:WikiPlace Navigation|navigation menu]], input a list of links on [[{{ns:Wikiplace}}:$1/'.WPNAVIGATIONKEY.']].',
     /* TablePage: Wikiplace */
-    'wp-list-header' => '<span style="float:right">See : <b>[[Help:Wikiplaces|Help]]</b></span>Here are your WikiPlaces.',
+    'wp-list-header' => '<span style="float:right">See : <b>[[Help:WikiPlaces|Help]]</b></span>Here are your WikiPlaces.',
     'wp-list-footer' => '<h3>{{int:statistics}}</h3>
 * Diskspace usage total: $1
 * Pages total: $2',
-    'wp-consult-header' => '<span style="float:right">See : <b>[[Help:Wikiplaces|Help]]</b></span>Here are all the pages within <b>[[$1]]</b>.',
+    'wp-consult-header' => '<span style="float:right">See : <b>[[Help:WikiPlaces|Help]]</b></span>Here are all the pages within <b>[[$1]]</b>.',
     'wp-consult-footer' => '<h3>{{int:tipsntricks}}</h3>
 * {{int:wp-url-tip|$1}}
 * {{int:wp-background-tip|$1}}
 * {{int:wp-navigation-tip|$1}}',
     /* Form: Wikiplace */
-    'wp-create-header' => 'Please fill the form below to create a new WikiPlace.',
+    'wp-create-header' => 'Fill the form below to create a new WikiPlace.',
     'wp-create-section' => 'Create a WikiPlace',
     'wp-name-field' => 'Name:',
     'wp-template-field' => 'Template:',
@@ -78,7 +78,7 @@ $messages['en'] = array(
     'wp-license-field' => 'License:',
     'wp-create-license-help' => 'Select here the license you wish to associate with this page. Your work is to be released under this license.',
     'wp-create-name-help' => 'Type here the Name of your new WikiPlace. It will be available at <u>www.seizam.com/<b>Name</b></u> and its Subpages will be at <u>www.seizam.com/<b>Name</b>/Subpage</u>. <b>Advice:</b> Make it short, easy to remember and easy to type!',
-    'wp-createpage-header' => 'Please fill the form below to create a new page within one of your WikiPlaces.',
+    'wp-createpage-header' => 'Fill the form below to create a new page within one of your WikiPlaces.',
     'wp-createpage-section' => 'Create a Page',
     'wp-parent-wikiplace-field' => 'Parent WikiPlace:',
     'wp-createtalk-field' => 'Also create and open the associated Talk for this page.',
@@ -114,7 +114,7 @@ You are also promising us that you wrote this yourself, or copied it from a publ
 '''Do not submit copyrighted work without permission!'''",
     /* Warning: Wikiplace */
     'wp-invalid-name' => 'This name is invalid.',
-    'wp-name-already-exists' => 'This name already exists. Please retry with a different name.',
+    'wp-name-already-exists' => 'This name already exists. Retry with a different name.',
     'wp-create-wp-first' => 'You need to create a WikiPlace first.',
 	'wp-duplicate-exists' => 'A page with the same name but different case ([[$1]]) already exists.',
 	'wp-duplicate-related' => 'A related page with the same name but different case ([[$1]]) exists. This page has to be named [[$2]].',
@@ -125,10 +125,10 @@ You are also promising us that you wrote this yourself, or copied it from a publ
     /* TablePager: Subscription */
     'wp-subscriptionslist-header' => 'Here are your active subscriptions.',
     'wp-subscriptionslist-noactive-header' => '{{int:wp-sub-noactive}} [[Special:Subscriptions/New|Click here to subscribe !]]',
-    'wp-subscriptionslist-pending-header' => 'Your subscription is pending because it has not been paid for yet. [[Special:ElectronicPayment|Please click here to credit your account.]]',
+    'wp-subscriptionslist-pending-header' => 'Your subscription is pending because it has not been paid for yet. [[Special:ElectronicPayment|Click here to credit your account.]]',
     'wp-subscriptionslist-footer' => 'Would you like to setup your [[Special:Subscriptions/Renew|subscription renewal]] plan? Or perhaps [[Special:Subscriptions/Change|change your plan]] right now?',
     /* Form: Subscription */
-    'wp-sub-new-header' => 'Please fill the form below to subscribe to Seizam.',
+    'wp-sub-new-header' => 'Fill the form below to subscribe to Seizam.',
     'wp-sub-new-section' => 'Subscribe',
     'wp-planfield' => 'Plan:',
     'wp-planfield-help' => 'Select the Seizam Plan you wish to subscribe to from this dropdown list. More details [[Project:Plans|here]].',
@@ -136,7 +136,7 @@ You are also promising us that you wrote this yourself, or copied it from a publ
     'wp-checkfield-unchecked' => 'You need to agree with our Terms and Conditions to subscribe. Please check the box above.',
     'wp-plan-desc-short' => '$1 for $2€',
     'wp-plan-subscribe-go' => 'I subscribe',
-    'wp-sub-renew-header' => 'Please fill the form below to setup your renewal plan.',
+    'wp-sub-renew-header' => 'Fill the form below to setup your renewal plan.',
     'wp-sub-renew-section' => 'Renew my subscription',
     'wp-do-not-renew' => 'Do not renew',
     'wp-plan-renew-go' => 'Set as my next plan',
@@ -153,7 +153,7 @@ You are also promising us that you wrote this yourself, or copied it from a publ
     'wp-diskspace-quota-exceeded' => 'Your file upload quota is exceeded.  {{int:wp-change-plan-required}}',
     'wp-subscribe-already' => 'You already have an active or pending subscription.',
     'wp-subscribe-email' => 'Before taking a subscription, you need to validate your e-mail address. Go to your inbox and click the <u>confirmation link</u> we just sent to you ([[Special:Preferences#mw-htmlform-email|resend]]). Then reload this page.',
-    'wp-subscribe-change' => 'You can select another plan to start from the end of your current subscription through [[Special:Subscriptions/Renew|the subscription renewal page]]. Please [[Project:Contact|contact us]] if you need to switch to another plan right now. {{int:sz-asap}}',
+    'wp-subscribe-change' => 'You can select another plan to start from the end of your current subscription through [[Special:Subscriptions/Renew|the subscription renewal page]]. [[Project:Contact|Contact us]] if you need to switch to another plan right now. {{int:sz-asap}}',
 	'wp-insufficient-quota' => 'Insufficient quota (this plan is too small for your usage).',
 	'wp-plan-not-available-renewal' => 'Plan not available (we do not offer it anymore).',
     
@@ -162,14 +162,14 @@ You are also promising us that you wrote this yourself, or copied it from a publ
     /* Background action */
     'wp-background-action' => 'Background',
     'wp-wikiplace-field' => 'WikiPlace:',
-    'wp-file-page-name-field' => 'File page name:',
-    'wp-setbackground-wikiplace-help' => 'Select here the WikiPlace.',
-    'wp-setbackground-file-page-name-help' => 'Type here the Name of a [[Help:Files|file]] Page. Make sure it doesn\'t have [[Help:Protection|"read" protection]]. Otherwise, the background may not be visible to all your visitors.',
-    'wp-setbackground-go' => 'Setup',
-    'wp-invalid-background' => 'This file is not compatible with background.',
-    'wp-setbackground-header' => '<span style="float:right">See : <b>[[Help:Background|Help]]</b></span>Please fill the form below to setup a background for one of your WikiPlaces.',
-    'wp-setbackground-section' => 'Setup a background',
-    'wp-setbackground-success' => 'Your WikiPlace background has been set!',
+    'wp-filename-field' => 'Filename:',
+    'wp-setbackground-wikiplace-help' => 'Select here the [[Help:WikiPlaces|WikiPlace]] you want to install the background on.',
+    'wp-setbackground-filename-help' => 'Type here the name of an [[Help:Images|image]] [[Help:Files|file]]. Make sure it does not have [[Help:Protection|"read" protection]] and you have the right to use it.',
+    'wp-setbackground-go' => 'Install',
+    'wp-invalid-background' => 'This file is invalid. It cannot be installed as a background.',
+    'wp-setbackground-header' => '<span style="float:right">See : <b>[[Help:Background|Help]]</b></span>Fill the form below to install a background image on your WikiPlace.',
+    'wp-setbackground-section' => 'Install a background',
+    'wp-setbackground-success' => 'The background has been installed on your WikiPlace!',
     
 );
 
@@ -233,16 +233,16 @@ $messages['fr'] = array(
     'wp-sublinkalias-tip' => 'Saisissez <b><nowiki>[[$1/$2|$2]]</nowiki></b> n\'importe où pour faire un [[Help:Liens|lien]] du type : [[$1/$2|$2]].',
     'wp-action-tip' => 'N\'oubliez pas de consulter le <b>menu actions</b> (en haut à droite de chaque page) où se trouvent des réglages comme <b>Protéger</b> ou <b>Suivre</b>.',
     'wp-subpage-tip' => 'Pour créer une sous-page, cliquez [[Special:WikiPlaces/CreatePage:$1|ici]] ou visitez [[$1/NomSousPage|<u>www.seizam.com/<b>$1/NomSousPage</b></u>]].',
-    'wp-background-tip' => 'Pour installer l\'[[Help:Arrière-plan|arrière-plan]], saisissez l\'adresse internet d\'une image sur [[{{ns:Wikiplace}}:$1/'.WPBACKGROUNDKEY.']].',
+    'wp-background-tip' => 'Pour installer l\'[[Help:Arrière-plan|arrière-plan]], saisissez un lien vers l\'image sur [[{{ns:Wikiplace}}:$1/'.WPBACKGROUNDKEY.']].',
     'wp-navigation-tip' => 'Pour installer le [[Help:Navigation pour WikiPlace|menu de navigation]], saisissez une liste de liens sur [[{{ns:Wikiplace}}:$1/'.WPNAVIGATIONKEY.']].',
     /* TablePage: Wikiplace */
-    'wp-list-header' => '<span style="float:right">Voir : <b>[[Help:Wikiplaces/fr|Aide]]</b></span>Voici vos WikiPlaces.',
+    'wp-list-header' => '<span style="float:right">Voir : <b>[[Help:WikiPlaces/fr|Aide]]</b></span>Voici vos WikiPlaces.',
     'wp-list-footer' => '<h3>{{int:statistics}}</h3>
 * Espace disque utilisé : $1
 * Total de pages : $2',
-    'wp-consult-header' => '<span style="float:right">Voir : <b>[[Help:Wikiplaces/fr|Aide]]</b></span>Voici toutes les pages dans <b>[[$1]]</b>.',
+    'wp-consult-header' => '<span style="float:right">Voir : <b>[[Help:WikiPlaces/fr|Aide]]</b></span>Voici toutes les pages dans <b>[[$1]]</b>.',
     /* Form: Wikiplace */
-    'wp-create-header' => 'Merci de remplir ce formulaire pour créer une nouvelle WikiPlace.',
+    'wp-create-header' => 'Remplisser ce formulaire pour créer une nouvelle WikiPlace.',
     'wp-create-section' => 'Créer une WikiPlace',
     'wp-name-field' => 'Nom :',
     'wp-template-field' => 'Modèle :',
@@ -250,7 +250,7 @@ $messages['fr'] = array(
     'wp-create-template-help' => 'Sélectionnez ici le modèle à utiliser pour cette page. Modifiez par la suite ce patron générique pour la personaliser. Voir [[:Category:Modèles_de_pages|tous les modèles]].',
     'wp-create-license-help' => 'Sélectionnez ici la licence que vous souhaitez associer à cette page. Votre travail sera soumis à cette licence.',
     'wp-create-name-help' => 'Saisissez ici le nom de votre nouvelle WikiPlace. Il sera disponnible depuis <u>www.seizam.com/<b>Nom</b></u> et toutes ses sous-pages seront depuis <u>www.seizam.com/<b>Name</b>/Subpage</u>. <b>Conseil :</b> Choisissez un nom court, facile à retenir et facile à saisir !',
-    'wp-createpage-header' => 'Merci de remplir ce formulaire pour créer une nouvelle page dans l\'une de vos WikiPlaces',
+    'wp-createpage-header' => 'Remplissez ce formulaire pour créer une nouvelle page dans l\'une de vos WikiPlaces',
     'wp-createpage-section' => 'Créer une page',
     'wp-parent-wikiplace-field' => 'WikiPlace parente :',
     'wp-createpage-wikiplace-help' => 'Sélectionnez ici la WikiPlace parente. Votre page sera disponnible depuis <u>www.seizam.com/<b>Parent</b>/Nom</u>.',
@@ -282,7 +282,7 @@ Vous nous promettez aussi que vous avez écrit ceci vous-même, ou que vous l’
 '''N'utilisez pas de travaux sous droit d'auteur sans autorisation expresse'''",
     /* Warning: Wikiplace */
     'wp-invalid-name' => 'Ce nom est invalide.',
-    'wp-name-already-exists' => 'Ce nom existe déjà. Merci d\'utiliser un autre nom.',
+    'wp-name-already-exists' => 'Ce nom existe déjà. Utilisez un autre nom.',
     'wp-create-wp-first' => 'Vous devez d\'abord créer une WikiPlace.',
 	'wp-duplicate-exists' => 'Une page ayant le même nom avec une casse différente ([[$1]]) existe déjà.',
 	'wp-duplicate-related' => 'Une page liée ayant le même nom mais avec une casse différente ([[$1]]) existe. Cette page devra se nommer [[$2]].',
@@ -296,7 +296,7 @@ Vous nous promettez aussi que vous avez écrit ceci vous-même, ou que vous l’
     'wp-subscriptionslist-pending-header' => 'Votre abonnement est en attente car il n\'a pas encore été payé. [[Special:ElectronicPayment|Cliquez ici pour créditer votre compte.]]',
     'wp-subscriptionslist-footer' => 'Désirez vous paramétrer le [[Special:Subscriptions/Renew|renouvellement de votre abonnement]] ? Ou peut-être [[Special:Subscriptions/Change|changer d\'abonnement]] immédiatement ?',
     /* Form: Subscription */
-    'wp-sub-new-header' => 'Merci de remplir ce formulaire pour vous abonner à Seizam.',
+    'wp-sub-new-header' => 'Remplissez ce formulaire pour vous abonner à Seizam.',
     'wp-sub-new-section' => 'S\'abonner',
     'wp-planfield' => 'Offre :',
     'wp-planfield-help' => 'Sélectionnez l\'offre Seizam à laquelle vous souhaitez souscrire grâce à ce menu déroulant. Plus de détails [[Project:Plans|ici]].',
@@ -304,7 +304,7 @@ Vous nous promettez aussi que vous avez écrit ceci vous-même, ou que vous l’
     'wp-checkfield-unchecked' => 'Vous devez approuver nos conditions d\'utilisation pour vous abonner. Merci de cocher la case ci-dessus.',
     'wp-plan-desc-short' => '$1 à $2€',
     'wp-plan-subscribe-go' => 'Je m\'abonne',
-    'wp-sub-renew-header' => 'Merci de remplir ce formulaire pour paramétrer le renouvellement de votre abonnement.',
+    'wp-sub-renew-header' => 'Remplissez ce formulaire pour paramétrer le renouvellement de votre abonnement.',
     'wp-sub-renew-section' => 'Renouveler mon abonnement',
     'wp-do-not-renew' => 'Ne pas renouveler',
     'wp-plan-renew-go' => 'Définir',
@@ -321,7 +321,7 @@ Vous nous promettez aussi que vous avez écrit ceci vous-même, ou que vous l’
     'wp-diskspace-quota-exceeded' => 'Votre quota d\'importation de fichiers est dépassé.  {{int:wp-change-plan-required}}',
     'wp-subscribe-already' => 'Vous avez déjà un abonnement actif ou en attente.',
     'wp-subscribe-email' => 'Avant de vous abonner, vous devez valider votre adresse de courriel. Allez dans votre boîte de réception et cliquez sur le <u>lien de confirmation</u> que nous vous avons envoyé ([[Special:Preferences#mw-htmlform-email|réenvoyer]]). Rechargez ensuite cette page.',
-    'wp-subscribe-change' => 'Vous pouvez sélectionner un abonnement qui succédera à l\'actuel depuis [[Special:Subscriptions/Renew|la page de renouvellement d\'abonnement]]. Merci de [[Project:Contact/fr|nous contacter]] si vous avez besoin de changer d\'abonnement immédiatement. {{int:sz-asap}}',
+    'wp-subscribe-change' => 'Vous pouvez sélectionner un abonnement qui succédera à l\'actuel depuis [[Special:Subscriptions/Renew|la page de renouvellement d\'abonnement]]. [[Project:Contact/fr|Contactez-nous]] si vous avez besoin de changer d\'abonnement immédiatement. {{int:sz-asap}}',
     'wp-insufficient-quota' => 'Quota insuffisant (cette offre est trop petite pour votre usage).',
 	'wp-plan-not-available-renewal' => 'Offre indisponnible (cette offre n\'est plus proposée).',
     
@@ -331,13 +331,13 @@ Vous nous promettez aussi que vous avez écrit ceci vous-même, ou que vous l’
     /* Background action */
     'wp-background-action' => 'Arrière-plan',
     'wp-wikiplace-field' => 'WikiPlace :',
-    'wp-file-page-name-field' => 'Nom de page du fichier :',
-    'wp-setbackground-wikiplace-help' => 'Sélectionnez ici la WikiPlace.',
-    'wp-setbackground-file-page-name-help' => 'Saisissez ici le nom de page du [[Help:Fichiers|fichier]]. Assurez-vous que le fichier image n\'est pas [[Help:Protection/fr|protégé en "lecture"]], sinon l\'arrière-plan pourrait ne pas être visible par tous vos visiteurs.',
+    'wp-filename-field' => 'Nom du fichier :',
+    'wp-setbackground-wikiplace-help' => 'Sélectionnez ici la WikiPlace sur laquelle installer l\'arrière plan',
+    'wp-setbackground-filename-help' => 'Saisissez ici le nom du [[Help:Fichiers|fichier]] [[Help:Images/fr|image]]. Assurez-vous que ce fichier n\'est pas [[Help:Protection/fr|protégé en "lecture"]] et que vous avez le droit de l\'utiliser.',
     'wp-setbackground-go' => 'Installer',
     'wp-invalid-background' => 'Ce fichier ne peut pas être utilisé comme arrière-plan.',
-    'wp-setbackground-header' => '<span style="float:right">Voir : <b>[[Help:Arrière-plan|Aide]]</b></span>Merci de remplir ce formulaire pour installer un arrière-plan à l\'un de vos WikiPlaces.',
+    'wp-setbackground-header' => '<span style="float:right">Voir : <b>[[Help:Arrière-plan|Aide]]</b></span>Remplissez ce formulaire pour installer une image d\'arrière-plan à l\'une de vos WikiPlaces.',
     'wp-setbackground-section' => 'Installer un arrière-plan',
-    'wp-setbackground-success' => 'Votre arrière-plan a été installé !',
+    'wp-setbackground-success' => 'L\'arrière-plan a été installé !',
     
 );

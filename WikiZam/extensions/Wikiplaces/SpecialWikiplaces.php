@@ -429,9 +429,9 @@ class SpecialWikiplaces extends SpecialPage {
             ),
             'FilePageName' => array(
                 'type' => 'text',
-                'label-message' => 'wp-file-page-name-field',
+                'label-message' => 'wp-filename-field',
                 'section' => 'setbackground-section',
-                'help-message' => 'wp-setbackground-file-page-name-help',
+                'help-message' => 'wp-setbackground-filename-help',
                 'validation-callback' => array($this, 'validateBackgroundFilePageName'),
                 'size' => 60,
                 'default' => $this->filePageName,
