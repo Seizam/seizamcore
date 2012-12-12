@@ -75,19 +75,4 @@ $messages['fr'] = array(
     'wikieditor-toolbar-widget-insert' => 'Insérer le widget',
     'wikieditor-toolbar-widget-cancel' => 'Annuler',
     'wikieditor-toolbar-widget-help' => 'Voir l\'aide sur <b><a target="_blank" href="/Widget:$1/fr">Widget:$1</a></b>',
-    'wikieditor-toolbar-widget-list' => '<nowiki>
-{{:Media}}
-{{Vimeo:id = 43347454
-| width = 392px
-| height = 220px
-| right}}
-{{:Social}}
-{{Twitter:user = TechCrunch
-| list = realtime-web
-| width = 220
-| height = 180
-| scrollbar
-| live
-| right}}
-</nowiki>',
 );
