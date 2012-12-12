@@ -646,7 +646,7 @@ $.wikiEditor.modules.dialogs.config = {
 					$( '#wikieditor-toolbar-widget-select' ).append($('<option></option>')
 						.attr("selected", "selected")
 						.attr("value", "")
-						.text("Please select a widget"));
+						.text( mw.msg( "wikieditor-toolbar-widget-default" )));
 					// Parse, setup and store widget list
 					var widgets = mw.msg( 'wikieditor-toolbar-widget-list' );
 					widgets = widgets.replace("<nowiki>\n{{", "", "gi");
@@ -678,7 +678,7 @@ $.wikiEditor.modules.dialogs.config = {
 				},
 				dialog: {
 					dialogClass: 'wikiEditor-toolbar-dialog',
-					width: 590,
+					width: 500,
 					buttons: {
 						'wikieditor-toolbar-widget-insert': function () {
 							var widget = $( '#wikieditor-toolbar-widget-select' ).val();
@@ -825,7 +825,7 @@ $.wikiEditor.modules.dialogs.config = {
 				dialog: {
 					resizable: false,
 					dialogClass: 'wikiEditor-toolbar-dialog',
-					width: 590,
+					width: 500,
 					buttons: {
 						'wikieditor-toolbar-tool-file-insert': function () {
 							var fileName, caption, fileFloat, fileFormat, fileSize, fileTitle,
