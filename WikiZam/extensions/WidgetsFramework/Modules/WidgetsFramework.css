@@ -85,6 +85,32 @@ img.gravatar {
     border: 1px solid #dad9d9;
 }
 
+/* CSS for www.seizam.com/Template:Signature */
+p.signature {
+    display: inline-block; 
+    min-width: 180px;
+    padding: 4px; 
+    border:1px solid #dad9d9;
+    background-color: #f2f2f2;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+}
+
+p.signature img.gravatar {
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+p.signature img.gravatar.wfmk_right {
+    margin-left: 8px;
+}
+
+p.signature img.gravatar.wfmk_left {
+    margin-right: 8px;
+}
+
 
 /* Button */
 a.wfmk_button {
