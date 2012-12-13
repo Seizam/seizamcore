@@ -847,16 +847,14 @@ class WikiplacesHooks {
      * @return string|false if unavailable 
      */
     private static function getBackgroundUrlForOther($title) {
-        $backgroundKey = WPBACKGROUNDKEY . '-' . $title->getNamespaceKey('') . '-' . $title->getDBkey();
-        $backgroundMessage = wfMessage($backgroundKey);
-        wfDebugLog('devbedhed', $backgroundKey);
+        $backgroundKey = WPBACKGROUNDKEY . '-' . $title->getSubjectNsText() . '-' . $title->getDBkey();
+        $backgroundMessage = wfMessage(strtolower($backgroundKey));
         if ($backgroundMessage->exists()) {
             return self::getBackgroundUrl($backgroundMessage->text());
         }
 
-        $backgroundKey = WPBACKGROUNDKEY . '-' . $title->getNamespaceKey('');
-        $backgroundMessage = wfMessage($backgroundKey);
-        wfDebugLog('devbedhed', $backgroundKey);
+        $backgroundKey = WPBACKGROUNDKEY . '-' . $title->getSubjectNsText();
+        $backgroundMessage = wfMessage(strtolower($backgroundKey));
         if ($backgroundMessage->exists()) {
             return self::getBackgroundUrl($backgroundMessage->text());
         }
