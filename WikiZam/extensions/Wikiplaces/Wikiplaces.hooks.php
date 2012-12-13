@@ -376,14 +376,14 @@ class WikiplacesHooks {
      */
     private static function wikiplaceUserCanAutopatrol($title, $user) {
         $back = array();
-        
+
         if (!$user->isAllowed(WP_ADMIN_RIGHT) && !WpPage::isOwner($title->getArticleID(), $user)) {
             $back[] = 'wp-not-owner';
         }
-        
+
         return $back;
     }
-    
+
     /**
      * Called when creating a new article, but after onArticleSave
      * @param WikiPage $wikipage the Article or WikiPage (object) saved. Article for MW < 1.18, WikiPage for MW >= 1.18
@@ -762,7 +762,7 @@ class WikiplacesHooks {
 
         return true;
     }
-    
+
     /**
      * If the page is in a Wikiplace namespace, search the owner and answer.
      * If the page is in a Wikiplace namespace but cannot be found, state only 
@@ -824,51 +824,52 @@ class WikiplacesHooks {
     }
 
     /**
-     * skinTemplateOutputPageBeforeExec hook
-     * 
-     * Cooks the skin template Seizam-Style!
-     * 
-     * @param SkinSkinzam $skin
-     * @param SkinzamTemplate $tpl
+     * Returns an image url from a wikiplace name
+     * @param string $wikiplaceKey
+     * @return string|false if unavailable 
      */
-    public static function skinTemplateOutputPageBeforeExec(&$skin, &$tpl) {
-        $background['url'] = false;
-        $navigation['content'] = false;
-        $headerTitle['content'] = false;
+    private static function getBackgroundUrlForWikiPlace($wikiplaceKey) {
+        $backgroundPageKey = $wikiplaceKey . '/' . WPBACKGROUNDKEY;
+        $backgroundPageTitle = Title::newFromText($backgroundPageKey, NS_WIKIPLACE);
 
-        $title = $skin->getRelevantTitle();
-        $ns = $title->getNamespace();
-        if ($title->exists() && WpPage::isInWikiplaceNamespaces($ns)) {
-            $explosion = WpWikiplace::explodeWikipageKey($title->getText(), $ns);
-            $wikiplaceKey = $explosion[0];
-
-            // Wikiplace Background?g|png|gif)$/i';
-            $background['url'] = self::getBackgroundUrl($wikiplaceKey);
-
-            // Wikiplace Navigation Menu
-            $navigationKey = $wikiplaceKey . '/' . WPNAVIGATIONKEY;
-            $navigationTitle = Title::newFromText($navigationKey, NS_WIKIPLACE);
-            $navigationPage = WikiPage::factory($navigationTitle);
-            $navigationText = $navigationPage->getText();
-            if ($navigationText) {
-                $navigationArticle = Article::newFromTitle($navigationTitle, $skin->getContext());
-                $navigation['content'] = $navigationArticle->getOutputFromWikitext($navigationText)->getText();
-            }
-        }
-        $tpl->set('wp_background', $background);
-        $tpl->set('wp_navigation', $navigation);
-        return true;
-    }
-
-    private static function getBackgroundUrl($wikiplaceKey) {
-        $backgroundKey = $wikiplaceKey . '/' . WPBACKGROUNDKEY;
-        $backgroundTitle = Title::newFromText($backgroundKey, NS_WIKIPLACE);
-        $backgroundPage = WikiPage::factory($backgroundTitle);
+        $backgroundPage = WikiPage::factory($backgroundPageTitle);
         $backgroundText = $backgroundPage->getText();
         if (!$backgroundText) {
             return false;
         }
 
+        return self::getBackgroundUrl($backgroundText);
+    }
+
+    /**
+     * Returns an image url from a non-wikiplace title
+     * @param Title $title 
+     * @return string|false if unavailable 
+     */
+    private static function getBackgroundUrlForOther($title) {
+        $backgroundKey = WPBACKGROUNDKEY . '-' . $title->getNamespaceKey('') . '-' . $title->getDBkey();
+        $backgroundMessage = wfMessage($backgroundKey);
+        wfDebugLog('devbedhed', $backgroundKey);
+        if ($backgroundMessage->exists()) {
+            return self::getBackgroundUrl($backgroundMessage->text());
+        }
+
+        $backgroundKey = WPBACKGROUNDKEY . '-' . $title->getNamespaceKey('');
+        $backgroundMessage = wfMessage($backgroundKey);
+        wfDebugLog('devbedhed', $backgroundKey);
+        if ($backgroundMessage->exists()) {
+            return self::getBackgroundUrl($backgroundMessage->text());
+        }
+        
+        return false;
+    }
+
+    /**
+     * Returns an image url parsed from a page
+     * @param Title $backgroundPageTitle
+     * @return string|false if unavailable 
+     */
+    private static function getBackgroundUrl($backgroundText) {
         $patternForFile = '/^\[\[File:([^\]\|]+).*\]\]/m';
         $matchesForFile = array();
         if (preg_match($patternForFile, $backgroundText, $matchesForFile)) {
@@ -888,7 +889,46 @@ class WikiplacesHooks {
         return false;
     }
 
-    
+    /**
+     * skinTemplateOutputPageBeforeExec hook
+     * 
+     * Cooks the skin template Seizam-Style!
+     * 
+     * @param SkinSkinzam $skin
+     * @param SkinzamTemplate $tpl
+     */
+    public static function skinTemplateOutputPageBeforeExec(&$skin, &$tpl) {
+        $background['url'] = false;
+        $navigation['content'] = false;
+
+        $title = $skin->getRelevantTitle();
+        $ns = $title->getNamespace();
+        if (WpPage::isInWikiplaceNamespaces($ns)) {
+            $explosion = WpWikiplace::explodeWikipageKey($title->getText(), $ns);
+            $wikiplaceKey = $explosion[0];
+
+            // Wikiplace Background?g|png|gif)$/i';
+            $background['url'] = self::getBackgroundUrlForWikiPlace($wikiplaceKey);
+
+            // Wikiplace Navigation Menu
+            $navigationKey = $wikiplaceKey . '/' . WPNAVIGATIONKEY;
+            $navigationTitle = Title::newFromText($navigationKey, NS_WIKIPLACE);
+            $navigationPage = WikiPage::factory($navigationTitle);
+            $navigationText = $navigationPage->getText();
+            if ($navigationText) {
+                $navigationArticle = Article::newFromTitle($navigationTitle, $skin->getContext());
+                $navigation['content'] = $navigationArticle->getOutputFromWikitext($navigationText)->getText();
+            }
+        } else {
+            $background['url'] = self::getBackgroundUrlForOther($title);
+        }
+
+
+
+        $tpl->set('wp_background', $background);
+        $tpl->set('wp_navigation', $navigation);
+        return true;
+    }
 
     /**
      *
