@@ -61,21 +61,24 @@ class Gravatar extends ParserFunction {
 
 		$this->addParameter($float);
 	}
+    
+    /**
+     * @return string 
+     */
+    public function getCSSClasses() {
 
-	/**
-	 * 
-	 * @return string
-	 */
-	protected function getClass() {
+        $classes = array();
 
-		if ($this->right->getValue()) {
-			return 'class="wfmk_right" ';
-		} elseif ($this->left->getValue()) {
-			return 'class="wfmk_left" ';
-		} else {
-			return '';
-		}
-	}
+        $classes[] = 'gravatar';
+
+        if ($this->right->getValue()) {
+            $classes[] = 'wfmk_right';
+        } elseif ($this->left->getValue()) {
+            $classes[] = 'wfmk_left';
+        }
+
+        return Tools::ArrayToCSSClasses($classes);
+    }
 
 	protected function getOutput() {
 
@@ -101,11 +104,16 @@ class Gravatar extends ParserFunction {
 		$rating = '&r=g'; // "suitable for display on all websites with any audience type."
 
 		return $a_open .
-				'<img ' .
-				$this->getClass() .
-				' src="http://www.gravatar.com/avatar/' . $email_md5 . '?' .
-				$size . $rating . $force_default . '&d=mm" alt="" />' .
-				$a_close;
+				'<img class="'
+                . $this->getCSSClasses()
+                . '" src="http://www.gravatar.com/avatar/'
+                . $email_md5
+                . '?'
+                . $size
+                . $rating
+                . $force_default
+                . '&d=mm" alt="" />'
+				.$a_close;
 	}
 
 }

@@ -80,6 +80,11 @@ div.addthis_toolbox.addthis_32x32_style.vertical{
     width:32px
 }
 
+/* Gravatar */
+img.gravatar {
+    border: 1px solid #dad9d9;
+}
+
 
 /* Button */
 a.wfmk_button {

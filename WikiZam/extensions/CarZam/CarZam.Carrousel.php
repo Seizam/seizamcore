@@ -233,43 +233,47 @@ class CarZamCarrousel {
      * @return string 
      */
     private function thumbToHTML($img, $nt, $text = '', $alt = '', $descQuery = '') {
-        if (self::imgIsVertical($img)) {
-            $params = array(
-                'height' => $this->mPhotoHeight, #no contraint on height
-                'width' => $this->mThumbHeight, 
-            );
-        } else {
-            $params = array(
-                'height' => $this->mThumbHeight,
-                'width' => $this->mPhotoWidth, #no constraint on width
-            );
-        }
 
         if (!$img) {
-            $html = '<a class="CarError" style="height: ' . $params['height'] . 'px; width: ' . $this->mThumbWidth . 'px;">'
+            $html = '<a class="CarError" style="height: ' . $this->mThumbHeight . 'px; width: ' . $this->mThumbWidth . 'px;">'
                     . htmlspecialchars($nt->getText()) . '</a>';
         } else if ($this->mHideBadImages && wfIsBadImage($nt->getDBkey(), $this->getContextTitle())) {
-            $html = '<a class="CarError" style="height: ' . $params['height'] . 'px; width: ' . $this->mThumbWidth . 'px;">' .
+            $html = '<a class="CarError" style="height: ' . $this->mThumbHeight . 'px; width: ' . $this->mThumbWidth . 'px;">' .
                     Linker::link(
                             $nt, htmlspecialchars($nt->getText()), array(), array(), array('known', 'noclasses')
                     ) .
                     '</a>';
-        } else if (!( $thumb = $img->transform($params) )) {
-            # Error generating thumbnail.
-            $html = '<a class="CarError" style="height: ' . $params['height'] . 'px; width: ' . $this->mThumbWidth . 'px;">' . plop . '</a>';
         } else {
-            $imageParameters = array(
-                'desc-link' => true,
-                'desc-query' => $descQuery,
-                'alt' => $alt,
-            );
-
-            # In the absence of both alt text and caption, fall back on providing screen readers with the filename as alt text
-            if ($alt == '') {
-                $imageParameters['alt'] = $nt->getText();
+            
+            if (self::imgIsVertical($img)) {
+                $params = array(
+                    'height' => $this->mPhotoHeight, #no contraint on height
+                    'width' => $this->mThumbHeight,
+                );
+            } else {
+                $params = array(
+                    'height' => $this->mThumbHeight,
+                    'width' => $this->mPhotoWidth, #no constraint on width
+                );
             }
 
-            $html = $thumb->toHtml($imageParameters);
+            if (!( $thumb = $img->transform($params) )) {
+                # Error generating thumbnail.
+                $html = '<a class="CarError" style="height: ' . $this->mThumbHeight . 'px; width: ' . $this->mThumbWidth . 'px;"></a>';
+            } else {
+                $imageParameters = array(
+                    'desc-link' => true,
+                    'desc-query' => $descQuery,
+                    'alt' => $alt,
+                );
+
+                # In the absence of both alt text and caption, fall back on providing screen readers with the filename as alt text
+                if ($alt == '') {
+                    $imageParameters['alt'] = $nt->getText();
+                }
+
+                $html = $thumb->toHtml($imageParameters);
+            }
         }
         return $html;
     }
