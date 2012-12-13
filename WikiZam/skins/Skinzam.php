@@ -396,7 +396,7 @@ class SkinzamTemplate extends BaseTemplate {
             </div>
             <!-- /header -->
             <!-- bodyCcontent -->
-            <div id="bodyContent" class="block block_full block_flat mainpage" role="main"<?php $this->html('specialpageattributes') ?>> <!--<div id="main" role="main">-->
+            <div id="bodyContent" class="block_full mainpage" role="main"<?php $this->html('specialpageattributes') ?>> <!--<div id="main" role="main">-->
                 <!-- bodytext -->
                 <?php $this->html('bodytext') ?>
                 <!-- /bodytext -->
