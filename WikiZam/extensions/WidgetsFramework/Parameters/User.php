@@ -2,9 +2,9 @@
 
 namespace WidgetsFramework;
 
-class Title extends Parameter {
-
-    /**
+class User extends Parameter {
+	
+	/**
      * <ul>
      * <li>The default value is <i>null</i></li>
      * <li>The parameter is not required</li>
@@ -17,14 +17,14 @@ class Title extends Parameter {
 
         $this->default_value = null;
     }
-
+	
     /**
-     * Transforms from string to MediaWiki Title object.
+     * Transforms from string to MediaWiki User object.
      * Require a value.
      * 
      * @param string|boolean $value A string or boolean <i>true</i>
-     * @return \Title
-     * @throws UserError When value is not a valid title name.
+     * @return \User
+     * @throws UserError When value is not an existing username.
      */
     public function parse($value) {
 
@@ -35,16 +35,25 @@ class Title extends Parameter {
 
         $title = \Title::newFromText($value);
         if (is_null($title)) {
-            Tools::ThrowUserError(wfMessage('wfmk-title-syntax', $this->getName()));
+            Tools::ThrowUserError(wfMessage('wfmk-user-syntax', $this->getName()));
+        }
+		
+		$user = \User::newFromName($value, 'usable');
+		if (!$user || $user->getId() == 0) {
+            Tools::ThrowUserError(wfMessage('wfmk-user-syntax', $this->getName()));
         }
 
-        return $title;
+        return $user;
     }
 
+	/**
+	 * Returns the username.
+	 * @return String
+	 */
     public function getOutput() {
-        /** @var \Title */
+        /** @var \User */
         $value = $this->getValue();
-        return $value->getFullURL();
+        return $value->getName();
     }
-
+	
 }
