@@ -62,12 +62,17 @@ class TitleExplosion {
         $ns = $this->title->getNamespace();
 
         $titles = array();
-        $explosion = explode('/', $this->title->getText());
-        $text = '';
-        foreach ($explosion as $atom) {
-            $text .= $atom;
-            $titles[] = Title::newFromText($text, $ns);
-            $text .= '/';
+
+        if ( !MWNamespace::hasSubpages( $ns ) ) {
+            $titles[] = $this->title;
+        } else {
+            $explosion = explode('/', $this->title->getText());
+            $text = '';
+            foreach ($explosion as $atom) {
+                $text .= $atom;
+                $titles[] = Title::newFromText($text, $ns);
+                $text .= '/';
+            }
         }
 
         $this->titles = $titles;
