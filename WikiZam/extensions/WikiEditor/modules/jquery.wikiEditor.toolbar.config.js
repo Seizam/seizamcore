@@ -176,7 +176,7 @@ getDefaultConfig: function() {
 							'action': {
 								'type': 'encapsulate',
 								'options': {
-									'pre': "{{subst:Signature/subst}}"
+									'pre': "{{subst:Sign}}"
 								}
 							}
 						}
