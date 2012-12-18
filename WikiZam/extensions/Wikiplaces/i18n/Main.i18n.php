@@ -68,7 +68,8 @@ $messages['en'] = array(
     'wp-consult-footer' => '<h3>{{int:tipsntricks}}</h3>
 * {{int:wp-url-tip|$1}}
 * {{int:wp-background-tip|$1}}
-* {{int:wp-navigation-tip|$1}}',
+* {{int:wp-navigation-tip|$1}}
+* {{int:wp-members-tip|$1}}',
     /* Form: Wikiplace */
     'wp-create-header' => 'Fill the form below to create a new WikiPlace.',
     'wp-create-section' => 'Create a WikiPlace',
@@ -170,7 +171,7 @@ You are also promising us that you wrote this yourself, or copied it from a publ
     'wp-setbackground-header' => '<span style="float:right">See : <b>[[Help:Background|Help]]</b></span>Fill the form below to install a background image on your WikiPlace.',
     'wp-setbackground-section' => 'Install a background',
     'wp-setbackground-success' => 'The background has been installed on your WikiPlace!',
-    
+	    
 );
 
 /*

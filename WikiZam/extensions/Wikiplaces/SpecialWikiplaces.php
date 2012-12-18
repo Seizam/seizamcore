@@ -8,7 +8,9 @@ class SpecialWikiplaces extends SpecialPage {
 	const ACTION_LIST_WIKIPLACES = 'List';
 	const ACTION_CONSULT_WIKIPLACE = 'Consult';
     const ACTION_SET_BACKGROUND = 'SetBackground';
-    
+    const ACTION_LIST_MEMBERS = 'Members';
+	const ACTION_ADD_MEMBER = 'AddMember';
+	const ACTION_REMOVE_MEMBER = 'RemoveMember';
     
     
     private $action = self::ACTION_LIST_WIKIPLACES;
@@ -16,6 +18,7 @@ class SpecialWikiplaces extends SpecialPage {
     private $msgType = null;
     private $msgKey = null;
     private $filePageName = null;
+	private $user = null;
 
 	private $homepageString;
 	private $subpageString;
@@ -67,6 +70,7 @@ class SpecialWikiplaces extends SpecialPage {
         $this->msgType = $request->getText('msgtype', $this->msgType);
         $this->msgKey = $request->getText('msgkey', $this->msgKey);
         $this->filePageName = $this->getRequest()->getText('filePageName', null);
+		$this->user = $this->getRequest()->getText('user', null);
         
         $this->display();
 		
@@ -104,7 +108,19 @@ class SpecialWikiplaces extends SpecialPage {
             case strtolower(self::ACTION_SET_BACKGROUND):
 				$this->displaySetBackground();
 				break;
-            
+			
+			case strtolower(self::ACTION_LIST_MEMBERS):
+				$this->displayListMembers();
+				break;
+			
+			case strtolower(self::ACTION_ADD_MEMBER):
+				$this->displayAddMember();
+				break;
+			
+			case strtolower(self::ACTION_REMOVE_MEMBER):
+				$this->processRemoveMember(); // this action has no display
+				break;
+			
 			case strtolower(self::ACTION_LIST_WIKIPLACES):
 			default:
 				$this->displayList();
@@ -503,8 +519,211 @@ class SpecialWikiplaces extends SpecialPage {
 
         return $ok;
     }
+	
 
-    public function displayConsultWikiplace() {
+	/**
+	 * Ensures <ul>
+	 * <li>the wikiplace exists and</li>
+	 * <li>the User executing this instance is the wikiplace owner</li>
+	 * </ul>
+	 * If WikiPlace is not good, this function displays ACTION_LIST_WIKIPLACES page with error message and returns <code>null</code>.
+	 * @param string|int|WpWikiplace $wikiplace The wikiplace name (with spaces or undescores), or id, or instance
+	 * @return WpWikiplace|null The WpWikiPlace if OK, or null
+	 */
+	protected function checkWikiPlace($wikiplace) {
+		
+		$error = 'internalerror'; // "Internal error", cleared if $wikiplace not null
+		
+		if ( is_string($wikiplace) ) {
+			$title = Title::newFromText($wikiplace);
+			if ( ! is_null($title) ) {
+				$wikiplace = WpWikiplace::newFromName($title->getDBkey());
+			}
+			$error = 'wp-invalid-name'; // "This name is invalid.", cleared if $wikiplace not null
+		} elseif ( is_int($wikiplace) ) {
+			$wikiplace = WpWikiplace::getById($wikiplace);		
+		} 
+		
+		if ( $wikiplace instanceof WpWikiplace) {
+			if ( ! $wikiplace->isOwner( $this->getUser()->getId() ) ) {
+				$error = 'wp-not-owner'; // "you are not the owner of this wp"
+			} else {
+				$error = null; // ok :)
+			}
+		}
+		
+		if ( !is_null($error) ) {
+			$this->action = self::ACTION_LIST_WIKIPLACES;
+			$this->msgKey = $error;
+			$this->msgType = 'error';
+			$this->display();
+			return null;
+		}
+		
+		// else : ok :)
+		return $wikiplace;		
+	}
+	
+
+	/**
+	 * Populates the "option" key of the table $selectDescriptor, and returns it.
+	 * @param array $selectDescriptor HTMLForm select field descriptor
+	 * @param null|array $wikiplaces Optional, array of WpWikiplace instances
+	 * (if null, uses all wikiplaces owned by the User executing this MediaWiki instance)
+	 * @param string|null $selected Optional, the WikiPlace name (the text form 
+	 * with spaces, not underscores, see WpWikiPlace->getName()) 
+	 * to set as default (if null, no
+	 * WikiPlace set as default)
+	 */
+	protected function populateWikiPlaceSelect($selectDescriptor, $wikiplaces = null, $default = null) {
+		if (is_null($wikiplaces) ) {
+			$wikiplaces = WpWikiplace::factoryAllOwnedByUserId($this->getUser()->getId());
+		}
+		foreach ($wikiplaces as $wikiplace) {
+			if ( ! $wikiplace instanceof WpWikiplace ) {
+				continue; // skip
+			}
+            $wpw_name = $wikiplace->getName();
+            $selectDescriptor['options'][$wpw_name] = $wikiplace->getId();
+            if ($default == $wpw_name) {
+                $selectDescriptor['default'] = $wikiplace->getId();
+            }
+        }
+		
+		return $selectDescriptor;	
+	}
+	
+	public function displayListMembers() {
+		
+		$wikiplace = $this->checkWikiPlace($this->name);
+		if (is_null($wikiplace)) {
+			return; // action ACTION_LIST_WIKIPLACES with error message already displayed
+		}
+		
+		$wikiplaceName = $wikiplace->getName();
+		$tp = new WpMembersTablePager();
+		$tp->setSelectConds(array(
+			'wpm_wpw_id' => $wikiplace->getId() ) );
+		$tp->setWikiPlace($wikiplace); // used for generating links
+		$tp->setHeader(wfMessage('wp-members-list-header', $wikiplaceName)->parse());
+		$tp->setFooter(wfMessage('wp-members-list-footer', $wikiplaceName)->parse());
+		$this->getOutput()->addHTML($tp->getWholeHtml());
+
+	}
+	
+	public function displayAddMember() {
+		
+		// check and normalise WikiPlace name if sets
+		if ( !empty($this->name) ) {
+			if (is_null($wikiplace = $this->checkWikiPlace($this->name))) {
+				return; // action ACTION_LIST_WIKIPLACES with error message already displayed
+			}
+			$this->name = $wikiplace->getName();
+		}
+		
+		$wikiplaceSelect = $this->populateWikiPlaceSelect(
+				array(
+			'type' => 'select',
+			'label-message' => 'wp-wikiplace-field',
+			'section' => 'addmember-section',
+			'help-message' => 'wp-setbackground-wikiplace-help',
+			'validation-callback' => array($this, 'validateUserWikiplaceID'),
+			'options' => array(),
+				), null, $this->name);
+		
+		$usernameText = array(
+			'type' => 'text',
+			'label-message' => 'username',
+			'section' => 'addmember-section',
+			'help-message' => 'wp-addmember-username-help',
+			'validation-callback' => array($this, 'validateUserName'),
+			'size' => 60,
+			'default' => '',
+		);
+
+		$htmlForm = new HTMLFormS(array(
+					'WpId' => $wikiplaceSelect,
+					'UserName' => $usernameText,
+				));
+		$htmlForm->addHeaderText(wfMessage('wp-members-add-header')->parse());
+		$htmlForm->setMessagePrefix('wp');
+		$htmlForm->setTitle($this->getTitle(self::ACTION_ADD_MEMBER));
+		$htmlForm->setSubmitCallback(array($this, 'processAddMember'));
+		$htmlForm->setSubmitText(wfMessage('wp-add-member')->text());
+		
+		if ($htmlForm->show()) {
+			$this->action = self::ACTION_LIST_MEMBERS;
+            $this->msgKey = 'wp-add-member-success';
+            $this->msgType = 'success';
+            $this->display();
+            return;
+		}
+	}
+
+	public function validateUserName($user_name, $allData) {
+
+		if ($user_name == null) {
+			return false;
+		}
+		
+		$user = User::newFromName($user_name);
+        if (!$user || $user->getId() == 0 ) {
+			return wfMessage('nosuchusershort', $user_name);
+		}
+
+		return true; // ok
+	}
+
+	public function processAddMember($formData) {
+
+		if (!isset($formData['WpId']) || !isset($formData['UserName'])) {
+			throw new MWException('Cannot add member, no data.');
+		}
+		
+		$wikiplace = WpWikiplace::getById(intval($formData['WpId']));
+		$user = User::newFromName($formData['UserName']);
+		
+		if ( WpMember::IsMember($wikiplace, $user) ) {
+			return wfMessage('wp-already-member');
+		}
+		
+		if ( is_null( $member = WpMember::create($wikiplace, $user ) ) ) {
+			return wfMessage('internalerror');
+		}
+
+		$this->name = $wikiplace->getName();
+		return true;
+	}
+
+	/**
+	 * Uses GET data
+	 */
+	public function processRemoveMember() {
+		
+		if (is_null($wikiplace = $this->checkWikiPlace($this->name))) {
+			return ;
+		}
+		
+		if ( ( $this->validateUserName($this->user, null) !== true )
+				|| ( ! ($user = User::newFromName($this->user)) instanceof User ) // already validated, so always ok
+				|| ( ! WpMember::IsMember($wikiplace, $user)) ) {
+			$this->action = self::ACTION_LIST_MEMBERS;
+            $this->msgKey = 'wp-not-member';
+            $this->msgType = 'error';
+            $this->display();
+            return;
+		}
+		
+		// remove
+		
+		$this->action = self::ACTION_LIST_MEMBERS;
+		$this->msgKey = 'wp-remove-member-success';
+		$this->msgType = 'success';
+		$this->display();
+		return;
+	}
+	
+	public function displayConsultWikiplace() {
 		$tp = new WpPagesTablePager();
 		$title = Title::newFromText($this->name);
 		$titleText = $title->getText();
@@ -559,5 +778,29 @@ class SpecialWikiplaces extends SpecialPage {
                     'action' => self::ACTION_SET_BACKGROUND,
                     'filePageName' => $file_page_name));
     }
+	
+	/**
+	 * Generate a link to the form for adding a member to a wikiplace
+	 * @param String $wikiplace_name should be $homepageTitle->getText()
+	 * @return string a HTML link
+	 */
+	public static function getLinkAddMember($wikiplace_name = null, $i18n_key = 'wp-add-member') {
+		return Linker::linkKnown(self::getTitleFor(self::TITLE_NAME, self::ACTION_ADD_MEMBER . ':' . $wikiplace_name), wfMessage($i18n_key)->text());
+	}
+
+	/**
+	 * 
+	 * @param string $wikiplace_name
+	 * @param string $username
+	 * @param string $i18n_key
+	 * @return string HTML link
+	 */
+	public static function getLinkRemoveMember($wikiplace_name = null, $user_name = null, $i18n_key = 'wp-remove-member') {
+		$title = self::getTitleFor(self::TITLE_NAME);
+		return Linker::linkKnown($title, $i18n_key, array(), array(
+                    'action' => self::ACTION_REMOVE_MEMBER,
+					'name' => $wikiplace_name,
+					'user' => $user_name ) );
+	}
 
 }

@@ -22,6 +22,7 @@ class WikiplacesHooks {
             'wp_invitation',
             'wp_invitation_category',
             'wp_wpi_wpp',
+			'wp_member',
         );
 
         $mysql_dir = dirname(__FILE__) . '/schema/mysql';

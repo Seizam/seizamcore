@@ -54,6 +54,8 @@ $wgAutoloadClasses['WpInvitationsTablePager'] = $_dir . 'model/WpInvitationsTabl
 $wgAutoloadClasses['WpInvitationsTablePagerAdmin'] = $_dir . 'model/WpInvitationsTablePager.php';
 $wgAutoloadClasses['SpecialInvitation'] = $_dir . 'SpecialInvitation.php';
 $wgAutoloadClasses['SpecialInvitations'] = $_dir . 'SpecialInvitations.php';
+$wgAutoloadClasses['WpMembersTablePager'] = $_dir . 'model/WpMembersTablePager.php';
+$wgAutoloadClasses['WpMember'] = $_dir . 'model/WpMember.php';
 
 # i18n
 $_i18n_dir = $_dir.'i18n/';
@@ -61,6 +63,7 @@ $wgExtensionMessagesFiles['Wikiplaces'] = $_i18n_dir.'Main.i18n.php';
 $wgExtensionMessagesFiles['Wikiplaces.invitations'] = $_i18n_dir.'Invitations.i18n.php';
 $wgExtensionMessagesFiles['Wikiplaces.plans'] = $_i18n_dir.'Plans.i18n.php';
 $wgExtensionMessagesFiles['Wikiplaces.mail'] = $_i18n_dir.'Mail.i18n.php';
+$wgExtensionMessagesFiles['Wikiplaces.members'] = $_i18n_dir.'Members.i18n.php';
 
 # Name aliases
 $wgExtensionAliasesFiles['Wikiplaces'] = $_dir . 'Wikiplaces.alias.php';
