@@ -173,6 +173,7 @@ function setupWikiplaces() {
 	$wgHooks['getUserPermissionsErrors'][] = 'WikiplacesHooks::getUserPermissionsErrors'; //former usercan
 	$wgHooks['TransactionUpdated'][] = 'WikiplacesHooks::onTransactionUpdated';
 	$wgHooks['IsOwner'][] = 'WikiplacesHooks::isOwner';
+	$wgHooks['IsMember'][] = 'WikiplacesHooks::isMember';
 	$wgHooks['ImgAuthFullyStreamedFile'][] = 'WikiplacesHooks::onImgAuthFullyStreamedFile';
 	$wgHooks['SkinTemplateNavigation'][] = 'WikiplacesHooks::SkinTemplateNavigation'; // Remove delete from action menu if necessary
 	$wgHooks['EditPageCopyrightWarning'][] = 'WikiplacesHooks::EditPageCopyrightWarning'; // Cooks the edit page warning

@@ -68,6 +68,18 @@ class WpMember {
 	}
 
 	/**
+	 * After using this method, the WpMember instance should not be used anymore.
+	 * @return boolean <code>true</code> if successfull.
+	 */
+	public function delete() {
+		$dbw = wfGetDB(DB_MASTER);
+		$dbw->begin();
+		$success = $dbw->delete('wp_member', array('wpm_id' => $this->wpm_id), __METHOD__);
+		$dbw->commit();
+		return $success;
+	}
+	
+	/**
 	 * 
 	 * @param WpWikiplace|int $wikiplace An instance of WpWikiplace (safer), or the wikiplace id (int, no checks)
 	 * @param User|int $user An instance of existing User (safer), or the user id (int, no checks)
@@ -123,13 +135,18 @@ class WpMember {
 	 * 
 	 * @param int|WpWikiplace $wikiplace An instance of WpWikiplace, or the wikiplace id (int)
 	 * @param int|User $user An instance of User, or the user id (int)
-	 * @return boolean Returns false if <ul>
-	 * <li>user is not memeber of wikiplace,</li>
-	 * <li>user or wikiplace doesn't exist or</li>
-	 * <li>wikiplace doesn't exist</li>
-	 * </ul>
+	 * @return boolean Returns false if user is not memeber of the wikiplace
 	 */
 	public static function IsMember($wikiplace, $user) {
+		return WpMember::GetFromWikiPlaceAndUser($wikiplace, $user) instanceof WpMember;
+	}
+	/**
+	 * 
+	 * @param int|WpWikiplace $wikiplace An instance of WpWikiplace, or the wikiplace id (int)
+	 * @param int|User $user An instance of User, or the user id (int)
+	 * @return WpMember An instance of WpMember, or <code>null</code> if user is not member of the wikiplace
+	 */
+	public static function GetFromWikiPlaceAndUser($wikiplace, $user) {
 		
 		if (is_int($wikiplace)) {
 			$wikiplaceId = $wikiplace;		
@@ -152,31 +169,30 @@ class WpMember {
 			return false; // anonymous is never member of a wikiplace
 		}
 		
-		$member = WpMember::search( array(
+		return WpMember::search( array(
 			'wpm_wpw_id' => $wikiplaceId,
 			'wpm_user_id' => $userId ) );
 		
-		return $member instanceof WpMember;
 	}
 
-	public static function NewFromId($id) {
-		return null;
+	/**
+	 * 
+	 * @param int $id
+	 * @return WpMember|null The WpMember, or null if it doesn't exist
+	 */
+	public static function GetFromId($id) {
+		return WpMember::search( array('wpm_id' => $id) );
 	}
 	
 	/**
 	 * 
-	 * @param int|WpWikiplace $wikiplace An instance of WpWikiplace, or the wikiplace id (int)
-	 * @return array|null Returns <ul>
-	 * <li>an array with of all members (instance of WpMember, at least the wikiplace owner) or</li>
-	 * <li>null if the wikiplace doesn't exist</li>
+	 * @param array $conds Array of conditions
+	 * @param boolean $multiple Optional, default is <code>false</code> <ul>
+	 * <li><code>false</code> => returns the WpMember or <code>null</code> if not found</li>
+	 * <li><code>true</code> => returns an array containing multiple WpMember, or empty array if none found</li>
 	 * </ul>
+	 * @return array|WpMember Type depend of $multiple
 	 */
-	public static function FactoryByWikiPlace($wikiplace) {
-		$members = array();
-
-		return $members;
-	}
-	
 	private static function search($conds, $multiple = false) {
 
 		$dbr = wfGetDB(DB_SLAVE);

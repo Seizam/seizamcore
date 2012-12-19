@@ -21,10 +21,11 @@ if (!defined('MEDIAWIKI')) {
 // (ex: 'user' + 'owner' checked == restriction to 'user')
 // by default:
 //  # group '' (=everyone) is virtual
+//  # group 'member' is virtual and used only by this extension (never stored in db)
 //  # group 'owner' is virtual and used only by this extension (never stored in db)
 // any other group added to this var need to exist (in $wgGroupPermissions)
 // NOTE: $wgRestrictionLevels will be updated in order for theses level to be accessed via protect
-$wgProtectOwnGroups = array('', 'owner');
+$wgProtectOwnGroups = array('', 'member', 'owner');
 
 // This value is used in other extensions to link to the ProtectOwn interface
 // Describe the action AND the right
@@ -54,7 +55,7 @@ $wgExtensionMessagesFiles['ProtectOwn'] = dirname(__FILE__) . '/ProtectOwn.i18n.
 $wgHooks['userCan'][] = 'poUserCan';
 
 // this hook is called when mediawiki request the rights of a user, it can give more 
-// rights than mediawiki does, in our case, it depends if the user is the owner
+// rights than mediawiki does, in our case, it depends if the user is the owner or a member
 // it can also give the protect right while updating restrictons
 $wgHooks['UserGetRights'][] = 'poUserGetRights';
 
@@ -96,6 +97,9 @@ $wgProtectOwnCacheUserCan = array();
 // Used for caching isowner result
 // [user_id][title_id] = true(=owner) / false(=not owner)
 $wgProtectOwnCacheIsOwner = array();
+// Used for caching isMember result
+// [user_id][title_id] = true(=member) / false(=not member)
+$wgProtectOwnCacheIsMember = array();
 
 
 
@@ -131,14 +135,14 @@ function poSetup() {
     global $wgProtectOwnGroups, $wgRestrictionLevels, $wgGroupPermissions;
     //TODO: refactore to use merge
     foreach ($wgProtectOwnGroups as $group) {
-        // if not virtual, add the group to "protect"'s accessible levels
+        // add the group to "protect"'s accessible levels
         if (!in_array($group, $wgRestrictionLevels)) {
             $wgRestrictionLevels[] = $group;
         }
 
-        // if not in wgGroupPermission > create it
-        if ($group != '' && $group != 'owner' && !array_key_exists($group, $wgGroupPermissions)) {
-            wfDebugLog('restrictions', 'Setup: /!\ creating user group "' . $group . '"');
+        // if group not virtual but missing in wgGroupPermission, creates it
+        if ($group != '' && $group != 'owner' && $group != 'member' && !array_key_exists($group, $wgGroupPermissions)) {
+            wfDebugLog('ProtectOwn', 'Setup: /!\ creating user group "' . $group . '"');
             $wgGroupPermissions[$group] = array();
         }
     }
@@ -157,12 +161,12 @@ function poIsUserInGroup($user, $group) {
 function poBeforeParserFetchTemplateAndtitle($parser, Title $title, &$skip, &$id) {
 
     if (!( $parser instanceof Parser )) {
-        wfDebugLog('restrictions', 'BeforeParserFetchTemplateAndtitle: NOTHING TO DO, no parser given');
+        wfDebugLog('ProtectOwn', 'BeforeParserFetchTemplateAndtitle: NOTHING TO DO, no parser given');
         return true; // nothing to do
     }
 
     if ($title->getNamespace() < 0 || $title->getNamespace() == NS_MEDIAWIKI) {
-        wfDebugLog('restrictions', 'BeforeParserFetchTemplateAndtitle: NOTHING TO DO, bug 29579 for NS_MEDIAWIKI');
+        wfDebugLog('ProtectOwn', 'BeforeParserFetchTemplateAndtitle: NOTHING TO DO, bug 29579 for NS_MEDIAWIKI');
         return true; // nothing to do (bug 29579 for NS_MEDIAWIKI)
     }
 
@@ -173,7 +177,7 @@ function poBeforeParserFetchTemplateAndtitle($parser, Title $title, &$skip, &$id
     // satisfy restriction, but the next vistors don't
     // so, if there is a read restriction, skip this transclusion
     if ($title->isProtected('read')) {
-        /* 		wfDebugLog( 'restrictions', 'BeforeParserFetchTemplateAndtitle: "'
+        /* 		wfDebugLog( 'ProtectOwn', 'BeforeParserFetchTemplateAndtitle: "'
           .$title->getPrefixedDBkey().'"['.$title->getArticleId()
           .'] is read restricted, so it will be skipped');
          */
@@ -191,7 +195,7 @@ function poBeforeParserFetchTemplateAndtitle($parser, Title $title, &$skip, &$id
          */
     }
 
-    wfDebugLog('restrictions', 'BeforeParserFetchTemplateAndtitle: '
+    wfDebugLog('ProtectOwn', 'BeforeParserFetchTemplateAndtitle: '
             . ($skip ? "SKIP" : "FETCH")
             . ' title="' . $title->getPrefixedDBkey() . '"[' . $title->getArticleId() . ']'
             . ' id="' . var_export($id, true) . '"'
@@ -229,7 +233,7 @@ function poUserCan($title, &$user, $action, &$result) {
         $act = 'read';
     }
 
-    // update user right about the current title, especially the owner right
+    // update user right about the current title, especially the owner and member rights
     // (not pretty, but needed because this is the way MW core checks protection...)
     poGrantProtectionRights($title, $user);
 
@@ -238,7 +242,7 @@ function poUserCan($title, &$user, $action, &$result) {
 
     // if no restrictions, return "the $user can do $action on $title"
     if ($title_restrictions === array()) {
-        wfDebugLog('restrictions', 'UserCan: action not restricted, resume other hooks'
+        wfDebugLog('ProtectOwn', 'UserCan: action not restricted, resume other hooks'
                 . ' title="' . $title->getPrefixedDBkey() . '"[' . $title->getArticleId() . ']'
                 . ' isKnown()=' . ($title->isKnown() ? 'YES' : 'NO')
                 . ' user="' . $user->getName() . '"[' . $user->getID() . ']'
@@ -251,7 +255,7 @@ function poUserCan($title, &$user, $action, &$result) {
     global $wgProtectOwnCacheUserCan;
     if (isset($wgProtectOwnCacheUserCan[$user->getID()][$title->getArticleId()][$act])) {
         $result = $wgProtectOwnCacheUserCan[$user->getID()][$title->getArticleId()][$act];
-        /* 		wfDebugLog( 'restrictions', 'UserCan: '.($result?'YES':'NO').', CACHE HIT '
+        /* 		wfDebugLog( 'ProtectOwn', 'UserCan: '.($result?'YES':'NO').', CACHE HIT '
           .' title="'.$title->getPrefixedDBkey().'"['.$title->getArticleId().']'
           .' isKnown()='.($title->isKnown()?'YES':'NO')
           .' user="'.$user->getName().'"['.$user->getID().']'
@@ -265,7 +269,7 @@ function poUserCan($title, &$user, $action, &$result) {
     // (in MediaWiki core, if multiple levels, user has to be in every restricted level... not very logic, but it's like that)
     // if not... well, we handle this the same way as in MediaWiki core, but that's bad!
     if (count($title_restrictions) != 1) {
-        wfDebugLog('restrictions', 'UserCan: /!\ few restricted level for only a page/action '
+        wfDebugLog('ProtectOwn', 'UserCan: /!\ few restricted level for only a page/action '
                 . '("' . $act . '" restricted to "' . implode(',', $title_restrictions) . '")');
         wfDebug('Restrictions.extension>>UserCan(): /!\ few restricted level for only a page/action '
                 . '("' . $act . '" restricted to "' . implode(',', $title_restrictions) . '")');
@@ -282,6 +286,9 @@ function poUserCan($title, &$user, $action, &$result) {
         if ($title_restriction == 'owner') {
             // check if the current user is the owner
             $result = poIsOwner($title, $user);
+        } elseif ($title_restriction == 'member') {
+            // check if the current user is a member
+            $result = ( poIsMember($title, $user) || poIsOwner($title, $user) );
         } else {
             // allow if $user is member of the group
             $result = poIsUserInGroup($user, $title_restriction);
@@ -290,14 +297,14 @@ function poUserCan($title, &$user, $action, &$result) {
 
     // if the user has a bypass, she is allowed
     if ($user->isAllowed(PROTECTOWN_BYPASS)) {
-        wfDebugLog('restrictions', 'UserCan: YES, user has "' . PROTECTOWN_BYPASS . '" right');
+        wfDebugLog('ProtectOwn', 'UserCan: YES, user has "' . PROTECTOWN_BYPASS . '" right');
         $result = true;  // allowed
     }
 
     // store to cache
     $wgProtectOwnCacheUserCan[$user->getID()][$title->getArticleId()][$act] = $result;
 
-    wfDebugLog('restrictions', 'UserCan: ' . ($result ? 'YES' : 'NO') . ', CACHE MISS '
+    wfDebugLog('ProtectOwn', 'UserCan: ' . ($result ? 'YES' : 'NO') . ', CACHE MISS '
             . ' title="' . $title->getPrefixedDBkey() . '"[' . $title->getArticleId() . ']'
             . ' isKnown()=' . ($title->isKnown() ? 'YES' : 'NO')
             . ' user="' . $user->getName() . '"[' . $user->getID() . ']'
@@ -311,7 +318,7 @@ function poUserCan($title, &$user, $action, &$result) {
 
 function poIsOwner($title, $user) {
 
-//		wfDebugLog( 'restrictions', 'IsOwner: '.  wfGetPrettyBacktrace());
+//		wfDebugLog( 'ProtectOwn', 'IsOwner: '.  wfGetPrettyBacktrace());
 
     if ((!$title instanceOf Title) || ( $user->getID() === 0 ) || ($title->isSpecialPage())) {
         return false;
@@ -322,7 +329,7 @@ function poIsOwner($title, $user) {
 
         $result = $wgProtectOwnCacheIsOwner[$user->getID()][$title->getArticleId()];
 
-        /* 		wfDebugLog( 'restrictions', 'IsOwner: '.( $result ? 'YES' : 'NO')
+        /* 		wfDebugLog( 'ProtectOwn', 'IsOwner: '.( $result ? 'YES' : 'NO')
           .', CACHE HIT '
           .' title="'.$title->getPrefixedDBkey().'"['.$title->getArticleId().']'
           .' user="'.$user->getName().'"['.$user->getID().']'
@@ -339,13 +346,43 @@ function poIsOwner($title, $user) {
     // store to cache
     $wgProtectOwnCacheIsOwner[$user->getID()][$title->getArticleId()] = $result;
 
-    wfDebugLog('restrictions', 'IsOwner: ' . ( $result ? 'YES' : 'NO')
+    wfDebugLog('ProtectOwn', 'IsOwner: ' . ( $result ? 'YES' : 'NO')
 //			.', CACHE MISS '
             . ' title="' . $title->getPrefixedDBkey() . '"[' . $title->getArticleId() . ']'
             . ' user="' . $user->getName() . '"[' . $user->getID() . ']'
     );
 
     return $result;
+}
+
+
+function poIsMember($title, $user) {
+
+	$pageId = $title->getArticleId();
+	$pageDBkey = $title->getPrefixedDBkey();
+	$userId = $user->getID();
+	
+//	wfDebugLog('ProtectOwn', 'IsMember(title='.$pageDBkey.'['.$pageId.'], user='.$userId.'): ' . wfGetPrettyBacktrace());
+//	wfDebugLog('ProtectOwn', 'IsMember(title='.$pageDBkey.'['.$pageId.'], user='.$userId.'): ' . wfBacktrace());
+
+	if ((!$title instanceOf Title) || ( $userId === 0 ) || ($title->isSpecialPage())) {
+		return false;
+	}
+
+	global $wgProtectOwnCacheIsMember;
+	if (isset($wgProtectOwnCacheIsMember[$userId][$pageId])) {
+		$result = $wgProtectOwnCacheIsMember[$userId][$pageId];
+		wfDebugLog( 'ProtectOwn', 'IsMember(title='.$pageDBkey.'['.$pageId.'], user='.$userId.'): CACHE IT = '.( $result ? 'YES' : 'NO') );
+		return $result;
+	}
+	
+	// fetch membership from other extensions
+	$result = false;
+	wfRunHooks('IsMember', array($title, $user, &$result));
+	$wgProtectOwnCacheIsMember [$userId][$pageId] = $result; // store to cache
+	wfDebugLog( 'ProtectOwn', 'IsMember((title='.$pageDBkey.'['.$pageId.'], user='.$userId.'): CACHE MISS = '.( $result ? 'YES' : 'NO') );
+
+	return $result;
 }
 
 /**
@@ -365,7 +402,7 @@ function poUserGetRights($user, &$aRights) {
 
     if ($wgProtectOwnDoProtect) {
 
-        wfDebugLog('restrictions', 'UserGetRights: GRANT "protect"'
+        wfDebugLog('ProtectOwn', 'UserGetRights: GRANT "protect"'
                 . ' to ' . $user->getName() . '"[' . $user->getID() . ']'
         );
         $aRights[] = 'protect';
@@ -384,14 +421,14 @@ function poGrantProtectionRights($title, $user, &$aRights = null) {
     }
 
     if ($aRights == null) {
-        wfDebugLog('restrictions', 'GrantRestrictionsRights: need to fetch rights by calling getRights()');
+        wfDebugLog('ProtectOwn', 'GrantRestrictionsRights: need to fetch rights by calling getRights()');
         $user->mRights = null;    // clear current user rights (and clear the "protect" right
         $user->getRights();
         $aRights = &$user->mRights;
     }
 
     if ($aRights == null) {
-        wfDebugLog('restrictions', 'GrantRestrictionsRights: /!\ $aRights is still null, something goes wrong');
+        wfDebugLog('ProtectOwn', 'GrantRestrictionsRights: /!\ $aRights is still null, something goes wrong');
     }
 
     # grant group right if the user is in group
@@ -403,9 +440,9 @@ function poGrantProtectionRights($title, $user, &$aRights = null) {
     $bypass = $user->isAllowed(PROTECTOWN_BYPASS);
     $to_grant;
     if ($bypass) {
-        $to_grant = $wgProtectOwnGroups; // give all groups, even 'owner' and ''
+        $to_grant = $wgProtectOwnGroups; // give all groups, even 'owner', 'member' and ''
         unset($to_grant[array_search('', $to_grant)]); // remove '' (=everyone) right
-        wfDebugLog('restrictions'
+        wfDebugLog('ProtectOwn'
                 , 'GrantRestrictionsRights: user has "' . PROTECTOWN_BYPASS . '" right, give rights "' .
                 implode(',', $to_grant) . '" if needed');
     } else {
@@ -416,7 +453,7 @@ function poGrantProtectionRights($title, $user, &$aRights = null) {
         // add the group to user right
         // (not very pretty, but this is how MediaWiki manage restrictions)
         if (!in_array($group, $aRights)) {
-            wfDebugLog('restrictions', 'GrantRestrictionsRights: GRANT "' . $group . '"'
+            wfDebugLog('ProtectOwn', 'GrantRestrictionsRights: GRANT "' . $group . '"'
                     . ' to ' . $user->getName() . '"[' . $user->getID() . ']'
             );
             $aRights[] = $group;
@@ -428,31 +465,66 @@ function poGrantProtectionRights($title, $user, &$aRights = null) {
     if ($bypass)
         return;
 
-    # grant owner right if the user is the owner of the current title
+    # grant owner and member right if the user is the owner of the current title
 
     if ($user->isLoggedIn() && poIsOwner($title, $user)) {
 
-        # user is owner of the current title
+        # user is owner of the current title : add 'owner' and add 'member' rights
 
         if (!in_array('owner', $aRights)) {
-            wfDebugLog('restrictions', 'GrantRestrictionsRights: GRANT "owner"'
+            wfDebugLog('ProtectOwn', 'GrantRestrictionsRights: GRANT "owner"'
                     . ' to ' . $user->getName() . '"[' . $user->getID() . ']'
                     . ' for title "' . $title->getPrefixedDBkey() . '"[' . $title->getArticleId() . ']'
             );
             $aRights[] = 'owner';
         }
-    } else {
-
-        # user is not owner of the current title
-
-        if (in_array('owner', $aRights)) {
-            wfDebugLog('restrictions', 'GrantRestrictionsRights: REMOVE "owner"'
+		
+		if (!in_array('member', $aRights)) {
+            wfDebugLog('ProtectOwn', 'GrantRestrictionsRights: GRANT "member"'
                     . ' to ' . $user->getName() . '"[' . $user->getID() . ']'
                     . ' for title "' . $title->getPrefixedDBkey() . '"[' . $title->getArticleId() . ']'
             );
-//			wfDebugLog( 'restrictions', 'GrantRestrictionsRights: ..rights before: '.implode(',',$aRights));
+            $aRights[] = 'member';
+        }
+		
+    } elseif ($user->isLoggedIn() && poIsMember($title, $user)) {
+		
+		# user is a member of the current title : remove 'owner' and add 'member' rights
+		
+		if (in_array('owner', $aRights)) {
+            wfDebugLog('ProtectOwn', 'GrantRestrictionsRights: REMOVE "owner"'
+                    . ' to ' . $user->getName() . '"[' . $user->getID() . ']'
+                    . ' for title "' . $title->getPrefixedDBkey() . '"[' . $title->getArticleId() . ']'
+            );
             unset($aRights[array_search('owner', $aRights)]); // remove owner
-//			wfDebugLog( 'restrictions', 'GrantRestrictionsRights: ..rights after: '.implode(',',$aRights));
+        }
+		
+		if (!in_array('member', $aRights)) {
+            wfDebugLog('ProtectOwn', 'GrantRestrictionsRights: GRANT "member"'
+                    . ' to ' . $user->getName() . '"[' . $user->getID() . ']'
+                    . ' for title "' . $title->getPrefixedDBkey() . '"[' . $title->getArticleId() . ']'
+            );
+            $aRights[] = 'member';
+        }
+		
+	} else {
+
+        # user is not owner of the current title : remove 'owner' and remove 'member' rights
+
+        if (in_array('owner', $aRights)) {
+            wfDebugLog('ProtectOwn', 'GrantRestrictionsRights: REMOVE "owner"'
+                    . ' to ' . $user->getName() . '"[' . $user->getID() . ']'
+                    . ' for title "' . $title->getPrefixedDBkey() . '"[' . $title->getArticleId() . ']'
+            );
+            unset($aRights[array_search('owner', $aRights)]); // remove owner
+        }
+		
+		if (in_array('member', $aRights)) {
+            wfDebugLog('ProtectOwn', 'GrantRestrictionsRights: REMOVE "member"'
+                    . ' to ' . $user->getName() . '"[' . $user->getID() . ']'
+                    . ' for title "' . $title->getPrefixedDBkey() . '"[' . $title->getArticleId() . ']'
+            );
+            unset($aRights[array_search('member', $aRights)]); // remove member
         }
     }
 }
@@ -529,7 +601,7 @@ function poForm($action, $article) {
     # temporary assign protect right, in order to update the restricitons
 
     $wgProtectOwnDoProtect = true;  // tells spSetProtectionAssignDynamicRights to add the "protect" right
-//	wfDebugLog( 'restrictions', 'Form: purge user\'s rights then force reload');
+//	wfDebugLog( 'ProtectOwn', 'Form: purge user\'s rights then force reload');
     $wgUser->mRights = null;   // clear current user rights
     $wgUser->getRights();    // force rights reloading
     $wgProtectOwnDoProtect = false;
@@ -540,11 +612,11 @@ function poForm($action, $article) {
     $readonly = !empty($readonly);
 
     # remove temporary assigned protect right by reloading rights with $wgProtectOwnDoProtect = false
-//	wfDebugLog( 'restrictions', 'Form: purge user\'s rights then force reload');
+//	wfDebugLog( 'ProtectOwn', 'Form: purge user\'s rights then force reload');
     $wgUser->mRights = null;    // clear current user rights (and clear the "protect" right
     $wgUser->getRights();     // force rights reloading
 
-    wfDebugLog('restrictions', 'Form: ' . ($readonly ? 'READ-ONLY' : 'READ/WRITE'));
+    wfDebugLog('ProtectOwn', 'Form: ' . ($readonly ? 'READ-ONLY' : 'READ/WRITE'));
 
     // can we AND do we have a request to handle?
     if ($readonly || !$wgRequest->wasPosted()) {
@@ -580,7 +652,7 @@ function poForm($action, $article) {
     foreach ($applicableRestrictionTypes as $action) {  // 'read', 'upload', ...
         $current_restrictions = $title->getRestrictions($action); //'sysop', 'owner', ...
 
-        wfDebugLog('restrictions', 'Form: current title, action "'
+        wfDebugLog('ProtectOwn', 'Form: current title, action "'
                 . $action . '" restricted to level(s) "' . implode(',', $current_restrictions) . '"');
 
         // ensure that we have not to keep the previous restrictions
@@ -642,7 +714,7 @@ function poForm($action, $article) {
                 // can the user set to this level?
                 if (poCanTheUserSetToThisLevel($wgUser, $title, $current_level)) {
 
-                    wfDebugLog('restrictions', 'Form: restricting ' . $action . ' to ' . $current_level);
+                    wfDebugLog('ProtectOwn', 'Form: restricting ' . $action . ' to ' . $current_level);
 
                     // so we can set the restriction to it			
                     $new_restrictions[$action] = $current_level;
@@ -696,31 +768,31 @@ function poUpdateRestrictions($article, $restrictions, $cascade = false, $expira
     # temporary assign protect right, in order to update the restricitons
 
     $wgProtectOwnDoProtect = true;  // tells spSetRestrictionsAssignDynamicRights to add the "protect" right
-//	wfDebugLog( 'restrictions', 'Form: purge user\'s rights then force reload');
+//	wfDebugLog( 'ProtectOwn', 'Form: purge user\'s rights then force reload');
     $wgUser->mRights = null;   // clear current user rights
     $wgUser->getRights();    // force rights reloading
     $wgProtectOwnDoProtect = false;
 
-    wfDebugLog('restrictions', "UpdateRestrictions: restrictions =\n "
+    wfDebugLog('ProtectOwn', "UpdateRestrictions: restrictions =\n "
             . var_export($restrictions, true)
             . "\nexpiration=\n" . var_export($expiration, true));
 
     // update restrictions
     $success = $article->updateRestrictions(
             $restrictions, // array of restrictions
-            'Restrictions', // reason
+            'ProtectOwn', // reason
             $cascade, // cascading protection disabled, need to pass by reference
             $expiration				// expiration
     );  // note that this article function check that the user has sufficient rights
     # clear userCan and isOwner caches
     # because of protect right granted few instants
     # IsOwner cache clearing should not be necessary, but IsOwner hook may be affected by restrictions update
-//	wfDebugLog( 'restrictions', 'Form: purge userCan and isOwner caches');
+//	wfDebugLog( 'ProtectOwn', 'Form: purge userCan and isOwner caches');
     $wgProtectOwnCacheUserCan = array();
     $wgProtectOwnCacheIsOwner = array();
 
     # remove temporary assigned protect right by reloading rights with $wgSetRestrictionsDoProtect = false
-//	wfDebugLog( 'restrictions', 'Form: purge user\'s rights then force reload');
+//	wfDebugLog( 'ProtectOwn', 'Form: purge user\'s rights then force reload');
     $wgUser->mRights = null;    // clear current user rights (and clear the "protect" right
     $wgUser->getRights();     // force rights reloading
 
@@ -870,8 +942,10 @@ function poCanTheUserSetToThisLevel($user, $title, $level) {
             poIsUserInGroup($user, $level)
             // OR level everyone
             || $level == ''
-            // OR ( level is owner AND user is the owner of the title )
-            || ( $level == 'owner' && poIsOwner($title, $user) ) );
+            // OR ( user is the owner of the title  AND  level is owner OR member )
+            || ( poIsOwner($title, $user) && ( $level == 'owner' || $level == 'member' ) )
+			// OR ( level is member AND user is the member of the title )
+            || ( $level == 'member' && poIsMember($title, $user) ) );
 }
 
 /*
@@ -888,7 +962,7 @@ function poArticleProtectComplete(&$article, &$user, $protect, $reason) {
 
     $title = $article->getTitle();
 
-    wfDebugLog('restrictions', 'ArticleProtectComplete: purging title cache'
+    wfDebugLog('ProtectOwn', 'ArticleProtectComplete: purging title cache'
             . ' title="' . $title->getPrefixedDBkey() . '"[' . $title->getArticleId() . ']'
     );
 
@@ -913,13 +987,13 @@ function poSearchUpdate($id, $namespace, $title_text, &$text) {
 
     $title = Title::newFromID($id);
 
-    wfDebugLog('restrictions', 'SearchUpdate:'
+    wfDebugLog('ProtectOwn', 'SearchUpdate:'
             . ' title="' . $title->getPrefixedDBkey() . '"[' . $title->getArticleId() . ']'
     );
 
     if ($title && $title->isProtected('read')) {
 
-        wfDebugLog('restrictions', 'SearchUpdate: CLEAR SEARCH CACHE'
+        wfDebugLog('ProtectOwn', 'SearchUpdate: CLEAR SEARCH CACHE'
                 . ' title="' . $title->getPrefixedDBkey() . '"[' . $title->getArticleId() . ']'
         );
 
@@ -956,7 +1030,7 @@ function poWatchArticle(&$user, &$article) {
 
     if (!$title->userCan('read')) {
 
-        wfDebugLog('restrictions', 'WatchArticle: FORBIDDEN'
+        wfDebugLog('ProtectOwn', 'WatchArticle: FORBIDDEN'
                 . ' the title "' . $title->getPrefixedDBkey() . '"[' . $title->getArticleId() . ']'
                 . ' has a read restriction, so no one can watch it');
 
@@ -965,7 +1039,7 @@ function poWatchArticle(&$user, &$article) {
         return false;
     }
 
-    wfDebugLog('restrictions', 'WatchArticle: ALLOWED'
+    wfDebugLog('ProtectOwn', 'WatchArticle: ALLOWED'
             . ' the title "' . $title->getPrefixedDBkey() . '"[' . $title->getArticleId() . ']'
             . ' has no read restriction');
 
@@ -988,10 +1062,10 @@ function poSetProtection($wikipage, $restrictions, &$ok) {
     $ok = poUpdateRestrictions($wikipage, $restrictions);
 
     if ($ok) {
-        wfDebugLog('restrictions', 'OnWikiplacePageCreated: restrictions set page "'
+        wfDebugLog('ProtectOwn', 'OnWikiplacePageCreated: restrictions set page "'
                 . $wikipage->getTitle()->getPrefixedDBkey() . '"[' . $wikipage->getTitle()->getArticleId() . ']');
     } else {
-        wfDebugLog('restrictions', 'OnWikiplacePageCreated: ERROR while setting restrictions to page "'
+        wfDebugLog('ProtectOwn', 'OnWikiplacePageCreated: ERROR while setting restrictions to page "'
                 . $wikipage->getTitle()->getPrefixedDBkey() . '"[' . $wikipage->getTitle()->getArticleId() . ']');
     }
 

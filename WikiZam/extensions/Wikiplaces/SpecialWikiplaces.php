@@ -699,26 +699,32 @@ class SpecialWikiplaces extends SpecialPage {
 	 * Uses GET data
 	 */
 	public function processRemoveMember() {
-		
+
 		if (is_null($wikiplace = $this->checkWikiPlace($this->name))) {
-			return ;
+			return;
 		}
-		
-		if ( ( $this->validateUserName($this->user, null) !== true )
-				|| ( ! ($user = User::newFromName($this->user)) instanceof User ) // already validated, so always ok
-				|| ( ! WpMember::IsMember($wikiplace, $user)) ) {
-			$this->action = self::ACTION_LIST_MEMBERS;
-            $this->msgKey = 'wp-not-member';
-            $this->msgType = 'error';
-            $this->display();
-            return;
+
+		$this->action = self::ACTION_LIST_MEMBERS; // always
+
+		if (( $this->validateUserName($this->user, null) === true )
+				&& ( ($user = User::newFromName($this->user)) instanceof User ) // already validated, so always ok
+				&& ( ($member = WpMember::GetFromWikiPlaceAndUser($wikiplace, $user)) instanceof WpMember)) {
+
+			if ($member->delete()) {
+				$this->msgKey = 'wp-remove-member-success';
+				$this->msgType = 'success';
+				
+			} else {
+				$this->msgKey = 'internalerror';
+				$this->msgType = 'error';
+			}
+			
+		} else {
+			$this->msgKey = 'wp-not-member';
+			$this->msgType = 'error';
 		}
-		
-		// remove
-		
-		$this->action = self::ACTION_LIST_MEMBERS;
-		$this->msgKey = 'wp-remove-member-success';
-		$this->msgType = 'success';
+
+		// always
 		$this->display();
 		return;
 	}

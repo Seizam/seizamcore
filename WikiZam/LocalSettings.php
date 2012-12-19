@@ -220,7 +220,7 @@ $wgWhitelistRead = array("Main Page", "Special:UserLogin", "Special:UserLogout")
 require_once( "$IP/extensions/ProtectOwn/ProtectOwn.php" );
 # available restriction level/group via SetPermissions form
 # ($wgRestrictionLevels will be updated in order for theses level to be accessed via protect
-$wgProtectOwnGroups = array('', 'user', 'artist', 'owner');
+$wgProtectOwnGroups = array('', 'user', 'artist', 'member', 'owner');
 $wgGroupPermissions['bot'][PROTECTOWN_BYPASS] = true;
 
 # remove the 'move' restriction (so it does not appear in protectOwn)

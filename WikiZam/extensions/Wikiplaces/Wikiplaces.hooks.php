@@ -793,6 +793,28 @@ class WikiplacesHooks {
 
         return false; // stop hook processing, because we have the answer
     }
+	
+	/**
+	 * 
+	 * @param Title $title
+	 * @param User $user
+	 * @param boolean $result
+	 * @return boolean
+	 */
+    public static function isMember($title, $user, &$result) {
+
+        $namespace = $title->getNamespace();
+        $db_key = $title->getDBkey();
+
+		if ( ( $user->getId() !== 0 ) // not anonymous
+			&& WpPage::isInWikiplace($namespace, $db_key) // might be in a wikiplace
+			&& ( ( $wikiplace = WpWikiplace::getBySubpage($db_key, $namespace) ) instanceof WpWikiplace ) ) { // is in a wikiplace
+				$result = WpMember::IsMember($wikiplace, $user);
+				return false; // stop hook processing, because we have the answer
+		}
+		
+		return true; // continue hook processing        
+    }
 
     /**
      * Called by img_auth.php when a file has fully been sent to a client
