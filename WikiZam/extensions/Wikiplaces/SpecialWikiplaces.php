@@ -360,6 +360,10 @@ class SpecialWikiplaces extends SpecialPage {
 		}
 
 		$title = Title::newFromText($wikiplace->getName() . '/' . $name);
+		
+		if (is_null($title)) {
+			return wfMessage('wp-invalid-name')->text();
+		}
 
 		if ($title->isKnown()) {
 			return wfMessage('wp-name-already-exists')->text();
