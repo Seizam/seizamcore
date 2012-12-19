@@ -119,7 +119,8 @@ $wgGroupPermissions[WP_SUBSCRIBERS_USER_GROUP][WP_ARTIST_RIGHT] = true;
 
 
 // all applicable actions except 'read' will be set to this level when creating a page/file in wikiplace namespaces
-define('WP_DEFAULT_RESTRICTION_LEVEL', 'owner');
+define('WP_DEFAULT_RESTRICTION_LEVEL', 'member');
+
 
 # Extra namespace for Wikiplace configuration (bg, nav...) settings
 define("NS_WIKIPLACE", 70);
