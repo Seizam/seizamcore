@@ -85,7 +85,7 @@ class WpMember {
 	 * @param User|int $user An instance of existing User (safer), or the user id (int, no checks)
 	 * @return WpMember The new WpMember or null if a problem occurs
 	 */
-	public static function create($wikiplace, $user ) {
+	public static function Create($wikiplace, $user ) {
 
 		if (is_int($wikiplace)) {
 			$wikiplaceId = $wikiplace;
@@ -140,6 +140,7 @@ class WpMember {
 	public static function IsMember($wikiplace, $user) {
 		return WpMember::GetFromWikiPlaceAndUser($wikiplace, $user) instanceof WpMember;
 	}
+	
 	/**
 	 * 
 	 * @param int|WpWikiplace $wikiplace An instance of WpWikiplace, or the wikiplace id (int)
@@ -172,7 +173,23 @@ class WpMember {
 		return WpMember::search( array(
 			'wpm_wpw_id' => $wikiplaceId,
 			'wpm_user_id' => $userId ) );
-		
+	}
+	
+	/**
+	 * 
+	 * @param int|WpWikiplace $wikiplace An instance of WpWikiplace, or the wikiplace id (int)
+	 * @return int The number of members
+	 */
+	public static function CountMembers($wikiplace) {
+		if (is_int($wikiplace)) {
+			$wikiplaceId = $wikiplace;
+		} elseif ($wikiplace instanceof WpWikiplace) {
+			$wikiplaceId = $wikiplace->getId();
+		} else {
+			throw new MWException('Invalid $wikiplace argument.');
+		}
+
+		return count(WpMember::search(array('wpm_wpw_id' => $wikiplaceId), true));
 	}
 
 	/**

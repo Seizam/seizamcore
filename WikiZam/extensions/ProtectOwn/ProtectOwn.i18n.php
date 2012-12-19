@@ -28,6 +28,7 @@ $messages['en'] = array(
     'po-everyone' => 'Everyone on the planet',
     'po-user' => 'Registered Users',
     'po-artist' => 'Subscribed Artists',
+	'po-member' => 'Authorized Members',
     'po-owner' => 'Only Me',
 	'badaccess-groups' => '{{int:badaccess-group0}}',
     'restriction-level-owner' => 'Owner only',

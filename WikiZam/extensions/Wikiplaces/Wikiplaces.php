@@ -159,6 +159,8 @@ $wgWikiplaceNameBlacklist = array(
 define ('WP_TEMPLATES_FOR_HOMEPAGE', 'Templates for Homepage'); // MediaWiki:Templates for Homepage
 define ('WP_TEMPLATES_FOR_SUBPAGE', 'Templates for Subpage'); // MediaWiki:Templates for Subpage
 
+define('WP_MEMBERS_LIMIT', 100);
+
 // deferred setup, to not break Hook execution ordering with PreventDuplicate extension
 $wgExtensionFunctions[] = 'setupWikiplaces';
 

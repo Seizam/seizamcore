@@ -51,12 +51,20 @@ class WpMembersTablePager extends SkinzamTablePager {
      * @param $value String: the value retrieved from the database
      */
 	function formatValue($name, $value) {
-		if ($name == 'actions') {
-			return $this->formatActions();
-		}
-
-		// else
-		return htmlspecialchars($value);
+		
+		switch ($name) {
+            case 'user_name':
+                return $this->formatUserName($value);
+            case 'actions':
+                return $this->formatActions();
+            default:
+                return htmlspecialchars($value);
+        }
+	}
+	
+	function formatUserName($username) {
+		
+		return htmlspecialchars($username);
 	}
 
     function formatActions() {
@@ -70,8 +78,17 @@ class WpMembersTablePager extends SkinzamTablePager {
 
     function getFieldNames() {
         $fieldNames = parent::getFieldNames();
-        $fieldNames['actions'] = '';
+		
 		unset($fieldNames['user_id']);
+		
+		if (isset($fieldNames['user_name']))
+            $fieldNames['user_name'] = wfMessage('wp-username');
+
+        if (isset($fieldNames['user_real_name']))
+            $fieldNames['user_real_name'] = wfMessage('wp-realname');
+		
+		$fieldNames['actions'] = '';
+		
         return $fieldNames;
     }
 

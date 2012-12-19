@@ -366,7 +366,7 @@ class SpecialWikiplaces extends SpecialPage {
 	public function validateNewSubpageName($name, $allData) {
 
 		if ($name == null) {
-			return false;
+			return wfMessage('htmlform-required')->text();
 		}
 
 		// $allData['WikiplaceId'] is already checked, because it is declared before the subpage name in the form descriptor
@@ -622,21 +622,21 @@ class SpecialWikiplaces extends SpecialPage {
 		}
 		
 		$wikiplaceSelect = $this->populateWikiPlaceSelect(
-				array(
-			'type' => 'select',
-			'label-message' => 'wp-wikiplace-field',
-			'section' => 'addmember-section',
-			'help-message' => 'wp-setbackground-wikiplace-help',
-			'validation-callback' => array($this, 'validateUserWikiplaceID'),
-			'options' => array(),
-				), null, $this->name);
+			array(
+				'type' => 'select',
+				'label-message' => 'wp-wikiplace-field',
+				'section' => 'addmember-section',
+				'help-message' => 'wp-addmember-wikiplace-help',
+				'validation-callback' => array($this, 'validateAddMemberWikiplaceID'),
+				'options' => array(),
+			), null, $this->name);
 		
 		$usernameText = array(
 			'type' => 'text',
 			'label-message' => 'username',
 			'section' => 'addmember-section',
 			'help-message' => 'wp-addmember-username-help',
-			'validation-callback' => array($this, 'validateUserName'),
+			'validation-callback' => array($this, 'validateAddMemberUserName'),
 			'size' => 60,
 			'default' => '',
 		);
@@ -645,30 +645,68 @@ class SpecialWikiplaces extends SpecialPage {
 					'WpId' => $wikiplaceSelect,
 					'UserName' => $usernameText,
 				));
-		$htmlForm->addHeaderText(wfMessage('wp-members-add-header')->parse());
+		$htmlForm->addHeaderText(wfMessage('wp-addmember-header')->parse());
 		$htmlForm->setMessagePrefix('wp');
 		$htmlForm->setTitle($this->getTitle(self::ACTION_ADD_MEMBER));
 		$htmlForm->setSubmitCallback(array($this, 'processAddMember'));
-		$htmlForm->setSubmitText(wfMessage('wp-add-member')->text());
+		$htmlForm->setSubmitText(wfMessage('wp-add')->text());
 		
 		if ($htmlForm->show()) {
 			$this->action = self::ACTION_LIST_MEMBERS;
-            $this->msgKey = 'wp-add-member-success';
+            $this->msgKey = 'wp-addmember-success';
             $this->msgType = 'success';
             $this->display();
             return;
 		}
 	}
+	
+	public function validateAddMemberWikiplaceID($id, $allData) {
 
-	public function validateUserName($user_name, $allData) {
+		if (!is_string($id) || !preg_match('/^[1-9]{1}[0-9]{0,9}$/', $id)) {
+			return 'Error: Invalid Wikiplace ID';
+		}
+
+		$wikiplace = WpWikiplace::getById(intval($id));
+		if ( !($wikiplace instanceof WpWikiplace) || !($wikiplace->isOwner($this->getUser()->getId())) ) {
+			return 'Error: Invalid Wikiplace';
+		}
+		
+		if ( WpMember::CountMembers($wikiplace) >= WP_MEMBERS_LIMIT ) {
+			return wfMessage('wp-members-limit-reached');
+		}
+
+		return true; // all ok
+	}
+
+	/**
+	 * 
+	 * @param type $user_name
+	 * @param array $allData An array with all data (within a HTMLForm)
+	 * @return boolean
+	 */
+	public function validateAddMemberUserName($user_name, $allData) {
 
 		if ($user_name == null) {
-			return false;
+			return wfMessage('htmlform-required')->text();
 		}
 		
 		$user = User::newFromName($user_name);
-        if (!$user || $user->getId() == 0 ) {
+        if ( ( ! $user instanceof User ) || ( $user->getId() == 0 ) ) {
 			return wfMessage('nosuchusershort', $user_name);
+		}
+		
+		// $allData['WpId'] is already checked, because it is declared earlier in the form descriptor
+		$wikiplace = WpWikiplace::getById(intval($allData['WpId']));	
+		if ( ! $wikiplace instanceof WpWikiplace) {
+			return wfMessage('internalerror');
+		}
+		
+		if ($wikiplace->isOwner($user->getId())) {
+			return wfMessage('wp-owner-cannot-be-member');
+		}
+		
+		if ( WpMember::IsMember($wikiplace, $user) ) {
+			return wfMessage('wp-already-member');
 		}
 
 		return true; // ok
@@ -683,11 +721,7 @@ class SpecialWikiplaces extends SpecialPage {
 		$wikiplace = WpWikiplace::getById(intval($formData['WpId']));
 		$user = User::newFromName($formData['UserName']);
 		
-		if ( WpMember::IsMember($wikiplace, $user) ) {
-			return wfMessage('wp-already-member');
-		}
-		
-		if ( is_null( $member = WpMember::create($wikiplace, $user ) ) ) {
+		if ( is_null( $member = WpMember::Create($wikiplace, $user ) ) ) {
 			return wfMessage('internalerror');
 		}
 
@@ -703,25 +737,26 @@ class SpecialWikiplaces extends SpecialPage {
 		if (is_null($wikiplace = $this->checkWikiPlace($this->name))) {
 			return;
 		}
+		// else, the wikiplace exists and the User executing this instance is the wikiplace owner, continue
 
 		$this->action = self::ACTION_LIST_MEMBERS; // always
 
-		if (( $this->validateUserName($this->user, null) === true )
-				&& ( ($user = User::newFromName($this->user)) instanceof User ) // already validated, so always ok
-				&& ( ($member = WpMember::GetFromWikiPlaceAndUser($wikiplace, $user)) instanceof WpMember)) {
-
-			if ($member->delete()) {
-				$this->msgKey = 'wp-remove-member-success';
-				$this->msgType = 'success';
-				
-			} else {
-				$this->msgKey = 'internalerror';
-				$this->msgType = 'error';
-			}
+        if ( ( ! ($user = User::newFromName($this->user)) instanceof User ) || ( $user->getId() == 0 ) ) {
+			$this->msgKey = 'noname'; // invalid username
+			$this->msgType = 'error';
 			
-		} else {
+		} elseif ( !($member = WpMember::GetFromWikiPlaceAndUser($wikiplace, $user)) instanceof WpMember ) {
 			$this->msgKey = 'wp-not-member';
 			$this->msgType = 'error';
+			
+		} elseif ( ! $member->delete() ) {
+			$this->msgKey = 'internalerror'; // sql error ?
+			$this->msgType = 'error';
+			
+		} else {
+			// everything is fine :)
+			$this->msgKey = 'wp-remove-member-success';
+			$this->msgType = 'success';
 		}
 
 		// always
@@ -801,9 +836,9 @@ class SpecialWikiplaces extends SpecialPage {
 	 * @param string $i18n_key
 	 * @return string HTML link
 	 */
-	public static function getLinkRemoveMember($wikiplace_name = null, $user_name = null, $i18n_key = 'wp-remove-member') {
+	public static function getLinkRemoveMember($wikiplace_name = null, $user_name = null, $i18n_key = 'wp-remove') {
 		$title = self::getTitleFor(self::TITLE_NAME);
-		return Linker::linkKnown($title, $i18n_key, array(), array(
+		return Linker::linkKnown($title, wfMessage($i18n_key)->text(), array(), array(
                     'action' => self::ACTION_REMOVE_MEMBER,
 					'name' => $wikiplace_name,
 					'user' => $user_name ) );
