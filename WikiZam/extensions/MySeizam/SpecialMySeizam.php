@@ -141,6 +141,7 @@ class SpecialMySeizam extends SpecialPage {
     private function buildQuickWikiplaces() {
         $user = $this->getUser();
         $tp = new WpWikiplacesTablePager();
+		$tp->setShortDisplay();
         $tp->setLimit(3);
         $tp->setSelectConds(array('wpw_owner_user_id' => $user->getId()));
         $tp->setFieldSortable(array());

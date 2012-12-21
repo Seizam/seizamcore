@@ -7,10 +7,12 @@ $messages = array();
  */
 $messages['en'] = array(
 	
+	'wp-members' => 'Members',
+	'wp-users' => 'Users',
 	'wp-members-tip' => 'To manage the WikiPlaces\'members, go to [[Special:WikiPlaces/Members:$1]].',
 	
 	/* Consult members */
-	'wp-members-list-header' => '<span style="float:right">See : <b>[[Help:WikiPlaces|Help]]</b></span>Here are all the members within <b>[[$1]]</b>.',
+	'wp-members-list-header' => '<span style="float:right">See <b>[[Help:WikiPlaces|Help]]</b> | See <b>[[Special:WikiPlaces/Consult:$1|Pages]]</b></span>Here are all the members of <b>[[$1]]</b>.',
 	'wp-username' => 'Username',
 	'wp-realname' => 'Real Name',
 	'wp-remove' => 'remove',

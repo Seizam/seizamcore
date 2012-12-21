@@ -64,12 +64,11 @@ $messages['en'] = array(
     'wp-list-footer' => '<h3>{{int:statistics}}</h3>
 * Diskspace usage total: $1
 * Pages total: $2',
-    'wp-consult-header' => '<span style="float:right">See : <b>[[Help:WikiPlaces|Help]]</b></span>Here are all the pages within <b>[[$1]]</b>.',
+    'wp-consult-header' => '<span style="float:right">See <b>[[Help:WikiPlaces|Help]]</b> | Manage <b>[[Special:WikiPlaces/Members:$1|Members]]</b></span>Here are all the pages within <b>[[$1]]</b>.',
     'wp-consult-footer' => '<h3>{{int:tipsntricks}}</h3>
 * {{int:wp-url-tip|$1}}
 * {{int:wp-background-tip|$1}}
-* {{int:wp-navigation-tip|$1}}
-* {{int:wp-members-tip|$1}}',
+* {{int:wp-navigation-tip|$1}}',
     /* Form: Wikiplace */
     'wp-create-header' => 'Fill the form below to create a new WikiPlace.',
     'wp-create-section' => 'Create a WikiPlace',
@@ -241,7 +240,7 @@ $messages['fr'] = array(
     'wp-list-footer' => '<h3>{{int:statistics}}</h3>
 * Espace disque utilisé : $1
 * Total de pages : $2',
-    'wp-consult-header' => '<span style="float:right">Voir : <b>[[Help:WikiPlaces/fr|Aide]]</b></span>Voici toutes les pages dans <b>[[$1]]</b>.',
+    'wp-consult-header' => '<span style="float:right">Voir <b>[[Help:WikiPlaces/fr|l\'aide]]</b> | Gérer <b>[[Special:WikiPlaces/Members:$1|les membres]]</b></span>Voici toutes les pages dans <b>[[$1]]</b>.',
     /* Form: Wikiplace */
     'wp-create-header' => 'Remplisser ce formulaire pour créer une nouvelle WikiPlace.',
     'wp-create-section' => 'Créer une WikiPlace',

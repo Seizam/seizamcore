@@ -10,14 +10,16 @@ if (!defined('MEDIAWIKI')) {
 class WpWikiplacesTablePager extends SkinzamTablePager {
     # Fields for default behavior
 
-    protected $selectTables = array('wp_wikiplace', 'wp_page', 'page');
+    protected $selectTables = array('wp_wikiplace', 'wp_page', 'page', 'wp_member');
     protected $selectJoinConditions = array(
         'wp_page' => array('LEFT JOIN', 'wpw_id = wppa_wpw_id'),
-        'page' => array('INNER JOIN', 'wpw_home_page_id = page_id'));
+        'page' => array('INNER JOIN', 'wpw_home_page_id = page_id'),
+        'wp_member' => array('LEFT JOIN', 'wpw_id = wpm_wpw_id') );
     protected $selectFields = array(
         'page_title',
         'page_namespace',
-        'count(*) as count',
+        'count(DISTINCT page_id) as count',
+        'count(DISTINCT wpm_id) as members',
         'wpw_monthly_page_hits',
         'wpw_monthly_bandwidth',
         'wpw_report_updated',
@@ -29,6 +31,16 @@ class WpWikiplacesTablePager extends SkinzamTablePager {
     protected $tableClasses = array('WpWikiplace'); # Array
     protected $messagesPrefix = 'wp-';
     protected $selectConds = array();
+	
+	function setShortDisplay() {
+		if (($key = array_search('wpw_monthly_page_hits', $this->selectFields)) !== false) {
+			unset($this->selectFields[$key]);
+		}
+		if (($key = array_search('wpw_monthly_bandwidth', $this->selectFields)) !== false) {
+			unset($this->selectFields[$key]);
+		}
+		$this->setFieldNames(); // reset the columns names
+	}
 
     /**
      * Format a table cell. The return value should be HTML, but use an empty
@@ -59,6 +71,17 @@ class WpWikiplacesTablePager extends SkinzamTablePager {
                         . '</li>';
                 $html .= '</ul>';
                 return $html;
+            case 'members':
+                $html = '<b>'.$value.'</b> '.  wfMessage('wp-users');
+                $html .= '<ul>';
+                $html .= '<li><b>'
+						. SpecialWikiplaces::getLinkListMembers($this->mCurrentRow->page_title)
+                        . '</b></li>';
+                $html .= '<li>'
+						. SpecialWikiplaces::getLinkAddMember( $this->mCurrentRow->page_title )
+                        . '</li>';
+                $html .= '</ul>';
+                return $html;
             case 'wpw_monthly_page_hits':
                 return wfFormatNumber($value).' '.  wfMessage('wp-hits')->text();
             case 'wpw_monthly_bandwidth':
@@ -76,9 +99,12 @@ class WpWikiplacesTablePager extends SkinzamTablePager {
         unset($fieldNames['page_namespace']);
         unset($fieldNames['wpw_report_updated']);
         unset($fieldNames['wpw_date_expires']);
-        unset($fieldNames['count(*) as count']);
-        
+        unset($fieldNames['count(DISTINCT page_id) as count']);
+        unset($fieldNames['count(DISTINCT wpm_id) as members']);
+				
         $fieldNames['count'] = wfMessage('wp-subpages')->text();
+		
+		$fieldNames['members'] = wfMessage('wp-members')->text();
         
         if (isset ($fieldNames['page_title']))
             $fieldNames['page_title'] = wfMessage('wp-name')->text();
@@ -115,6 +141,6 @@ class WpWikiplacesTablePager extends SkinzamTablePager {
      *
      */
     function isFieldSortable($field) {
-        return $field == 'count' ? false : parent::isFieldSortable($field);
+        return ( $field == 'count' || $field == 'members' ) ? false : parent::isFieldSortable($field);
     }
 }

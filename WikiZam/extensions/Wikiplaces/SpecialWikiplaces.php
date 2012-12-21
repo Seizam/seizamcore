@@ -843,5 +843,16 @@ class SpecialWikiplaces extends SpecialPage {
 					'name' => $wikiplace_name,
 					'user' => $user_name ) );
 	}
+	
+	/**
+	 * Generate a link to consult a listing of a wikiplace members.
+	 * @param string $homepage_title_name should be $homepageTitle->getText()
+	 * @return string a HTML link
+	 */
+	public static function getLinkListMembers($homepage_title_name, $displayName = false) {
+        $message = $displayName ? wfUnUnderscore($homepage_title_name) : wfMessage('details')->text();
+		return Linker::linkKnown(
+						self::getTitleFor(self::TITLE_NAME, self::ACTION_LIST_MEMBERS . ':' . $homepage_title_name), $message);
+	}
 
 }
