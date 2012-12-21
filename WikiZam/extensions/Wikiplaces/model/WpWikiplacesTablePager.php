@@ -18,7 +18,7 @@ class WpWikiplacesTablePager extends SkinzamTablePager {
     protected $selectFields = array(
         'page_title',
         'page_namespace',
-        'count(DISTINCT page_id) as count',
+        'count(DISTINCT wppa_id) as count',
         'count(DISTINCT wpm_id) as members',
         'wpw_monthly_page_hits',
         'wpw_monthly_bandwidth',
@@ -99,7 +99,7 @@ class WpWikiplacesTablePager extends SkinzamTablePager {
         unset($fieldNames['page_namespace']);
         unset($fieldNames['wpw_report_updated']);
         unset($fieldNames['wpw_date_expires']);
-        unset($fieldNames['count(DISTINCT page_id) as count']);
+        unset($fieldNames['count(DISTINCT wppa_id) as count']);
         unset($fieldNames['count(DISTINCT wpm_id) as members']);
 				
         $fieldNames['count'] = wfMessage('wp-subpages')->text();
