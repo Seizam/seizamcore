@@ -70,7 +70,10 @@ class WpMembersTablePager extends SkinzamTablePager {
     function formatActions() {
         $html = '<ul>';
         $html .= '<li>'
-                . SpecialWikiplaces::getLinkRemoveMember($this->wpNameDb, $this->mCurrentRow->user_name)
+				. Linker::link(User::newFromId($this->mCurrentRow->user_id)->getTalkPage(), wfMessage('talk')->text(), array(), array('redirect' => 'no'))
+				. '</li>'
+				. '<li>'
+				. SpecialWikiplaces::getLinkRemoveMember($this->wpNameDb, $this->mCurrentRow->user_name)
                 . '</li>';
         $html .= '</ul>';
         return $html;

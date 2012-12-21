@@ -2446,7 +2446,7 @@ table.WpPage td ul {
     margin: 0 8px;
 }
 
-table.WpPage td ul li {
+td.actions ul li {
     display: inline;
     border-left: 1px solid #dad9d9;
     padding: 0 8px;
@@ -2455,7 +2455,7 @@ table.WpPage td ul li {
     text-align: left;
 }
 
-table.WpPage td ul li:first-child {
+td.actions ul li:first-child {
     border-left: none;
 }
 
