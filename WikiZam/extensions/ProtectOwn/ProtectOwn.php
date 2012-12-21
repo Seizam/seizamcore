@@ -358,8 +358,6 @@ function poIsOwner($title, $user) {
 
 function poIsMember($title, $user) {
 
-	$pageId = $title->getArticleId();
-	$pageDBkey = $title->getPrefixedDBkey();
 	$userId = $user->getID();
 	
 //	wfDebugLog('ProtectOwn', 'IsMember(title='.$pageDBkey.'['.$pageId.'], user='.$userId.'): ' . wfGetPrettyBacktrace());
@@ -368,6 +366,9 @@ function poIsMember($title, $user) {
 	if ((!$title instanceOf Title) || ( $userId === 0 ) || ($title->isSpecialPage())) {
 		return false;
 	}
+	
+	$pageId = $title->getArticleId();
+	$pageDBkey = $title->getPrefixedDBkey();
 
 	global $wgProtectOwnCacheIsMember;
 	if (isset($wgProtectOwnCacheIsMember[$userId][$pageId])) {
@@ -1034,7 +1035,7 @@ function poWatchArticle(&$user, &$article) {
                 . ' the title "' . $title->getPrefixedDBkey() . '"[' . $title->getArticleId() . ']'
                 . ' has a read restriction, so no one can watch it');
 
-        throw new ErrorPageError('sorry', 'sz-invalid-request'); // no active subscription or quotas exceeded 
+        throw new ErrorPageError('sorry', 'sz-invalid-request');
 
         return false;
     }
