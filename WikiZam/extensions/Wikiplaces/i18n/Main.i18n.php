@@ -222,8 +222,10 @@ $messages['fr'] = array(
     'wp-subscribe-change' => 'Changer d\'Abonnement',
     'wp-subscribe-renew' => 'Renouveler',
     'wp-create' => 'Créer !',
-    'wp-create-page' => 'Nouvelle page',
-    'wp-create-wikiplace' => 'Créer une nouvelle WikiPlace',
+    'wp-create-page' => 'Créer',
+    'wp-create-page-long' => 'Créer une nouvelle Page',
+    'wp-create-wikiplace-long' => 'Créer',
+    'wp-create-wikiplace-long' => 'Créer une nouvelle WikiPlace',
     /* Tips */
     'wp-url-tip' => 'Votre WikiPlace est disponnible depuis [[$1|<u>http://www.<b>seizam.com/$1</b></u>]].',
     'wp-suburl-tip' => 'Votre page est disponnible depuis [[$1/$2|<u>http://www.<b>seizam.com/$1/$2</b></u>]].',

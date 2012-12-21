@@ -11,7 +11,7 @@ $messages['en'] = array(
 	'wp-users' => 'Users',
 
 	/* Consult members */
-	'wp-members-list-header' => '<span style="float:right">See <b>[[Help:WikiPlaces|Help]]</b> | See <b>[[Special:WikiPlaces/Consult:$1|Pages]]</b></span>Here are all the members of <b>[[$1]]</b>.',
+	'wp-members-list-header' => '<span style="float:right">See <b>[[Help:Members|Help]]</b> | Manage <b>[[Special:WikiPlaces/Consult:$1|Pages]]</b></span>Here are all the members of <b>[[$1]]</b>.',
 	'wp-username' => 'Username',
 	'wp-realname' => 'Real Name',
 	'wp-remove' => 'Remove',
@@ -52,11 +52,12 @@ $messages['fr'] = array(
 	'wp-users' => 'Utilisateurs',
 
 	/* Consult members */
-	'wp-members-list-header' => '<span style="float:right">Voir <b>[[Help:WikiPlaces|l\'aide]]</b> | Voir <b>[[Special:WikiPlaces/Consult:$1|les pages]]</b></span>Voici tous les membres de <b>[[$1]]</b>.',
+	'wp-members-list-header' => '<span style="float:right">Voir <b>[[Help:Membres|l\'aide]]</b> | Gérer <b>[[Special:WikiPlaces/Consult:$1|les pages]]</b></span>Voici tous les membres de <b>[[$1]]</b>.',
 	'wp-username' => 'Nom d\'utilisateur',
 	'wp-realname' => 'Nom réel',
 	'wp-remove' => 'Retirer',
-	'wp-add-member' => 'Ajouter un membre',
+	'wp-add-member' => 'Ajouter',
+	'wp-add-member-long' => 'Ajouter un autre membre',
 
 	/* Add member */
 	'wp-addmember-header' => 'Remplisser ce formulaire pour ajouter un membre à une WikiPlace.',
@@ -71,6 +72,6 @@ $messages['fr'] = array(
 
 	/* Remove member */
 	'wp-not-member' => 'Cet utilisateur n\'est pas un membre de cette WikiPlace.',
-	'wp-remove-member-success' => 'Le membre a été retiré !',
+	'wp-remove-member-success' => 'Le membre a été retiré avec succès !',
 );
 

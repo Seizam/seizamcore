@@ -197,8 +197,8 @@ class WpPagesTablePager extends SkinzamTablePager {
             $class = 'mw-line-odd';
         $this->even = !$this->even;
 
-        $html = "<tr class=\"$class\"><td colspan=\"$colums\">";
-        $html .= SpecialWikiplaces::getLinkCreateSubpage($this->wpName);
+        $html = "<tr class=\"$class mw-line-last\"><td colspan=\"$colums\">";
+        $html .= SpecialWikiplaces::getLinkCreateSubpage($this->wpName,'wp-create-page-long');
         $html .= "</td></tr>";
         $html .= "</tbody></table>\n";
         return $html;

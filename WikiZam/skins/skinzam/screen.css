@@ -1969,6 +1969,10 @@ body.mw-special-Recentchanges #bodyContent li.mw-line-odd {
     border-left: 1px solid #dad9d9;
 }
 
+.mw-line-last {
+    font-weight: bold;
+}
+
 
 /*
     Enhanced (tables+js)
@@ -2771,32 +2775,30 @@ p.ms-wl-empty {
    ==  SLIDESHOW ON WELCOME PAGE
    -------------------------------------------------------------------------- */
 
-.mw-special-Welcome .slideshow {
-    margin-bottom: 0;
-}
-
-.mw-special-Welcome .slideshow {
+.slideshow.mainslide {
     width: 518px;
     height: 244px;
-    padding-top: 7px;
+    margin: 0;
+    padding: 0
+    
 }
 
-.slideshow div.wrapper {
+.slideshow.mainslide div.wrapper {
     padding: 0 10px;
     width: 499px;
     height: 190px;
 }
 
-.mw-special-Welcome .slideshow a { color: #4D4E4F; }
+.slideshow.mainslide a { color: #4D4E4F; }
 
-.mw-special-Welcome .slideshow div.caption {
+.slideshow.mainslide div.caption {
     font-size: 14px;
     text-align: justify;
-    padding: 10px 10px 0;
+    padding: 0 10px 10px;
     margin: 0;
 }
 
-.mw-special-Welcome .slideshow h4 {
+.slideshow.mainslide h4 {
     display: inline;
     font-size: 14px;
     letter-spacing: 1px;
@@ -2808,11 +2810,11 @@ p.ms-wl-empty {
     color: #4D4E4F;
 }
 
-.mw-special-Welcome .slideshow a:hover h4 {
+.slideshow.mainslide a:hover h4 {
     color: #e22c2e;
 }
 
-.mw-special-Welcome .slideshow p {
+.slideshow.mainslide p {
     display: inline;
     letter-spacing: 1px;
     word-spacing: 3px;
@@ -2821,11 +2823,11 @@ p.ms-wl-empty {
     padding: 0;
 }
 
-.mw-special-Welcome .slideshow a:hover p {
+.slideshow.mainslide a:hover p {
     color: #e22c2e;
 }
 
-.mw-special-Welcome .slideshow a:hover img {
+.slideshow.mainslide a:hover img {
     border: 1px solid #e22c2e;
 }
 

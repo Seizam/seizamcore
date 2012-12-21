@@ -16,13 +16,13 @@ $messages['en'] = array(
     'skinzam' => 'SkinZam',
     'sz-skinzam' => 'UI elements for Seizam',
     'sz-skinzam-desc' => 'Holds UI elements for Seizam\'s skin.',
-    'tagline' => 'From Seizam.com - For Art & Freedom',
+    'tagline' => 'From Seizam.com - Freedom to the Artists!',
     'sz-myseizam' => 'My Seizam',
     'welcome' => 'Welcome',
     
     'details' => 'Details',
     
-    'sz-meta-desc' => 'WikiPlaces for Art & Freedom. Seizam is a community of artists liberated thanks to Wikipedia’s philosophy and technology.',
+    'sz-meta-desc' => 'Freedom to the Artists! Seizam is a community of artists liberated thanks to Wikipedia’s philosophy and technology.',
     
     'cur-euro' => '€',
     'contactlinks' => 'Project:Contact',
@@ -51,7 +51,7 @@ $messages['en'] = array(
     'sz-seizamonsocialnetworks' => 'Seizam on Social Networks',
     'sz-selectlang' => 'Select your Language',
     
-    'sz-tagline' => '[[Help:WikiPlaces|<span class="fade">Wiki</span>Places]] for Art & Freedom',
+    'sz-tagline' => '[[Project:Freedoms|Freedom]] to the Artists!',
     
     'sz-htmlform-helpzonetitle' => 'Need Help?',
     'sz-htmlform-helpzonedefault' => 'This frame will display text to help you fill this form. Just fly over the "\'\'\'?\'\'\'" beside any field to obtain help or details! Visit [[Help:Contents|The Help Pages]] for more help.',
@@ -73,6 +73,7 @@ $messages['en'] = array(
     /* Mainpage */
     /* Slideshow */
     'sz-mp-ourfreedoms' => 'Our Freedoms',
+    'sz-more' => '<u>Read more</u>...',
     
     'sz-slideshow0-src' => '{{STYLEPATH}}/skinzam/content/en/Seizam.Liberty_for_Creation.jpg',
     'sz-slideshow1-src' => '{{STYLEPATH}}/skinzam/content/en/Seizam.Openness_for_Collaboration.jpg',
@@ -107,16 +108,16 @@ $messages['en'] = array(
     'sz-slideshow8-href' => '{{canonicalurl:Project:Choice of Licenses}}',
     'sz-slideshow9-href' => '{{canonicalurl:Project:Belief in Free Thinking}}',
     
-    'sz-slideshow0-body' => 'Publish your art online, whatever your disciplines, whatever your vision.',
-    'sz-slideshow1-body' => 'Share your creativity with the world, let it share its creativity back.',
-    'sz-slideshow2-body' => 'No advertisement, no spam. Nothing here will ever spoil your work.',
-    'sz-slideshow3-body' => 'From Vimeo to Twitter, insert and combine your favorite services.',
-    'sz-slideshow4-body' => 'Be the architect of your own website. Keep your pages short and artful.',
-    'sz-slideshow5-body' => 'Design the look of your pages with precision thanks to Wikipedia\'s technology.',
-    'sz-slideshow6-body' => 'Write and translate your work in any language. Touch every culture.',
-    'sz-slideshow7-body' => 'Host and share your files. Keep track of your work with revision history.',
-    'sz-slideshow8-body' => 'Copyright or Copyleft? You are the master of your intellectual property.',
-    'sz-slideshow9-body' => 'Join a community inspired and powered by leading Free projects.',
+    'sz-slideshow0-body' => 'Publish your art online, whatever your disciplines, whatever your vision. {{int:sz-more}}',
+    'sz-slideshow1-body' => 'Share your creativity with the world, let it share its creativity back. {{int:sz-more}}',
+    'sz-slideshow2-body' => 'No advertisement, no spam. Nothing here will ever spoil your work. {{int:sz-more}}',
+    'sz-slideshow3-body' => 'From Vimeo to Twitter, insert and combine your favorite services. {{int:sz-more}}',
+    'sz-slideshow4-body' => 'Be the architect of your own website. Keep your pages short and artful. {{int:sz-more}}',
+    'sz-slideshow5-body' => 'Design the look of your pages with precision thanks to Wikipedia\'s technology. {{int:sz-more}}',
+    'sz-slideshow6-body' => 'Write and translate your work in any language. Touch every culture. {{int:sz-more}}',
+    'sz-slideshow7-body' => 'Host and share your files. Keep track of your work with revision history. {{int:sz-more}}',
+    'sz-slideshow8-body' => 'Copyright or Copyleft? You are the master of your intellectual property. {{int:sz-more}}',
+    'sz-slideshow9-body' => 'Join a community inspired and powered by leading Free projects. {{int:sz-more}}',
     
     
     
@@ -220,13 +221,13 @@ $messages['qqq'] = array(
 $messages['fr'] = array(
     'sz-seizam' => 'Éléments IHM pout Seizam',
     'sz-seizam-desc' => 'Contient éléments IHM pour l\'interface Seizam.',
-    'tagline' => 'Depuis Seizam.com - Art & Liberté',
+    'tagline' => 'Depuis Seizam.com - Liberté aux artistes !',
     'sz-myseizam' => 'Mon Seizam',
     'welcome' => 'Bienvenue',
     
     'details' => 'Détails',
     
-    'sz-meta-desc' => 'WikiPlaces d\'Art et de Liberté. Seizam est une communauté d\'artistes libérés grâce à la philosophie et la technologie de Wikipedia.',
+    'sz-meta-desc' => 'Liberté aux artistes ! Seizam est une communauté d\'artistes libérés grâce à la philosophie et la technologie de Wikipedia.',
     
     'mycontris' => 'Mes contributions',
     'mypreferences' => 'Mes préférences',
@@ -260,7 +261,7 @@ $messages['fr'] = array(
     'sz-seizamonsocialnetworks' => 'Seizam sur les réseaux sociaux',
     'sz-selectlang' => 'Selectionnez votre language',
     
-    'sz-tagline' => '[[Help:WikiPlaces/fr|<span class="fade">Wiki</span>Places]] d\'Art et de Liberté',
+    'sz-tagline' => '[[Project:Libertés|Liberté]] aux artistes !',
     
     'sz-htmlform-helpzonetitle' => 'Besoin d\'aide ?',
     'sz-htmlform-helpzonedefault' => 'Ce cadre affichera un texte d\'aide pour le remplissage de ce formulaire. Il vous suffit de passer sur le "\'\'\'?\'\'\'" à côté d\'un champ pour obtenir de l\'aide ou des précisions ! Visitez [[Help:Contents/fr|Les Pages d\'Aide]] pour plus d\'aide.',
@@ -281,6 +282,7 @@ $messages['fr'] = array(
     /* Mainpage */
     /* Slideshow */
     'sz-mp-ourfreedoms' => 'Nos libertés',
+    'sz-more' => '<u>Lire plus</u>...',
     
     'sz-slideshow0-src' => '{{STYLEPATH}}/skinzam/content/fr/Seizam.Liberté_de_créer.jpg',
     'sz-slideshow1-src' => '{{STYLEPATH}}/skinzam/content/fr/Seizam.Ouverture_à_la_collaboration.jpg',
@@ -315,16 +317,16 @@ $messages['fr'] = array(
     'sz-slideshow8-href' => '{{canonicalurl:Project:Choix des licences}}',
     'sz-slideshow9-href' => '{{canonicalurl:Project:Modèle du libre}}',
     
-    'sz-slideshow0-body' => 'Publiez votre art en ligne, quelles que soient vos disciplines, quelle que soit votre vision.',
-    'sz-slideshow1-body' => 'Partagez votre créativité avec le monde, profitez de sa créativité en retour.',
-    'sz-slideshow2-body' => 'Pas de publicité, pas de spam. Ici, votre travail ne sera jamais pollué.',
-    'sz-slideshow3-body' => 'De Vimeo à Twitter, insérez et combinez vos services favoris dans vos pages.',
-    'sz-slideshow4-body' => 'Soyez l\'architecte de votre site Internet. Gardez vos pages courtes et poignantes.',
-    'sz-slideshow5-body' => 'Concevez l\'apparence de vos pages avec précision grâce à la technologie de Wikipédia.',
-    'sz-slideshow6-body' => 'Écrivez et traduisez votre contenu dans n\'importe quelle langue.',
-    'sz-slideshow7-body' => 'Hébergez et partagez vos fichiers. Suivez l\'évolution de vos projets avec l\'historique.',
-    'sz-slideshow8-body' => 'Libre ou propriétaire ? Vous êtes le maître de votre propriété intellectuelle.',
-    'sz-slideshow9-body' => 'Rejoignez une communauté inspirée et étayée par des projets libres de pointe.',
+    'sz-slideshow0-body' => 'Publiez votre art en ligne, quelles que soient vos disciplines, quelle que soit votre vision. {{int:sz-more}}',
+    'sz-slideshow1-body' => 'Partagez votre créativité avec le monde, profitez de sa créativité en retour. {{int:sz-more}}',
+    'sz-slideshow2-body' => 'Pas de publicité, pas de spam. Ici, votre travail ne sera jamais pollué. {{int:sz-more}}',
+    'sz-slideshow3-body' => 'De Vimeo à Twitter, insérez et combinez vos services favoris dans vos pages. {{int:sz-more}}',
+    'sz-slideshow4-body' => 'Soyez l\'architecte de votre site Internet. Gardez vos pages courtes et poignantes. {{int:sz-more}}',
+    'sz-slideshow5-body' => 'Concevez l\'apparence de vos pages avec précision grâce à la techno Wikipédia. {{int:sz-more}}',
+    'sz-slideshow6-body' => 'Écrivez et traduisez votre contenu dans n\'importe quelle langue. {{int:sz-more}}',
+    'sz-slideshow7-body' => 'Hébergez et partagez vos fichiers. Suivez l\'évolution de vos projets avec l\'historique. {{int:sz-more}}',
+    'sz-slideshow8-body' => 'Libre ou propriétaire ? Vous êtes le maître de votre propriété intellectuelle. {{int:sz-more}}',
+    'sz-slideshow9-body' => 'Rejoignez une communauté inspirée et étayée par des projets libres de pointe. {{int:sz-more}}',
     
     /* Form */
     'sz-mp-joinus' => 'Nous rejoindre',

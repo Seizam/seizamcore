@@ -94,5 +94,21 @@ class WpInvitationsTablePager extends SkinzamTablePager {
 
         return $classes;
     }
+    
+    function getEndBody() {
+        $colums = count($this->getFieldNames());
+
+        if ($this->even)
+            $class = 'mw-line-even';
+        else
+            $class = 'mw-line-odd';
+        $this->even = !$this->even;
+
+        $html = "<tr class=\"$class mw-line-last\"><td colspan=\"$colums\">";
+        $html .= SpecialInvitations::getLinkInvite(null,'wpi-create');
+        $html .= "</td></tr>";
+        $html .= "</tbody></table>\n";
+        return $html;
+    }
 
 }

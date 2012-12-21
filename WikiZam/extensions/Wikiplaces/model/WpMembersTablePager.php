@@ -63,18 +63,26 @@ class WpMembersTablePager extends SkinzamTablePager {
 	}
 	
 	function formatUserName($username) {
-		
-		return htmlspecialchars($username);
+		$userTitle = Title::newFromText($username, NS_USER);
+        
+		return Linker::link($userTitle, "<b>$username</b>");
 	}
 
     function formatActions() {
+        $userName = $this->mCurrentRow->user_name;
         $html = '<ul>';
         $html .= '<li>'
-				. Linker::link(User::newFromId($this->mCurrentRow->user_id)->getTalkPage(), wfMessage('talk')->text(), array(), array('redirect' => 'no'))
+				. Linker::link(Title::newFromText($userName, NS_USER_TALK), wfMessage('talk')->text())
 				. '</li>'
-				. '<li>'
+                . '<li>'
+				. Linker::linkKnown(SpecialPage::getTitleFor('EmailUser',$userName), wfMessage('emailuser')->text())
+				. '</li>'
+                . '<li>'
+				. Linker::linkKnown(SpecialPage::getTitleFor('Contributions',$userName), wfMessage('contributions')->text())
+				. '</li>'
+				. '<li><b>'
 				. SpecialWikiplaces::getLinkRemoveMember($this->wpNameDb, $this->mCurrentRow->user_name)
-                . '</li>';
+                . '</b></li>';
         $html .= '</ul>';
         return $html;
     }
@@ -104,8 +112,8 @@ class WpMembersTablePager extends SkinzamTablePager {
             $class = 'mw-line-odd';
         $this->even = !$this->even;
 
-        $html = "<tr class=\"$class\"><td colspan=\"$colums\">";
-        $html .= SpecialWikiplaces::getLinkAddMember($this->wpNameDb);
+        $html = "<tr class=\"$class mw-line-last\"><td colspan=\"$colums\">";
+        $html .= SpecialWikiplaces::getLinkAddMember($this->wpNameDb, 'wp-add-member-long');
         $html .= "</td></tr>";
         $html .= "</tbody></table>\n";
         return $html;

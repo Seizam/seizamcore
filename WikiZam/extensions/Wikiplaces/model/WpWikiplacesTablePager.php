@@ -126,8 +126,8 @@ class WpWikiplacesTablePager extends SkinzamTablePager {
         else $class = 'mw-line-odd';
         $this->even = !$this->even;
         
-        $html = "<tr class=\"$class\"><td colspan=\"$colums\">";
-        $html .= SpecialWikiplaces::getLinkCreateWikiplace();
+        $html = "<tr class=\"$class mw-line-last\"><td colspan=\"$colums\">";
+        $html .= SpecialWikiplaces::getLinkCreateWikiplace('wp-create-wikiplace-long');
         $html .= "</td></tr>";
         $html .= parent::getEndBody();
 		return $html;

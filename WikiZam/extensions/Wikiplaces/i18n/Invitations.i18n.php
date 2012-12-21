@@ -27,6 +27,7 @@ Each month, you can generate a few invitation codes for your friends and relativ
 	'wpi-used' => 'Used by [[User:$1|$1]]',
     'wpi-unlimited' => 'Unlimited, used $1 times.',
     'wpi-remaining' => '$1 remaining',
+    'wpi-create' => 'Create a new invitation',
     /* Create Form */
     'wp-inv-create-header' => 'Please fill the form below to generate a new invitation code. If you fill up the e-mail part, the invitation will be sent automatically, otherwise you will need to transmit the generated code yourself.',
     'wp-inv-create-section' => 'Create an invitation code',
@@ -113,6 +114,7 @@ Chaque mois, vous pouvez générer quelques codes d\'invitation pour vos amis et
 	'wpi-used' => 'Utilisée par [[User:$1|$1]]',
     'wpi-unlimited' => 'Illimitée, utilisée $1 fois.',
     'wpi-remaining' => '$1 restantes',
+    'wpi-create' => 'Créer une nouvelle invitation',
     /* Create Form */
     'wp-inv-create-header' => 'Merci de remplir le formulaire ci-dessous pour générer un nouveau code. Si vous remplissez la section "courriel", l\'invitation sera envoyée automatiquement ; sinon, vous devrez transmettre le code vous-même.',
     'wp-inv-create-section' => 'Créer un code d\'invitation',

@@ -71,7 +71,7 @@ class SpecialMainpage extends SpecialPage {
         # inside
         $html .= Xml::openElement('div', array('class' => 'inside'));
         # slideshow
-        $html .= Xml::openElement('div', array('class' => 'slideshow'));
+        $html .= Xml::openElement('div', array('class' => 'mainslide slideshow'));
         $html .= Xml::openElement('ul');
         
         $slide = 0;
@@ -81,17 +81,17 @@ class SpecialMainpage extends SpecialPage {
         while ($h4->exists()) {
             $html .= Xml::openElement('li');
             $html .= Xml::openElement('a', array('href' => wfMessage($key.'-href')->text()));
-            # wrapper
-            $html .= Xml::openElement('div', array('class'=>'wrapper'));
-            $html .= Xml::element('img', array('src' => wfMessage($key.'-src')->text(),'alt' => $h4, 'width' => 497, 'height' => 188));
-            # /wrapper
-            $html .= Xml::closeElement('div');
             # caption
             $html .= Xml::openElement('div', array('class'=>'caption'));
             $html .= Html::rawElement('h4', array(), $h4);
             $html .= Html::rawElement('p', array(), wfMessage($key . '-body')->parse());
-            # /caption
             $html .= Xml::closeElement('div');
+            # /caption            
+            # wrapper
+            $html .= Xml::openElement('div', array('class'=>'wrapper'));
+            $html .= Xml::element('img', array('src' => wfMessage($key.'-src')->text(),'alt' => $h4, 'width' => 497, 'height' => 188));
+            $html .= Xml::closeElement('div');
+            # /wrapper
             $html .= Xml::closeElement('a');
             $html .= Xml::closeElement('li');
             $slide++;
