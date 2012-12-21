@@ -15,7 +15,8 @@ $messages['en'] = array(
 	'wp-username' => 'Username',
 	'wp-realname' => 'Real Name',
 	'wp-remove' => 'Remove',
-	'wp-add-member' => 'Add member',
+	'wp-add-member' => 'Add',
+	'wp-add-member-long' => 'Add another member',
 	'wp-members-list-footer' => '<h3>{{int:tipsntricks}}</h3>
 * {{int:wp-url-tip|$1}}
 * {{int:wp-background-tip|$1}}

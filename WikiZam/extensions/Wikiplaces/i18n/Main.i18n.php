@@ -46,8 +46,10 @@ $messages['en'] = array(
     'wp-subscribe-change' => 'Change subscription',
     'wp-subscribe-renew' => 'Renew',
     'wp-create' => 'Create!',
-    'wp-create-page' => 'New page',
-    'wp-create-wikiplace' => 'Create a new WikiPlace',
+    'wp-create-page' => 'Create',
+    'wp-create-page-long' => 'Create a new Page',
+    'wp-create-wikiplace' => 'Create',
+    'wp-create-wikiplace-long' => 'Create a new WikiPlace',
     /* Tips */
     'wp-url-tip' => 'Your WikiPlace is available at [[$1|<u>http://www.<b>seizam.com/$1</b></u>]].',
     'wp-suburl-tip' => 'Your Page is available at [[$1/$2|<u>http://www.<b>seizam.com/$1/$2</b></u>]].',
