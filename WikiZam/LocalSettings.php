@@ -292,8 +292,9 @@ $wgFileBlacklist[] = 'mht';
 # =[ ConfirmEdit with FancyCaptcha ]=
 require( "$IP/extensions/ConfirmEdit/ConfirmEdit.php" );
 require( "$IP/extensions/ConfirmEdit/FancyCaptcha.php" );
-$wgCaptchaTriggers['createaccount'] = false;  // Special:Userlogin&type=signup
+$wgCaptchaTriggers['createaccount'] = true;  // Special:Userlogin&type=signup
 $wgGroupPermissions['autoconfirmed']['skipcaptcha'] = true;
+$wgSkipCaptchaFrom = array( 'SpecialWelcome' );
 $wgCaptchaClass = 'FancyCaptcha';
 $wgCaptchaWhitelist = false; // Regex to whitelist URLs to known-good sites...
 $wgCaptchaWhitelistIP = false; // List of IP ranges to allow to skip the captcha; (bug 23982 may require the server IP)

@@ -497,7 +497,7 @@ class SimpleCaptcha {
 	 * @return bool true to continue, false to abort user creation
 	 */
 	function confirmUserCreate( $u, &$message ) {
-		global $wgCaptchaTriggers, $wgUser;
+		global $wgCaptchaTriggers, $wgUser, $wgSkipCaptchaFrom;
 		if ( $wgCaptchaTriggers['createaccount'] ) {
 			if ( $wgUser->isAllowed( 'skipcaptcha' ) ) {
 				wfDebug( "ConfirmEdit: user group allows skipping captcha on account creation\n" );
@@ -505,6 +505,11 @@ class SimpleCaptcha {
 			}
 			if ( $this->isIPWhitelisted() )
 				return true;
+			
+			$from = RequestContext::getMain()->getRequest()->getText('from');
+			if ( in_array($from, $wgSkipCaptchaFrom)) {
+				return true;
+			}
 
 			$this->trigger = "new account '" . $u->getName() . "'";
 			if ( !$this->passCaptcha() ) {

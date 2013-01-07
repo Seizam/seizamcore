@@ -129,7 +129,7 @@ class SpecialMainpage extends SpecialPage {
         global $wgServer;
         $html .= Xml::openElement('form', array(
                     'id' => 'userloginS',
-                    'action' => $wgServer.'/index.php?title=Special:UserLogin&action=submitlogin&type=signup',
+                    'action' => $wgServer.'/index.php?title=Special:UserLogin&action=submitlogin&type=signup&from=SpecialWelcome',
                     'method' => 'post',
                     'name' => 'userlogin'
                 ));
