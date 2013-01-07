@@ -60,6 +60,7 @@ $messages['fr'] = array(
     'po-everyone' => 'Le monde entier',
     'po-user' => 'Les utilisateurs enregistrés',
     'po-artist' => 'Les artistes abonnés',
+	'po-member' => 'Les membres autorisés',
     'po-owner' => 'Seulement moi',
     'restriction-level-owner' => 'Propriétaire seulement',
     'restriction-level-user' => 'Utilisateurs enregistrés',
