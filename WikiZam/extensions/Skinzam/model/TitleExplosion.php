@@ -47,6 +47,11 @@ class TitleExplosion {
         $titles = array();
         $explosion = explode('.', $this->title->getText());
 
+		if (count($explosion) < 3) {
+			$this->titles[] = $this->title;
+			return;
+		}
+		
         $this->extension = array_pop($explosion);
 
         $text = array_shift($explosion);
@@ -101,8 +106,11 @@ class TitleExplosion {
 
     private function getHtmlForFile() {
         $html = Linker::linkKnown($this->titles[0], $this->titles[0]->getText(), array('class' => 'fh-homepage'));
-        $html .= self::getHtmlSeparator('.') . Linker::linkKnown($this->titles[1], $this->fileName, array('class' => 'fh-current'));
-        $html .= self::getHtmlSeparator('.' . $this->extension);
+		
+        if ( count($this->titles) > 1 ) {
+            $html .= self::getHtmlSeparator('.') . Linker::linkKnown($this->titles[1], $this->fileName, array('class' => 'fh-current'));
+            $html .= self::getHtmlSeparator('.' . $this->extension);
+        }
         return $html;
     }
 
