@@ -1027,38 +1027,79 @@ class WpSubscription {
     }
 
     /**
-     * Check the user has an active subscription, page creation quota is not exceeded and
+     * Checks subscription is active, page creation quota is not exceeded and
      * diskpace quota is not exceeded.
-     * @param int $user_id
-     * @return boolean/string True if user can, string message explaining why she can't
+     * @param int $current_user_id The current user identifier (used to select i18n message)
+     * @param int|WpWikiplace $wikiplace An instance of WpWikiplace (faster) or the wikiplace id (int), checks the
+     * subscriptions associated to the wikiplace and the quotas of the subscription buyer.
+     * @return boolean/string True if user can, or string message explaining why she can't
      * <ul>
-     * <li><b>wp-no-active-sub</b> user has no active subscription</li>
-     * <li><b>wp-page-quota-exceeded</b> page quota exceeded</li>
-     * <li><b>wp-diskspace-quota-exceeded</b> diskspace quota exceeded</li>
+     * <li><b>wp-no-active-sub</b> you have no active subscription</li>
+     * <li><b>wp-wikiplace-no-active-sub</b> wikiplace has no active subscription associated</li>
+     * <li><b>wp-page-quota-exceeded</b> your page quota exceeded</li>
+     * <li><b>wp-wikiplace-page-quota-exceeded</b> the subscriber page quota exceeded</li>
+     * <li><b>wp-diskspace-quota-exceeded</b> your diskspace quota exceeded</li>
+     * <li><b>wp-wikiplace-diskspace-quota-exceeded</b> the subscriber diskspace quota exceeded</li>
      * </ul>
      */
-    public static function userCanUploadNewFile($user_id) {
+    public static function userCanUploadNewFile($current_user_id, $wikiplace) {
 
-        $sub = self::newActiveByUserId($user_id);
+        if (is_int($wikiplace)) {
+            $wikiplace = WpWikiplace::getById($wikiplace);		
+        } 
 
-        if ($sub === null) {
-            return 'wp-no-active-sub';
+        if ( ! $wikiplace instanceof WpWikiplace ) {
+            throw new MWException('Invalid $wikiplace argument.');
         }
 
-        $plan = $sub->getPlan();
+        $subscription = self::newFromId($wikiplace->getSubscriptionId());
+        
+        if (!$subscription instanceof WpSubscription) {
+
+            return 'wp-wikiplace-no-active-sub'; // "THE OWNER subscription ..."
+
+        } else {
+
+            $subscriber_id = $subscription->getBuyerUserId();
+
+            if (!$subscription->isActive()) {
+
+                if ($current_user_id == $subscriber_id) {
+                    return 'wp-no-active-sub'; // "YOUR subscription ..."
+                } else {
+                    return 'wp-wikiplace-no-active-sub'; // "THE OWNER subscription ..."
+                }
+            }
+        }
+
+        if (!$wikiplace->isOwner($current_user_id) && !WpMember::IsMember($wikiplace, $current_user_id)) {
+            return 'wp-not-owner-or-member';
+        }
+
+        $plan = $subscription->getPlan();
 
         $max_pages = $plan->getNbWikiplacePages();
-        $user_pages_nb = WpPage::countPagesOwnedByUser($user_id);
+        $user_pages_nb = WpPage::countPagesOwnedByUser($subscriber_id);
 
         if ($user_pages_nb >= $max_pages) {
-            return 'wp-page-quota-exceeded';
+
+            if ( $current_user_id == $subscriber_id ) {
+                return 'wp-page-quota-exceeded'; // "YOUR quota..."
+            } else {
+                return 'wp-wikiplace-page-quota-exceeded'; // "THE OWNER quota ..."
+            }
         }
 
         $max_diskspace = $plan->getDiskspace();
-        $user_diskspace_usage = WpPage::countDiskspaceUsageByUser($user_id);
+        $user_diskspace_usage = WpPage::countDiskspaceUsageByUser($subscriber_id);
 
         if ($user_diskspace_usage >= $max_diskspace) {
-            return 'wp-diskspace-quota-exceeded';
+
+            if ( $current_user_id == $subscriber_id ) {
+                return 'wp-diskspace-quota-exceeded'; // "YOUR quota..."
+            } else {
+                return 'wp-wikiplace-diskspace-quota-exceeded'; // "THE OWNER quota ..."
+            }
         }
 
         return true;

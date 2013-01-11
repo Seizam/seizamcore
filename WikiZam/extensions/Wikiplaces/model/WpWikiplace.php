@@ -271,21 +271,28 @@ class WpWikiplace {
 	 * array( 'page_title' =>  $name )
 	 * array( 'wpw_owner_user_id' =>  $user_id )
 	 * @param boolean $multiple Return an array of Wikiplace or a single Wikiplace object
+     * @param array $extra_table Extra table to use
+     * @param array $extra_join Extra join condition
 	 * @return array|WpWikiplace 
 	 */
-	public static function search($conds, $multiple = false) {
+	public static function search($conds, $multiple = false, $extra_table = array(), $extra_join = array() ) {
 		
 		$dbr = wfGetDB(DB_SLAVE);
 		//todo
 		
-		$tables = array( 'wp_wikiplace', 'page' );
+		$tables = array_merge( 
+                array( 'wp_wikiplace', 'page' ),
+                $extra_table
+        );
 		$vars = array( 'wpw_id', 'wpw_owner_user_id', 'wpw_home_page_id', 'page_title',
 			'wpw_wps_id', 'wpw_previous_total_page_hits', 'wpw_monthly_page_hits', 'wpw_previous_total_bandwidth', 'wpw_monthly_bandwidth',
 			'wpw_report_updated','wpw_date_expires'	);
 		$fname = __METHOD__;
 		$options = array();
-		$join_conds = array( 'page' => array('INNER JOIN', 'wpw_home_page_id = page_id')); /** @todo:maybe a left join? */
-		
+		$join_conds = array_merge(
+                array( 'page' => array('INNER JOIN', 'wpw_home_page_id = page_id') ), /** @todo:maybe a left join? */
+                $extra_join
+        ); 
 		if ($multiple) {
 			$results = $dbr->select($tables, $vars, $conds, $fname, $options, $join_conds);
 			$wikiplaces = array();
@@ -345,6 +352,39 @@ class WpWikiplace {
 		}
 		
 		return self::search( array( 'wpw_owner_user_id' =>  $user_id ), true);
+
+	}
+    
+    
+    /**
+	 * 
+	 * 
+	 * @param int|User $user An instance of User, or the user id (int)
+	 * @return array of WpWikiplaces ("array()" if no wikiplaces)
+	 */
+	public static function factoryAllWhereUserIsMember($user) {
+		
+        if (is_int($user)) {
+			$user_id = $user;
+		} elseif ( $user instanceof User) {
+			$user_id = $user->getId();
+		} else {
+			throw new MWException('Invalid $user argument.');
+		}
+		
+		if ($user_id < 1) {
+			return array();
+		}
+		
+		return self::search( 
+                array( ),
+                true,
+                array( 'wp_member' ),
+                array('wp_member' => array('INNER JOIN', array(
+                    'wpw_id = wpm_wpw_id',
+                    'wpm_user_id' => $user_id
+                ) ) )
+        );
 
 	}
 	

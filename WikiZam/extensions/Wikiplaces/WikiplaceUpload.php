@@ -68,27 +68,48 @@ class WikiplaceUpload {
 		$full_title = $specialUploadObj->getFullTitle();
 		$request = $specialUploadObj->getRequest();
 
+        // update special page DestFileName attribute
+		$final_wp_filename = self::getDestinationFileName($request);
+		if ($final_wp_filename != null) {
+			$specialUploadObj->mDesiredDestName = $final_wp_filename;
+			wfDebugLog('wikiplaces-debug', 'fetchRequestInformations, mDesiredDestName set to "' . $final_wp_filename . '"');
+		}
+        $final_wp_file_title = Title::newFromText($final_wp_filename, NS_FILE);
+
 		// is the user re uploading a new version of an existing file or followed a "upload a file with this name" link ?
 		if ($request->getText('wpDestFile') && !$request->getText('wpDestFileMainPart')) {
 
-			// ensure that user can, but we don't need explanation if the file can't be uploaded
-			if (!WikiplacesHooks::wikiplaceUserCanCreate(Title::makeTitle(NS_FILE, $request->getText('wpDestFile')), $user)) {
-				$specialUploadObj->getOutput()->showErrorPage('sorry', wfMessage('wp-invalid-request'));
-				return false; // break SpecialUpload page init/processing
-			}
+            $result = true;
+
+            wfRunHooks('userCan', array(&$final_wp_file_title, &$user, 'upload', &$result));
+            if ( $result !== true ) {
+                wfDebugLog('wikiplaces-debug', 'WikiplaceUpload::fetchRequestInformations userCan returned '.print_r($result, true));
+                $specialUploadObj->getOutput()->showErrorPage('sorry', wfMessage('badaccess-group0')); // not allowed
+                return false; // break SpecialUpload page init/processing
+            }
+
+            // Check getUserPermissionsErrors hook (this behavior is suitable for nonessential UI
+            // controls because it skips potentially expensive cascading permission checks, but may 
+            // provide false positives)
+            wfRunHooks( 'getUserPermissionsErrors', array( &$final_wp_file_title, &$user, 'upload', &$result ) );
+            if ( $result !== true ) {
+                wfDebugLog('wikiplaces-debug', print_r($result, true));
+                // WikiplacesHooks::getUserPermissionsErrors($final_wp_file_title, $user, 'upload', $result);
+                if ( is_array($result) && !empty($result) ) {
+                    $key = array_shift($result);
+                    $specialUploadObj->getOutput()->showErrorPage('sorry', wfMessage($key, $result));
+                    return false; // break SpecialUpload page init/processing
+                } else {
+                    $specialUploadObj->getOutput()->showErrorPage('sorry', wfMessage('badaccess-group0')); // not allowed
+                    return false; // break SpecialUpload page init/processing
+                }
+            }
 
 			// she is reuploading or has followed a "upload a file with this name" link
 			wfDebugLog('wikiplaces-debug', 'fetchRequestInformations: reuploading, so disabling mod');
 			self::$WPDESTFILE_READONLY = true; // ensure that the filename field is readonly when create link followed
 			self::$DISPLAY_UPLOAD_MOD = false;
 			return true; // no informations to fetch and nothing to prepare
-		}
-		
-		// update special page DestFileName attribute
-		$final_wp_filename = self::getDestinationFileName($request);
-		if ($final_wp_filename != null) {
-			$specialUploadObj->mDesiredDestName = $final_wp_filename;
-			wfDebugLog('wikiplaces-debug', 'fetchRequestInformations, mDesiredDestName set to "' . $final_wp_filename . '"');
 		}
 
 		// ( if we arrive here, we are uploading a new file )
@@ -102,7 +123,6 @@ class WikiplaceUpload {
 		}
 
 		// is the user trying to upload a public file ?
-		$final_wp_file_title = Title::newFromText($final_wp_filename, NS_FILE);
 		if ( ($param === WP_PUBLIC_FILE_PREFIX) || ( ( $final_wp_file_title instanceof Title ) && WpPage::isPublic(NS_FILE, $final_wp_file_title->getDBkey() ) ) )  {
 
 			// there is a "Public" param, there will be only one choice in the listbox
@@ -111,25 +131,26 @@ class WikiplaceUpload {
 			self::$FILE_PREFIXES_DEFAULT = $param;
 		} else {
 
-			// can the user upload a new file with her subscription ?
-			if (( $reason = WpSubscription::userCanUploadNewFile($user->getId())) !== true) {
-				$specialUploadObj->getOutput()->showErrorPage('sorry', wfMessage($reason));  // no active subscription or quotas exceeded 
-				return false; // break SpecialUpload page init/processing
-			}
+			// get all wikiplaces the user has access to
+			$wikiplacesOwner = WpWikiplace::factoryAllOwnedByUserId($user->getId());
+            $wikiplacesMember = WpWikiplace::factoryAllWhereUserIsMember($user->getId());
 
-			// check if the user has at least one wikiplace
-			$wikiplaces = WpWikiplace::factoryAllOwnedByUserId($user->getId());
-			if (count($wikiplaces) == 0) {
+            // check if the user has access to at least one wikiplace
+			if ( ( count($wikiplacesOwner) + count($wikiplacesMember) ) == 0) {
 				$specialUploadObj->getOutput()->showErrorPage('sorry', wfMessage('wp-create-wp-first'));
 				return false; // break SpecialUpload page init/processing
 			}
 
 			// multiple choice: prepare full prefixes list
-			foreach ($wikiplaces as $wikiplace) {
+			foreach ($wikiplacesOwner as $wikiplace) {
 				$wpw_name = $wikiplace->getName();
 				self::$FILE_PREFIXES[$wpw_name] = $wpw_name;
 			}
-
+            foreach ($wikiplacesMember as $wikiplace) {
+				$wpw_name = $wikiplace->getName();
+				self::$FILE_PREFIXES[$wpw_name] = $wpw_name;
+			}
+            
 			// do we have to set a default value ?
 			if (($param != null) && array_key_exists($param, self::$FILE_PREFIXES)) {
 				if (!self::$FILE_PREFIXES_DEFAULT) {

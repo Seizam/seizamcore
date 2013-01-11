@@ -725,6 +725,7 @@ class SpecialWikiplaces extends SpecialPage {
 			return wfMessage('internalerror');
 		}
 
+        $user->invalidateCache(); // necessary to update menus and link of the user
 		$this->name = $wikiplace->getName();
 		return true;
 	}
@@ -755,6 +756,7 @@ class SpecialWikiplaces extends SpecialPage {
 			
 		} else {
 			// everything is fine :)
+            $user->invalidateCache(); // necessary to update menus and link of the user
 			$this->msgKey = 'wp-remove-member-success';
 			$this->msgType = 'success';
 		}

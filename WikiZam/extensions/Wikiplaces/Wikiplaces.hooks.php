@@ -181,7 +181,8 @@ class WikiplacesHooks {
     }
 
     /**
-     * Can the user create this new Title?
+     * Can the user create this new Title? (called for action 'create', 'edit',
+	 * 'upload', 'createpage', 'move-target' on a new title)
      * @param Title $title A new Title (=not known/not stored) in a Wikiplace namespace
      * @param User $user A logged in user
      * @return array Empty array = can, array containing i18n key + args = cannot 
@@ -274,14 +275,14 @@ class WikiplacesHooks {
                         // admin is working for someone else
                         $result = array();
                         $msg .= ', admin is working for someone else';
-                    } elseif (!$wp->isOwner($user_id)) { // checks the current user is the owner of the wikiplace
-                        $result = array('wp-not-owner');
-                        $msg .= ', current user is not Wikiplace owner';
+                    } elseif ( !$wp->isOwner($user_id) && !WpMember::IsMember($wp, $user) ) { // !owner and !member => DENY
+                        $result = array('wp-not-owner-or-member');
+                        $msg .= ', current user is neither the owner nor a member of the Wikiplace';
                     } else {
 
                         $reason;
                         if ($namespace == NS_FILE) {
-                            $reason = WpSubscription::userCanUploadNewFile($user_id);
+                            $reason = WpSubscription::userCanUploadNewFile($user_id, $wp);
                         } else {
                             $reason = WpSubscription::userCanCreateNewPage($user_id);
                         }
@@ -308,9 +309,9 @@ class WikiplacesHooks {
                     // admin is creating a subpage for someone else
                     $result = array();
                     $msg .= ', admin is creating a subpage for someone else';
-                } elseif (!$wp->isOwner($user_id)) { // checks the user who creates the page is the owner of the wikiplace
-                    $result = array('wp-not-owner');
-                    $msg .= ', current user is not Wikiplace owner';
+                } elseif ( !$wp->isOwner($user_id) && !WpMember::IsMember($wp, $user) ) { // !owner and !member => DENY
+                    $result = array('wp-not-owner-or-member');
+                    $msg .= ', current user is neither the owner nor a member of the Wikiplace';
                 } elseif (($reason = WpSubscription::userCanCreateNewPage($user_id)) !== true) {
                     $result = array($reason); // no active subscription or page creation quota is exceeded
                     $msg .= ', ' . $reason;
@@ -371,16 +372,20 @@ class WikiplacesHooks {
 
     /**
      * For title in wikiplace namespace, checks if the current user can autopatrol the edit.
-     * @param type $title
-     * @param type $user 
+     * @param Title $title
+     * @param User $user 
      * @return array Empty array = can, array containing i18n key + args = cannot 
      */
     private static function wikiplaceUserCanAutopatrol($title, $user) {
         $back = array();
+        
+        $wikiplace = WpWikiplace::getBySubpage($title->getDBkey(), $title->getNamespace());
 
-        if (!$user->isAllowed(WP_ADMIN_RIGHT) && !WpPage::isOwner($title->getArticleID(), $user)) {
-            $back[] = 'wp-not-owner';
-        }
+        if (!$user->isAllowed(WP_ADMIN_RIGHT)
+                && !WpPage::isOwner($title->getArticleID(), $user)
+                && ( ! $wikiplace instanceof WpWikiplace || ! WpMember::IsMember($wikiplace, $user) ) ) {
+            $back[] = 'wp-not-owner-or-member';
+        }        
 
         return $back;
     }
@@ -789,7 +794,7 @@ class WikiplacesHooks {
 
         $result = WpPage::isOwner($article_id, $user);
 
-        wfDebugLog('wikiplaces-debug', "{$user->getName()}($user_id) is" . (($result ? '' : ' not')) . " owner of {$title->getPrefixedDBkey()}($article_id)" . wfGetPrettyBacktrace());
+        wfDebugLog('wikiplaces-debug', "{$user->getName()}($user_id) is" . (($result ? '' : ' not')) . " owner of {$title->getPrefixedDBkey()}($article_id)");
 
         return false; // stop hook processing, because we have the answer
     }
