@@ -90,6 +90,14 @@ class WpWikiplace {
     public function getOwnerUserId() {
         return $this->wpw_owner_user_id;
     }
+    
+    /**
+     *
+     * @return Title 
+     */
+    public function getTitle() {
+        return Title::newFromDBkey($this->getName());
+    }
 	
 	/**
 	 * Force archiving current usage, then reset, even if 'expires_date' is not outdated.

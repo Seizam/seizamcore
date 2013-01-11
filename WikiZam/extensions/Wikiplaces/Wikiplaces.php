@@ -165,6 +165,11 @@ define('WP_MEMBERS_LIMIT', 100);
 // deferred setup, to not break Hook execution ordering with PreventDuplicate extension
 $wgExtensionFunctions[] = 'setupWikiplaces';
 
+$wgLogTypes[] = 'members';
+$wgLogNames['members'] = 'log-name-members';
+$wgLogHeaders['members'] = 'log-description-members';
+$wgLogActionsHandlers['foo/*'] = 'LogFormatter';
+
 function setupWikiplaces() {
 	global $wgHooks;
 	# Attach our own functions to hooks
