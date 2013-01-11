@@ -12,7 +12,7 @@ if (!defined('MEDIAWIKI')) {
 
 $wgExtensionCredits['other'][] = array(
    'path' => __FILE__,
-   'name' => 'Wikiplace',
+   'name' => 'WikiPlace',
    'author' => array('Yann Missler', 'Seizam'), 
    'url' => 'http://www.seizam.com', 
    'descriptionmsg' => 'wp-desc',
@@ -70,7 +70,7 @@ $wgExtensionMessagesFiles['Wikiplaces.members'] = $_i18n_dir.'Members.i18n.php';
 $wgExtensionAliasesFiles['Wikiplaces'] = $_dir . 'Wikiplaces.alias.php';
 
 # Add SpecialPages
-$wgSpecialPages['Wikiplaces'] = 'SpecialWikiplaces';
+$wgSpecialPages['WikiPlaces'] = 'SpecialWikiplaces';
 $wgSpecialPageGroups['Wikiplaces'] = 'wikiplace';
 $wgSpecialPages['Subscriptions'] = 'SpecialSubscriptions';
 $wgSpecialPageGroups['Subscriptions'] = 'wikiplace';
@@ -126,8 +126,8 @@ define('WP_DEFAULT_RESTRICTION_LEVEL', 'member');
 # Extra namespace for Wikiplace configuration (bg, nav...) settings
 define("NS_WIKIPLACE", 70);
 define("NS_WIKIPLACE_TALK", 71);
-$wgExtraNamespaces[NS_WIKIPLACE] = "Wikiplace";
-$wgExtraNamespaces[NS_WIKIPLACE_TALK] = "Wikiplace_talk";   # underscore required
+$wgExtraNamespaces[NS_WIKIPLACE] = "WikiPlace";
+$wgExtraNamespaces[NS_WIKIPLACE_TALK] = "WikiPlace_talk";   # underscore required
 
 $wgNamespacesWithSubpages[NS_WIKIPLACE] = true; 
 $wgNamespacesWithSubpages[NS_WIKIPLACE_TALK] = true;

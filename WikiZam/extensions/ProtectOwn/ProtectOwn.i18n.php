@@ -11,15 +11,17 @@ $messages = array();
 /** English
  */
 $messages['en'] = array(
-    'po-desc' => 'Enable protection options for the owner of a resource',
+    'po-desc' => 'Enable protection/openness options for the owner of a resource',
     'protectown' => 'Protect Own',
-    'po-success' => 'Protection has been successfully set!',
-    'po-failure' => 'Protection failed. {{int:sz-report}}',
-    'po-locked' => 'Protection locked. {{int:sz-report}}',
+    'collaborate' => 'Collaborate',
+    'collaborate-title' => 'Change collaboration level for "$1"',
+    'po-success' => 'Collaboration has been successfully set!',
+    'po-failure' => 'Collaboration failed. {{int:sz-report}}',
+    'po-locked' => 'Collaboration locked. {{int:sz-report}}',
     'po-notowner' => 'This page does not belong to you. {{int:sz-report}}',
-    'po-submit' => 'Set Protection',
-    'po-header' => "<span style=\"float:right\">See <b>[[Help:Protection|Help]]</b> | Manage <b>[[Special:WikiPlaces/Members:$2|Members]]</b></span>You may view and change the protection level here for the page '''$1'''.",
-    'po-legend' => 'Protect my page',
+    'po-submit' => 'Setup Collaboration',
+    'po-header' => "<span style=\"float:right\">See <b>[[Help:Collaboration|Help]]</b> | Manage <b>[[Special:WikiPlaces/Members:$2|Members]]</b></span>You can change the collaboration level for the page '''$1''' here.",
+    'po-legend' => 'Collaborate',
     'po-whocan-read' => 'Who can read?',
     'po-help-read' => 'Click one radio button to select the group of user allowed to read this page/this file. Eg: Select "<b>{{int:po-owner}}</b>" to forbid access to everyone.',
     'po-whocan-edit' => 'Who can edit?',
@@ -36,7 +38,7 @@ $messages['en'] = array(
     'restriction-level-user' => 'Registered Users',
     'restriction-level-artist' => 'Subscribed Artists',
     'restriction-read' => 'Read',
-    'tooltip-ca-setprotection' => 'Define access rights to this page',
+    'tooltip-ca-setprotection' => 'Define access rights for this page',
     'accesskey-ca-setprotection' => 'p'
     
 );
@@ -44,15 +46,17 @@ $messages['en'] = array(
 /** French
  */
 $messages['fr'] = array(
-    'po-desc' => 'Active les options de protection pour le propriétaire d\'une ressource',
+    'po-desc' => 'Active les options de protection/ouverture pour le propriétaire d\'une ressource',
     'protectown' => 'Protect Own',
-    'po-success' => 'Protection mise en place avec succès !',
-    'po-failure' => 'Protection ratée.  {{int:sz-report}}',
-    'po-locked' => 'Protection bloquée. {{int:sz-report}}',
+    'collaborate' => 'Collaborer',
+    'collaborate-title' => 'Changer le niveau de collaboration sur "$1"',
+    'po-success' => 'Collaboration mise en place avec succès !',
+    'po-failure' => 'Collaboration ratée.  {{int:sz-report}}',
+    'po-locked' => 'Collaboration bloquée. {{int:sz-report}}',
     'po-notowner' => 'Cette page ne vous appartient pas. {{int:sz-report}}',
-    'po-submit' => 'Régler la protection',
-    'po-header' => "<span style=\"float:right\">Voir <b>[[Help:Protection/fr|l'aide]]</b> | Gérer <b>[[Special:WikiPlaces/Members:$2|les membres]]</b></span>Vous pouvez consulter et modifier le niveau de protection de la page '''$1'''.",
-    'po-legend' => 'Protéger ma page',
+    'po-submit' => 'Paramétrer la collaboration',
+    'po-header' => "<span style=\"float:right\">Voir <b>[[Help:Collaboration/fr|l'aide]]</b> | Gérer <b>[[Special:WikiPlaces/Members:$2|les membres]]</b></span>Vous pouvez modifier le niveau de collaboration sur la page '''$1''' ici.",
+    'po-legend' => 'Collaborer',
     'po-whocan-read' => 'Qui peut lire ?',
     'po-help-read' => 'Cliquez un boutton radio pour sélectionner le groupe d\'utilisateurs autorisé à consulter cette page/ce fichier. Ex : Sélectionnez "<b>{{int:po-owner}}</b>" pour interdire l\'accès à tout le monde.',
     'po-whocan-edit' => 'Qui peut modifier ?',
