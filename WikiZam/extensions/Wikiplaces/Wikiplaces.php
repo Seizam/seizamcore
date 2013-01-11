@@ -60,6 +60,7 @@ $wgAutoloadClasses['WpMember'] = $_dir . 'model/WpMember.php';
 # i18n
 $_i18n_dir = $_dir.'i18n/';
 $wgExtensionMessagesFiles['Wikiplaces'] = $_i18n_dir.'Main.i18n.php';
+$wgExtensionMessagesFiles['Wikiplaces.subscriptions'] = $_i18n_dir.'Subscriptions.i18n.php';
 $wgExtensionMessagesFiles['Wikiplaces.invitations'] = $_i18n_dir.'Invitations.i18n.php';
 $wgExtensionMessagesFiles['Wikiplaces.plans'] = $_i18n_dir.'Plans.i18n.php';
 $wgExtensionMessagesFiles['Wikiplaces.mail'] = $_i18n_dir.'Mail.i18n.php';

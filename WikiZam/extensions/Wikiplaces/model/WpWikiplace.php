@@ -724,15 +724,14 @@ WHERE wpw_report_updated < $outdated ;" ;
 	
 	
 	/**
-	 * Parse the db_key depending on the namespace, extract the name of the wikiplace
-	 * that the page should belong. Work with both homepages and subpages db_key.
-	 * Note that this function can return a Wikiplace name even if the page doesn't not already 
-	 * belongs to ( = newly created page ) or even if the Wikiplace doesn't already exists.
+	 * Parse the db_key depending on the namespace, extract the name of the WikiPlace
+	 * the page should belong to. Works with both homepages and subpages db_key.
+	 * Note that this function can return a Wikiplace name even if the page or the WikiPlace does not already exist.
 	 * @param string $db_key should be $wikipage->getTitle()->getDBkey()
 	 * @param int $namespace should be $wikipage->getTitle()->getNamespace()
 	 * @return String The wikiplace name or null the page doesn't belong to an exsiting Wikiplace
 	 */
-	public static function extractWikiplaceRoot($db_key, $namespace) {
+	public static function extractWikiplaceRoot($db_key, $namespace = NS_MAIN) {
 		
 		$hierarchy = self::explodeWikipageKey($db_key, $namespace);
 		

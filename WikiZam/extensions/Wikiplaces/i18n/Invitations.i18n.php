@@ -50,15 +50,15 @@ $1',
 	'wp-inv-counter-help' => 'How many times can the code be used. Type "-1" for unlimited.',
     
     /* Use Warnings */
-	'wp-use-inv-header' => 'Please fill the form below to use an invitation code. Or check out [[Special:Subscriptions/new|our regular offers]].',
+	'wp-use-inv-header' => 'Please fill the form below to use an invitation code. If you do not have an invitation, [[Special:Subscriptions/new|click here]].',
 	'wp-use-inv-ok' => 'Great! Your invitation is valid. You now have access to new special offers.',
 	'wp-use-inv-invalid' => 'This code is invalid.',
 	'wp-use-inv-nolonger' => 'Sorry. Your invitation has expired.',
     
     /* Use Form */
-    'wp-use-inv-help' => 'Type here the invitation code you received. Most likely a 12 characters string looking like "GNXHGKH79XQA".',
+    'wp-use-inv-help' => 'Type here the invitation code you received. Most likely a 12 characters string looking like <b>aqxx3kaf3drf</b>. This code is case-insensitive.',
 	'wp-use-inv-go' => 'Use this code!',
-    'wp-use-inv-help' => 'This is your invitation code. Click [[Special:Invitation|here]] to try an other one.',
+    'wp-use-inv-help2' => 'This is your invitation code. Click [[Special:Invitation|here]] to try an other one.',
     'wp-inv-use-section' => '{{int:wp-sub-new-section}} (1/2)',
     
     /* Welcome Page */
@@ -136,15 +136,15 @@ $1',
 	'wp-inv-counter-help' => 'Combien de fois ce code peut-il être utilisé. Tapez "-1" pour illimité.',
     
     /* Use Warnings */
-	'wp-use-inv-header' => 'Merci de remplir le formulaire ci-dessous pour utiliser votre code d\'invitation. Ou consultez [[Special:Subscriptions/new|nos offres normales]].',
+	'wp-use-inv-header' => 'Merci de remplir le formulaire ci-dessous pour utiliser votre code d\'invitation. Si vous n\'avez pas de code, [[Special:Subscriptions/new|cliquez ici]].',
 	'wp-use-inv-ok' => 'Félicitations ! Votre invitation est valide. Vous avez maintenant accès à de nouvelles offres spéciales.',
 	'wp-use-inv-invalid' => 'Ce code est invalide.',
 	'wp-use-inv-nolonger' => 'Désolé. Votre invitation a expiré.',
     
     /* Use Form */
-    'wp-use-inv-help' => 'Saisissez ici le code que vous avez reçu. Probablement une chaine de 12 caractères comme "GNXHGKH79XQA".',
+    'wp-use-inv-help' => 'Saisissez ici le code que vous avez reçu. Probablement une chaine de 12 caractères ressemblant à <b>aqxx3kaf3drf</b>. Ce code est insensible à la casse.',
 	'wp-use-inv-go' => 'Utiliser ce code !',
-    'wp-use-inv-help' => 'Voici votre code d\'invitation. Cliquez [[Special:Invitation|ici]] pour en essayer un autre.',
+    'wp-use-inv-help2' => 'Voici votre code d\'invitation. Cliquez [[Special:Invitation|ici]] pour en essayer un autre.',
     'wp-inv-use-section' => '{{int:wp-sub-new-section}} (1/2)',
     
     /* Welcome Page */

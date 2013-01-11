@@ -105,7 +105,13 @@ if( !$title->userCanRead() )
 
 // Stream the requested file
 wfDebugLog( 'img_auth', "Streaming `".$filename."`." );
-wfStreamFile( $filename, array( 'Cache-Control: private', 'Vary: Cookie' ) );
+
+# PATCH
+if (!isset($wgImgAuthMaxAge) ) {
+    $wgImgAuthMaxAge = 0;
+}
+wfStreamFile( $filename, array( "Cache-Control:max-age=$wgImgAuthMaxAge", 'Vary: Cookie' ) );
+# /PATCH
 
 // This was added by Yann Missler for Seizam
 wfRunHooks( 'ImgAuthFullyStreamedFile', array( &$title, $filename ) ); /*

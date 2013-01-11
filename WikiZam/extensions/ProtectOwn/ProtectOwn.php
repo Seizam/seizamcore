@@ -624,7 +624,7 @@ function poForm($action, $article) {
         // readonly OR no data submitted, so construct the form (maybe readonly)
         // display the header.
         if (!$readonly) {
-            $wgOut->addHTML(Html::rawElement('div', array('class' => 'form_header informations'), wfMessage('protect-text', wfEscapeWikiText($title->getPrefixedText()))->parse()));
+            $wgOut->addHTML(Html::rawElement('div', array('class' => 'form_header informations'), wfMessage('po-header', $title->getPrefixedText(), WpWikiplace::extractWikiplaceRoot($title->getDBkey(), $title->getNamespace()))->parse()));
         } else {
             $wgOut->addHTML(Html::rawElement('div', array('class' => 'form_header informations'), wfMsg('po-locked')));
         }
@@ -742,7 +742,7 @@ function poForm($action, $article) {
     }
     
     if (!$readonly) {
-        $wgOut->addHTML(Html::rawElement('div', array('class' => 'form_header informations'), wfMessage('protect-text', wfEscapeWikiText($title->getPrefixedText()))->parse()));
+        $wgOut->addHTML(Html::rawElement('div', array('class' => 'form_header informations'), wfMessage('po-header', $title->getPrefixedText(), WpWikiplace::extractWikiplaceRoot($title->getDBkey(), $title->getNamespace()))->parse()));
     } else {
         $wgOut->addHTML(Html::rawElement('div', array('class' => 'form_header informations'), wfMsg('po-locked')));
     }
