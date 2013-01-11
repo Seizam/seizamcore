@@ -73,5 +73,12 @@ $messages['fr'] = array(
     /* Remove member */
     'wp-not-member' => 'Cet utilisateur n\'est pas un membre de cette WikiPlace.',
     'wp-remove-member-success' => 'Le membre a été retiré avec succès !',
+    /* Log */
+    'log-name-members' => 'Journal de Gestion des Membres',
+    'log-description-members' => 'Ces evenements suivent l\'ajout ou le retrait de membres aux WikiPlaces. Voir [[Help:Collaboration/fr]]',
+    'logentry118-members-add' => '[[User:$4|$4]] ajouté comme membre de [[$3]]',
+    'logentry118-members-remove' => '[[User:$4|$4]] retiré comme membre de [[$3]]',
+    'logentry-members-add' => '[[User:$1|$1]] a ajouté [[User:$4|$4]] comme membre de [[$3]]',
+    'logentry-members-remove' => '[[User:$1|$1]] a retiré [[User:$4|$4]] comme membre de [[$3]]',
 );
 

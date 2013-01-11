@@ -721,7 +721,7 @@ class SpecialWikiplaces extends SpecialPage {
     private function logActionMember($action, $target, $member) {
         $log = new LogPage('members');
         $log->addEntry(
-                $action,
+                '',
                 $target,
                 wfMsg("logentry118-members-$action",'','#',$target->getPrefixedText(),$member->getName()),
                 array(),
