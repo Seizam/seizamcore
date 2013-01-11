@@ -122,7 +122,7 @@ class EmailContactForm {
 			}
 
 			$message = 'contactpage-subject-' . $this->formType;
-			$text = wfMsgForContentNoTrans( $message );
+			$text = wfMessage( $message )->text();
 			if ( !wfEmptyMsg( $message, $text ) ) {
 				$this->subject = $wgRequest->getText( 'wpSubject', $text );
 			} else {
@@ -130,7 +130,7 @@ class EmailContactForm {
 			}
 
 			$message = 'contactpage-text-' . $this->formType;
-			$text = wfMsgForContentNoTrans( $message );
+			$text = wfMessage( $message )->text();
 			if ( !wfEmptyMsg( $message, $text ) ) {
 				$this->text = $wgRequest->getText( 'wpText', $text );
 			} else {

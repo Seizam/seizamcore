@@ -29,7 +29,7 @@ $wgProtectOwnGroups = array('', 'member', 'owner');
 
 // This value is used in other extensions to link to the ProtectOwn interface
 // Describe the action AND the right
-define('PROTECTOWN_ACTION', 'setprotection');
+define('PROTECTOWN_ACTION', 'collaborate');
 
 // The right to bypass restrictions set here 
 define('PROTECTOWN_BYPASS', 'bypassprotectown');
@@ -542,7 +542,7 @@ function poMakeContentAction($skin, &$cactions) {
         $action = $wgRequest->getText('action');
         $cactions['actions'][PROTECTOWN_ACTION] = array(
             'class' => $action == PROTECTOWN_ACTION ? 'selected' : false,
-            'text' => wfMsg('protect'),
+            'text' => wfMsg('collaborate'),
             'href' => $title->getLocalUrl('action=' . PROTECTOWN_ACTION),
         );
     }
@@ -588,7 +588,7 @@ function poForm($action, $article) {
 
     # user is the owner
     // start displaying page
-    $wgOut->setPageTitle(wfMsg('protect-title', $title->getPrefixedText()));
+    $wgOut->setPageTitle(wfMsg('collaborate-title', $title->getPrefixedText()));
 
     // as defined in Title.php, around lines 1550 (mw1.18.1), 
     // being authorized to 'protect' require being authorized to 'edit'
@@ -624,7 +624,7 @@ function poForm($action, $article) {
         // readonly OR no data submitted, so construct the form (maybe readonly)
         // display the header.
         if (!$readonly) {
-            $wgOut->addHTML(Html::rawElement('div', array('class' => 'form_header informations'), wfMessage('protect-text', wfEscapeWikiText($title->getPrefixedText()))->parse()));
+            $wgOut->addHTML(Html::rawElement('div', array('class' => 'form_header informations'), wfMessage('po-header', $title->getPrefixedText(), WpWikiplace::extractWikiplaceRoot($title->getDBkey(), $title->getNamespace()))->parse()));
         } else {
             $wgOut->addHTML(Html::rawElement('div', array('class' => 'form_header informations'), wfMsg('po-locked')));
         }
@@ -742,7 +742,7 @@ function poForm($action, $article) {
     }
     
     if (!$readonly) {
-        $wgOut->addHTML(Html::rawElement('div', array('class' => 'form_header informations'), wfMessage('protect-text', wfEscapeWikiText($title->getPrefixedText()))->parse()));
+        $wgOut->addHTML(Html::rawElement('div', array('class' => 'form_header informations'), wfMessage('po-header', $title->getPrefixedText(), WpWikiplace::extractWikiplaceRoot($title->getDBkey(), $title->getNamespace()))->parse()));
     } else {
         $wgOut->addHTML(Html::rawElement('div', array('class' => 'form_header informations'), wfMsg('po-locked')));
     }

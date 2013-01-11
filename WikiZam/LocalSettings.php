@@ -280,8 +280,10 @@ $wgFileExtensions = array(
 	'pdf',
 	'zip');
 // ensure this types will never be uploaded, regarless $wgStrictFileExtensions or not
-$wgFileBlacklist[] = 'txt';
 $wgFileBlacklist[] = 'mht';
+
+// Cache control for img_auth served files.
+$wgImgAuthMaxAge = 3600;
 
 
 

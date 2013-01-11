@@ -711,6 +711,39 @@ class SpecialWikiplaces extends SpecialPage {
 
 		return true; // ok
 	}
+    
+    /**
+     * @todo adapt to MW>1.19 logic
+     * @param string $action
+     * @param Title $target
+     * @param User $member 
+     */
+    private function logActionMember($action, $target, $member) {
+        $log = new LogPage('members');
+        $log->addEntry(
+                $action,
+                $target,
+                wfMsg("logentry118-members-$action",'','#',$target->getPrefixedText(),$member->getName()),
+                array(),
+                $this->getUser());
+        
+        // Code for MW > 1.19
+        //$logEntry = new ManualLogEntry( 'members', $action ); // Action bar in log foo
+        //$logEntry->setPerformer( $this->getUser() ); // User object, the user who did this action
+        //$logEntry->setTarget( $target ); // The page that this log entry affects
+        //$logEntry->setComment( '' ); // User provided comment, optional
+        //$logEntry->setParameters( array(
+        // Parameter numbering should start from 4.
+        //'4::member' => $member->getName(),
+        //) );
+        // Were not done yet, we need to insert the log entry into the database
+        // Insert adds it to the logging table and returns the id of that log entry
+        //$logid = $logEntry->insert();
+        // Then we can publish it in recent changes and the UDP feed of recent changes
+        // if we want. UDP feed is mainly used for echoing the recent change items into IRC.
+        // publish() takes second param with values 'rcandudp' (default), 'rc' and 'udp'.
+        //$logEntry->publish( $logid );
+    }
 
 	public function processAddMember($formData) {
 
@@ -726,6 +759,9 @@ class SpecialWikiplaces extends SpecialPage {
 		}
 
         $user->invalidateCache(); // necessary to update menus and link of the user
+        
+        $this->logActionMember('add', $wikiplace->getTitle(), $user);
+        
 		$this->name = $wikiplace->getName();
 		return true;
 	}
@@ -757,6 +793,7 @@ class SpecialWikiplaces extends SpecialPage {
 		} else {
 			// everything is fine :)
             $user->invalidateCache(); // necessary to update menus and link of the user
+            $this->logActionMember('remove', $wikiplace->getTitle(), $user);
 			$this->msgKey = 'wp-remove-member-success';
 			$this->msgType = 'success';
 		}

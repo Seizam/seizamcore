@@ -4,16 +4,16 @@ $specialPageAliases = array();
 
 /** English (English) */
 $specialPageAliases['en'] = array(
-	'Wikiplaces' => array( 'MyWikiplaces', 'My Wikiplaces' ),
+	'WikiPlaces' => array( 'MyWikiPlaces', 'My WikiPlaces' ),
 	'Subscriptions' => array( 'MySubscriptions' ),
-	'WikiplacesAdmin' => array( 'WikiplacesAdmin' ),
+	'WikiPlacesAdmin' => array( 'WikiPlacesAdmin' ),
 	'Offers' => array( 'Offers' ),
 );
 
 /** French */
 $specialPageAliases['fr'] = array(
-	'Wikiplaces' => array( 'MesWikiplaces' ),
+	'WikiPlaces' => array( 'MesWikiPlaces' ),
 	'Subscriptions' => array( 'MesSouscriptions' ),
-	'WikiplacesAdmin' => array( 'AdministrationWikiplaces' ),
+	'WikiPlacesAdmin' => array( 'AdministrationWikiPlaces' ),
 	'Offers' => array( 'Offres' ),
 );

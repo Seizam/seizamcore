@@ -772,7 +772,12 @@ class WikiplacesHooks {
     /**
      * If the page is in a Wikiplace namespace, search the owner and answer.
      * If the page is in a Wikiplace namespace but cannot be found, state only 
+     * 
      * admins users are owner
+     * @todo should not be a hook. Should be...
+     * WpWikiPlaces->hasOwner($user)
+     * and called by getUserPermissionError()
+     * 
      * @param Title $title
      * @param User $user
      * @param boolean
@@ -800,6 +805,10 @@ class WikiplacesHooks {
     }
 	
 	/**
+     * @todo should not be a hook. Should be...
+     * WpWikiPlaces->hasMember($user) 
+     * WpMember->isMember($WikiPlace) 
+     * and called by getUserPermissionError()
 	 * 
 	 * @param Title $title
 	 * @param User $user

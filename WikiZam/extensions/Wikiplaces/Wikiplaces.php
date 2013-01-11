@@ -12,7 +12,7 @@ if (!defined('MEDIAWIKI')) {
 
 $wgExtensionCredits['other'][] = array(
    'path' => __FILE__,
-   'name' => 'Wikiplace',
+   'name' => 'WikiPlace',
    'author' => array('Yann Missler', 'Seizam'), 
    'url' => 'http://www.seizam.com', 
    'descriptionmsg' => 'wp-desc',
@@ -60,6 +60,7 @@ $wgAutoloadClasses['WpMember'] = $_dir . 'model/WpMember.php';
 # i18n
 $_i18n_dir = $_dir.'i18n/';
 $wgExtensionMessagesFiles['Wikiplaces'] = $_i18n_dir.'Main.i18n.php';
+$wgExtensionMessagesFiles['Wikiplaces.subscriptions'] = $_i18n_dir.'Subscriptions.i18n.php';
 $wgExtensionMessagesFiles['Wikiplaces.invitations'] = $_i18n_dir.'Invitations.i18n.php';
 $wgExtensionMessagesFiles['Wikiplaces.plans'] = $_i18n_dir.'Plans.i18n.php';
 $wgExtensionMessagesFiles['Wikiplaces.mail'] = $_i18n_dir.'Mail.i18n.php';
@@ -69,7 +70,7 @@ $wgExtensionMessagesFiles['Wikiplaces.members'] = $_i18n_dir.'Members.i18n.php';
 $wgExtensionAliasesFiles['Wikiplaces'] = $_dir . 'Wikiplaces.alias.php';
 
 # Add SpecialPages
-$wgSpecialPages['Wikiplaces'] = 'SpecialWikiplaces';
+$wgSpecialPages['WikiPlaces'] = 'SpecialWikiplaces';
 $wgSpecialPageGroups['Wikiplaces'] = 'wikiplace';
 $wgSpecialPages['Subscriptions'] = 'SpecialSubscriptions';
 $wgSpecialPageGroups['Subscriptions'] = 'wikiplace';
@@ -125,8 +126,8 @@ define('WP_DEFAULT_RESTRICTION_LEVEL', 'member');
 # Extra namespace for Wikiplace configuration (bg, nav...) settings
 define("NS_WIKIPLACE", 70);
 define("NS_WIKIPLACE_TALK", 71);
-$wgExtraNamespaces[NS_WIKIPLACE] = "Wikiplace";
-$wgExtraNamespaces[NS_WIKIPLACE_TALK] = "Wikiplace_talk";   # underscore required
+$wgExtraNamespaces[NS_WIKIPLACE] = "WikiPlace";
+$wgExtraNamespaces[NS_WIKIPLACE_TALK] = "WikiPlace_talk";   # underscore required
 
 $wgNamespacesWithSubpages[NS_WIKIPLACE] = true; 
 $wgNamespacesWithSubpages[NS_WIKIPLACE_TALK] = true;
@@ -163,6 +164,11 @@ define('WP_MEMBERS_LIMIT', 100);
 
 // deferred setup, to not break Hook execution ordering with PreventDuplicate extension
 $wgExtensionFunctions[] = 'setupWikiplaces';
+
+$wgLogTypes[] = 'members';
+$wgLogNames['members'] = 'log-name-members';
+$wgLogHeaders['members'] = 'log-description-members';
+$wgLogActionsHandlers['foo/*'] = 'LogFormatter';
 
 function setupWikiplaces() {
 	global $wgHooks;

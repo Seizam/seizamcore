@@ -228,7 +228,7 @@ class SpecialSubscriptions extends SpecialPage {
                 'type' => 'text',
                 'section' => 'sub-new-section',
                 'label-message' => 'wp-inv-code-field',
-                'help-message' => 'wp-use-inv-help',
+                'help-message' => 'wp-use-inv-help2',
                 'default' => $invitation->getCode(),
                 'disabled' => true
             );
