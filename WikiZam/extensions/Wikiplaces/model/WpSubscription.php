@@ -1060,11 +1060,9 @@ class WpSubscription {
 
         } else {
 
-            $subscriber_id = $subscription->getBuyerUserId();
-
             if (!$subscription->isActive()) {
 
-                if ($current_user_id == $subscriber_id) {
+                if ( $wikiplace->isOwner($current_user_id) ) {
                     return 'wp-no-active-sub'; // "YOUR subscription ..."
                 } else {
                     return 'wp-wikiplace-no-active-sub'; // "THE OWNER subscription ..."
@@ -1079,11 +1077,11 @@ class WpSubscription {
         $plan = $subscription->getPlan();
 
         $max_pages = $plan->getNbWikiplacePages();
-        $user_pages_nb = WpPage::countPagesOwnedByUser($subscriber_id);
+        $owner_pages_nb = WpPage::countPagesOwnedByUser($wikiplace->getOwnerUserId());
 
-        if ($user_pages_nb >= $max_pages) {
+        if ($owner_pages_nb >= $max_pages) {
 
-            if ( $current_user_id == $subscriber_id ) {
+            if ( $wikiplace->isOwner($current_user_id) ) {
                 return 'wp-page-quota-exceeded'; // "YOUR quota..."
             } else {
                 return 'wp-wikiplace-page-quota-exceeded'; // "THE OWNER quota ..."
@@ -1091,11 +1089,11 @@ class WpSubscription {
         }
 
         $max_diskspace = $plan->getDiskspace();
-        $user_diskspace_usage = WpPage::countDiskspaceUsageByUser($subscriber_id);
+        $owner_diskspace_usage = WpPage::countDiskspaceUsageByUser($wikiplace->getOwnerUserId());
 
-        if ($user_diskspace_usage >= $max_diskspace) {
+        if ($owner_diskspace_usage >= $max_diskspace) {
 
-            if ( $current_user_id == $subscriber_id ) {
+            if ( $wikiplace->isOwner($current_user_id) ) {
                 return 'wp-diskspace-quota-exceeded'; // "YOUR quota..."
             } else {
                 return 'wp-wikiplace-diskspace-quota-exceeded'; // "THE OWNER quota ..."
@@ -1107,28 +1105,60 @@ class WpSubscription {
 
     /**
      * Check the user has an active subscription and page creation quota is not exceeded
-     * @param int $user_id
+     * @param int $current_user_id The current user
+     * @param int|WpWikiplace $wikiplace OPTIONAL An instance of WpWikiplace (faster) or the wikiplace id (int), checks the
+     * subscription associated to the wikiplace (instead of the subscription of the current user) and the quotas of 
+     * the subscription buyer.
      * @return boolean/string True if user can, string message explaining why she can't
-     * <ul>
-     * <li><b>wp-no-active-sub</b> user has no active subscription</li>
-     * <li><b>wp-page-quota-exceeded</b> page quota exceeded</li>
-     * </ul>
+     * @deprecated since version 1.3.1 ($wikiplace argument will be REQUIRED soon)
      */
-    public static function userCanCreateNewPage($user_id) {
+    public static function userCanCreateNewPage($current_user_id, $wikiplace = null) {
 
         global $wgLang;
 
-        $sub = self::newActiveByUserId($user_id);
+        if (!is_null($wikiplace)) {
 
-        if ($sub === null) {
-            return 'wp-no-active-sub';
+            if (is_int($wikiplace)) {
+                $wikiplace = WpWikiplace::getById($wikiplace);
+            }
+
+            if (!$wikiplace instanceof WpWikiplace) {
+                throw new MWException('Invalid $wikiplace argument.');
+            }
+
+            $subscription = self::newFromId($wikiplace->getSubscriptionId());
+
+            if (is_null($subscription) || !$subscription->isActive()) {
+                
+                if ($wikiplace->isOwner($current_user_id)) {
+                    return 'wp-no-active-sub'; // "YOUR subscription ..."
+                } else {
+                    return 'wp-wikiplace-no-active-sub'; // "THE OWNER subscription ..."
+                }
+            }
+            
+            $owner_user_id = $wikiplace->getOwnerUserId();
+            
+        } else {
+
+            // backward compatibility, this section will be removed soon, and $wikiplace will be REQUIRED
+            $owner_user_id = $current_user_id;
+            $subscription = self::newActiveByUserId($current_user_id);
+
+            if (is_null($subscription)) {
+                return 'wp-no-active-sub'; // "YOU have no active subscription ..."
+            }
         }
 
-        $max_pages = $sub->getPlan()->getNbWikiplacePages();
-        $user_pages_nb = WpPage::countPagesOwnedByUser($user_id);
+        $max_pages = $subscription->getPlan()->getNbWikiplacePages();
+        $owner_pages_nb = WpPage::countPagesOwnedByUser($owner_user_id);
 
-        if ($user_pages_nb >= $max_pages) {
-            return 'wp-page-quota-exceeded';
+        if ($owner_pages_nb >= $max_pages) {
+            if ( is_null($wikiplace) || $wikiplace->isOwner($current_user_id) ) {
+                return 'wp-page-quota-exceeded'; // "YOUR quota..."
+            } else {
+                return 'wp-wikiplace-page-quota-exceeded'; // "THE OWNER quota ..."
+            }
         }
 
         return true;
