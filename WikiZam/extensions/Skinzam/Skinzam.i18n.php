@@ -16,13 +16,13 @@ $messages['en'] = array(
     'skinzam' => 'SkinZam',
     'sz-skinzam' => 'UI elements for Seizam',
     'sz-skinzam-desc' => 'Holds UI elements for Seizam\'s skin.',
-    'tagline' => 'From Seizam.com - Freedom to the Artists!',
+    'tagline' => 'Seizam.com - Freedom to the Artists!',
     'sz-myseizam' => 'My Seizam',
     'welcome' => 'Welcome',
     
     'details' => 'Details',
     
-    'sz-meta-desc' => 'Freedom to the Artists! Seizam is a community of artists liberated thanks to Wikipedia’s philosophy and technology.',
+    'sz-meta-desc' => 'Freedom to the Artists! Seizam is a creative and collaborative tool based on Wikipedia’s philosophy and technology.',
     
     'cur-euro' => '€',
     'contactlinks' => 'Project:Contact',
@@ -221,13 +221,13 @@ $messages['qqq'] = array(
 $messages['fr'] = array(
     'sz-seizam' => 'Éléments IHM pout Seizam',
     'sz-seizam-desc' => 'Contient éléments IHM pour l\'interface Seizam.',
-    'tagline' => 'Depuis Seizam.com - Liberté aux artistes !',
+    'tagline' => 'Seizam.com - Liberté aux artistes !',
     'sz-myseizam' => 'Mon Seizam',
     'welcome' => 'Bienvenue',
     
     'details' => 'Détails',
     
-    'sz-meta-desc' => 'Liberté aux artistes ! Seizam est une communauté d\'artistes libérés grâce à la philosophie et la technologie de Wikipedia.',
+    'sz-meta-desc' => 'Liberté aux artistes ! Seizam est un outil créatif et collaboratif fondé sur la philosophie et la technologie de Wikipedia.',
     
     'mycontris' => 'Mes contributions',
     'mypreferences' => 'Mes préférences',
