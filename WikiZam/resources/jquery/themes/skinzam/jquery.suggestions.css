@@ -10,6 +10,10 @@
 	font-size: 1.2em;
 	background: white;	
 }
+.suggestions-result {
+    color: #4d4e4f;
+}
 .suggestions-result-current {
-	background-color: #f2f2f2;
+    background-color: #e22c2e;
+    color: white;
 }
