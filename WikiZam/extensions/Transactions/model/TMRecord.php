@@ -322,7 +322,7 @@ class TMRecord {
      */
     private function reactToIncome() {
         $return = false;
-        $pendingExpenses = self::getAllOwnedByUserId($this->getUserId(), array('tmr_status' => 'PE', 'tmr_amount < 0'));
+        $pendingExpenses = self::getAllOwnedByUserId($this->getUserId(), array('tmr_status' => 'PE', 'tmr_amount <= 0'));
         $balanceOk = self::getBalanceFromDB($this->getUserId(), array('tmr_status' => 'OK'));
         foreach ($pendingExpenses as $expense) {
             $balanceOk += $expense->attemptPEtoOK($balanceOk);
