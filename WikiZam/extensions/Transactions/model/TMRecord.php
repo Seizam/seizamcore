@@ -345,7 +345,7 @@ class TMRecord {
     private function attemptPEtoOK($balanceOk) {
         $amount = 0;
         if ($this->tmr['tmr_currency'] === 'EUR' #Only Euro for the moment
-                && $this->tmr['tmr_amount'] < 0 #This is about (pending) expenses only
+                && $this->tmr['tmr_amount'] <= 0 #This is about (pending) expenses only
                 && $this->tmr['tmr_status'] === 'PE' #This is about pending (expenses) only
                 && ($this->tmr['tmr_amount'] + $balanceOk) >= 0) { #We can validate if the balance is positive or null
             $this->toOK();
