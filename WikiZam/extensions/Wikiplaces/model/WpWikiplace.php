@@ -99,7 +99,37 @@ class WpWikiplace {
         return Title::newFromDBkey($this->getName());
     }
 	
-	/**
+    /**
+     * Updates the wpw_owner_user_id field.
+     * @param int $userId The user identifier
+     * @throws MWException When an error occurs
+     */
+    public function setOwnerUserId($userId) {
+
+        if (!is_int($userId) || ($userId < 1)) {
+            throw new MWException('Invalid user identifier.');
+        }
+
+        $this->wpw_owner_user_id = intval($userId);
+
+        $dbw = wfGetDB(DB_MASTER);
+        $dbw->begin();
+
+        $success = $dbw->update(
+                'wp_wikiplace',
+                array( 'wpw_owner_user_id' => $this->wpw_owner_user_id ),
+                array('wpw_id' => $this->wpw_id)
+        );
+
+        $dbw->commit();
+
+        if (!$success) {
+            throw new MWException('Error while updating Wikiplace owner to database.');
+        }
+        
+    }
+
+    /**
 	 * Force archiving current usage, then reset, even if 'expires_date' is not outdated.
 	 * It uses NOW as end date in archives table. <b>Doesn't update 'wpw_expires_date'</b>
 	 * @param string $now DATETIME Sql timestamp. If null, WpSubscription::getNow() is used.
