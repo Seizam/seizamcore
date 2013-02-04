@@ -244,7 +244,7 @@ class SkinzamTemplate extends BaseTemplate {
                 <div class="controlled">
                     <?php $this->renderContentFooterWrapper() ?>
                 </div>
-                <a class="control" href="#" style="display:none"><?php echo wfMessage('show-footer')->text() ?></a>
+                <a class="control" href="#contentFooterWrapper" style="display:none"><?php echo wfMessage('show-footer')->text() ?></a>
             </div>
             <!-- /contentFooterWrapper -->
         </div>
