@@ -988,7 +988,7 @@ div.license img {
 #content.noframe {
     border: none;
     background: none;
-    margin: 0 auto 16px;
+    margin: 0 auto 32px;
 }
 
 .block_full {
@@ -1296,10 +1296,6 @@ div#bodyContent div.inside #nav {
     border-radius: 6px;
 }
 
-#nav .nav_actions ul {
-    display: none;
-}
-
 #nav .nav_actions a {
     color: #FFFFFF;
 }
@@ -1313,10 +1309,6 @@ div#bodyContent div.inside #nav {
 #nav .nav_actions a:focus,
 #nav .nav_actions a:hover {
     color: #E22C2E;
-}
-
-#nav .nav_actions { 
-    display: none;
 }
 
 /* navigation on special page */
@@ -1398,11 +1390,10 @@ html.client-nojs #bodyContent>.inside {
     padding: 6px 0;
     font-size: 0.8em;
     text-align: center;
-    border-bottom: none;
-
-    -webkit-border-radius: 0;
-    -moz-border-radius: 0;
-    border-radius: 0;
+    
+    -webkit-border-radius: 0 0 6px 6px;
+    -moz-border-radius: 0 0 6px 6px;
+    border-radius: 0 0 6px 6px;
 }
 
 #contentOther #mw-normal-catlinks li {
@@ -1469,6 +1460,14 @@ a.feedlink:first-child {
 #contentFooterWrapper a.control:hover {
     color: red;
     border-color: red;
+}
+
+#contentFooterWrapper #contentOther .inside {
+    border-bottom: none;
+
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
 }
 
 #contentFooter .inside {
@@ -2900,6 +2899,9 @@ p.ms-wl-empty {
     border: 1px solid #e22c2e;
 }
 
+.slideshow.mainslide li {
+    list-style: none;
+}
 
 /* -----------------------------------------------------------------------------
    ==  MAIN PAGE TRIPTIC (Special:Welcome)

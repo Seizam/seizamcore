@@ -210,10 +210,10 @@ class SkinzamTemplate extends BaseTemplate {
                             <?php echo $this->data['wp_navigation']['content']; ?>
                         </div>
                     <?php endif; ?>
-                    <ul class="nav_actions">
+                    <ul class="nav_actions" style="display: none;">
                         <li>
                             <a href="#"><?php echo wfMessage('actions')->text() ?></a>
-                            <ul>
+                            <ul style="display: none;">
                                 <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
                             </ul>
                         </li>
@@ -244,7 +244,7 @@ class SkinzamTemplate extends BaseTemplate {
                 <div class="controlled">
                     <?php $this->renderContentFooterWrapper() ?>
                 </div>
-                <a class="control" href="#">Show Footer</a>
+                <a class="control" href="#" style="display:none"><?php echo wfMessage('show-footer')->text() ?></a>
             </div>
             <!-- /contentFooterWrapper -->
         </div>

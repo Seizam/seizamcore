@@ -22,6 +22,8 @@ $messages['en'] = array(
     
     'details' => 'Details',
     
+    'show-footer' => 'Show Footer',
+    
     'sz-meta-desc' => 'Freedom to the Artists! Seizam is a creative and collaborative tool based on Wikipedia’s philosophy and technology.',
     
     'cur-euro' => '€',
@@ -226,6 +228,9 @@ $messages['fr'] = array(
     'welcome' => 'Bienvenue',
     
     'details' => 'Détails',
+    
+    
+    'show-footer' => 'Voir le pied',
     
     'sz-meta-desc' => 'Liberté aux artistes ! Seizam est un outil créatif et collaboratif fondé sur la philosophie et la technologie de Wikipedia.',
     

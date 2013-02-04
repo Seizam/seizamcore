@@ -74,7 +74,7 @@
         var $df = $('#contentFooterWrapper');
         
         $("div.controlled", $df).slideUp(300);
-        $("div.control", $df).show();
+        $("a.control", $df).show();
         
         $df.click(function(){
             if ($("div.controlled", $df).is(":hidden")) {
