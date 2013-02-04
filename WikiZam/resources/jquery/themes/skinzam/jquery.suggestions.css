@@ -8,8 +8,17 @@
 
 .suggestions-results {
 	font-size: 1.2em;
-	background: white;	
+	background: white;
 }
+
+.suggestions-results li, .suggestions-results td, .suggestions-results tr, .suggestions-results table, .suggestions-results span, .suggestions-results div, .suggestions-results input[type="submit"], .suggestions-results a.fade {
+	-webkit-transition: background 0s;
+	-moz-transition: background 0s;
+	-ms-transition: background 0s;
+	-o-transition: background 0s;
+	transition: background 0s;
+}
+
 .suggestions-result {
     color: #4d4e4f;
 }
