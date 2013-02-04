@@ -972,7 +972,7 @@ div.license img {
 #content {
     width: 881px;
     margin: 0 auto 42px;
-    padding: 30px 0 30px; 
+    padding: 30px 0 0;
     border: 1px solid #D8D7D7;
     /* @embed */
     background-image: url(images/bg_transp.png);
@@ -1398,10 +1398,11 @@ html.client-nojs #bodyContent>.inside {
     padding: 6px 0;
     font-size: 0.8em;
     text-align: center;
+    border-bottom: none;
 
-    -webkit-border-radius: 0 0 6px 6px;
-    -moz-border-radius: 0 0 6px 6px;
-    border-radius: 0 0 6px 6px;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
 }
 
 #contentOther #mw-normal-catlinks li {
@@ -1454,6 +1455,21 @@ a.feedlink:first-child {
 /* ----------------------------------------
    ==  CONTENTFOOTER
    ---------------------------------------- */
+
+#contentFooterWrapper a.control {
+    border-top:1px solid #dad9d9;
+    display:block;
+    text-align: center;
+    color: #dad9d9;
+    text-transform: uppercase;
+    font-family: Arial, Helvetica, Verdana, sans-serif;
+    font-size: 0.7em;
+}
+
+#contentFooterWrapper a.control:hover {
+    color: red;
+    border-color: red;
+}
 
 #contentFooter .inside {
     padding: 6px 0;

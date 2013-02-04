@@ -239,29 +239,14 @@ class SkinzamTemplate extends BaseTemplate {
                 <!-- /inside -->
             </div>
             <!-- /bodyContent -->
-            <!-- contentFooter -->
-            <div id="contentFooter" class="block block_full block_flat">
-                <!-- inside -->
-                <div class="inside">
-                    <?php $this->renderContentFooter(); ?>
+            <!-- contentFooterWrapper -->
+            <div id="contentFooterWrapper" class="block_full">
+                <div class="controlled">
+                    <?php $this->renderContentFooterWrapper() ?>
                 </div>
+                <a class="control" href="#">Show Footer</a>
             </div>
-            <!-- /contentFooter -->
-            <!-- Horizontal actions -->
-            <div id="nav_horizontal" class="block block_full block_flat noprint">
-                <ul class="nav_actions">
-                    <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
-                </ul>
-            </div>
-            <!-- /Horizontal actions -->
-            <!-- contentOther -->
-            <div id="contentOther" class="block block_full block_flat noprint">
-                <!-- inside -->
-                <div class="inside">
-                    <?php $this->renderContentOther(); ?>
-                </div>
-            </div>
-            <!-- contentOther -->
+            <!-- /contentFooterWrapper -->
         </div>
         <!-- /content -->
         <?php
@@ -307,30 +292,9 @@ class SkinzamTemplate extends BaseTemplate {
                 <!-- /inside -->
             </div>
             <!-- /bodyContent -->
-            <!-- contentFooter -->
-            <div id="contentFooter" class="block block_full block_flat ">
-                <!-- inside -->
-                <div class="inside">
-                    <?php $this->renderContentFooter(); ?>
-                </div>
-                <!-- /inside -->
-            </div>
-            <!-- /contentFooter -->
-            <!-- Horizontal actions -->
-            <div id="nav_horizontal" class="block block_full block_flat noprint">
-                <ul class="nav_actions">
-                    <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
-                </ul>
-            </div>
-            <!-- /Horizontal actions -->
-            <!-- contentOther -->
-            <div id="contentOther" class="block block_full noprint">
-                <!-- inside -->
-                <div class="inside">
-                    <?php $this->renderContentOther(); ?>
-                </div>
-            </div>
-            <!-- contentOther -->
+            <!-- contentFooterWrapper -->
+            <?php $this->renderContentFooterWrapper() ?>
+            <!-- /contentFooterWrapper -->
         </div>
         <!-- /content -->
         <?php
@@ -463,6 +427,36 @@ class SkinzamTemplate extends BaseTemplate {
             </ul>
             <?php
         endforeach;
+    }
+
+    /**
+     * Render all the content footers (other + horizontal actions)
+     */
+    private function renderContentFooterWrapper() {
+        ?>
+        <div id="contentFooter" class="block block_full block_flat">
+            <!-- inside -->
+            <div class="inside">
+                <?php $this->renderContentFooter(); ?>
+            </div>
+        </div>
+        <!-- /contentFooter -->
+        <!-- Horizontal actions -->
+        <div id="nav_horizontal" class="block block_full block_flat noprint">
+            <ul class="nav_actions">
+                <?php $this->renderNavigation(array('NAMESPACES', 'VIEWS', 'ACTIONS')); ?>
+            </ul>
+        </div>
+        <!-- /Horizontal actions -->
+        <!-- contentOther -->
+        <div id="contentOther" class="block block_full block_flat noprint">
+            <!-- inside -->
+            <div class="inside">
+                <?php $this->renderContentOther(); ?>
+            </div>
+        </div>
+        <!-- /contentOther -->
+        <?php
     }
 
     /**

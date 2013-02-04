@@ -54,22 +54,39 @@
     if($('#nav .nav_actions').length == 1) {
 	
         var $dd = $('#nav .nav_actions');
-		
-        $dd.hover(function(){
-            $("ul", $dd).stop(false, true).slideDown(400);
-        }, function(){
-            $("ul", $dd).stop(false, true).slideUp(250);
+        
+        $dd.click(function () {
+            if ($("ul", $dd).is(":hidden")) {
+                $("ul", $dd).slideDown(300);
+            } else {
+                $("ul", $dd).slideUp(300);
+            }
         });
-		
-        $('a', $dd).focus(function(){
-            $dd.trigger("mouseenter");
-        });
-        $('ul li:last-child a', $dd).blur(function(){
-            $dd.trigger("mouseleave");
-        });
+
 	
     }
+    
+    
+    // ContentFooter déroulant
+    
+    if ( $('#contentFooterWrapper').length == 1) {
         
+        var $df = $('#contentFooterWrapper');
+        
+        $("div.controlled", $df).slideUp(300);
+        $("div.control", $df).show();
+        
+        $df.click(function(){
+            if ($("div.controlled", $df).is(":hidden")) {
+                $("div.controlled", $df).slideDown(300);
+                $("a.control", $df).hide();
+            } else {
+                $("div.controlled", $df).slideUp(300);
+                $("a.control", $df).show();
+            }
+        });
+    }
+    
     // help dans le formulaire
     
     if ( $('#help_zone').length == 1 ) {
@@ -80,12 +97,12 @@
         $('.help').mouseenter(function(){
 			
             var help_parent = $(this).closest('.radio_line');
+            var help_title;
 			
             if(help_parent.length>0) { // cas des labels multiples sur radio
-                var help_title = $(this).siblings('.label_like').text();
-            }
-            else { // autres cas
-                var help_title = $(this).siblings('label').text();
+                help_title = $(this).siblings('.label_like').text();
+            } else { // autres cas
+                help_title = $(this).siblings('label').text();
                 if (!help_title) help_title = $(this).siblings('.label_like').text();
             }
             var help_msg = $(this).html();
