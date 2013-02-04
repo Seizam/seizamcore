@@ -301,7 +301,7 @@ class WpPlan {
     public static function newFromId($id) {
 
         if (($id === null) || !is_numeric($id) || ($id < 1)) {
-            throw new MWException('Cannot fectch Wikiplace matching the identifier (invalid identifier)');
+            throw new MWException('Cannot fetch Plan matching the identifier (invalid identifier)');
         }
 
         $dbr = wfGetDB(DB_SLAVE);

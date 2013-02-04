@@ -625,9 +625,8 @@ class WikiplacesHooks {
                     // throw new MWException('Cannot find subpage to move.');
                     return true;
                 }
-                $old_wp_id;
+                $old_wp_id = $renamed_wp_page->getWikiplaceId();
                 if ($redirect_page_id != 0) {
-                    $old_wp_id = $renamed_wp_page->getWikiplaceId();
                     if (WpPage::create($redirect_page_id, $old_wp_id) == null) {
                         wfDebugLog('wikiplaces', "onTitleMoveComplete() ERROR: cannot create redirect subpage ($renamed_page_id)");
                         // throw new MWException('Cannot create redirect subpage.');
@@ -947,6 +946,7 @@ class WikiplacesHooks {
 
             // Wikiplace Navigation Menu
             $navigationKey = $wikiplaceKey . '/' . WPNAVIGATIONKEY;
+            /** @todo i18n */
             $navigationTitle = Title::newFromText($navigationKey, NS_WIKIPLACE);
             $navigationPage = WikiPage::factory($navigationTitle);
             $navigationText = $navigationPage->getText();

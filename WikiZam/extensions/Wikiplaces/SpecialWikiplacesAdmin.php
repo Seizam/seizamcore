@@ -6,6 +6,8 @@ class SpecialWikiplacesAdmin extends SpecialPage {
 
     const ACTION_CANCEL_SUBSCRIPTION = 'Cancel';
     const ACTION_GET_INFOS = 'Infos';
+	const ACTION_CHANGE_WIKIPLACE_OWNER = 'ChangeWikiplaceOwner';
+    const ACTION_SUBSCRIBER_FOR = 'SubscribeFor';
     const ACTION_TEST = 'Test';
 
 
@@ -44,16 +46,67 @@ class SpecialWikiplacesAdmin extends SpecialPage {
             case strtolower(self::ACTION_GET_INFOS) :
                 $this->getInfos($request->getText('wpw_id', null));
                 break;
+			case strtolower(self::ACTION_CHANGE_WIKIPLACE_OWNER) :
+                $this->changeWikiplaceOwner($request->getText('wikiplace', null), $request->getText('user', null), $request->getBool('confirm'));
+                break;
+			case strtolower(self::ACTION_SUBSCRIBER_FOR) :
+                $this->subscribeFor($request->getText('plan', null), $request->getText('user', null), $request->getBool('confirm'));
+                break;
             case strtolower(self::ACTION_TEST) :
                 $this->test($request->getText('arg1', null),$request->getText('arg2', null),$request->getText('arg3', null));
                 break;
             default :
                 $output->addWikiText("=== ERROR: Wrong action ===");
                 $output->addWikiText("====Available actions:====");
-                $output->addWikiText(self::ACTION_CANCEL_SUBSCRIPTION . "(string '''name''', boolean '''confirm''')");
-                $output->addWikiText(self::ACTION_GET_INFOS . "(int '''wpw_id''')");
-                $output->addWikiText(self::ACTION_TEST . "(string '''arg1''', string '''arg2''', string '''arg3''')");
+				$output->addHTML('<p>'.$this->getLink(self::ACTION_CANCEL_SUBSCRIPTION, array( 'name' => 'string' )).'</p>');
+				$output->addHTML('<p>'.$this->getLink(self::ACTION_GET_INFOS, array( 'wpw_id' => 'int' )).'</p>');
+				$output->addHTML('<p>'.$this->getLink(self::ACTION_CHANGE_WIKIPLACE_OWNER, array( 'wikiplace' => 'string', 'user' => 'string' )).'</p>');
+				$output->addHTML('<p>'.$this->getLink(self::ACTION_SUBSCRIBER_FOR, array( 'plan' => 'id', 'user' => 'string' )).'</p>');
+				$output->addHTML('<p>'.$this->getLink(self::ACTION_TEST, array( 'arg1' => 'string', 'arg2' => 'string', 'arg3' => 'string' )).'</p>');
                 break;
+        }
+    }
+	
+	private function getLink($action, $params, $confirm = false) {
+
+		if ($confirm) {
+			$displayParams = array_merge( $params, array( 'confirm' => 'true') );
+            $linkParams = array_merge( array( 'action' => $action) , $params , array( 'confirm' => 'true'));
+		} else {
+            $displayParams = array_merge( $params, array( 'confirm' => 'boolean') );
+            $linkParams = array_merge( array( 'action' => $action) , $params);
+        }
+
+		foreach ($displayParams as $key => $value) {
+			if ( isset($text) ) {
+				$text .= ', ';
+			} else {
+				$text = '(';
+			}
+			$text.= $confirm ? "$key=<b>$value</b>" : "$value <b>$key</b>";
+		}
+		if ( isset($text) ) {
+			$text .= ')';
+		} else {
+			$text = '()';
+		}
+		
+		return Linker::link($this->getTitle(), $action.$text, array(), $linkParams);
+	}
+	
+    /**
+     * 
+     * @param OutputPage $output REQUIRED
+     * @param array|string $firt An array for multiple (name,value) , or the name as string
+     * @param string $second When $first is a string (the name) , the value as string.
+     */
+    private function prettyOutput($output, $first, $second = null) {
+        if (is_array($first)) {
+            foreach ( $first as $name => $value ) {
+                $this->prettyOutput($output, $name, $value);
+            }
+        } else {
+            $output->addWikiText("$first = ". (is_null($second) ? "''NULL''" : "<code><nowiki>$second</nowiki></code>" ) );
         }
     }
 
@@ -205,6 +258,269 @@ class SpecialWikiplacesAdmin extends SpecialPage {
         }
     }
     
+	private function changeWikiplaceOwner($wikiplace_name = null, $user_name = null, $confirm = false) {
+        $output = $this->getOutput();
+
+        $output->addWikiText("=== Change Wikiplace Owner ===");
+        $this->prettyOutput($output, array(
+            'wikiplace' => $wikiplace_name,
+            'user' => $user_name,
+        ));
+
+        $output->addWikiText("----");
+        
+        if ( empty($wikiplace_name) ) {
+            $output->addWikiText("=== Specify a wikiplace name. ==="); 
+            return;
+        }
+            
+        $wikiplace = WpWikiplace::newFromName($wikiplace_name);
+        
+        if (is_null($wikiplace)) {
+            $output->addWikiText("=== No Wikiplace with that name was found. ==="); 
+            return;
+        }
+        
+        $output->addWikiText("=== Wikiplace ==="); 
+        $this->prettyOutput($output, array(
+            'id' => $wikiplace->getId(),
+            'name' => $wikiplace->getName(),  
+            'report_expires' => $wikiplace->getDateExpires(),
+            'report_updated' => $wikiplace->getReportUpdated(),
+        ));
+        
+        $owner = User::newFromId($wikiplace->getOwnerUserId());
+        if ( ! $owner->loadFromId() ) {
+            $output->addWikiText("==== WARNING The current owner is not an existing user ! ====");
+        } else {
+            $output->addWikiText("==== Current owner ===="); 
+            $this->prettyOutput($output, array(
+                'id' => $owner->getId(),
+                'name' => $owner->getName(),
+                'email' => $owner->getEmail(),
+                'email confirmed' => $owner->isEmailConfirmed() ? 'yes' : 'no',
+                'timestamp of account creation' => $owner->getRegistration(),
+            ));
+        }
+        
+        $output->addWikiText("----");
+        
+        if ( empty($user_name) ) {
+            $output->addWikiText("=== Specify a user name. ==="); 
+            return;
+        }
+        
+        $user = User::newFromName($user_name);
+        if ( !$user || $user->getId() == 0 ) {
+            $output->addWikiText("=== ERROR The user doesn't exist ! ===");
+            return;
+        } 
+        
+        $output->addWikiText("=== New Owner ==="); 
+        $this->prettyOutput($output, array(
+            'id' => $user->getId(),
+            'name' => $user->getName(),
+            'email' => $user->getEmail(),
+            'email confirmed' => $user->isEmailConfirmed() ? 'yes' : 'no',
+            'timestamp of account creation' => $user->getRegistration(),
+        ));
+
+        if ( !$user->isEmailConfirmed() ) {
+            $output->addWikiText("==== WARNING Email is not confirmed ! ====");
+        }
+        
+        $last_subscription = WpSubscription::newByUserId($user->getId());
+        if (is_null($last_subscription)) {
+            $output->addWikiText("=== ERROR The user doesn't have any subscription ! ===");
+        }
+        
+        $output->addWikiText("==== Last subscription ====");
+        $this->prettyOutput($output, array(
+            'id' => $last_subscription->getId(),
+            'starts' => $last_subscription->getStart(),
+            'ends' => $last_subscription->getEnd(),
+            'active' => $last_subscription->isActive() ? "yes" : "no",
+            'transaction status' => $last_subscription->getTmrStatus(),
+        ));
+        
+        if (!$last_subscription->isActive()) {
+            $output->addWikiText("==== WARNING The subscription is not active ! ====");
+        }
+        
+        $plan = $last_subscription->getPlan();
+        if (is_null($plan)) {
+            $output->addWikiText("=== ERROR The subscribed plan doesn't exist ! ===");
+            return;
+        }
+        
+        $output->addWikiText("==== Plan ====");
+        $price = $plan->getPrice();
+        
+        $this->prettyOutput($output, array(
+            'id' => $plan->getId(),
+            'name' => $plan->getName(),
+            'period' => $plan->getPeriod() . ' month(s)',
+            'by invitation only' => $plan->isInvitationRequired() ? 'yes' : 'no',
+            'price' => $price['amount'] . ' ' . $price['currency'],
+        ));        
+        
+        $output->addWikiText("----");
+        
+        if ( $confirm !== true ) {
+            
+            $output->addWikiText("=== To confirm ===");
+            $output->addHTML( $this->getLink(self::ACTION_CHANGE_WIKIPLACE_OWNER, array(
+                'wikiplace' => $wikiplace_name,
+                'user' => $user_name
+            ), true) );
+            
+        } else {
+            
+            $wikiplace->setOwnerUserId($user->getId());
+            $output->addWikiText("=== Done ! ===");
+            
+        }
+        
+    }
+    
+	private function subscribeFor($plan_id = null, $user_name = null, $confirm = false) {
+        $output = $this->getOutput();
+
+        $output->addWikiText("=== Subscribe For ===");
+        $this->prettyOutput($output, array(
+            'plan' => $plan_id,
+            'user' => $user_name,
+        ));;
+
+        $output->addWikiText("----");
+        
+        if ( empty($plan_id) || !is_numeric($plan_id) ) {
+            $output->addWikiText("=== Specify a plan id in integer format. ==="); 
+            return;
+        }
+        
+        $plan = WpPlan::newFromId($plan_id);
+        if (is_null($plan)) {
+            $output->addWikiText("=== No plan with that identifier was found. ==="); 
+            return;        
+        }
+        
+        $output->addWikiText("=== Plan ==="); 
+        $price = $plan->getPrice();
+        $this->prettyOutput($output, array(
+            'id' => $plan->getId(),
+            'name' => $plan->getName(),
+            'period' => $plan->getPeriod() . ' month(s)',
+            'by invitation only' => $plan->isInvitationRequired() ? 'yes' : 'no',
+            'price' => $price['amount'] . ' ' . $price['currency'],
+        )); 
+        
+        $output->addWikiText("----");
+        
+        if ( empty($user_name) ) {
+            $output->addWikiText("=== Specify a user name. ==="); 
+            return;
+        }
+        
+        $user = User::newFromName($user_name);
+        if ( !$user || $user->getId() == 0 ) {
+            $output->addWikiText("=== ERROR The user doesn't exist ! ===");
+            return;
+        } 
+        
+        $output->addWikiText("=== User to subscribe for ==="); 
+        $this->prettyOutput($output, array(
+            'id' => $user->getId(),
+            'name' => $user->getName(),
+            'email' => $user->getEmail(),
+            'email confirmed' => $user->isEmailConfirmed() ? 'yes' : 'no',
+            'timestamp of account creation' => $user->getRegistration(),
+        ));
+
+        if ( !$user->isEmailConfirmed() ) {
+            $output->addWikiText("==== WARNING Email is not confirmed ! ====");
+        }
+        
+        $last_subscription = WpSubscription::newByUserId($user->getId());
+        
+        if (is_null($last_subscription)) {
+            
+            $output->addWikiText("=== The user doesn't have any subscription. ===");
+            
+        } else {
+        
+            $output->addWikiText("==== Last subscription ====");
+            $this->prettyOutput($output, array(
+                'id' => $last_subscription->getId(),
+                'starts' => $last_subscription->getStart(),
+                'ends' => $last_subscription->getEnd(),
+                'active' => $last_subscription->isActive() ? "yes" : "no",
+                'transaction status' => $last_subscription->getTmrStatus(),
+            ));
+
+            if ($last_subscription->isActive()) {
+                $output->addWikiText("==== ERROR Last subscription is still active ! ====");
+                return;
+            }
+
+            $lastPlan = $last_subscription->getPlan();
+            if (is_null($lastPlan)) {
+                $output->addWikiText("=== ERROR The subscribed plan doesn't exist ! ===");
+                return;
+            }
+            $output->addWikiText("=== Subscribed plan ===");
+            $price = $lastPlan->getPrice();
+            $this->prettyOutput($output, array(
+                'id' => $lastPlan->getId(),
+                'name' => $lastPlan->getName(),
+                'period' => $lastPlan->getPeriod() . ' month(s)',
+                'by invitation only' => $lastPlan->isInvitationRequired() ? 'yes' : 'no',
+                'price' => $price['amount'] . ' ' . $price['currency'],
+            )); 
+        }
+        
+        $check = WpSubscription::canSubscribe($this->getUser());
+        if (is_string($check) ) {
+            $output->addWikiText("=== ERROR The user cannot take a subscription ! ===");
+            $output->addWikiText($check);
+            return;
+        } else {
+            $output->addWikiText("=== The user can take a subscription. ===");
+        }
+        
+        $output->addWikiText("----");
+        
+        if ( $confirm !== true ) {
+            
+            $output->addWikiText("=== To confirm ===");
+            $output->addHTML( $this->getLink(self::ACTION_SUBSCRIBER_FOR, array(
+                'plan' => $plan_id,
+                'user' => $user_name
+            ), true) );
+            
+        } else {
+            
+            $subscription = WpSubscription::subscribe($user, $plan);
+            
+            if ( is_null($subscription) ) {
+                $output->addWikiText("=== An error occured ! ===");
+            } else {
+                $output->addWikiText("=== Done ! ===");
+                $output->addWikiText("==== New subscription ====");
+                $this->prettyOutput($output, array(
+                    'id' => $subscription->getId(),
+                    'buyer user id' => $subscription->getBuyerUserId(),
+                    'starts' => $subscription->getStart(),
+                    'ends' => $subscription->getEnd(),
+                    'active' => $subscription->isActive() ? "yes" : "no",
+                    'transaction status' => $subscription->getTmrStatus(),
+                ));
+            }
+            
+        }
+        
+    }
+
     private function test($arg1='null', $arg2='null', $arg3='null') {
         $plan=WpPlan::newFromId($arg1);
         $price = $plan->getLocalizedPrice($this->getUser());
