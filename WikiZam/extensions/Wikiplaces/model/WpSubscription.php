@@ -1027,6 +1027,29 @@ class WpSubscription {
     }
 
     /**
+     * Returns the subs attached to a WikiPlace
+     * @param WikiPlace|int $wikiplace
+     * @return Subscription 
+     */
+    public static function newByWikiPlace($wikiplace) {
+
+        if (!$wikiplace instanceof WpWikiplace) {
+            throw new MWException('Invalid $wikiplace argument.');
+        }
+
+        return self::newFromId($wikiplace->getSubscriptionId());
+    }
+
+    public static function newActiveByWikiPlace($wikiplace) {
+        $subscription = self::newByWikiPlace($wikiplace);
+        if ($subscription->isActive()) {
+            return $subscription;
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Checks subscription is active, page creation quota is not exceeded and
      * diskpace quota is not exceeded.
      * @param int $current_user_id The current user identifier (used to select i18n message)
@@ -1045,24 +1068,23 @@ class WpSubscription {
     public static function userCanUploadNewFile($current_user_id, $wikiplace) {
 
         if (is_int($wikiplace)) {
-            $wikiplace = WpWikiplace::getById($wikiplace);		
-        } 
+            $wikiplace = WpWikiplace::getById($wikiplace);
+        }
 
-        if ( ! $wikiplace instanceof WpWikiplace ) {
+        if (!$wikiplace instanceof WpWikiplace) {
             throw new MWException('Invalid $wikiplace argument.');
         }
 
         $subscription = self::newFromId($wikiplace->getSubscriptionId());
-        
+
         if (!$subscription instanceof WpSubscription) {
 
             return 'wp-wikiplace-no-active-sub'; // "THE OWNER subscription ..."
-
         } else {
 
             if (!$subscription->isActive()) {
 
-                if ( $wikiplace->isOwner($current_user_id) ) {
+                if ($wikiplace->isOwner($current_user_id)) {
                     return 'wp-no-active-sub'; // "YOUR subscription ..."
                 } else {
                     return 'wp-wikiplace-no-active-sub'; // "THE OWNER subscription ..."
@@ -1081,7 +1103,7 @@ class WpSubscription {
 
         if ($owner_pages_nb >= $max_pages) {
 
-            if ( $wikiplace->isOwner($current_user_id) ) {
+            if ($wikiplace->isOwner($current_user_id)) {
                 return 'wp-page-quota-exceeded'; // "YOUR quota..."
             } else {
                 return 'wp-wikiplace-page-quota-exceeded'; // "THE OWNER quota ..."
@@ -1093,7 +1115,7 @@ class WpSubscription {
 
         if ($owner_diskspace_usage >= $max_diskspace) {
 
-            if ( $wikiplace->isOwner($current_user_id) ) {
+            if ($wikiplace->isOwner($current_user_id)) {
                 return 'wp-diskspace-quota-exceeded'; // "YOUR quota..."
             } else {
                 return 'wp-wikiplace-diskspace-quota-exceeded'; // "THE OWNER quota ..."
@@ -1105,48 +1127,35 @@ class WpSubscription {
 
     /**
      * Check the user has an active subscription and page creation quota is not exceeded
-     * @param int $current_user_id The current user
-     * @param int|WpWikiplace $wikiplace OPTIONAL An instance of WpWikiplace (faster) or the wikiplace id (int), checks the
+     * @param User $current_user The current user
+     * @param WpWikiplace $wikiplace OPTIONAL An instance of WpWikiplace (faster) or the wikiplace id (int), checks the
      * subscription associated to the wikiplace (instead of the subscription of the current user) and the quotas of 
      * the subscription buyer.
      * @return boolean/string True if user can, string message explaining why she can't
      * @deprecated since version 1.3.1 ($wikiplace argument will be REQUIRED soon)
      */
-    public static function userCanCreateNewPage($current_user_id, $wikiplace = null) {
+    public static function userCanCreateNewPage($current_user, $wikiplace = null) {
 
         global $wgLang;
 
+        $subscription = null;
+        
+        $current_user_id = $current_user->getId();
+        $owner_user_id = $current_user_id;
+
         if (!is_null($wikiplace)) {
-
-            if (is_int($wikiplace)) {
-                $wikiplace = WpWikiplace::getById($wikiplace);
-            }
-
-            if (!$wikiplace instanceof WpWikiplace) {
-                throw new MWException('Invalid $wikiplace argument.');
-            }
-
-            $subscription = self::newFromId($wikiplace->getSubscriptionId());
-
-            if (is_null($subscription) || !$subscription->isActive()) {
-                
-                if ($wikiplace->isOwner($current_user_id)) {
-                    return 'wp-no-active-sub'; // "YOUR subscription ..."
-                } else {
-                    return 'wp-wikiplace-no-active-sub'; // "THE OWNER subscription ..."
-                }
-            }
-            
+            $subscription = self::newActiveByWikiPlace($wikiplace);
             $owner_user_id = $wikiplace->getOwnerUserId();
-            
         } else {
-
             // backward compatibility, this section will be removed soon, and $wikiplace will be REQUIRED
-            $owner_user_id = $current_user_id;
             $subscription = self::newActiveByUserId($current_user_id);
+        }
 
-            if (is_null($subscription)) {
-                return 'wp-no-active-sub'; // "YOU have no active subscription ..."
+        if (is_null($subscription)) {
+            if ($wikiplace->isOwner($current_user_id)) {
+                return 'wp-no-active-sub'; // "YOUR subscription ..."
+            } else {
+                return 'wp-wikiplace-no-active-sub'; // "THE OWNER subscription ..."
             }
         }
 
@@ -1154,7 +1163,7 @@ class WpSubscription {
         $owner_pages_nb = WpPage::countPagesOwnedByUser($owner_user_id);
 
         if ($owner_pages_nb >= $max_pages) {
-            if ( is_null($wikiplace) || $wikiplace->isOwner($current_user_id) ) {
+            if (is_null($wikiplace) || $wikiplace->isOwner($current_user_id)) {
                 return 'wp-page-quota-exceeded'; // "YOUR quota..."
             } else {
                 return 'wp-wikiplace-page-quota-exceeded'; // "THE OWNER quota ..."

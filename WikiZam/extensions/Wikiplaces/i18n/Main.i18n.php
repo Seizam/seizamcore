@@ -12,6 +12,7 @@ $messages['en'] = array(
     /* Special Pages */
     'wikiplacesadmin' => 'WikiPlaces Administration',
     'wikiplaces' => 'My WikiPlaces',
+    'wikiplaces-member' => 'WikiPlaces I belong to',
     /* Group: Artists */
     'group-artist' => 'Artists',
     'group-artist-member' => 'artist',
@@ -47,8 +48,8 @@ $messages['en'] = array(
     'wp-create-wikiplace' => 'Create',
     'wp-create-wikiplace-long' => 'Create a new WikiPlace',
     /* Tips */
-    'wp-url-tip' => 'Your WikiPlace is available at [[$1|<u>http://www.<b>seizam.com/$1</b></u>]].',
-    'wp-suburl-tip' => 'Your Page is available at [[$1/$2|<u>http://www.<b>seizam.com/$1/$2</b></u>]].',
+    'wp-url-tip' => 'This WikiPlace is available at [[$1|<u>http://www.<b>seizam.com/$1</b></u>]].',
+    'wp-suburl-tip' => 'This Page is available at [[$1/$2|<u>http://www.<b>seizam.com/$1/$2</b></u>]].',
     'wp-link-tip' => 'Type <b><nowiki>[[$1]]</nowiki></b> anywhere to make a [[Help:Links|link]] like: [[$1]].',
     'wp-linkalias-tip' => 'Type <b><nowiki>[[$1|$2]]</nowiki></b> to make a [[Help:Links|link]] like: [[$1|$2]].',
     'wp-sublink-tip' => 'Type <b><nowiki>[[$1/$2]]</nowiki></b> anywhere to make a [[Help:Links|link]] like: [[$1/$2]].',
@@ -58,7 +59,8 @@ $messages['en'] = array(
     'wp-background-tip' => 'To install a [[Help:Background|background image]], input the link to the image on [[{{ns:Wikiplace}}:$1/'.WPBACKGROUNDKEY.']].',
     'wp-navigation-tip' => 'To install the [[Help:WikiPlace Navigation|navigation menu]], input a list of links on [[{{ns:Wikiplace}}:$1/'.WPNAVIGATIONKEY.']].',
     /* TablePage: Wikiplace */
-    'wp-list-header' => '<span style="float:right">See : <b>[[Help:WikiPlaces|Help]]</b></span>Here are your WikiPlaces.',
+    'wp-list-header' => '<span style="float:right">See : [[Help:WikiPlaces|Help]] | <b>[[Special:WikiPlaces/ListForMember|WikiPlaces I belong to]]</b></span>Here are the WikiPlaces your own.',
+    'wp-list-member-header' => '<span style="float:right">See : [[Help:WikiPlaces|Help]] | <b>[[Special:WikiPlaces|My WikiPlaces]]</b></span>Here are the WikiPlaces <b>your are member of</b>.',
     'wp-list-footer' => '<h3>{{int:statistics}}</h3>
 * Diskspace usage total: $1
 * Pages total: $2',
@@ -118,6 +120,7 @@ You are also promising us that you wrote this yourself, or copied it from a publ
 	'wp-duplicate-related' => 'A related page with the same name but different case ([[$1]]) exists. This page has to be named [[$2]].',
 	'wp-no-container-found' => 'This page should belong to a WikiPlace. Retry with a name starting by a WikiPlace name.',
 	'wp-not-owner' => 'You are not the owner of this WikiPlace.',
+    'wp-not-member' => 'You are not the owner nor a member of this WikiPlace.',
     'wp-not-owner-or-member' => 'You are neither the owner nor a member of this WikiPlace.',
 	'wp-notloggedin' => 'You must be logged in to perform this action. Please [[Special:UserLogin/signup|create an account]] or [[Special:UserLogin|log in]].',
     'wp-nosub' => 'WikiPlaces are only available upon subscription. [[Special:Subscriptions/New|Click here to subscribe !]]',
@@ -155,6 +158,7 @@ $messages['fr'] = array(
     /* Special Pages */
     'wikiplacesadmin' => 'Administration de WikiPlaces',
     'wikiplaces' => 'Mes WikiPlaces',
+    'wikiplaces-member' => 'WikiPlaces dont je suis membre',
     /* Group: Artists */
     'group-artist' => 'Artistes',
     'group-artist-member' => 'artiste',
@@ -189,8 +193,8 @@ $messages['fr'] = array(
     'wp-create-wikiplace-long' => 'Créer',
     'wp-create-wikiplace-long' => 'Créer une nouvelle WikiPlace',
     /* Tips */
-    'wp-url-tip' => 'Votre WikiPlace est disponnible depuis [[$1|<u>http://www.<b>seizam.com/$1</b></u>]].',
-    'wp-suburl-tip' => 'Votre page est disponnible depuis [[$1/$2|<u>http://www.<b>seizam.com/$1/$2</b></u>]].',
+    'wp-url-tip' => 'Cette WikiPlace est disponnible depuis [[$1|<u>http://www.<b>seizam.com/$1</b></u>]].',
+    'wp-suburl-tip' => 'Cette page est disponnible depuis [[$1/$2|<u>http://www.<b>seizam.com/$1/$2</b></u>]].',
     'wp-link-tip' => 'Saisissez <b><nowiki>[[$1]]</nowiki></b> n\'importe où pour faire un [[Help:Liens|lien]] du type : [[$1]].',
     'wp-linkalias-tip' => 'Saisissez <b><nowiki>[[$1|$2]]</nowiki></b> n\'importe où pour faire un [[Help:Liens|lien]] du type : [[$1|$2]].',
     'wp-sublink-tip' => 'Saisissez <b><nowiki>[[$1/$2]]</nowiki></b> n\'importe où pour faire un [[Help:Liens|lien]] du type : [[$1/$2]].',
@@ -200,7 +204,8 @@ $messages['fr'] = array(
     'wp-background-tip' => 'Pour installer l\'[[Help:Arrière-plan|arrière-plan]], saisissez un lien vers l\'image sur [[{{ns:Wikiplace}}:$1/'.WPBACKGROUNDKEY.']].',
     'wp-navigation-tip' => 'Pour installer le [[Help:Navigation pour WikiPlace|menu de navigation]], saisissez une liste de liens sur [[{{ns:Wikiplace}}:$1/'.WPNAVIGATIONKEY.']].',
     /* TablePage: Wikiplace */
-    'wp-list-header' => '<span style="float:right">Voir : <b>[[Help:WikiPlaces/fr|Aide]]</b></span>Voici vos WikiPlaces.',
+    'wp-list-header' => '<span style="float:right">Voir : [[Help:WikiPlaces/fr|Aide]] | <b>[[Special:WikiPlaces/ListForMember|WikiPlaces dont je suis membre]]</b></span>Voici les WikiPlaces que vous possédez. ',
+    'wp-list-member-header' => '<span style="float:right">Voir : [[Help:WikiPlaces/fr|Aide]] | <b>[[Special:WikiPlaces|Mes WikiPlaces]]</b></span>Voici les WikiPlaces dont <b>vous êtes membre</b>.',
     'wp-list-footer' => '<h3>{{int:statistics}}</h3>
 * Espace disque utilisé : $1
 * Total de pages : $2',
@@ -252,6 +257,7 @@ Vous nous promettez aussi que vous avez écrit ceci vous-même, ou que vous l’
 	'wp-duplicate-related' => 'Une page liée ayant le même nom mais avec une casse différente ([[$1]]) existe. Cette page devra se nommer [[$2]].',
 	'wp-no-container-found' => 'Cette page devrait appartenir à une WikiPlace. Rééssayez avec un nom commencant par celui d\'une WikiPlace.',
 	'wp-not-owner' => 'Vous n\'êtes pas le propriétaire de cette WikiPlace.',
+    'wp-not-member' => 'Vous n\'êtes ni le propriétaire ni un membre de cette WikiPlace.',
     'wp-not-owner-or-member' => 'Vous n\'êtes ni le propriétaire, ni un membre de cette WikiPlace.',
 	'wp-notloggedin' => 'Cette action nécessite que vous soyez identifié. Vous pouvez [[Special:UserLogin/signup|créer un compte]] ou [[Special:UserLogin|vous connecter]].',
     'wp-nosub' => 'Les WikiPlaces ne sont disponibles qu\'après abonnement. [[Special:Subscriptions/New|Cliquez ici pour vous abonner !]]',

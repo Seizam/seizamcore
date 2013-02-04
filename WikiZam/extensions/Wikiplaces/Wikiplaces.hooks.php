@@ -284,7 +284,7 @@ class WikiplacesHooks {
                         if ($namespace == NS_FILE) {
                             $reason = WpSubscription::userCanUploadNewFile($user_id, $wp);
                         } else {
-                            $reason = WpSubscription::userCanCreateNewPage($user_id, $wp);
+                            $reason = WpSubscription::userCanCreateNewPage($user, $wp);
                         }
 
                         if ($reason !== true) {
@@ -312,7 +312,7 @@ class WikiplacesHooks {
                 } elseif ( !$wp->isOwner($user_id) && !WpMember::IsMember($wp, $user) ) { // !owner and !member => DENY
                     $result = array('wp-not-owner-or-member');
                     $msg .= ', current user is neither the owner nor a member of the Wikiplace';
-                } elseif (($reason = WpSubscription::userCanCreateNewPage($user_id, $wp)) !== true) {
+                } elseif (($reason = WpSubscription::userCanCreateNewPage($user, $wp)) !== true) {
                     $result = array($reason); // no active subscription or page creation quota is exceeded
                     $msg .= ', ' . $reason;
                 } else {

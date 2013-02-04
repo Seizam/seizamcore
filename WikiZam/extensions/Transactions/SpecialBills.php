@@ -116,7 +116,7 @@ class SpecialBills extends SpecialPage {
         $tmRecord = $tmBill->getRecord();
         $tmUser = User::newFromId($tmRecord->getUserId());
         
-        if ($user->getId() != $tmUser->getId()) {
+        if (!$user->isAllowed(TM_ADMIN_RIGHT) && $user->getId() != $tmUser->getId()) {
             $this->msgKey = 'sz-invalid-request';
             $this->msgType = 'error';
             $this->display();

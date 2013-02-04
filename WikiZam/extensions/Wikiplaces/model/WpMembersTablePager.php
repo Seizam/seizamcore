@@ -16,11 +16,11 @@ class WpMembersTablePager extends SkinzamTablePager {
 
     protected $selectTables = array(
         'wp_member',
-        'user' );
+        'user');
     protected $selectJoinConditions = array(
-        'user' => array('INNER JOIN', 'wpm_user_id = user_id') );
+        'user' => array('INNER JOIN', 'wpm_user_id = user_id'));
     protected $selectFields = array(
-		'user_id',
+        'user_id',
         'user_name',
         'user_real_name');
     protected $defaultSort = 'user_name';
@@ -30,16 +30,24 @@ class WpMembersTablePager extends SkinzamTablePager {
     protected $messagesPrefix = 'wp-';
     protected $wpNameDb = '';
     protected $wpNameText = '';
+    protected $forMember = false;
 
-	/**
-	 * 
-	 * @param WpWikiplace $wikiplace
-	 */
-	function setWikiPlace($wikiplace) {
+    /**
+     * 
+     * @param WpWikiplace $wikiplace
+     */
+    function setWikiPlace($wikiplace) {
         $this->wpNameText = $wikiplace->getName();
-		$this->wpNameDb = Title::newFromText($this->wpNameText)->getDBkey();
+        $this->wpNameDb = Title::newFromText($this->wpNameText)->getDBkey();
     }
-	
+
+    /**
+     * @param boolean $forMember 
+     */
+    public function setForMember() {
+        $this->forMember = true;
+    }
+
     /**
      * Format a table cell. The return value should be HTML, but use an empty
      * string not &#160; for empty cells. Do not include the <td> and </td>.
@@ -50,9 +58,9 @@ class WpMembersTablePager extends SkinzamTablePager {
      * @param $name String: the database field name
      * @param $value String: the value retrieved from the database
      */
-	function formatValue($name, $value) {
-		
-		switch ($name) {
+    function formatValue($name, $value) {
+
+        switch ($name) {
             case 'user_name':
                 return $this->formatUserName($value);
             case 'actions':
@@ -60,61 +68,67 @@ class WpMembersTablePager extends SkinzamTablePager {
             default:
                 return htmlspecialchars($value);
         }
-	}
-	
-	function formatUserName($username) {
-		$userTitle = Title::newFromText($username, NS_USER);
-        
-		return Linker::link($userTitle, "<b>$username</b>");
-	}
+    }
+
+    function formatUserName($username) {
+        $userTitle = Title::newFromText($username, NS_USER);
+
+        return Linker::link($userTitle, "<b>$username</b>");
+    }
 
     function formatActions() {
         $userName = $this->mCurrentRow->user_name;
         $html = '<ul>';
         $html .= '<li>'
-				. Linker::link(Title::newFromText($userName, NS_USER_TALK), wfMessage('talk')->text())
-				. '</li>'
-                . '<li>'
-				. Linker::linkKnown(SpecialPage::getTitleFor('EmailUser',$userName), wfMessage('emailuser')->text())
-				. '</li>'
-                . '<li>'
-				. Linker::linkKnown(SpecialPage::getTitleFor('Contributions',$userName), wfMessage('contributions')->text())
-				. '</li>'
-				. '<li><b>'
-				. SpecialWikiplaces::getLinkRemoveMember($this->wpNameDb, $this->mCurrentRow->user_name)
-                . '</b></li>';
+                . Linker::link(Title::newFromText($userName, NS_USER_TALK), wfMessage('talk')->text())
+                . '</li>';
+        $html .= '<li>'
+                . Linker::linkKnown(SpecialPage::getTitleFor('EmailUser', $userName), wfMessage('emailuser')->text())
+                . '</li>';
+        $html .= '<li>'
+                . Linker::linkKnown(SpecialPage::getTitleFor('Contributions', $userName), wfMessage('contributions')->text())
+                . '</li>';
+        if ($this->forMember == false) {
+            $html .= '<li><b>'
+                    . SpecialWikiplaces::getLinkRemoveMember($this->wpNameDb, $this->mCurrentRow->user_name)
+                    . '</b></li>';
+        }
         $html .= '</ul>';
         return $html;
     }
 
     function getFieldNames() {
         $fieldNames = parent::getFieldNames();
-		
-		unset($fieldNames['user_id']);
-		
-		if (isset($fieldNames['user_name']))
+
+        unset($fieldNames['user_id']);
+
+        if (isset($fieldNames['user_name']))
             $fieldNames['user_name'] = wfMessage('wp-username');
 
         if (isset($fieldNames['user_real_name']))
             $fieldNames['user_real_name'] = wfMessage('wp-realname');
-		
-		$fieldNames['actions'] = '';
-		
+
+        $fieldNames['actions'] = '';
+
         return $fieldNames;
     }
 
     function getEndBody() {
-        $colums = count($this->getFieldNames());
+        $html = "";
+        if ($this->forMember == false) {
 
-        if ($this->even)
-            $class = 'mw-line-even';
-        else
-            $class = 'mw-line-odd';
-        $this->even = !$this->even;
+            $colums = count($this->getFieldNames());
 
-        $html = "<tr class=\"$class mw-line-last\"><td colspan=\"$colums\">";
-        $html .= SpecialWikiplaces::getLinkAddMember($this->wpNameDb, 'wp-add-member-long');
-        $html .= "</td></tr>";
+            if ($this->even)
+                $class = 'mw-line-even';
+            else
+                $class = 'mw-line-odd';
+            $this->even = !$this->even;
+
+            $html .= "<tr class=\"$class mw-line-last\"><td colspan=\"$colums\">";
+            $html .= SpecialWikiplaces::getLinkAddMember($this->wpNameDb, 'wp-add-member-long');
+            $html .= "</td></tr>";
+        }
         $html .= "</tbody></table>\n";
         return $html;
     }

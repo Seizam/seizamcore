@@ -150,9 +150,21 @@ class WpWikiplace {
 		
 	}
 
+    /**
+     * @param int $user_id
+     * @return boolean 
+     */
 	public function isOwner($user_id) {
 		return ( $this->wpw_owner_user_id == $user_id );
 	}
+    
+    /**
+     * @param User $user
+     * @return boolean
+     */
+    public function isMember($user) {
+        return WpMember::IsMember($this, $user);
+    }
     
     /**
      * 
