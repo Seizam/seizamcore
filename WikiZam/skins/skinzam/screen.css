@@ -1448,13 +1448,20 @@ a.feedlink:first-child {
    ---------------------------------------- */
 
 #contentFooterWrapper a.control {
-    border-top:1px solid #dad9d9;
+    border:1px solid #dad9d9;
+    border-bottom: none;
     display:block;
     text-align: center;
     color: #dad9d9;
     text-transform: uppercase;
     font-family: Arial, Helvetica, Verdana, sans-serif;
     font-size: 0.7em;
+    
+    background-color: white;
+    
+    -webkit-border-radius: 6px 6px 0 0;
+    -moz-border-radius: 6px 6px 0 0;
+    border-radius: 6px 6px 0 0;
 }
 
 #contentFooterWrapper a.control:hover {
