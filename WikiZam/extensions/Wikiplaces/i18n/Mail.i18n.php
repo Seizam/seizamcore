@@ -347,7 +347,7 @@ Voici le message joint :
 
 Que faire ?
 
-Utilisez votre lien d\'invitation personel,
+Utilisez votre lien d\'invitation personnel,
 {{canonicalurl:{{#special:Invitation/Use:$3}}}}
 (lien caché, utilisable seulement par vous, seulement depuis ce mail).',
 );
