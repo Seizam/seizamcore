@@ -77,8 +77,8 @@
         $("a.control", $df).show();
         
         $df.click(function(event){
-            event.preventDefault();
             if ($("div.controlled", $df).is(":hidden")) {
+                event.preventDefault();
                 $("div.controlled", $df).slideDown(300);
                 $("a.control", $df).hide();
             } else {
