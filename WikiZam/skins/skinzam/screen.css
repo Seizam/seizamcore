@@ -27,12 +27,7 @@ html {
 }
 
 body {
-    /* @embed */
-    background-image: url(images/bg.jpg);
     background-color: #e5e5e5;
-    background-repeat: no-repeat;
-    background-position: top center;
-    background-attachment: fixed;
     margin: 0;
     padding: 24px 0 0 0;
     font-size: 13px;
@@ -1832,23 +1827,6 @@ a.feedlink:first-child {
 
 .ie7 li {
     list-style-position: outside;
-}
-
-
-/* -----------------------------------------------------------------------------
-   ==  GENERIC
-   -------------------------------------------------------------------------- */
-
-/* -----------------------------------------------------------------------------
-   ==  NS_MEDIAWIKI, NS_TEMPLATE, NS_HELP, NS_WIDGET,
-   -------------------------------------------------------------------------- */
-
-body.ns-8, body.ns-9,
-body.ns-10, body.ns-11,
-body.ns-12, body.ns-13,
-body.ns-274, body.ns-275 {
-    background-image: url(images/help.bg.jpg);
-    background-position: top right;
 }
 
 
