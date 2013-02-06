@@ -305,7 +305,7 @@ class SpecialWikiplacesAdmin extends SpecialPage {
         $wikiplace = WpWikiplace::newFromName($wikiplace_name);
 
         if (is_null($wikiplace)) {
-            $output->addWikiText("=== No Wikiplace with that name was found. ===");
+            $output->addWikiText("== ERROR! No Wikiplace with that name was found. ==");
             return;
         }
 
@@ -319,7 +319,7 @@ class SpecialWikiplacesAdmin extends SpecialPage {
 
         $owner = User::newFromId($wikiplace->getOwnerUserId());
         if (!$owner->loadFromId()) {
-            $output->addWikiText("==== WARNING The current owner is not an existing user ! ====");
+            $output->addWikiText("== WARNING! Owner is not an existing user! ==");
         } else {
             $output->addWikiText("==== Current owner ====");
             $this->prettyOutput($output, array(
@@ -340,7 +340,7 @@ class SpecialWikiplacesAdmin extends SpecialPage {
 
         $user = User::newFromName($user_name);
         if (!$user || $user->getId() == 0) {
-            $output->addWikiText("=== ERROR The user doesn't exist ! ===");
+            $output->addWikiText("== ERROR! The user doesn't exist ! ==");
             return;
         }
 
@@ -354,12 +354,13 @@ class SpecialWikiplacesAdmin extends SpecialPage {
         ));
 
         if (!$user->isEmailConfirmed()) {
-            $output->addWikiText("==== WARNING Email is not confirmed ! ====");
+            $output->addWikiText("== WARNING! Email is not confirmed! ==");
         }
 
         $last_subscription = WpSubscription::newByUserId($user->getId());
         if (is_null($last_subscription)) {
-            $output->addWikiText("=== ERROR The user doesn't have any subscription ! ===");
+            $output->addWikiText("== ERROR! The user doesn't have any subscription! ==");
+            return;
         }
 
         $output->addWikiText("==== Last subscription ====");
@@ -372,12 +373,12 @@ class SpecialWikiplacesAdmin extends SpecialPage {
         ));
 
         if (!$last_subscription->isActive()) {
-            $output->addWikiText("==== WARNING The subscription is not active ! ====");
+            $output->addWikiText("== WARNING! The subscription is not active! ==");
         }
 
         $plan = $last_subscription->getPlan();
         if (is_null($plan)) {
-            $output->addWikiText("=== ERROR The subscribed plan doesn't exist ! ===");
+            $output->addWikiText("== ERROR! The subscribed plan doesn't exist! ==");
             return;
         }
 
@@ -391,6 +392,15 @@ class SpecialWikiplacesAdmin extends SpecialPage {
             'by invitation only' => $plan->isInvitationRequired() ? 'yes' : 'no',
             'price' => $price['amount'] . ' ' . $price['currency'],
         ));
+        
+        $output->addWikiText("==== Membership ====");
+        $member = WpMember::GetFromWikiPlaceAndUser($wikiplace, $user);
+        if ($member instanceof WpMember) {
+            $output->addWikiText("Target user, {$user->getName()}, is a member of {$wikiplace->getName()}.");
+            $output->addWikiText("Membership will be removed for ownership change.");
+        } else {
+            $output->addWikiText("{$user->getName()} is <b>NOT</b> a member of {$wikiplace->getName()}.");
+        }
 
         $output->addWikiText("----");
 
@@ -402,9 +412,11 @@ class SpecialWikiplacesAdmin extends SpecialPage {
                         'user' => $user_name
                             ), true));
         } else {
-
+            if ($member instanceof WpMember) {
+                $member->delete();
+            }
             $wikiplace->setOwnerUserId($user->getId());
-            $output->addWikiText("=== Done ! ===");
+            $output->addWikiText("== Done ! ==");
         }
     }
 
@@ -527,7 +539,7 @@ class SpecialWikiplacesAdmin extends SpecialPage {
             if (is_null($subscription)) {
                 $output->addWikiText("=== An error occured ! ===");
             } else {
-                $output->addWikiText("=== Done ! ===");
+                $output->addWikiText("== Done ! ==");
                 $output->addWikiText("==== New subscription ====");
                 $this->prettyOutput($output, array(
                     'id' => $subscription->getId(),
