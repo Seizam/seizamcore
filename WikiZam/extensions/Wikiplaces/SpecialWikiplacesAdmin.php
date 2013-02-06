@@ -415,6 +415,10 @@ class SpecialWikiplacesAdmin extends SpecialPage {
             'price' => $price['amount'] . ' ' . $price['currency'],
         )); 
         
+        if ($plan->isInvitationRequired()) {
+            $output->addWikiText("=== ERROR This plan requires an invitation ! It cannot be subscribed using this interface. ===");
+            return;
+        }
         $output->addWikiText("----");
         
         if ( empty($user_name) ) {
@@ -479,7 +483,7 @@ class SpecialWikiplacesAdmin extends SpecialPage {
             )); 
         }
         
-        $check = WpSubscription::canSubscribe($this->getUser());
+        $check = WpSubscription::canSubscribe($user);
         if (is_string($check) ) {
             $output->addWikiText("=== ERROR The user cannot take a subscription ! ===");
             $output->addWikiText($check);
