@@ -260,13 +260,14 @@ class SpecialWikiplacesAdmin extends SpecialPage {
         $output->addWikiText("wps_renewal_notified = " . ($subscription->isRenewalNotified() ? "true" : "false"));
 
         $plan = WpPlan::newFromId($subscription->getPlanId());
-        $rplan = $plan = WpPlan::newFromId($subscription->getRenewalPlanId());
+        $rplanid = $subscription->getRenewalPlanId();
+        $rplan = ( ($rplanid == 0) ? null : WpPlan::newFromId($rplanid) );
 
         $output->addWikiText("==== Plan ====");
         $output->addWikiText("wpp_id = " . $plan->getId());
         $output->addWikiText("wpp_name = " . $plan->getName());
-        $output->addWikiText("renew_wpp_id = " . $rplan->getId());
-        $output->addWikiText("renew_wpp_name = " . $rplan->getName());
+        $output->addWikiText("renew_wpp_id = " . ( ($rplan == null) ? '<i>NONE</i>' : $rplan->getId()) );
+        $output->addWikiText("renew_wpp_name = " . ( ($rplan == null) ? '<i>NONE</i>' : $rplan->getName()) );
 
         $tmr = TMRecord::getById($subscription->getTmrId());
 
