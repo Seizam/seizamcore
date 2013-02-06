@@ -58,6 +58,10 @@ class TMRecord {
 
         return $this->tmr['tmr_user_id'];
     }
+    
+    public function getTMBId() {
+        return $this->tmr['tmr_tmb_id'];
+    }
 
     /**
      * Get the TMRecord instance from a SQL row
