@@ -81,7 +81,7 @@
                 event.preventDefault();
                 $("div.controlled", $df).slideDown(300);
                 $("a.control", $df).hide();
-            } else {
+            } else if (event.target.nodeName != 'A') {
                 $("div.controlled", $df).slideUp(300);
                 $("a.control", $df).show();
             }
