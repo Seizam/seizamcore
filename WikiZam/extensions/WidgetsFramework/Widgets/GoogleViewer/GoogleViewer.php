@@ -8,10 +8,15 @@
  * @see http://www.mediawiki.org/wiki/Extension:WidgetsFramework
  * @see http://www.seizam.com/Help:Widgets
  * 
+ * @todo Google Docs is deprecated, this widget is obsolete.
+ * 
  * This widget was created by the Yellpedia.com team continuing the excellant work done by
- * Clément Dietschy <clement@seizam.com> & Yann Missler <yann@seizam.com> in creating the WdigetFramework extension.
+ * Clément Dietschy <clement@seizam.com> & Yann Missler <yann@seizam.com> in creating the WdigetsFramework extension.
+ * 
+ * @todo Google Docs is deprecated, this widget is obsolete. It has not been tested by Seizam's team.
+ * 
  * @license GPL v3 or later
- * @version 0.3
+ * @version 0.4
  */
 
 namespace WidgetsFramework; 
@@ -48,12 +53,14 @@ class GoogleViewer extends ParserFunction {
         $this->addParameter($this->url);
 		
 		$this->width = new IntegerInPixel('width');
-        $this->width->setDefaultValue($wgWFMKMaxWidth);
-        $this->width->setMax($wgWFMKMaxWidth);
+        $this->width->setDefaultValue($wgWFMKMaxWidth-2);
+        $this->width->setMax($wgWFMKMaxWidth-2);
+        $this->width->setMin(0);
         $this->addParameter($this->width);
 
         $this->height = new IntegerInPixel('height');
-		$this->height->setDefaultValue(700);
+		$this->height->setDefaultValue($wgWFMKMaxWidth);
+        $this->height->setMin(0);
         $this->addParameter($this->height);
 
         $float = new XorParameter('float');
