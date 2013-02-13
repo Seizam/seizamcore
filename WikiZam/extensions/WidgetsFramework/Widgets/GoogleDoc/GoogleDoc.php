@@ -8,10 +8,14 @@
  * @see http://www.mediawiki.org/wiki/Extension:WidgetsFramework
  * @see http://www.seizam.com/Help:Widgets
  * 
+ * 
  * This widget was created by the Yellpedia.com team continuing the excellant work done by
- * Clément Dietschy <clement@seizam.com> & Yann Missler <yann@seizam.com> in creating the WdigetFramework extension.
+ * Clément Dietschy <clement@seizam.com> & Yann Missler <yann@seizam.com> in creating the WdigetsFramework extension.
+ * 
+ * @todo Google Docs is deprecated, this widget is obsolete. It has not been tested by Seizam's team.
+ * 
  * @license GPL v3 or later
- * @version 0.3
+ * @version 0.4
  */
 
 namespace WidgetsFramework; 
@@ -59,7 +63,7 @@ class GoogleDoc extends ParserFunction {
         $this->addParameter($this->width);
 
         $this->height = new IntegerInPixel('height');
-		$this->height->setDefaultValue(300);
+		$this->height->setDefaultValue($wgWFMKMaxWidth);
         $this->addParameter($this->height);
 
         $float = new XorParameter('float');
