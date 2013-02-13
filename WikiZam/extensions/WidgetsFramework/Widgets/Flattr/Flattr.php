@@ -57,12 +57,12 @@ class Flattr extends ParserFunction {
      */
     public function declareParameters() {
 
+        $this->uid = new String('uid');
+        $this->addParameter($this->uid);
+
         $this->url = new String('url');
         $this->url->setDefaultValue($this->parser->getTitle()->getCanonicalURL());
         $this->addParameter($this->url);
-
-        $this->uid = new String('uid');
-        $this->addParameter($this->uid);
 
         $this->title = new String('title');
         $this->title->setDefaultValue($this->parser->getTitle()->getText());
@@ -86,9 +86,6 @@ class Flattr extends ParserFunction {
         $this->category->addParameter(new Option('rest'));
         $this->addParameter($this->category);
 
-        $this->language = new String('language');
-        $this->addParameter($this->language);
-
         $this->tags = new String('tags');
         $this->addParameter($this->tags);
 
@@ -107,6 +104,9 @@ class Flattr extends ParserFunction {
         $this->left = new Option('left');
         $float->addParameter($this->left);
         $this->addParameter($float);
+
+        $this->language = new String('language');
+        $this->addParameter($this->language);
         
         
     }
