@@ -54,8 +54,8 @@ class GoogleDoc extends ParserFunction {
         $this->addParameter($this->oldkey);
 		
 		$this->width = new IntegerInPixel('width');
-        $this->width->setDefaultValue($wgWFMKMaxWidth);
-        $this->width->setMax($wgWFMKMaxWidth);
+        $this->width->setDefaultValue($wgWFMKMaxWidth - 2); // -2 because of frameborder
+        $this->width->setMax($wgWFMKMaxWidth - 2); // -2 because of frameborder
         $this->addParameter($this->width);
 
         $this->height = new IntegerInPixel('height');

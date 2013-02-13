@@ -48,7 +48,8 @@ class GoogleViewer extends ParserFunction {
         $this->addParameter($this->url);
 		
 		$this->width = new IntegerInPixel('width');
-        $this->width->setDefaultValue(600);
+        $this->width->setDefaultValue($wgWFMKMaxWidth);
+        $this->width->setMax($wgWFMKMaxWidth);
         $this->addParameter($this->width);
 
         $this->height = new IntegerInPixel('height');
