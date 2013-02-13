@@ -11,7 +11,7 @@
  * This widget was created by the Yellpedia.com team continuing the excellant work done by
  * Clément Dietschy <clement@seizam.com> & Yann Missler <yann@seizam.com> in creating the WdigetFramework extension.
  * @license GPL v3 or later
- * @version 1.0
+ * @version 1.1
  */
  
  namespace WidgetsFramework; 
@@ -26,6 +26,12 @@ class Disqus extends ParserFunction {
     protected $url;
     /** @var String */
     protected $title;
+    /** @var IntegerInPixel */
+    protected $width;
+    /** @var IntegerInPixel */
+    protected $height;
+    /** @var Option */
+    protected $frame;
     /** @var Option */
     protected $right;
     /** @var Option */
@@ -46,7 +52,7 @@ class Disqus extends ParserFunction {
     protected function declareParameters() {
         
         // Set $wgDisqusShortName in LocalSettings as you discus account name
-        global $wgDisqusShortName;
+        global $wgDisqusShortName, $wgWFMKMaxWidth;
 
         $this->shortname = new String('shortname');
         $this->shortname->setEscapeMode('javascript');
@@ -66,6 +72,18 @@ class Disqus extends ParserFunction {
         $this->title->setEscapeMode('javascript');
         $this->title->setDefaultValue($this->parser->getTitle()->getFullText());
         $this->addParameter($this->title);
+        
+        $this->width = new IntegerInPixel('width');
+        $this->width->setMax($wgWFMKMaxWidth);
+        $this->width->setMin(0);
+        $this->addParameter($this->width);
+        
+        $this->height = new IntegerInPixel('height');
+        $this->height->setMin(0);
+        $this->addParameter($this->height);
+        
+        $this->frame = new Option('frame');
+        $this->addParameter($this->frame);
 
         $float = new XorParameter('float');
 
@@ -88,9 +106,11 @@ class Disqus extends ParserFunction {
 
         $classes = array();
 
-        $classes[] = 'wufoo';
+        $classes[] = 'disqus';
         $classes[] = 'wfmk_block';
-        $classes[] = 'wfmk_frame';
+        if ($this->frame->getValue()) {
+            $classes[] = 'wfmk_frame';
+        }
 
         if ($this->right->getValue()) {
             $classes[] = 'wfmk_right';
@@ -124,7 +144,10 @@ class Disqus extends ParserFunction {
      */
     public function getOutput() {
         
-        $output = "<div id=\"disqus_thread\"></div>";
+        $output = "<div id=\"disqus_thread\" class=\"{$this->getCSSClasses()}\" style=\"";
+        if ($this->width->hasBeenSet()) $output .= "width:{$this->width->getOutput()}px;";
+        if ($this->height->hasBeenSet()) $output .= "height:{$this->height->getOutput()}px;";
+        $output .= "\">";
         $output .= "\n<script type=\"text/javascript\">";
         $output .= "\nvar disqus_shortname='{$this->shortname->getOutput()}';";
         if ($this->id->hasBeenSet()) $output .= "\nvar disqus_identifier='{$this->id->getOutput()}';";
