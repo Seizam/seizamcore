@@ -85,9 +85,13 @@ img.gravatar {
     border: 1px solid #dad9d9;
 }
 
-/* Discus */
+/* Disqus */
 div.disqus.wfmk_frame {
     padding: 9px 9px 0 9px;
+}
+
+.wfmk_block.disqus {
+    margin-bottom: 0;
 }
 
 /* CSS for www.seizam.com/Template:Signature */

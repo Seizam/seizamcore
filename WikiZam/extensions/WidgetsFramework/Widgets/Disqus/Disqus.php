@@ -147,7 +147,7 @@ class Disqus extends ParserFunction {
         $output = "<div id=\"disqus_thread\" class=\"{$this->getCSSClasses()}\" style=\"";
         if ($this->width->hasBeenSet()) $output .= "width:{$this->width->getOutput()}px;";
         if ($this->height->hasBeenSet()) $output .= "height:{$this->height->getOutput()}px;";
-        $output .= "\">";
+        $output .= "\"></div>";
         $output .= "\n<script type=\"text/javascript\">";
         $output .= "\nvar disqus_shortname='{$this->shortname->getOutput()}';";
         if ($this->id->hasBeenSet()) $output .= "\nvar disqus_identifier='{$this->id->getOutput()}';";
