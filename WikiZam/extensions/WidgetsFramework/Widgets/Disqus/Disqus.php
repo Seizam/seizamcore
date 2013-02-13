@@ -11,7 +11,7 @@
  * This widget was created by the Yellpedia.com team continuing the excellant work done by
  * Clément Dietschy <clement@seizam.com> & Yann Missler <yann@seizam.com> in creating the WdigetFramework extension.
  * @license GPL v3 or later
- * @version 0.3
+ * @version 1.0
  */
  
  namespace WidgetsFramework; 
@@ -21,13 +21,17 @@ class Disqus extends ParserFunction {
     /** @var String */
     protected $shortname;
 	/** @var String **/
-	protected $uid;
+	protected $id;
     /** @var String */
     protected $url;
+    /** @var String */
+    protected $title;
     /** @var Option */
     protected $right;
     /** @var Option */
     protected $left;
+    /** @var Option */
+    protected $dev;
     
     /**
      * Declares the widget's parameters:
@@ -40,19 +44,28 @@ class Disqus extends ParserFunction {
      * @return void
      */
     protected function declareParameters() {
+        
+        // Set $wgDisqusShortName in LocalSettings as you discus account name
+        global $wgDisqusShortName;
 
         $this->shortname = new String('shortname');
-        $this->shortname->setRequired();
-        $this->shortname->setEscapeMode('urlpathinfo');
+        $this->shortname->setEscapeMode('javascript');
+        $this->shortname->setDefaultValue($wgDisqusShortName);
         $this->addParameter($this->shortname);
 		
-		$this->uid = new String('uid');
-        $this->uid->setEscapeMode('urlpathinfo');
-        $this->addParameter($this->uid);
+		$this->id = new String('id');
+        $this->id->setEscapeMode('javascript');
+        $this->addParameter($this->id);
 
         $this->url = new String('url');
+        $this->url->setEscapeMode('javascript');
         $this->url->setDefaultValue($this->parser->getTitle()->getCanonicalURL());
         $this->addParameter($this->url);
+        
+        $this->title = new String('title');
+        $this->title->setEscapeMode('javascript');
+        $this->title->setDefaultValue($this->parser->getTitle()->getFullText());
+        $this->addParameter($this->title);
 
         $float = new XorParameter('float');
 
@@ -63,6 +76,9 @@ class Disqus extends ParserFunction {
         $float->addParameter($this->left);
 
         $this->addParameter($float);
+        
+        $this->dev = new Option('dev');
+        $this->addParameter($this->dev);
     }
 
     /**
@@ -86,9 +102,9 @@ class Disqus extends ParserFunction {
     }
 	
 	
-	protected function getUid() {
+	protected function getId() {
         if ($this->uid->hasBeenSet()) { // user
-            return "var disqus_identifier ='{$this->uid->getOutput()}';";
+            return "var disqus_identifier ='{$this->id->getOutput()}';";
         } else {
             return '';
         }
@@ -107,19 +123,25 @@ class Disqus extends ParserFunction {
      * @return string Raw HTMl
      */
     public function getOutput() {
-		return '<div id="disqus_thread"></div>
-				<script type="text/javascript">
-					var disqus_shortname = \'' . $this->shortname->getOutput() . '\';
-                    '.$this->getUid().'
-                    '.$this->getURL().'
-					(function() {
-						var dsq = document.createElement(\'script\'); dsq.type = \'text/javascript\'; dsq.async = true;
-						dsq.src = \'http://\' + disqus_shortname + \'.disqus.com/embed.js\';
-						(document.getElementsByTagName(\'head\')[0] || document.getElementsByTagName(\'body\')[0]).appendChild(dsq);
-					})();
-				</script>
-				<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-				<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>';
+        
+        $output = "<div id=\"disqus_thread\"></div>";
+        $output .= "\n<script type=\"text/javascript\">";
+        $output .= "\nvar disqus_shortname='{$this->shortname->getOutput()}';";
+        if ($this->id->hasBeenSet()) $output .= "\nvar disqus_identifier='{$this->id->getOutput()}';";
+        $output .= "\nvar disqus_title='{$this->title->getOutput()}';";
+        $output .= "\nvar disqus_url='{$this->url->getOutput()}';";
+        if ($this->dev->hasBeenSet()) $output .= "\nvar disqus_developer=1;";
+        
+        $output .= "\n(function() {
+var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})()";
+        $output .= "</script>";
+        $output .= "<noscript>Please enable JavaScript to view the <a href=\"http://disqus.com/?ref_noscript\">comments powered by Disqus.</a></noscript>";
+        // $output .= "<a href=\"http://disqus.com\" class=\"dsq-brlink\">comments powered by <span class=\"logo-disqus\">Disqus</span></a>";
+        
+        return $output;
     }
 
 }

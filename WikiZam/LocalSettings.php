@@ -421,6 +421,7 @@ require_once("$IP/extensions/CarZam/CarZam.php");
 # =[WidgetsFramework]=
 require_once( "$IP/extensions/WidgetsFramework/WidgetsFramework.php" );
 $wgWFMKMaxWidth = 784;
+$wgDisqusShortName = 'seizam';
 
 # =[Description2]=
 require_once( "$IP/extensions/Description2/Description2.php" );
